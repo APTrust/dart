@@ -14,7 +14,7 @@ func NewTag(label, value string) *Tag {
 	}
 }
 
-func NewTagProfile(label string, required bool, values []string) {
+func NewTagWithAllowedValues(label string, required bool, values []string) *Tag {
 	return &Tag{
 		Label:    label,
 		Required: required,

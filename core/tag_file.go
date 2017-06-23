@@ -6,13 +6,13 @@ type TagFile struct {
 	Tags     []*Tag
 }
 
-func NewTagFile(path string) {
+func NewTagFile(path string) *TagFile {
 	return &TagFile{
 		Path: path,
 	}
 }
 
-func NewTagFileProfile(path string, required bool, tags []*Tag) {
+func NewTagFileWithRequirements(path string, required bool, tags []*Tag) *TagFile {
 	return &TagFile{
 		Path:     path,
 		Required: required,

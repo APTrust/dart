@@ -23,14 +23,14 @@ const (
 
 // ManifestTypes describe the recognized types of manifests that
 // expect to find in BagIt bags.
-const ManifestTypes []string = []string{
+var ManifestTypes []string = []string{
 	PAYLOAD_MANIFEST,
 	TAG_MANIFEST,
 }
 
 // HashAlgorithms describes the list of hash algorithms we support
 // for calculating fixity digests.
-const HashAlgorithms []string = []string{
+var HashAlgorithms []string = []string{
 	MD4,
 	MD5,
 	SHA1,
@@ -42,7 +42,7 @@ const HashAlgorithms []string = []string{
 
 // RequirementTypes are the valid requirement type values in a
 // BagIt profile description.
-const RequirementTypes []string = []string{
+var RequirementTypes []string = []string{
 	REQUIRED,
 	OPTIONAL,
 	FORBIDDEN,

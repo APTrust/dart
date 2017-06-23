@@ -1,7 +1,7 @@
 package core
 
 import (
-	"encoding/json"
+//	"encoding/json"
 )
 
 // BagItProfile is a slightly modified version of bagit-profiles at

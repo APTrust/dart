@@ -8,8 +8,8 @@ import (
 
 func TestStringListContains(t *testing.T) {
 	list := []string{"apple", "orange", "banana"}
-	assert.True(t, util.StringListContains(list, "orange"))
-	assert.False(t, util.StringListContains(list, "wedgie"))
+	assert.True(t, core.StringListContains(list, "orange"))
+	assert.False(t, core.StringListContains(list, "wedgie"))
 	// Don't panic on nil list
-	assert.False(t, util.StringListContains(nil, "mars"))
+	assert.False(t, core.StringListContains(nil, "mars"))
 }
