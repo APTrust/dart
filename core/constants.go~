@@ -1,0 +1,39 @@
+package core
+
+const (
+	PAYLOAD_MANIFEST = "payload manifest"
+	TAG_MANIFEST     = "tag manifest"
+
+	MD4    = "md4"
+	MD5    = "md5"
+	SHA1   = "sha1"
+	SHA224 = "sha224"
+	SHA256 = "sha256"
+	SHA384 = "sha384"
+	SHA512 = "sha512"
+
+	REQUIRED  = "required"
+	OPTIONAL  = "optional"
+	FORBIDDEN = "forbidden"
+)
+
+const ManifestTypes []string = []string{
+	PAYLOAD_MANIFEST,
+	TAG_MANIFEST,
+}
+
+const HashAlgorithms []string = []string{
+	MD4,
+	MD5,
+	SHA1,
+	SHA224,
+	SHA256,
+	SHA384,
+	SHA512,
+}
+
+const RequirementTypes []string = []string{
+	REQUIRED,
+	OPTIONAL,
+	FORBIDDEN,
+}
