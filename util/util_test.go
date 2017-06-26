@@ -1,7 +1,7 @@
-package core_test
+package util_test
 
 import (
-	"github.com/APTrust/bagit/core"
+	"github.com/APTrust/bagit/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -18,10 +18,10 @@ type SampleStruct struct {
 
 func TestStringListContains(t *testing.T) {
 	list := []string{"apple", "orange", "banana"}
-	assert.True(t, core.StringListContains(list, "orange"))
-	assert.False(t, core.StringListContains(list, "wedgie"))
+	assert.True(t, util.StringListContains(list, "orange"))
+	assert.False(t, util.StringListContains(list, "wedgie"))
 	// Don't panic on nil list
-	assert.False(t, core.StringListContains(nil, "mars"))
+	assert.False(t, util.StringListContains(nil, "mars"))
 }
 
 func TestJsonDumpAndLoad(t *testing.T) {
@@ -41,13 +41,13 @@ func TestJsonDumpAndLoad(t *testing.T) {
 }
 
 func testDumpJson(t *testing.T, tempfile string, obj SampleStruct) {
-	err := core.DumpJson(tempfile, obj)
+	err := util.DumpJson(tempfile, obj)
 	require.Nil(t, err)
 }
 
 func testLoadJson(t *testing.T, tempfile string, obj SampleStruct) {
 	sample := &SampleStruct{}
-	err := core.LoadJson(tempfile, sample)
+	err := util.LoadJson(tempfile, sample)
 	require.Nil(t, err)
 	assert.Equal(t, obj.Id, sample.Id)
 	assert.Equal(t, len(obj.Strings), len(sample.Strings))

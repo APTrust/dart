@@ -1,6 +1,7 @@
-package core
+package constants
 
 import (
+	"github.com/APTrust/bagit/util"
 	"strings"
 )
 
@@ -51,11 +52,11 @@ var RequirementTypes []string = []string{
 // IsSupportedAlgorithm returns true if the algorithm alg is
 // among those this library supports.
 func IsSupportedAlgorithm(alg string) bool {
-	return StringListContains(HashAlgorithms, strings.ToLower(alg))
+	return util.StringListContains(HashAlgorithms, strings.ToLower(alg))
 }
 
 // IsValidRequirementType returns true if reqType is a valid
 // requirement type.
 func IsValidRequirementType(reqType string) bool {
-	return StringListContains(RequirementTypes, strings.ToLower(reqType))
+	return util.StringListContains(RequirementTypes, strings.ToLower(reqType))
 }
