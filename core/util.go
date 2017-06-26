@@ -30,7 +30,7 @@ func StringListContains(list []string, item string) bool {
 }
 
 // DumpJson dumps an object as JSON to the file specified by filePath.
-func DumpJson(obj interface{}, filePath string) error {
+func DumpJson(filePath string, obj interface{}) error {
 	jsonBytes, err := json.MarshalIndent(obj, "", "  ")
 	if err != nil {
 		return err
@@ -40,7 +40,7 @@ func DumpJson(obj interface{}, filePath string) error {
 
 // LoadJson parses JSON data from the specified file and parses it
 // into an object.
-func LoadJson(obj interface{}, filePath string) error {
+func LoadJson(filePath string, obj interface{}) error {
 	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
