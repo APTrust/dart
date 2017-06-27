@@ -1,10 +1,10 @@
 package core
 
 type Tag struct {
-	Label    string   `json:"-"`
-	Value    string   `json:"-"`
+	Label    string   `json:"label"`
+	Value    string   `json:"value"`
 	Required bool     `json:"required"`
-	EmptyOK  bool     `json:"emptyOk"`
+	EmptyOk  bool     `json:"emptyOk"`
 	Values   []string `json:"values"`
 }
 
@@ -19,7 +19,7 @@ func NewTagWithRequirements(label string, required, emptyOk bool, values []strin
 	return &Tag{
 		Label:    label,
 		Required: required,
-		EmptyOK:  emptyOk,
+		EmptyOk:  emptyOk,
 		Values:   values,
 	}
 }

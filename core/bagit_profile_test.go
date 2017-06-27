@@ -36,4 +36,30 @@ func TestLoadBagItProfile(t *testing.T) {
 	assert.EqualValues(t, []string{"md5"}, profile.ManifestsRequired)
 	assert.Equal(t, "required", profile.Serialization)
 	assert.Empty(t, profile.TagManifestsRequired)
+
+	// BagIt Profile Info
+	require.NotNil(t, profile.BagItProfileInfo)
+	assert.Equal(t, "http://example.com/aptrust-bagit-profile_2.0.json", profile.BagItProfileInfo.BagItProfileIdentifier)
+	assert.Equal(t, "support@aptrust.org", profile.BagItProfileInfo.ContactEmail)
+	assert.Equal(t, "A. Diamond", profile.BagItProfileInfo.ContactName)
+	assert.Equal(t, "BagIt profile for ingesting content into APTrust.", profile.BagItProfileInfo.ExternalDescription)
+	assert.Equal(t, "aptrust.org", profile.BagItProfileInfo.SourceOrganization)
+	assert.Equal(t, "2.0", profile.BagItProfileInfo.Version)
+
+	// Required Tag Files
+	require.NotNil(t, profile.TagFilesRequired)
+	require.Equal(t, 3, len(profile.TagFilesRequired))
+
+	bagit := profile.TagFilesRequired["bagit.txt"]
+	require.NotNil(t, bagit)
+	require.Equal(t, 2, len(bagit))
+	require.NotNil(t, bagit["BagIt-Version"])
+	assert.True(t, bagit["BagIt-Version"].Required)
+	assert.False(t, bagit["BagIt-Version"].EmptyOk)
+
+	baginfo := profile.TagFilesRequired["bag-info.txt"]
+	require.NotNil(t, baginfo)
+
+	aptrust := profile.TagFilesRequired["aptrust-info.txt"]
+	require.NotNil(t, aptrust)
 }

@@ -5,7 +5,7 @@ type Bag struct {
 	Files     []*File
 	Manifests []*Manifest
 	Path      string
-	TagFiles  []*TagFile
+	TagFiles  map[string][]*Tag
 }
 
 func NewBag(name, filePath string) *Bag {

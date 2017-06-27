@@ -45,7 +45,7 @@ type BagItProfile struct {
 	// find in the files. Since TagFile objects have a Required property,
 	// we omit bagit-profiles' TagFilesRequired, because that would be
 	// redundant.
-	TagFilesRequired map[string]*TagFile `json:"Tag-Files-Required"`
+	TagFilesRequired map[string]map[string]*Tag `json:"Tag-Files-Required"`
 	// TagManifestsRequired is a list of required tag manifests. Like
 	// ManifestsRequired, the list contains only the names of the
 	// required hashing algorithms. E.g. ["md5", "sha256"]
@@ -57,7 +57,7 @@ type BagItProfile struct {
 // https://github.com/ruebot/bagit-profiles.
 type BagItProfileInfo struct {
 	// BagItProfileIdentifier is the URL where this bagit profile can be found.
-	BagItProfileIdentifier string `json:"BagIt-Profile-Info"`
+	BagItProfileIdentifier string `json:"BagIt-Profile-Identifier"`
 	// ContactEmail is the email address of the person maintaining this
 	// bagit profile.
 	ContactEmail string `json:"Contact-Email"`
