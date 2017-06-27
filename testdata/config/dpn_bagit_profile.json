@@ -1,0 +1,121 @@
+{
+    "BagIt-Profile-Info": {
+        "BagIt-Profile-Identifier": "http://example.com/dpn-bagit-profile.json",
+        "Source-Organization": "dpn.org",
+        "Contact-Name": "A. Diamond",
+        "Contact-Email": "support@dpn.org",
+        "External-Description": "BagIt profile for ingesting content into DPN.",
+        "Version": "2.0"
+        },
+    "Accept-BagIt-Version": [
+        "0.97"
+        ],
+    "AllowMiscTopLevelFiles": false,
+    "AllowMiscDirectories": true,
+    "Allow-Fetch.txt": false,
+    "Manifests-Required": [
+        "sha256"
+        ],
+    "Serialization": "required",
+    "Accept-Serialization": [
+        "application/tar"
+        ],
+    "Tag-Manifests-Required": [
+        "sha256"
+        ],
+    "Tag-Files-Required": {
+        "bagit.txt": {
+            "BagIt-Version": {
+                "required": true
+                },
+            "Tag-File-Character-Encoding": {
+                "required": true
+                }
+            },
+        "bag-info.txt": {
+            "Source-Organization": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Organization-Address": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Contact-Name": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Contact-Phone": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Contact-Email": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Bagging-Date": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Bag-Size": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Bag-Group-Identifier": {
+                "required": true,
+                "emptyOK": true
+                },
+            "Bag-Count": {
+                "required": true,
+                "emptyOK": true
+                }
+            },
+        "dpn-tags/dpn-info.txt": {
+            "DPN-Object-ID": {
+                "required": true,
+                "emptyOk": false
+                },
+            "Local-ID": {
+                "required": true,
+                "emptyOk": false
+                },
+            "Ingest-Node-Name": {
+                "required": true,
+                "emptyOk": false
+                },
+            "Ingest-Node-Address": {
+                "required": true,
+                "emptyOk": true
+                },
+            "Ingest-Node-Contact-Name": {
+                "required": true,
+                "emptyOk": true
+                },
+            "Ingest-Node-Contact-Email": {
+                "required": true,
+                "emptyOk": true
+                },
+            "Version-Number": {
+                "required": true,
+                "emptyOk": false
+                },
+            "First-Version-Object-ID": {
+                "required": true,
+                "emptyOk": false
+                },
+            "Interpretive-Object-ID": {
+                "required": true,
+                "emptyOk": true
+                },
+            "Rights-Object-ID": {
+                "required": true,
+                "emptyOk": true
+                },
+            "Bag-Type": {
+                "required": true,
+                "emptyOk": false,
+                "values": ["data", "interpretive", "rights"]
+            }
+        }
+    }
+}
