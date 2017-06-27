@@ -1,9 +1,8 @@
 package core
 
 type TagFile struct {
-	Path     string
-	Required bool
-	Tags     []*Tag
+	Path string `json:"-"`
+	Tags []*Tag
 }
 
 func NewTagFile(path string) *TagFile {
@@ -12,10 +11,9 @@ func NewTagFile(path string) *TagFile {
 	}
 }
 
-func NewTagFileWithRequirements(path string, required bool, tags []*Tag) *TagFile {
+func NewTagFileWithTags(path string, tags []*Tag) *TagFile {
 	return &TagFile{
-		Path:     path,
-		Required: required,
-		Tags:     tags,
+		Path: path,
+		Tags: tags,
 	}
 }
