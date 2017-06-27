@@ -10,8 +10,8 @@
     "Accept-BagIt-Version":[
         "0.97"
     ],
-    "AllowMiscTopLevelFiles":true,
-    "AllowMiscDirectories":true,
+    "Allow-Misc-Top-Level-Files":true,
+    "Allow-Misc-Directories":true,
     "Allow-Fetch.txt":false,
     "Manifests-Required":[
         "md5"

@@ -1,7 +1,7 @@
 package core
 
 import (
-//	"encoding/json"
+	"github.com/APTrust/bagit/util"
 )
 
 // BagItProfile is a slightly modified version of bagit-profiles at
@@ -17,7 +17,7 @@ type BagItProfile struct {
 	AcceptBagItVersion []string `json:"Accept-BagIt-Version"`
 	// AcceptSerialization is a list of BagIt serialization formats
 	// to accept. For example, ["application/zip", "application/tar"]
-	AcceptSerialization []string `json:"Accept-BagIt-Serialization"`
+	AcceptSerialization []string `json:"Accept-Serialization"`
 	// AllowFetchTxt indicates whether we allow a fetch.txt file in the bag.
 	AllowFetchTxt bool `json:"Allow-Fetch.txt"`
 	// AllowMiscTopLevelFiles indicates whether we allow files in the top-level
@@ -45,7 +45,7 @@ type BagItProfile struct {
 	// find in the files. Since TagFile objects have a Required property,
 	// we omit bagit-profiles' TagFilesRequired, because that would be
 	// redundant.
-	TagFilesRequired []*TagFile `json:"Tag-Files-Required"`
+	TagFilesRequired map[string]*TagFile `json:"Tag-Files-Required"`
 	// TagManifestsRequired is a list of required tag manifests. Like
 	// ManifestsRequired, the list contains only the names of the
 	// required hashing algorithms. E.g. ["md5", "sha256"]
@@ -75,7 +75,9 @@ type BagItProfileInfo struct {
 
 // LoadBagItProfile loads a BagItProfile from the specified file path.
 func LoadBagItProfile(filePath string) (*BagItProfile, error) {
-	return nil, nil
+	profile := &BagItProfile{}
+	err := util.LoadJson(filePath, profile)
+	return profile, err
 }
 
 func (profile *BagItProfile) Validate() []error {
