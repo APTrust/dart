@@ -20,6 +20,14 @@ type BagItProfile struct {
 	AcceptSerialization []string `json:"Accept-BagIt-Serialization"`
 	// AllowFetchTxt indicates whether we allow a fetch.txt file in the bag.
 	AllowFetchTxt bool `json:"Allow-Fetch.txt"`
+	// AllowMiscTopLevelFiles indicates whether we allow files in the top-level
+	// directory other than payload manifests and tag manifests.
+	AllowMiscTopLevelFiles bool `json:"Allow-Misc-Top-Level-Files"`
+	// AllowMiscDirectories indicates whether we allow miscellaneous
+	// directories to exist outside the data directory. These non-data
+	// directories often contain custom tag files whose checksums may
+	// not appear in any manifest.
+	AllowMiscDirectories bool `json:"Allow-Misc-Directories"`
 	// BagItProfileInfo contains descriptive information about this
 	// BagIt profile.
 	BagItProfileInfo BagItProfileInfo `json:"BagIt-Profile-Info"`
