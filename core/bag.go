@@ -2,9 +2,9 @@ package core
 
 type Bag struct {
 	Name      string
-	Files     []*File
-	Manifests []*Manifest
 	Path      string
+	Files     map[string]*File
+	Manifests map[string]map[string]string
 	TagFiles  map[string][]*Tag
 }
 

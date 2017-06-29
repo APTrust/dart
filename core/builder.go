@@ -1,4 +1,4 @@
-package workers
+package core
 
 type BagBuilder struct {
 }
