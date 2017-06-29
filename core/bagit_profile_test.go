@@ -73,3 +73,19 @@ func TestLoadBagItProfile(t *testing.T) {
 	require.Equal(t, 9, len(dpnProfile.TagFilesRequired["bag-info.txt"]))
 	require.Equal(t, 11, len(dpnProfile.TagFilesRequired["dpn-tags/dpn-info.txt"]))
 }
+
+func TestBagItProfileValidate(t *testing.T) {
+	profile := &core.BagItProfile{}
+	errs := profile.Validate()
+	require.Equal(t, 4, len(errs))
+
+	profile.AcceptBagItVersion = []string{"0.97"}
+	profile.ManifestsRequired = []string{"md5"}
+	profile.TagFilesRequired = make(map[string]map[string]*core.Tag)
+	profile.TagFilesRequired["bagit.txt"] = make(map[string]*core.Tag)
+	profile.TagFilesRequired["bagit.txt"]["tag1"] = &core.Tag{}
+	profile.TagFilesRequired["bag-info.txt"] = make(map[string]*core.Tag)
+	profile.TagFilesRequired["bag-info.txt"]["tag2"] = &core.Tag{}
+	errs = profile.Validate()
+	require.Equal(t, 0, len(errs))
+}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"github.com/APTrust/bagit/util"
 )
 
@@ -80,6 +81,21 @@ func LoadBagItProfile(filePath string) (*BagItProfile, error) {
 	return profile, err
 }
 
+// Validate returns a list of errors describing why the profile is not
+// valid. If the profile is valid, this returns an empty slice.
 func (profile *BagItProfile) Validate() []error {
-	return nil
+	errs := make([]error, 0)
+	if profile.AcceptBagItVersion == nil || len(profile.AcceptBagItVersion) == 0 {
+		errs = append(errs, fmt.Errorf("Accept-BagIt-Version must accept at least one BagIt version."))
+	}
+	if profile.ManifestsRequired == nil || len(profile.ManifestsRequired) == 0 {
+		errs = append(errs, fmt.Errorf("Manifests-Required must requite at least one algorithm."))
+	}
+	if _, hasBagit := profile.TagFilesRequired["bagit.txt"]; !hasBagit {
+		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bagit.txt."))
+	}
+	if _, hasBaginfo := profile.TagFilesRequired["bag-info.txt"]; !hasBaginfo {
+		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bag-info.txt."))
+	}
+	return errs
 }
