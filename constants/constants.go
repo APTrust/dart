@@ -49,6 +49,18 @@ var RequirementTypes []string = []string{
 	FORBIDDEN,
 }
 
+// SerializationFormats maps file extensions to mime types for
+// common file serialization formats.
+var SerializationFormats = map[string][]string{
+	".7z":   {"application/x-7z-compressed"},
+	".gz":   {"application/gzip", "application/x-gzip"},
+	".gzip": {"application/gzip", "application/x-gzip"},
+	".rar":  {"application/x-rar-compressed"},
+	".tar":  {"application/x-tar", "application/tar"},
+	".tgz":  {"application/gzip", "application/x-gzip", "application/tar+gzip"},
+	".zip":  {"application/zip"},
+}
+
 // IsSupportedAlgorithm returns true if the algorithm alg is
 // among those this library supports.
 func IsSupportedAlgorithm(alg string) bool {
