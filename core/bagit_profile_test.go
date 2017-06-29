@@ -62,4 +62,14 @@ func TestLoadBagItProfile(t *testing.T) {
 
 	aptrust := profile.TagFilesRequired["aptrust-info.txt"]
 	require.NotNil(t, aptrust)
+
+	// Make sure this one parses, while we're at it.
+	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := core.LoadBagItProfile(dpnFile)
+	require.Nil(t, err)
+	require.Equal(t, 3, len(dpnProfile.TagFilesRequired))
+	require.Equal(t, 2, len(dpnProfile.TagFilesRequired["bagit.txt"]))
+	require.Equal(t, 9, len(dpnProfile.TagFilesRequired["bag-info.txt"]))
+	require.Equal(t, 11, len(dpnProfile.TagFilesRequired["dpn-tags/dpn-info.txt"]))
 }
