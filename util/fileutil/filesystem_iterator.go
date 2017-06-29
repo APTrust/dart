@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -70,6 +71,18 @@ func (iter *FileSystemIterator) Next() (io.ReadCloser, *FileSummary, error) {
 		return nil, fs, fmt.Errorf("Cannot read file '%s': %v", filePath, err)
 	}
 	return file, fs, nil
+}
+
+// OpenFile opens the file at filePath, and returns an open reader for it.
+// It's the caller's job to close the reader. Param filePath should
+// be the relative path of the file within the bag. Will return a
+// nil ReadCloser and an error if file is not found.
+func (iter *FileSystemIterator) OpenFile(filePath string) (io.ReadCloser, error) {
+	fullPath := filepath.Join(iter.rootPath, filePath)
+	if !FileExists(fullPath) {
+		return nil, fmt.Errorf("File %s does not exist", fullPath)
+	}
+	return os.Open(fullPath)
 }
 
 // Returns the last component of the path that this iterator is traversing.

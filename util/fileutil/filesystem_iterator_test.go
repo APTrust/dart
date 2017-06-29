@@ -85,3 +85,23 @@ func TestFSIGetTopLevelDirNames(t *testing.T) {
 	assert.Equal(t, 1, len(names))
 	assert.Equal(t, "testdata", names[0])
 }
+
+// func TestFSIOpenFile(t *testing.T) {
+// 	fsi, _ := fileutil.NewFileSystemIterator(getTestDataPath())
+// 	if fsi == nil {
+// 		assert.Fail(t, "Could not get a FileSystemIterator")
+// 	}
+// 	file, err := fsi.OpenFile(filepath.Join("bags", "example.edu.tagsample_good.tar"))
+// 	if file != nil {
+// 		defer file.Close()
+// 	}
+// 	assert.Nil(t, err)
+// 	assert.NotNil(t, file)
+
+// 	file2, err := fsi.OpenFile(filepath.Join("bags", "does_not_exist.tar"))
+// 	if file2 != nil {
+// 		defer file2.Close()
+// 	}
+// 	assert.NotNil(t, err)
+// 	assert.Nil(t, file2)
+// }

@@ -108,6 +108,9 @@ func (validator *Validator) ValidateBagItVersion() bool {
 }
 
 func (validator *Validator) ValidateAllowFetch() bool {
+	if validator.Profile.AllowFetchTxt {
+
+	}
 	return true
 }
 

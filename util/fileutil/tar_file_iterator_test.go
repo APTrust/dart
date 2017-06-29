@@ -108,7 +108,7 @@ func TestTFIGetTopLevelDirNames(t *testing.T) {
 	assert.Equal(t, "example.edu.tagsample_good", topLevelDirs[0])
 }
 
-func TestTFIFind(t *testing.T) {
+func TestTFIOpenFile(t *testing.T) {
 	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, err := fileutil.NewTarFileIterator(tarFilePath)
@@ -118,17 +118,17 @@ func TestTFIFind(t *testing.T) {
 	assert.NotNil(t, tfi)
 	require.Nil(t, err)
 
-	readCloser, err := tfi.Find("example.edu.tagsample_good/junk_file.txt")
+	readCloser, err := tfi.OpenFile("example.edu.tagsample_good/junk_file.txt")
 	assert.Nil(t, err)
 	assert.NotNil(t, readCloser)
 	readCloser.Close()
 
-	readCloser, err = tfi.Find("example.edu.tagsample_good/tagmanifest-sha256.txt")
+	readCloser, err = tfi.OpenFile("example.edu.tagsample_good/tagmanifest-sha256.txt")
 	assert.Nil(t, err)
 	assert.NotNil(t, readCloser)
 	readCloser.Close()
 
-	readCloser, err = tfi.Find("this-file-does-not-exist")
+	readCloser, err = tfi.OpenFile("this-file-does-not-exist")
 	assert.NotNil(t, err)
 	assert.Nil(t, readCloser)
 }

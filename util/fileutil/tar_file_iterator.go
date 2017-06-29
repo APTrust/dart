@@ -65,21 +65,20 @@ func (iter *TarFileIterator) Next() (io.ReadCloser, *FileSummary, error) {
 	return tarReadCloser, fs, nil
 }
 
-// Find returns an open reader for the file with the specified name,
+// OpenFile returns an open reader for the file with the specified name,
 // or nil if that file cannot be found. Caller is responsible
 // for closing the reader. Note that the iterator is forward-only,
 // which makes it unsuitable for re-use. Create a new iterator each
-// time you want to call Find, and user genericFile.OriginalPathWithBagName()
-// to get the originalPath param.
-func (iter *TarFileIterator) Find(originalPathWithBagName string) (io.ReadCloser, error) {
+// time you want to call Find.
+func (iter *TarFileIterator) OpenFile(filePath string) (io.ReadCloser, error) {
 	for {
 		header, err := iter.tarReader.Next()
 		if err != nil {
 			// Error may be io.EOF, which just means we
 			// reached the end of the headers.
-			return nil, fmt.Errorf("File '%s' not found in archive", originalPathWithBagName)
+			return nil, fmt.Errorf("File '%s' not found in archive", filePath)
 		}
-		if header.Name == originalPathWithBagName {
+		if header.Name == filePath {
 			tarReadCloser := TarReadCloser{
 				tarReader: iter.tarReader,
 			}
