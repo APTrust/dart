@@ -27,6 +27,24 @@ func FileExists(filePath string) bool {
 	return true
 }
 
+// IsFile returns true if the object at filePath is a file.
+func IsFile(filePath string) bool {
+	stat, err := os.Stat(filePath)
+	if err == nil && stat != nil {
+		return !stat.IsDir()
+	}
+	return false
+}
+
+// IsDir returns true if the object at filePath is a directory.
+func IsDir(filePath string) bool {
+	stat, err := os.Stat(filePath)
+	if err == nil && stat != nil {
+		return stat.IsDir()
+	}
+	return false
+}
+
 // Expands the tilde in a directory path to the current
 // user's home directory. For example, on Linux, ~/data
 // would expand to something like /home/josie/data

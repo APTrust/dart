@@ -16,12 +16,22 @@ import (
 func TestFileExists(t *testing.T) {
 	_, filename, _, ok := runtime.Caller(0)
 	require.True(t, ok)
-	if fileutil.FileExists(filename) == false {
-		t.Errorf("FileExists returned false for fileutil_test.go")
-	}
-	if fileutil.FileExists("NonExistentFile.xyz") == true {
-		t.Errorf("FileExists returned true for NonExistentFile.xyz")
-	}
+	assert.True(t, fileutil.IsFile(filename))
+	assert.False(t, fileutil.IsFile("NonExistentFile.xyz"))
+}
+
+func TestIsFile(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	require.True(t, ok)
+	assert.True(t, fileutil.IsFile(filename))
+	assert.False(t, fileutil.IsFile(filepath.Dir(filename)))
+}
+
+func TestIsDir(t *testing.T) {
+	_, filename, _, ok := runtime.Caller(0)
+	require.True(t, ok)
+	assert.False(t, fileutil.IsDir(filename))
+	assert.True(t, fileutil.IsDir(filepath.Dir(filename)))
 }
 
 func TestExpandTilde(t *testing.T) {
