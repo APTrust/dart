@@ -39,6 +39,12 @@ func NewFileSystemIterator(pathToDir string) (*FileSystemIterator, error) {
 	}, nil
 }
 
+// Close is a no-op. It's here so that FileSystemIterator can adhere
+// to the ReadIterator interface.
+func (iter *FileSystemIterator) Close() {
+	return
+}
+
 // Returns an open reader for the next file, along with a FileSummary.
 // Returns io.EOF when it reaches the last file.
 // The caller is responsible for closing the reader.

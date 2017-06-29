@@ -107,11 +107,21 @@ func (validator *Validator) ValidateBagItVersion() bool {
 	return true
 }
 
-func (validator *Validator) ValidateAllowFetch() bool {
-	if validator.Profile.AllowFetchTxt {
-
+func (validator *Validator) ValidateAllowFetch() (bool, error) {
+	ok := true
+	if !validator.Profile.AllowFetchTxt {
+		iter, err := validator.getIterator()
+		if err != nil {
+			return false, err
+		}
+		fetchFile, err := iter.OpenFile("fetch.txt")
+		defer fetchFile.Close()
+		if fetchFile != nil && err == nil {
+			validator.addError("Found fetch.txt, which BagIt profile says is not allowed.")
+			ok = false
+		}
 	}
-	return true
+	return ok, nil
 }
 
 func (validator *Validator) ValidateRequiredManifests() bool {
