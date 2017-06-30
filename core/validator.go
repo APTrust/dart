@@ -65,14 +65,12 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	reader, fileSummary, err := iterator.Next()
 	if reader != nil {
 		defer reader.Close()
-	} else {
-		return errtypes.NewRuntimeError("Iterator returned a nil reader.")
 	}
 	if err != nil {
 		return err
 	}
 	if !fileSummary.IsRegularFile {
-		return nil // This is a directory
+		return nil // This is a directory. Don't process it.
 	}
 	validator.Bag.AddFileFromSummary(fileSummary)
 	return nil
@@ -178,10 +176,17 @@ func (validator *Validator) ValidateProfile() bool {
 	return ok
 }
 
+func (validator *Validator) Errors() []string {
+	return validator.errors
+}
+
 // getIterator returns either a tar file iterator or a filesystem
 // iterator, depending on whether we're reading a tarred bag or
 // an untarred one.
 func (validator *Validator) getIterator() (fileutil.ReadIterator, error) {
+	if !fileutil.FileExists(validator.Bag.Path) {
+		return nil, errtypes.NewRuntimeError("Bag does not exist at %s", validator.Bag.Path)
+	}
 	if fileutil.IsDir(validator.Bag.Path) {
 		return fileutil.NewFileSystemIterator(validator.Bag.Path)
 	}
@@ -190,7 +195,7 @@ func (validator *Validator) getIterator() (fileutil.ReadIterator, error) {
 		return fileutil.NewTarFileIterator(validator.Bag.Path)
 	}
 	// FUTURE: Support zip format
-	return nil, fmt.Errorf("Cannot read bag format. Supported formats: directory, tar.")
+	return nil, errtypes.NewRuntimeError("Cannot read bag format. Supported formats: directory, tar.")
 }
 
 // addError adds a message to the list of validation errors.

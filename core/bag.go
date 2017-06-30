@@ -15,7 +15,11 @@ type Bag struct {
 
 func NewBag(filePath string) *Bag {
 	return &Bag{
-		Path: filePath,
+		Path:         filePath,
+		Payload:      make(map[string]*File),
+		Manifests:    make(map[string]*File),
+		TagManifests: make(map[string]*File),
+		TagFiles:     make(map[string]*File),
 	}
 }
 
