@@ -6,7 +6,6 @@ import (
 )
 
 type Bag struct {
-	Name         string
 	Path         string
 	Payload      map[string]*File
 	Manifests    map[string]*File
@@ -14,9 +13,8 @@ type Bag struct {
 	TagFiles     map[string]*File
 }
 
-func NewBag(name, filePath string) *Bag {
+func NewBag(filePath string) *Bag {
 	return &Bag{
-		Name: name,
 		Path: filePath,
 	}
 }

@@ -2,6 +2,7 @@ package fileutil_test
 
 import (
 	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"
@@ -11,7 +12,7 @@ import (
 )
 
 func TestNewTarFileIterator(t *testing.T) {
-	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, err := fileutil.NewTarFileIterator(tarFilePath)
 	assert.NotNil(t, tfi)
@@ -19,7 +20,7 @@ func TestNewTarFileIterator(t *testing.T) {
 }
 
 func TestTFINext(t *testing.T) {
-	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, err := fileutil.NewTarFileIterator(tarFilePath)
 	if tfi != nil {
@@ -63,7 +64,7 @@ func TestTFINext(t *testing.T) {
 
 // Should be able to close repeatedly without panic.
 func TestTarFileIteratorClose(t *testing.T) {
-	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, _ := fileutil.NewTarFileIterator(tarFilePath)
 	if tfi == nil {
@@ -87,7 +88,7 @@ func TestTarReaderCloserClose(t *testing.T) {
 }
 
 func TestTFIGetTopLevelDirNames(t *testing.T) {
-	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, _ := fileutil.NewTarFileIterator(tarFilePath)
 	if tfi == nil {
@@ -108,7 +109,7 @@ func TestTFIGetTopLevelDirNames(t *testing.T) {
 }
 
 func TestTFIOpenFile(t *testing.T) {
-	tarFilePath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 	tfi, err := fileutil.NewTarFileIterator(tarFilePath)
 	if tfi != nil {

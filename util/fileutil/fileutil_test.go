@@ -4,6 +4,7 @@ import (
 	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
@@ -81,22 +82,8 @@ func TestLooksSafeToDelete(t *testing.T) {
 	assert.False(t, fileutil.LooksSafeToDelete("/usr/local", 12, 3))
 }
 
-func TestGetPathToTestBag(t *testing.T) {
-	path1, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
-	require.Nil(t, err)
-	assert.True(t, fileutil.FileExists(path1))
-
-	path2, err := fileutil.GetPathToTestBag("example.edu.tagsample_bad.tar")
-	require.Nil(t, err)
-	assert.True(t, fileutil.FileExists(path2))
-
-	path3, err := fileutil.GetPathToTestBag("file_does_not_exist.tar")
-	require.Nil(t, err)
-	assert.False(t, fileutil.FileExists(path3))
-}
-
 func TestCalculateChecksums(t *testing.T) {
-	bagPath, err := fileutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	bagPath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
 
 	// Calculate the two most common checksums, and make sure we get only those.

@@ -12,15 +12,14 @@ import (
 )
 
 type Validator struct {
-	Bag         Bag
-	Profile     BagItProfile
-	iterator    fileutil.ReadIterator
+	Bag         *Bag
+	Profile     *BagItProfile
 	errors      []string
 	bagsize     int64
 	payloadOxum string
 }
 
-func NewValidator(bag Bag, profile BagItProfile) *Validator {
+func NewValidator(bag *Bag, profile *BagItProfile) *Validator {
 	errs := make([]string, 0)
 	return &Validator{
 		Bag:     bag,

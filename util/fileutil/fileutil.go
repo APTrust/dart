@@ -14,7 +14,6 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -144,20 +143,4 @@ func CalculateChecksums(pathToFile string, algorithms []string) (map[string]stri
 		digests[alg] = fmt.Sprintf("%x", _hash.Sum(nil))
 	}
 	return digests, nil
-}
-
-// GetPathToTestBag is for unit testing and only works where the source
-// code is installed. (It does not work in a binary-only distribution.)
-// This returns the absolute path to a test bag.
-func GetPathToTestBag(bagName string) (string, error) {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", fmt.Errorf("Rumtime cannot get caller file name.")
-	}
-	absFileName, err := filepath.Abs(filename)
-	if err != nil {
-		return "", err
-	}
-	bagPath := filepath.Join(absFileName, "..", "..", "..", "testdata", "bags", bagName)
-	return filepath.Abs(bagPath)
 }
