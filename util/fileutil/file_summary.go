@@ -9,7 +9,6 @@ import (
 // file attributes available from os.FileInfo and tar.Header.
 type FileSummary struct {
 	RelPath       string
-	AbsPath       string
 	Mode          os.FileMode
 	Size          int64
 	ModTime       time.Time

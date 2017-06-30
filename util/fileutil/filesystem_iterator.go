@@ -62,7 +62,6 @@ func (iter *FileSystemIterator) Next() (io.ReadCloser, *FileSummary, error) {
 	fileMode := stat.Mode()
 	fs := &FileSummary{
 		RelPath:       strings.Replace(filePath, iter.rootPath+string(os.PathSeparator), "", 1),
-		AbsPath:       filePath,
 		Mode:          fileMode,
 		Size:          stat.Size(),
 		ModTime:       stat.ModTime(),

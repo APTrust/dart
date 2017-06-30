@@ -3,8 +3,10 @@ package core
 import (
 	"fmt"
 	"github.com/APTrust/bagit/constants"
+	"github.com/APTrust/bagit/errtypes"
 	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
+	"io"
 	"path/filepath"
 	"strings"
 )
@@ -32,18 +34,49 @@ func (validator *Validator) Validate() bool {
 		return false
 	}
 	validator.ValidateSerialization()
+	validator.ReadBag()
 	validator.ValidateTopLevelFiles()
 	validator.ValidateMiscDirs()
 	validator.ValidateBagItVersion()
 	validator.ValidateAllowFetch()
 	validator.ValidateRequiredManifests()
 	validator.ValidateTagFiles()
-	// This is the expensive part. Don't even start if we
-	// already know the bag is invalid.
-	if len(validator.errors) > 0 {
-		validator.ValidateChecksums()
+	validator.ValidateChecksums()
+	return len(validator.errors) == 0
+}
+
+func (validator *Validator) ReadBag() {
+	iterator, err := validator.getIterator()
+	if err != nil {
+		validator.addError("Error getting file iterator: %v", err)
+		return
 	}
-	return len(validator.errors) > 0
+	for {
+		err := validator.processFile(iterator)
+		if err != nil && (err == io.EOF || err.Error() == "EOF") {
+			break // ReadIterator hit the end of the list
+		} else if err != nil {
+			validator.addError("Error reading bag: %s", err.Error())
+			break
+		}
+	}
+}
+
+func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
+	reader, fileSummary, err := iterator.Next()
+	if reader != nil {
+		defer reader.Close()
+	} else {
+		return errtypes.NewRuntimeError("Iterator returned a nil reader.")
+	}
+	if err != nil {
+		return err
+	}
+	if !fileSummary.IsRegularFile {
+		return nil // This is a directory
+	}
+	validator.Bag.AddFileFromSummary(fileSummary)
+	return nil
 }
 
 // ValidateSerialization checks to whether the bag is serialized

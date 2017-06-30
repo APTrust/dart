@@ -46,7 +46,6 @@ func (iter *TarFileIterator) Next() (io.ReadCloser, *FileSummary, error) {
 	relPathInArchive := (strings.Join(strings.Split(header.Name, "/")[1:], "/"))
 	fs := &FileSummary{
 		RelPath:       relPathInArchive,
-		AbsPath:       "",
 		Mode:          finfo.Mode(),
 		Size:          header.Size,
 		ModTime:       header.ModTime,

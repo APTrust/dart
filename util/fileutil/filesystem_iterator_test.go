@@ -60,7 +60,6 @@ func TestFSINext(t *testing.T) {
 		require.NotNil(t, fileSummary)
 		assert.NotEmpty(t, fileSummary.RelPath)
 		assert.False(t, strings.HasPrefix(fileSummary.RelPath, string(os.PathSeparator)))
-		assert.NotEmpty(t, fileSummary.AbsPath)
 		assert.NotNil(t, fileSummary.Mode)
 		assert.True(t, fileSummary.Size > int64(0))
 		assert.False(t, fileSummary.ModTime.IsZero())

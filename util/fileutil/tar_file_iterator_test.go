@@ -47,7 +47,6 @@ func TestTFINext(t *testing.T) {
 		assert.False(t, strings.HasPrefix(fileSummary.RelPath, string(os.PathSeparator)))
 		// On Windows, where separator is '\', tar files may still use '/'
 		assert.False(t, strings.HasPrefix(fileSummary.RelPath, "/"))
-		assert.Empty(t, fileSummary.AbsPath)
 		assert.NotNil(t, fileSummary.Mode)
 		if fileSummary.IsRegularFile {
 			assert.True(t, fileSummary.Size > int64(0))
