@@ -56,3 +56,23 @@ func TestReadBag(t *testing.T) {
 	assert.NotEmpty(t, validator.Bag.TagFiles["custom_tags/tracked_tag_file.txt"])
 	assert.NotEmpty(t, validator.Bag.TagFiles["custom_tags/untracked_tag_file.txt"])
 }
+
+func TestValidateTopLevelFiles(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+	validator.Profile.AllowMiscTopLevelFiles = true
+	validator.ReadBag()
+	ok := validator.ValidateTopLevelFiles()
+	assert.True(t, ok)
+	assert.Empty(t, validator.Errors())
+
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+	validator.Profile.AllowMiscTopLevelFiles = false
+	validator.ReadBag()
+	ok = validator.ValidateTopLevelFiles()
+	assert.False(t, ok)
+	assert.Equal(t, 5, len(validator.Errors()))
+}

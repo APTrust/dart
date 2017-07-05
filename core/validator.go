@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"io"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -127,8 +128,22 @@ func (validator *Validator) ValidateSerializationFormat() bool {
 	return ok
 }
 
+// ValidateTopLevelFiles returns false if the BagIt profile says
+// AllowMiscTopLevelFiles is false and the bag contains files in the
+// top-level directory that are neither manifests nor tag manifests.
 func (validator *Validator) ValidateTopLevelFiles() bool {
-	return true
+	ok := true
+	if validator.Profile.AllowMiscTopLevelFiles == false {
+		for filename, _ := range validator.Bag.TagFiles {
+			if !strings.Contains(filename, string(os.PathSeparator)) {
+				validator.addError("Non-manifest file '%s' is not allowed "+
+					"in top-level directory when BagIt profile says "+
+					"AllowMiscTopLevelFiles is false.", filename)
+				ok = false
+			}
+		}
+	}
+	return ok
 }
 
 func (validator *Validator) ValidateMiscDirs() bool {
