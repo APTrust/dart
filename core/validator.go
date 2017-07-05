@@ -135,6 +135,16 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 	ok := true
 	if validator.Profile.AllowMiscTopLevelFiles == false {
 		for filename, _ := range validator.Bag.TagFiles {
+			if _, isRequiredTagFile := validator.Profile.TagFilesRequired[filename]; isRequiredTagFile {
+				// This is a required tag file, and not some miscellaneous
+				// item floating around the top of the bag. E.g APTrust
+				// requires aptrust-info.txt, and DPN requires dpn-info.txt
+				// at the top level of the bag. BagIt spec says misc items
+				// outside of data dir may be considered tag files, do not
+				// have to be parsed (or even parsable) and do not necessarily
+				// have to be included in the tag manifests.
+				continue
+			}
 			if !strings.Contains(filename, string(os.PathSeparator)) {
 				validator.addError("Non-manifest file '%s' is not allowed "+
 					"in top-level directory when BagIt profile says "+

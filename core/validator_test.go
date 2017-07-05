@@ -1,11 +1,11 @@
 package core_test
 
 import (
-	//	"fmt"
 	"github.com/APTrust/bagit/core"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"strings"
 	"testing"
 )
 
@@ -70,9 +70,17 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
 
+	// Items in the top-level dir that are not manifests or required
+	// tag files are considered misc. The APTrust BagIt profile
+	// defines 3 of the 5 non-manifest items in the top-level dir
+	// as required (bagit, bag-info, aptrust-info), so the other two
+	// are misc.
 	validator.Profile.AllowMiscTopLevelFiles = false
 	validator.ReadBag()
 	ok = validator.ValidateTopLevelFiles()
 	assert.False(t, ok)
-	assert.Equal(t, 5, len(validator.Errors()))
+	errs := validator.Errors()
+	require.Equal(t, 2, len(errs))
+	assert.True(t, strings.Contains(errs[0], "custom_tag_file.txt"))
+	assert.True(t, strings.Contains(errs[1], "junk_file.txt"))
 }
