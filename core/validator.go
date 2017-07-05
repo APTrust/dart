@@ -61,6 +61,8 @@ func (validator *Validator) ReadBag() {
 	}
 }
 
+// processFile adds file information to the Payload, Manifests, TagManifests,
+// and TagFiles properties of validator.Bag.
 func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	reader, fileSummary, err := iterator.Next()
 	if reader != nil {
