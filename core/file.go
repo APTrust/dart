@@ -37,8 +37,8 @@ func (file *File) ParseAsManifest(reader io.Reader, filePath string) []error {
 		}
 		if re.MatchString(line) {
 			data := re.FindStringSubmatch(line)
-			digest := data[1]
-			fileName := data[2]
+			digest := strings.TrimSpace(data[1])
+			fileName := strings.TrimSpace(data[2])
 			file.Checksums[fileName] = digest
 		} else {
 			errs = append(errs, fmt.Errorf(
