@@ -24,7 +24,7 @@ func NewBag(filePath string) *Bag {
 }
 
 func (bag *Bag) AddFileFromSummary(fileSummary *fileutil.FileSummary) {
-	file := &File{Size: fileSummary.Size}
+	file := NewFile(fileSummary.Size)
 	if strings.HasPrefix(fileSummary.RelPath, "tagmanifest-") {
 		bag.TagManifests[fileSummary.RelPath] = file
 	} else if strings.HasPrefix(fileSummary.RelPath, "manifest-") {
@@ -34,4 +34,16 @@ func (bag *Bag) AddFileFromSummary(fileSummary *fileutil.FileSummary) {
 	} else {
 		bag.TagFiles[fileSummary.RelPath] = file
 	}
+}
+
+func (bag *Bag) GetChecksum(filePath, algorighm string) (string, error) {
+	return "", nil
+}
+
+func (bag *Bag) GetTagValue(tagName string) ([]string, error) {
+	return nil, nil
+}
+
+func (bag *Bag) GetTagValueInFile(filePath, tagName string) ([]string, error) {
+	return nil, nil
 }

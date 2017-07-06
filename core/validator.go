@@ -181,7 +181,9 @@ func (validator *Validator) ValidateMiscDirs() bool {
 }
 
 func (validator *Validator) ValidateBagItVersion() bool {
-	return true
+	//return util.StringListContains(validator.Profile.AcceptBagItVersion,
+	// xxxxxxxxxx
+	return false
 }
 
 func (validator *Validator) ValidateAllowFetch() (bool, error) {

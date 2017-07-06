@@ -81,6 +81,9 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	assert.False(t, ok)
 	errs := validator.Errors()
 	require.Equal(t, 2, len(errs))
-	assert.True(t, strings.Contains(errs[0], "custom_tag_file.txt"))
-	assert.True(t, strings.Contains(errs[1], "junk_file.txt"))
+	// These two may come back in different order.
+	assert.True(t, strings.Contains(errs[0], "custom_tag_file.txt") ||
+		strings.Contains(errs[0], "junk_file.txt"))
+	assert.True(t, strings.Contains(errs[1], "custom_tag_file.txt") ||
+		strings.Contains(errs[1], "junk_file.txt"))
 }
