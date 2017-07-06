@@ -156,8 +156,28 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 	return ok
 }
 
+// ValidateMiscDirs checks for illegal top-level directories and returns
+// false if any are found.
 func (validator *Validator) ValidateMiscDirs() bool {
-	return true
+	ok := true
+	requiredTagDirs := validator.Profile.RequiredTagDirs()
+	if validator.Profile.AllowMiscDirectories == false {
+		for filename, _ := range validator.Bag.TagFiles {
+			parts := strings.Split(filename, "/")
+			if len(parts) == 1 {
+				continue // OK: filename has no directory component
+			}
+			dir := parts[0]
+			if util.StringListContains(requiredTagDirs, dir) {
+				continue // OK: dir contains some required tag files
+			}
+			validator.addError("Directory '%s' is not allowed "+
+				"in top-level directory when BagIt profile says "+
+				"AllowMiscDirectories is false.", filename)
+			ok = false
+		}
+	}
+	return ok
 }
 
 func (validator *Validator) ValidateBagItVersion() bool {

@@ -89,3 +89,18 @@ func TestBagItProfileValidate(t *testing.T) {
 	errs = profile.Validate()
 	require.Equal(t, 0, len(errs))
 }
+
+func TestRequiredTagDirs(t *testing.T) {
+	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err := core.LoadBagItProfile(aptrustFile)
+	require.Nil(t, err)
+	assert.Empty(t, aptrustProfile.RequiredTagDirs())
+
+	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := core.LoadBagItProfile(dpnFile)
+	require.Nil(t, err)
+	require.Equal(t, 1, len(dpnProfile.RequiredTagDirs()))
+	assert.Equal(t, "dpn-tags", dpnProfile.RequiredTagDirs()[0])
+}

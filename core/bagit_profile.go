@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"github.com/APTrust/bagit/util"
+	"strings"
 )
 
 // BagItProfile is a slightly modified version of bagit-profiles at
@@ -89,7 +90,7 @@ func (profile *BagItProfile) Validate() []error {
 		errs = append(errs, fmt.Errorf("Accept-BagIt-Version must accept at least one BagIt version."))
 	}
 	if profile.ManifestsRequired == nil || len(profile.ManifestsRequired) == 0 {
-		errs = append(errs, fmt.Errorf("Manifests-Required must requite at least one algorithm."))
+		errs = append(errs, fmt.Errorf("Manifests-Required must require at least one algorithm."))
 	}
 	if _, hasBagit := profile.TagFilesRequired["bagit.txt"]; !hasBagit {
 		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bagit.txt."))
@@ -98,4 +99,20 @@ func (profile *BagItProfile) Validate() []error {
 		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bag-info.txt."))
 	}
 	return errs
+}
+
+// RequiredTagDirs returns a list of directories that the profile says
+// should contain required tag files. The validator should permit the
+// presence of these directories even when AllowMiscDirectories is false.
+func (profile *BagItProfile) RequiredTagDirs() []string {
+	dirs := make([]string, 0)
+	for filename := range profile.TagFilesRequired {
+		// Use "/" instead of os.PathSeparator, because BagIt spec
+		// says manifests and tag manifests should use "/".
+		parts := strings.Split(filename, "/")
+		if len(parts) > 1 && !util.StringListContains(dirs, parts[0]) {
+			dirs = append(dirs, parts[0])
+		}
+	}
+	return dirs
 }
