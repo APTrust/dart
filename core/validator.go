@@ -75,7 +75,16 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	if !fileSummary.IsRegularFile {
 		return nil // This is a directory. Don't process it.
 	}
-	validator.Bag.AddFileFromSummary(fileSummary)
+	file, fileType := validator.Bag.AddFileFromSummary(fileSummary)
+	var errs []error
+	if fileType == constants.MANIFEST {
+		errs = file.ParseAsManifest(reader, fileSummary.RelPath)
+	} else if fileType == constants.TAG_FILE && validator.Profile.TagFilesRequired[fileSummary.RelPath] != nil {
+		errs = file.ParseAsTagFile(reader, fileSummary.RelPath)
+	}
+	for _, err := range errs {
+		validator.addError(err.Error())
+	}
 	return nil
 }
 

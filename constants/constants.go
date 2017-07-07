@@ -20,7 +20,17 @@ const (
 	REQUIRED  = "required"
 	OPTIONAL  = "optional"
 	FORBIDDEN = "forbidden"
+
+	MANIFEST     = "manifest"
+	TAG_FILE     = "tagfile"
+	PAYLOAD_FILE = "payload"
 )
+
+var FileTypes []string = []string{
+	MANIFEST,
+	TAG_FILE,
+	PAYLOAD_FILE,
+}
 
 // ManifestTypes describe the recognized types of manifests that
 // expect to find in BagIt bags.
