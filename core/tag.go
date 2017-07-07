@@ -8,6 +8,8 @@ type Tag struct {
 	Values   []string `json:"values"`
 }
 
+// TODO: Rename this to TagDefinition?
+
 func NewTag(label, value string) *Tag {
 	return &Tag{
 		Label: label,

@@ -41,7 +41,7 @@ func (validator *Validator) Validate() bool {
 		validator.ValidateMiscDirectories()
 		validator.ValidateBagItVersion()
 		validator.ValidateAllowFetch()
-		validator.ValidateManifests()
+		validator.ValidateRequiredManifests()
 		validator.ValidateTagFiles()
 		validator.ValidateChecksums()
 	}
@@ -265,12 +265,22 @@ func (validator *Validator) ValidateAllowFetch() bool {
 	return ok
 }
 
-// ValidateManifests checks to see whether the manifests
+// ValidateRequiredManifests checks to see whether the manifests
 // and tag manifests specified in validator.Profile.ManifestsRequired
 // and validator.Profile.TagManifestsRequired are actually present.
-func (validator *Validator) ValidateManifests() bool {
+func (validator *Validator) ValidateRequiredManifests() bool {
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
+	}
+	for _, filePath := range validator.Profile.ManifestsRequired {
+		if _, ok := validator.Bag.Manifests[filePath]; !ok {
+			validator.addError("Required manifest '%s' is missing.", filePath)
+		}
+	}
+	for _, filePath := range validator.Profile.TagManifestsRequired {
+		if _, ok := validator.Bag.Manifests[filePath]; !ok {
+			validator.addError("Required tag manifest '%s' is missing.", filePath)
+		}
 	}
 	return true
 }
@@ -280,10 +290,65 @@ func (validator *Validator) ValidateManifests() bool {
 // allowed values. This does not try to parse or verify the presence
 // of any tag files not mentioned in validator.Profile.TagFilesRequired.
 func (validator *Validator) ValidateTagFiles() bool {
+	ok := true
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
 	}
-	return true
+	for filePath, tagMap := range validator.Profile.TagFilesRequired {
+		tagFile := validator.Bag.TagFiles[filePath]
+		if tagFile == nil {
+			validator.addError("Required tag file '%s' is missing.", filePath)
+			ok = false
+		} else {
+			// Check the tags
+			for tagName, tagDefinition := range tagMap {
+				tagValue := tagFile.Tags[tagName]
+				tagIsValid := validator.ValidateTag(tagName, filePath, tagDefinition, tagValue)
+				if !tagIsValid {
+					ok = false
+				}
+			}
+		}
+	}
+	return ok
+}
+
+// Validate tag validates a single tag to ensure it meets the requirements
+// in validator.Profile's tag definitions. Param tagName is the name of
+// the tag. Param filePath is the relative path within the bag of the file
+// in which the tag was found. Param tagDefinition is a definition of the
+// requirements for the tag. Param tagValues is the list of values for this
+// tag, as parsed from the tagfile.
+func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition *Tag, tagValues []string) bool {
+	tagIsMissing := (tagValues == nil)
+	tagIsEmpty := true
+	if !tagIsMissing {
+		for _, val := range tagValues {
+			if val != "" {
+				tagIsEmpty = false
+			}
+		}
+	}
+	if !tagDefinition.Required && tagIsMissing {
+		return true
+	}
+	if tagDefinition.EmptyOk && tagIsEmpty {
+		return true
+	}
+
+	// We have a tag and a value. Make sure the value is allowed.
+	ok := true
+	if tagDefinition.Values != nil && len(tagDefinition.Values) > 0 {
+		for _, value := range tagValues {
+			if !util.StringListContains(tagDefinition.Values, value) {
+				validator.addError("Value '%s' for tag '%s' in '%s' is not in "+
+					"list of allowed values (%s)", value, tagName, filePath,
+					strings.Join(tagDefinition.Values, " ,"))
+				ok = false
+			}
+		}
+	}
+	return ok
 }
 
 // ValidateChecksums makes sure that checksums in manifests are

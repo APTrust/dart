@@ -251,3 +251,18 @@ func TestValidateSerializationFormat(t *testing.T) {
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Bag is serialized, but profile does not specify accepted serializations.", validator.Errors()[0])
 }
+
+func TestValidateRequiredManifests(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+}
+
+func TestValidateTagFiles(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+}
+
+func TestValidateTag(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+}
