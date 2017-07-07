@@ -39,7 +39,7 @@ func (validator *Validator) Validate() bool {
 	validator.ValidateMiscDirs()
 	validator.ValidateBagItVersion()
 	validator.ValidateAllowFetch()
-	validator.ValidateRequiredManifests()
+	validator.ValidateManifests()
 	validator.ValidateTagFiles()
 	validator.ValidateChecksums()
 	return len(validator.errors) == 0
@@ -202,10 +202,31 @@ func (validator *Validator) ValidateMiscDirs() bool {
 	return ok
 }
 
+// ValidateBagItVersion checks the BagIt version in bagit.txt against
+// the allowed versions in validator.Profile.AcceptBagItVersion. If no
+// versions are specified in the profile, we allow any version. If a
+// version is specified, and there's a mismatch, this will trigger a
+// validation error.
 func (validator *Validator) ValidateBagItVersion() bool {
-	//return util.StringListContains(validator.Profile.AcceptBagItVersion,
-	// xxxxxxxxxx
-	return false
+	ok := true
+	allowedVersions := validator.Profile.AcceptBagItVersion
+	if allowedVersions != nil && len(allowedVersions) > 0 {
+		bagItVersion := ""
+		bagItFile := validator.Bag.TagFiles["bagit.txt"]
+		if bagItFile != nil && len(bagItFile.Tags["BagIt-Version"]) > 0 {
+			bagItVersion = bagItFile.Tags["BagIt-Version"][0]
+		}
+		if bagItVersion == "" {
+			validator.addError("Profile requires a specific BagIt version, but no " +
+				"version is specified in bagit.txt")
+			ok = false
+		} else if !util.StringListContains(allowedVersions, bagItVersion) {
+			validator.addError("BagIt version %s in bagit.txt does not match allowed "+
+				"version(s) %s", bagItVersion, strings.Join(allowedVersions, ","))
+			ok = false
+		}
+	}
+	return ok
 }
 
 func (validator *Validator) ValidateAllowFetch() (bool, error) {
@@ -225,7 +246,7 @@ func (validator *Validator) ValidateAllowFetch() (bool, error) {
 	return ok, nil
 }
 
-func (validator *Validator) ValidateRequiredManifests() bool {
+func (validator *Validator) ValidateManifests() bool {
 	return true
 }
 

@@ -119,3 +119,39 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	assert.True(t, strings.Contains(errs[1], "custom_tag_file.txt") ||
 		strings.Contains(errs[1], "junk_file.txt"))
 }
+
+func TestValidateBagItVersion(t *testing.T) {
+	// Both profile and bag say version 0.97
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.ReadBag()
+	assert.True(t, validator.ValidateBagItVersion())
+	assert.Empty(t, validator.Errors())
+
+	// If no accepted versions are specified, then any version will do.
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AcceptBagItVersion = nil
+	validator.ReadBag()
+	assert.True(t, validator.ValidateBagItVersion())
+	assert.Empty(t, validator.Errors())
+
+	// Mismatch between accepted versions and actual version should
+	// cause a validation error.
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AcceptBagItVersion = []string{"2.22", "3.33", "4.44"}
+	validator.ReadBag()
+	assert.False(t, validator.ValidateBagItVersion())
+	require.Equal(t, 1, len(validator.Errors()))
+	assert.Equal(t, "BagIt version 0.97 in bagit.txt does not match allowed version(s) 2.22,3.33,4.44", validator.Errors()[0])
+
+	// Be specific about missing BagIt version
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.ReadBag()
+	delete(validator.Bag.TagFiles["bagit.txt"].Tags, "BagIt-Version")
+	assert.False(t, validator.ValidateBagItVersion())
+	require.Equal(t, 1, len(validator.Errors()))
+	assert.Equal(t, "Profile requires a specific BagIt version, but no version is specified in bagit.txt", validator.Errors()[0])
+}
