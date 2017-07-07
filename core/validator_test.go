@@ -31,6 +31,8 @@ func TestReadBag(t *testing.T) {
 	require.NotNil(t, validator)
 	validator.ReadBag()
 	assert.Empty(t, validator.Errors())
+
+	// Make sure files were added as the right types, in the right places.
 	assert.Equal(t, 4, len(validator.Bag.Payload))
 	assert.Equal(t, 2, len(validator.Bag.Manifests))
 	assert.Equal(t, 2, len(validator.Bag.TagManifests))
@@ -55,6 +57,36 @@ func TestReadBag(t *testing.T) {
 	assert.NotEmpty(t, validator.Bag.TagFiles["custom_tags/tracked_file_custom.xml"])
 	assert.NotEmpty(t, validator.Bag.TagFiles["custom_tags/tracked_tag_file.txt"])
 	assert.NotEmpty(t, validator.Bag.TagFiles["custom_tags/untracked_tag_file.txt"])
+
+	// Manifests should have been parsed.
+	for _, m := range validator.Bag.Manifests {
+		assert.Equal(t, 4, len(m.Checksums))
+	}
+	md5 := validator.Bag.Manifests["manifest-md5.txt"].Checksums["data/datastream-DC"]
+	sha256 := validator.Bag.Manifests["manifest-sha256.txt"].Checksums["data/datastream-DC"]
+	assert.Equal(t, "44d85cf4810d6c6fe87750117633e461", md5)
+	assert.Equal(t, "248fac506a5c46b3c760312b99827b6fb5df4698d6cf9a9cdc4c54746728ab99", sha256)
+
+	// TagManifests should have been parsed.
+	for _, m := range validator.Bag.TagManifests {
+		assert.Equal(t, 8, len(m.Checksums))
+	}
+	md5 = validator.Bag.TagManifests["tagmanifest-md5.txt"].Checksums["aptrust-info.txt"]
+	sha256 = validator.Bag.TagManifests["tagmanifest-sha256.txt"].Checksums["aptrust-info.txt"]
+	assert.Equal(t, "300e936e622605f9f7a846d261d53093", md5)
+	assert.Equal(t, "a2b6c5a713af771c5e4edde8d5be25fbcad86e45ea338f43a5bb769347e7c8bb", sha256)
+
+	// Files in BagItProfile.TagFilesRequired should be parsed,
+	// while others should not.
+	unparsedTagFile := validator.Bag.TagFiles["custom_tags/tracked_tag_file.txt"]
+	assert.Empty(t, unparsedTagFile.Tags)
+
+	parsedTagFile := validator.Bag.TagFiles["aptrust-info.txt"]
+	require.NotEmpty(t, parsedTagFile.Tags)
+	require.Equal(t, 1, len(parsedTagFile.Tags["Title"]))
+	require.Equal(t, 1, len(parsedTagFile.Tags["Access"]))
+	assert.Equal(t, "Thirteen Ways of Looking at a Blackbird", parsedTagFile.Tags["Title"][0])
+	assert.Equal(t, "Institution", parsedTagFile.Tags["Access"][0])
 }
 
 func TestValidateTopLevelFiles(t *testing.T) {

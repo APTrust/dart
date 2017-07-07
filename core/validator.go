@@ -65,6 +65,7 @@ func (validator *Validator) ReadBag() {
 // processFile adds file information to the Payload, Manifests, TagManifests,
 // and TagFiles properties of validator.Bag.
 func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
+	// Get the next file from the bag.
 	reader, fileSummary, err := iterator.Next()
 	if reader != nil {
 		defer reader.Close()
@@ -75,15 +76,27 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	if !fileSummary.IsRegularFile {
 		return nil // This is a directory. Don't process it.
 	}
+
+	// Add that file to our representation of the bag.
 	file, fileType := validator.Bag.AddFileFromSummary(fileSummary)
+
+	// Parse the file if it's a manifest or required tag file.
 	var errs []error
 	if fileType == constants.MANIFEST {
 		errs = file.ParseAsManifest(reader, fileSummary.RelPath)
 	} else if fileType == constants.TAG_FILE && validator.Profile.TagFilesRequired[fileSummary.RelPath] != nil {
 		errs = file.ParseAsTagFile(reader, fileSummary.RelPath)
 	}
+
+	// Record parse errors
 	for _, err := range errs {
 		validator.addError(err.Error())
+	}
+
+	// Return an error if there was one, so we break out of
+	// the validation loop above.
+	if len(errs) > 0 {
+		return fmt.Errorf("Error(s) in manifest or tag file.")
 	}
 	return nil
 }
