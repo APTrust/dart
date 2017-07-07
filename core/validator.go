@@ -36,7 +36,7 @@ func (validator *Validator) Validate() bool {
 	validator.ValidateSerialization()
 	validator.ReadBag()
 	validator.ValidateTopLevelFiles()
-	validator.ValidateMiscDirs()
+	validator.ValidateMiscDirectories()
 	validator.ValidateBagItVersion()
 	validator.ValidateAllowFetch()
 	validator.ValidateManifests()
@@ -178,9 +178,9 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 	return ok
 }
 
-// ValidateMiscDirs checks for illegal top-level directories and returns
+// ValidateMiscDirectories checks for illegal top-level directories and returns
 // false if any are found.
-func (validator *Validator) ValidateMiscDirs() bool {
+func (validator *Validator) ValidateMiscDirectories() bool {
 	ok := true
 	requiredTagDirs := validator.Profile.RequiredTagDirs()
 	if validator.Profile.AllowMiscDirectories == false {
@@ -195,7 +195,7 @@ func (validator *Validator) ValidateMiscDirs() bool {
 			}
 			validator.addError("Directory '%s' is not allowed "+
 				"in top-level directory when BagIt profile says "+
-				"AllowMiscDirectories is false.", filename)
+				"AllowMiscDirectories is false.", dir)
 			ok = false
 		}
 	}

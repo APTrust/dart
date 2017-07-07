@@ -95,8 +95,7 @@ func TestValidateTopLevelFiles(t *testing.T) {
 
 	validator.Profile.AllowMiscTopLevelFiles = true
 	validator.ReadBag()
-	ok := validator.ValidateTopLevelFiles()
-	assert.True(t, ok)
+	assert.True(t, validator.ValidateTopLevelFiles())
 	assert.Empty(t, validator.Errors())
 
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
@@ -109,8 +108,7 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	// are misc.
 	validator.Profile.AllowMiscTopLevelFiles = false
 	validator.ReadBag()
-	ok = validator.ValidateTopLevelFiles()
-	assert.False(t, ok)
+	assert.False(t, validator.ValidateTopLevelFiles())
 	errs := validator.Errors()
 	require.Equal(t, 2, len(errs))
 	// These two may come back in different order.
@@ -118,6 +116,23 @@ func TestValidateTopLevelFiles(t *testing.T) {
 		strings.Contains(errs[0], "junk_file.txt"))
 	assert.True(t, strings.Contains(errs[1], "custom_tag_file.txt") ||
 		strings.Contains(errs[1], "junk_file.txt"))
+}
+
+func TestValidateMiscDirectories(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AllowMiscDirectories = true
+	validator.ReadBag()
+	assert.True(t, validator.ValidateMiscDirectories())
+	assert.Empty(t, validator.Errors())
+
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AllowMiscDirectories = false
+	validator.ReadBag()
+	assert.False(t, validator.ValidateMiscDirectories())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Directory 'custom_tags' is not allowed in top-level directory when BagIt profile says AllowMiscDirectories is false.", validator.Errors()[0])
 }
 
 func TestValidateBagItVersion(t *testing.T) {
