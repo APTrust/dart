@@ -341,7 +341,7 @@ func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition 
 		return true
 	}
 	if tagDefinition.Required && tagIsMissing {
-		validator.addError("Tag '%s' is missing from file '%s'.", tagName, filePath)
+		validator.addError("Required tag '%s' is missing from file '%s'.", tagName, filePath)
 		return false
 	}
 	if !tagDefinition.EmptyOk && tagIsEmpty {

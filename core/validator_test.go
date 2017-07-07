@@ -289,7 +289,7 @@ func TestValidateTagFiles(t *testing.T) {
 	delete(validator.Bag.TagFiles["aptrust-info.txt"].Tags, "Title")
 	assert.False(t, validator.ValidateTagFiles())
 	require.NotEmpty(t, validator.Errors())
-	assert.Equal(t, "Tag 'Title' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
+	assert.Equal(t, "Required tag 'Title' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
 }
 
 func TestValidateTag(t *testing.T) {
@@ -297,6 +297,31 @@ func TestValidateTag(t *testing.T) {
 	require.NotNil(t, validator)
 	tagDef := validator.Profile.TagFilesRequired["aptrust-info.txt"]["Access"]
 	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Consortia"}))
+	assert.Empty(t, validator.Errors())
 	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Institution"}))
+	assert.Empty(t, validator.Errors())
 	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Restricted"}))
+	assert.Empty(t, validator.Errors())
+
+	// Value not explicitly allowed
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Inertia"}))
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Value 'Inertia' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)", validator.Errors()[0])
+
+	// Missing required tag
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, nil))
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Required tag 'Access' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
+
+	// Empty tag where empty is not OK
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"", "", ""}))
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Tag 'Access' in file 'aptrust-info.txt' cannot be empty.", validator.Errors()[0])
+
 }
