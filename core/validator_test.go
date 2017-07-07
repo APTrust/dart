@@ -255,6 +255,19 @@ func TestValidateSerializationFormat(t *testing.T) {
 func TestValidateRequiredManifests(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.True(t, validator.ValidateRequiredManifests())
+	assert.Empty(t, validator.Errors())
+
+	validator.Profile.ManifestsRequired = append(validator.Profile.ManifestsRequired, "sha512")
+	assert.False(t, validator.ValidateRequiredManifests())
+	assert.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Required manifest 'manifest-sha512.txt' is missing.", validator.Errors()[0])
+
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator.Profile.TagManifestsRequired = append(validator.Profile.TagManifestsRequired, "sha512")
+	assert.False(t, validator.ValidateRequiredManifests())
+	assert.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Required tag manifest 'tagmanifest-sha512.txt' is missing.", validator.Errors()[0])
 }
 
 func TestValidateTagFiles(t *testing.T) {

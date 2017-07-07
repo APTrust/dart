@@ -269,20 +269,25 @@ func (validator *Validator) ValidateAllowFetch() bool {
 // and tag manifests specified in validator.Profile.ManifestsRequired
 // and validator.Profile.TagManifestsRequired are actually present.
 func (validator *Validator) ValidateRequiredManifests() bool {
+	ok := true
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
 	}
-	for _, filePath := range validator.Profile.ManifestsRequired {
-		if _, ok := validator.Bag.Manifests[filePath]; !ok {
+	for _, algorithm := range validator.Profile.ManifestsRequired {
+		filePath := fmt.Sprintf("manifest-%s.txt", algorithm)
+		if validator.Bag.Manifests[filePath] == nil {
 			validator.addError("Required manifest '%s' is missing.", filePath)
+			ok = false
 		}
 	}
-	for _, filePath := range validator.Profile.TagManifestsRequired {
-		if _, ok := validator.Bag.Manifests[filePath]; !ok {
+	for _, algorithm := range validator.Profile.TagManifestsRequired {
+		filePath := fmt.Sprintf("tagmanifest-%s.txt", algorithm)
+		if validator.Bag.Manifests[filePath] == nil {
 			validator.addError("Required tag manifest '%s' is missing.", filePath)
+			ok = false
 		}
 	}
-	return true
+	return ok
 }
 
 // ValidateTag files checks that required tag files, as specified
