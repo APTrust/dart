@@ -155,3 +155,30 @@ func TestValidateBagItVersion(t *testing.T) {
 	require.Equal(t, 1, len(validator.Errors()))
 	assert.Equal(t, "Profile requires a specific BagIt version, but no version is specified in bagit.txt", validator.Errors()[0])
 }
+
+func TestValidateAllowFetch(t *testing.T) {
+	// fetch.txt not allowed and not present
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AllowFetchTxt = false
+	assert.True(t, validator.ValidateAllowFetch())
+	assert.Empty(t, validator.Errors())
+
+	// Not allowed and present
+	validator.Bag.TagFiles["fetch.txt"] = &core.File{}
+	assert.False(t, validator.ValidateAllowFetch())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Found fetch.txt, which BagIt profile says is not allowed.", validator.Errors()[0])
+
+	// Allowed, but not present
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AllowFetchTxt = true
+	assert.True(t, validator.ValidateAllowFetch())
+	assert.Empty(t, validator.Errors())
+
+	// Alloed and present
+	validator.Bag.TagFiles["fetch.txt"] = &core.File{}
+	assert.True(t, validator.ValidateAllowFetch())
+	assert.Empty(t, validator.Errors())
+}
