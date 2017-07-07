@@ -273,9 +273,30 @@ func TestValidateRequiredManifests(t *testing.T) {
 func TestValidateTagFiles(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.True(t, validator.ValidateTagFiles())
+	assert.Empty(t, validator.Errors())
+
+	// Make sure it catches missing files.
+	delete(validator.Bag.TagFiles, "aptrust-info.txt")
+	assert.False(t, validator.ValidateTagFiles())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Required tag file 'aptrust-info.txt' is missing.", validator.Errors()[0])
+
+	// Make sure it catches missing tags.
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.ReadBag()
+	delete(validator.Bag.TagFiles["aptrust-info.txt"].Tags, "Title")
+	assert.False(t, validator.ValidateTagFiles())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Tag 'Title' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
 }
 
 func TestValidateTag(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	tagDef := validator.Profile.TagFilesRequired["aptrust-info.txt"]["Access"]
+	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Consortia"}))
+	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Institution"}))
+	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Restricted"}))
 }

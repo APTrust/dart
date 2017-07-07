@@ -340,7 +340,14 @@ func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition 
 	if tagDefinition.EmptyOk && tagIsEmpty {
 		return true
 	}
-
+	if tagDefinition.Required && tagIsMissing {
+		validator.addError("Tag '%s' is missing from file '%s'.", tagName, filePath)
+		return false
+	}
+	if !tagDefinition.EmptyOk && tagIsEmpty {
+		validator.addError("Tag '%s' in file '%s' cannot be empty.", tagName, filePath)
+		return false
+	}
 	// We have a tag and a value. Make sure the value is allowed.
 	ok := true
 	if tagDefinition.Values != nil && len(tagDefinition.Values) > 0 {
