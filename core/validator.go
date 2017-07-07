@@ -13,19 +13,21 @@ import (
 )
 
 type Validator struct {
-	Bag         *Bag
-	Profile     *BagItProfile
-	errors      []string
-	bagsize     int64
-	payloadOxum string
+	Bag            *Bag
+	Profile        *BagItProfile
+	errors         []string
+	bagsize        int64
+	payloadOxum    string
+	bagHasBeenRead bool
 }
 
 func NewValidator(bag *Bag, profile *BagItProfile) *Validator {
 	errs := make([]string, 0)
 	return &Validator{
-		Bag:     bag,
-		Profile: profile,
-		errors:  errs,
+		Bag:            bag,
+		Profile:        profile,
+		errors:         errs,
+		bagHasBeenRead: false,
 	}
 }
 
@@ -33,19 +35,21 @@ func (validator *Validator) Validate() bool {
 	if !validator.ValidateProfile() {
 		return false
 	}
-	validator.ValidateSerialization()
-	validator.ReadBag()
-	validator.ValidateTopLevelFiles()
-	validator.ValidateMiscDirectories()
-	validator.ValidateBagItVersion()
-	validator.ValidateAllowFetch()
-	validator.ValidateManifests()
-	validator.ValidateTagFiles()
-	validator.ValidateChecksums()
+	if validator.ValidateSerialization() {
+		validator.ReadBag()
+		validator.ValidateTopLevelFiles()
+		validator.ValidateMiscDirectories()
+		validator.ValidateBagItVersion()
+		validator.ValidateAllowFetch()
+		validator.ValidateManifests()
+		validator.ValidateTagFiles()
+		validator.ValidateChecksums()
+	}
 	return len(validator.errors) == 0
 }
 
 func (validator *Validator) ReadBag() {
+	validator.errors = make([]string, 0)
 	iterator, err := validator.getIterator()
 	if err != nil {
 		validator.addError("Error getting file iterator: %v", err)
@@ -60,6 +64,7 @@ func (validator *Validator) ReadBag() {
 			break
 		}
 	}
+	validator.bagHasBeenRead = true
 }
 
 // processFile adds file information to the Payload, Manifests, TagManifests,
@@ -110,12 +115,12 @@ func (validator *Validator) ValidateSerialization() bool {
 	serialization := strings.ToLower(validator.Profile.Serialization)
 	isDir := fileutil.IsDir(validator.Bag.Path)
 	isFile := fileutil.IsFile(validator.Bag.Path)
-	if serialization == "required" && isDir {
+	if serialization == constants.REQUIRED && isDir {
 		validator.addError("Serialization is required, but bag is a directory")
 		ok = false
 	}
 	if isFile {
-		if serialization == "forbidden" {
+		if serialization == constants.FORBIDDEN {
 			validator.addError("Serialization is forbidden, but bag is a single file")
 			ok = false
 		} else {
@@ -125,15 +130,22 @@ func (validator *Validator) ValidateSerialization() bool {
 	return ok
 }
 
+// ValidateSerializationFormat returns false if the bag we're
+// validating is serialized (e.g. in tar, zip, or some other non-directory
+// format) and the format is not in the list of accepted formats
+// specified in validator.Profile.AcceptSerialization. This also
+// returns false if the bag is serialized in any format
+// validator.Profile.AcceptSerialization is not defined or
+// validator.Profile.Serialization is set to "forbidden".
 func (validator *Validator) ValidateSerializationFormat() bool {
 	if validator.Profile.AcceptSerialization == nil {
-		validator.addError("Bag is serialized, but profile does not specify accepted serializations")
+		validator.addError("Bag is serialized, but profile does not specify accepted serializations.")
 		return false
 	}
-	extension := filepath.Base(validator.Bag.Path)
+	extension := filepath.Ext(validator.Bag.Path)
 	mimeTypes, typeIsKnown := constants.SerializationFormats[extension]
-	if typeIsKnown {
-		validator.addError("Unknown serialization type for format %s", extension)
+	if !typeIsKnown {
+		validator.addError("Unknown serialization type for format %s.", extension)
 		return false
 	}
 	ok := false
@@ -145,7 +157,7 @@ func (validator *Validator) ValidateSerializationFormat() bool {
 	}
 	if !ok {
 		validator.addError("Serialization format %s is not in the "+
-			"Accept-Serialization list for this BagIt profile", extension)
+			"Accept-Serialization list for this BagIt profile.", extension)
 	}
 	return ok
 }
@@ -154,6 +166,9 @@ func (validator *Validator) ValidateSerializationFormat() bool {
 // AllowMiscTopLevelFiles is false and the bag contains files in the
 // top-level directory that are neither manifests nor tag manifests.
 func (validator *Validator) ValidateTopLevelFiles() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	ok := true
 	if validator.Profile.AllowMiscTopLevelFiles == false {
 		for filename, _ := range validator.Bag.TagFiles {
@@ -181,6 +196,9 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 // ValidateMiscDirectories checks for illegal top-level directories and returns
 // false if any are found.
 func (validator *Validator) ValidateMiscDirectories() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	ok := true
 	requiredTagDirs := validator.Profile.RequiredTagDirs()
 	if validator.Profile.AllowMiscDirectories == false {
@@ -208,6 +226,9 @@ func (validator *Validator) ValidateMiscDirectories() bool {
 // version is specified, and there's a mismatch, this will trigger a
 // validation error.
 func (validator *Validator) ValidateBagItVersion() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	ok := true
 	allowedVersions := validator.Profile.AcceptBagItVersion
 	if allowedVersions != nil && len(allowedVersions) > 0 {
@@ -229,7 +250,13 @@ func (validator *Validator) ValidateBagItVersion() bool {
 	return ok
 }
 
+// ValidateAllowFetch returns false and sets an error message if
+// validator.Profile.AllowFetchTxt is false and the bag contains
+// a fetch.txt file.
 func (validator *Validator) ValidateAllowFetch() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	ok := true
 	if !validator.Profile.AllowFetchTxt && validator.Bag.TagFiles["fetch.txt"] != nil {
 		validator.addError("Found fetch.txt, which BagIt profile says is not allowed.")
@@ -238,18 +265,42 @@ func (validator *Validator) ValidateAllowFetch() bool {
 	return ok
 }
 
+// ValidateManifests checks to see whether the manifests
+// and tag manifests specified in validator.Profile.ManifestsRequired
+// and validator.Profile.TagManifestsRequired are actually present.
 func (validator *Validator) ValidateManifests() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	return true
 }
 
+// ValidateTag files checks that required tag files, as specified
+// in the BagItProfile, are present and defined tags are present with
+// allowed values. This does not try to parse or verify the presence
+// of any tag files not mentioned in validator.Profile.TagFilesRequired.
 func (validator *Validator) ValidateTagFiles() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	return true
 }
 
+// ValidateChecksums makes sure that checksums in manifests are
+// correct and complete, and that no payload files exist that
+// are not mentioned in the manifests. Note that the BagIt spec
+// says non-payload files may be excluded from the tag manifests.
+// See the section 2.2.4 of the specification at
+// https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4
 func (validator *Validator) ValidateChecksums() bool {
+	if !validator.bagHasBeenRead {
+		validator.ReadBag()
+	}
 	return true
 }
 
+// ValidateProfile ensures that the BagItProfile is valid.
+// We check this before attempting validation.
 func (validator *Validator) ValidateProfile() bool {
 	ok := true
 	errs := validator.Profile.Validate()
@@ -260,6 +311,7 @@ func (validator *Validator) ValidateProfile() bool {
 	return ok
 }
 
+// Errors returns a list of validation errors.
 func (validator *Validator) Errors() []string {
 	return validator.errors
 }

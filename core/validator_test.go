@@ -1,6 +1,7 @@
 package core_test
 
 import (
+	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/core"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
@@ -196,4 +197,57 @@ func TestValidateAllowFetch(t *testing.T) {
 	validator.Bag.TagFiles["fetch.txt"] = &core.File{}
 	assert.True(t, validator.ValidateAllowFetch())
 	assert.Empty(t, validator.Errors())
+}
+
+func TestValidateSerialization(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	assert.True(t, validator.ValidateSerialization())
+	assert.Empty(t, validator.Errors())
+
+	validator.Profile.Serialization = constants.REQUIRED
+	assert.True(t, validator.ValidateSerialization())
+	assert.Empty(t, validator.Errors())
+
+	validator.Profile.Serialization = constants.OPTIONAL
+	assert.True(t, validator.ValidateSerialization())
+	assert.Empty(t, validator.Errors())
+
+	validator.Profile.Serialization = constants.FORBIDDEN
+	assert.False(t, validator.ValidateSerialization())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Serialization is forbidden, but bag is a single file", validator.Errors()[0])
+}
+
+func TestValidateSerializationFormat(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+	// OK because profile says serialization is required
+	// and we accept tar format.
+	assert.True(t, validator.ValidateSerializationFormat())
+	assert.Empty(t, validator.Errors())
+
+	// Should fail, because the list of accepted formats
+	// does not include .tar
+	validator.Profile.AcceptSerialization = []string{".rar", ".7z", "zip"}
+	assert.False(t, validator.ValidateSerializationFormat())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Serialization format .tar is not in the Accept-Serialization list for this BagIt profile.", validator.Errors()[0])
+
+	// Unrecognized format
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Bag.Path = "path/to/unknown/format.fake"
+	assert.False(t, validator.ValidateSerializationFormat())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Unknown serialization type for format .fake.", validator.Errors()[0])
+
+	// No serialization types specified in profile
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+	validator.Profile.AcceptSerialization = nil
+	assert.False(t, validator.ValidateSerializationFormat())
+	require.NotEmpty(t, validator.Errors())
+	assert.Equal(t, "Bag is serialized, but profile does not specify accepted serializations.", validator.Errors()[0])
 }
