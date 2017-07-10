@@ -53,8 +53,13 @@ func (bag *Bag) AddFileFromSummary(fileSummary *fileutil.FileSummary) (*File, st
 // payload manifest. Param algorithm should be "md5", "sha256", or any
 // other manifest algorithm. This returns the checksum, or an error if
 // no manifest file exists for the specified checksum.
-func (bag *Bag) GetChecksum(filePath, algorighm string) (string, error) {
-	return "", nil
+func (bag *Bag) GetChecksum(filePath, algorithm string) (string, error) {
+	manifestFile := fmt.Sprintf("manifest-%s.txt", algorithm)
+	if bag.Manifests[manifestFile] == nil {
+		return "", fmt.Errorf("%s is missing", manifestFile)
+	}
+	checksum := bag.Manifests[manifestFile].Checksums[filePath]
+	return checksum, nil
 }
 
 // GetTagValues returns the values for the specified tag from any and

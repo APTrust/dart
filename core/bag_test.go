@@ -55,6 +55,45 @@ func TestAddFileFromSummary(t *testing.T) {
 	assert.NotNil(t, 2, bag.TagFiles["extra/random_file.xml"])
 }
 
+func TestGetChecksum(t *testing.T) {
+	bag := core.NewBag("path/to/bag.tar")
+	require.NotNil(t, bag)
+	bag.Manifests["manifest-md5.txt"] = core.NewFile(int64(344))
+	bag.Manifests["manifest-md5.txt"].Checksums["data/sample.txt"] = "12345678"
+	bag.Manifests["manifest-sha256.txt"] = core.NewFile(int64(377))
+	bag.Manifests["manifest-sha256.txt"].Checksums["data/sample.txt"] = "fedac8989"
+
+	checksum, err := bag.GetChecksum("data/sample.txt", constants.MD5)
+	assert.Nil(t, err)
+	assert.Equal(t, "12345678", checksum)
+
+	checksum, err = bag.GetChecksum("data/sample.txt", constants.SHA256)
+	assert.Nil(t, err)
+	assert.Equal(t, "fedac8989", checksum)
+
+	// Sha256 manifest exists, but has no record of requested file
+	checksum, err = bag.GetChecksum("data/file_does_not_exist.txt", constants.SHA256)
+	assert.Nil(t, err)
+	assert.Equal(t, "", checksum)
+
+	// No sha512 manifest. Error.
+	checksum, err = bag.GetChecksum("data/sample.txt", constants.SHA512)
+	assert.NotNil(t, err)
+	assert.Equal(t, "", checksum)
+}
+
+func TestGetTagValues(t *testing.T) {
+	bag := core.NewBag("path/to/bag.tar")
+	require.NotNil(t, bag)
+
+}
+
+func TestGetTagValuesFromFile(t *testing.T) {
+	bag := core.NewBag("path/to/bag.tar")
+	require.NotNil(t, bag)
+
+}
+
 func fileSummary(relPath string) *fileutil.FileSummary {
 	return &fileutil.FileSummary{
 		RelPath:       relPath,
