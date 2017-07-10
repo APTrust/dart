@@ -3,6 +3,7 @@ package core_test
 import (
 	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/core"
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -86,12 +87,52 @@ func TestGetTagValues(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
 
+	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["aptrust-info.txt"].Tags["key1"] = []string{"value1"}
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["dpn-tags/dpn-info.txt"].Tags["key1"] = []string{"value2"}
+
+	values, tagExists := bag.GetTagValues("key1")
+	assert.True(t, tagExists)
+	require.Equal(t, 2, len(values))
+	assert.True(t, util.StringListContains(values, "value1"))
+	assert.True(t, util.StringListContains(values, "value2"))
+
+	values, tagExists = bag.GetTagValues("key9")
+	assert.False(t, tagExists)
+	assert.Empty(t, values)
 }
 
 func TestGetTagValuesFromFile(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
 
+	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["aptrust-info.txt"].Tags["key1"] = []string{"value1"}
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["dpn-tags/dpn-info.txt"].Tags["key1"] = []string{"value2"}
+
+	values, tagExists, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")
+	assert.True(t, tagExists)
+	assert.Nil(t, err)
+	require.Equal(t, 1, len(values))
+	assert.True(t, util.StringListContains(values, "value1"))
+
+	values, tagExists, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "key1")
+	assert.True(t, tagExists)
+	assert.Nil(t, err)
+	require.Equal(t, 1, len(values))
+	assert.True(t, util.StringListContains(values, "value2"))
+
+	values, tagExists, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "no-such-tag")
+	assert.Nil(t, err)
+	assert.False(t, tagExists)
+	assert.Empty(t, values)
+
+	values, tagExists, err = bag.GetTagValuesFromFile("no-such-file.txt", "key1")
+	assert.NotNil(t, err)
+	assert.False(t, tagExists)
+	assert.Empty(t, values)
 }
 
 func fileSummary(relPath string) *fileutil.FileSummary {
