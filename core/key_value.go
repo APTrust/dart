@@ -43,13 +43,13 @@ func NewKeyValueCollection() *KeyValueCollection {
 }
 
 // Append adds a new key-value pair to the collection.
-func (collection KeyValueCollection) Append(key, value string) {
+func (collection *KeyValueCollection) Append(key, value string) {
 	collection.items = append(collection.items, NewKeyValuePair(key, value))
 	fmt.Println("------------------", key, value, len(collection.items))
 }
 
 // Keys returns a list all unique keys in this collection.
-func (collection KeyValueCollection) Keys() []string {
+func (collection *KeyValueCollection) Keys() []string {
 	fmt.Println("------------------>>", len(collection.items))
 	keys := make([]string, 0)
 	added := make(map[string]bool)
@@ -63,7 +63,7 @@ func (collection KeyValueCollection) Keys() []string {
 }
 
 // Values returns a list all unique values in this collection.
-func (collection KeyValueCollection) Values() []string {
+func (collection *KeyValueCollection) Values() []string {
 	values := make([]string, 0)
 	added := make(map[string]bool)
 	for _, item := range collection.items {
@@ -77,7 +77,7 @@ func (collection KeyValueCollection) Values() []string {
 
 // FindByKey returns all of the matching KeyValuePair items, in the order
 // they were added. Matching is case-sensitive.
-func (collection KeyValueCollection) FindByKey(key string) []KeyValuePair {
+func (collection *KeyValueCollection) FindByKey(key string) []KeyValuePair {
 	items := make([]KeyValuePair, 0)
 	for _, item := range collection.items {
 		if item.Key == key {
@@ -89,7 +89,7 @@ func (collection KeyValueCollection) FindByKey(key string) []KeyValuePair {
 
 // FindByValue returns all of the matching KeyValuePair items, in the order
 // they were added. Matching is case-sensitive.
-func (collection KeyValueCollection) FindByValue(value string) []KeyValuePair {
+func (collection *KeyValueCollection) FindByValue(value string) []KeyValuePair {
 	items := make([]KeyValuePair, 0)
 	for _, item := range collection.items {
 		if item.Value == value {
