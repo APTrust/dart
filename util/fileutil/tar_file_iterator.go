@@ -68,7 +68,7 @@ func (iter *TarFileIterator) Next() (io.ReadCloser, *FileSummary, error) {
 // or nil if that file cannot be found. Caller is responsible
 // for closing the reader. Note that the iterator is forward-only,
 // which makes it unsuitable for re-use. Create a new iterator each
-// time you want to call Find.
+// time you want to call OpenFile.
 func (iter *TarFileIterator) OpenFile(filePath string) (io.ReadCloser, error) {
 	for {
 		header, err := iter.tarReader.Next()

@@ -101,7 +101,7 @@ func LooksSafeToDelete(dir string, minLength, minSeparators int) bool {
 // "md5"    => "0123456789ABCDEF"
 // "sha256" => "FEDCBA0987654321"
 // "sha512" => "ABCDEF1234567890"
-func CalculateChecksums(pathToFile string, algorithms []string) (map[string]string, error) {
+func CalculateChecksums(reader io.Reader, algorithms []string) (map[string]string, error) {
 	if len(algorithms) == 0 {
 		return nil, errtypes.NewValueError("You must specify at least one algorithm.")
 	}
@@ -126,14 +126,8 @@ func CalculateChecksums(pathToFile string, algorithms []string) (map[string]stri
 			hashes[i] = sha512.New()
 		}
 	}
-	inputFile, err := os.Open(pathToFile)
-	if err != nil {
-		return nil, err
-	}
-	defer inputFile.Close()
-
 	multiWriter := io.MultiWriter(hashes...)
-	_, err = io.Copy(multiWriter, inputFile)
+	_, err := io.Copy(multiWriter, reader)
 	if err != nil {
 		return nil, err
 	}

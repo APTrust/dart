@@ -88,7 +88,12 @@ func TestCalculateChecksums(t *testing.T) {
 
 	// Calculate the two most common checksums, and make sure we get only those.
 	algs := []string{constants.MD5, constants.SHA256}
-	checksums, err := fileutil.CalculateChecksums(bagPath, algs)
+	bagFile, err := os.Open(bagPath)
+	if bagFile != nil {
+		defer bagFile.Close()
+	}
+	require.Nil(t, err)
+	checksums, err := fileutil.CalculateChecksums(bagFile, algs)
 	require.Nil(t, err)
 
 	assert.Equal(t, 2, len(checksums))
@@ -96,7 +101,11 @@ func TestCalculateChecksums(t *testing.T) {
 	assert.Equal(t, "85be22159f728d5194cbbd69ff6b2bcf0af4fe3ec79ae101b6a4a044fd8c2c86", checksums[constants.SHA256])
 
 	// Calculate all supported hash algorithms on this file.
-	checksums, err = fileutil.CalculateChecksums(bagPath, constants.HashAlgorithms)
+	bagFile, err = os.Open(bagPath)
+	if bagFile != nil {
+		defer bagFile.Close()
+	}
+	checksums, err = fileutil.CalculateChecksums(bagFile, constants.HashAlgorithms)
 	require.Nil(t, err)
 
 	assert.Equal(t, len(constants.HashAlgorithms), len(checksums))

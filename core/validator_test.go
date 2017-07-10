@@ -61,7 +61,7 @@ func TestReadBag(t *testing.T) {
 
 	// Manifests should have been parsed.
 	for _, m := range validator.Bag.Manifests {
-		assert.Equal(t, 4, len(m.Checksums))
+		assert.Equal(t, 4, len(m.Checksums), "%v", m.Checksums)
 	}
 	md5 := validator.Bag.Manifests["manifest-md5.txt"].Checksums["data/datastream-DC"]
 	sha256 := validator.Bag.Manifests["manifest-sha256.txt"].Checksums["data/datastream-DC"]
@@ -324,4 +324,12 @@ func TestValidateTag(t *testing.T) {
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Tag 'Access' in file 'aptrust-info.txt' cannot be empty.", validator.Errors()[0])
 
+}
+
+func TestValidateChecksums(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+	assert.True(t, validator.ValidateChecksums())
+	assert.Empty(t, validator.Errors())
 }

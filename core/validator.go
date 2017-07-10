@@ -85,12 +85,32 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	// Add that file to our representation of the bag.
 	file, fileType := validator.Bag.AddFileFromSummary(fileSummary)
 
+	// Calculate checksums for the file
+	file.Checksums, err = fileutil.CalculateChecksums(reader, validator.Profile.ManifestsRequired)
+	if err != nil {
+		return err
+	}
+
 	// Parse the file if it's a manifest or required tag file.
+	// We have to rewind the file reader to do that, or get a new
+	// reader if we're reading directly out of a tar file.
 	var errs []error
-	if fileType == constants.MANIFEST {
-		errs = file.ParseAsManifest(reader, fileSummary.RelPath)
-	} else if fileType == constants.TAG_FILE && validator.Profile.TagFilesRequired[fileSummary.RelPath] != nil {
-		errs = file.ParseAsTagFile(reader, fileSummary.RelPath)
+	isRequiredTagFile := (fileType == constants.TAG_FILE &&
+		validator.Profile.TagFilesRequired[fileSummary.RelPath] != nil)
+	isManifest := fileType == constants.MANIFEST
+	if isManifest || isRequiredTagFile {
+		rewoundReader, isNewReader, err := validator.rewindReader(reader, fileSummary.RelPath)
+		if err != nil {
+			return err
+		}
+		if isNewReader && rewoundReader != nil {
+			defer rewoundReader.Close()
+		}
+		if isManifest {
+			errs = file.ParseAsManifest(rewoundReader, fileSummary.RelPath)
+		} else if isRequiredTagFile {
+			errs = file.ParseAsTagFile(rewoundReader, fileSummary.RelPath)
+		}
 	}
 
 	// Record parse errors
@@ -104,6 +124,31 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 		return fmt.Errorf("Error(s) in manifest or tag file.")
 	}
 	return nil
+}
+
+// rewindReader returns a reader that points to the beginning of
+// whatever reader points to.
+// CalclateChecksums advanced the file pointer to the end of the file.
+// For normal files, we can just rewind, but if we're reading an
+// embedded tar file, we're working with a forward-only reader, so
+// we need to get a new reader that points to the start of the file.
+func (validator *Validator) rewindReader(reader io.ReadCloser, filePath string) (io.ReadCloser, bool, error) {
+	var err error
+	isNewReader := false
+	if readSeeker, isSeeker := reader.(io.ReadSeeker); isSeeker {
+		_, err = readSeeker.Seek(0, io.SeekStart)
+	} else {
+		// Assuming we're working with a tar file and a TarFileIterator.
+		reader.Close()
+		iter, err := validator.getIterator()
+		if err == nil {
+			bagName := filepath.Base(validator.Bag.Path)
+			pathInTarFile := fmt.Sprintf("%s/%s", bagName[:len(bagName)-4], filePath)
+			reader, err = iter.OpenFile(pathInTarFile)
+			isNewReader = true
+		}
+	}
+	return reader, isNewReader, err
 }
 
 // ValidateSerialization checks to whether the bag is serialized
@@ -370,6 +415,7 @@ func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition 
 // See the section 2.2.4 of the specification at
 // https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4
 func (validator *Validator) ValidateChecksums() bool {
+	ok := true
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
 	}
@@ -381,10 +427,12 @@ func (validator *Validator) ValidateChecksums() bool {
 			checksum, _ := validator.Bag.GetChecksum(filename, algorithm)
 			if checksum == "" {
 				validator.addError("No checksum found for %s in %s", filename, manifestName)
+				ok = false
 			} else if checksum != payloadFile.Checksums[algorithm] {
 				validator.addError("Digest for %s in manifest %s: '%s' "+
 					"does not match actual '%s' ", filename, manifestName, checksum,
 					payloadFile.Checksums[algorithm])
+				ok = false
 			}
 		}
 	}
@@ -394,6 +442,7 @@ func (validator *Validator) ValidateChecksums() bool {
 			if validator.Bag.Payload[filename] == nil {
 				validator.addError("File %s in manifest %s is missing from the data directory",
 					filename, manifestName)
+				ok = false
 			}
 		}
 	}
@@ -409,11 +458,11 @@ func (validator *Validator) ValidateChecksums() bool {
 				validator.addError("Digest for %s in tag manifest %s: '%s' "+
 					"does not match actual '%s' ", filename, manifestName, checksum,
 					tagFile.Checksums[algorithm])
+				ok = false
 			}
 		}
 	}
-
-	return true
+	return ok
 }
 
 // ValidateProfile ensures that the BagItProfile is valid.
