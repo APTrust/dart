@@ -9,9 +9,23 @@ import (
 )
 
 type File struct {
-	Size      int64
+	// Size is the size of the file, in bytes.
+	Size int64
+	// Checksums are the checksums we've calculated for this file.
+	// Key is algorithm (e.g. "md5", "sha256") value is hex digest.
 	Checksums map[string]string
-	Tags      map[string][]string
+	// TODO: GET RID OF TAGS. USE ParsedData instead.
+	Tags map[string][]string
+	// ParsedData is a collection of Key-Value pairs representing
+	// data parsed from the file. For manifests and tag manifests,
+	// this will be digest info, with the key being the path of
+	// the file in the bag, and the value being the digest for that
+	// file. For example, "data/image.jpg" => "1234567890abcdef".
+	// For parsed tag files, the key will be the tag label and the
+	// value will be the parsed value. Note that the BagIt spec
+	// says tags may appear more than once, so a single tag may
+	// return a list of values.
+	ParsedData KeyValueCollection
 }
 
 func NewFile(size int64) *File {
