@@ -373,6 +373,46 @@ func (validator *Validator) ValidateChecksums() bool {
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
 	}
+	// Check payload files against manifests
+	for filename, payloadFile := range validator.Bag.Payload {
+		for manifestName, _ := range validator.Bag.Manifests {
+			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
+			// Should have already checked for missing manifest above.
+			checksum, _ := validator.Bag.GetChecksum(filename, algorithm)
+			if checksum == "" {
+				validator.addError("No checksum found for %s in %s", filename, manifestName)
+			} else if checksum != payloadFile.Checksums[algorithm] {
+				validator.addError("Digest for %s in manifest %s: '%s' "+
+					"does not match actual '%s' ", filename, manifestName, checksum,
+					payloadFile.Checksums[algorithm])
+			}
+		}
+	}
+	// Make sure no payload files are missing.
+	for manifestName, manifest := range validator.Bag.Manifests {
+		for filename, _ := range manifest.Checksums {
+			if validator.Bag.Payload[filename] == nil {
+				validator.addError("File %s in manifest %s is missing from the data directory",
+					filename, manifestName)
+			}
+		}
+	}
+	// Check tag files against tag manifests.
+	for filename, tagFile := range validator.Bag.TagFiles {
+		for manifestName, _ := range validator.Bag.TagManifests {
+			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
+			checksum, _ := validator.Bag.GetChecksum(filename, algorithm)
+			if checksum == "" {
+				// OK. BagIt spec says tag files don't have to be in tag manifest.
+				// Implied in https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4
+			} else if checksum != tagFile.Checksums[algorithm] {
+				validator.addError("Digest for %s in tag manifest %s: '%s' "+
+					"does not match actual '%s' ", filename, manifestName, checksum,
+					tagFile.Checksums[algorithm])
+			}
+		}
+	}
+
 	return true
 }
 
