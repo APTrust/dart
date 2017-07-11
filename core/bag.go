@@ -58,7 +58,32 @@ func (bag *Bag) GetChecksumFromManifest(algorithm, filePath string) (string, err
 	if bag.Manifests[manifestFile] == nil {
 		return "", fmt.Errorf("%s is missing", manifestFile)
 	}
-	checksum := bag.Manifests[manifestFile].Checksums[filePath]
+	checksum := ""
+	checksums := bag.Manifests[manifestFile].ParsedData.ValuesForKey(filePath)
+	if len(checksums) > 0 {
+		checksum = checksums[0]
+	}
+	return checksum, nil
+}
+
+// GetChecksumFromTagManifest returns the checksum with the specified algorithm
+// for the specified file. Param algorithm should be "md5", "sha256", or any
+// other manifest algorithm. This returns the checksum, or an error if
+// no manifest file exists for the specified checksum.
+// Param filePath should be the relative  path of the file within the bag.
+// For example, "data/image.jpg". If filePath does not begin with "data/",
+// this will look for the checksum in the tag manifest. Otherwise, it checks
+// the payload manifest.
+func (bag *Bag) GetChecksumFromTagManifest(algorithm, filePath string) (string, error) {
+	manifestFile := fmt.Sprintf("tagmanifest-%s.txt", algorithm)
+	if bag.TagManifests[manifestFile] == nil {
+		return "", fmt.Errorf("%s is missing", manifestFile)
+	}
+	checksum := ""
+	checksums := bag.TagManifests[manifestFile].ParsedData.ValuesForKey(filePath)
+	if len(checksums) > 0 {
+		checksum = checksums[0]
+	}
 	return checksum, nil
 }
 

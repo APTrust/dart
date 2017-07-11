@@ -63,8 +63,10 @@ func TestReadBag(t *testing.T) {
 	for _, m := range validator.Bag.Manifests {
 		assert.Equal(t, 4, m.ParsedData.Count())
 	}
-	md5 := validator.Bag.Manifests["manifest-md5.txt"].Checksums["data/datastream-DC"]
-	sha256 := validator.Bag.Manifests["manifest-sha256.txt"].Checksums["data/datastream-DC"]
+	md5, err := validator.Bag.GetChecksumFromManifest(constants.MD5, "data/datastream-DC")
+	require.Nil(t, err)
+	sha256, err := validator.Bag.GetChecksumFromManifest(constants.SHA256, "data/datastream-DC")
+	require.Nil(t, err)
 	assert.Equal(t, "44d85cf4810d6c6fe87750117633e461", md5)
 	assert.Equal(t, "248fac506a5c46b3c760312b99827b6fb5df4698d6cf9a9cdc4c54746728ab99", sha256)
 
@@ -72,7 +74,8 @@ func TestReadBag(t *testing.T) {
 	for _, m := range validator.Bag.TagManifests {
 		assert.Equal(t, 8, m.ParsedData.Count())
 	}
-	md5 = validator.Bag.TagManifests["tagmanifest-md5.txt"].Checksums["aptrust-info.txt"]
+	md5, err = validator.Bag.GetChecksumFromManifest(constants.MD5, "aptrust-info.txt")
+	require.Nil(t, err)
 	sha256 = validator.Bag.TagManifests["tagmanifest-sha256.txt"].Checksums["aptrust-info.txt"]
 	assert.Equal(t, "300e936e622605f9f7a846d261d53093", md5)
 	assert.Equal(t, "a2b6c5a713af771c5e4edde8d5be25fbcad86e45ea338f43a5bb769347e7c8bb", sha256)
