@@ -371,7 +371,7 @@ func (validator *Validator) ValidateTagFiles() bool {
 // requirements for the tag. Param tagValues is the list of values for this
 // tag, as parsed from the tagfile.
 func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition *Tag, tagValues []string) bool {
-	tagIsMissing := (tagValues == nil)
+	tagIsMissing := (tagValues == nil || len(tagValues) == 0)
 	tagIsEmpty := true
 	if !tagIsMissing {
 		for _, val := range tagValues {

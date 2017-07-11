@@ -60,7 +60,7 @@ func TestKeyValueCollectionFindByValue(t *testing.T) {
 	matches = items.FindByValue("value2")
 	require.Equal(t, 2, len(matches))
 	assert.Equal(t, "key1", matches[0].Key)
-	assert.Equal(t, "key2", matches[0].Key)
+	assert.Equal(t, "key2", matches[1].Key)
 
 	matches = items.FindByValue("does_not_exist")
 	require.Empty(t, matches)
