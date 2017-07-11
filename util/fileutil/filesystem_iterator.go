@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -88,6 +89,18 @@ func (iter *FileSystemIterator) OpenFile(filePath string) (io.ReadCloser, error)
 		return nil, fmt.Errorf("File %s does not exist", fullPath)
 	}
 	return os.Open(fullPath)
+}
+
+// FindMatchingFiles returns a list of files whose names match
+// the supplied regular expression.
+func (iter *FileSystemIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, error) {
+	matches := make([]string, 0)
+	checkFile := func(pathToFile string, info os.FileInfo, err error) error {
+		matches = append(matches, pathToFile)
+		return nil
+	}
+	err := filepath.Walk(iter.rootPath, checkFile)
+	return matches, err
 }
 
 // Returns the last component of the path that this iterator is traversing.

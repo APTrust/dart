@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"strings"
 )
 
@@ -84,6 +85,26 @@ func (iter *TarFileIterator) OpenFile(filePath string) (io.ReadCloser, error) {
 			return tarReadCloser, nil
 		}
 	}
+}
+
+// FindMatchingFiles returns a list of files whose names match
+// the supplied regular expression.
+func (iter *TarFileIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, error) {
+	matches := make([]string, 0)
+	for {
+		header, err := iter.tarReader.Next()
+		if err != nil {
+			if err == io.EOF {
+				return matches, nil
+			} else {
+				return matches, err
+			}
+		}
+		if regex.MatchString(header.Name) {
+			matches = append(matches, header.Name)
+		}
+	}
+	return matches, nil
 }
 
 // Keep track of any top-level directory names we encounter.

@@ -118,3 +118,21 @@ func TestCalculateChecksums(t *testing.T) {
 	assert.Equal(t, "0e0b2181ce78ea879e962cf3731cb9631d26ce04cd0c1a71765b32625a3ee7bd8209de6b8beee80657ecb449d3ab7300fbf6231c9287e51bbd6637e6e25ff0d9", checksums[constants.SHA512])
 
 }
+
+func TestParseManifestName(t *testing.T) {
+	manifestType, algorithm := fileutil.ParseManifestName("manifest-md5.txt")
+	assert.Equal(t, constants.PAYLOAD_MANIFEST, manifestType)
+	assert.Equal(t, constants.MD5, algorithm)
+
+	manifestType, algorithm = fileutil.ParseManifestName("tagmanifest-sha256.txt")
+	assert.Equal(t, constants.TAG_MANIFEST, manifestType)
+	assert.Equal(t, constants.SHA256, algorithm)
+
+	manifestType, algorithm = fileutil.ParseManifestName("plain.txt")
+	assert.Empty(t, manifestType)
+	assert.Empty(t, algorithm)
+
+	manifestType, algorithm = fileutil.ParseManifestName("tagfiles/manifest-md5.txt")
+	assert.Empty(t, manifestType)
+	assert.Empty(t, algorithm)
+}

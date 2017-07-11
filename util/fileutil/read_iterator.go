@@ -2,6 +2,7 @@ package fileutil
 
 import (
 	"io"
+	"regexp"
 )
 
 // ReadIterator is an interface that allows TarFileIterator and
@@ -11,4 +12,5 @@ type ReadIterator interface {
 	GetTopLevelDirNames() []string
 	Next() (io.ReadCloser, *FileSummary, error)
 	OpenFile(filePath string) (io.ReadCloser, error)
+	FindMatchingFiles(regex *regexp.Regexp) ([]string, error)
 }

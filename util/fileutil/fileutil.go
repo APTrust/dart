@@ -84,6 +84,33 @@ func LooksSafeToDelete(dir string, minLength, minSeparators int) bool {
 	return len(dir) >= minLength && separatorCount >= minSeparators
 }
 
+// ParseManifestName returns a manifestType and algorithm if filePath
+// looks like a manifest name. For example, "tagmanifest-sha256.txt"
+// would return constants.TAG_MANIFEST and "sha256", while
+// "manifest-md5.txt" would return constants.PAYLOAD_MANIFEST, "md5".
+// Non-manifest files will return two empty strings.
+func ParseManifestName(filePath string) (manifestType string, algorithm string) {
+	// Regex??
+	if strings.Contains(filePath, "/") || strings.Contains(filePath, string(os.PathSeparator)) {
+		return "", ""
+	}
+	parts := strings.Split(filePath, ".")
+	if len(parts) > 1 && parts[1] == "txt" {
+		if strings.HasPrefix(parts[0], "tagmanifest-") {
+			manifestType = constants.TAG_MANIFEST
+		} else if strings.HasPrefix(parts[0], "manifest-") {
+			manifestType = constants.PAYLOAD_MANIFEST
+		}
+		nameAndAlg := strings.Split(parts[0], "-")
+		if len(nameAndAlg) > 1 {
+			algorithm = nameAndAlg[1]
+		} else {
+			manifestType = ""
+		}
+	}
+	return manifestType, algorithm
+}
+
 // CalculateChecksums calculates checksums for a file, based on the algorithms
 // specified in the algorithms param. Supported algorithm names are specified
 // in constants.go. The return value is a map in which the key is the algorithm

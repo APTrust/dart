@@ -9,25 +9,33 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
+var reManifest *regexp.Regexp = regexp.MustCompile("^manifest-[A-Za-z0-9]+\\.txt$")
+var reTagManifest *regexp.Regexp = regexp.MustCompile("^manifest-[A-Za-z0-9]+\\.txt$")
+
 type Validator struct {
-	Bag            *Bag
-	Profile        *BagItProfile
-	errors         []string
-	bagsize        int64
-	payloadOxum    string
-	bagHasBeenRead bool
+	Bag               *Bag
+	Profile           *BagItProfile
+	errors            []string
+	bagsize           int64
+	payloadOxum       string
+	bagHasBeenRead    bool
+	manifestsFound    []string
+	tagManifestsFound []string
 }
 
 func NewValidator(bag *Bag, profile *BagItProfile) *Validator {
 	errs := make([]string, 0)
 	return &Validator{
-		Bag:            bag,
-		Profile:        profile,
-		errors:         errs,
-		bagHasBeenRead: false,
+		Bag:               bag,
+		Profile:           profile,
+		errors:            errs,
+		bagHasBeenRead:    false,
+		manifestsFound:    make([]string, 0),
+		tagManifestsFound: make([]string, 0),
 	}
 }
 
@@ -50,6 +58,12 @@ func (validator *Validator) Validate() bool {
 
 func (validator *Validator) ReadBag() {
 	validator.errors = make([]string, 0)
+	// TODO: Uncomment me
+	//err := validator.findManifests()
+	// if err != nil {
+	// 	validator.addError("Error getting file iterator: %v", err)
+	// 	return
+	// }
 	iterator, err := validator.getIterator()
 	if err != nil {
 		validator.addError("Error getting file iterator: %v", err)
@@ -65,6 +79,28 @@ func (validator *Validator) ReadBag() {
 		}
 	}
 	validator.bagHasBeenRead = true
+}
+
+// findManifests makes a list of manifests and tag manifests that are present
+// in the bag. Some bags may include more manifests than the profile requires.
+// When this happens, we want to calculate checksums that we can compare to
+// those manifests.
+func (validator *Validator) findManifests() error {
+	validator.findManifests()
+	validator.errors = make([]string, 0)
+	iterator, err := validator.getIterator()
+	if err != nil {
+		return err
+	}
+	reader, fileSummary, err := iterator.Next()
+	reader.Close()
+	for err == nil {
+		if fileSummary != nil {
+
+		}
+		reader, fileSummary, err = iterator.Next()
+	}
+	return nil
 }
 
 // processFile adds file information to the Payload, Manifests, TagManifests,
@@ -426,6 +462,10 @@ func (validator *Validator) ValidateChecksums() bool {
 			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
 			// Should have already checked for missing manifest above.
 			checksum, _ := validator.Bag.GetChecksumFromManifest(algorithm, filename)
+			// algRequiredByProfile := util.StringListContains(validator.Profile.RequiredManifests, algorithm)
+			// if payloadFile.Checksums[algorithm] == "" && !algRequiredByProfile {
+			// 	continue // We didn't calculate this checksum
+			// }
 			if checksum == "" {
 				validator.addError("No checksum found for %s in %s", filename, manifestName)
 				ok = false
@@ -451,7 +491,7 @@ func (validator *Validator) ValidateChecksums() bool {
 	for filename, tagFile := range validator.Bag.TagFiles {
 		for manifestName, _ := range validator.Bag.TagManifests {
 			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
-			checksum, _ := validator.Bag.GetChecksumFromManifest(algorithm, filename)
+			checksum, _ := validator.Bag.GetChecksumFromTagManifest(algorithm, filename)
 			if checksum == "" {
 				// OK. BagIt spec says tag files don't have to be in tag manifest.
 				// Implied in https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4
