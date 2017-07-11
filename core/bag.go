@@ -67,19 +67,17 @@ func (bag *Bag) GetChecksum(filePath, algorithm string) (string, error) {
 // slice, and a boolean indicating whether the tag is present in any
 // of the parsed tag files.
 func (bag *Bag) GetTagValues(tagName string) ([]string, bool) {
-	tagIsPresent := false
 	values := make([]string, 0)
 	for _, tagFile := range bag.TagFiles {
-		vals := tagFile.Tags[tagName]
+		vals := tagFile.ParsedData.FindByKey(tagName)
 		if vals != nil {
-			tagIsPresent = true
 			// This slice may be empty
 			for _, val := range vals {
-				values = append(values, val)
+				values = append(values, val.Value)
 			}
 		}
 	}
-	return values, tagIsPresent
+	return values, len(values) > 0
 }
 
 // GetTagValuesFromFile returns the values of the specified tag from
@@ -89,15 +87,14 @@ func (bag *Bag) GetTagValues(tagName string) ([]string, bool) {
 // or "dpn-tags/dpn-info.txt". The bool return value indicates whether
 // the tag was present in any tag files.
 func (bag *Bag) GetTagValuesFromFile(filePath, tagName string) ([]string, bool, error) {
-	tagIsPresent := false
 	tagFile := bag.TagFiles[filePath]
 	if tagFile == nil {
-		return nil, tagIsPresent, fmt.Errorf("Tag file %s is not in bag", filePath)
+		return nil, false, fmt.Errorf("Tag file %s is not in bag", filePath)
 	}
-	values := tagFile.Tags[tagName]
-	tagIsPresent = values != nil
-	if !tagIsPresent {
-		values = make([]string, 0)
+	keyValuePairs := tagFile.ParsedData.FindByKey(tagName)
+	values := make([]string, len(keyValuePairs))
+	for i, item := range keyValuePairs {
+		values[i] = item.Value
 	}
-	return values, tagIsPresent, nil
+	return values, len(values) > 0, nil
 }

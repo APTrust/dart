@@ -14,8 +14,6 @@ type File struct {
 	// Checksums are the checksums we've calculated for this file.
 	// Key is algorithm (e.g. "md5", "sha256") value is hex digest.
 	Checksums map[string]string
-	// TODO: GET RID OF TAGS. USE ParsedData instead.
-	Tags map[string][]string
 	// ParsedData is a collection of Key-Value pairs representing
 	// data parsed from the file. For manifests and tag manifests,
 	// this will be digest info, with the key being the path of
@@ -25,14 +23,14 @@ type File struct {
 	// value will be the parsed value. Note that the BagIt spec
 	// says tags may appear more than once, so a single tag may
 	// return a list of values.
-	ParsedData KeyValueCollection
+	ParsedData *KeyValueCollection
 }
 
 func NewFile(size int64) *File {
 	return &File{
-		Size:      size,
-		Checksums: make(map[string]string),
-		Tags:      make(map[string][]string),
+		Size:       size,
+		Checksums:  make(map[string]string),
+		ParsedData: NewKeyValueCollection(),
 	}
 }
 
@@ -66,8 +64,8 @@ func (file *File) ParseAsManifest(reader io.Reader, filePath string) []error {
 
 func (file *File) ParseAsTagFile(reader io.Reader, filePath string) []error {
 	errs := make([]error, 0)
-	if file.Tags == nil {
-		file.Tags = make(map[string][]string)
+	if file.ParsedData == nil {
+		file.ParsedData = NewKeyValueCollection()
 	}
 	re := regexp.MustCompile(`^(\S*\:)?(\s*.*)?$`)
 	scanner := bufio.NewScanner(reader)
@@ -86,7 +84,7 @@ func (file *File) ParseAsTagFile(reader io.Reader, filePath string) []error {
 			data := re.FindStringSubmatch(line)
 			data[1] = strings.TrimSpace(data[1])
 			if tagName != "" {
-				file.addTag(tagName, tagValue)
+				file.ParsedData.Append(tagName, tagValue)
 			}
 			tagName = strings.Replace(data[1], ":", "", 1)
 			tagValue = strings.TrimSpace(data[2])
@@ -106,15 +104,8 @@ func (file *File) ParseAsTagFile(reader io.Reader, filePath string) []error {
 		errs = append(errs, fmt.Errorf("Error reading tag file '%s': %v",
 			filePath, scanner.Err().Error()))
 	}
-	file.addTag(tagName, tagValue)
+	file.ParsedData.Append(tagName, tagValue)
 	return errs
-}
-
-func (file *File) addTag(name, value string) {
-	if file.Tags[name] == nil {
-		file.Tags[name] = make([]string, 0)
-	}
-	file.Tags[name] = append(file.Tags[name], value)
 }
 
 func (file *File) Write(writer *io.Writer, filePath string) []error {

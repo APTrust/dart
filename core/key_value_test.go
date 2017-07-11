@@ -40,7 +40,7 @@ func TestKeyValueCollectionFindByKey(t *testing.T) {
 	matches = items.FindByKey("key2")
 	require.Equal(t, 2, len(matches))
 	assert.Equal(t, "value2", matches[0].Value)
-	assert.Equal(t, "value3", matches[0].Value)
+	assert.Equal(t, "value3", matches[1].Value)
 
 	matches = items.FindByKey("does_not_exist")
 	require.Empty(t, matches)
@@ -57,11 +57,68 @@ func TestKeyValueCollectionFindByValue(t *testing.T) {
 	require.Equal(t, 1, len(matches))
 	assert.Equal(t, "key1", matches[0].Key)
 
-	matches = items.FindByKey("value2")
+	matches = items.FindByValue("value2")
 	require.Equal(t, 2, len(matches))
-	assert.Equal(t, "key1", matches[0])
-	assert.Equal(t, "key2", matches[0])
+	assert.Equal(t, "key1", matches[0].Key)
+	assert.Equal(t, "key2", matches[0].Key)
 
 	matches = items.FindByValue("does_not_exist")
 	require.Empty(t, matches)
+}
+
+func TestKeyValueCollectionValuesForKey(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	items.Append("key2", "value2")
+	items.Append("key2", "value3")
+
+	matches := items.ValuesForKey("key1")
+	require.Equal(t, 1, len(matches))
+	assert.Equal(t, "value1", matches[0])
+
+	matches = items.ValuesForKey("key2")
+	require.Equal(t, 2, len(matches))
+	assert.Equal(t, "value2", matches[0])
+	assert.Equal(t, "value3", matches[1])
+
+	matches = items.ValuesForKey("does_not_exist")
+	require.Empty(t, matches)
+}
+
+func TestKeyValueCollectionCount(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	items.Append("key2", "value2")
+	items.Append("key2", "value3")
+	assert.Equal(t, 3, items.Count())
+
+	items.Append("key3", "value4")
+	assert.Equal(t, 4, items.Count())
+}
+
+func TestKeyValueCollectionDelete(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	item_2_2 := items.Append("key2", "value2")
+	items.Append("key2", "value3")
+	assert.Equal(t, 3, items.Count())
+
+	items.Delete(item_2_2)
+	assert.Equal(t, 2, items.Count())
+	matches := items.FindByKey("key2")
+	for _, match := range matches {
+		assert.NotEqual(t, "value2", match.Value)
+	}
+}
+
+func TestKeyValueCollectionDeleteByKey(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	items.Append("key2", "value2")
+	items.Append("key2", "value3")
+	assert.Equal(t, 3, items.Count())
+
+	items.DeleteByKey("key2")
+	assert.Equal(t, 1, items.Count())
+	assert.Empty(t, items.FindByKey("key2"))
 }

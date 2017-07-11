@@ -279,8 +279,9 @@ func (validator *Validator) ValidateBagItVersion() bool {
 	if allowedVersions != nil && len(allowedVersions) > 0 {
 		bagItVersion := ""
 		bagItFile := validator.Bag.TagFiles["bagit.txt"]
-		if bagItFile != nil && len(bagItFile.Tags["BagIt-Version"]) > 0 {
-			bagItVersion = bagItFile.Tags["BagIt-Version"][0]
+		bagItVersionTags := bagItFile.ParsedData.FindByKey("BagIt-Version")
+		if bagItFile != nil && len(bagItVersionTags) > 0 {
+			bagItVersion = bagItVersionTags[0].Value
 		}
 		if bagItVersion == "" {
 			validator.addError("Profile requires a specific BagIt version, but no " +
@@ -352,8 +353,8 @@ func (validator *Validator) ValidateTagFiles() bool {
 		} else {
 			// Check the tags
 			for tagName, tagDefinition := range tagMap {
-				tagValue := tagFile.Tags[tagName]
-				tagIsValid := validator.ValidateTag(tagName, filePath, tagDefinition, tagValue)
+				tagValues := tagFile.ParsedData.ValuesForKey(tagName)
+				tagIsValid := validator.ValidateTag(tagName, filePath, tagDefinition, tagValues)
 				if !tagIsValid {
 					ok = false
 				}

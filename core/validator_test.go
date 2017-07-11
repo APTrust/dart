@@ -80,14 +80,14 @@ func TestReadBag(t *testing.T) {
 	// Files in BagItProfile.TagFilesRequired should be parsed,
 	// while others should not.
 	unparsedTagFile := validator.Bag.TagFiles["custom_tags/tracked_tag_file.txt"]
-	assert.Empty(t, unparsedTagFile.Tags)
+	assert.Equal(t, 0, unparsedTagFile.ParsedData.Count())
 
 	parsedTagFile := validator.Bag.TagFiles["aptrust-info.txt"]
-	require.NotEmpty(t, parsedTagFile.Tags)
-	require.Equal(t, 1, len(parsedTagFile.Tags["Title"]))
-	require.Equal(t, 1, len(parsedTagFile.Tags["Access"]))
-	assert.Equal(t, "Thirteen Ways of Looking at a Blackbird", parsedTagFile.Tags["Title"][0])
-	assert.Equal(t, "Institution", parsedTagFile.Tags["Access"][0])
+	require.NotEqual(t, 0, parsedTagFile.ParsedData.Count())
+	require.Equal(t, 1, len(parsedTagFile.ParsedData.FindByKey("Title")))
+	require.Equal(t, 1, len(parsedTagFile.ParsedData.FindByKey("Access")))
+	assert.Equal(t, "Thirteen Ways of Looking at a Blackbird", parsedTagFile.ParsedData.FindByKey("Title")[0].Value)
+	assert.Equal(t, "Institution", parsedTagFile.ParsedData.FindByKey("Access")[0].Value)
 }
 
 func TestValidateTopLevelFiles(t *testing.T) {
@@ -166,7 +166,7 @@ func TestValidateBagItVersion(t *testing.T) {
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
-	delete(validator.Bag.TagFiles["bagit.txt"].Tags, "BagIt-Version")
+	validator.Bag.TagFiles["bagit.txt"].ParsedData.DeleteByKey("BagIt-Version")
 	assert.False(t, validator.ValidateBagItVersion())
 	require.Equal(t, 1, len(validator.Errors()))
 	assert.Equal(t, "Profile requires a specific BagIt version, but no version is specified in bagit.txt", validator.Errors()[0])
@@ -286,7 +286,7 @@ func TestValidateTagFiles(t *testing.T) {
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
-	delete(validator.Bag.TagFiles["aptrust-info.txt"].Tags, "Title")
+	validator.Bag.TagFiles["aptrust-info.txt"].ParsedData.DeleteByKey("Title")
 	assert.False(t, validator.ValidateTagFiles())
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Required tag 'Title' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])

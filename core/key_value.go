@@ -1,9 +1,5 @@
 package core
 
-import (
-	"fmt"
-)
-
 // KeyValuePair is a key-value pair used to represent
 // tags and checksums. For checksums the key is the path of
 // the file in the bag, and the value being the digest for that
@@ -43,14 +39,14 @@ func NewKeyValueCollection() *KeyValueCollection {
 }
 
 // Append adds a new key-value pair to the collection.
-func (collection *KeyValueCollection) Append(key, value string) {
-	collection.items = append(collection.items, NewKeyValuePair(key, value))
-	fmt.Println("------------------", key, value, len(collection.items))
+func (collection *KeyValueCollection) Append(key, value string) KeyValuePair {
+	pair := NewKeyValuePair(key, value)
+	collection.items = append(collection.items, pair)
+	return pair
 }
 
 // Keys returns a list all unique keys in this collection.
 func (collection *KeyValueCollection) Keys() []string {
-	fmt.Println("------------------>>", len(collection.items))
 	keys := make([]string, 0)
 	added := make(map[string]bool)
 	for _, item := range collection.items {
@@ -71,6 +67,15 @@ func (collection *KeyValueCollection) Values() []string {
 			values = append(values, item.Value)
 		}
 		added[item.Value] = true
+	}
+	return values
+}
+
+// ValuesForKey returns a list all values for the specified key.
+func (collection *KeyValueCollection) ValuesForKey(key string) []string {
+	values := make([]string, 0)
+	for _, item := range collection.FindByKey(key) {
+		values = append(values, item.Value)
 	}
 	return values
 }
@@ -97,4 +102,39 @@ func (collection *KeyValueCollection) FindByValue(value string) []KeyValuePair {
 		}
 	}
 	return items
+}
+
+// Count returns the number of items in the collection.
+func (collection *KeyValueCollection) Count() int {
+	return len(collection.items)
+}
+
+// Delete deletes all key-value pairs whose Key and Value
+// match item.Key and item.Value. Returns the number of items
+// deleted.
+func (collection *KeyValueCollection) Delete(itemToDelete KeyValuePair) int {
+	newItems := make([]KeyValuePair, 0)
+	for _, item := range collection.items {
+		if item.Key != itemToDelete.Key || item.Value != itemToDelete.Value {
+			newItems = append(newItems, item)
+		}
+	}
+	count := len(collection.items) - len(newItems)
+	collection.items = newItems
+	return count
+}
+
+// DeleteByKey deletes all key-value pairs whose Key
+// matches the specified value. Returns the number of items
+// deleted.
+func (collection *KeyValueCollection) DeleteByKey(key string) int {
+	newItems := make([]KeyValuePair, 0)
+	for _, item := range collection.items {
+		if item.Key != key {
+			newItems = append(newItems, item)
+		}
+	}
+	count := len(collection.items) - len(newItems)
+	collection.items = newItems
+	return count
 }

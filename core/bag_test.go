@@ -88,9 +88,9 @@ func TestGetTagValues(t *testing.T) {
 	require.NotNil(t, bag)
 
 	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
-	bag.TagFiles["aptrust-info.txt"].Tags["key1"] = []string{"value1"}
+	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "value1")
 	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
-	bag.TagFiles["dpn-tags/dpn-info.txt"].Tags["key1"] = []string{"value2"}
+	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagExists := bag.GetTagValues("key1")
 	assert.True(t, tagExists)
@@ -108,9 +108,9 @@ func TestGetTagValuesFromFile(t *testing.T) {
 	require.NotNil(t, bag)
 
 	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
-	bag.TagFiles["aptrust-info.txt"].Tags["key1"] = []string{"value1"}
+	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "vallue1")
 	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
-	bag.TagFiles["dpn-tags/dpn-info.txt"].Tags["key1"] = []string{"value2"}
+	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagExists, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")
 	assert.True(t, tagExists)
