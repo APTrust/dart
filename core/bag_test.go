@@ -56,29 +56,29 @@ func TestAddFileFromSummary(t *testing.T) {
 	assert.NotNil(t, 2, bag.TagFiles["extra/random_file.xml"])
 }
 
-func TestGetChecksum(t *testing.T) {
+func TestGetChecksumFromManifest(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
 	bag.Manifests["manifest-md5.txt"] = core.NewFile(int64(344))
-	bag.Manifests["manifest-md5.txt"].Checksums["data/sample.txt"] = "12345678"
+	bag.Manifests["manifest-md5.txt"].ParsedData.Append("data/sample.txt", "12345678")
 	bag.Manifests["manifest-sha256.txt"] = core.NewFile(int64(377))
-	bag.Manifests["manifest-sha256.txt"].Checksums["data/sample.txt"] = "fedac8989"
+	bag.Manifests["manifest-sha256.txt"].ParsedData.Append("data/sample.txt", "fedac8989")
 
-	checksum, err := bag.GetChecksum("data/sample.txt", constants.MD5)
+	checksum, err := bag.GetChecksumFromManifest(constants.MD5, "data/sample.txt")
 	assert.Nil(t, err)
 	assert.Equal(t, "12345678", checksum)
 
-	checksum, err = bag.GetChecksum("data/sample.txt", constants.SHA256)
+	checksum, err = bag.GetChecksumFromManifest(constants.SHA256, "data/sample.txt")
 	assert.Nil(t, err)
 	assert.Equal(t, "fedac8989", checksum)
 
 	// Sha256 manifest exists, but has no record of requested file
-	checksum, err = bag.GetChecksum("data/file_does_not_exist.txt", constants.SHA256)
+	checksum, err = bag.GetChecksumFromManifest(constants.SHA256, "data/file_does_not_exist.txt")
 	assert.Nil(t, err)
 	assert.Equal(t, "", checksum)
 
 	// No sha512 manifest. Error.
-	checksum, err = bag.GetChecksum("data/sample.txt", constants.SHA512)
+	checksum, err = bag.GetChecksumFromManifest(constants.SHA512, "data/sample.txt")
 	assert.NotNil(t, err)
 	assert.Equal(t, "", checksum)
 }

@@ -425,7 +425,7 @@ func (validator *Validator) ValidateChecksums() bool {
 		for manifestName, _ := range validator.Bag.Manifests {
 			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
 			// Should have already checked for missing manifest above.
-			checksum, _ := validator.Bag.GetChecksum(filename, algorithm)
+			checksum, _ := validator.Bag.GetChecksumFromManifest(algorithm, filename)
 			if checksum == "" {
 				validator.addError("No checksum found for %s in %s", filename, manifestName)
 				ok = false
@@ -451,7 +451,7 @@ func (validator *Validator) ValidateChecksums() bool {
 	for filename, tagFile := range validator.Bag.TagFiles {
 		for manifestName, _ := range validator.Bag.TagManifests {
 			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
-			checksum, _ := validator.Bag.GetChecksum(filename, algorithm)
+			checksum, _ := validator.Bag.GetChecksumFromManifest(algorithm, filename)
 			if checksum == "" {
 				// OK. BagIt spec says tag files don't have to be in tag manifest.
 				// Implied in https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4

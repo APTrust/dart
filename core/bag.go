@@ -45,15 +45,15 @@ func (bag *Bag) AddFileFromSummary(fileSummary *fileutil.FileSummary) (*File, st
 	return file, fileType
 }
 
-// GetChecksum returns the checksum with the specified algorithm
-// for the specified file. Param filePath should be the relative
-// path of the file within the bag. For example, "data/image.jpg".
-// If filePath does not begin with "data/", this will look for
-// the checksum in the tag manifest. Otherwise, it checks the
-// payload manifest. Param algorithm should be "md5", "sha256", or any
+// GetChecksumFromManifest returns the checksum with the specified algorithm
+// for the specified file. Param algorithm should be "md5", "sha256", or any
 // other manifest algorithm. This returns the checksum, or an error if
 // no manifest file exists for the specified checksum.
-func (bag *Bag) GetChecksum(filePath, algorithm string) (string, error) {
+// Param filePath should be the relative  path of the file within the bag.
+// For example, "data/image.jpg". If filePath does not begin with "data/",
+// this will look for the checksum in the tag manifest. Otherwise, it checks
+// the payload manifest.
+func (bag *Bag) GetChecksumFromManifest(algorithm, filePath string) (string, error) {
 	manifestFile := fmt.Sprintf("manifest-%s.txt", algorithm)
 	if bag.Manifests[manifestFile] == nil {
 		return "", fmt.Errorf("%s is missing", manifestFile)

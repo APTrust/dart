@@ -61,7 +61,7 @@ func TestReadBag(t *testing.T) {
 
 	// Manifests should have been parsed.
 	for _, m := range validator.Bag.Manifests {
-		assert.Equal(t, 4, len(m.Checksums), "%v", m.Checksums)
+		assert.Equal(t, 4, m.ParsedData.Count())
 	}
 	md5 := validator.Bag.Manifests["manifest-md5.txt"].Checksums["data/datastream-DC"]
 	sha256 := validator.Bag.Manifests["manifest-sha256.txt"].Checksums["data/datastream-DC"]
@@ -70,7 +70,7 @@ func TestReadBag(t *testing.T) {
 
 	// TagManifests should have been parsed.
 	for _, m := range validator.Bag.TagManifests {
-		assert.Equal(t, 8, len(m.Checksums))
+		assert.Equal(t, 8, m.ParsedData.Count())
 	}
 	md5 = validator.Bag.TagManifests["tagmanifest-md5.txt"].Checksums["aptrust-info.txt"]
 	sha256 = validator.Bag.TagManifests["tagmanifest-sha256.txt"].Checksums["aptrust-info.txt"]

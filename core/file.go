@@ -36,8 +36,8 @@ func NewFile(size int64) *File {
 
 func (file *File) ParseAsManifest(reader io.Reader, filePath string) []error {
 	errs := make([]error, 0)
-	if file.Checksums == nil {
-		file.Checksums = make(map[string]string)
+	if file.ParsedData == nil {
+		file.ParsedData = NewKeyValueCollection()
 	}
 	re := regexp.MustCompile(`^(\S*)\s*(.*)`)
 	scanner := bufio.NewScanner(reader)
@@ -51,7 +51,7 @@ func (file *File) ParseAsManifest(reader io.Reader, filePath string) []error {
 			data := re.FindStringSubmatch(line)
 			digest := strings.TrimSpace(data[1])
 			fileName := strings.TrimSpace(data[2])
-			file.Checksums[fileName] = digest
+			file.ParsedData.Append(fileName, digest)
 		} else {
 			errs = append(errs, fmt.Errorf(
 				"Unable to parse data from line %d of manifest %s: %s",
