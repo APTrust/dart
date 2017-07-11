@@ -80,6 +80,14 @@ func (collection *KeyValueCollection) ValuesForKey(key string) []string {
 	return values
 }
 
+// FirstValueForKey returns the first value for the specified key.
+func (collection *KeyValueCollection) FirstValueForKey(key string) string {
+	for _, item := range collection.FindByKey(key) {
+		return item.Value
+	}
+	return ""
+}
+
 // FindByKey returns all of the matching KeyValuePair items, in the order
 // they were added. Matching is case-sensitive.
 func (collection *KeyValueCollection) FindByKey(key string) []KeyValuePair {

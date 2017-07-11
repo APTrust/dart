@@ -65,9 +65,9 @@ func TestParseAsManifest(t *testing.T) {
 	file := &core.File{}
 	errs := file.ParseAsManifest(reader, "example.edu.tagsample_good/manifest-md5.txt")
 	assert.Empty(t, errs)
-	assert.Equal(t, 4, len(file.Checksums))
-	assert.Equal(t, "44d85cf4810d6c6fe87750117633e461", file.Checksums["data/datastream-DC"])
-	assert.Equal(t, "4bd0ad5f85c00ce84a455466b24c8960", file.Checksums["data/datastream-descMetadata"])
-	assert.Equal(t, "93e381dfa9ad0086dbe3b92e0324bae6", file.Checksums["data/datastream-MARC"])
-	assert.Equal(t, "ff731b9a1758618f6cc22538dede6174", file.Checksums["data/datastream-RELS-EXT"])
+	assert.Equal(t, 4, file.ParsedData.Count())
+	assert.Equal(t, "44d85cf4810d6c6fe87750117633e461", file.ParsedData.FirstValueForKey("data/datastream-DC"))
+	assert.Equal(t, "4bd0ad5f85c00ce84a455466b24c8960", file.ParsedData.FirstValueForKey("data/datastream-descMetadata"))
+	assert.Equal(t, "93e381dfa9ad0086dbe3b92e0324bae6", file.ParsedData.FirstValueForKey("data/datastream-MARC"))
+	assert.Equal(t, "ff731b9a1758618f6cc22538dede6174", file.ParsedData.FirstValueForKey("data/datastream-RELS-EXT"))
 }

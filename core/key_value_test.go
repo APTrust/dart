@@ -85,6 +85,20 @@ func TestKeyValueCollectionValuesForKey(t *testing.T) {
 	require.Empty(t, matches)
 }
 
+func TestKeyValueCollectionFirstValueForKey(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	items.Append("key1", "value2")
+	items.Append("key1", "value3")
+	items.Append("key2", "value10")
+	items.Append("key2", "value20")
+
+	assert.Equal(t, "value1", items.FirstValueForKey("key1"))
+	assert.Equal(t, "value10", items.FirstValueForKey("key2"))
+
+	require.Empty(t, items.FirstValueForKey("no_such_key"))
+}
+
 func TestKeyValueCollectionCount(t *testing.T) {
 	items := core.NewKeyValueCollection()
 	items.Append("key1", "value1")

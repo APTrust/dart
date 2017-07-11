@@ -74,9 +74,10 @@ func TestReadBag(t *testing.T) {
 	for _, m := range validator.Bag.TagManifests {
 		assert.Equal(t, 8, m.ParsedData.Count())
 	}
-	md5, err = validator.Bag.GetChecksumFromManifest(constants.MD5, "aptrust-info.txt")
+	md5, err = validator.Bag.GetChecksumFromTagManifest(constants.MD5, "aptrust-info.txt")
 	require.Nil(t, err)
-	sha256 = validator.Bag.TagManifests["tagmanifest-sha256.txt"].Checksums["aptrust-info.txt"]
+	sha256, err = validator.Bag.GetChecksumFromTagManifest(constants.SHA256, "aptrust-info.txt")
+	require.Nil(t, err)
 	assert.Equal(t, "300e936e622605f9f7a846d261d53093", md5)
 	assert.Equal(t, "a2b6c5a713af771c5e4edde8d5be25fbcad86e45ea338f43a5bb769347e7c8bb", sha256)
 
