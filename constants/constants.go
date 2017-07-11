@@ -2,6 +2,7 @@ package constants
 
 import (
 	"github.com/APTrust/bagit/util"
+	"regexp"
 	"strings"
 )
 
@@ -25,6 +26,9 @@ const (
 	TAG_FILE     = "tagfile"
 	PAYLOAD_FILE = "payload"
 )
+
+var ReManifest *regexp.Regexp = regexp.MustCompile("^manifest-[A-Za-z0-9]+\\.txt$")
+var ReTagManifest *regexp.Regexp = regexp.MustCompile("^tagmanifest-[A-Za-z0-9]+\\.txt$")
 
 var FileTypes []string = []string{
 	MANIFEST,

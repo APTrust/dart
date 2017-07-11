@@ -1,6 +1,8 @@
 package fileutil_test
 
 import (
+	"github.com/APTrust/bagit/constants"
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
@@ -131,4 +133,34 @@ func TestTFIOpenFile(t *testing.T) {
 	readCloser, err = tfi.OpenFile("this-file-does-not-exist")
 	assert.NotNil(t, err)
 	assert.Nil(t, readCloser)
+}
+
+func TestTFIFindMatchingFiles(t *testing.T) {
+	tarFilePath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	require.Nil(t, err)
+	tfi, err := fileutil.NewTarFileIterator(tarFilePath)
+	if tfi != nil {
+		defer tfi.Close()
+	}
+	assert.NotNil(t, tfi)
+	require.Nil(t, err)
+
+	fileNames, err := tfi.FindMatchingFiles(constants.ReManifest)
+	require.Nil(t, err)
+	require.Equal(t, 2, len(fileNames))
+	assert.True(t, util.StringListContains(fileNames, "manifest-md5.txt"))
+	assert.True(t, util.StringListContains(fileNames, "manifest-sha256.txt"))
+
+	tfi2, err := fileutil.NewTarFileIterator(tarFilePath)
+	if tfi2 != nil {
+		defer tfi2.Close()
+	}
+	assert.NotNil(t, tfi2)
+	require.Nil(t, err)
+
+	fileNames, err = tfi2.FindMatchingFiles(constants.ReTagManifest)
+	require.Nil(t, err)
+	require.Equal(t, 2, len(fileNames))
+	assert.True(t, util.StringListContains(fileNames, "tagmanifest-md5.txt"))
+	assert.True(t, util.StringListContains(fileNames, "tagmanifest-sha256.txt"))
 }

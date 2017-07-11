@@ -88,7 +88,8 @@ func (iter *TarFileIterator) OpenFile(filePath string) (io.ReadCloser, error) {
 }
 
 // FindMatchingFiles returns a list of files whose names match
-// the supplied regular expression.
+// the supplied regular expression. You must create a new iterator
+// each time you call this, since tar file iterators are forward-only.
 func (iter *TarFileIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, error) {
 	matches := make([]string, 0)
 	for {
@@ -100,8 +101,10 @@ func (iter *TarFileIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, 
 				return matches, err
 			}
 		}
-		if regex.MatchString(header.Name) {
-			matches = append(matches, header.Name)
+		relPathInArchive := (strings.Join(strings.Split(header.Name, "/")[1:], "/"))
+		fmt.Println(relPathInArchive)
+		if regex.MatchString(relPathInArchive) {
+			matches = append(matches, relPathInArchive)
 		}
 	}
 	return matches, nil

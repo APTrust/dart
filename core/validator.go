@@ -9,12 +9,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
-
-var reManifest *regexp.Regexp = regexp.MustCompile("^manifest-[A-Za-z0-9]+\\.txt$")
-var reTagManifest *regexp.Regexp = regexp.MustCompile("^manifest-[A-Za-z0-9]+\\.txt$")
 
 type Validator struct {
 	Bag               *Bag
