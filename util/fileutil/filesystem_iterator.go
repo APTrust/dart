@@ -92,11 +92,19 @@ func (iter *FileSystemIterator) OpenFile(filePath string) (io.ReadCloser, error)
 }
 
 // FindMatchingFiles returns a list of files whose names match
-// the supplied regular expression.
+// the supplied regular expression. Note that this returns the relative
+// path of the file within the bag. To get the full (absolute) path in
+// the file system, you'll to prepend this iterator's root directory.
 func (iter *FileSystemIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, error) {
 	matches := make([]string, 0)
 	checkFile := func(pathToFile string, info os.FileInfo, err error) error {
-		matches = append(matches, pathToFile)
+		relFilePath := strings.Replace(pathToFile, iter.rootPath, "", 1)
+		if strings.HasPrefix(relFilePath, string(os.PathSeparator)) {
+			relFilePath = strings.Replace(relFilePath, string(os.PathSeparator), "", 1)
+		}
+		if regex.MatchString(relFilePath) {
+			matches = append(matches, relFilePath)
+		}
 		return nil
 	}
 	err := filepath.Walk(iter.rootPath, checkFile)

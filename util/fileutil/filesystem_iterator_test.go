@@ -1,6 +1,7 @@
 package fileutil_test
 
 import (
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -103,4 +105,23 @@ func TestFSIOpenFile(t *testing.T) {
 	}
 	assert.NotNil(t, err)
 	assert.Nil(t, file2)
+}
+
+func TestFSIFindMatchingFiles(t *testing.T) {
+	fsi, _ := fileutil.NewFileSystemIterator(getTestDataPath())
+	if fsi == nil {
+		assert.Fail(t, "Could not get a FileSystemIterator")
+	}
+
+	reJsonFile := regexp.MustCompile(".*\\.json$")
+	fileNames, err := fsi.FindMatchingFiles(reJsonFile)
+	require.Nil(t, err)
+	require.Equal(t, 2, len(fileNames))
+	assert.True(t, util.StringListContains(fileNames, "profiles/aptrust_bagit_profile_2.0.json"))
+	assert.True(t, util.StringListContains(fileNames, "profiles/dpn_bagit_profile.json"))
+
+	reTarFile := regexp.MustCompile(".*\\.tar$")
+	fileNames, err = fsi.FindMatchingFiles(reTarFile)
+	require.Nil(t, err)
+	require.Equal(t, 17, len(fileNames))
 }

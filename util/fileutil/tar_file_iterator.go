@@ -102,7 +102,6 @@ func (iter *TarFileIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, 
 			}
 		}
 		relPathInArchive := (strings.Join(strings.Split(header.Name, "/")[1:], "/"))
-		fmt.Println(relPathInArchive)
 		if regex.MatchString(relPathInArchive) {
 			matches = append(matches, relPathInArchive)
 		}
