@@ -373,25 +373,52 @@ func TestValidateBadChecksumsBag(t *testing.T) {
 func TestValidateGoodBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.True(t, validator.Validate())
+	errors := validator.Errors()
+	require.Empty(t, errors)
 }
 
 func TestValidateMissingDataFileBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_missing_data_file.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 2, len(errors))
 
+	expected := []string{
+		"Required tag 'Access' is missing from file 'aptrust-info.txt'.",
+		"File data/datastream-DC in manifest manifest-md5.txt is missing from the data directory",
+	}
+
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateMissingAPTrustInfoBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_aptrust_info.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 1, len(errors))
+	assert.Equal(t, "Required tag file 'aptrust-info.txt' is missing.", errors[0])
 }
 
 func TestValidateNoBagInfoBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_bag_info.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 2, len(errors))
 
+	expected := []string{
+		"Required tag file 'bag-info.txt' is missing.",
+		"Required tag 'Access' is missing from file 'aptrust-info.txt'.",
+	}
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateBagItBag(t *testing.T) {
