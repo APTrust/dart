@@ -407,7 +407,6 @@ func TestValidateMissingAPTrustInfoBag(t *testing.T) {
 func TestValidateNoBagInfoBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_bag_info.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
 	require.Equal(t, 2, len(errors))
@@ -421,34 +420,66 @@ func TestValidateNoBagInfoBag(t *testing.T) {
 	}
 }
 
-func TestValidateBagItBag(t *testing.T) {
+func TestValidateNoBagItBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_bagit.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 3, len(errors))
 
+	expected := []string{
+		"Cannot check bagit version because bagit.txt is missing.",
+		"Required tag file 'bagit.txt' is missing.",
+		"Required tag 'Access' is missing from file 'aptrust-info.txt'.",
+	}
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateNoDataDirBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_data_dir.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 4, len(errors))
 
+	expected := []string{
+		"File data/datastream-DC in manifest manifest-md5.txt is missing from the data directory",
+		"File data/datastream-descMetadata in manifest manifest-md5.txt is missing from the data directory",
+		"File data/datastream-MARC in manifest manifest-md5.txt is missing from the data directory",
+		"File data/datastream-RELS-EXT in manifest manifest-md5.txt is missing from the data directory",
+	}
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateNoMd5ManifestBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_md5_manifest.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 1, len(errors))
+	assert.Equal(t, "Required manifest 'manifest-md5.txt' is missing.", errors[0])
 }
 
 func TestValidateNoTitleBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_no_title.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 1, len(errors))
+	assert.Equal(t, "Tag 'Title' in file 'aptrust-info.txt' cannot be empty.", errors[0])
 }
 
 func TestValidateWrongFolderNameBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_wrong_folder_name.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.Equal(t, 1, len(errors))
+	assert.Equal(t, "Bag should untar to a single directory whose name matches the name of the tar file", errors[0])
 }
 
 func TestValidateBadTagSampleBag(t *testing.T) {

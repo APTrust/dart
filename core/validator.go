@@ -39,6 +39,9 @@ type Validator struct {
 	// tagManifests found lists the algorithms for all tag manifests
 	// found in the bag. See manifestsFound, above.
 	tagManifestsFound []string
+	// topLevelDirNames is a list of directory names found in the
+	// top level of the bag.
+	topLevelDirNames []string
 }
 
 func NewValidator(bag *Bag, profile *BagItProfile) *Validator {
@@ -59,6 +62,16 @@ func (validator *Validator) Validate() bool {
 	}
 	if validator.ValidateSerialization() {
 		validator.ReadBag()
+		// In cases where the tarred bag untars to the wrong directory,
+		// we'll get lots of errors for missing files. The real error
+		// is that the user needs to tar the bag with the correct top-level
+		// folder name. So get rid of the other errors, and keep that one.
+		if !validator.ValidateUntarDirName() {
+			validator.errors = make([]string, 0)
+			validator.addError("Bag should untar to a single directory " +
+				"whose name matches the name of the tar file")
+			return false
+		}
 		validator.ValidateTopLevelFiles()
 		validator.ValidateMiscDirectories()
 		validator.ValidateBagItVersion()
@@ -92,6 +105,7 @@ func (validator *Validator) ReadBag() {
 		}
 	}
 	validator.bagHasBeenRead = true
+	validator.topLevelDirNames = iterator.GetTopLevelDirNames()
 }
 
 // findManifests makes a list of manifests and tag manifests that are present
@@ -173,11 +187,14 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 			return err
 		}
 	} else { // Tag file
-		algorithms := validator.manifestsFound
+		algorithms := validator.tagManifestsFound
 		if len(algorithms) == 0 && len(validator.Profile.TagManifestsRequired) > 0 {
 			algorithms = validator.Profile.TagManifestsRequired
 		}
-		file.Checksums, err = fileutil.CalculateChecksums(reader, algorithms)
+		// Validate only if tag manifests should or do exist.
+		if len(algorithms) > 0 {
+			file.Checksums, err = fileutil.CalculateChecksums(reader, algorithms)
+		}
 		if err != nil {
 			return err
 		}
@@ -194,6 +211,13 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 		rewoundReader, isNewReader, err := validator.rewindReader(reader, fileSummary.RelPath)
 		if err != nil {
 			return err
+		}
+		// This is a runtime error that should never occur.
+		// Check that directory names inside the bag are correct,
+		// and that the untarred dir of a tarred bag matches the
+		// tar file name.
+		if rewoundReader == nil {
+			return fmt.Errorf("Could not rewind reader for %s", fileSummary.RelPath)
 		}
 		if isNewReader && rewoundReader != nil {
 			defer rewoundReader.Close()
@@ -351,6 +375,22 @@ func (validator *Validator) ValidateMiscDirectories() bool {
 			validator.addError("Directory '%s' is not allowed "+
 				"in top-level directory when BagIt profile says "+
 				"AllowMiscDirectories is false.", dir)
+			ok = false
+		}
+	}
+	return ok
+}
+
+// ValidateUntarDirName checks to see that, if this is a tarred bag, it
+// untars to a directory whose name matches the tar file name, as suggested
+// by the BagIt spec, section 4, serialization.
+// https://tools.ietf.org/html/draft-kunze-bagit-14
+func (validator *Validator) ValidateUntarDirName() bool {
+	ok := true
+	if strings.HasSuffix(validator.Bag.Path, ".tar") {
+		bagName := filepath.Base(validator.Bag.Path)
+		bagName = bagName[0 : len(bagName)-4]
+		if len(validator.topLevelDirNames) != 1 || validator.topLevelDirNames[0] != bagName {
 			ok = false
 		}
 	}
