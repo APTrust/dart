@@ -104,39 +104,43 @@ func (validator *Validator) ReadBag() {
 // are present we must validate them. This function scans the bag and makes
 // a list of the manifest algorithms and tagmanifest algorithms.
 func (validator *Validator) findManifests() error {
+	err := validator.findManifestsByType(constants.PAYLOAD_MANIFEST)
+	if err != nil {
+		return err
+	}
+	return validator.findManifestsByType(constants.TAG_MANIFEST)
+}
+
+// findManifestsByType finds which manifests or tagmanifests are
+// present in the bag.
+func (validator *Validator) findManifestsByType(manifestType string) error {
+	pattern := constants.ReManifest
+	if manifestType == constants.TAG_MANIFEST {
+		pattern = constants.ReTagManifest
+	}
 	iterator, err := validator.getIterator()
 	if err != nil {
 		return fmt.Errorf("Error getting file iterator: %v", err)
 	}
-	manifests, err := iterator.FindMatchingFiles(constants.ReManifest)
+	manifests, err := iterator.FindMatchingFiles(pattern)
 	if err != nil {
 		return fmt.Errorf("Error checking for manifests: %v", err)
 	}
 
-	iterator, err = validator.getIterator()
-	if err != nil {
-		return fmt.Errorf("Error getting file iterator: %v", err)
-	}
-	tagManifests, err := iterator.FindMatchingFiles(constants.ReTagManifest)
-	if err != nil {
-		return fmt.Errorf("Error checking for tag manifests: %v", err)
-	}
 	// Note that we're making a list of the algorithms, not the
 	// manifest file names. So manifest-md5.txt gets listed as "md5".
 	// When we call CalculateChecksums() below, we can pass in these
 	// lists, so the function knows which checksums to calculate.
-	manifestAlgs := make([]string, len(manifests))
+	algs := make([]string, len(manifests))
 	for i, fileName := range manifests {
 		_, alg := fileutil.ParseManifestName(fileName)
-		manifestAlgs[i] = alg
+		algs[i] = alg
 	}
-	tagManifestAlgs := make([]string, len(tagManifests))
-	for i, fileName := range tagManifests {
-		_, alg := fileutil.ParseManifestName(fileName)
-		tagManifestAlgs[i] = alg
+	if manifestType == constants.PAYLOAD_MANIFEST {
+		validator.manifestsFound = algs
+	} else {
+		validator.tagManifestsFound = algs
 	}
-	validator.manifestsFound = manifestAlgs
-	validator.tagManifestsFound = tagManifestAlgs
 	return nil
 }
 
