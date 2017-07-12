@@ -353,7 +353,21 @@ func TestValidateBadAccessBag(t *testing.T) {
 func TestValidateBadChecksumsBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_bad_checksums.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.NotEmpty(t, errors)
 
+	expected := []string{
+		"Required tag 'Access' is missing from file 'aptrust-info.txt'.",
+		"Digest for data/datastream-DC in manifest manifest-md5.txt: '44d85cf4810d6c6fe877BlahBlahBlah' does not match actual '44d85cf4810d6c6fe87750117633e461' ",
+		"Digest for data/datastream-descMetadata in manifest manifest-md5.txt: '4bd0ad5f85c00ce84a45BlahBlahBlah' does not match actual '4bd0ad5f85c00ce84a455466b24c8960' ",
+		"Digest for data/datastream-MARC in manifest manifest-md5.txt: '93e381dfa9ad0086dbe3BlahBlahBlah' does not match actual '93e381dfa9ad0086dbe3b92e0324bae6' ",
+		"Digest for data/datastream-RELS-EXT in manifest manifest-md5.txt: 'ff731b9a1758618f6cc2BlahBlahBlah' does not match actual 'ff731b9a1758618f6cc22538dede6174' ",
+	}
+
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateGoodBag(t *testing.T) {
