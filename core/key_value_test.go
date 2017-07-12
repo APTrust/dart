@@ -99,6 +99,18 @@ func TestKeyValueCollectionFirstValueForKey(t *testing.T) {
 	require.Empty(t, items.FirstValueForKey("no_such_key"))
 }
 
+func TestKeyValueCollectionItems(t *testing.T) {
+	items := core.NewKeyValueCollection()
+	items.Append("key1", "value1")
+	items.Append("key2", "value2")
+	items.Append("key2", "value3")
+
+	kvPairs := items.Items()
+	assert.Equal(t, 3, len(kvPairs))
+	assert.Equal(t, "key2", kvPairs[1].Key)
+	assert.Equal(t, "value2", kvPairs[1].Value)
+}
+
 func TestKeyValueCollectionCount(t *testing.T) {
 	items := core.NewKeyValueCollection()
 	items.Append("key1", "value1")
