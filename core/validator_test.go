@@ -337,3 +337,94 @@ func TestValidateChecksums(t *testing.T) {
 	assert.True(t, validator.ValidateChecksums())
 	assert.Empty(t, validator.Errors())
 }
+
+// ---------- Test specific bags with specific issues --------- //
+
+func TestValidateBadAccessBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_bad_access.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+}
+
+func TestValidateBadChecksumsBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_bad_checksums.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateGoodBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateMissingDataFileBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_missing_data_file.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateMissingAPTrustInfoBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_aptrust_info.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateNoBagInfoBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_bag_info.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateBagItBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_bagit.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateNoDataDirBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_data_dir.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateNoMd5ManifestBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_md5_manifest.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateNoTitleBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_no_title.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateWrongFolderNameBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.sample_wrong_folder_name.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateBadTagSampleBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_bad.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateGoodTagSampleBag(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "dpn_bagit_profile.json")
+	require.NotNil(t, validator)
+
+}
+
+func TestValidateUntarredBags(t *testing.T) {
+	// validator := getValidator(t, "", "aptrust_bagit_profile_2.0.json")
+	// require.NotNil(t, validator)
+
+}
