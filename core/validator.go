@@ -13,13 +13,31 @@ import (
 )
 
 type Validator struct {
-	Bag               *Bag
-	Profile           *BagItProfile
-	errors            []string
-	bagsize           int64
-	payloadOxum       string
-	bagHasBeenRead    bool
-	manifestsFound    []string
+	// Bag is the bag being validated.
+	Bag *Bag
+	// Profile is the BagIt profile that describes a valid bag.
+	Profile *BagItProfile
+	// errors is a list of validation and/or runtime errors
+	// that occured during validation.
+	errors []string
+	// payloadSize is the size, in bytes, of the files in the
+	// data directory.
+	payloadSize int64
+	// payloadOxum is the Payload-Oxum for the bag-info.txt
+	// file, as described at
+	// https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.2
+	payloadOxum string
+	// bagHasBeenRead indicates whether the validator has already
+	// read the contents of the bag.
+	bagHasBeenRead bool
+	// manifestsFound is a list of algorithms for payload manifests
+	// that appear in the bag. For example, if the bag contains a
+	// manifest-md5.txt file and a manifest-sha256.txt file, then
+	// manifestsFound will be ["md5", "sha256'] in no guaranteed
+	// order.
+	manifestsFound []string
+	// tagManifests found lists the algorithms for all tag manifests
+	// found in the bag. See manifestsFound, above.
 	tagManifestsFound []string
 }
 
@@ -54,12 +72,11 @@ func (validator *Validator) Validate() bool {
 
 func (validator *Validator) ReadBag() {
 	validator.errors = make([]string, 0)
-	// TODO: Uncomment me
-	//err := validator.findManifests()
-	// if err != nil {
-	// 	validator.addError("Error getting file iterator: %v", err)
-	// 	return
-	// }
+	err := validator.findManifests()
+	if err != nil {
+		validator.addError("Error getting file iterator: %v", err)
+		return
+	}
 	iterator, err := validator.getIterator()
 	if err != nil {
 		validator.addError("Error getting file iterator: %v", err)
@@ -80,22 +97,46 @@ func (validator *Validator) ReadBag() {
 // findManifests makes a list of manifests and tag manifests that are present
 // in the bag. Some bags may include more manifests than the profile requires.
 // When this happens, we want to calculate checksums that we can compare to
-// those manifests.
+// those manifests. For example, when a BagIt profile specifies that a bag must
+// contain a manifest-md5.txt file, we have to validate that. But the bag may
+// also legally contain other manifests not mentioned in the profile,
+// such as manifest-sha256.txt, manifest-sha512.txt, etc. If those manifests
+// are present we must validate them. This function scans the bag and makes
+// a list of the manifest algorithms and tagmanifest algorithms.
 func (validator *Validator) findManifests() error {
-	validator.findManifests()
-	validator.errors = make([]string, 0)
 	iterator, err := validator.getIterator()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error getting file iterator: %v", err)
 	}
-	reader, fileSummary, err := iterator.Next()
-	reader.Close()
-	for err == nil {
-		if fileSummary != nil {
+	manifests, err := iterator.FindMatchingFiles(constants.ReManifest)
+	if err != nil {
+		return fmt.Errorf("Error checking for manifests: %v", err)
+	}
 
-		}
-		reader, fileSummary, err = iterator.Next()
+	iterator, err = validator.getIterator()
+	if err != nil {
+		return fmt.Errorf("Error getting file iterator: %v", err)
 	}
+	tagManifests, err := iterator.FindMatchingFiles(constants.ReTagManifest)
+	if err != nil {
+		return fmt.Errorf("Error checking for tag manifests: %v", err)
+	}
+	// Note that we're making a list of the algorithms, not the
+	// manifest file names. So manifest-md5.txt gets listed as "md5".
+	// When we call CalculateChecksums() below, we can pass in these
+	// lists, so the function knows which checksums to calculate.
+	manifestAlgs := make([]string, len(manifests))
+	for i, fileName := range manifests {
+		_, alg := fileutil.ParseManifestName(fileName)
+		manifestAlgs[i] = alg
+	}
+	tagManifestAlgs := make([]string, len(tagManifests))
+	for i, fileName := range tagManifests {
+		_, alg := fileutil.ParseManifestName(fileName)
+		tagManifestAlgs[i] = alg
+	}
+	validator.manifestsFound = manifestAlgs
+	validator.tagManifestsFound = tagManifestAlgs
 	return nil
 }
 
@@ -118,9 +159,16 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	file, fileType := validator.Bag.AddFileFromSummary(fileSummary)
 
 	// Calculate checksums for the file
-	file.Checksums, err = fileutil.CalculateChecksums(reader, validator.Profile.ManifestsRequired)
-	if err != nil {
-		return err
+	if fileType == constants.PAYLOAD_FILE {
+		file.Checksums, err = fileutil.CalculateChecksums(reader, validator.manifestsFound)
+		if err != nil {
+			return err
+		}
+	} else { // Tag file
+		file.Checksums, err = fileutil.CalculateChecksums(reader, validator.tagManifestsFound)
+		if err != nil {
+			return err
+		}
 	}
 
 	// Parse the file if it's a manifest or required tag file.
@@ -455,13 +503,8 @@ func (validator *Validator) ValidateChecksums() bool {
 	// Check payload files against manifests
 	for filename, payloadFile := range validator.Bag.Payload {
 		for manifestName, _ := range validator.Bag.Manifests {
-			algorithm := strings.Split(strings.Split(manifestName, ".")[0], "-")[1]
-			// Should have already checked for missing manifest above.
+			_, algorithm := fileutil.ParseManifestName(manifestName)
 			checksum, _ := validator.Bag.GetChecksumFromManifest(algorithm, filename)
-			// algRequiredByProfile := util.StringListContains(validator.Profile.RequiredManifests, algorithm)
-			// if payloadFile.Checksums[algorithm] == "" && !algRequiredByProfile {
-			// 	continue // We didn't calculate this checksum
-			// }
 			if checksum == "" {
 				validator.addError("No checksum found for %s in %s", filename, manifestName)
 				ok = false
@@ -475,7 +518,8 @@ func (validator *Validator) ValidateChecksums() bool {
 	}
 	// Make sure no payload files are missing.
 	for manifestName, manifest := range validator.Bag.Manifests {
-		for filename, _ := range manifest.Checksums {
+		for _, item := range manifest.ParsedData.Items() {
+			filename := item.Key
 			if validator.Bag.Payload[filename] == nil {
 				validator.addError("File %s in manifest %s is missing from the data directory",
 					filename, manifestName)

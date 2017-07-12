@@ -112,6 +112,11 @@ func (collection *KeyValueCollection) FindByValue(value string) []KeyValuePair {
 	return items
 }
 
+// Items returns all of the KeyValuePairs in the collection, in order.
+func (collection *KeyValueCollection) Items() []KeyValuePair {
+	return collection.items
+}
+
 // Count returns the number of items in the collection.
 func (collection *KeyValueCollection) Count() int {
 	return len(collection.items)
