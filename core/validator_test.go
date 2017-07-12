@@ -3,6 +3,7 @@ package core_test
 import (
 	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/core"
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -343,6 +344,10 @@ func TestValidateChecksums(t *testing.T) {
 func TestValidateBadAccessBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.sample_bad_access.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	assert.Equal(t, 1, len(errors))
+	assert.True(t, util.StringListContains(errors, "Value 'Hands Off!' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)"))
 }
 
 func TestValidateBadChecksumsBag(t *testing.T) {
@@ -414,7 +419,8 @@ func TestValidateBadTagSampleBag(t *testing.T) {
 func TestValidateGoodTagSampleBag(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-
+	assert.True(t, validator.Validate())
+	assert.Empty(t, validator.Errors())
 }
 
 func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {

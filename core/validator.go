@@ -164,12 +164,20 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 
 	// Calculate checksums for the file
 	if fileType == constants.PAYLOAD_FILE {
-		file.Checksums, err = fileutil.CalculateChecksums(reader, validator.manifestsFound)
+		algorithms := validator.manifestsFound
+		if len(algorithms) == 0 && len(validator.Profile.ManifestsRequired) > 0 {
+			algorithms = validator.Profile.ManifestsRequired
+		}
+		file.Checksums, err = fileutil.CalculateChecksums(reader, algorithms)
 		if err != nil {
 			return err
 		}
 	} else { // Tag file
-		file.Checksums, err = fileutil.CalculateChecksums(reader, validator.tagManifestsFound)
+		algorithms := validator.manifestsFound
+		if len(algorithms) == 0 && len(validator.Profile.TagManifestsRequired) > 0 {
+			algorithms = validator.Profile.TagManifestsRequired
+		}
+		file.Checksums, err = fileutil.CalculateChecksums(reader, algorithms)
 		if err != nil {
 			return err
 		}
@@ -363,6 +371,10 @@ func (validator *Validator) ValidateBagItVersion() bool {
 	if allowedVersions != nil && len(allowedVersions) > 0 {
 		bagItVersion := ""
 		bagItFile := validator.Bag.TagFiles["bagit.txt"]
+		if bagItFile == nil {
+			validator.addError("Cannot check bagit version because bagit.txt is missing.")
+			return false
+		}
 		bagItVersionTags := bagItFile.ParsedData.FindByKey("BagIt-Version")
 		if bagItFile != nil && len(bagItVersionTags) > 0 {
 			bagItVersion = bagItVersionTags[0].Value
