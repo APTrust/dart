@@ -510,10 +510,27 @@ func TestValidateGoodTagSampleBag(t *testing.T) {
 	assert.Empty(t, validator.Errors())
 }
 
+// Bag example.edu.tagsample_good.tar is valid according to the APTrust
+// BagIt profile, but not valid according to the DPN profile. So although
+// it passed in the test above, it should fail here.
 func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "dpn_bagit_profile.json")
 	require.NotNil(t, validator)
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.NotEmpty(t, errors)
+	assert.Equal(t, 5, len(errors))
 
+	expected := []string{
+		"Non-manifest file 'custom_tag_file.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
+		"Non-manifest file 'junk_file.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
+		"Non-manifest file 'aptrust-info.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
+		"Required tag manifest 'tagmanifest-sha256.txt' is missing.",
+		"Required tag file 'dpn-tags/dpn-info.txt' is missing.",
+	}
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
 }
 
 func TestValidateUntarredBags(t *testing.T) {
