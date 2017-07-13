@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"os"
 	"strings"
 	"testing"
 )
@@ -533,8 +534,31 @@ func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
 	}
 }
 
-func TestValidateUntarredBags(t *testing.T) {
-	// validator := getValidator(t, "", "aptrust_bagit_profile_2.0.json")
-	// require.NotNil(t, validator)
+func TestValidateUntarredGoodBag(t *testing.T) {
+	// Load the APTrust BagIt Profile
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err := core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
 
+	// Untar a bag that we know is good.
+	pathToTarredBag, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	require.Nil(t, err)
+	tempDir, pathToUntarredBag, err := testutil.UntarTestBag(pathToTarredBag)
+	defer os.RemoveAll(tempDir)
+	require.Nil(t, err)
+
+	// Create the bag object and the vaidator.
+	bag := core.NewBag(pathToUntarredBag)
+	validator := core.NewValidator(bag, aptrustProfile)
+	require.NotNil(t, validator)
+
+	// Turn this off temporarily, so we can validate.
+	validator.Profile.Serialization = constants.OPTIONAL
+
+	// Make sure it validates. This test ensures that the underlying
+	// FileSystemIterator inside the Validator behaves just like the
+	// TarFileIterator tested in all the cases above.
+	assert.True(t, validator.Validate())
+	assert.Empty(t, validator.Errors())
 }
