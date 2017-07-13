@@ -566,7 +566,7 @@ func (validator *Validator) ValidateChecksums() bool {
 				ok = false
 			} else if checksum != payloadFile.Checksums[algorithm] {
 				validator.addError("Digest for %s in manifest %s: '%s' "+
-					"does not match actual '%s' ", filename, manifestName, checksum,
+					"does not match actual '%s'", filename, manifestName, checksum,
 					payloadFile.Checksums[algorithm])
 				ok = false
 			}
@@ -593,7 +593,7 @@ func (validator *Validator) ValidateChecksums() bool {
 				// Implied in https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.4
 			} else if checksum != tagFile.Checksums[algorithm] {
 				validator.addError("Digest for %s in tag manifest %s: '%s' "+
-					"does not match actual '%s' ", filename, manifestName, checksum,
+					"does not match actual '%s'", filename, manifestName, checksum,
 					tagFile.Checksums[algorithm])
 				ok = false
 			}
