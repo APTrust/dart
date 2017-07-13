@@ -562,3 +562,43 @@ func TestValidateUntarredGoodBag(t *testing.T) {
 	assert.True(t, validator.Validate())
 	assert.Empty(t, validator.Errors())
 }
+
+func TestValidateUntarredBadBag(t *testing.T) {
+	// Load the APTrust BagIt Profile
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err := core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
+
+	// Untar a bag that we know is bad.
+	pathToTarredBag, err := testutil.GetPathToTestBag("example.edu.tagsample_bad.tar")
+	require.Nil(t, err)
+	tempDir, pathToUntarredBag, err := testutil.UntarTestBag(pathToTarredBag)
+	defer os.RemoveAll(tempDir)
+	require.Nil(t, err)
+
+	// Create the bag object and the vaidator.
+	bag := core.NewBag(pathToUntarredBag)
+	validator := core.NewValidator(bag, aptrustProfile)
+	require.NotNil(t, validator)
+
+	// Turn this off temporarily, so we can validate.
+	validator.Profile.Serialization = constants.OPTIONAL
+
+	// We should find the same errors as in TestValidateBadTagSampleBag.
+	assert.False(t, validator.Validate())
+	errors := validator.Errors()
+	require.NotEmpty(t, errors)
+
+	expected := []string{
+		"Tag 'Title' in file 'aptrust-info.txt' cannot be empty.",
+		"Value 'acksess' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)",
+		"Digest for data/datastream-descMetadata in manifest manifest-sha256.txt: 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!' does not match actual 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'",
+		"File data/file-not-in-bag in manifest manifest-sha256.txt is missing from the data directory",
+		"Digest for custom_tags/tracked_tag_file.txt in tag manifest tagmanifest-sha256.txt: '0000000000000000000000000000000000000000000000000000000000000000' does not match actual '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'",
+		"Digest for custom_tags/tracked_tag_file.txt in tag manifest tagmanifest-md5.txt: '00000000000000000000000000000000' does not match actual 'dafbffffc3ed28ef18363394935a2651'",
+	}
+	for _, msg := range expected {
+		assert.True(t, util.StringListContains(errors, msg), "Missing expected error: %s", msg)
+	}
+}
