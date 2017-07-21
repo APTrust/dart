@@ -21,7 +21,8 @@ type Bagger struct {
 // be built. This should be a directory name. The bagger will
 // create the directory, if it does not already exist. If the directory
 // exists, the bagger will not overwrite it, unless the forceOverwrite
-// (see below) is true.
+// (see below) is true. If bagPath ends with ".tar", the bag will be
+// created as a tar file instead of as a directory.
 //
 // Param payloadDir is the name of the directory containing the files to be
 // bagged.
@@ -61,17 +62,22 @@ func NewBagger(bagPath, payloadDir string, profile *BagItProfile, tagValues map[
 */
 
 func (bagger *Bagger) BuildBag() bool {
-	ok := bagger.makeDir()
+	ok := bagger.initFileOrDir()
 	if !ok {
 		return false
 	}
+
+	// copy payload files
+	// write tag files
+	// create manifests
+
 	return true
 }
 
-// makeDir creates the directory in which we'll assemble the bag,
+// initFileOrDir creates the directory in which we'll assemble the bag,
 // performing some safety checks along the way. Returns true on
 // success, false otherwise.
-func (bagger *Bagger) makeDir() bool {
+func (bagger *Bagger) initFileOrDir() bool {
 	if fileutil.FileExists(bagger.Bag.Path) {
 		if bagger.ForceOverwrite {
 			if fileutil.LooksSafeToDelete(bagger.Bag.Path, 12, 3) {
@@ -97,6 +103,19 @@ func (bagger *Bagger) makeDir() bool {
 		bagger.addError(err.Error())
 		return false
 	}
+	return true
+}
+
+// copyPayload copies files from PayloadDir into the bag's data
+// directory.
+func (bagger *Bagger) copyPayload() bool {
+	// -> os.Copy() files into dir/data for bag as directory, or
+	// -> tarWriter.AddToArchive() if writing straight to a tar file
+	//
+	// calculate checksums along the way.
+	//
+	// Adapt fileutil.CalculateChecksums, to include a writer,
+	// which can be a file writer or a tar file writer.
 	return true
 }
 
