@@ -139,7 +139,7 @@ func CalculateChecksums(reader io.Reader, algorithms []string) (map[string]strin
 // hashing algorithms and the values are digests. For example,
 // this call:
 //
-// checsums, err := WriteWithChecksums(file1, file2, []string{ "md5", "sha256"})
+// checksums, err := WriteWithChecksums(file1, file2, []string{ "md5", "sha256"})
 //
 // will copy the contents of file1 to file2, and will calculate md5
 // and sha256 digests on the contents, returning a map that looks like

@@ -3,7 +3,6 @@ package fileutil
 import (
 	"archive/tar"
 	"fmt"
-	"io"
 	"os"
 )
 
@@ -34,14 +33,30 @@ func (writer *TarWriter) Close() error {
 	return nil
 }
 
-// Adds a file to a tar archive.
-func (writer *TarWriter) AddToArchive(filePath, pathWithinArchive string) error {
+// AddToArchive copies the file at filePath into the tar archive
+// at pathWithin archive (its relative path within the archive).
+// It computes the digests specified in algorithms along the way,
+// and returns those in the form of a map. Supported digest algorithms
+// are listed in constants.HashAlgorithms.
+//
+// For example, to add the file "/usr/local/image.jpg" into the
+// tar archive at "data/photo.jpg", and get back the file's
+// md5 and sha256 checksums, you would call this:
+//
+// checksums, err := tarWriter.AddToArchive("/usr/local/image.jpg", "data/photo.jpg", []string{ "md5", "sha256"})
+//
+// You'll get back a map that looks like this:
+//
+// { "md5": "1234567", "sha256": "890abcd" }
+//
+// The checksum map will be nil when there's an error.
+func (writer *TarWriter) AddToArchive(filePath, pathWithinArchive string, algorithms []string) (map[string]string, error) {
 	if writer.tarWriter == nil {
-		return fmt.Errorf("Underlying TarWriter is nil. Has it been opened?")
+		return nil, fmt.Errorf("Underlying TarWriter is nil. Has it been opened?")
 	}
 	finfo, err := os.Stat(filePath)
 	if err != nil {
-		return fmt.Errorf("Cannot add '%s' to archive: %v", filePath, err)
+		return nil, fmt.Errorf("Cannot add '%s' to archive: %v", filePath, err)
 	}
 	header := &tar.Header{
 		Name:    pathWithinArchive,
@@ -53,26 +68,15 @@ func (writer *TarWriter) AddToArchive(filePath, pathWithinArchive string) error 
 	// Write the header entry
 	if err := writer.tarWriter.WriteHeader(header); err != nil {
 		// Most likely error is archive/tar: write after close
-		return err
+		return nil, err
 	}
 
 	// Open the file whose data we're going to add.
 	file, err := os.Open(filePath)
 	defer file.Close()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// Copy the contents of the file into the tarWriter.
-	bytesWritten, err := io.Copy(writer.tarWriter, file)
-	if bytesWritten != header.Size {
-		return fmt.Errorf("addToArchive() copied only %d of %d bytes for file %s",
-			bytesWritten, header.Size, filePath)
-	}
-	if err != nil {
-		return fmt.Errorf("Error copying %s into tar archive: %v",
-			filePath, err)
-	}
-
-	return nil
+	return WriteWithChecksums(file, writer.tarWriter, algorithms)
 }
