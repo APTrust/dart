@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -116,7 +117,42 @@ func TestCalculateChecksums(t *testing.T) {
 	assert.Equal(t, "85be22159f728d5194cbbd69ff6b2bcf0af4fe3ec79ae101b6a4a044fd8c2c86", checksums[constants.SHA256])
 	assert.Equal(t, "d52762618913de4792b8f0044fc021bc4eadb853e8deb854c2a2378fb5171f811b4596c391dd198d0831a9631aebe8c6", checksums[constants.SHA384])
 	assert.Equal(t, "0e0b2181ce78ea879e962cf3731cb9631d26ce04cd0c1a71765b32625a3ee7bd8209de6b8beee80657ecb449d3ab7300fbf6231c9287e51bbd6637e6e25ff0d9", checksums[constants.SHA512])
+}
 
+func TestWriteWithChecksums(t *testing.T) {
+	bagPath, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	require.Nil(t, err)
+
+	algs := []string{constants.MD5, constants.SHA256}
+	bagFile, err := os.Open(bagPath)
+	if bagFile != nil {
+		defer bagFile.Close()
+	}
+	require.Nil(t, err)
+
+	outfile, err := ioutil.TempFile("", "fileutil_test")
+	require.Nil(t, err)
+	defer outfile.Close()
+	defer os.Remove(outfile.Name())
+
+	checksums, err := fileutil.WriteWithChecksums(bagFile, outfile, algs)
+	require.Nil(t, err)
+	outfile.Close()
+
+	// Make sure the checksums were calculated
+	assert.Equal(t, 2, len(checksums))
+	assert.Equal(t, "3f6dc525527b5d87ca42ad3d7e3abbcd", checksums[constants.MD5])
+	assert.Equal(t, "85be22159f728d5194cbbd69ff6b2bcf0af4fe3ec79ae101b6a4a044fd8c2c86", checksums[constants.SHA256])
+
+	// Make sure the file was written
+	require.True(t, fileutil.FileExists(outfile.Name()))
+
+	orig, err := os.Stat(bagPath)
+	require.Nil(t, err)
+	copy, err := os.Stat(outfile.Name())
+	require.Nil(t, err)
+
+	assert.Equal(t, orig.Size(), copy.Size())
 }
 
 func TestParseManifestName(t *testing.T) {
