@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/md4"
 	"hash"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -129,38 +130,56 @@ func ParseManifestName(filePath string) (manifestType string, algorithm string) 
 // "sha256" => "FEDCBA0987654321"
 // "sha512" => "ABCDEF1234567890"
 func CalculateChecksums(reader io.Reader, algorithms []string) (map[string]string, error) {
+	return WriteWithChecksums(reader, ioutil.Discard, algorithms)
+}
+
+// WriteWithChecksums copies the contents of reader to writer,
+// calculating the specified checksums in the process. It returns
+// a map of the checksums in which the keys are the names of the
+// hashing algorithms and the values are digests. For example,
+// this call:
+//
+// checsums, err := WriteWithChecksums(file1, file2, []string{ "md5", "sha256"})
+//
+// will copy the contents of file1 to file2, and will calculate md5
+// and sha256 digests on the contents, returning a map that looks like
+// this:
+//
+// { "md5": "1234567", "sha256": "890abcd" }
+func WriteWithChecksums(reader io.Reader, writer io.Writer, algorithms []string) (map[string]string, error) {
 	if len(algorithms) == 0 {
 		return nil, errtypes.NewValueError("You must specify at least one algorithm.")
 	}
-	hashes := make([]io.Writer, len(algorithms))
+	writers := make([]io.Writer, len(algorithms)+1)
+	writers[0] = writer
 	for i, alg := range algorithms {
 		if !constants.IsSupportedAlgorithm(alg) {
 			return nil, errtypes.NewValueError("Unsupported algorithm: %s", alg)
 		}
 		if alg == constants.MD4 {
-			hashes[i] = md4.New()
+			writers[i+1] = md4.New()
 		} else if alg == constants.MD5 {
-			hashes[i] = md5.New()
+			writers[i+1] = md5.New()
 		} else if alg == constants.SHA1 {
-			hashes[i] = sha1.New()
+			writers[i+1] = sha1.New()
 		} else if alg == constants.SHA224 {
-			hashes[i] = sha256.New224()
+			writers[i+1] = sha256.New224()
 		} else if alg == constants.SHA256 {
-			hashes[i] = sha256.New()
+			writers[i+1] = sha256.New()
 		} else if alg == constants.SHA384 {
-			hashes[i] = sha512.New384()
+			writers[i+1] = sha512.New384()
 		} else if alg == constants.SHA512 {
-			hashes[i] = sha512.New()
+			writers[i+1] = sha512.New()
 		}
 	}
-	multiWriter := io.MultiWriter(hashes...)
+	multiWriter := io.MultiWriter(writers...)
 	_, err := io.Copy(multiWriter, reader)
 	if err != nil {
 		return nil, err
 	}
 	digests := make(map[string]string)
 	for i, alg := range algorithms {
-		_hash := hashes[i].(hash.Hash)
+		_hash := writers[i+1].(hash.Hash)
 		digests[alg] = fmt.Sprintf("%x", _hash.Sum(nil))
 	}
 	return digests, nil
