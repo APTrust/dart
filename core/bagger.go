@@ -56,7 +56,7 @@ func NewBagger(bagPath, payloadDir string, profile *BagItProfile, tagValues map[
 /*
 
 - Validate Profile
-- Validate that all defaults are present
+- Validate that all required tags are present
 - Include progress callback or io.Writer for writing progress messages
 - Add all payload files to bag in working dir
 - Build tag files
@@ -73,8 +73,8 @@ func (bagger *Bagger) BuildBag() bool {
 	if !ok {
 		return false
 	}
+	bagger.copyPayload()
 
-	// copy payload files
 	// write tag files
 	// create manifests
 
@@ -162,6 +162,15 @@ func (bagger *Bagger) addPayloadFile(filePath string) bool {
 			return false
 		}
 
+		targetDir := filepath.Dir(targetPath)
+		if !fileutil.IsDir(targetDir) {
+			err := os.MkdirAll(targetDir, 0755)
+			if err != nil {
+				bagger.addError(err.Error())
+				return false
+			}
+		}
+
 		// destFile is the writer we'll copy to
 		destFile, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, fileInfo.Mode())
 		defer destFile.Close()
@@ -182,7 +191,7 @@ func (bagger *Bagger) addPayloadFile(filePath string) bool {
 }
 
 func (bagger *Bagger) getBasePath(filePath string) string {
-	basePath := strings.Replace(filePath, bagger.PayloadDir, "", 1)
+	basePath := strings.Replace(filePath, bagger.PayloadDir+string(os.PathSeparator), "", 1)
 	if strings.HasSuffix(basePath, string(os.PathSeparator)) {
 		basePath = strings.TrimRight(basePath, string(os.PathSeparator))
 	}
@@ -205,4 +214,10 @@ func (bagger *Bagger) addChecksums(relativePath string, checksums map[string]str
 // addError adds a message to the list of bagging errors.
 func (bagger *Bagger) addError(format string, a ...interface{}) {
 	bagger.errors = append(bagger.errors, fmt.Sprintf(format, a...))
+}
+
+// Returns a list of error messages describing what went wrong with
+// the bagging process.
+func (bagger *Bagger) Errors() []string {
+	return bagger.errors
 }

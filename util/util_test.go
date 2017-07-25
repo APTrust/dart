@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
+	"os"
 	"testing"
 	"time"
 )
@@ -29,6 +30,7 @@ func TestJsonDumpAndLoad(t *testing.T) {
 	if tempfile != nil {
 		tempfile.Close()
 	}
+	defer os.Remove(tempfile.Name())
 	require.Nil(t, err)
 	obj := SampleStruct{
 		Id:      1234,
