@@ -1,31 +1,35 @@
 package core_test
 
 import (
-	//	"fmt"
 	"github.com/APTrust/bagit/core"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
-	//	"path/filepath"
-	//	"runtime"
 	"testing"
 )
 
-func TestNewBagger(t *testing.T) {
-	tempFile, err := ioutil.TempFile("", "bagger")
-	defer tempFile.Close()
-	defer os.Remove(tempFile.Name())
+func getBaggerPreReqs(t *testing.T) (tempFile *os.File, payloadDir string, aptrustProfile *core.BagItProfile) {
+	var err error
+	tempFile, err = ioutil.TempFile("", "bagger")
 	require.Nil(t, err)
 
-	payloadDir, err := testutil.GetPathToTestFileDir()
+	payloadDir, err = testutil.GetPathToTestFileDir()
 	require.Nil(t, err)
 
 	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	aptrustProfile, err := core.LoadBagItProfile(profilePath)
+	aptrustProfile, err = core.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
+
+	return tempFile, payloadDir, aptrustProfile
+}
+
+func TestNewBagger(t *testing.T) {
+	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
+	defer tempFile.Close()
+	defer os.Remove(tempFile.Name())
 
 	bagger := core.NewBagger(tempFile.Name(), payloadDir, aptrustProfile, nil, false)
 	require.NotNil(t, bagger)
