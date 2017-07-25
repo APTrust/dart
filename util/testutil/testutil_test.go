@@ -29,6 +29,18 @@ func TestGetPathToTestProfile(t *testing.T) {
 	assert.True(t, strings.HasSuffix(path, "/bagit/testdata/profiles/dpn_bagit_profile.json"))
 }
 
+func TestGetPathToTestFile(t *testing.T) {
+	path, err := testutil.GetPathToTestFile("sample.txt")
+	require.Nil(t, err)
+	assert.True(t, strings.HasSuffix(path, "/bagit/testdata/files/sample.txt"))
+}
+
+func TestGetPathToTestFileDir(t *testing.T) {
+	path, err := testutil.GetPathToTestFileDir()
+	require.Nil(t, err)
+	assert.True(t, strings.HasSuffix(path, "/bagit/testdata/files"))
+}
+
 func TestUntarTestBag(t *testing.T) {
 	pathToTarFile, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)

@@ -39,6 +39,22 @@ func GetPathToTestProfile(profileName string) (string, error) {
 	return filepath.Join(dataPath, "profiles", profileName), nil
 }
 
+func GetPathToTestFile(fileName string) (string, error) {
+	dataPath, err := GetPathToTestData()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dataPath, "files", fileName), nil
+}
+
+func GetPathToTestFileDir() (string, error) {
+	dataPath, err := GetPathToTestData()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dataPath, "files"), nil
+}
+
 // UntarTestBag untars a bag into a temporary directory for testing.
 // pathToTarFile is the absolute path the tar file.
 // This assumes name of untarred bag will match name of tar file,
