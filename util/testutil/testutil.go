@@ -47,7 +47,7 @@ func GetPathToTestProfile(profileName string) (string, error) {
 // convenience method for testing only. Returns the name of the
 // temp dir, the path to the untarred bag, and an error if there
 // is one.
-func UntarTestBag(pathToTarFile string) (tempDir string, bagPath string, err error) {
+func UntarTestBag(pathToTarFile string) (tempDir string, pathToUntarredBag string, err error) {
 	tempDir, err = ioutil.TempDir("", "bagit-test")
 	if err != nil {
 		return "", "", fmt.Errorf("Cannot create temp dir: %v", err)
@@ -62,6 +62,6 @@ func UntarTestBag(pathToTarFile string) (tempDir string, bagPath string, err err
 	if index > -1 {
 		nameOfOutputDir = nameOfOutputDir[0:index]
 	}
-	pathToUntarredBag := filepath.Join(tempDir, nameOfOutputDir)
+	pathToUntarredBag = filepath.Join(tempDir, nameOfOutputDir)
 	return tempDir, pathToUntarredBag, nil
 }
