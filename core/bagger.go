@@ -88,9 +88,14 @@ func (bagger *Bagger) BuildBag() bool {
 
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
+	// Avoid nil pointer errors
+	tagValues := bagger.TagValues
+	if tagValues == nil {
+		tagValues = make(map[string]string)
+	}
 	for filename, tagmap := range bagger.Profile.TagFilesRequired {
 		for tagname, tag := range tagmap {
-			value, keyExists := bagger.TagValues[tagname]
+			value, keyExists := tagValues[tagname]
 			if tag.Required && !keyExists {
 				bagger.addError("Required tag %s for file %s is missing", tagname, filename)
 				ok = false

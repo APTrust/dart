@@ -109,16 +109,62 @@ func TestBuildBagDoesNotOverwrite(t *testing.T) {
 	assert.True(t, strings.HasSuffix(bagger.Errors()[0], "already exists. Use forceOverwrite=true to replace it."))
 }
 
-func TestBuildBag(t *testing.T) {
+func TestHasRequiredTags(t *testing.T) {
 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
 	dir := filepath.Dir(tempFile.Name())
 	tempFile.Close()
 	os.Remove(filepath.Dir(tempFile.Name()))
 
-	// profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
-	// require.Nil(t, err)
-	// dpnProfile, err := core.LoadBagItProfile(profilePath)
-	// require.Nil(t, err)
+	// Make sure we flag missing required APTrust tags
+	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, nil, true)
+	require.NotNil(t, bagger)
+
+	assert.False(t, bagger.BuildBag())
+	errors := bagger.Errors()
+	require.NotEmpty(t, errors)
+	require.Equal(t, len(APTrustDefaultTags), len(errors))
+
+	for tagName, _ := range APTrustDefaultTags {
+		foundError := false
+		for _, err := range errors {
+			if strings.Contains(err, tagName) {
+				foundError = true
+			}
+		}
+		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
+	}
+
+	// Make sure bagger flags missing required DPN tags
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
+
+	bagger = core.NewBagger(dir, payloadDir, dpnProfile, nil, true)
+	require.NotNil(t, bagger)
+
+	assert.False(t, bagger.BuildBag())
+	errors = bagger.Errors()
+	require.NotEmpty(t, errors)
+	require.Equal(t, len(DPNDefaultTags), len(errors))
+
+	for tagName, _ := range DPNDefaultTags {
+		foundError := false
+		for _, err := range errors {
+			if strings.Contains(err, tagName) {
+				foundError = true
+			}
+		}
+		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
+	}
+
+}
+
+func TestBuildBag(t *testing.T) {
+	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
+	dir := filepath.Dir(tempFile.Name())
+	tempFile.Close()
+	os.Remove(filepath.Dir(tempFile.Name()))
 
 	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, APTrustDefaultTags, true)
 	require.NotNil(t, bagger)
