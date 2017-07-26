@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"os"
 	"path/filepath"
@@ -73,12 +74,39 @@ func (bagger *Bagger) BuildBag() bool {
 	if !ok {
 		return false
 	}
+	ok = bagger.hasRequiredTags()
+	if !ok {
+		return false
+	}
 	bagger.copyPayload()
 
 	// write tag files
 	// create manifests
 
 	return true
+}
+
+func (bagger *Bagger) hasRequiredTags() bool {
+	ok := true
+	for filename, tagmap := range bagger.Profile.TagFilesRequired {
+		for tagname, tag := range tagmap {
+			value, keyExists := bagger.TagValues[tagname]
+			if tag.Required && !keyExists {
+				bagger.addError("Required tag %s for file %s is missing", tagname, filename)
+				ok = false
+			}
+			if !tag.EmptyOk && keyExists && value == "" {
+				bagger.addError("Tag %s for file %s cannot be empty", tagname, filename)
+				ok = false
+			}
+			if len(tag.Values) > 0 && keyExists && !util.StringListContains(tag.Values, value) {
+				bagger.addError("Value '%s' is not allowed for tag %s. Valid values: %s",
+					value, tagname, strings.Join(tag.Values, ", "))
+				ok = false
+			}
+		}
+	}
+	return ok
 }
 
 // initFileOrDir creates the directory in which we'll assemble the bag,

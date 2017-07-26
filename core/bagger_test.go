@@ -13,6 +13,39 @@ import (
 	"testing"
 )
 
+var APTrustDefaultTags = map[string]string{
+	"BagIt-Version":               "0.97",
+	"Tag-File-Character-Encoding": "UTF-8",
+	"Source-Organization":         "APTrust",
+	"Title":                       "Test Object",
+	"Access":                      "Institution",
+}
+
+var DPNDefaultTags = map[string]string{
+	"BagIt-Version":               "0.97",
+	"Tag-File-Character-Encoding": "UTF-8",
+	"Contact-Name":                "Homer Simpson",
+	"Contact-Phone":               "555-555-1212",
+	"Bag-Size":                    "411",
+	"Bag-Group-Identifier":        "None",
+	"Source-Organization":         "APTrust",
+	"Organization-Address":        "160 McCormick Rd, Charlottesville, VA 22904",
+	"Contact-Email":               "homer@example.com",
+	"Bagging-Date":                "2017-07-26",
+	"Bag-Count":                   "1",
+	"Ingest-Node-Name":            "aptrust",
+	"Ingest-Node-Contact-Name":    "Apu Nahasapeemapetilon",
+	"Ingest-Node-Contact-Email":   "apu@example.com",
+	"First-Version-Object-ID":     "00af15fd-1046-4811-8cb5-878ec66cf0da",
+	"Interpretive-Object-ID":      "83bbc27a-86ef-4d1d-be09-4d78cf9e7df3",
+	"Rights-Object-ID":            "3559d615-6df9-4f30-a2b0-511568359787",
+	"DPN-Object-ID":               "00af15fd-1046-4811-8cb5-878ec66cf0da",
+	"Local-ID":                    "Homer's Beer Can Collection",
+	"Ingest-Node-Address":         "160 McCormick Rd, Charlottesville, VA 22904",
+	"Version-Number":              "1",
+	"Bag-Type":                    "data",
+}
+
 func getBaggerPreReqs(t *testing.T) (tempFile *os.File, payloadDir string, aptrustProfile *core.BagItProfile) {
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
@@ -82,7 +115,12 @@ func TestBuildBag(t *testing.T) {
 	tempFile.Close()
 	os.Remove(filepath.Dir(tempFile.Name()))
 
-	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, nil, true)
+	// profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	// require.Nil(t, err)
+	// dpnProfile, err := core.LoadBagItProfile(profilePath)
+	// require.Nil(t, err)
+
+	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, APTrustDefaultTags, true)
 	require.NotNil(t, bagger)
 
 	assert.True(t, bagger.BuildBag())
