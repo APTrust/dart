@@ -14,6 +14,7 @@ type Bagger struct {
 	profile        *BagItProfile
 	ForceOverwrite bool
 	files          map[string]*fileutil.FileSummary
+	tags           map[string][]*Tag
 	tarWriter      *fileutil.TarWriter
 	errors         []string
 
@@ -38,6 +39,7 @@ func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
 		bag:            NewBag(bagPath),
 		profile:        profile,
 		files:          make(map[string]*fileutil.FileSummary),
+		tags:           make(map[string][]*Tag),
 		ForceOverwrite: false,
 		errors:         make([]string, 0),
 	}
@@ -47,7 +49,60 @@ func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
 	return bagger
 }
 
+// AddFile adds a file to the bag. Param absSourcePath is the path
+// of the file to add. Param relDestPath is the relative path within
+// the bag where the file should be added. For example, the following
+// adds a payload file to the data directory:
+//
+// bagger.AddFile("/home/joe/document.pdf", "data/document.pdf")
+//
+// This adds a tag file to the top-level directory:
+//
+// bagger.AddFile("/home/joe/custom-tag-data.txt", "custom-tag-data.txt")
+//
+// This adds a tag file to a custom tag directory:
+//
+// bagger.AddFile("/home/joe/tag-info.txt", "custom-tags/tag-info.txt")
+//
+// Don't add manifests here, or you'll get an error.
 func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
+	manifestType, alg := fileutil.ParseManifestName(relDestPath)
+	if manifestType != "" && alg != "" {
+		bagger.addError("Don't add manifest '%s' through AddFile", relDestPath)
+		return false
+	}
+	fs, err := fileutil.NewFileSummaryFromPath(absSourcePath)
+	if err != nil {
+		bagger.addError("Error adding %s: %v", absSourcePath, err)
+		return false
+	}
+	fs.RelPath = relDestPath
+	bagger.files[absSourcePath] = fs
+	return true
+}
+
+// AddTag adds a tag that will be written to a text manifest when
+// the bag is written to disk. Param relDestPath is the relative
+// path within the file where this tag should be written. Param tag
+// is the tag to write. If a tag has multiple Values, the will be
+// written in the order they appear. The following example adds the
+// Title tag to the aptrust-info.txt file:
+//
+// titleTag := NewTag("Title", "An Inquiry into Human Understanding")
+// bagger.AddTag("aptrust-info.txt", titleTag)
+//
+// When you call bagger.BuildBag(), the bagger will create the tag
+// file and write in the tags, only for the tags you've added.
+// Tags will be written in the order they were added, since the
+// BagIt spec says tag order should be preserved.
+//
+// You can skip this behavior and copy in your own tag files using
+// bagger.AddFile().
+func (bagger *Bagger) AddTag(relDestPath string, tag *Tag) bool {
+	if bagger.tags[relDestPath] == nil {
+		bagger.tags[relDestPath] = make([]*Tag, 0)
+	}
+	bagger.tags[relDestPath] = append(bagger.tags[relDestPath], tag)
 	return true
 }
 
