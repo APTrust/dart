@@ -41,21 +41,14 @@ func (iter *TarFileIterator) Next() (io.ReadCloser, *FileSummary, error) {
 		return nil, nil, err
 	}
 	iter.setTopLevelDirName(header.Name)
-	finfo := header.FileInfo()
-	// Path to file, minus the top-level directory name,
-	// which is the name of the bag.
-	relPathInArchive := (strings.Join(strings.Split(header.Name, "/")[1:], "/"))
-	fs := &FileSummary{
-		RelPath:       relPathInArchive,
-		Mode:          finfo.Mode(),
-		Size:          header.Size,
-		ModTime:       header.ModTime,
-		IsDir:         header.Typeflag == tar.TypeDir,
-		IsRegularFile: header.Typeflag == tar.TypeReg || header.Typeflag == tar.TypeRegA,
-		Uid:           header.Uid,
-		Gid:           header.Gid,
-	}
-
+	// trimPrefix is the bag's top-level directory name,
+	// which we want to trim from the header path to get
+	// the file's actual relative path within the bag.
+	// E.g. "bag_1337/data/image.jpg" should be trimmed
+	// to "data/image.jpg" to match up against entries
+	// in the payload manifests.
+	trimPrefix := strings.Split(header.Name, "/")[0] + "/"
+	fs, err := NewFileSummaryFromTarHeader(header, trimPrefix)
 	// Wrap our tar reader in a TarReadCloser. When the caller
 	// calls Read() on this object, it will read to the end
 	// of whatever file the current header describes.
