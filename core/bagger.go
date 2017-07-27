@@ -79,10 +79,58 @@ func (bagger *Bagger) BuildBag() bool {
 		return false
 	}
 	bagger.copyPayload()
+	//bagger.writeTagFiles()
 
 	// write tag files
 	// create manifests
 
+	return true
+}
+
+func (bagger *Bagger) writeTagFiles() bool {
+	for filename, tagmap := range bagger.Profile.TagFilesRequired {
+		if !bagger.writeTagFile(filename, tagmap) {
+			return false
+		}
+	}
+	return true
+}
+
+func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*Tag) bool {
+	//var checksums map[string]string
+	var err error
+	if bagger.tarWriter != nil {
+		// Write the tag file into the tar archive, and keep track of its checksums
+		// checksums, err = bagger.tarWriter.AddToArchive(filename, tagmap, bagger.Profile.ManifestsRequired)
+	} else {
+		targetPath := filepath.Join(bagger.Bag.Path, filename)
+		if fileutil.FileExists(targetPath) {
+			bagger.addError(fmt.Sprintf("Cannot write tag file %s: file already exists", targetPath))
+			return false
+		}
+		targetDir := filepath.Dir(targetPath)
+		if !fileutil.IsDir(targetDir) {
+			err := os.MkdirAll(targetDir, 0755)
+			if err != nil {
+				bagger.addError(err.Error())
+				return false
+			}
+		}
+		tagFile, err := os.Create(targetPath)
+		defer tagFile.Close()
+		if err != nil {
+			bagger.addError(err.Error())
+			return false
+		}
+
+		// Copy src to dest, and keep track of the checksums
+		// checksums, err = fileutil.WriteWithChecksums(srcFile, destFile, bagger.Profile.ManifestsRequired)
+	}
+	if err != nil {
+		bagger.addError(err.Error())
+		return false
+	}
+	//bagger.addChecksums(relativePath, checksums)
 	return true
 }
 
@@ -235,7 +283,12 @@ func (bagger *Bagger) getBasePath(filePath string) string {
 func (bagger *Bagger) addChecksums(relativePath string, checksums map[string]string) {
 	for algorithm, digest := range checksums {
 		manifestFileName := fmt.Sprintf("manifest-%s.txt", algorithm)
-		manifestFile := bagger.Bag.Manifests[manifestFileName]
+		fileMap := bagger.Bag.Manifests
+		if !strings.HasPrefix(relativePath, "data/") {
+			manifestFileName = fmt.Sprintf("tagmanifest-%s.txt", algorithm)
+			fileMap = bagger.Bag.TagManifests
+		}
+		manifestFile := fileMap[manifestFileName]
 		if manifestFile == nil {
 			manifestFile = NewFile(int64(0))
 			bagger.Bag.Manifests[manifestFileName] = manifestFile
