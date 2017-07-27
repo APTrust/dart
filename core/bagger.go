@@ -143,7 +143,6 @@ func (bagger *Bagger) BuildBag() bool {
 		return false
 	}
 	bagger.copyPayload()
-	//bagger.writeTagFiles()
 
 	// write tag files
 	// create manifests
