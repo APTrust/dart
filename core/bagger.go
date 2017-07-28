@@ -10,16 +10,17 @@ import (
 )
 
 type Bagger struct {
-	bag       *Bag
-	profile   *BagItProfile
-	files     map[string]*fileutil.FileSummary
+	bag     *Bag
+	profile *BagItProfile
+	files   map[string]*fileutil.FileSummary
+
+	// Use bag.TagFiles instead of this hash
 	tags      map[string][]*Tag
 	tarWriter *fileutil.TarWriter
 	errors    []string
 
 	// TODO: Delete these
 	PayloadDir string
-	TagValues  map[string]string
 }
 
 // NewBagger creates a new Bagger.
