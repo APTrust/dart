@@ -10,13 +10,12 @@ import (
 )
 
 type Bagger struct {
-	bag            *Bag
-	profile        *BagItProfile
-	ForceOverwrite bool
-	files          map[string]*fileutil.FileSummary
-	tags           map[string][]*Tag
-	tarWriter      *fileutil.TarWriter
-	errors         []string
+	bag       *Bag
+	profile   *BagItProfile
+	files     map[string]*fileutil.FileSummary
+	tags      map[string][]*Tag
+	tarWriter *fileutil.TarWriter
+	errors    []string
 
 	// TODO: Delete these
 	PayloadDir string
@@ -27,21 +26,18 @@ type Bagger struct {
 //
 // Param bagPath is the path to the location where the bag should
 // be built. This should be a directory name. The bagger will
-// create the directory, if it does not already exist. If the directory
-// exists, the bagger will not overwrite it, unless the forceOverwrite
-// (see below) is true. If bagPath ends with ".tar", the bag will be
-// created as a tar file instead of as a directory.
+// create the directory, if it does not already exist. If bagPath ends with
+// ".tar", the bag will be created as a tar file instead of as a directory.
 //
 // Param profile is the BagIt profile that describes the requirements
 // for the bag.
 func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
 	bagger := &Bagger{
-		bag:            NewBag(bagPath),
-		profile:        profile,
-		files:          make(map[string]*fileutil.FileSummary),
-		tags:           make(map[string][]*Tag),
-		ForceOverwrite: false,
-		errors:         make([]string, 0),
+		bag:     NewBag(bagPath),
+		profile: profile,
+		files:   make(map[string]*fileutil.FileSummary),
+		tags:    make(map[string][]*Tag),
+		errors:  make([]string, 0),
 	}
 	if strings.HasSuffix(bagPath, ".tar") {
 		bagger.tarWriter = fileutil.NewTarWriter(bagPath)
@@ -84,7 +80,7 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 // AddTag adds a tag that will be written to a text manifest when
 // the bag is written to disk. Param relDestPath is the relative
 // path within the file where this tag should be written. Param tag
-// is the tag to write. If a tag has multiple Values, the will be
+// is the tag to write. If a tag has multiple Values, they will be
 // written in the order they appear. The following example adds the
 // Title tag to the aptrust-info.txt file:
 //
@@ -97,7 +93,9 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 // BagIt spec says tag order should be preserved.
 //
 // You can skip this behavior and copy in your own tag files using
-// bagger.AddFile().
+// bagger.AddFile(). If you're adding tags for a file like bag-info.txt,
+// don't also copy in bag-info.txt through bagger.AddFile(), since
+// that will cause bag-info.txt to be written twice.
 func (bagger *Bagger) AddTag(relDestPath string, tag *Tag) bool {
 	if bagger.tags[relDestPath] == nil {
 		bagger.tags[relDestPath] = make([]*Tag, 0)
@@ -106,14 +104,18 @@ func (bagger *Bagger) AddTag(relDestPath string, tag *Tag) bool {
 	return true
 }
 
+// Profile returns the BagItProfile used to construct this bag.
 func (bagger *Bagger) Profile() BagItProfile {
 	return *bagger.profile
 }
 
+// Bag returns a bag object that describes the bag being built.
 func (bagger *Bagger) Bag() Bag {
 	return *bagger.bag
 }
 
+// Errors returns a list of errors that occurred duing the bagging
+// process.
 func (bagger *Bagger) Errors() []string {
 	return bagger.errors
 }
@@ -133,14 +135,28 @@ func (bagger *Bagger) Errors() []string {
 
 */
 
-func (bagger *Bagger) BuildBag() bool {
-	ok := bagger.initFileOrDir()
+// WriteBag writes the bag to disk, returning true on success,
+// and false if there were errors. Check bagger.Errors() if this
+// returns false.
+//
+// Set overwrite to true if you want the bagger to overwrite
+// an existing version of the bag.
+//
+// Set param checkRequiredTags to true if you are
+// passing in tags through bagger.AddTag() and you want to make
+// sure all required tags are present and valid. Set it to false
+// if you are copying in tag files like bag-info.txt through
+// bagger.AddFile().
+func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
+	ok := bagger.initFileOrDir(overwrite)
 	if !ok {
 		return false
 	}
-	ok = bagger.hasRequiredTags()
-	if !ok {
-		return false
+	if checkRequiredTags {
+		ok = bagger.hasRequiredTags()
+		if !ok {
+			return false
+		}
 	}
 	bagger.copyPayload()
 
@@ -197,27 +213,41 @@ func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*Tag) bool
 	return true
 }
 
+func (bagger *Bagger) findTag(filename, label string) *Tag {
+	if bagger.tags != nil {
+		tags := bagger.tags[filename]
+		if tags != nil {
+			for _, tag := range tags {
+				if tag.Value == label {
+					return tag
+				}
+			}
+		}
+	}
+	return nil
+}
+
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
 	// Avoid nil pointer errors
-	tagValues := bagger.TagValues
+	tagValues := bagger.tags
 	if tagValues == nil {
-		tagValues = make(map[string]string)
+		tagValues = make(map[string][]*Tag)
 	}
-	for filename, tagmap := range bagger.profile.TagFilesRequired {
-		for tagname, tag := range tagmap {
-			value, keyExists := tagValues[tagname]
-			if tag.Required && !keyExists {
+	for filename, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
+		for tagname, tagdesc := range mapOfRequiredTags {
+			tag := bagger.findTag(filename, tagname)
+			if tagdesc.Required && tag == nil {
 				bagger.addError("Required tag %s for file %s is missing", tagname, filename)
 				ok = false
 			}
-			if !tag.EmptyOk && keyExists && value == "" {
+			if !tagdesc.EmptyOk && tag != nil && tag.Value == "" && len(tag.Values) == 0 {
 				bagger.addError("Tag %s for file %s cannot be empty", tagname, filename)
 				ok = false
 			}
-			if len(tag.Values) > 0 && keyExists && !util.StringListContains(tag.Values, value) {
+			if len(tagdesc.Values) > 0 && tag != nil && !util.StringListContains(tagdesc.Values, tag.Value) {
 				bagger.addError("Value '%s' is not allowed for tag %s. Valid values: %s",
-					value, tagname, strings.Join(tag.Values, ", "))
+					tag.Value, tagname, strings.Join(tagdesc.Values, ", "))
 				ok = false
 			}
 		}
@@ -228,9 +258,9 @@ func (bagger *Bagger) hasRequiredTags() bool {
 // initFileOrDir creates the directory in which we'll assemble the bag,
 // performing some safety checks along the way. Returns true on
 // success, false otherwise.
-func (bagger *Bagger) initFileOrDir() bool {
+func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 	if fileutil.FileExists(bagger.bag.Path) {
-		if bagger.ForceOverwrite {
+		if overwrite {
 			if fileutil.LooksSafeToDelete(bagger.bag.Path, 12, 3) {
 				err := os.RemoveAll(bagger.bag.Path)
 				if err != nil {
@@ -244,7 +274,7 @@ func (bagger *Bagger) initFileOrDir() bool {
 				return false
 			}
 		} else {
-			bagger.addError("%s already exists. Use forceOverwrite=true to replace it.",
+			bagger.addError("%s already exists. Use overwrite=true to replace it.",
 				bagger.bag.Path)
 			return false
 		}
