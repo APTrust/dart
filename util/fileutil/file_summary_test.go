@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
@@ -20,6 +21,9 @@ func TestNewFileSummaryFromPath(t *testing.T) {
 	require.Nil(t, err)
 	require.NotNil(t, fs)
 
+	absPath, _ := filepath.Abs(tarFile)
+
+	assert.Equal(t, absPath, fs.AbsPath)
 	assert.Empty(t, fs.RelPath)
 	assert.EqualValues(t, int64(0644), fs.Mode)
 	assert.Equal(t, int64(40960), fs.Size)
@@ -66,6 +70,7 @@ func TestNewFileSummaryFromTarHeader(t *testing.T) {
 	fs, err := fileutil.NewFileSummaryFromTarHeader(tarHeader, "my_bag_o_goodies/")
 	require.Nil(t, err)
 	require.NotNil(t, fs)
+	assert.Empty(t, fs.AbsPath)
 	assert.Equal(t, "data/image.jpg", fs.RelPath)
 	assert.EqualValues(t, int64(0755), fs.Mode)
 	assert.Equal(t, int64(8800), fs.Size)

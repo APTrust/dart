@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/APTrust/bagit/util/platform"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -12,14 +13,33 @@ import (
 // FileSummary includes the intersection of the set of
 // file attributes available from os.FileInfo and tar.Header.
 type FileSummary struct {
-	RelPath       string
-	Mode          os.FileMode
-	Size          int64
-	ModTime       time.Time
-	IsDir         bool
+	// AbsPath is the absolute path of the file on disk.
+	// This will be an empty string if the file is inside
+	// a tar archive.
+	AbsPath string
+	// RelPath is the relative path of the file within the
+	// bag. A typical payload file would have a RelPath like
+	// "data/document.pdf".
+	RelPath string
+	// Mode is the file mode (permission set) of the file.
+	// For example, 0644 has read/write privileges for the
+	// owner and read-only for others.
+	Mode os.FileMode
+	// Size is the size of the file in bytes.
+	Size int64
+	// ModTime is the time the file was last modified.
+	ModTime time.Time
+	// IsDir is true if the file is directory.
+	IsDir bool
+	// IsRegularFile is true if the file is regular file
+	// (i.e. not a directory or a link).
 	IsRegularFile bool
-	Uid           int
-	Gid           int
+	// Uid is the id of the user who owns the file. This
+	// will be zero when bagging files on non-posix systems.
+	Uid int
+	// Gid is the id of the group that owns the file. This
+	// will be zero when bagging files on non-posix systems.
+	Gid int
 }
 
 // NewFileSummaryFromPath returns a new FileSummary object
@@ -32,7 +52,9 @@ func NewFileSummaryFromPath(pathToFile string) (*FileSummary, error) {
 		return nil, err
 	}
 	uid, gid := platform.FileOwnerAndGroup(fileInfo)
+	absPath, _ := filepath.Abs(pathToFile)
 	return &FileSummary{
+		AbsPath:       absPath,
 		RelPath:       "", // Let the caller set this
 		Mode:          fileInfo.Mode(),
 		Size:          fileInfo.Size(),
@@ -74,6 +96,7 @@ func NewFileSummaryFromTarHeader(header *tar.Header, trimPrefix string) (*FileSu
 	relPathInArchive := strings.Replace(header.Name, trimPrefix, "", 1)
 	finfo := header.FileInfo()
 	return &FileSummary{
+		AbsPath:       "",
 		RelPath:       relPathInArchive,
 		Mode:          finfo.Mode(),
 		Size:          header.Size,
