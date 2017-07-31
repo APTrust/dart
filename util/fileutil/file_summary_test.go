@@ -2,10 +2,12 @@ package fileutil_test
 
 import (
 	"archive/tar"
+	"github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -25,10 +27,19 @@ func TestNewFileSummaryFromPath(t *testing.T) {
 	assert.False(t, fs.IsDir)
 	assert.True(t, fs.IsRegularFile)
 
-	// We have to do platform-specific implementations
-	// for uid and gid, and these are not done yet.
-	//assert.NotEmpty(t, fs.Uid)
-	//assert.NotEmpty(t, fs.Gid)
+	posix := []string{
+		"darwin",
+		"dragonfly",
+		"freebsd",
+		"linux",
+		"netbsd",
+		"openbsd",
+		"solaris",
+	}
+	if util.StringListContains(posix, runtime.GOOS) {
+		assert.NotEmpty(t, fs.Uid)
+		assert.NotEmpty(t, fs.Gid)
+	}
 }
 
 func TestNewFileSummaryFromTarHeader(t *testing.T) {

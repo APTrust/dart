@@ -3,6 +3,7 @@ package fileutil
 import (
 	"archive/tar"
 	"fmt"
+	"github.com/APTrust/bagit/util/platform"
 	"os"
 	"strings"
 	"time"
@@ -30,6 +31,7 @@ func NewFileSummaryFromPath(pathToFile string) (*FileSummary, error) {
 	if err != nil {
 		return nil, err
 	}
+	uid, gid := platform.FileOwnerAndGroup(fileInfo)
 	return &FileSummary{
 		RelPath:       "", // Let the caller set this
 		Mode:          fileInfo.Mode(),
@@ -37,8 +39,8 @@ func NewFileSummaryFromPath(pathToFile string) (*FileSummary, error) {
 		ModTime:       fileInfo.ModTime(),
 		IsDir:         fileInfo.IsDir(),
 		IsRegularFile: fileInfo.Mode().IsRegular(),
-		Uid:           0,
-		Gid:           0,
+		Uid:           uid,
+		Gid:           gid,
 	}, nil
 }
 
