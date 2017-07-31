@@ -4,7 +4,8 @@ import (
 	"fmt"
 )
 
-// ValueError describes an invalid value that was passed to a function.
+// ValueError describes an invalid value that was passed to a function
+// or assigned to a tag.
 type ValueError struct {
 	message string
 }
@@ -17,6 +18,24 @@ func (err *ValueError) Error() string {
 // NewValueError creates a new ValueError.
 func NewValueError(format string, a ...interface{}) *ValueError {
 	return &ValueError{message: fmt.Sprintf(format, a...)}
+}
+
+// EmptyError describes an illegal empty value.
+// This is used mainly in validating tag values, where
+// we want to distinguish between a value that was specified
+// but not allowed vs. a value that was not specified at all.
+type EmptyError struct {
+	message string
+}
+
+// Error returns the error message.
+func (err *EmptyError) Error() string {
+	return err.message
+}
+
+// NewEmptyError creates a new EmptyError.
+func NewEmptyError(format string, a ...interface{}) *EmptyError {
+	return &EmptyError{message: fmt.Sprintf(format, a...)}
 }
 
 // RuntimeError describes an invalid value that was passed to a function.

@@ -490,7 +490,7 @@ func (validator *Validator) ValidateTagFiles() bool {
 			// Check the tags
 			for tagName, tagDefinition := range tagMap {
 				tagValues := tagFile.ParsedData.ValuesForKey(tagName)
-				tagIsValid := validator.ValidateTag(tagName, filePath, tagDefinition, tagValues)
+				tagIsValid := validator.ValidateTag(filePath, tagDefinition, tagValues)
 				if !tagIsValid {
 					ok = false
 				}
@@ -501,12 +501,11 @@ func (validator *Validator) ValidateTagFiles() bool {
 }
 
 // Validate tag validates a single tag to ensure it meets the requirements
-// in validator.Profile's tag definitions. Param tagName is the name of
-// the tag. Param filePath is the relative path within the bag of the file
-// in which the tag was found. Param tagDefinition is a definition of the
-// requirements for the tag. Param tagValues is the list of values for this
-// tag, as parsed from the tagfile.
-func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition *TagDefinition, tagValues []string) bool {
+// in validator.Profile's tag definitions. Param filePath is the relative
+// path within the bag of the file in which the tag was found. Param
+// tagDef is a definition of the requirements for the tag. Param tagValues
+// is the list of values for this tag, as parsed from the tagfile.
+func (validator *Validator) ValidateTag(filePath string, tagDef *TagDefinition, tagValues []string) bool {
 	tagIsMissing := (tagValues == nil || len(tagValues) == 0)
 	tagIsEmpty := true
 	if !tagIsMissing {
@@ -516,30 +515,27 @@ func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition 
 			}
 		}
 	}
-	if !tagDefinition.Required && tagIsMissing {
+	if !tagDef.Required && tagIsMissing {
 		return true
 	}
-	if tagDefinition.EmptyOk && tagIsEmpty {
+	if tagDef.EmptyOk && tagIsEmpty {
 		return true
 	}
-	if tagDefinition.Required && tagIsMissing {
-		validator.addError("Required tag '%s' is missing from file '%s'.", tagName, filePath)
+	if tagDef.Required && tagIsMissing {
+		validator.addError("Required tag '%s' is missing from file '%s'.", tagDef.Label, filePath)
 		return false
 	}
-	if !tagDefinition.EmptyOk && tagIsEmpty {
-		validator.addError("Tag '%s' in file '%s' cannot be empty.", tagName, filePath)
+	if !tagDef.EmptyOk && tagIsEmpty {
+		validator.addError("Tag '%s' in file '%s' cannot be empty.", tagDef.Label, filePath)
 		return false
 	}
 	// We have a tag and a value. Make sure the value is allowed.
 	ok := true
-	if tagDefinition.Values != nil && len(tagDefinition.Values) > 0 {
-		for _, value := range tagValues {
-			if !util.StringListContains(tagDefinition.Values, value) {
-				validator.addError("Value '%s' for tag '%s' in '%s' is not in "+
-					"list of allowed values (%s)", value, tagName, filePath,
-					strings.Join(tagDefinition.Values, " ,"))
-				ok = false
-			}
+	for _, tagValue := range tagValues {
+		err := tagDef.ValueIsAllowed(tagValue)
+		if err != nil {
+			validator.addError("In file '%s': %s", filePath, err.Error())
+			ok = false
 		}
 	}
 	return ok

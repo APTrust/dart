@@ -302,31 +302,31 @@ func TestValidateTag(t *testing.T) {
 	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
 	tagDef := validator.Profile.TagFilesRequired["aptrust-info.txt"]["Access"]
-	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Consortia"}))
+	assert.True(t, validator.ValidateTag("aptrust-info.txt", tagDef, []string{"Consortia"}))
 	assert.Empty(t, validator.Errors())
-	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Institution"}))
+	assert.True(t, validator.ValidateTag("aptrust-info.txt", tagDef, []string{"Institution"}))
 	assert.Empty(t, validator.Errors())
-	assert.True(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Restricted"}))
+	assert.True(t, validator.ValidateTag("aptrust-info.txt", tagDef, []string{"Restricted"}))
 	assert.Empty(t, validator.Errors())
 
 	// Value not explicitly allowed
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"Inertia"}))
+	assert.False(t, validator.ValidateTag("aptrust-info.txt", tagDef, []string{"Inertia"}))
 	require.NotEmpty(t, validator.Errors())
-	assert.Equal(t, "Value 'Inertia' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)", validator.Errors()[0])
+	assert.Equal(t, "In file 'aptrust-info.txt': Value 'Inertia' for tag 'Access' is not in list of allowed values (Consortia, Institution, Restricted)", validator.Errors()[0])
 
 	// Missing required tag
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, nil))
+	assert.False(t, validator.ValidateTag("aptrust-info.txt", tagDef, nil))
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Required tag 'Access' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
 
 	// Empty tag where empty is not OK
 	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
 	require.NotNil(t, validator)
-	assert.False(t, validator.ValidateTag("Access", "aptrust-info.txt", tagDef, []string{"", "", ""}))
+	assert.False(t, validator.ValidateTag("aptrust-info.txt", tagDef, []string{"", "", ""}))
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Tag 'Access' in file 'aptrust-info.txt' cannot be empty.", validator.Errors()[0])
 
@@ -348,7 +348,7 @@ func TestValidateBadAccessBag(t *testing.T) {
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
 	assert.Equal(t, 1, len(errors))
-	assert.True(t, util.StringListContains(errors, "Value 'Hands Off!' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)"))
+	assert.True(t, util.StringListContains(errors, "In file 'aptrust-info.txt': Value 'Hands Off!' for tag 'Access' is not in list of allowed values (Consortia, Institution, Restricted)"))
 }
 
 func TestValidateBadChecksumsBag(t *testing.T) {
@@ -493,7 +493,7 @@ func TestValidateBadTagSampleBag(t *testing.T) {
 
 	expected := []string{
 		"Tag 'Title' in file 'aptrust-info.txt' cannot be empty.",
-		"Value 'acksess' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)",
+		"In file 'aptrust-info.txt': Value 'acksess' for tag 'Access' is not in list of allowed values (Consortia, Institution, Restricted)",
 		"Digest for data/datastream-descMetadata in manifest manifest-sha256.txt: 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!' does not match actual 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'",
 		"File data/file-not-in-bag in manifest manifest-sha256.txt is missing from the data directory",
 		"Digest for custom_tags/tracked_tag_file.txt in tag manifest tagmanifest-sha256.txt: '0000000000000000000000000000000000000000000000000000000000000000' does not match actual '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'",
@@ -592,7 +592,7 @@ func TestValidateUntarredBadBag(t *testing.T) {
 
 	expected := []string{
 		"Tag 'Title' in file 'aptrust-info.txt' cannot be empty.",
-		"Value 'acksess' for tag 'Access' in 'aptrust-info.txt' is not in list of allowed values (Consortia ,Institution ,Restricted)",
+		"In file 'aptrust-info.txt': Value 'acksess' for tag 'Access' is not in list of allowed values (Consortia, Institution, Restricted)",
 		"Digest for data/datastream-descMetadata in manifest manifest-sha256.txt: 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!' does not match actual 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'",
 		"File data/file-not-in-bag in manifest manifest-sha256.txt is missing from the data directory",
 		"Digest for custom_tags/tracked_tag_file.txt in tag manifest tagmanifest-sha256.txt: '0000000000000000000000000000000000000000000000000000000000000000' does not match actual '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'",

@@ -79,6 +79,16 @@ type BagItProfileInfo struct {
 func LoadBagItProfile(filePath string) (*BagItProfile, error) {
 	profile := &BagItProfile{}
 	err := util.LoadJson(filePath, profile)
+	// The BagIt profile spec is a little out of alignment with our
+	// TagDefinition struct, so we have to copy the tag names into
+	// the struct from the JSON map keys.
+	if err == nil && profile != nil && profile.TagFilesRequired != nil {
+		for _, tagDefinitions := range profile.TagFilesRequired {
+			for tagName, tagDef := range tagDefinitions {
+				tagDef.Label = tagName
+			}
+		}
+	}
 	return profile, err
 }
 
