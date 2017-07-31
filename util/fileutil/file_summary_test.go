@@ -3,6 +3,7 @@ package fileutil_test
 import (
 	"archive/tar"
 	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -10,7 +11,24 @@ import (
 )
 
 func TestNewFileSummaryFromPath(t *testing.T) {
+	tarFile, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
+	require.Nil(t, err)
+	require.NotNil(t, tarFile)
+	fs, err := fileutil.NewFileSummaryFromPath(tarFile)
+	require.Nil(t, err)
+	require.NotNil(t, fs)
 
+	assert.Empty(t, fs.RelPath)
+	assert.EqualValues(t, int64(0644), fs.Mode)
+	assert.Equal(t, int64(40960), fs.Size)
+	assert.NotEmpty(t, fs.ModTime)
+	assert.False(t, fs.IsDir)
+	assert.True(t, fs.IsRegularFile)
+
+	// We have to do platform-specific implementations
+	// for uid and gid, and these are not done yet.
+	//assert.NotEmpty(t, fs.Uid)
+	//assert.NotEmpty(t, fs.Gid)
 }
 
 func TestNewFileSummaryFromTarHeader(t *testing.T) {
