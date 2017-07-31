@@ -3,17 +3,19 @@ package core
 import (
 	"bufio"
 	"fmt"
+	"github.com/APTrust/bagit/util/fileutil"
 	"io"
 	"regexp"
 	"strings"
 )
 
 type File struct {
-	// Size is the size of the file, in bytes.
-	Size int64
 	// Checksums are the checksums we've calculated for this file.
 	// Key is algorithm (e.g. "md5", "sha256") value is hex digest.
 	Checksums map[string]string
+	// FileSummary contains attributes about the file, such as size,
+	// mode, modtime, etc.
+	FileSummary *fileutil.FileSummary
 	// ParsedData is a collection of Key-Value pairs representing
 	// data parsed from the file. For manifests and tag manifests,
 	// this will be digest info, with the key being the path of
@@ -26,11 +28,11 @@ type File struct {
 	ParsedData *KeyValueCollection
 }
 
-func NewFile(size int64) *File {
+func NewFile(fs *fileutil.FileSummary) *File {
 	return &File{
-		Size:       size,
-		Checksums:  make(map[string]string),
-		ParsedData: NewKeyValueCollection(),
+		FileSummary: fs,
+		Checksums:   make(map[string]string),
+		ParsedData:  NewKeyValueCollection(),
 	}
 }
 

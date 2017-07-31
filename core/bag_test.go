@@ -59,9 +59,10 @@ func TestAddFileFromSummary(t *testing.T) {
 func TestGetChecksumFromManifest(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
-	bag.Manifests["manifest-md5.txt"] = core.NewFile(int64(344))
+	fs := fileSummary("data/sample.txt")
+	bag.Manifests["manifest-md5.txt"] = core.NewFile(fs)
 	bag.Manifests["manifest-md5.txt"].ParsedData.Append("data/sample.txt", "12345678")
-	bag.Manifests["manifest-sha256.txt"] = core.NewFile(int64(377))
+	bag.Manifests["manifest-sha256.txt"] = core.NewFile(fs)
 	bag.Manifests["manifest-sha256.txt"].ParsedData.Append("data/sample.txt", "fedac8989")
 
 	checksum, err := bag.GetChecksumFromManifest(constants.MD5, "data/sample.txt")
@@ -86,9 +87,10 @@ func TestGetChecksumFromManifest(t *testing.T) {
 func TestGetChecksumFromTagManifest(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
-	bag.TagManifests["tagmanifest-md5.txt"] = core.NewFile(int64(344))
+	fs := fileSummary("bag-info.txt")
+	bag.TagManifests["tagmanifest-md5.txt"] = core.NewFile(fs)
 	bag.TagManifests["tagmanifest-md5.txt"].ParsedData.Append("bag-info.txt", "12345678")
-	bag.TagManifests["tagmanifest-sha256.txt"] = core.NewFile(int64(377))
+	bag.TagManifests["tagmanifest-sha256.txt"] = core.NewFile(fs)
 	bag.TagManifests["tagmanifest-sha256.txt"].ParsedData.Append("bag-info.txt", "fedac8989")
 
 	checksum, err := bag.GetChecksumFromTagManifest(constants.MD5, "bag-info.txt")
@@ -113,10 +115,10 @@ func TestGetChecksumFromTagManifest(t *testing.T) {
 func TestGetTagValues(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
-
-	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
+	fs := fileSummary("data/sample.txt")
+	bag.TagFiles["aptrust-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "value1")
-	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagExists := bag.GetTagValues("key1")
@@ -133,10 +135,10 @@ func TestGetTagValues(t *testing.T) {
 func TestGetTagValuesFromFile(t *testing.T) {
 	bag := core.NewBag("path/to/bag.tar")
 	require.NotNil(t, bag)
-
-	bag.TagFiles["aptrust-info.txt"] = core.NewFile(int64(344))
+	fs := fileSummary("data/sample.txt")
+	bag.TagFiles["aptrust-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "value1")
-	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(int64(344))
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagExists, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")

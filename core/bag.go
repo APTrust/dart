@@ -29,7 +29,7 @@ func NewBag(filePath string) *Bag {
 // record and the type of the file. FileTypes are defined in constants.go.
 func (bag *Bag) AddFileFromSummary(fileSummary *fileutil.FileSummary) (*File, string) {
 	fileType := constants.PAYLOAD_FILE
-	file := NewFile(fileSummary.Size)
+	file := NewFile(fileSummary)
 	if strings.HasPrefix(fileSummary.RelPath, "tagmanifest-") {
 		bag.TagManifests[fileSummary.RelPath] = file
 		fileType = constants.MANIFEST

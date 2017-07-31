@@ -307,8 +307,20 @@ func (bagger *Bagger) copyPayload() bool {
 // addPayloadFile adds one file from the source directory into the
 // bag's payload (data) directory.
 func (bagger *Bagger) addPayloadFile(filePath string) bool {
+	// fileSummary tells us the mode the new file should have
+	fileSummary, err := fileutil.NewFileSummaryFromPath(filePath)
+	if err != nil {
+		bagger.addError(err.Error())
+		return false
+	}
+
+	// Set the relative path within the bag for this fle.
+	// Use forward slashes, even on Windows, because payload
+	// manifests require forward slashes, according to the spec.
+	// https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.1.3
+	fileSummary.RelPath = fmt.Sprintf("data/%s", bagger.getBasePath(filePath))
+
 	var checksums map[string]string
-	var err error
 	// Use forward slash, even on Windows, for tar file paths and manifest entries.
 	relativePath := fmt.Sprintf("data/%s", bagger.getBasePath(filePath))
 	if bagger.tarWriter != nil {
@@ -330,13 +342,6 @@ func (bagger *Bagger) addPayloadFile(filePath string) bool {
 			return false
 		}
 
-		// fileInfo tells us the mode the new file should have
-		fileInfo, err := os.Stat(filePath)
-		if err != nil {
-			bagger.addError(err.Error())
-			return false
-		}
-
 		targetDir := filepath.Dir(targetPath)
 		if !fileutil.IsDir(targetDir) {
 			err := os.MkdirAll(targetDir, 0755)
@@ -347,7 +352,7 @@ func (bagger *Bagger) addPayloadFile(filePath string) bool {
 		}
 
 		// destFile is the writer we'll copy to
-		destFile, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, fileInfo.Mode())
+		destFile, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, fileSummary.Mode)
 		defer destFile.Close()
 		if err != nil {
 			bagger.addError(err.Error())
@@ -361,7 +366,7 @@ func (bagger *Bagger) addPayloadFile(filePath string) bool {
 		bagger.addError(err.Error())
 		return false
 	}
-	bagger.addChecksums(relativePath, checksums)
+	bagger.addChecksums(fileSummary, checksums)
 	return true
 }
 
@@ -374,20 +379,20 @@ func (bagger *Bagger) getBasePath(filePath string) string {
 }
 
 // addChecksums adds a file's checksums to the appropriate manifests.
-func (bagger *Bagger) addChecksums(relativePath string, checksums map[string]string) {
+func (bagger *Bagger) addChecksums(fileSummary *fileutil.FileSummary, checksums map[string]string) {
 	for algorithm, digest := range checksums {
 		manifestFileName := fmt.Sprintf("manifest-%s.txt", algorithm)
 		fileMap := bagger.bag.Manifests
-		if !strings.HasPrefix(relativePath, "data/") {
+		if !strings.HasPrefix(fileSummary.RelPath, "data/") {
 			manifestFileName = fmt.Sprintf("tagmanifest-%s.txt", algorithm)
 			fileMap = bagger.bag.TagManifests
 		}
 		manifestFile := fileMap[manifestFileName]
 		if manifestFile == nil {
-			manifestFile = NewFile(int64(0))
+			manifestFile = NewFile(fileSummary)
 			bagger.bag.Manifests[manifestFileName] = manifestFile
 		}
-		manifestFile.Checksums[relativePath] = digest
+		manifestFile.Checksums[fileSummary.RelPath] = digest
 	}
 }
 
