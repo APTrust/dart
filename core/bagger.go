@@ -2,7 +2,7 @@ package core
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/util"
+	// "github.com/APTrust/bagit/util"
 	"github.com/APTrust/bagit/util/fileutil"
 	"os"
 	"path/filepath"
@@ -10,12 +10,8 @@ import (
 )
 
 type Bagger struct {
-	bag     *Bag
-	profile *BagItProfile
-	files   map[string]*fileutil.FileSummary
-
-	// Use bag.TagFiles instead of this hash
-	tags      map[string][]*Tag
+	bag       *Bag
+	profile   *BagItProfile
 	tarWriter *fileutil.TarWriter
 	errors    []string
 
@@ -36,8 +32,6 @@ func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
 	bagger := &Bagger{
 		bag:     NewBag(bagPath),
 		profile: profile,
-		files:   make(map[string]*fileutil.FileSummary),
-		tags:    make(map[string][]*Tag),
 		errors:  make([]string, 0),
 	}
 	if strings.HasSuffix(bagPath, ".tar") {
@@ -74,7 +68,7 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 		return false
 	}
 	fs.RelPath = relDestPath
-	bagger.files[absSourcePath] = fs
+	//bagger.files[absSourcePath] = fs
 	return true
 }
 
@@ -97,11 +91,11 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 // bagger.AddFile(). If you're adding tags for a file like bag-info.txt,
 // don't also copy in bag-info.txt through bagger.AddFile(), since
 // that will cause bag-info.txt to be written twice.
-func (bagger *Bagger) AddTag(relDestPath string, tag *Tag) bool {
-	if bagger.tags[relDestPath] == nil {
-		bagger.tags[relDestPath] = make([]*Tag, 0)
-	}
-	bagger.tags[relDestPath] = append(bagger.tags[relDestPath], tag)
+func (bagger *Bagger) AddTag(relDestPath string, tag *KeyValuePair) bool {
+	// if bagger.tags[relDestPath] == nil {
+	// 	bagger.tags[relDestPath] = make([]*Tag, 0)
+	// }
+	// bagger.tags[relDestPath] = append(bagger.tags[relDestPath], tag)
 	return true
 }
 
@@ -168,15 +162,15 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 }
 
 func (bagger *Bagger) writeTagFiles() bool {
-	for filename, tagmap := range bagger.profile.TagFilesRequired {
-		if !bagger.writeTagFile(filename, tagmap) {
-			return false
-		}
-	}
+	// for filename, tagmap := range bagger.profile.TagFilesRequired {
+	// 	if !bagger.writeTagFile(filename, tagmap) {
+	// 		return false
+	// 	}
+	// }
 	return true
 }
 
-func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*Tag) bool {
+func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*KeyValuePair) bool {
 	//var checksums map[string]string
 	var err error
 	if bagger.tarWriter != nil {
@@ -214,45 +208,31 @@ func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*Tag) bool
 	return true
 }
 
-func (bagger *Bagger) findTag(filename, label string) *Tag {
-	if bagger.tags != nil {
-		tags := bagger.tags[filename]
-		if tags != nil {
-			for _, tag := range tags {
-				if tag.Value == label {
-					return tag
-				}
-			}
-		}
-	}
-	return nil
-}
-
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
 	// Avoid nil pointer errors
-	tagValues := bagger.tags
-	if tagValues == nil {
-		tagValues = make(map[string][]*Tag)
-	}
-	for filename, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
-		for tagname, tagdesc := range mapOfRequiredTags {
-			tag := bagger.findTag(filename, tagname)
-			if tagdesc.Required && tag == nil {
-				bagger.addError("Required tag %s for file %s is missing", tagname, filename)
-				ok = false
-			}
-			if !tagdesc.EmptyOk && tag != nil && tag.Value == "" && len(tag.Values) == 0 {
-				bagger.addError("Tag %s for file %s cannot be empty", tagname, filename)
-				ok = false
-			}
-			if len(tagdesc.Values) > 0 && tag != nil && !util.StringListContains(tagdesc.Values, tag.Value) {
-				bagger.addError("Value '%s' is not allowed for tag %s. Valid values: %s",
-					tag.Value, tagname, strings.Join(tagdesc.Values, ", "))
-				ok = false
-			}
-		}
-	}
+	// tagValues := bagger.tags
+	// if tagValues == nil {
+	// 	tagValues = make(map[string][]*Tag)
+	// }
+	// for filename, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
+	// 	for tagname, tagdesc := range mapOfRequiredTags {
+	// 		tag := bagger.findTag(filename, tagname)
+	// 		if tagdesc.Required && tag == nil {
+	// 			bagger.addError("Required tag %s for file %s is missing", tagname, filename)
+	// 			ok = false
+	// 		}
+	// 		if !tagdesc.EmptyOk && tag != nil && tag.Value == "" && len(tag.Values) == 0 {
+	// 			bagger.addError("Tag %s for file %s cannot be empty", tagname, filename)
+	// 			ok = false
+	// 		}
+	// 		if len(tagdesc.Values) > 0 && tag != nil && !util.StringListContains(tagdesc.Values, tag.Value) {
+	// 			bagger.addError("Value '%s' is not allowed for tag %s. Valid values: %s",
+	// 				tag.Value, tagname, strings.Join(tagdesc.Values, ", "))
+	// 			ok = false
+	// 		}
+	// 	}
+	// }
 	return ok
 }
 

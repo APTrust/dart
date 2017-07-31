@@ -81,11 +81,11 @@ func TestBagItProfileValidate(t *testing.T) {
 
 	profile.AcceptBagItVersion = []string{"0.97"}
 	profile.ManifestsRequired = []string{"md5"}
-	profile.TagFilesRequired = make(map[string]map[string]*core.Tag)
-	profile.TagFilesRequired["bagit.txt"] = make(map[string]*core.Tag)
-	profile.TagFilesRequired["bagit.txt"]["tag1"] = &core.Tag{}
-	profile.TagFilesRequired["bag-info.txt"] = make(map[string]*core.Tag)
-	profile.TagFilesRequired["bag-info.txt"]["tag2"] = &core.Tag{}
+	profile.TagFilesRequired = make(map[string]map[string]*core.TagDefinition)
+	profile.TagFilesRequired["bagit.txt"] = make(map[string]*core.TagDefinition)
+	profile.TagFilesRequired["bagit.txt"]["tag1"] = &core.TagDefinition{}
+	profile.TagFilesRequired["bag-info.txt"] = make(map[string]*core.TagDefinition)
+	profile.TagFilesRequired["bag-info.txt"]["tag2"] = &core.TagDefinition{}
 	errs = profile.Validate()
 	require.Equal(t, 0, len(errs))
 }

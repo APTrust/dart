@@ -506,7 +506,7 @@ func (validator *Validator) ValidateTagFiles() bool {
 // in which the tag was found. Param tagDefinition is a definition of the
 // requirements for the tag. Param tagValues is the list of values for this
 // tag, as parsed from the tagfile.
-func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition *Tag, tagValues []string) bool {
+func (validator *Validator) ValidateTag(tagName, filePath string, tagDefinition *TagDefinition, tagValues []string) bool {
 	tagIsMissing := (tagValues == nil || len(tagValues) == 0)
 	tagIsEmpty := true
 	if !tagIsMissing {

@@ -47,7 +47,7 @@ type BagItProfile struct {
 	// find in the files. Since TagFile objects have a Required property,
 	// we omit bagit-profiles' TagFilesRequired, because that would be
 	// redundant.
-	TagFilesRequired map[string]map[string]*Tag `json:"Tag-Files-Required"`
+	TagFilesRequired map[string]map[string]*TagDefinition `json:"Tag-Files-Required"`
 	// TagManifestsRequired is a list of required tag manifests. Like
 	// ManifestsRequired, the list contains only the names of the
 	// required hashing algorithms. E.g. ["md5", "sha256"]
