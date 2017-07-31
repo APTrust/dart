@@ -92,10 +92,21 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 // don't also copy in bag-info.txt through bagger.AddFile(), since
 // that will cause bag-info.txt to be written twice.
 func (bagger *Bagger) AddTag(relDestPath string, tag *KeyValuePair) bool {
-	// if bagger.tags[relDestPath] == nil {
-	// 	bagger.tags[relDestPath] = make([]*Tag, 0)
-	// }
-	// bagger.tags[relDestPath] = append(bagger.tags[relDestPath], tag)
+	if bagger.bag.TagFiles[relDestPath] != nil {
+		if bagger.bag.TagFiles[relDestPath].Size > 0 {
+			bagger.addError("Tag file '%s' was added via AddFile(). "+
+				"You cannot add new values to it using AddTag(). "+
+				"Value was for tag '%s'.", relDestPath, tag.Key)
+			return false
+		}
+		fileSummary := &FileSummary{
+			RelPath:       relDestPath,
+			IsDir:         false,
+			IsRegularFile: true,
+		}
+		bagger.bag.TagFiles[relDestPath] = NewFile(fs)
+	}
+	bagger.bag.TagFiles[relDestPath].ParsedData.Append(tag)
 	return true
 }
 
