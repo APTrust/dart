@@ -6,25 +6,20 @@ import (
 	"github.com/APTrust/bagit/util/fileutil"
 	"os"
 	"path/filepath"
-	"strings"
+	// "strings"
 )
 
 type Bagger struct {
-	bag       *Bag
-	profile   *BagItProfile
-	tarWriter *fileutil.TarWriter
-	errors    []string
-
-	// TODO: Delete these
-	PayloadDir string
+	bag     *Bag
+	profile *BagItProfile
+	errors  []string
 }
 
 // NewBagger creates a new Bagger.
 //
 // Param bagPath is the path to the location where the bag should
 // be built. This should be a directory name. The bagger will
-// create the directory, if it does not already exist. If bagPath ends with
-// ".tar", the bag will be created as a tar file instead of as a directory.
+// create the directory, if it does not already exist.
 //
 // Param profile is the BagIt profile that describes the requirements
 // for the bag.
@@ -33,9 +28,6 @@ func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
 		bag:     NewBag(bagPath),
 		profile: profile,
 		errors:  make([]string, 0),
-	}
-	if strings.HasSuffix(bagPath, ".tar") {
-		bagger.tarWriter = fileutil.NewTarWriter(bagPath)
 	}
 	return bagger
 }
@@ -164,25 +156,20 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 			return false
 		}
 	}
-	bagger.copyPayload()
-
-	// write tag files
-	// create manifests
-
+	bagger.copyExistingFiles()
+	bagger.writeTags()
+	bagger.writeManifests()
 	return true
 }
 
-// copyFiles copies files from their source on disk into the bag.
-// If the bag is a tar file, this copies the files directly into
-// a tar archive.
-func (bagger *Bagger) copyPayload() bool {
-	files, err := fileutil.RecursiveFileList(bagger.PayloadDir)
-	if err != nil {
-		bagger.addError("Error listing %s: %v", bagger.PayloadDir, err)
-		return false
+func (bagger *Bagger) copyExistingFiles() bool {
+	for _, file := range bagger.bag.Payload {
+		if !bagger.copyFile(file) {
+			return false
+		}
 	}
-	for _, filePath := range files {
-		if !bagger.addPayloadFile(filePath) {
+	for _, file := range bagger.bag.TagFiles {
+		if !bagger.copyFile(file) {
 			return false
 		}
 	}
@@ -191,79 +178,54 @@ func (bagger *Bagger) copyPayload() bool {
 
 // addPayloadFile adds one file from the source directory into the
 // bag's payload (data) directory.
-func (bagger *Bagger) addPayloadFile(filePath string) bool {
-	// fileSummary tells us the mode the new file should have
-	fileSummary, err := fileutil.NewFileSummaryFromPath(filePath)
+func (bagger *Bagger) copyFile(file *File) bool {
+	srcPath := file.FileSummary.AbsPath
+	destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
+	if fileutil.FileExists(destPath) {
+		bagger.addError(fmt.Sprintf("Cannot copy to %s: file already exists", destPath))
+		return false
+	}
+
+	// Make sure the destination directory exists
+	destDir := filepath.Dir(destPath)
+	if !fileutil.IsDir(destDir) {
+		err := os.MkdirAll(destDir, 0755)
+		if err != nil {
+			bagger.addError(err.Error())
+			return false
+		}
+	}
+
+	// srcFile is the reader we'll copy from
+	srcFile, err := os.Open(srcPath)
+	defer srcFile.Close()
 	if err != nil {
 		bagger.addError(err.Error())
 		return false
 	}
 
-	// Set the relative path within the bag for this fle.
-	// Use forward slashes, even on Windows, because payload
-	// manifests require forward slashes, according to the spec.
-	// https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.1.3
-	fileSummary.RelPath = fmt.Sprintf("data/%s", bagger.getBasePath(filePath))
-
-	var checksums map[string]string
-	// Use forward slash, even on Windows, for tar file paths and manifest entries.
-	relativePath := fmt.Sprintf("data/%s", bagger.getBasePath(filePath))
-	if bagger.tarWriter != nil {
-		// Copy the new file into the tar archive, and keep track of its checksums
-		checksums, err = bagger.tarWriter.AddToArchive(filePath, relativePath, bagger.profile.ManifestsRequired)
-	} else {
-		// targetPath is the path we will copy the file to
-		targetPath := filepath.Join(bagger.bag.Path, "data", bagger.getBasePath(filePath))
-		if fileutil.FileExists(targetPath) {
-			bagger.addError(fmt.Sprintf("Cannot copy to %s: file already exists", targetPath))
-			return false
-		}
-
-		// srcFile is the reader we'll copy from
-		srcFile, err := os.Open(filePath)
-		defer srcFile.Close()
-		if err != nil {
-			bagger.addError(err.Error())
-			return false
-		}
-
-		targetDir := filepath.Dir(targetPath)
-		if !fileutil.IsDir(targetDir) {
-			err := os.MkdirAll(targetDir, 0755)
-			if err != nil {
-				bagger.addError(err.Error())
-				return false
-			}
-		}
-
-		// destFile is the writer we'll copy to
-		destFile, err := os.OpenFile(targetPath, os.O_RDWR|os.O_CREATE, fileSummary.Mode)
-		defer destFile.Close()
-		if err != nil {
-			bagger.addError(err.Error())
-			return false
-		}
-
-		// Copy src to dest, and keep track of the checksums
-		checksums, err = fileutil.WriteWithChecksums(srcFile, destFile, bagger.profile.ManifestsRequired)
-	}
+	// destFile is the writer we'll copy to
+	destFile, err := os.OpenFile(destPath, os.O_RDWR|os.O_CREATE, file.FileSummary.Mode)
+	defer destFile.Close()
 	if err != nil {
 		bagger.addError(err.Error())
 		return false
 	}
-	bagger.addChecksums(fileSummary, checksums)
+
+	// Copy src to dest, and keep track of the checksums
+	checksums, err := fileutil.WriteWithChecksums(srcFile, destFile, bagger.profile.ManifestsRequired)
+	if err != nil {
+		bagger.addError(err.Error())
+		return false
+	}
+
+	// Attach the file's checksums, which we'll need
+	// soon when we write the manifests.
+	file.Checksums = checksums
 	return true
 }
 
-func (bagger *Bagger) getBasePath(filePath string) string {
-	basePath := strings.Replace(filePath, bagger.PayloadDir+string(os.PathSeparator), "", 1)
-	if strings.HasSuffix(basePath, string(os.PathSeparator)) {
-		basePath = strings.TrimRight(basePath, string(os.PathSeparator))
-	}
-	return basePath
-}
-
-func (bagger *Bagger) writeTagFiles() bool {
+func (bagger *Bagger) writeTags() bool {
 	// for filename, tagmap := range bagger.profile.TagFilesRequired {
 	// 	if !bagger.writeTagFile(filename, tagmap) {
 	// 		return false
@@ -273,40 +235,14 @@ func (bagger *Bagger) writeTagFiles() bool {
 }
 
 func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*KeyValuePair) bool {
-	//var checksums map[string]string
-	var err error
-	if bagger.tarWriter != nil {
-		// Write the tag file into the tar archive, and keep track of its checksums
-		// checksums, err = bagger.tarWriter.AddToArchive(filename, tagmap, bagger.profile.ManifestsRequired)
-	} else {
-		targetPath := filepath.Join(bagger.bag.Path, filename)
-		if fileutil.FileExists(targetPath) {
-			bagger.addError(fmt.Sprintf("Cannot write tag file %s: file already exists", targetPath))
-			return false
-		}
-		targetDir := filepath.Dir(targetPath)
-		if !fileutil.IsDir(targetDir) {
-			err := os.MkdirAll(targetDir, 0755)
-			if err != nil {
-				bagger.addError(err.Error())
-				return false
-			}
-		}
-		tagFile, err := os.Create(targetPath)
-		defer tagFile.Close()
-		if err != nil {
-			bagger.addError(err.Error())
-			return false
-		}
+	return true
+}
 
-		// Copy src to dest, and keep track of the checksums
-		// checksums, err = fileutil.WriteWithChecksums(srcFile, destFile, bagger.profile.ManifestsRequired)
-	}
-	if err != nil {
-		bagger.addError(err.Error())
-		return false
-	}
-	//bagger.addChecksums(relativePath, checksums)
+func (bagger *Bagger) writeManifests() bool {
+	return true
+}
+
+func (bagger *Bagger) writeManifest(f *File) bool {
 	return true
 }
 
@@ -368,24 +304,6 @@ func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 		return false
 	}
 	return true
-}
-
-// addChecksums adds a file's checksums to the appropriate manifests.
-func (bagger *Bagger) addChecksums(fileSummary *fileutil.FileSummary, checksums map[string]string) {
-	for algorithm, digest := range checksums {
-		manifestFileName := fmt.Sprintf("manifest-%s.txt", algorithm)
-		fileMap := bagger.bag.Manifests
-		if !strings.HasPrefix(fileSummary.RelPath, "data/") {
-			manifestFileName = fmt.Sprintf("tagmanifest-%s.txt", algorithm)
-			fileMap = bagger.bag.TagManifests
-		}
-		manifestFile := fileMap[manifestFileName]
-		if manifestFile == nil {
-			manifestFile = NewFile(fileSummary)
-			bagger.bag.Manifests[manifestFileName] = manifestFile
-		}
-		manifestFile.Checksums[fileSummary.RelPath] = digest
-	}
 }
 
 // addError adds a message to the list of bagging errors.
