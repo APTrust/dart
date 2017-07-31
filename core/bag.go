@@ -89,37 +89,43 @@ func (bag *Bag) GetChecksumFromTagManifest(algorithm, filePath string) (string, 
 
 // GetTagValues returns the values for the specified tag from any and
 // all parsed tag files. Returns the tag values, which may be an empty
-// slice, and a boolean indicating whether the tag is present in any
-// of the parsed tag files.
-func (bag *Bag) GetTagValues(tagName string) ([]string, bool) {
-	values := make([]string, 0)
+// slice.
+func (bag *Bag) GetTagValues(tagName string) (values []string, tagIsPresent bool, hasNonEmptyValue bool) {
+	values = make([]string, 0)
 	for _, tagFile := range bag.TagFiles {
 		vals := tagFile.ParsedData.FindByKey(tagName)
-		if vals != nil {
+		if vals != nil && len(vals) > 0 {
 			// This slice may be empty
+			tagIsPresent = true
 			for _, val := range vals {
 				values = append(values, val.Value)
+				if val.Value != "" {
+					hasNonEmptyValue = true
+				}
 			}
 		}
 	}
-	return values, len(values) > 0
+	return values, tagIsPresent, hasNonEmptyValue
 }
 
 // GetTagValuesFromFile returns the values of the specified tag from
 // the specified tag file. This returns an error if the specified
 // tag file does not exist. Param filePath should be the relative
 // path of the tag file within the bag. E.g. "aptrust-info.txt"
-// or "dpn-tags/dpn-info.txt". The bool return value indicates whether
-// the tag was present in any tag files.
-func (bag *Bag) GetTagValuesFromFile(filePath, tagName string) ([]string, bool, error) {
+// or "dpn-tags/dpn-info.txt".
+func (bag *Bag) GetTagValuesFromFile(filePath, tagName string) (values []string, tagIsPresent bool, hasNonEmptyValue bool, err error) {
 	tagFile := bag.TagFiles[filePath]
 	if tagFile == nil {
-		return nil, false, fmt.Errorf("Tag file %s is not in bag", filePath)
+		return nil, false, false, fmt.Errorf("Tag file %s is not in bag", filePath)
 	}
 	keyValuePairs := tagFile.ParsedData.FindByKey(tagName)
-	values := make([]string, len(keyValuePairs))
+	values = make([]string, len(keyValuePairs))
 	for i, item := range keyValuePairs {
 		values[i] = item.Value
+		tagIsPresent = true
+		if item.Value != "" {
+			hasNonEmptyValue = true
+		}
 	}
-	return values, len(values) > 0, nil
+	return values, tagIsPresent, hasNonEmptyValue, nil
 }

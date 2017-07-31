@@ -121,14 +121,16 @@ func TestGetTagValues(t *testing.T) {
 	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
-	values, tagExists := bag.GetTagValues("key1")
-	assert.True(t, tagExists)
+	values, tagIsPresent, hasNonEmptyValue := bag.GetTagValues("key1")
+	assert.True(t, tagIsPresent)
 	require.Equal(t, 2, len(values))
+	assert.True(t, hasNonEmptyValue)
 	assert.True(t, util.StringListContains(values, "value1"))
 	assert.True(t, util.StringListContains(values, "value2"))
 
-	values, tagExists = bag.GetTagValues("key9")
-	assert.False(t, tagExists)
+	values, tagIsPresent, hasNonEmptyValue = bag.GetTagValues("key9")
+	assert.False(t, tagIsPresent)
+	assert.False(t, hasNonEmptyValue)
 	assert.Empty(t, values)
 }
 
@@ -141,26 +143,30 @@ func TestGetTagValuesFromFile(t *testing.T) {
 	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
-	values, tagExists, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")
-	assert.True(t, tagExists)
+	values, tagIsPresent, hasNonEmptyValue, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")
+	assert.True(t, tagIsPresent)
+	assert.True(t, hasNonEmptyValue)
 	assert.Nil(t, err)
 	require.Equal(t, 1, len(values))
 	assert.True(t, util.StringListContains(values, "value1"))
 
-	values, tagExists, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "key1")
-	assert.True(t, tagExists)
+	values, tagIsPresent, hasNonEmptyValue, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "key1")
+	assert.True(t, tagIsPresent)
+	assert.True(t, hasNonEmptyValue)
 	assert.Nil(t, err)
 	require.Equal(t, 1, len(values))
 	assert.True(t, util.StringListContains(values, "value2"))
 
-	values, tagExists, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "no-such-tag")
+	values, tagIsPresent, hasNonEmptyValue, err = bag.GetTagValuesFromFile("dpn-tags/dpn-info.txt", "no-such-tag")
 	assert.Nil(t, err)
-	assert.False(t, tagExists)
+	assert.False(t, tagIsPresent)
+	assert.False(t, hasNonEmptyValue)
 	assert.Empty(t, values)
 
-	values, tagExists, err = bag.GetTagValuesFromFile("no-such-file.txt", "key1")
+	values, tagIsPresent, hasNonEmptyValue, err = bag.GetTagValuesFromFile("no-such-file.txt", "key1")
 	assert.NotNil(t, err)
-	assert.False(t, tagExists)
+	assert.False(t, tagIsPresent)
+	assert.False(t, hasNonEmptyValue)
 	assert.Empty(t, values)
 }
 

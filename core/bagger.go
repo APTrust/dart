@@ -248,29 +248,27 @@ func (bagger *Bagger) writeManifest(f *File) bool {
 
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
-	// Avoid nil pointer errors
-	// tagValues := bagger.tags
-	// if tagValues == nil {
-	// 	tagValues = make(map[string][]*Tag)
-	// }
-	// for filename, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
-	// 	for tagname, tagdesc := range mapOfRequiredTags {
-	// 		tag := bagger.findTag(filename, tagname)
-	// 		if tagdesc.Required && tag == nil {
-	// 			bagger.addError("Required tag %s for file %s is missing", tagname, filename)
-	// 			ok = false
-	// 		}
-	// 		if !tagdesc.EmptyOk && tag != nil && tag.Value == "" && len(tag.Values) == 0 {
-	// 			bagger.addError("Tag %s for file %s cannot be empty", tagname, filename)
-	// 			ok = false
-	// 		}
-	// 		if len(tagdesc.Values) > 0 && tag != nil && !util.StringListContains(tagdesc.Values, tag.Value) {
-	// 			bagger.addError("Value '%s' is not allowed for tag %s. Valid values: %s",
-	// 				tag.Value, tagname, strings.Join(tagdesc.Values, ", "))
-	// 			ok = false
-	// 		}
-	// 	}
-	// }
+	for relFilePath, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
+		for tagname, tagdesc := range mapOfRequiredTags {
+			values, tagIsPresent, hasNonEmptyValue, err := bagger.bag.GetTagValuesFromFile(relFilePath, tagname)
+			if tagdesc.Required && !tagIsPresent {
+				bagger.addError("Required tag %s for file %s is missing", tagname, relFilePath)
+				ok = false
+			}
+			if !tagdesc.EmptyOk && tagIsPresent && !hasNonEmptyValue {
+				bagger.addError("Tag %s for file %s cannot be empty", tagname, relFilePath)
+				ok = false
+			}
+			if hasNonEmptyValue && tagIsPresent {
+				for _, value := range values {
+					if err = tagdesc.ValueIsAllowed(value); err != nil {
+						bagger.addError(err.Error())
+						ok = false
+					}
+				}
+			}
+		}
+	}
 	return ok
 }
 
