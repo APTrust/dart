@@ -1,16 +1,16 @@
 package core_test
 
 import (
-// "github.com/APTrust/bagit/core"
-// "github.com/APTrust/bagit/util/fileutil"
-// "github.com/APTrust/bagit/util/testutil"
-// "github.com/stretchr/testify/assert"
-// "github.com/stretchr/testify/require"
-// "io/ioutil"
-// "os"
-// "path/filepath"
-// "strings"
-// "testing"
+	"github.com/APTrust/bagit/core"
+	// "github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/bagit/util/testutil"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"io/ioutil"
+	"os"
+	// "path/filepath"
+	// "strings"
+	"testing"
 )
 
 var APTrustDefaultTags = map[string]string{
@@ -46,51 +46,36 @@ var DPNDefaultTags = map[string]string{
 	"Bag-Type":                    "data",
 }
 
-// func getBaggerPreReqs(t *testing.T) (tempFile *os.File, payloadDir string, aptrustProfile *core.BagItProfile) {
-// 	tempDir, err := ioutil.TempDir("", "bagger_test")
-// 	require.Nil(t, err)
-// 	tempFile, err = ioutil.TempFile(tempDir, "bag")
-// 	require.Nil(t, err)
+func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *core.BagItProfile) {
+	tempDir, err := ioutil.TempDir("", "bagger_test")
+	require.Nil(t, err)
 
-// 	payloadDir, err = testutil.GetPathToTestFileDir()
-// 	require.Nil(t, err)
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err = core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
 
-// 	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
-// 	require.Nil(t, err)
-// 	aptrustProfile, err = core.LoadBagItProfile(profilePath)
-// 	require.Nil(t, err)
+	return tempDir, aptrustProfile
+}
 
-// 	return tempFile, payloadDir, aptrustProfile
-// }
+func TestNewBagger(t *testing.T) {
+	tempDir, aptrustProfile := getBaggerPreReqs(t)
+	defer os.RemoveAll(tempDir)
 
-// func TestNewBagger(t *testing.T) {
-// 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
-// 	defer tempFile.Close()
-// 	defer os.RemoveAll(filepath.Dir(tempFile.Name()))
+	bagger, err := core.NewBagger("", aptrustProfile)
+	require.NotNil(t, err)
+	assert.Equal(t, "Param bagPath cannot be empty", err.Error())
 
-// 	bagger := core.NewBagger(tempFile.Name(), payloadDir, aptrustProfile, nil, false)
-// 	require.NotNil(t, bagger)
-// 	require.NotNil(t, bagger.Bag)
-// 	assert.Equal(t, tempFile.Name(), bagger.Bag.Path)
-// 	assert.Equal(t, payloadDir, bagger.PayloadDir)
-// 	assert.Nil(t, bagger.TagValues)
-// 	assert.False(t, bagger.ForceOverwrite)
+	bagger, err = core.NewBagger(tempDir, nil)
+	require.NotNil(t, err)
+	assert.Equal(t, "Param profile cannot be nil", err.Error())
 
-// 	tagValues := map[string]string{
-// 		"one": "first",
-// 		"two": "second",
-// 	}
-
-// 	bagger = core.NewBagger(tempFile.Name(), payloadDir, aptrustProfile, tagValues, true)
-// 	require.NotNil(t, bagger)
-// 	require.NotNil(t, bagger.Bag)
-// 	assert.Equal(t, tempFile.Name(), bagger.Bag.Path)
-// 	assert.Equal(t, payloadDir, bagger.PayloadDir)
-// 	require.NotNil(t, bagger.TagValues)
-// 	assert.Equal(t, "first", bagger.TagValues["one"])
-// 	assert.Equal(t, "second", bagger.TagValues["two"])
-// 	assert.True(t, bagger.ForceOverwrite)
-// }
+	bagger, err = core.NewBagger(tempDir, aptrustProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
+	require.NotNil(t, bagger.Bag())
+	require.NotNil(t, bagger.Profile())
+}
 
 // func TestBuildBagDoesNotOverwrite(t *testing.T) {
 // 	// We'll build the bag in a temp dir.

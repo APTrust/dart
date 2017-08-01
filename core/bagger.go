@@ -23,13 +23,19 @@ type Bagger struct {
 //
 // Param profile is the BagIt profile that describes the requirements
 // for the bag.
-func NewBagger(bagPath string, profile *BagItProfile) *Bagger {
+func NewBagger(bagPath string, profile *BagItProfile) (*Bagger, error) {
+	if profile == nil {
+		return nil, fmt.Errorf("Param profile cannot be nil")
+	}
+	if bagPath == "" {
+		return nil, fmt.Errorf("Param bagPath cannot be empty")
+	}
 	bagger := &Bagger{
 		bag:     NewBag(bagPath),
 		profile: profile,
 		errors:  make([]string, 0),
 	}
-	return bagger
+	return bagger, nil
 }
 
 // AddFile adds a file to the bag. Param absSourcePath is the path
