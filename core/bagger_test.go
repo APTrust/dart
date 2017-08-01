@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	// "path/filepath"
-	// "strings"
+	"strings"
 	"testing"
 )
 
@@ -77,73 +77,55 @@ func TestNewBagger(t *testing.T) {
 	require.NotNil(t, bagger.Profile())
 }
 
-// func TestBuildBagDoesNotOverwrite(t *testing.T) {
-// 	// We'll build the bag in a temp dir.
-// 	// We can chuck tempFile and get the name of the dir it's in.
-// 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
-// 	dir := filepath.Dir(tempFile.Name())
-// 	defer os.RemoveAll(dir)
-// 	tempFile.Close()
-// 	os.Remove(filepath.Dir(tempFile.Name()))
+func TestHasRequiredTags(t *testing.T) {
+	tempDir, aptrustProfile := getBaggerPreReqs(t)
+	defer os.RemoveAll(tempDir)
 
-// 	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, nil, false)
-// 	require.NotNil(t, bagger)
+	// Make sure we flag missing required APTrust tags
+	bagger, err := core.NewBagger(tempDir, aptrustProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
 
-// 	assert.False(t, bagger.BuildBag())
-// 	require.Equal(t, 1, len(bagger.Errors()))
-// 	assert.True(t, strings.HasSuffix(bagger.Errors()[0], "already exists. Use forceOverwrite=true to replace it."))
-// }
+	assert.False(t, bagger.WriteBag(true, true))
+	errors := bagger.Errors()
+	require.NotEmpty(t, errors)
+	require.Equal(t, len(APTrustDefaultTags), len(errors))
 
-// func TestHasRequiredTags(t *testing.T) {
-// 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
-// 	dir := filepath.Dir(tempFile.Name())
-// 	tempFile.Close()
-// 	os.Remove(filepath.Dir(tempFile.Name()))
+	for tagName, _ := range APTrustDefaultTags {
+		foundError := false
+		for _, err := range errors {
+			if strings.Contains(err, tagName) {
+				foundError = true
+			}
+		}
+		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
+	}
 
-// 	// Make sure we flag missing required APTrust tags
-// 	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, nil, true)
-// 	require.NotNil(t, bagger)
+	// Make sure bagger flags missing required DPN tags
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
 
-// 	assert.False(t, bagger.BuildBag())
-// 	errors := bagger.Errors()
-// 	require.NotEmpty(t, errors)
-// 	require.Equal(t, len(APTrustDefaultTags), len(errors))
+	bagger, err = core.NewBagger(tempDir, dpnProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
 
-// 	for tagName, _ := range APTrustDefaultTags {
-// 		foundError := false
-// 		for _, err := range errors {
-// 			if strings.Contains(err, tagName) {
-// 				foundError = true
-// 			}
-// 		}
-// 		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
-// 	}
+	assert.False(t, bagger.WriteBag(true, true))
+	errors = bagger.Errors()
+	require.NotEmpty(t, errors)
+	require.Equal(t, len(DPNDefaultTags), len(errors))
 
-// 	// Make sure bagger flags missing required DPN tags
-// 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
-// 	require.Nil(t, err)
-// 	dpnProfile, err := core.LoadBagItProfile(profilePath)
-// 	require.Nil(t, err)
-
-// 	bagger = core.NewBagger(dir, payloadDir, dpnProfile, nil, true)
-// 	require.NotNil(t, bagger)
-
-// 	assert.False(t, bagger.BuildBag())
-// 	errors = bagger.Errors()
-// 	require.NotEmpty(t, errors)
-// 	require.Equal(t, len(DPNDefaultTags), len(errors))
-
-// 	for tagName, _ := range DPNDefaultTags {
-// 		foundError := false
-// 		for _, err := range errors {
-// 			if strings.Contains(err, tagName) {
-// 				foundError = true
-// 			}
-// 		}
-// 		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
-// 	}
-
-// }
+	for tagName, _ := range DPNDefaultTags {
+		foundError := false
+		for _, err := range errors {
+			if strings.Contains(err, tagName) {
+				foundError = true
+			}
+		}
+		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
+	}
+}
 
 // func TestBuildBag(t *testing.T) {
 // 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
