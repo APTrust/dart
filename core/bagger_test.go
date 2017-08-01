@@ -18,8 +18,10 @@ var APTrustDefaultTags = map[string][]core.KeyValuePair{
 		core.NewKeyValuePair("BagIt-Version", "0.97"),
 		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
 	},
-	"aptrust-info.txt": []core.KeyValuePair{
+	"bag-info.txt": []core.KeyValuePair{
 		core.NewKeyValuePair("Source-Organization", "APTrust"),
+	},
+	"aptrust-info.txt": []core.KeyValuePair{
 		core.NewKeyValuePair("Title", "Test Object"),
 		core.NewKeyValuePair("Access", "Institution"),
 	},
@@ -30,16 +32,18 @@ var DPNDefaultTags = map[string][]core.KeyValuePair{
 		core.NewKeyValuePair("BagIt-Version", "0.97"),
 		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
 	},
-	"dpn-tags/dpn-info.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("Contact-Name", "Homer Simpson"),
-		core.NewKeyValuePair("Contact-Phone", "555-555-1212"),
-		core.NewKeyValuePair("Bag-Size", "411"),
-		core.NewKeyValuePair("Bag-Group-Identifier", "None"),
+	"bag-info.txt": []core.KeyValuePair{
 		core.NewKeyValuePair("Source-Organization", "APTrust"),
 		core.NewKeyValuePair("Organization-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
 		core.NewKeyValuePair("Contact-Email", "homer@example.com"),
 		core.NewKeyValuePair("Bagging-Date", "2017-07-26"),
 		core.NewKeyValuePair("Bag-Count", "1"),
+		core.NewKeyValuePair("Contact-Name", "Homer Simpson"),
+		core.NewKeyValuePair("Contact-Phone", "555-555-1212"),
+		core.NewKeyValuePair("Bag-Size", "411"),
+		core.NewKeyValuePair("Bag-Group-Identifier", "None"),
+	},
+	"dpn-tags/dpn-info.txt": []core.KeyValuePair{
 		core.NewKeyValuePair("Ingest-Node-Name", "aptrust"),
 		core.NewKeyValuePair("Ingest-Node-Contact-Name", "Apu Nahasapeemapetilon"),
 		core.NewKeyValuePair("Ingest-Node-Contact-Email", "apu@example.com"),
@@ -119,6 +123,16 @@ func TestHasRequiredTags(t *testing.T) {
 		}
 	}
 
+	// Make sure there are no errors when tags are all there
+	for filename, list := range APTrustDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
+	assert.True(t, bagger.WriteBag(true, true))
+	errors = bagger.Errors()
+	require.Empty(t, errors)
+
 	// Make sure bagger flags missing required DPN tags
 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
@@ -145,6 +159,17 @@ func TestHasRequiredTags(t *testing.T) {
 			assert.True(t, foundError, "Bagger did not flag missing tag %s", kvPair.Key)
 		}
 	}
+
+	// Make sure there are no errors when tags are all there
+	for filename, list := range DPNDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
+	assert.True(t, bagger.WriteBag(true, true))
+	errors = bagger.Errors()
+	require.Empty(t, errors)
+
 }
 
 // func TestBuildBag(t *testing.T) {

@@ -10,9 +10,10 @@ import (
 )
 
 type Bagger struct {
-	bag     *Bag
-	profile *BagItProfile
-	errors  []string
+	bag      *Bag
+	profile  *BagItProfile
+	skipCopy map[string]bool
+	errors   []string
 }
 
 // NewBagger creates a new Bagger.
@@ -31,9 +32,10 @@ func NewBagger(bagPath string, profile *BagItProfile) (*Bagger, error) {
 		return nil, fmt.Errorf("Param bagPath cannot be empty")
 	}
 	bagger := &Bagger{
-		bag:     NewBag(bagPath),
-		profile: profile,
-		errors:  make([]string, 0),
+		bag:      NewBag(bagPath),
+		profile:  profile,
+		errors:   make([]string, 0),
+		skipCopy: make(map[string]bool),
 	}
 	return bagger, nil
 }
@@ -97,12 +99,15 @@ func (bagger *Bagger) AddTag(relDestPath string, tag *KeyValuePair) bool {
 				"Value was for tag '%s'.", relDestPath, tag.Key)
 			return false
 		}
+	} else {
+		// Add the tag file to the bag
 		fileSummary := &fileutil.FileSummary{
 			RelPath:       relDestPath,
 			IsDir:         false,
 			IsRegularFile: true,
 		}
 		bagger.bag.TagFiles[relDestPath] = NewFile(fileSummary)
+		bagger.skipCopy[relDestPath] = true
 	}
 	bagger.bag.TagFiles[relDestPath].ParsedData.Append(tag.Key, tag.Value)
 	return true
@@ -152,6 +157,7 @@ func (bagger *Bagger) Errors() []string {
 // if you are copying in tag files like bag-info.txt through
 // bagger.AddFile().
 func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
+	bagger.errors = make([]string, 0)
 	errs := bagger.profile.Validate()
 	if errs != nil && len(errs) > 0 {
 		for _, err := range errs {
@@ -192,6 +198,11 @@ func (bagger *Bagger) copyExistingFiles() bool {
 // addPayloadFile adds one file from the source directory into the
 // bag's payload (data) directory.
 func (bagger *Bagger) copyFile(file *File) bool {
+	if bagger.skipCopy[file.FileSummary.RelPath] {
+		// This is a tag file we'll write ourselves,
+		// based on tags added through AddTag()
+		return true
+	}
 	srcPath := file.FileSummary.AbsPath
 	destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
 	if fileutil.FileExists(destPath) {
