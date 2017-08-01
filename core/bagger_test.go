@@ -13,37 +13,45 @@ import (
 	"testing"
 )
 
-var APTrustDefaultTags = map[string]string{
-	"BagIt-Version":               "0.97",
-	"Tag-File-Character-Encoding": "UTF-8",
-	"Source-Organization":         "APTrust",
-	"Title":                       "Test Object",
-	"Access":                      "Institution",
+var APTrustDefaultTags = map[string][]core.KeyValuePair{
+	"bagit.txt": []core.KeyValuePair{
+		core.NewKeyValuePair("BagIt-Version", "0.97"),
+		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
+	},
+	"aptrust-info.txt": []core.KeyValuePair{
+		core.NewKeyValuePair("Source-Organization", "APTrust"),
+		core.NewKeyValuePair("Title", "Test Object"),
+		core.NewKeyValuePair("Access", "Institution"),
+	},
 }
 
-var DPNDefaultTags = map[string]string{
-	"BagIt-Version":               "0.97",
-	"Tag-File-Character-Encoding": "UTF-8",
-	"Contact-Name":                "Homer Simpson",
-	"Contact-Phone":               "555-555-1212",
-	"Bag-Size":                    "411",
-	"Bag-Group-Identifier":        "None",
-	"Source-Organization":         "APTrust",
-	"Organization-Address":        "160 McCormick Rd, Charlottesville, VA 22904",
-	"Contact-Email":               "homer@example.com",
-	"Bagging-Date":                "2017-07-26",
-	"Bag-Count":                   "1",
-	"Ingest-Node-Name":            "aptrust",
-	"Ingest-Node-Contact-Name":    "Apu Nahasapeemapetilon",
-	"Ingest-Node-Contact-Email":   "apu@example.com",
-	"First-Version-Object-ID":     "00af15fd-1046-4811-8cb5-878ec66cf0da",
-	"Interpretive-Object-ID":      "83bbc27a-86ef-4d1d-be09-4d78cf9e7df3",
-	"Rights-Object-ID":            "3559d615-6df9-4f30-a2b0-511568359787",
-	"DPN-Object-ID":               "00af15fd-1046-4811-8cb5-878ec66cf0da",
-	"Local-ID":                    "Homer's Beer Can Collection",
-	"Ingest-Node-Address":         "160 McCormick Rd, Charlottesville, VA 22904",
-	"Version-Number":              "1",
-	"Bag-Type":                    "data",
+var DPNDefaultTags = map[string][]core.KeyValuePair{
+	"bagit.txt": []core.KeyValuePair{
+		core.NewKeyValuePair("BagIt-Version", "0.97"),
+		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
+	},
+	"dpn-tags/dpn-info.txt": []core.KeyValuePair{
+		core.NewKeyValuePair("Contact-Name", "Homer Simpson"),
+		core.NewKeyValuePair("Contact-Phone", "555-555-1212"),
+		core.NewKeyValuePair("Bag-Size", "411"),
+		core.NewKeyValuePair("Bag-Group-Identifier", "None"),
+		core.NewKeyValuePair("Source-Organization", "APTrust"),
+		core.NewKeyValuePair("Organization-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
+		core.NewKeyValuePair("Contact-Email", "homer@example.com"),
+		core.NewKeyValuePair("Bagging-Date", "2017-07-26"),
+		core.NewKeyValuePair("Bag-Count", "1"),
+		core.NewKeyValuePair("Ingest-Node-Name", "aptrust"),
+		core.NewKeyValuePair("Ingest-Node-Contact-Name", "Apu Nahasapeemapetilon"),
+		core.NewKeyValuePair("Ingest-Node-Contact-Email", "apu@example.com"),
+		core.NewKeyValuePair("First-Version-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
+		core.NewKeyValuePair("Interpretive-Object-ID", "83bbc27a-86ef-4d1d-be09-4d78cf9e7df3"),
+		core.NewKeyValuePair("Rights-Object-ID", "3559d615-6df9-4f30-a2b0-511568359787"),
+		core.NewKeyValuePair("DPN-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
+		core.NewKeyValuePair("Local-ID", "Homer's Beer Can Collection"),
+		core.NewKeyValuePair("Ingest-Node-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
+		core.NewKeyValuePair("Version-Number", "1"),
+		core.NewKeyValuePair("Bag-Type", "data"),
+	},
 }
 
 func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *core.BagItProfile) {
@@ -56,6 +64,14 @@ func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *core.BagItP
 	require.Nil(t, err)
 
 	return tempDir, aptrustProfile
+}
+
+func countItems(items map[string][]core.KeyValuePair) int {
+	count := 0
+	for _, list := range items {
+		count += len(list)
+	}
+	return count
 }
 
 func TestNewBagger(t *testing.T) {
@@ -89,7 +105,7 @@ func TestHasRequiredTags(t *testing.T) {
 	assert.False(t, bagger.WriteBag(true, true))
 	errors := bagger.Errors()
 	require.NotEmpty(t, errors)
-	require.Equal(t, len(APTrustDefaultTags), len(errors))
+	require.Equal(t, countItems(APTrustDefaultTags), len(errors))
 
 	for tagName, _ := range APTrustDefaultTags {
 		foundError := false
@@ -114,7 +130,7 @@ func TestHasRequiredTags(t *testing.T) {
 	assert.False(t, bagger.WriteBag(true, true))
 	errors = bagger.Errors()
 	require.NotEmpty(t, errors)
-	require.Equal(t, len(DPNDefaultTags), len(errors))
+	require.Equal(t, countItems(DPNDefaultTags), len(errors))
 
 	for tagName, _ := range DPNDefaultTags {
 		foundError := false
