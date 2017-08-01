@@ -60,7 +60,7 @@ func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
 		return false
 	}
 	fs.RelPath = relDestPath
-	//bagger.files[absSourcePath] = fs
+	_, _ = bagger.bag.AddFileFromSummary(fs)
 	return true
 }
 
@@ -146,6 +146,13 @@ func (bagger *Bagger) Errors() []string {
 // if you are copying in tag files like bag-info.txt through
 // bagger.AddFile().
 func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
+	errs := bagger.profile.Validate()
+	if errs != nil && len(errs) > 0 {
+		for _, err := range errs {
+			bagger.addError(err.Error())
+		}
+		return false
+	}
 	ok := bagger.initFileOrDir(overwrite)
 	if !ok {
 		return false
