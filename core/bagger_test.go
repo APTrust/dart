@@ -107,14 +107,16 @@ func TestHasRequiredTags(t *testing.T) {
 	require.NotEmpty(t, errors)
 	require.Equal(t, countItems(APTrustDefaultTags), len(errors))
 
-	for tagName, _ := range APTrustDefaultTags {
-		foundError := false
-		for _, err := range errors {
-			if strings.Contains(err, tagName) {
-				foundError = true
+	for _, list := range APTrustDefaultTags {
+		for _, kvPair := range list {
+			foundError := false
+			for _, err := range errors {
+				if strings.Contains(err, kvPair.Key) {
+					foundError = true
+				}
 			}
+			assert.True(t, foundError, "Bagger did not flag missing tag %s", kvPair.Key)
 		}
-		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
 	}
 
 	// Make sure bagger flags missing required DPN tags
@@ -132,14 +134,16 @@ func TestHasRequiredTags(t *testing.T) {
 	require.NotEmpty(t, errors)
 	require.Equal(t, countItems(DPNDefaultTags), len(errors))
 
-	for tagName, _ := range DPNDefaultTags {
-		foundError := false
-		for _, err := range errors {
-			if strings.Contains(err, tagName) {
-				foundError = true
+	for _, list := range DPNDefaultTags {
+		for _, kvPair := range list {
+			foundError := false
+			for _, err := range errors {
+				if strings.Contains(err, kvPair.Key) {
+					foundError = true
+				}
 			}
+			assert.True(t, foundError, "Bagger did not flag missing tag %s", kvPair.Key)
 		}
-		assert.True(t, foundError, "Bagger did not flag missing tag %s", tagName)
 	}
 }
 
