@@ -63,6 +63,17 @@ func TestLoadBagItProfile(t *testing.T) {
 	aptrust := profile.TagFilesRequired["aptrust-info.txt"]
 	require.NotNil(t, aptrust)
 
+	// Make sure tag labels were copied into tag definitions.
+	for _, tagDef := range bagit {
+		assert.NotEmpty(t, tagDef.Label)
+	}
+	for _, tagDef := range baginfo {
+		assert.NotEmpty(t, tagDef.Label)
+	}
+	for _, tagDef := range aptrust {
+		assert.NotEmpty(t, tagDef.Label)
+	}
+
 	// Make sure this one parses, while we're at it.
 	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
