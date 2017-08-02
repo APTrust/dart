@@ -129,3 +129,35 @@ func (bag *Bag) GetTagValuesFromFile(filePath, tagName string) (values []string,
 	}
 	return values, tagIsPresent, hasNonEmptyValue, nil
 }
+
+// AddChecksumsToManifest adds all of the payload file checksums
+// to each manifest.
+func (bag *Bag) AddChecksumsToManifests() {
+	for manifestName, manifest := range bag.Manifests {
+		// Reset this on each call, so duplicate calls don't
+		// result in duplicate entries.
+		manifest.ParsedData = NewKeyValueCollection()
+		_, alg := fileutil.ParseManifestName(manifestName)
+		for fileName, file := range bag.Payload {
+			manifest.ParsedData.Append(fileName, file.Checksums[alg])
+		}
+	}
+}
+
+// AddChecksumsToManifest adds all of the tag file checksums
+// to each tagmanifest. Call this after AddChecksumsToManifests,
+// so that the checksums of the payload manifests will be available.
+func (bag *Bag) AddChecksumsToTagManifests() {
+	for manifestName, manifest := range bag.TagManifests {
+		// Reset this on each call, so duplicate calls don't
+		// result in duplicate entries.
+		manifest.ParsedData = NewKeyValueCollection()
+		_, alg := fileutil.ParseManifestName(manifestName)
+		for fileName, file := range bag.Manifests {
+			manifest.ParsedData.Append(fileName, file.Checksums[alg])
+		}
+		for fileName, file := range bag.TagFiles {
+			manifest.ParsedData.Append(fileName, file.Checksums[alg])
+		}
+	}
+}

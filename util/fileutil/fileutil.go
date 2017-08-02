@@ -154,8 +154,8 @@ func CalculateChecksums(reader io.Reader, algorithms []string) (map[string]strin
 //
 // { "md5": "1234567", "sha256": "890abcd" }
 func WriteWithChecksums(reader io.Reader, writer io.Writer, algorithms []string) (map[string]string, error) {
-	if len(algorithms) == 0 {
-		return nil, errtypes.NewValueError("You must specify at least one algorithm.")
+	if algorithms == nil {
+		algorithms = make([]string, 0)
 	}
 	writers := make([]io.Writer, len(algorithms)+1)
 	writers[0] = writer

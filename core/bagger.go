@@ -128,21 +128,6 @@ func (bagger *Bagger) Errors() []string {
 	return bagger.errors
 }
 
-/*
-
-- Validate Profile
-- Validate that all required tags are present
-- Include progress callback or io.Writer for writing progress messages
-- Add all payload files to bag in working dir
-- Build tag files
-- Create manifests
-
-- Tar bag if serialization is required and serlialization format is tar?
-- Provide a way of specifying tag files and where to put them?
-- Parse existing tag files, and skip defaults if they're already defined in existing tag files?
-
-*/
-
 // WriteBag writes the bag to disk, returning true on success,
 // and false if there were errors. Check bagger.Errors() if this
 // returns false.
@@ -180,6 +165,9 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 	return true
 }
 
+// copyExistingFiles copies any files that already exist on disk
+// into the bag directory. Existing files should include all payload
+// files, and may include some tag files.
 func (bagger *Bagger) copyExistingFiles() bool {
 	for _, file := range bagger.bag.Payload {
 		if !bagger.copyFile(file) {
@@ -194,8 +182,9 @@ func (bagger *Bagger) copyExistingFiles() bool {
 	return true
 }
 
-// addPayloadFile adds one file from the source directory into the
-// bag's payload (data) directory.
+// copyFile copies one file from its source location into the
+// bag directory. The file being copied may be part of the payload
+// or it could be a tag file.
 func (bagger *Bagger) copyFile(file *File) bool {
 	if bagger.skipCopy[file.FileSummary.RelPath] {
 		// This is a tag file we'll write ourselves,
@@ -249,26 +238,45 @@ func (bagger *Bagger) copyFile(file *File) bool {
 }
 
 func (bagger *Bagger) writeTags() bool {
-	// for filename, tagmap := range bagger.profile.TagFilesRequired {
-	// 	if !bagger.writeTagFile(filename, tagmap) {
-	// 		return false
-	// 	}
-	// }
-	return true
-}
-
-func (bagger *Bagger) writeTagFile(filename string, tagmap map[string]*KeyValuePair) bool {
+	for _, file := range bagger.bag.TagFiles {
+		destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
+		err := file.Write(destPath, bagger.profile.TagManifestsRequired)
+		if err != nil {
+			bagger.addError("Error writing tag file '%s'", destPath, err.Error())
+			return false
+		}
+	}
 	return true
 }
 
 func (bagger *Bagger) writeManifests() bool {
+	// Write the manifest-*.txt files, and track the checksums of those
+	// files so we can add their checksums into the tag manifest files.
+	bagger.bag.AddChecksumsToManifests()
+	for _, file := range bagger.bag.Manifests {
+		destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
+		err := file.Write(destPath, bagger.profile.TagManifestsRequired)
+		if err != nil {
+			bagger.addError("Error writing manifest '%s'", destPath, err.Error())
+			return false
+		}
+	}
+	// Write the tagmanifest-*.txt files. Don't bother calculating
+	// checksums on these.
+	bagger.bag.AddChecksumsToTagManifests()
+	for _, file := range bagger.bag.TagManifests {
+		destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
+		err := file.Write(destPath, nil)
+		if err != nil {
+			bagger.addError("Error writing tag manifest '%s'", destPath, err.Error())
+			return false
+		}
+	}
 	return true
 }
 
-func (bagger *Bagger) writeManifest(f *File) bool {
-	return true
-}
-
+// hasRequiredTags returns true if we have all the tags required by the
+// BagIt profile.
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
 	for relFilePath, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
