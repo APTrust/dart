@@ -159,6 +159,7 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 			return false
 		}
 	}
+	bagger.ensureManifests()
 	bagger.copyExistingFiles()
 	bagger.writeTags()
 	bagger.writeManifests()
@@ -247,6 +248,30 @@ func (bagger *Bagger) writeTags() bool {
 		}
 	}
 	return true
+}
+
+// ensureManifests ensures that the bag has a representation of
+// the required manifests and tag manifests. These must exist so
+// we can add the checksums to them later.
+func (bagger *Bagger) ensureManifests() {
+	for _, algorithm := range bagger.profile.ManifestsRequired {
+		name := fmt.Sprintf("manifest-%s.txt", algorithm)
+		if bagger.bag.Manifests[algorithm] == nil {
+			fs := &fileutil.FileSummary{
+				RelPath: name,
+			}
+			bagger.bag.AddFileFromSummary(fs)
+		}
+	}
+	for _, algorithm := range bagger.profile.TagManifestsRequired {
+		name := fmt.Sprintf("tagmanifest-%s.txt", algorithm)
+		if bagger.bag.TagManifests[algorithm] == nil {
+			fs := &fileutil.FileSummary{
+				RelPath: name,
+			}
+			bagger.bag.AddFileFromSummary(fs)
+		}
+	}
 }
 
 func (bagger *Bagger) writeManifests() bool {

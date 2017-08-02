@@ -1,14 +1,16 @@
 package core_test
 
 import (
+	"fmt"
+	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/core"
-	// "github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/bagit/util/fileutil"
 	"github.com/APTrust/bagit/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
-	// "path/filepath"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -172,31 +174,62 @@ func TestHasRequiredTags(t *testing.T) {
 
 }
 
-// func TestBuildBag(t *testing.T) {
-// 	tempFile, payloadDir, aptrustProfile := getBaggerPreReqs(t)
-// 	dir := filepath.Dir(tempFile.Name())
-// 	tempFile.Close()
-// 	os.Remove(filepath.Dir(tempFile.Name()))
+func TestWriteBag_APTrust(t *testing.T) {
+	tempDir, aptrustProfile := getBaggerPreReqs(t)
+	os.RemoveAll(tempDir)
 
-// 	bagger := core.NewBagger(dir, payloadDir, aptrustProfile, APTrustDefaultTags, true)
-// 	require.NotNil(t, bagger)
+	bagger, err := core.NewBagger(tempDir, aptrustProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
 
-// 	assert.True(t, bagger.BuildBag())
-// 	require.Empty(t, bagger.Errors())
-// 	files, err := fileutil.RecursiveFileList(dir)
-// 	require.Nil(t, err)
-// 	assert.Equal(t, 6, len(files))
+	// Add tags
+	for filename, list := range APTrustDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
 
-// 	require.NotNil(t, bagger.Bag)
-// 	require.NotNil(t, bagger.Bag.Manifests)
+	// Add files. The "files" var contains relative file paths.
+	testFileDir, _ := testutil.GetPathToTestFileDir()
+	absSourcePath, _ := fileutil.RecursiveFileList(testFileDir)
+	relDestPaths := make([]string, len(absSourcePath))
+	for i, absSrcPath := range absSourcePath {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+	}
 
-// 	md5 := bagger.Bag.Manifests["manifest-md5.txt"]
-// 	require.NotNil(t, md5)
+	assert.True(t, bagger.WriteBag(true, true))
+	require.Empty(t, bagger.Errors())
+	filesWritten, err := fileutil.RecursiveFileList(tempDir)
+	require.Nil(t, err)
+	// Should have 6 payload files, plus bagit.txt, bag-info.txt,
+	// aptrust-info.txt, and manifest-md5.txt.
+	assert.Equal(t, 10, len(filesWritten))
 
-// 	assert.Equal(t, "6385e86c8489b28586d03320efd57dfe", md5.Checksums["data/hemingway.jpg"])
-// 	assert.Equal(t, "c3b41207c1374fa0bc2c2d323afc580d", md5.Checksums["data/lighthouse.jpg"])
-// 	assert.Equal(t, "a41052eecd987d8175164c48f486945c", md5.Checksums["data/president.jpg"])
-// 	assert.Equal(t, "8ee0d735f4120b06de6ba8a9a4047336", md5.Checksums["data/sample.docx"])
-// 	assert.Equal(t, "12dae6491cc10bd8d088b70852a39e2c", md5.Checksums["data/sample.pdf"])
-// 	assert.Equal(t, "3585ab45da8cdfdcec64f8b6460c763f", md5.Checksums["data/sample.txt"])
-// }
+	bag := bagger.Bag()
+	require.NotNil(t, bag)
+	require.NotNil(t, bag.Manifests)
+
+	md5 := bag.Manifests["manifest-md5.txt"]
+	require.NotNil(t, md5)
+
+	checksum, _ := bag.GetChecksumFromManifest(constants.MD5, "data/hemingway.jpg")
+	assert.Equal(t, "6385e86c8489b28586d03320efd57dfe", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/lighthouse.jpg")
+	assert.Equal(t, "c3b41207c1374fa0bc2c2d323afc580d", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/president.jpg")
+	assert.Equal(t, "a41052eecd987d8175164c48f486945c", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/sample.docx")
+	assert.Equal(t, "8ee0d735f4120b06de6ba8a9a4047336", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/sample.pdf")
+	assert.Equal(t, "12dae6491cc10bd8d088b70852a39e2c", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/sample.txt")
+	assert.Equal(t, "3585ab45da8cdfdcec64f8b6460c763f", checksum)
+}

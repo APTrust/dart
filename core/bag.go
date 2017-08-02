@@ -59,11 +59,7 @@ func (bag *Bag) GetChecksumFromManifest(algorithm, filePath string) (string, err
 	if bag.Manifests[manifestFile] == nil {
 		return "", fmt.Errorf("%s is missing", manifestFile)
 	}
-	checksum := ""
-	checksums := bag.Manifests[manifestFile].ParsedData.ValuesForKey(filePath)
-	if len(checksums) > 0 {
-		checksum = checksums[0]
-	}
+	checksum := bag.Manifests[manifestFile].ParsedData.FirstValueForKey(filePath)
 	return checksum, nil
 }
 
