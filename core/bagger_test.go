@@ -204,10 +204,16 @@ func TestWriteBag_APTrust(t *testing.T) {
 	require.Empty(t, bagger.Errors())
 	filesWritten, err := fileutil.RecursiveFileList(tempDir)
 	require.Nil(t, err)
-	// Should have 6 payload files, plus bagit.txt, bag-info.txt,
-	// aptrust-info.txt, and manifest-md5.txt.
-	assert.Equal(t, 10, len(filesWritten))
 
+	// Make sure the files were written to disk
+	relDestPaths = append(relDestPaths, "bagit.txt", "bag-info.txt", "aptrust-info.txt", "manifest-md5.txt")
+	assert.Equal(t, len(relDestPaths), len(filesWritten))
+	for _, relPath := range relDestPaths {
+		absDestPath := filepath.Join(tempDir, relPath)
+		assert.True(t, fileutil.FileExists(absDestPath))
+	}
+
+	// Make sure the checksums were loaded into the manifest.
 	bag := bagger.Bag()
 	require.NotNil(t, bag)
 	require.NotNil(t, bag.Manifests)
@@ -232,4 +238,35 @@ func TestWriteBag_APTrust(t *testing.T) {
 
 	checksum, _ = bag.GetChecksumFromManifest(constants.MD5, "data/sample.txt")
 	assert.Equal(t, "3585ab45da8cdfdcec64f8b6460c763f", checksum)
+
+	// Verify contents of tag files and the manifest.
+	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
+	expectedBagInfo := "Source-Organization:  APTrust\n"
+	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
+	expectedManifest := `data/hemingway.jpg:  6385e86c8489b28586d03320efd57dfe
+data/lighthouse.jpg:  c3b41207c1374fa0bc2c2d323afc580d
+data/president.jpg:  a41052eecd987d8175164c48f486945c
+data/sample.docx:  8ee0d735f4120b06de6ba8a9a4047336
+data/sample.pdf:  12dae6491cc10bd8d088b70852a39e2c
+data/sample.txt:  3585ab45da8cdfdcec64f8b6460c763f
+`
+
+	actualBagit, err := ioutil.ReadFile(filepath.Join(tempDir, "bagit.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedBagit, string(actualBagit))
+
+	actualBagInfo, err := ioutil.ReadFile(filepath.Join(tempDir, "bag-info.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedBagInfo, string(actualBagInfo))
+
+	actualAPTrustInfo, err := ioutil.ReadFile(filepath.Join(tempDir, "aptrust-info.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedAPTrustInfo, string(actualAPTrustInfo))
+
+	actualManifest, err := ioutil.ReadFile(filepath.Join(tempDir, "manifest-md5.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedManifest, string(actualManifest))
 }
+
+// TODO: Bag the same contents, using DPN profile.
+// Break out the common test code into functions.
