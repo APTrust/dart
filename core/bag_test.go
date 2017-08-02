@@ -231,14 +231,49 @@ func TestAddChecksumsToManifests(t *testing.T) {
 	assert.Equal(t, "data/file_9", sha256Data[9].Key)
 }
 
-// func TestAddChecksumsToTagManifests(t *testing.T) {
-// 	bag := core.NewBag("path/to/bag")
-// 	require.NotNil(t, bag)
+func TestAddChecksumsToTagManifests(t *testing.T) {
+	bag := core.NewBag("path/to/bag")
+	require.NotNil(t, bag)
 
-// 	file, fileType := bag.AddFileFromSummary(fileSummary("tagmanifest-sha256.txt"))
-// 	assert.NotNil(t, file)
-// 	assert.Equal(t, constants.MANIFEST, fileType)
-// 	assert.Equal(t, 1, len(bag.TagManifests))
-// 	assert.NotNil(t, 1, bag.TagManifests["tagmanifest-sha256.txt"])
+	file, fileType := bag.AddFileFromSummary(fileSummary("tagmanifest-md5.txt"))
+	assert.NotNil(t, file)
+	assert.Equal(t, constants.MANIFEST, fileType)
+	file, fileType = bag.AddFileFromSummary(fileSummary("tagmanifest-sha256.txt"))
+	assert.NotNil(t, file)
+	assert.Equal(t, constants.MANIFEST, fileType)
 
-// }
+	for i := 1; i <= 10; i++ {
+		fileName := fmt.Sprintf("tag_file_%d", i)
+		md5 := fmt.Sprintf("md5-%d", i)
+		sha256 := fmt.Sprintf("sha256-%d", i)
+		file, _ := bag.AddFileFromSummary(fileSummary(fileName))
+		file.Checksums[constants.MD5] = md5
+		file.Checksums[constants.SHA256] = sha256
+	}
+
+	bag.AddChecksumsToTagManifests()
+	md5Manifest := bag.TagManifests["tagmanifest-md5.txt"]
+	sha256Manifest := bag.TagManifests["tagmanifest-sha256.txt"]
+	require.NotNil(t, md5Manifest)
+	require.NotNil(t, sha256Manifest)
+
+	// Make sure the checksums were added to the ParsedData
+	// attribute of the manifests
+	md5Data := md5Manifest.ParsedData.Items()
+	sha256Data := sha256Manifest.ParsedData.Items()
+
+	require.Equal(t, 10, len(md5Data))
+	require.Equal(t, 10, len(sha256Data))
+
+	// Make sure files are in order in md5 tag manifest
+	assert.Equal(t, "tag_file_1", md5Data[0].Key)
+	assert.Equal(t, "tag_file_10", md5Data[1].Key)
+	assert.Equal(t, "tag_file_6", md5Data[6].Key)
+	assert.Equal(t, "tag_file_9", md5Data[9].Key)
+
+	// Make sure files are in order in sha256 tag manifest
+	assert.Equal(t, "tag_file_1", sha256Data[0].Key)
+	assert.Equal(t, "tag_file_10", sha256Data[1].Key)
+	assert.Equal(t, "tag_file_6", sha256Data[6].Key)
+	assert.Equal(t, "tag_file_9", sha256Data[9].Key)
+}
