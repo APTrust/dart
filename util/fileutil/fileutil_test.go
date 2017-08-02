@@ -172,3 +172,11 @@ func TestParseManifestName(t *testing.T) {
 	assert.Empty(t, manifestType)
 	assert.Empty(t, algorithm)
 }
+
+func TestLooksLikeManifest(t *testing.T) {
+	assert.True(t, fileutil.LooksLikeManifest("manifest-md5.txt"))
+	assert.True(t, fileutil.LooksLikeManifest("tagmanifest-sha256.txt"))
+	assert.False(t, fileutil.LooksLikeManifest("plain.txt"))
+	assert.False(t, fileutil.LooksLikeManifest("tagfiles/manifest-md5.txt"))
+	assert.False(t, fileutil.LooksLikeManifest("manifesto.txt"))
+}

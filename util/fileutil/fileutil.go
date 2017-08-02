@@ -112,6 +112,13 @@ func ParseManifestName(filePath string) (manifestType string, algorithm string) 
 	return manifestType, algorithm
 }
 
+// LooksLikeManifest returns true if filePath ends with a file name
+// that matches the manifest pattern (manifest-***.txt).
+func LooksLikeManifest(filePath string) bool {
+	manifestType, algorithm := ParseManifestName(filePath)
+	return manifestType != "" && algorithm != ""
+}
+
 // CalculateChecksums calculates checksums for a file, based on the algorithms
 // specified in the algorithms param. Supported algorithm names are specified
 // in constants.go. The return value is a map in which the key is the algorithm
