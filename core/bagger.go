@@ -57,8 +57,7 @@ func NewBagger(bagPath string, profile *BagItProfile) (*Bagger, error) {
 //
 // Don't add manifests here, or you'll get an error.
 func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
-	manifestType, alg := fileutil.ParseManifestName(relDestPath)
-	if manifestType != "" && alg != "" {
+	if fileutil.LooksLikeManifest(relDestPath) {
 		bagger.addError("Don't add manifest '%s' through AddFile", relDestPath)
 		return false
 	}

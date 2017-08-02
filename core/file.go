@@ -2,9 +2,12 @@ package core
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"github.com/APTrust/bagit/util/fileutil"
 	"io"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -110,6 +113,81 @@ func (file *File) ParseAsTagFile(reader io.Reader, filePath string) []error {
 	return errs
 }
 
-func (file *File) Write(writer *io.Writer, filePath string) []error {
+// Write writes a tag file or checksum manifest to disk.
+// File will be written to the specified filePath, and during
+// writing, we will calculate checksums for the specified algorithms.
+// The checksums will be saved to File.Checksums.
+func (file *File) Write(filePath string, algorithms []string) error {
+	// Create the output file
+	if err := os.MkdirAll(filepath.Dir(filePath), 0755); err != nil {
+		return err
+	}
+	fileOut, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer fileOut.Close()
+
+	// Load up contents into a single string.
+	// Will this be a problem for 100k checksums?
+	str := ""
+	for _, keyValuePair := range file.ParsedData.Items() {
+		field, err := file.formatField(keyValuePair.Key, keyValuePair.Value)
+		if err != nil {
+			return err
+		}
+		str += fmt.Sprintf("%s\n", field)
+	}
+
+	checksums, err := fileutil.WriteWithChecksums(strings.NewReader(str), fileOut, algorithms)
+	if err != nil {
+		return err
+	}
+	file.Checksums = checksums
 	return nil
+}
+
+func (file *File) formatField(key string, value string) (string, error) {
+	// When writing tag files, we want to break lines at 79
+	// characters, as recommended by the bagit spec at
+	// https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.2.2
+	//
+	// The delimiter for tag files includes leading spaces for tag
+	// values that span more than one line.
+	//
+	// For manifests, we don't want checksum values to span multiple
+	// lines, so we don't set a line length. We also want to use a plain
+	// line break, with no indent, after each line.
+	delimiter := "\n   "
+	maxLineLength := 79
+	if fileutil.LooksLikeManifest(file.FileSummary.RelPath) {
+		delimiter = "\n"
+		maxLineLength = 0
+	}
+
+	var buff bytes.Buffer
+	writeLen, err := buff.WriteString(fmt.Sprintf("%s: ", key))
+	if err != nil {
+		return "", err
+	}
+	splitCounter := writeLen
+
+	words := strings.Split(value, " ")
+
+	for word := range words {
+		if maxLineLength > 0 && splitCounter+len(words[word]) > maxLineLength {
+			splitCounter, err = buff.WriteString(delimiter)
+			if err != nil {
+				return "", err
+			}
+		}
+		writeLen, err = buff.WriteString(strings.Join([]string{" ", words[word]}, ""))
+		if err != nil {
+			return "", err
+		}
+		splitCounter += writeLen
+
+	}
+
+	return buff.String(), nil
 }
