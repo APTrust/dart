@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/APTrust/bagit/constants"
 	"github.com/APTrust/bagit/util/fileutil"
+	"sort"
 	"strings"
 )
 
@@ -133,12 +134,14 @@ func (bag *Bag) GetTagValuesFromFile(filePath, tagName string) (values []string,
 // AddChecksumsToManifest adds all of the payload file checksums
 // to each manifest.
 func (bag *Bag) AddChecksumsToManifests() {
+	sortedFiles := bag.sortKeys(bag.Payload)
 	for manifestName, manifest := range bag.Manifests {
 		// Reset this on each call, so duplicate calls don't
 		// result in duplicate entries.
 		manifest.ParsedData = NewKeyValueCollection()
 		_, alg := fileutil.ParseManifestName(manifestName)
-		for fileName, file := range bag.Payload {
+		for _, fileName := range sortedFiles {
+			file := bag.Payload[fileName]
 			manifest.ParsedData.Append(fileName, file.Checksums[alg])
 		}
 	}
@@ -148,16 +151,32 @@ func (bag *Bag) AddChecksumsToManifests() {
 // to each tagmanifest. Call this after AddChecksumsToManifests,
 // so that the checksums of the payload manifests will be available.
 func (bag *Bag) AddChecksumsToTagManifests() {
+	sortedManifests := bag.sortKeys(bag.Manifests)
+	sortedTagFiles := bag.sortKeys(bag.TagFiles)
 	for manifestName, manifest := range bag.TagManifests {
 		// Reset this on each call, so duplicate calls don't
 		// result in duplicate entries.
 		manifest.ParsedData = NewKeyValueCollection()
 		_, alg := fileutil.ParseManifestName(manifestName)
-		for fileName, file := range bag.Manifests {
+		for _, fileName := range sortedManifests {
+			file := bag.Manifests[fileName]
 			manifest.ParsedData.Append(fileName, file.Checksums[alg])
 		}
-		for fileName, file := range bag.TagFiles {
+		for _, fileName := range sortedTagFiles {
+			file := bag.TagFiles[fileName]
 			manifest.ParsedData.Append(fileName, file.Checksums[alg])
 		}
 	}
+}
+
+// sortKeys returns the string keys of a map in sorted order.
+func (bag *Bag) sortKeys(items map[string]*File) []string {
+	keys := make([]string, len(items))
+	i := 0
+	for key, _ := range items {
+		keys[i] = key
+		i++
+	}
+	sort.Strings(keys)
+	return keys
 }
