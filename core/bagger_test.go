@@ -268,5 +268,134 @@ data/sample.txt:  3585ab45da8cdfdcec64f8b6460c763f
 	require.Equal(t, expectedManifest, string(actualManifest))
 }
 
-// TODO: Bag the same contents, using DPN profile.
-// Break out the common test code into functions.
+func TestWriteBag_DPN(t *testing.T) {
+	// Get a tmp dir name
+	tempDir, err := ioutil.TempDir("", "bagger_test")
+	require.Nil(t, err)
+
+	// Load the DPN bagit profile
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := core.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
+
+	// Get our bagger
+	bagger, err := core.NewBagger(tempDir, dpnProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
+
+	// Add tags
+	for filename, list := range DPNDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
+
+	// Add files. The "files" var contains relative file paths.
+	testFileDir, _ := testutil.GetPathToTestFileDir()
+	absSourcePath, _ := fileutil.RecursiveFileList(testFileDir)
+	relDestPaths := make([]string, len(absSourcePath))
+	for i, absSrcPath := range absSourcePath {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+	}
+
+	assert.True(t, bagger.WriteBag(true, true))
+	require.Empty(t, bagger.Errors())
+	filesWritten, err := fileutil.RecursiveFileList(tempDir)
+	require.Nil(t, err)
+
+	// Make sure the files were written to disk
+	relDestPaths = append(relDestPaths, "bagit.txt", "bag-info.txt",
+		"dpn-tags/dpn-info.txt", "manifest-sha256.txt", "tagmanifest-sha256.txt")
+	assert.Equal(t, len(relDestPaths), len(filesWritten))
+	for _, relPath := range relDestPaths {
+		absDestPath := filepath.Join(tempDir, relPath)
+		assert.True(t, fileutil.FileExists(absDestPath))
+	}
+
+	// Make sure the checksums were loaded into the manifest.
+	bag := bagger.Bag()
+	require.NotNil(t, bag)
+	require.NotNil(t, bag.Manifests)
+
+	sha256 := bag.Manifests["manifest-sha256.txt"]
+	require.NotNil(t, sha256)
+
+	checksum, _ := bag.GetChecksumFromManifest(constants.SHA256, "data/hemingway.jpg")
+	assert.Equal(t, "01d46064cdd20c943a1ceb09d523dddb052e52d7f7c0fd53cc928dfe6d6e0dd5", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.SHA256, "data/lighthouse.jpg")
+	assert.Equal(t, "66363a6b2c64a5560d7cf17f3e39545320e888968f1bcef99dde732671415c44", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.SHA256, "data/president.jpg")
+	assert.Equal(t, "a0dea3fd2e3f565c610f9a1b48bdbb0303d855090c230ac849b62c48267704de", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.SHA256, "data/sample.docx")
+	assert.Equal(t, "ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.SHA256, "data/sample.pdf")
+	assert.Equal(t, "1a728e9068020801cdbf24d2ba4b359459a7c415ddb43a98c43e33f6373ee4fe", checksum)
+
+	checksum, _ = bag.GetChecksumFromManifest(constants.SHA256, "data/sample.txt")
+	assert.Equal(t, "c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4", checksum)
+
+	// Verify contents of tag files and the manifest.
+	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
+	expectedBagInfo := `Source-Organization:  APTrust
+Organization-Address:  160 McCormick Rd, Charlottesville, VA 22904
+Contact-Email:  homer@example.com
+Bagging-Date:  2017-07-26
+Bag-Count:  1
+Contact-Name:  Homer Simpson
+Contact-Phone:  555-555-1212
+Bag-Size:  411
+Bag-Group-Identifier:  None
+`
+	expectedDPNInfo := `Ingest-Node-Name:  aptrust
+Ingest-Node-Contact-Name:  Apu Nahasapeemapetilon
+Ingest-Node-Contact-Email:  apu@example.com
+First-Version-Object-ID:  00af15fd-1046-4811-8cb5-878ec66cf0da
+Interpretive-Object-ID:  83bbc27a-86ef-4d1d-be09-4d78cf9e7df3
+Rights-Object-ID:  3559d615-6df9-4f30-a2b0-511568359787
+DPN-Object-ID:  00af15fd-1046-4811-8cb5-878ec66cf0da
+Local-ID:  Homer's Beer Can Collection
+Ingest-Node-Address:  160 McCormick Rd, Charlottesville, VA 22904
+Version-Number:  1
+Bag-Type:  data
+`
+	expectedManifest := `data/hemingway.jpg:  01d46064cdd20c943a1ceb09d523dddb052e52d7f7c0fd53cc928dfe6d6e0dd5
+data/lighthouse.jpg:  66363a6b2c64a5560d7cf17f3e39545320e888968f1bcef99dde732671415c44
+data/president.jpg:  a0dea3fd2e3f565c610f9a1b48bdbb0303d855090c230ac849b62c48267704de
+data/sample.docx:  ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb
+data/sample.pdf:  1a728e9068020801cdbf24d2ba4b359459a7c415ddb43a98c43e33f6373ee4fe
+data/sample.txt:  c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4
+`
+	expectedTagManifest := `manifest-sha256.txt:  7f2b1af17d92bffd7da61ac090d97cafac9e86dc7c10bc1189ef0b8ac00f13d8
+bag-info.txt:  7b5034929ac9b5ae96dc2d38b6afb092e5f1a774a0e773959db493f76685a83c
+bagit.txt:  49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4
+dpn-tags/dpn-info.txt:  ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887
+`
+
+	actualBagit, err := ioutil.ReadFile(filepath.Join(tempDir, "bagit.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedBagit, string(actualBagit))
+
+	actualBagInfo, err := ioutil.ReadFile(filepath.Join(tempDir, "bag-info.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedBagInfo, string(actualBagInfo))
+
+	actualDPNInfo, err := ioutil.ReadFile(filepath.Join(tempDir, "dpn-tags/dpn-info.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedDPNInfo, string(actualDPNInfo))
+
+	actualManifest, err := ioutil.ReadFile(filepath.Join(tempDir, "manifest-sha256.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedManifest, string(actualManifest))
+
+	actualTagManifest, err := ioutil.ReadFile(filepath.Join(tempDir, "tagmanifest-sha256.txt"))
+	require.Nil(t, err)
+	require.Equal(t, expectedTagManifest, string(actualTagManifest))
+}
