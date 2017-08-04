@@ -1,2 +1,4 @@
 *~
 /bin
+# Binary of compiled server
+/server/server
