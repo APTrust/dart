@@ -6,6 +6,8 @@ create table if not exists general_settings (
        "value" text
 );
 
+create unique index if not exists ix_general_settings_name ON general_settings ("name");
+
 -- Credentials store credentials for accessing remote storage services.
 create table if not exists credentials (
        id integer primary key,
@@ -14,6 +16,8 @@ create table if not exists credentials (
        "key" text not null,
        "value" text not null
 );
+
+create unique index if not exists ix_credentials_name ON credentials ("name");
 
 -- Storage services stores information about storage services to
 -- which bags and files may be uploaded. The protocol column will
@@ -33,6 +37,8 @@ create table if not exists storage_services (
        foreign key(credentials_id) references credentials(id)
 );
 
+create unique index if not exists ix_storage_services_name ON storage_services ("name");
+
 -- BagIt profiles contains blobs of JSON that describe BagIt profiles.
 create table if not exists bagit_profiles (
        id integer primary key,
@@ -41,6 +47,8 @@ create table if not exists bagit_profiles (
        json text not null,
        updated_at datetime default current_timestamp
 );
+
+create unique index if not exists ix_bagit_profiles_name ON bagit_profiles ("name");
 
 -- Default tag values are values that are used across all bags adhering to a
 -- profile. For example, both APTrust and DPN require the Source-Organization
@@ -59,6 +67,8 @@ create table if not exists default_tag_values (
        foreign key(profile_id) references bagit_profiles(id)
 );
 
+create index if not exists ix_default_tag_values_profile_id ON default_tag_values (profile_id);
+
 -- Workflows table describes workflows, which typically include bagging content
 -- according to a specific profile and then uploading it to some storage service.
 create table if not exists workflows (
@@ -72,6 +82,8 @@ create table if not exists workflows (
        foreign key(storage_service_id) references storage_services(id)
 );
 
+create unique index if not exists ix_workflows_name ON workflows ("name");
+
 -- Bags contains information about bags that easy-store has created.
 -- storage_url contains the location to which this bag was uploaded,
 -- if it was uplaoded anywhere. metadata_url contains information about
@@ -84,7 +96,7 @@ create table if not exists workflows (
 -- object from the storage service's Web UI or REST API.
 create table if not exists bags (
        id integer primary key,
-       "name" text not null unique,
+       "name" text not null,
        "size" bigint not null default -1,
        storage_url text,
        metadata_url text,
@@ -92,6 +104,8 @@ create table if not exists bags (
        create_at datetime,
        updated_at datetime default current_timestamp
 );
+
+create index if not exists ix_bags_name ON bags ("name");
 
 -- Files contains information about unbagged files that easy-store has
 -- dealt with. storage_url describes where the file is stored and may
@@ -101,7 +115,7 @@ create table if not exists bags (
 create table if not exists files (
        id integer primary key,
        bag_id integer,
-       "name" text not null unique,
+       "name" text not null,
        "size" bigint not null default -1,
        md5 text,
        sha256 text,
@@ -115,6 +129,9 @@ create table if not exists files (
        foreign key(bag_id) references bags(id)
 );
 
+create index if not exists ix_files_name ON files ("name");
+create index if not exists ix_files_bag_id ON files (bag_id);
+
 -- Jobs contains information about jobs that easy-store has scheduled
 -- or completed. The workflow_snapshot column contains a JSON snapshot
 -- of the workflow at the time the job was executed. We store a snapshot
@@ -124,6 +141,7 @@ create table if not exists jobs (
        id integer primary key,
        bag_id integer null,
        file_id integer null,
+       workflow_id integer null,
        workflow_snapshot text,
        created_at datetime,
        scheduled_start_time datetime,
@@ -133,6 +151,11 @@ create table if not exists jobs (
        pid integer,
        captured_output text,
 
+       foreign key(workflow_id) references workflows(id),
        foreign key(bag_id) references bags(id),
        foreign key(file_id) references files(id)
 );
+
+create index if not exists ix_jobs_bag_id ON jobs (bag_id);
+create index if not exists ix_jobs_file_id ON jobs (file_id);
+create index if not exists ix_jobs_workflow_id ON jobs (workflow_id);
