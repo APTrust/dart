@@ -1,9 +1,9 @@
-package core_test
+package bagit_test
 
 import (
-	"github.com/APTrust/bagit/core"
-	"github.com/APTrust/bagit/util/fileutil"
-	"github.com/APTrust/bagit/util/testutil"
+	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -19,7 +19,7 @@ func TestParseAsTagFile(t *testing.T) {
 	defer reader.Close()
 	require.Nil(t, err)
 
-	file := &core.File{}
+	file := &bagit.File{}
 	errs := file.ParseAsTagFile(reader, "example.edu.tagsample_good/aptrust-info.txt")
 	assert.Empty(t, errs)
 	assert.Equal(t, 2, file.ParsedData.Count())
@@ -32,7 +32,7 @@ func TestParseAsTagFile(t *testing.T) {
 	defer reader.Close()
 	require.Nil(t, err)
 
-	file = &core.File{}
+	file = &bagit.File{}
 	errs = file.ParseAsTagFile(reader2, "example.edu.tagsample_good/bag-info.txt")
 	assert.Empty(t, errs)
 	assert.Equal(t, 6, file.ParsedData.Count())
@@ -62,7 +62,7 @@ func TestParseAsManifest(t *testing.T) {
 	defer reader.Close()
 	require.Nil(t, err)
 
-	file := &core.File{}
+	file := &bagit.File{}
 	errs := file.ParseAsManifest(reader, "example.edu.tagsample_good/manifest-md5.txt")
 	assert.Empty(t, errs)
 	assert.Equal(t, 4, file.ParsedData.Count())

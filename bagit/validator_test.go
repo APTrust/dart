@@ -1,10 +1,10 @@
-package core_test
+package bagit_test
 
 import (
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/core"
-	"github.com/APTrust/bagit/util"
-	"github.com/APTrust/bagit/util/testutil"
+	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
@@ -12,16 +12,16 @@ import (
 	"testing"
 )
 
-func getValidator(t *testing.T, bagName, profileName string) *core.Validator {
+func getValidator(t *testing.T, bagName, profileName string) *bagit.Validator {
 	profilePath, err := testutil.GetPathToTestProfile(profileName)
 	require.Nil(t, err)
-	profile, err := core.LoadBagItProfile(profilePath)
+	profile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
 	bagPath, err := testutil.GetPathToTestBag(bagName)
 	require.Nil(t, err)
-	bag := core.NewBag(bagPath)
-	return core.NewValidator(bag, profile)
+	bag := bagit.NewBag(bagPath)
+	return bagit.NewValidator(bag, profile)
 }
 
 func TestNewValidator(t *testing.T) {
@@ -187,7 +187,7 @@ func TestValidateAllowFetch(t *testing.T) {
 	assert.Empty(t, validator.Errors())
 
 	// Not allowed and present
-	validator.Bag.TagFiles["fetch.txt"] = &core.File{}
+	validator.Bag.TagFiles["fetch.txt"] = &bagit.File{}
 	assert.False(t, validator.ValidateAllowFetch())
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Found fetch.txt, which BagIt profile says is not allowed.", validator.Errors()[0])
@@ -200,7 +200,7 @@ func TestValidateAllowFetch(t *testing.T) {
 	assert.Empty(t, validator.Errors())
 
 	// Alloed and present
-	validator.Bag.TagFiles["fetch.txt"] = &core.File{}
+	validator.Bag.TagFiles["fetch.txt"] = &bagit.File{}
 	assert.True(t, validator.ValidateAllowFetch())
 	assert.Empty(t, validator.Errors())
 }
@@ -538,7 +538,7 @@ func TestValidateUntarredGoodBag(t *testing.T) {
 	// Load the APTrust BagIt Profile
 	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	aptrustProfile, err := core.LoadBagItProfile(profilePath)
+	aptrustProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
 	// Untar a bag that we know is good.
@@ -549,8 +549,8 @@ func TestValidateUntarredGoodBag(t *testing.T) {
 	require.Nil(t, err)
 
 	// Create the bag object and the vaidator.
-	bag := core.NewBag(pathToUntarredBag)
-	validator := core.NewValidator(bag, aptrustProfile)
+	bag := bagit.NewBag(pathToUntarredBag)
+	validator := bagit.NewValidator(bag, aptrustProfile)
 	require.NotNil(t, validator)
 
 	// Turn this off temporarily, so we can validate.
@@ -567,7 +567,7 @@ func TestValidateUntarredBadBag(t *testing.T) {
 	// Load the APTrust BagIt Profile
 	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	aptrustProfile, err := core.LoadBagItProfile(profilePath)
+	aptrustProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
 	// Untar a bag that we know is bad.
@@ -578,8 +578,8 @@ func TestValidateUntarredBadBag(t *testing.T) {
 	require.Nil(t, err)
 
 	// Create the bag object and the vaidator.
-	bag := core.NewBag(pathToUntarredBag)
-	validator := core.NewValidator(bag, aptrustProfile)
+	bag := bagit.NewBag(pathToUntarredBag)
+	validator := bagit.NewValidator(bag, aptrustProfile)
 	require.NotNil(t, validator)
 
 	// Turn this off temporarily, so we can validate.

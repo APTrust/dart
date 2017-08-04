@@ -1,12 +1,10 @@
-package core
+package bagit
 
 import (
 	"fmt"
-	// "github.com/APTrust/bagit/util"
-	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"os"
 	"path/filepath"
-	// "strings"
 )
 
 type Bagger struct {

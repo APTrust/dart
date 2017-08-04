@@ -1,11 +1,11 @@
-package core_test
+package bagit_test
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/core"
-	"github.com/APTrust/bagit/util"
-	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -26,7 +26,7 @@ func fileSummary(relPath string) *fileutil.FileSummary {
 }
 
 func TestNewBag(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 	assert.Equal(t, "path/to/bag", bag.Path)
 	assert.NotNil(t, bag.Payload)
@@ -36,7 +36,7 @@ func TestNewBag(t *testing.T) {
 }
 
 func TestAddFileFromSummary(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 
 	file, fileType := bag.AddFileFromSummary(fileSummary("tagmanifest-sha256.txt"))
@@ -71,12 +71,12 @@ func TestAddFileFromSummary(t *testing.T) {
 }
 
 func TestGetChecksumFromManifest(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 	fs := fileSummary("data/sample.txt")
-	bag.Manifests["manifest-md5.txt"] = core.NewFile(fs)
+	bag.Manifests["manifest-md5.txt"] = bagit.NewFile(fs)
 	bag.Manifests["manifest-md5.txt"].ParsedData.Append("data/sample.txt", "12345678")
-	bag.Manifests["manifest-sha256.txt"] = core.NewFile(fs)
+	bag.Manifests["manifest-sha256.txt"] = bagit.NewFile(fs)
 	bag.Manifests["manifest-sha256.txt"].ParsedData.Append("data/sample.txt", "fedac8989")
 
 	checksum, err := bag.GetChecksumFromManifest(constants.MD5, "data/sample.txt")
@@ -99,12 +99,12 @@ func TestGetChecksumFromManifest(t *testing.T) {
 }
 
 func TestGetChecksumFromTagManifest(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 	fs := fileSummary("bag-info.txt")
-	bag.TagManifests["tagmanifest-md5.txt"] = core.NewFile(fs)
+	bag.TagManifests["tagmanifest-md5.txt"] = bagit.NewFile(fs)
 	bag.TagManifests["tagmanifest-md5.txt"].ParsedData.Append("bag-info.txt", "12345678")
-	bag.TagManifests["tagmanifest-sha256.txt"] = core.NewFile(fs)
+	bag.TagManifests["tagmanifest-sha256.txt"] = bagit.NewFile(fs)
 	bag.TagManifests["tagmanifest-sha256.txt"].ParsedData.Append("bag-info.txt", "fedac8989")
 
 	checksum, err := bag.GetChecksumFromTagManifest(constants.MD5, "bag-info.txt")
@@ -127,12 +127,12 @@ func TestGetChecksumFromTagManifest(t *testing.T) {
 }
 
 func TestGetTagValues(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 	fs := fileSummary("data/sample.txt")
-	bag.TagFiles["aptrust-info.txt"] = core.NewFile(fs)
+	bag.TagFiles["aptrust-info.txt"] = bagit.NewFile(fs)
 	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "value1")
-	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = bagit.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagIsPresent, hasNonEmptyValue := bag.GetTagValues("key1")
@@ -149,12 +149,12 @@ func TestGetTagValues(t *testing.T) {
 }
 
 func TestGetTagValuesFromFile(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 	fs := fileSummary("data/sample.txt")
-	bag.TagFiles["aptrust-info.txt"] = core.NewFile(fs)
+	bag.TagFiles["aptrust-info.txt"] = bagit.NewFile(fs)
 	bag.TagFiles["aptrust-info.txt"].ParsedData.Append("key1", "value1")
-	bag.TagFiles["dpn-tags/dpn-info.txt"] = core.NewFile(fs)
+	bag.TagFiles["dpn-tags/dpn-info.txt"] = bagit.NewFile(fs)
 	bag.TagFiles["dpn-tags/dpn-info.txt"].ParsedData.Append("key1", "value2")
 
 	values, tagIsPresent, hasNonEmptyValue, err := bag.GetTagValuesFromFile("aptrust-info.txt", "key1")
@@ -185,7 +185,7 @@ func TestGetTagValuesFromFile(t *testing.T) {
 }
 
 func TestAddChecksumsToManifests(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 
 	file, fileType := bag.AddFileFromSummary(fileSummary("manifest-md5.txt"))
@@ -232,7 +232,7 @@ func TestAddChecksumsToManifests(t *testing.T) {
 }
 
 func TestAddChecksumsToTagManifests(t *testing.T) {
-	bag := core.NewBag("path/to/bag")
+	bag := bagit.NewBag("path/to/bag")
 	require.NotNil(t, bag)
 
 	file, fileType := bag.AddFileFromSummary(fileSummary("tagmanifest-md5.txt"))

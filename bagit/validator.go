@@ -1,11 +1,11 @@
-package core
+package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/errtypes"
-	"github.com/APTrust/bagit/util"
-	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/errtypes"
+	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
 	"os"
 	"path/filepath"

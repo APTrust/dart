@@ -1,11 +1,11 @@
-package core_test
+package bagit_test
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/core"
-	"github.com/APTrust/bagit/util/fileutil"
-	"github.com/APTrust/bagit/util/testutil"
+	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -15,64 +15,64 @@ import (
 	"testing"
 )
 
-var APTrustDefaultTags = map[string][]core.KeyValuePair{
-	"bagit.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("BagIt-Version", "0.97"),
-		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
+var APTrustDefaultTags = map[string][]bagit.KeyValuePair{
+	"bagit.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("BagIt-Version", "0.97"),
+		bagit.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
 	},
-	"bag-info.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("Source-Organization", "APTrust"),
+	"bag-info.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("Source-Organization", "APTrust"),
 	},
-	"aptrust-info.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("Title", "Test Object"),
-		core.NewKeyValuePair("Access", "Institution"),
-	},
-}
-
-var DPNDefaultTags = map[string][]core.KeyValuePair{
-	"bagit.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("BagIt-Version", "0.97"),
-		core.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
-	},
-	"bag-info.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("Source-Organization", "APTrust"),
-		core.NewKeyValuePair("Organization-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
-		core.NewKeyValuePair("Contact-Email", "homer@example.com"),
-		core.NewKeyValuePair("Bagging-Date", "2017-07-26"),
-		core.NewKeyValuePair("Bag-Count", "1"),
-		core.NewKeyValuePair("Contact-Name", "Homer Simpson"),
-		core.NewKeyValuePair("Contact-Phone", "555-555-1212"),
-		core.NewKeyValuePair("Bag-Size", "411"),
-		core.NewKeyValuePair("Bag-Group-Identifier", "None"),
-	},
-	"dpn-tags/dpn-info.txt": []core.KeyValuePair{
-		core.NewKeyValuePair("Ingest-Node-Name", "aptrust"),
-		core.NewKeyValuePair("Ingest-Node-Contact-Name", "Apu Nahasapeemapetilon"),
-		core.NewKeyValuePair("Ingest-Node-Contact-Email", "apu@example.com"),
-		core.NewKeyValuePair("First-Version-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
-		core.NewKeyValuePair("Interpretive-Object-ID", "83bbc27a-86ef-4d1d-be09-4d78cf9e7df3"),
-		core.NewKeyValuePair("Rights-Object-ID", "3559d615-6df9-4f30-a2b0-511568359787"),
-		core.NewKeyValuePair("DPN-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
-		core.NewKeyValuePair("Local-ID", "Homer's Beer Can Collection"),
-		core.NewKeyValuePair("Ingest-Node-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
-		core.NewKeyValuePair("Version-Number", "1"),
-		core.NewKeyValuePair("Bag-Type", "data"),
+	"aptrust-info.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("Title", "Test Object"),
+		bagit.NewKeyValuePair("Access", "Institution"),
 	},
 }
 
-func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *core.BagItProfile) {
+var DPNDefaultTags = map[string][]bagit.KeyValuePair{
+	"bagit.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("BagIt-Version", "0.97"),
+		bagit.NewKeyValuePair("Tag-File-Character-Encoding", "UTF-8"),
+	},
+	"bag-info.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("Source-Organization", "APTrust"),
+		bagit.NewKeyValuePair("Organization-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
+		bagit.NewKeyValuePair("Contact-Email", "homer@example.com"),
+		bagit.NewKeyValuePair("Bagging-Date", "2017-07-26"),
+		bagit.NewKeyValuePair("Bag-Count", "1"),
+		bagit.NewKeyValuePair("Contact-Name", "Homer Simpson"),
+		bagit.NewKeyValuePair("Contact-Phone", "555-555-1212"),
+		bagit.NewKeyValuePair("Bag-Size", "411"),
+		bagit.NewKeyValuePair("Bag-Group-Identifier", "None"),
+	},
+	"dpn-tags/dpn-info.txt": []bagit.KeyValuePair{
+		bagit.NewKeyValuePair("Ingest-Node-Name", "aptrust"),
+		bagit.NewKeyValuePair("Ingest-Node-Contact-Name", "Apu Nahasapeemapetilon"),
+		bagit.NewKeyValuePair("Ingest-Node-Contact-Email", "apu@example.com"),
+		bagit.NewKeyValuePair("First-Version-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
+		bagit.NewKeyValuePair("Interpretive-Object-ID", "83bbc27a-86ef-4d1d-be09-4d78cf9e7df3"),
+		bagit.NewKeyValuePair("Rights-Object-ID", "3559d615-6df9-4f30-a2b0-511568359787"),
+		bagit.NewKeyValuePair("DPN-Object-ID", "00af15fd-1046-4811-8cb5-878ec66cf0da"),
+		bagit.NewKeyValuePair("Local-ID", "Homer's Beer Can Collection"),
+		bagit.NewKeyValuePair("Ingest-Node-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
+		bagit.NewKeyValuePair("Version-Number", "1"),
+		bagit.NewKeyValuePair("Bag-Type", "data"),
+	},
+}
+
+func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *bagit.BagItProfile) {
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
 
 	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	aptrustProfile, err = core.LoadBagItProfile(profilePath)
+	aptrustProfile, err = bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
 	return tempDir, aptrustProfile
 }
 
-func countItems(items map[string][]core.KeyValuePair) int {
+func countItems(items map[string][]bagit.KeyValuePair) int {
 	count := 0
 	for _, list := range items {
 		count += len(list)
@@ -84,15 +84,15 @@ func TestNewBagger(t *testing.T) {
 	tempDir, aptrustProfile := getBaggerPreReqs(t)
 	defer os.RemoveAll(tempDir)
 
-	bagger, err := core.NewBagger("", aptrustProfile)
+	bagger, err := bagit.NewBagger("", aptrustProfile)
 	require.NotNil(t, err)
 	assert.Equal(t, "Param bagPath cannot be empty", err.Error())
 
-	bagger, err = core.NewBagger(tempDir, nil)
+	bagger, err = bagit.NewBagger(tempDir, nil)
 	require.NotNil(t, err)
 	assert.Equal(t, "Param profile cannot be nil", err.Error())
 
-	bagger, err = core.NewBagger(tempDir, aptrustProfile)
+	bagger, err = bagit.NewBagger(tempDir, aptrustProfile)
 	require.Nil(t, err)
 	require.NotNil(t, bagger)
 	require.NotNil(t, bagger.Bag())
@@ -104,7 +104,7 @@ func TestHasRequiredTags(t *testing.T) {
 	defer os.RemoveAll(tempDir)
 
 	// Make sure we flag missing required APTrust tags
-	bagger, err := core.NewBagger(tempDir, aptrustProfile)
+	bagger, err := bagit.NewBagger(tempDir, aptrustProfile)
 	require.Nil(t, err)
 	require.NotNil(t, bagger)
 
@@ -138,10 +138,10 @@ func TestHasRequiredTags(t *testing.T) {
 	// Make sure bagger flags missing required DPN tags
 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
-	dpnProfile, err := core.LoadBagItProfile(profilePath)
+	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
-	bagger, err = core.NewBagger(tempDir, dpnProfile)
+	bagger, err = bagit.NewBagger(tempDir, dpnProfile)
 	require.Nil(t, err)
 	require.NotNil(t, bagger)
 
@@ -178,7 +178,7 @@ func TestWriteBag_APTrust(t *testing.T) {
 	tempDir, aptrustProfile := getBaggerPreReqs(t)
 	os.RemoveAll(tempDir)
 
-	bagger, err := core.NewBagger(tempDir, aptrustProfile)
+	bagger, err := bagit.NewBagger(tempDir, aptrustProfile)
 	require.Nil(t, err)
 	require.NotNil(t, bagger)
 
@@ -276,11 +276,11 @@ func TestWriteBag_DPN(t *testing.T) {
 	// Load the DPN bagit profile
 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
-	dpnProfile, err := core.LoadBagItProfile(profilePath)
+	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
 
 	// Get our bagger
-	bagger, err := core.NewBagger(tempDir, dpnProfile)
+	bagger, err := bagit.NewBagger(tempDir, dpnProfile)
 	require.Nil(t, err)
 	require.NotNil(t, bagger)
 

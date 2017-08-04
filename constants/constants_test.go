@@ -1,7 +1,7 @@
 package constants_test
 
 import (
-	"github.com/APTrust/bagit/constants"
+	"github.com/APTrust/easy-store/constants"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"

@@ -3,7 +3,7 @@ package fileutil
 import (
 	"archive/tar"
 	"fmt"
-	"github.com/APTrust/bagit/util/platform"
+	"github.com/APTrust/easy-store/util/platform"
 	"os"
 	"path/filepath"
 	"strings"

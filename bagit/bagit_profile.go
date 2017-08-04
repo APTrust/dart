@@ -1,8 +1,8 @@
-package core
+package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/util"
+	"github.com/APTrust/easy-store/util"
 	"strings"
 )
 

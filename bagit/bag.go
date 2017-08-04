@@ -1,9 +1,9 @@
-package core
+package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"sort"
 	"strings"
 )

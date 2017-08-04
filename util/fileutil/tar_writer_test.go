@@ -2,9 +2,9 @@ package fileutil_test
 
 import (
 	"archive/tar"
-	"github.com/APTrust/bagit/constants"
-	"github.com/APTrust/bagit/util/fileutil"
-	"github.com/APTrust/bagit/util/testutil"
+	"github.com/APTrust/easy-store/constants"
+	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"

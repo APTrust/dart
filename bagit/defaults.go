@@ -1,4 +1,4 @@
-package core
+package bagit
 
 // Defaults are default tag values to use when creating bags.
 // For example, the value Source-Organization tag will be the

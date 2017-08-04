@@ -2,7 +2,7 @@ package fileutil
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/util/platform"
+	"github.com/APTrust/easy-store/util/platform"
 	"io"
 	"os"
 	"path"

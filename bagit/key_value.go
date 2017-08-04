@@ -1,4 +1,4 @@
-package core
+package bagit
 
 // KeyValuePair is a key-value pair used to represent
 // tags and checksums. For checksums the key is the path of

@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"github.com/APTrust/bagit/util"
+	"github.com/APTrust/easy-store/util"
 	"regexp"
 	"strings"
 )

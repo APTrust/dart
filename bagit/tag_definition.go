@@ -1,8 +1,8 @@
-package core
+package bagit
 
 import (
-	"github.com/APTrust/bagit/errtypes"
-	"github.com/APTrust/bagit/util"
+	"github.com/APTrust/easy-store/errtypes"
+	"github.com/APTrust/easy-store/util"
 	"strings"
 )
 

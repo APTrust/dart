@@ -1,25 +1,25 @@
-package core_test
+package bagit_test
 
 import (
-	"github.com/APTrust/bagit/core"
+	"github.com/APTrust/easy-store/bagit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestNewKeyValuePair(t *testing.T) {
-	item := core.NewKeyValuePair("key", "value")
+	item := bagit.NewKeyValuePair("key", "value")
 	assert.Equal(t, "key", item.Key)
 	assert.Equal(t, "value", item.Value)
 }
 
 func TestNewKeyValueCollection(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	require.NotNil(t, items)
 }
 
 func TestKeyValueCollectionAppend(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -28,7 +28,7 @@ func TestKeyValueCollectionAppend(t *testing.T) {
 }
 
 func TestKeyValueCollectionFindByKey(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -47,7 +47,7 @@ func TestKeyValueCollectionFindByKey(t *testing.T) {
 }
 
 func TestKeyValueCollectionFindByValue(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key1", "value2")
 	items.Append("key2", "value2")
@@ -67,7 +67,7 @@ func TestKeyValueCollectionFindByValue(t *testing.T) {
 }
 
 func TestKeyValueCollectionValuesForKey(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -86,7 +86,7 @@ func TestKeyValueCollectionValuesForKey(t *testing.T) {
 }
 
 func TestKeyValueCollectionFirstValueForKey(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key1", "value2")
 	items.Append("key1", "value3")
@@ -100,7 +100,7 @@ func TestKeyValueCollectionFirstValueForKey(t *testing.T) {
 }
 
 func TestKeyValueCollectionItems(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -112,7 +112,7 @@ func TestKeyValueCollectionItems(t *testing.T) {
 }
 
 func TestKeyValueCollectionCount(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -123,7 +123,7 @@ func TestKeyValueCollectionCount(t *testing.T) {
 }
 
 func TestKeyValueCollectionDelete(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	item_2_2 := items.Append("key2", "value2")
 	items.Append("key2", "value3")
@@ -138,7 +138,7 @@ func TestKeyValueCollectionDelete(t *testing.T) {
 }
 
 func TestKeyValueCollectionDeleteByKey(t *testing.T) {
-	items := core.NewKeyValueCollection()
+	items := bagit.NewKeyValueCollection()
 	items.Append("key1", "value1")
 	items.Append("key2", "value2")
 	items.Append("key2", "value3")

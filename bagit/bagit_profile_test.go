@@ -1,8 +1,8 @@
-package core_test
+package bagit_test
 
 import (
 	"fmt"
-	"github.com/APTrust/bagit/core"
+	"github.com/APTrust/easy-store/bagit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"path/filepath"
@@ -26,7 +26,7 @@ func getPathToProfile(profileName string) (string, error) {
 func TestLoadBagItProfile(t *testing.T) {
 	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	profile, err := core.LoadBagItProfile(aptrustFile)
+	profile, err := bagit.LoadBagItProfile(aptrustFile)
 	require.Nil(t, err)
 	assert.EqualValues(t, []string{"0.97"}, profile.AcceptBagItVersion)
 	assert.EqualValues(t, []string{"application/tar"}, profile.AcceptSerialization)
@@ -50,12 +50,12 @@ func TestLoadBagItProfile(t *testing.T) {
 	require.NotNil(t, profile.TagFilesRequired)
 	require.Equal(t, 3, len(profile.TagFilesRequired))
 
-	bagit := profile.TagFilesRequired["bagit.txt"]
-	require.NotNil(t, bagit)
-	require.Equal(t, 2, len(bagit))
-	require.NotNil(t, bagit["BagIt-Version"])
-	assert.True(t, bagit["BagIt-Version"].Required)
-	assert.False(t, bagit["BagIt-Version"].EmptyOk)
+	bagitRequiredTags := profile.TagFilesRequired["bagit.txt"]
+	require.NotNil(t, bagitRequiredTags)
+	require.Equal(t, 2, len(bagitRequiredTags))
+	require.NotNil(t, bagitRequiredTags["BagIt-Version"])
+	assert.True(t, bagitRequiredTags["BagIt-Version"].Required)
+	assert.False(t, bagitRequiredTags["BagIt-Version"].EmptyOk)
 
 	baginfo := profile.TagFilesRequired["bag-info.txt"]
 	require.NotNil(t, baginfo)
@@ -64,7 +64,7 @@ func TestLoadBagItProfile(t *testing.T) {
 	require.NotNil(t, aptrust)
 
 	// Make sure tag labels were copied into tag definitions.
-	for _, tagDef := range bagit {
+	for _, tagDef := range bagitRequiredTags {
 		assert.NotEmpty(t, tagDef.Label)
 	}
 	for _, tagDef := range baginfo {
@@ -77,7 +77,7 @@ func TestLoadBagItProfile(t *testing.T) {
 	// Make sure this one parses, while we're at it.
 	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
-	dpnProfile, err := core.LoadBagItProfile(dpnFile)
+	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
 	require.Nil(t, err)
 	require.Equal(t, 3, len(dpnProfile.TagFilesRequired))
 	require.Equal(t, 2, len(dpnProfile.TagFilesRequired["bagit.txt"]))
@@ -86,17 +86,17 @@ func TestLoadBagItProfile(t *testing.T) {
 }
 
 func TestBagItProfileValidate(t *testing.T) {
-	profile := &core.BagItProfile{}
+	profile := &bagit.BagItProfile{}
 	errs := profile.Validate()
 	require.Equal(t, 4, len(errs))
 
 	profile.AcceptBagItVersion = []string{"0.97"}
 	profile.ManifestsRequired = []string{"md5"}
-	profile.TagFilesRequired = make(map[string]map[string]*core.TagDefinition)
-	profile.TagFilesRequired["bagit.txt"] = make(map[string]*core.TagDefinition)
-	profile.TagFilesRequired["bagit.txt"]["tag1"] = &core.TagDefinition{}
-	profile.TagFilesRequired["bag-info.txt"] = make(map[string]*core.TagDefinition)
-	profile.TagFilesRequired["bag-info.txt"]["tag2"] = &core.TagDefinition{}
+	profile.TagFilesRequired = make(map[string]map[string]*bagit.TagDefinition)
+	profile.TagFilesRequired["bagit.txt"] = make(map[string]*bagit.TagDefinition)
+	profile.TagFilesRequired["bagit.txt"]["tag1"] = &bagit.TagDefinition{}
+	profile.TagFilesRequired["bag-info.txt"] = make(map[string]*bagit.TagDefinition)
+	profile.TagFilesRequired["bag-info.txt"]["tag2"] = &bagit.TagDefinition{}
 	errs = profile.Validate()
 	require.Equal(t, 0, len(errs))
 }
@@ -104,13 +104,13 @@ func TestBagItProfileValidate(t *testing.T) {
 func TestRequiredTagDirs(t *testing.T) {
 	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
 	require.Nil(t, err)
-	aptrustProfile, err := core.LoadBagItProfile(aptrustFile)
+	aptrustProfile, err := bagit.LoadBagItProfile(aptrustFile)
 	require.Nil(t, err)
 	assert.Empty(t, aptrustProfile.RequiredTagDirs())
 
 	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
-	dpnProfile, err := core.LoadBagItProfile(dpnFile)
+	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
 	require.Nil(t, err)
 	require.Equal(t, 1, len(dpnProfile.RequiredTagDirs()))
 	assert.Equal(t, "dpn-tags", dpnProfile.RequiredTagDirs()[0])

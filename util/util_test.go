@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"github.com/APTrust/bagit/util"
+	"github.com/APTrust/easy-store/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"

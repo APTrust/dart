@@ -1,10 +1,10 @@
-package core
+package bagit
 
 import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/APTrust/bagit/util/fileutil"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
 	"os"
 	"path/filepath"
