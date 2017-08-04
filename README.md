@@ -1,3 +1,8 @@
+# APTrust Easy Store
+
+Easy Store will provide a simple way of creating BagIt files and shipping them
+off to various back ends.
+
 # APTrust BagIt
 
 This is the APTrust library for creating and validating bags that conform to
@@ -10,27 +15,25 @@ support for required tags in specific tag files other than bag-info.txt.
 
 This project aims to provide the following:
 
+### Bagging
+
 * Configurable bag creation and validation through the use of BagIt profiles.
-* Stand-alone tools for building and validating bags that requires no external
+* Stand-alone tools for building and validating bags that require no external
 libraries. Each tool is a stand-alone executable binary.
 * Multi-platform support, including Linux, Mac, and Windows.
 * A simple, scriptable command-line interface.
+* A simple, intuitive UI for drag-and-drop bagging.
 * Reasonable peformance, even when creating and validating large bags that
 include tens of thousands of files.
 
-## Executables
+### Shipping
 
-* apt_create_bag creates a bag.
-* apt_validate_bag validates an existing bag.
-* apt_validate_profile validates a BagIt profile.
+* A simple UI for sending bags (or other files) to remote storage. The
+initial focus will be on object stores that support an S3-compliant API.
+* Simple command-line tools for storing objects.
 
-## Configuration Files
+### Workflows
 
-In addition the executables, this project includes two types of config files:
-
-* Profiles describe the structure and required elements of a bag, and are
-used both to build and to validate bags.
-* Defaults describe a set of default tag values to include when creating new
-bags. Defaults include bits of information that you expect to be consistent
-across all of the bags you produce. Defaults may include your institution
-name, contact information, etc.
+* An intuitive UI to define workflows that describe how items should be
+bagged and where they should be shipped.
+* The ability to push items through a workflow from the UI, or via scripting.
