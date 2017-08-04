@@ -1,9 +1,12 @@
+-- NOTE: most columns are not nullable so we can simplify our Go code by
+-- using normal ints, strings, etc. instead of having to use pointers.
+
 -- General settings are for things like the path to the working
 -- directory where bags will be assembled, etc.
 create table if not exists general_settings (
        id integer primary key,
        "name" text not null unique,
-       "value" text
+       "value" text not null default ''
 );
 
 create unique index if not exists ix_general_settings_name ON general_settings ("name");
@@ -12,7 +15,7 @@ create unique index if not exists ix_general_settings_name ON general_settings (
 create table if not exists credentials (
        id integer primary key,
        "name" text not null unique,
-       description text,
+       description text not null default '',
        "key" text not null,
        "value" text not null
 );
@@ -28,10 +31,10 @@ create unique index if not exists ix_credentials_name ON credentials ("name");
 create table if not exists storage_services (
        id integer primary key,
        "name" text not null unique,
-       description text,
+       description text not null default '',
        protocol text not null,
        url text not null,
-       bucket_or_folder text,
+       bucket_or_folder textnot null default '',
        credentials_id integer null,
 
        foreign key(credentials_id) references credentials(id)
@@ -43,7 +46,7 @@ create unique index if not exists ix_storage_services_name ON storage_services (
 create table if not exists bagit_profiles (
        id integer primary key,
        "name" text not null unique,
-       description text,
+       description text not null default '',
        json text not null,
        updated_at datetime default current_timestamp
 );
@@ -74,8 +77,8 @@ create index if not exists ix_default_tag_values_profile_id ON default_tag_value
 create table if not exists workflows (
        id integer primary key,
        "name" text not null unique,
-       description text,
-       profile_id integer not null,
+       description text not null default '',
+       profile_id integer null,
        storage_service_id integer null,
 
        foreign key(profile_id) references bagit_profiles(id)
@@ -98,10 +101,10 @@ create table if not exists bags (
        id integer primary key,
        "name" text not null,
        "size" bigint not null default -1,
-       storage_url text,
-       metadata_url text,
-       storage_registry_identifier text,
-       create_at datetime,
+       storage_url text not null default '',
+       metadata_url text not null default '',
+       storage_registry_identifier text not null default '',
+       create_at datetime default '0001-01-01T00:00:00Z',
        updated_at datetime default current_timestamp
 );
 
@@ -117,13 +120,13 @@ create table if not exists files (
        bag_id integer,
        "name" text not null,
        "size" bigint not null default -1,
-       md5 text,
-       sha256 text,
-       storage_url text,
+       md5 text not null default '',
+       sha256 text not null default '',
+       storage_url text not null default '',
        stored_as_part_of_bag boolean default false,
-       etag text,
-       stored_at datetime,
-       created_at datetime,
+       etag text not null default '',
+       stored_at datetime default '0001-01-01T00:00:00Z',
+       created_at datetime default '0001-01-01T00:00:00Z',
        updated_at datetime default current_timestamp,
 
        foreign key(bag_id) references bags(id)
@@ -142,14 +145,14 @@ create table if not exists jobs (
        bag_id integer null,
        file_id integer null,
        workflow_id integer null,
-       workflow_snapshot text,
-       created_at datetime,
-       scheduled_start_time datetime,
-       started_at datetime,
-       finished_at datetime,
-       outcome text,
-       pid integer,
-       captured_output text,
+       workflow_snapshot text not null default '',
+       created_at datetime default '0001-01-01T00:00:00Z',
+       scheduled_start_time datetime default '0001-01-01T00:00:00Z',
+       started_at datetime default '0001-01-01T00:00:00Z',
+       finished_at datetime default '0001-01-01T00:00:00Z',
+       outcome text not null default '',
+       pid integer not null default 0,
+       captured_output text not null default '',
 
        foreign key(workflow_id) references workflows(id),
        foreign key(bag_id) references bags(id),
