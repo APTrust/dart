@@ -104,11 +104,24 @@ create table if not exists bags (
        storage_url text not null default '',
        metadata_url text not null default '',
        storage_registry_identifier text not null default '',
-       create_at datetime default '0001-01-01T00:00:00Z',
+       stored_at datetime default '0001-01-01T00:00:00Z',
+       created_at datetime default '0001-01-01T00:00:00Z',
        updated_at datetime default current_timestamp
 );
 
 create index if not exists ix_bags_name ON bags ("name");
+
+-- Tags holds information about tag values in a bag.
+create table if not exists tags (
+       id integer primary key,
+       bag_id integer not null,
+       "name" text not null,
+       "value" text not null default '',
+
+       foreign key(bag_id) references bags(id)
+);
+
+create index if not exists ix_tags_bag_id ON tags (bag_id);
 
 -- Files contains information about unbagged files that easy-store has
 -- dealt with. storage_url describes where the file is stored and may
@@ -150,8 +163,8 @@ create table if not exists jobs (
        scheduled_start_time datetime default '0001-01-01T00:00:00Z',
        started_at datetime default '0001-01-01T00:00:00Z',
        finished_at datetime default '0001-01-01T00:00:00Z',
-       outcome text not null default '',
        pid integer not null default 0,
+       outcome text not null default '',
        captured_output text not null default '',
 
        foreign key(workflow_id) references workflows(id),

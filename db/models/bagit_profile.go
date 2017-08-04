@@ -5,8 +5,10 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// BagItProfile holds information about how to connect to a remote
-// storage service.
+// *** See types.JSONText for parsedProfile bagit.BagItProfile ***
+
+// BagItProfile contains a BagIt profile that tells us how to construct
+// and validate a bag.
 type BagItProfile struct {
 	Id             int    `db:"id"`
 	Name           string `db:"name"`
@@ -25,17 +27,17 @@ func NewBagItProfileFromMap() (*BagItProfile, error) {
 	return nil, nil
 }
 
-func (setting *BagItProfile) Validate() (bool, []error) {
+func (profile *BagItProfile) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *BagItProfile) Save(db *sqlx.DB) (*BagItProfile, error) {
+func (profile *BagItProfile) Save(db *sqlx.DB) (*BagItProfile, error) {
 	// Insert if Id is zero, otherwise update.
-	// Return setting with Id.
-	return setting, nil
+	// Return profile with Id.
+	return profile, nil
 }
 
-func (setting *BagItProfile) Profile() (*bagit.BagItProfile, error) {
+func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	// Return the parsed json profile.
 	return nil, nil
 }
