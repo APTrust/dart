@@ -91,8 +91,59 @@ func SaveStatement(model Model, tableName string) string {
 	return UpdateStatement(model, tableName)
 }
 
-// TODO: General find statement, takes map[string]interface{}
-//       GetById statement
-//       SelectStatement (returns select with no where)
-//       WhereAll map[string]interface
-//       WhereAny map[string]interface
+// SelectQuery returns the basic select statement for the specified model, with
+// no where clause.
+func SelectQuery(model Model, tableName string) string {
+	cols := strings.Join(ColNames(model), ", ")
+	return fmt.Sprintf("select %s from %s ", cols, tableName)
+}
+
+// SelectByIdQuery returns the query to select a row from the model's
+// table by Id.
+func SelectByIdQuery(model Model, tableName string) string {
+	query := SelectQuery(model, tableName)
+	return fmt.Sprintf("%s where id = :id ", query, model.PrimaryKey())
+}
+
+// Select returns a model's select statement with the specified conditions
+// in the where clause.
+func SelectWhere(model Model, tableName, conditions string) string {
+	query := SelectQuery(model, tableName)
+	return fmt.Sprintf("%s where %s ", query, conditions)
+}
+
+// AndAll returns a string of SQL conditions in which all name-value
+// params are ANDed together. For example:
+//
+// params["name"] = "Joe"
+// params["age"] = 34
+// conditions := AndAll(params)
+//
+// conditions -> " (name = :name and age = :age) "
+func AndAll(params map[string]interface{}) string {
+	paramPairs := make([]string, len(params))
+	i := 0
+	for key := range params {
+		paramPairs[i] = fmt.Sprintf("%s = :%s", key)
+		i++
+	}
+	return fmt.Sprintf(" (%s) ", strings.Join(paramPairs, " and "))
+}
+
+// AndAll returns a string of SQL conditions in which all name-value
+// params are ORed together. For example:
+//
+// params["name"] = "Joe"
+// params["age"] = 34
+// conditions := OrAll(params)
+//
+// conditions -> " (name = :name or age = :age) "
+func OrAll(params map[string]interface{}) string {
+	paramPairs := make([]string, len(params))
+	i := 0
+	for key := range params {
+		paramPairs[i] = fmt.Sprintf("%s = :%s", key)
+		i++
+	}
+	return fmt.Sprintf(" (%s) ", strings.Join(paramPairs, " or "))
+}
