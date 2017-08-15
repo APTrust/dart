@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -36,8 +35,15 @@ func (job *Job) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (job *Job) Save(db *sqlx.DB) (*Job, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return job with Id.
+func (job *Job) Save(validate bool) (*Job, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return job, nil
 }

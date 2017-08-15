@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+	"github.com/jmoiron/sqlx"
+	"log"
 	"reflect"
 	"strings"
 )
@@ -11,6 +13,30 @@ import (
 // convenience of some of the DB helper functions in this file.
 type Model interface {
 	PrimaryKey() int
+}
+
+const DEFAULT = "default"
+
+var connections map[string]*sqlx.DB
+
+// SetConnection sets the database connection associated with the specified
+// name. When the application starts, it should set a connection named
+// "default" to point to the SQLite3 database that holds all our app info.
+func SetConnection(name string, db *sqlx.DB) {
+	if connections == nil {
+		connections = make(map[string]*sqlx.DB)
+	}
+	connections[name] = db
+}
+
+// GetConnection returns the connection with the specified name.
+// The default connection, named "default", is used by all of the
+// core models.
+func GetConnection(name string) *sqlx.DB {
+	if connections == nil || connections[name] == nil {
+		log.Fatal("Database connection '%s' has not been set", name)
+	}
+	return connections[name]
 }
 
 // Returns the column names of the given model.

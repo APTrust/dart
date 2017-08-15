@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/jmoiron/sqlx"
-)
+import ()
 
 // Tag holds information about a tag in bag built by easy-store.
 // A cat in the hat from the hooka store.
@@ -22,8 +20,15 @@ func (tag *Tag) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (tag *Tag) Save(db *sqlx.DB) (*Tag, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return tag with Id.
+func (tag *Tag) Save(validate bool) (*Tag, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return tag, nil
 }

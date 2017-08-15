@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/jmoiron/sqlx"
-)
+import ()
 
 // Workflow holds information about how a bag should be built and
 // where it should be sent.
@@ -23,9 +21,16 @@ func (workflow *Workflow) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (workflow *Workflow) Save(db *sqlx.DB) (*Workflow, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return workflow with Id.
+func (workflow *Workflow) Save(validate bool) (*Workflow, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return workflow, nil
 }
 

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -31,8 +30,15 @@ func (file *File) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (file *File) Save(db *sqlx.DB) (*File, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return file with Id.
+func (file *File) Save(validate bool) (*File, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return file, nil
 }

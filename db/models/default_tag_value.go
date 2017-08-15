@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -25,8 +24,15 @@ func (value *DefaultTagValue) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (value *DefaultTagValue) Save(db *sqlx.DB) (*DefaultTagValue, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return value with Id.
+func (value *DefaultTagValue) Save(validate bool) (*DefaultTagValue, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return value, nil
 }

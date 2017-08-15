@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/jmoiron/sqlx"
-)
+import ()
 
 // StorageService holds information about how to connect to a remote
 // storage service.
@@ -24,9 +22,16 @@ func (service *StorageService) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (service *StorageService) Save(db *sqlx.DB) (*StorageService, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return service with Id.
+func (service *StorageService) Save(validate bool) (*StorageService, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return service, nil
 }
 

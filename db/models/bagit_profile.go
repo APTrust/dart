@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/APTrust/easy-store/bagit"
-	"github.com/jmoiron/sqlx"
 )
 
 // *** See types.JSONText for parsedProfile bagit.BagItProfile ***
@@ -26,9 +25,8 @@ func (profile *BagItProfile) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (profile *BagItProfile) Save(db *sqlx.DB) (*BagItProfile, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return profile with Id.
+func (profile *BagItProfile) Save(validate bool) (*BagItProfile, error) {
+	// 	db := GetConnection(DEFAULT)
 	return profile, nil
 }
 

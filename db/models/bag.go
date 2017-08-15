@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -18,16 +17,6 @@ type Bag struct {
 	UpdatedAt                 time.Time `db:"updated_at" form_options:"skip"`
 }
 
-func BagGetById(db *sqlx.DB, id int) (*Bag, error) {
-	bag := Bag{}
-	err := db.Get(&bag, "select * from bags where id=$1", id)
-	return &bag, err
-}
-
-func NewBagFromMap() (*Bag, error) {
-	return nil, nil
-}
-
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
 func (bag *Bag) PrimaryKey() int {
 	return bag.Id
@@ -37,9 +26,12 @@ func (bag *Bag) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (bag *Bag) Save(db *sqlx.DB) (*Bag, error) {
+func (bag *Bag) Save(validate bool) (*Bag, error) {
 	// Insert if Id is zero, otherwise update.
 	// Return item with Id.
+	db := GetConnection(DEFAULT)
+
+	// Validate
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -50,7 +42,14 @@ func (bag *Bag) Save(db *sqlx.DB) (*Bag, error) {
 	return bag, nil
 }
 
-func (bag *Bag) Files(db *sqlx.DB) (*[]File, error) {
+func (bag *Bag) Files() (*[]File, error) {
 	// Return files belonging to this bag
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
 	return nil, nil
 }

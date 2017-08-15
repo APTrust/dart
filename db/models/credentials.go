@@ -1,8 +1,6 @@
 package models
 
-import (
-	"github.com/jmoiron/sqlx"
-)
+import ()
 
 // Credentials holds information about credentials needed to connect
 // to remote storage services, REST APIs, etc.
@@ -23,8 +21,15 @@ func (setting *Credentials) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *Credentials) Save(db *sqlx.DB) (*Credentials, error) {
-	// Insert if Id is zero, otherwise update.
-	// Return setting with Id.
+func (setting *Credentials) Save(validate bool) (*Credentials, error) {
+	// Validate
+	db := GetConnection(DEFAULT)
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
+
 	return setting, nil
 }
