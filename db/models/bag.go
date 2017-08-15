@@ -7,15 +7,15 @@ import (
 
 // Bag holds information about a bag built by easy-store.
 type Bag struct {
-	Id                        int       `db:"id"`
+	Id                        int       `db:"id" form_options:"skip"`
 	Name                      string    `db:"name"`
-	Size                      int64     `db:"size"`
-	StorageURL                string    `db:"storage_url"`
-	MetadataURL               string    `db:"metadata_url"`
-	StorageRegistryIdentifier string    `db:"storage_registry_identifier"`
-	StoredAt                  time.Time `db:"stored_at"`
-	CreatedAt                 time.Time `db:"created_at"`
-	UpdatedAt                 time.Time `db:"updated_at"`
+	Size                      int64     `db:"size" form_options:"skip"`
+	StorageURL                string    `db:"storage_url" form_options:"skip"`
+	MetadataURL               string    `db:"metadata_url" form_options:"skip"`
+	StorageRegistryIdentifier string    `db:"storage_registry_identifier" form_options:"skip"`
+	StoredAt                  time.Time `db:"stored_at" form_options:"skip"`
+	CreatedAt                 time.Time `db:"created_at" form_options:"skip"`
+	UpdatedAt                 time.Time `db:"updated_at" form_options:"skip"`
 }
 
 func BagGetById(db *sqlx.DB, id int) (*Bag, error) {

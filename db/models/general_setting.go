@@ -7,7 +7,7 @@ import (
 // GeneralSetting holds information about a general application-wide setting,
 // such as the path to the directory where bags should be built.
 type GeneralSetting struct {
-	Id    int    `db:"id"`
+	Id    int    `db:"id" form_options:"skip"`
 	Name  string `db:"name"`
 	Value string `db:"value"`
 }

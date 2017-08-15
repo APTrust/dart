@@ -7,7 +7,7 @@ import (
 // Credentials holds information about credentials needed to connect
 // to remote storage services, REST APIs, etc.
 type Credentials struct {
-	Id          int    `db:"id"`
+	Id          int    `db:"id" form_options:"skip"`
 	Name        string `db:"name"`
 	Description string `db:"description"`
 	Key         string `db:"key"`

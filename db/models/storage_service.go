@@ -7,7 +7,7 @@ import (
 // StorageService holds information about how to connect to a remote
 // storage service.
 type StorageService struct {
-	Id             int    `db:"id"`
+	Id             int    `db:"id" form_options:"skip"`
 	Name           string `db:"name"`
 	Description    string `db:"description"`
 	Protocol       string `db:"protocol"`

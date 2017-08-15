@@ -10,13 +10,11 @@ import (
 // BagItProfile contains a BagIt profile that tells us how to construct
 // and validate a bag.
 type BagItProfile struct {
-	Id             int    `db:"id"`
-	Name           string `db:"name"`
-	Description    string `db:"description"`
-	Protocol       string `db:"protocol"`
-	BucketOrFolder string `db:"bucket_or_folder"`
-	CredentialsId  *int   `db:"credentials_id"`
-	parsedProfile  *bagit.BagItProfile
+	Id            int    `db:"id" form_options:"skip"`
+	Name          string `db:"name"`
+	Description   string `db:"description" form_widget:"textarea"`
+	JSON          string `db: "json" form_widget:"textarea"`
+	parsedProfile *bagit.BagItProfile
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.

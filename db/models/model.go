@@ -64,3 +64,9 @@ func SaveStatement(model Model, tableName string) string {
 	}
 	return UpdateStatement(model, tableName)
 }
+
+// TODO: General find statement, takes map[string]interface{}
+//       GetById statement
+//       SelectStatement (returns select with no where)
+//       WhereAll map[string]interface
+//       WhereAny map[string]interface
