@@ -12,12 +12,9 @@ type GeneralSetting struct {
 	Value string `db:"value"`
 }
 
-func NewGeneralSettingFromRow() (*GeneralSetting, error) {
-	return nil, nil
-}
-
-func NewGeneralSettingFromMap() (*GeneralSetting, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (setting *GeneralSetting) PrimaryKey() int {
+	return setting.Id
 }
 
 func (setting *GeneralSetting) Validate() (bool, []error) {

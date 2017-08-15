@@ -27,12 +27,9 @@ type Job struct {
 	CapturedOutput     string    `db:"captured_output"`
 }
 
-func NewJobFromRow() (*Job, error) {
-	return nil, nil
-}
-
-func NewJobFromMap() (*Job, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (job *Job) PrimaryKey() int {
+	return job.Id
 }
 
 func (job *Job) Validate() (bool, []error) {

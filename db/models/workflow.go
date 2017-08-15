@@ -14,30 +14,27 @@ type Workflow struct {
 	StorageServiceId *int   `db:"storage_service_id"`
 }
 
-func NewWorkflowFromRow() (*Workflow, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (workflow *Workflow) PrimaryKey() int {
+	return workflow.Id
 }
 
-func NewWorkflowFromMap() (*Workflow, error) {
-	return nil, nil
-}
-
-func (setting *Workflow) Validate() (bool, []error) {
+func (workflow *Workflow) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *Workflow) Save(db *sqlx.DB) (*Workflow, error) {
+func (workflow *Workflow) Save(db *sqlx.DB) (*Workflow, error) {
 	// Insert if Id is zero, otherwise update.
-	// Return setting with Id.
-	return setting, nil
+	// Return workflow with Id.
+	return workflow, nil
 }
 
-func (setting *Workflow) BagItProfile() *BagItProfile {
+func (workflow *Workflow) BagItProfile() *BagItProfile {
 	// Load from ProfileId, if that's not nil.
 	return nil
 }
 
-func (setting *Workflow) StorageService() *StorageService {
+func (workflow *Workflow) StorageService() *StorageService {
 	// Load from StorageServiceId, if that's not nil.
 	return nil
 }

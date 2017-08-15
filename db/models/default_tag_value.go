@@ -16,20 +16,17 @@ type DefaultTagValue struct {
 	UpdatedAt time.Time `db:"updated_at"`
 }
 
-func NewDefaultTagValueFromRow() (*DefaultTagValue, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (value *DefaultTagValue) PrimaryKey() int {
+	return value.Id
 }
 
-func NewDefaultTagValueFromMap() (*DefaultTagValue, error) {
-	return nil, nil
-}
-
-func (setting *DefaultTagValue) Validate() (bool, []error) {
+func (value *DefaultTagValue) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *DefaultTagValue) Save(db *sqlx.DB) (*DefaultTagValue, error) {
+func (value *DefaultTagValue) Save(db *sqlx.DB) (*DefaultTagValue, error) {
 	// Insert if Id is zero, otherwise update.
-	// Return setting with Id.
-	return setting, nil
+	// Return value with Id.
+	return value, nil
 }

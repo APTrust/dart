@@ -22,12 +22,9 @@ type File struct {
 	UpdatedAt         time.Time `db:"updated_at"`
 }
 
-func NewFileFromRow() (*File, error) {
-	return nil, nil
-}
-
-func NewFileFromMap() (*File, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (file *File) PrimaryKey() int {
+	return file.Id
 }
 
 func (file *File) Validate() (bool, []error) {

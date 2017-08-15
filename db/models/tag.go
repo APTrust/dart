@@ -13,12 +13,9 @@ type Tag struct {
 	Value string `db:"value"`
 }
 
-func NewTagFromRow() (*Tag, error) {
-	return nil, nil
-}
-
-func NewTagFromMap() (*Tag, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (tag *Tag) PrimaryKey() int {
+	return tag.Id
 }
 
 func (tag *Tag) Validate() (bool, []error) {

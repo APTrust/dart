@@ -19,12 +19,9 @@ type BagItProfile struct {
 	parsedProfile  *bagit.BagItProfile
 }
 
-func NewBagItProfileFromRow() (*BagItProfile, error) {
-	return nil, nil
-}
-
-func NewBagItProfileFromMap() (*BagItProfile, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (profile *BagItProfile) PrimaryKey() int {
+	return profile.Id
 }
 
 func (profile *BagItProfile) Validate() (bool, []error) {

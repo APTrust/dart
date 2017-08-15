@@ -15,25 +15,22 @@ type StorageService struct {
 	CredentialsId  *int   `db:"credentials_id"`
 }
 
-func NewStorageServiceFromRow() (*StorageService, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (service *StorageService) PrimaryKey() int {
+	return service.Id
 }
 
-func NewStorageServiceFromMap() (*StorageService, error) {
-	return nil, nil
-}
-
-func (setting *StorageService) Validate() (bool, []error) {
+func (service *StorageService) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *StorageService) Save(db *sqlx.DB) (*StorageService, error) {
+func (service *StorageService) Save(db *sqlx.DB) (*StorageService, error) {
 	// Insert if Id is zero, otherwise update.
-	// Return setting with Id.
-	return setting, nil
+	// Return service with Id.
+	return service, nil
 }
 
-func (setting *StorageService) Credentials() *Credentials {
+func (service *StorageService) Credentials() *Credentials {
 	// Load from CredentialsId, if that's not nil.
 	return nil
 }

@@ -18,12 +18,19 @@ type Bag struct {
 	UpdatedAt                 time.Time `db:"updated_at"`
 }
 
-func NewBagFromRow() (*Bag, error) {
-	return nil, nil
+func BagGetById(db *sqlx.DB, id int) (*Bag, error) {
+	bag := Bag{}
+	err := db.Get(&bag, "select * from bags where id=$1", id)
+	return &bag, err
 }
 
 func NewBagFromMap() (*Bag, error) {
 	return nil, nil
+}
+
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (bag *Bag) PrimaryKey() int {
+	return bag.Id
 }
 
 func (bag *Bag) Validate() (bool, []error) {
@@ -33,6 +40,13 @@ func (bag *Bag) Validate() (bool, []error) {
 func (bag *Bag) Save(db *sqlx.DB) (*Bag, error) {
 	// Insert if Id is zero, otherwise update.
 	// Return item with Id.
+
+	tx, err := db.Beginx()
+	if err != nil {
+		return nil, err
+	}
+	//tx.NamedExec(statement, bag)
+	tx.Commit()
 	return bag, nil
 }
 

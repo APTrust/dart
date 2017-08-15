@@ -14,12 +14,9 @@ type Credentials struct {
 	Value       string `db:"value"`
 }
 
-func NewCredentialsFromRow() (*Credentials, error) {
-	return nil, nil
-}
-
-func NewCredentialsFromMap() (*Credentials, error) {
-	return nil, nil
+// PrimaryKey() returns this object's Id, to conform to the Model interface.
+func (credentials *Credentials) PrimaryKey() int {
+	return credentials.Id
 }
 
 func (setting *Credentials) Validate() (bool, []error) {
