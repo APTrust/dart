@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/APTrust/easy-store/util"
 	"github.com/jmoiron/sqlx"
 	"log"
 	"reflect"
@@ -45,10 +46,12 @@ func SetConnection(name string, db *sqlx.DB) {
 
 // GetConnection returns the connection with the specified name.
 // The default connection, named "default", is used by all of the
-// core models.
+// core models. The app will crash (on purpose) if you request a
+// connection that hasn't been set using SetConnection.
 func GetConnection(name string) *sqlx.DB {
-	if connections == nil || connections[name] == nil {
-		log.Fatal("Database connection '%s' has not been set", name)
+	// Notice we don't crash during unit tests - util.IsTesting()
+	if (connections == nil || connections[name] == nil) && !util.IsTesting() {
+		log.Fatalf("Database connection '%s' has not been set", name)
 	}
 	return connections[name]
 }

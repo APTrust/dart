@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"flag"
 	"io/ioutil"
 )
 
@@ -38,4 +39,9 @@ func LoadJson(filePath string, obj interface{}) error {
 		return err
 	}
 	return nil
+}
+
+// IsTesting returns true if we are running under "go test" (as in unit tests).
+func IsTesting() bool {
+	return flag.Lookup("test.v") != nil
 }
