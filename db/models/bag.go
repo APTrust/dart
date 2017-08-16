@@ -15,6 +15,7 @@ type Bag struct {
 	StoredAt                  time.Time `db:"stored_at" form_options:"skip"`
 	CreatedAt                 time.Time `db:"created_at" form_options:"skip"`
 	UpdatedAt                 time.Time `db:"updated_at" form_options:"skip"`
+	errors                    []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -28,11 +29,11 @@ func (bag *Bag) TableName() string {
 	return "bags"
 }
 
-func (bag *Bag) Validate() (bool, []error) {
-	return true, nil
+func (bag *Bag) Validate() bool {
+	return true
 }
 
-func (bag *Bag) Save(validate bool) (*Bag, error) {
+func (bag *Bag) Save(validate bool) bool {
 	// Insert if Id is zero, otherwise update.
 	// Return item with Id.
 	db := GetConnection(DEFAULT)
@@ -41,11 +42,19 @@ func (bag *Bag) Save(validate bool) (*Bag, error) {
 
 	tx, err := db.Beginx()
 	if err != nil {
-		return nil, err
+		bag.errors = append(bag.errors, err.Error())
+		return false
 	}
 	//tx.NamedExec(statement, bag)
 	tx.Commit()
-	return bag, nil
+	return true
+}
+
+func (bag *Bag) Errors() []string {
+	if bag.errors == nil {
+		bag.errors = make([]string, 0)
+	}
+	return bag.errors
 }
 
 func (bag *Bag) Files() (*[]File, error) {

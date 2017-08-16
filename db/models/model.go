@@ -12,11 +12,20 @@ import (
 // method, which returns the model's database ID, simply for the
 // convenience of some of the DB helper functions in this file.
 type Model interface {
+	// Errors returns a list of errors that occurred while saving
+	// or validating the object.
+	Errors() []string
 	// PrimaryKey returns the model's primary key (id) value.
 	PrimaryKey() int
+	// Save saves the object the database.
+	Save() bool
 	// TableName returns the name of the database table in which
 	// this model's data is stored.
 	TableName() string
+	// Validate returns true if the object contains valid data,
+	// false otherwise. If it returns false, check the Errors()
+	// function for a list of errors.
+	Validate() bool
 }
 
 const DEFAULT = "default"
