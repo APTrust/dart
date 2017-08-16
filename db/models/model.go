@@ -28,13 +28,14 @@ type Model interface {
 	Validate() bool
 }
 
-const DEFAULT = "default"
+const DEFAULT_CONNECTION = "default connection"
 
 var connections map[string]*sqlx.DB
 
 // SetConnection sets the database connection associated with the specified
 // name. When the application starts, it should set a connection named
-// "default" to point to the SQLite3 database that holds all our app info.
+// "default connection" to point to the SQLite3 database that holds all
+// our app info.
 func SetConnection(name string, db *sqlx.DB) {
 	if connections == nil {
 		connections = make(map[string]*sqlx.DB)

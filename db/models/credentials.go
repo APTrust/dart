@@ -10,6 +10,7 @@ type Credentials struct {
 	Description string `db:"description"`
 	Key         string `db:"key"`
 	Value       string `db:"value"`
+	errors      []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -23,19 +24,47 @@ func (credentials *Credentials) TableName() string {
 	return "credentials"
 }
 
-func (credentials *Credentials) Validate() (bool, []error) {
-	return true, nil
+// Validate runs validation checks on the object and returns true if
+// the object is valid. If this returns false, check Errors().
+func (credentials *Credentials) Validate() bool {
+	credentials.initErrors(true)
+	return true
 }
 
-func (credentials *Credentials) Save(validate bool) (*Credentials, error) {
-	// Validate
-	db := GetConnection(DEFAULT)
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (credentials *Credentials) Save(validate bool) bool {
+	if !credentials.Validate() {
+		return false
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		return nil, err
+		credentials.addError(err.Error())
+		return false
 	}
-	//tx.NamedExec(statement, bag)
+	//tx.NamedExec(statement, credentials)
 	tx.Commit()
+	return true
+}
 
-	return credentials, nil
+// Errors returns a list of errors that occurred after a call to Validate()
+// or Save().
+func (credentials *Credentials) Errors() []string {
+	credentials.initErrors(false)
+	return credentials.errors
+}
+
+// initErrors initializes the errors list. If param clearExistingList
+// is true, it replaces the existing errors list with a blank list.
+func (credentials *Credentials) initErrors(clearExistingList bool) {
+	if credentials.errors == nil || clearExistingList {
+		credentials.errors = make([]string, 0)
+	}
+}
+
+// addError adds an error message to the errors list.
+func (credentials *Credentials) addError(message string) {
+	credentials.errors = append(credentials.errors, message)
 }

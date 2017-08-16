@@ -5,10 +5,11 @@ import ()
 // Tag holds information about a tag in bag built by easy-store.
 // A cat in the hat from the hooka store.
 type Tag struct {
-	Id    int    `db:"id" form_options:"skip"`
-	BagId *int   `db:"bag_id" form_widget:"hidden"`
-	Name  string `db:"name"`
-	Value string `db:"value"`
+	Id     int    `db:"id" form_options:"skip"`
+	BagId  *int   `db:"bag_id" form_widget:"hidden"`
+	Name   string `db:"name"`
+	Value  string `db:"value"`
+	errors []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -22,19 +23,47 @@ func (tag *Tag) TableName() string {
 	return "tags"
 }
 
-func (tag *Tag) Validate() (bool, []error) {
-	return true, nil
+// Validate runs validation checks on the object and returns true if
+// the object is valid. If this returns false, check Errors().
+func (tag *Tag) Validate() bool {
+	tag.initErrors(true)
+	return true
 }
 
-func (tag *Tag) Save(validate bool) (*Tag, error) {
-	// Validate
-	db := GetConnection(DEFAULT)
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (tag *Tag) Save(validate bool) bool {
+	if !tag.Validate() {
+		return false
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		return nil, err
+		tag.addError(err.Error())
+		return false
 	}
-	//tx.NamedExec(statement, bag)
+	//tx.NamedExec(statement, tag)
 	tx.Commit()
+	return true
+}
 
-	return tag, nil
+// Errors returns a list of errors that occurred after a call to Validate()
+// or Save().
+func (tag *Tag) Errors() []string {
+	tag.initErrors(false)
+	return tag.errors
+}
+
+// initErrors initializes the errors list. If param clearExistingList
+// is true, it replaces the existing errors list with a blank list.
+func (tag *Tag) initErrors(clearExistingList bool) {
+	if tag.errors == nil || clearExistingList {
+		tag.errors = make([]string, 0)
+	}
+}
+
+// addError adds an error message to the errors list.
+func (tag *Tag) addError(message string) {
+	tag.errors = append(tag.errors, message)
 }

@@ -24,6 +24,7 @@ type Job struct {
 	Pid                int       `db:"pid"`
 	Outcome            string    `db:"outcome"`
 	CapturedOutput     string    `db:"captured_output"`
+	errors             []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -37,19 +38,47 @@ func (job *Job) TableName() string {
 	return "jobs"
 }
 
-func (job *Job) Validate() (bool, []error) {
-	return true, nil
+// Validate runs validation checks on the object and returns true if
+// the object is valid. If this returns false, check Errors().
+func (job *Job) Validate() bool {
+	job.initErrors(true)
+	return true
 }
 
-func (job *Job) Save(validate bool) (*Job, error) {
-	// Validate
-	db := GetConnection(DEFAULT)
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (job *Job) Save(validate bool) bool {
+	if !job.Validate() {
+		return false
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		return nil, err
+		job.addError(err.Error())
+		return false
 	}
-	//tx.NamedExec(statement, bag)
+	//tx.NamedExec(statement, job)
 	tx.Commit()
+	return true
+}
 
-	return job, nil
+// Errors returns a list of errors that occurred after a call to Validate()
+// or Save().
+func (job *Job) Errors() []string {
+	job.initErrors(false)
+	return job.errors
+}
+
+// initErrors initializes the errors list. If param clearExistingList
+// is true, it replaces the existing errors list with a blank list.
+func (job *Job) initErrors(clearExistingList bool) {
+	if job.errors == nil || clearExistingList {
+		job.errors = make([]string, 0)
+	}
+}
+
+// addError adds an error message to the errors list.
+func (job *Job) addError(message string) {
+	job.errors = append(job.errors, message)
 }

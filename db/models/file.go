@@ -19,6 +19,7 @@ type File struct {
 	StoredAt          time.Time `db:"stored_at"`
 	CreatedAt         time.Time `db:"created_at"`
 	UpdatedAt         time.Time `db:"updated_at"`
+	errors            []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -32,19 +33,47 @@ func (file *File) TableName() string {
 	return "files"
 }
 
-func (file *File) Validate() (bool, []error) {
-	return true, nil
+// Validate runs validation checks on the object and returns true if
+// the object is valid. If this returns false, check Errors().
+func (file *File) Validate() bool {
+	file.initErrors(true)
+	return true
 }
 
-func (file *File) Save(validate bool) (*File, error) {
-	// Validate
-	db := GetConnection(DEFAULT)
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (file *File) Save(validate bool) bool {
+	if !file.Validate() {
+		return false
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		return nil, err
+		file.addError(err.Error())
+		return false
 	}
-	//tx.NamedExec(statement, bag)
+	//tx.NamedExec(statement, file)
 	tx.Commit()
+	return true
+}
 
-	return file, nil
+// Errors returns a list of errors that occurred after a call to Validate()
+// or Save().
+func (file *File) Errors() []string {
+	file.initErrors(false)
+	return file.errors
+}
+
+// initErrors initializes the errors list. If param clearExistingList
+// is true, it replaces the existing errors list with a blank list.
+func (file *File) initErrors(clearExistingList bool) {
+	if file.errors == nil || clearExistingList {
+		file.errors = make([]string, 0)
+	}
+}
+
+// addError adds an error message to the errors list.
+func (file *File) addError(message string) {
+	file.errors = append(file.errors, message)
 }

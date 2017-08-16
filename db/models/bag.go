@@ -29,20 +29,24 @@ func (bag *Bag) TableName() string {
 	return "bags"
 }
 
+// Validate runs validation checks on the object and returns true if
+// the object is valid. If this returns false, check Errors().
 func (bag *Bag) Validate() bool {
+	bag.initErrors(true)
 	return true
 }
 
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
 func (bag *Bag) Save(validate bool) bool {
-	// Insert if Id is zero, otherwise update.
-	// Return item with Id.
-	db := GetConnection(DEFAULT)
-
-	// Validate
-
+	if !bag.Validate() {
+		return false
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		bag.errors = append(bag.errors, err.Error())
+		bag.addError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, bag)
@@ -50,16 +54,29 @@ func (bag *Bag) Save(validate bool) bool {
 	return true
 }
 
+// Errors returns a list of errors that occurred after a call to Validate()
+// or Save().
 func (bag *Bag) Errors() []string {
-	if bag.errors == nil {
+	bag.initErrors(false)
+	return bag.errors
+}
+
+// initErrors initializes the errors list. If param clearExistingList
+// is true, it replaces the existing errors list with a blank list.
+func (bag *Bag) initErrors(clearExistingList bool) {
+	if bag.errors == nil || clearExistingList {
 		bag.errors = make([]string, 0)
 	}
-	return bag.errors
+}
+
+// addError adds an error message to the errors list.
+func (bag *Bag) addError(message string) {
+	bag.errors = append(bag.errors, message)
 }
 
 func (bag *Bag) Files() (*[]File, error) {
 	// Return files belonging to this bag
-	db := GetConnection(DEFAULT)
+	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
 		return nil, err
