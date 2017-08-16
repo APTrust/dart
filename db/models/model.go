@@ -7,6 +7,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"unicode"
 )
 
 // Model is the interface for all db models. It implements an PrimaryKey()
@@ -19,7 +20,7 @@ type Model interface {
 	// PrimaryKey returns the model's primary key (id) value.
 	PrimaryKey() int
 	// Save saves the object the database.
-	Save() bool
+	Save(bool) bool
 	// TableName returns the name of the database table in which
 	// this model's data is stored.
 	TableName() string
@@ -58,10 +59,14 @@ func GetConnection(name string) *sqlx.DB {
 
 // Returns the column names of the given model.
 func ColNames(model Model) []string {
-	t := reflect.TypeOf(model)
-	colnames := make([]string, t.NumField())
+	t := reflect.TypeOf(model).Elem()
+	colnames := make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
-		colnames[i] = t.Field(i).Name
+		fieldName := t.Field(i).Name
+		// Include only settable (public) fields
+		if unicode.IsUpper(rune(fieldName[0])) {
+			colnames = append(colnames, fieldName)
+		}
 	}
 	return colnames
 }

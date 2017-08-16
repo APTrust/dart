@@ -16,6 +16,26 @@ import (
 // dbConn is the test database connection, which is shared by all tests.
 var dbConn *sqlx.DB
 
+var ExpectedBagCols = []string{
+	"Id",
+	"Name",
+	"Size",
+	"StorageURL",
+	"MetadataURL",
+	"StorageRegistryIdentifier",
+	"StoredAt",
+	"CreatedAt",
+	"UpdatedAt",
+}
+
+var ExpectedCredentialsCols = []string{
+	"Id",
+	"Name",
+	"Description",
+	"Key",
+	"Value",
+}
+
 // TestMain sets up our test suite, runs it, then deletes the test DB
 // at the end. The setup (CreateTestDB) occurs before all tests in
 // the models_test package are run, and the teardown (DeleteTestDB)
@@ -55,6 +75,7 @@ func CreateTestDB() string {
 	return dbFilePath
 }
 
+// DeleteTestDB deletes the test SQLite db file when tests complete.
 func DeleteTestDB(pathToDB string) {
 	dbConn.Close()
 	os.RemoveAll(filepath.Dir(pathToDB))
@@ -70,7 +91,13 @@ func TestSetAndGetConnection(t *testing.T) {
 }
 
 func TestColNames(t *testing.T) {
+	bag := &models.Bag{}
+	bagCols := models.ColNames(bag)
+	assert.Equal(t, ExpectedBagCols, bagCols)
 
+	credentials := &models.Credentials{}
+	credentialsCols := models.ColNames(credentials)
+	assert.Equal(t, ExpectedCredentialsCols, credentialsCols)
 }
 
 func TestColPlaceholders(t *testing.T) {
