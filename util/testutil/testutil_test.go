@@ -41,6 +41,12 @@ func TestGetPathToTestFileDir(t *testing.T) {
 	assert.True(t, strings.HasSuffix(path, "/easy-store/testdata/files"))
 }
 
+func TestGetPathToSchema(t *testing.T) {
+	path, err := testutil.GetPathToSchema()
+	require.Nil(t, err)
+	assert.True(t, strings.HasSuffix(path, "/easy-store/db/schema/easy-store.sql"))
+}
+
 func TestUntarTestBag(t *testing.T) {
 	pathToTarFile, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
