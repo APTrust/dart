@@ -22,6 +22,12 @@ func (bag *Bag) PrimaryKey() int {
 	return bag.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (bag *Bag) TableName() string {
+	return "bags"
+}
+
 func (bag *Bag) Validate() (bool, []error) {
 	return true, nil
 }

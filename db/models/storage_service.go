@@ -18,6 +18,12 @@ func (service *StorageService) PrimaryKey() int {
 	return service.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (service *StorageService) TableName() string {
+	return "storage_services"
+}
+
 func (service *StorageService) Validate() (bool, []error) {
 	return true, nil
 }

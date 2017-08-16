@@ -17,6 +17,12 @@ func (workflow *Workflow) PrimaryKey() int {
 	return workflow.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (workflow *Workflow) TableName() string {
+	return "workflows"
+}
+
 func (workflow *Workflow) Validate() (bool, []error) {
 	return true, nil
 }

@@ -15,6 +15,12 @@ func (setting *GeneralSetting) PrimaryKey() int {
 	return setting.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (setting *GeneralSetting) TableName() string {
+	return "general_settings"
+}
+
 func (setting *GeneralSetting) Validate() (bool, []error) {
 	return true, nil
 }

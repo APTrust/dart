@@ -16,6 +16,12 @@ func (tag *Tag) PrimaryKey() int {
 	return tag.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (tag *Tag) TableName() string {
+	return "tags"
+}
+
 func (tag *Tag) Validate() (bool, []error) {
 	return true, nil
 }

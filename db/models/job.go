@@ -31,6 +31,12 @@ func (job *Job) PrimaryKey() int {
 	return job.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (job *Job) TableName() string {
+	return "jobs"
+}
+
 func (job *Job) Validate() (bool, []error) {
 	return true, nil
 }

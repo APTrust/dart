@@ -17,11 +17,17 @@ func (credentials *Credentials) PrimaryKey() int {
 	return credentials.Id
 }
 
-func (setting *Credentials) Validate() (bool, []error) {
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (credentials *Credentials) TableName() string {
+	return "credentials"
+}
+
+func (credentials *Credentials) Validate() (bool, []error) {
 	return true, nil
 }
 
-func (setting *Credentials) Save(validate bool) (*Credentials, error) {
+func (credentials *Credentials) Save(validate bool) (*Credentials, error) {
 	// Validate
 	db := GetConnection(DEFAULT)
 	tx, err := db.Beginx()
@@ -31,5 +37,5 @@ func (setting *Credentials) Save(validate bool) (*Credentials, error) {
 	//tx.NamedExec(statement, bag)
 	tx.Commit()
 
-	return setting, nil
+	return credentials, nil
 }

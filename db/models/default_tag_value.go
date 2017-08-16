@@ -20,6 +20,12 @@ func (value *DefaultTagValue) PrimaryKey() int {
 	return value.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (value *DefaultTagValue) TableName() string {
+	return "default_tag_values"
+}
+
 func (value *DefaultTagValue) Validate() (bool, []error) {
 	return true, nil
 }

@@ -21,6 +21,12 @@ func (profile *BagItProfile) PrimaryKey() int {
 	return profile.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (profile *BagItProfile) TableName() string {
+	return "bagit_profiles"
+}
+
 func (profile *BagItProfile) Validate() (bool, []error) {
 	return true, nil
 }

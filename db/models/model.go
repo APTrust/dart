@@ -12,7 +12,11 @@ import (
 // method, which returns the model's database ID, simply for the
 // convenience of some of the DB helper functions in this file.
 type Model interface {
+	// PrimaryKey returns the model's primary key (id) value.
 	PrimaryKey() int
+	// TableName returns the name of the database table in which
+	// this model's data is stored.
+	TableName() string
 }
 
 const DEFAULT = "default"
@@ -61,14 +65,14 @@ func ColPlaceholders(model Model) []string {
 }
 
 // Returns an insert statement for the given model.
-func InsertStatement(model Model, tableName string) string {
+func InsertStatement(model Model) string {
 	cols := strings.Join(ColNames(model), ", ")
 	placeholders := strings.Join(ColPlaceholders(model), ", ")
-	return fmt.Sprintf("insert into %s (%s) values (%s)", tableName, cols, placeholders)
+	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), cols, placeholders)
 }
 
 // Returns an update statement for the given model.
-func UpdateStatement(model Model, tableName string) string {
+func UpdateStatement(model Model) string {
 	cols := ColNames(model)
 	placeholders := ColPlaceholders(model)
 	colValuePairs := make([]string, len(cols)-1)
@@ -78,37 +82,37 @@ func UpdateStatement(model Model, tableName string) string {
 		}
 		colValuePairs[i] = fmt.Sprintf("%s = %s", cols[i], placeholders[i])
 	}
-	return fmt.Sprintf("update %s set %s where id = :id", tableName, strings.Join(colValuePairs, ", "))
+	return fmt.Sprintf("update %s set %s where id = :id", model.TableName(), strings.Join(colValuePairs, ", "))
 }
 
 // SaveStatement returns the appropriate save statement for the given
 // model. If the model's id is zero, this returns an insert statement,
 // otherwise, it returns an update.
-func SaveStatement(model Model, tableName string) string {
+func SaveStatement(model Model) string {
 	if model.PrimaryKey() == 0 {
-		return InsertStatement(model, tableName)
+		return InsertStatement(model)
 	}
-	return UpdateStatement(model, tableName)
+	return UpdateStatement(model)
 }
 
 // SelectQuery returns the basic select statement for the specified model, with
 // no where clause.
-func SelectQuery(model Model, tableName string) string {
+func SelectQuery(model Model) string {
 	cols := strings.Join(ColNames(model), ", ")
-	return fmt.Sprintf("select %s from %s ", cols, tableName)
+	return fmt.Sprintf("select %s from %s ", cols, model.TableName())
 }
 
 // SelectByIdQuery returns the query to select a row from the model's
 // table by Id.
-func SelectByIdQuery(model Model, tableName string) string {
-	query := SelectQuery(model, tableName)
+func SelectByIdQuery(model Model) string {
+	query := SelectQuery(model)
 	return fmt.Sprintf("%s where id = :id ", query, model.PrimaryKey())
 }
 
 // Select returns a model's select statement with the specified conditions
 // in the where clause.
-func SelectWhere(model Model, tableName, conditions string) string {
-	query := SelectQuery(model, tableName)
+func SelectWhere(model Model, conditions string) string {
+	query := SelectQuery(model)
 	return fmt.Sprintf("%s where %s ", query, conditions)
 }
 

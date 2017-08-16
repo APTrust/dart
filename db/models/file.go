@@ -26,6 +26,12 @@ func (file *File) PrimaryKey() int {
 	return file.Id
 }
 
+// TableName returns the name of the database table where this model's
+// records are stored.
+func (file *File) TableName() string {
+	return "files"
+}
+
 func (file *File) Validate() (bool, []error) {
 	return true, nil
 }
