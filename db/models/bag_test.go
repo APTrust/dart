@@ -1,6 +1,6 @@
 package models_test
 
-/* NOTE: model_test.go contains the TestMain, setup, and teardown functions for this suite. */
+/* NOTE: main_test.go contains the TestMain, setup, and teardown functions for this suite. */
 
 import (
 	"github.com/stretchr/testify/assert"
