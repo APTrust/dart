@@ -161,25 +161,80 @@ func TestUpdateStatement(t *testing.T) {
 }
 
 func TestSaveStatement(t *testing.T) {
+	// Should get update statement for non-zero id...
+	bag := &models.Bag{}
+	statement := models.UpdateStatement(bag)
+	assert.Equal(t, BagUpdateStatement, statement)
 
+	credentials := &models.Credentials{}
+	statement = models.UpdateStatement(credentials)
+	assert.Equal(t, CredentialsUpdateStatement, statement)
+
+	// ...and insert statement for zero id.
+	bag.Id = 0
+	statement = models.SaveStatement(bag)
+	assert.Equal(t, BagInsertStatement, statement)
+
+	credentials.Id = 0
+	statement = models.InsertStatement(credentials)
+	assert.Equal(t, CredentialsInsertStatement, statement)
 }
 
 func TestSelectQuery(t *testing.T) {
+	bag := &models.Bag{}
+	query := models.SelectQuery(bag)
+	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags"
+	assert.Equal(t, expected, query)
 
+	credentials := &models.Credentials{}
+	query = models.SelectQuery(credentials)
+	expected = "select id, name, description, key, value from credentials"
+	assert.Equal(t, expected, query)
 }
 
 func TestSelectByIdQuery(t *testing.T) {
+	bag := &models.Bag{}
+	query := models.SelectByIdQuery(bag)
+	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where id = :id"
+	assert.Equal(t, expected, query)
 
+	credentials := &models.Credentials{}
+	query = models.SelectByIdQuery(credentials)
+	expected = "select id, name, description, key, value from credentials where id = :id"
+	assert.Equal(t, expected, query)
 }
 
 func TestSelectWhere(t *testing.T) {
+	bag := &models.Bag{}
+	query := models.SelectWhere(bag, "name = :name and stored_at > :stored_at")
+	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where name = :name and stored_at > :stored_at"
+	assert.Equal(t, expected, query)
 
+	credentials := &models.Credentials{}
+	query = models.SelectWhere(credentials, "key = :key and value is not null")
+	expected = "select id, name, description, key, value from credentials where key = :key and value is not null"
+	assert.Equal(t, expected, query)
 }
 
 func TestAndAll(t *testing.T) {
-
+	params := map[string]interface{}{
+		"name": "Jim",
+		"age":  44,
+	}
+	// No telling what order keys will come out in.
+	expected1 := "(age = :age and name = :name)"
+	expected2 := "(name = :name and age = :age)"
+	actual := models.AndAll(params)
+	assert.True(t, (actual == expected1 || actual == expected2))
 }
 
 func TestOrAll(t *testing.T) {
-
+	params := map[string]interface{}{
+		"name": "Jim",
+		"age":  44,
+	}
+	expected1 := "(age = :age or name = :name)"
+	expected2 := "(name = :name or age = :age)"
+	actual := models.OrAll(params)
+	assert.True(t, (actual == expected1 || actual == expected2))
 }

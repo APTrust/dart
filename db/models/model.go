@@ -120,21 +120,21 @@ func SaveStatement(model Model) string {
 // no where clause.
 func SelectQuery(model Model) string {
 	cols := strings.Join(ColNames(model, true), ", ")
-	return fmt.Sprintf("select %s from %s ", cols, model.TableName())
+	return fmt.Sprintf("select %s from %s", cols, model.TableName())
 }
 
 // SelectByIdQuery returns the query to select a row from the model's
 // table by Id.
 func SelectByIdQuery(model Model) string {
 	query := SelectQuery(model)
-	return fmt.Sprintf("%s where id = :id ", query, model.PrimaryKey())
+	return fmt.Sprintf("%s where id = :id", query)
 }
 
 // Select returns a model's select statement with the specified conditions
 // in the where clause.
 func SelectWhere(model Model, conditions string) string {
 	query := SelectQuery(model)
-	return fmt.Sprintf("%s where %s ", query, conditions)
+	return fmt.Sprintf("%s where %s", query, conditions)
 }
 
 // AndAll returns a string of SQL conditions in which all name-value
@@ -149,10 +149,10 @@ func AndAll(params map[string]interface{}) string {
 	paramPairs := make([]string, len(params))
 	i := 0
 	for key := range params {
-		paramPairs[i] = fmt.Sprintf("%s = :%s", key)
+		paramPairs[i] = fmt.Sprintf("%s = :%s", key, key)
 		i++
 	}
-	return fmt.Sprintf(" (%s) ", strings.Join(paramPairs, " and "))
+	return fmt.Sprintf("(%s)", strings.Join(paramPairs, " and "))
 }
 
 // AndAll returns a string of SQL conditions in which all name-value
@@ -167,8 +167,8 @@ func OrAll(params map[string]interface{}) string {
 	paramPairs := make([]string, len(params))
 	i := 0
 	for key := range params {
-		paramPairs[i] = fmt.Sprintf("%s = :%s", key)
+		paramPairs[i] = fmt.Sprintf("%s = :%s", key, key)
 		i++
 	}
-	return fmt.Sprintf(" (%s) ", strings.Join(paramPairs, " or "))
+	return fmt.Sprintf("(%s)", strings.Join(paramPairs, " or "))
 }
