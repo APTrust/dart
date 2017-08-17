@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/APTrust/easy-store/util"
 	"github.com/jmoiron/sqlx"
@@ -130,11 +131,10 @@ func SelectByIdQuery(model Model) string {
 	return fmt.Sprintf("%s where id = :id", query)
 }
 
-// Select returns a model's select statement with the specified conditions
-// in the where clause.
-func SelectWhere(model Model, conditions string) string {
+// Select returns a model's select statement with the specified where clause.
+func SelectWhere(model Model, whereClause string) string {
 	query := SelectQuery(model)
-	return fmt.Sprintf("%s where %s", query, conditions)
+	return fmt.Sprintf("%s where %s", query, whereClause)
 }
 
 // AndAll returns a string of SQL conditions in which all name-value
@@ -171,4 +171,12 @@ func OrAll(params map[string]interface{}) string {
 		i++
 	}
 	return fmt.Sprintf("(%s)", strings.Join(paramPairs, " or "))
+}
+
+func ExecCommand(command string, arg interface{}) (sql.Result, error) {
+	if arg == nil {
+		arg = map[string]interface{}{}
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
+	return db.NamedExec(command, arg)
 }

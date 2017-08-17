@@ -2,6 +2,7 @@ package models
 
 import (
 	"log"
+	"strings"
 	"time"
 )
 
@@ -42,7 +43,32 @@ func GetBag(id int64) (*Bag, error) {
 // }
 // bags, err := GetBags(where, values)
 func GetBags(where string, values map[string]interface{}) ([]*Bag, error) {
-	return nil, nil
+	bag := &Bag{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(bag, where)
+	} else {
+		query = SelectQuery(bag)
+	}
+	db := GetConnection(DEFAULT_CONNECTION)
+	rows, err := db.NamedQuery(query, values)
+
+	// DEBUG
+	log.Println(query, values)
+
+	if err != nil {
+		return nil, err
+	}
+	bags := make([]*Bag, 0)
+	for rows.Next() {
+		bag = &Bag{}
+		err = rows.StructScan(bag)
+		if err != nil {
+			return nil, err
+		}
+		bags = append(bags, bag)
+	}
+	return bags, err
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
@@ -71,8 +97,10 @@ func (bag *Bag) Save(validate bool) bool {
 		return false
 	}
 	statement := SaveStatement(bag)
+
 	// DEBUG
-	log.Println(statement)
+	// log.Println(statement)
+
 	db := GetConnection(DEFAULT_CONNECTION)
 	result, err := db.NamedExec(statement, bag)
 	if err != nil {
