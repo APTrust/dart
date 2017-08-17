@@ -58,11 +58,14 @@ func GetConnection(name string) *sqlx.DB {
 }
 
 // Returns the column names of the given model.
-func ColNames(model Model) []string {
+func ColNames(model Model, includeId bool) []string {
 	t := reflect.TypeOf(model).Elem()
 	colnames := make([]string, 0)
 	for i := 0; i < t.NumField(); i++ {
 		fieldName := t.Field(i).Name
+		if fieldName == "Id" && includeId == false {
+			continue
+		}
 		// Include only settable (public) fields
 		if unicode.IsUpper(rune(fieldName[0])) {
 			colnames = append(colnames, t.Field(i).Tag.Get("db"))
@@ -73,8 +76,8 @@ func ColNames(model Model) []string {
 
 // Returns column placeholders for the given model.
 // These are the column names prefixed with a colon.
-func ColPlaceholders(model Model) []string {
-	colnames := ColNames(model)
+func ColPlaceholders(model Model, includeId bool) []string {
+	colnames := ColNames(model, includeId)
 	placeholders := make([]string, len(colnames))
 	for i := 0; i < len(colnames); i++ {
 		placeholders[i] = ":" + colnames[i]
@@ -84,28 +87,16 @@ func ColPlaceholders(model Model) []string {
 
 // Returns an insert statement for the given model.
 func InsertStatement(model Model) string {
-	cols := ColNames(model)
-	placeholders := ColPlaceholders(model)
-	cleanCols := make([]string, 0)
-	cleanPlaceholders := make([]string, 0)
-	for i := 0; i < len(cols); i++ {
-		if cols[i] != "id" {
-			cleanCols = append(cleanCols, cols[i])
-		}
-		if placeholders[i] != ":id" {
-			cleanPlaceholders = append(cleanPlaceholders, placeholders[i])
-		}
-	}
-	colString := strings.Join(cleanCols, ", ")
-	placeholderString := strings.Join(cleanPlaceholders, ", ")
-	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), colString, placeholderString)
+	cols := strings.Join(ColNames(model, false), ", ")
+	placeholders := strings.Join(ColPlaceholders(model, false), ", ")
+	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), cols, placeholders)
 }
 
 // Returns an update statement for the given model.
 func UpdateStatement(model Model) string {
-	cols := ColNames(model)
-	placeholders := ColPlaceholders(model)
-	colValuePairs := make([]string, len(cols)-1)
+	cols := ColNames(model, false)
+	placeholders := ColPlaceholders(model, false)
+	colValuePairs := make([]string, len(cols))
 	for i := 0; i < len(cols); i++ {
 		if cols[i] == "id" {
 			continue
@@ -128,7 +119,7 @@ func SaveStatement(model Model) string {
 // SelectQuery returns the basic select statement for the specified model, with
 // no where clause.
 func SelectQuery(model Model) string {
-	cols := strings.Join(ColNames(model), ", ")
+	cols := strings.Join(ColNames(model, true), ", ")
 	return fmt.Sprintf("select %s from %s ", cols, model.TableName())
 }
 

@@ -8,9 +8,17 @@ import (
 )
 
 func TestBagSave(t *testing.T) {
+	// Save as insert
 	bag := FakeBag()
 	bag.Id = 0
 	ok := bag.Save(false)
 	assert.True(t, ok)
 	assert.NotEqual(t, 0, bag.Id)
+
+	// Save as update
+	id := bag.Id
+	bag.Size = bag.Size + 20
+	ok = bag.Save(false)
+	assert.True(t, ok)
+	assert.Equal(t, id, bag.Id)
 }

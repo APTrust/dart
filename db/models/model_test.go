@@ -116,23 +116,23 @@ func TestSetAndGetConnection(t *testing.T) {
 
 func TestColNames(t *testing.T) {
 	bag := &models.Bag{}
-	bagCols := models.ColNames(bag)
+	bagCols := models.ColNames(bag, true)
 	assert.Equal(t, ExpectedBagCols, bagCols)
 
 	credentials := &models.Credentials{}
-	credentialsCols := models.ColNames(credentials)
+	credentialsCols := models.ColNames(credentials, true)
 	assert.Equal(t, ExpectedCredentialsCols, credentialsCols)
 }
 
 func TestColPlaceholders(t *testing.T) {
 	bag := &models.Bag{}
 	expected := ExpectedBagPlaceholders()
-	bagPlaceholders := models.ColPlaceholders(bag)
+	bagPlaceholders := models.ColPlaceholders(bag, true)
 	assert.Equal(t, expected, bagPlaceholders)
 
 	credentials := &models.Credentials{}
 	expected = ExpectedCredentialsPlaceholders()
-	credentialsPlaceholders := models.ColPlaceholders(credentials)
+	credentialsPlaceholders := models.ColPlaceholders(credentials, true)
 	assert.Equal(t, expected, credentialsPlaceholders)
 }
 
