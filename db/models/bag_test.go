@@ -22,3 +22,26 @@ func TestBagSave(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, id, bag.Id)
 }
+
+func TestPrimaryKey(t *testing.T) {
+	bag := FakeBag()
+	assert.Equal(t, bag.Id, bag.PrimaryKey())
+}
+
+func TestTableName(t *testing.T) {
+	bag := FakeBag()
+	assert.Equal(t, "bags", bag.TableName())
+}
+
+func TestValidate(t *testing.T) {
+	bag := FakeBag()
+	assert.True(t, bag.Validate())
+	assert.NotNil(t, bag.Errors())
+	assert.Empty(t, bag.Errors())
+}
+
+func TestErrors(t *testing.T) {
+	bag := FakeBag()
+	assert.NotNil(t, bag.Errors())
+	assert.Empty(t, bag.Errors())
+}

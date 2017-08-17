@@ -48,19 +48,11 @@ func (bag *Bag) Save(validate bool) bool {
 	// DEBUG
 	log.Println(statement)
 	db := GetConnection(DEFAULT_CONNECTION)
-	// tx, err := db.Beginx()
-	// if err != nil {
-	// 	bag.addError(err.Error())
-	// 	return false
-	// }
 	result, err := db.NamedExec(statement, bag)
 	if err != nil {
 		bag.addError(err.Error())
 		return false
 	}
-
-	//tx.Commit()
-
 	id, err := result.LastInsertId()
 	if err != nil {
 		bag.addError(err.Error())
