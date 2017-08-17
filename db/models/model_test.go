@@ -38,7 +38,11 @@ var ExpectedCredentialsCols = []string{
 
 var BagInsertStatement = "insert into bags (name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at) values (:name, :size, :storage_url, :metadata_url, :storage_registry_identifier, :stored_at, :created_at, :updated_at)"
 
+var BagUpdateStatement = "update bags set name = :name, size = :size, storage_url = :storage_url, metadata_url = :metadata_url, storage_registry_identifier = :storage_registry_identifier, stored_at = :stored_at, created_at = :created_at, updated_at = :updated_at where id = :id"
+
 var CredentialsInsertStatement = "insert into credentials (name, description, key, value) values (:name, :description, :key, :value)"
+
+var CredentialsUpdateStatement = "update credentials set name = :name, description = :description, key = :key, value = :value where id = :id"
 
 func ExpectedBagPlaceholders() []string {
 	list := make([]string, len(ExpectedBagCols))
@@ -147,7 +151,13 @@ func TestInsertStatement(t *testing.T) {
 }
 
 func TestUpdateStatement(t *testing.T) {
+	bag := &models.Bag{}
+	statement := models.UpdateStatement(bag)
+	assert.Equal(t, BagUpdateStatement, statement)
 
+	credentials := &models.Credentials{}
+	statement = models.UpdateStatement(credentials)
+	assert.Equal(t, CredentialsUpdateStatement, statement)
 }
 
 func TestSaveStatement(t *testing.T) {
