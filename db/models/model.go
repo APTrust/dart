@@ -65,7 +65,7 @@ func ColNames(model Model) []string {
 		fieldName := t.Field(i).Name
 		// Include only settable (public) fields
 		if unicode.IsUpper(rune(fieldName[0])) {
-			colnames = append(colnames, fieldName)
+			colnames = append(colnames, t.Field(i).Tag.Get("db"))
 		}
 	}
 	return colnames
@@ -84,9 +84,21 @@ func ColPlaceholders(model Model) []string {
 
 // Returns an insert statement for the given model.
 func InsertStatement(model Model) string {
-	cols := strings.Join(ColNames(model), ", ")
-	placeholders := strings.Join(ColPlaceholders(model), ", ")
-	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), cols, placeholders)
+	cols := ColNames(model)
+	placeholders := ColPlaceholders(model)
+	cleanCols := make([]string, 0)
+	cleanPlaceholders := make([]string, 0)
+	for i := 0; i < len(cols); i++ {
+		if cols[i] != "id" {
+			cleanCols = append(cleanCols, cols[i])
+		}
+		if placeholders[i] != ":id" {
+			cleanPlaceholders = append(cleanPlaceholders, placeholders[i])
+		}
+	}
+	colString := strings.Join(cleanCols, ", ")
+	placeholderString := strings.Join(cleanPlaceholders, ", ")
+	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), colString, placeholderString)
 }
 
 // Returns an update statement for the given model.

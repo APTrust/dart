@@ -17,23 +17,43 @@ import (
 var dbConn *sqlx.DB
 
 var ExpectedBagCols = []string{
-	"Id",
-	"Name",
-	"Size",
-	"StorageURL",
-	"MetadataURL",
-	"StorageRegistryIdentifier",
-	"StoredAt",
-	"CreatedAt",
-	"UpdatedAt",
+	"id",
+	"name",
+	"size",
+	"storage_url",
+	"metadata_url",
+	"storage_registry_identifier",
+	"stored_at",
+	"created_at",
+	"updated_at",
 }
 
 var ExpectedCredentialsCols = []string{
-	"Id",
-	"Name",
-	"Description",
-	"Key",
-	"Value",
+	"id",
+	"name",
+	"description",
+	"key",
+	"value",
+}
+
+var BagInsertStatement = "insert into bags (name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at) values (:name, :size, :storage_url, :metadata_url, :storage_registry_identifier, :stored_at, :created_at, :updated_at)"
+
+var CredentialsInsertStatement = "insert into credentials (name, description, key, value) values (:name, :description, :key, :value)"
+
+func ExpectedBagPlaceholders() []string {
+	list := make([]string, len(ExpectedBagCols))
+	for i, colName := range ExpectedBagCols {
+		list[i] = ":" + colName
+	}
+	return list
+}
+
+func ExpectedCredentialsPlaceholders() []string {
+	list := make([]string, len(ExpectedCredentialsCols))
+	for i, colName := range ExpectedCredentialsCols {
+		list[i] = ":" + colName
+	}
+	return list
 }
 
 // TestMain sets up our test suite, runs it, then deletes the test DB
@@ -101,11 +121,25 @@ func TestColNames(t *testing.T) {
 }
 
 func TestColPlaceholders(t *testing.T) {
+	bag := &models.Bag{}
+	expected := ExpectedBagPlaceholders()
+	bagPlaceholders := models.ColPlaceholders(bag)
+	assert.Equal(t, expected, bagPlaceholders)
 
+	credentials := &models.Credentials{}
+	expected = ExpectedCredentialsPlaceholders()
+	credentialsPlaceholders := models.ColPlaceholders(credentials)
+	assert.Equal(t, expected, credentialsPlaceholders)
 }
 
 func TestInsertStatement(t *testing.T) {
+	bag := &models.Bag{}
+	statement := models.InsertStatement(bag)
+	assert.Equal(t, BagInsertStatement, statement)
 
+	credentials := &models.Credentials{}
+	statement = models.InsertStatement(credentials)
+	assert.Equal(t, CredentialsInsertStatement, statement)
 }
 
 func TestUpdateStatement(t *testing.T) {
