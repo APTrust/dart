@@ -1,12 +1,13 @@
 package models
 
 import (
+	"log"
 	"time"
 )
 
 // Bag holds information about a bag built by easy-store.
 type Bag struct {
-	Id                        int       `db:"id" form_options:"skip"`
+	Id                        int64     `db:"id" form_options:"skip"`
 	Name                      string    `db:"name"`
 	Size                      int64     `db:"size" form_options:"skip"`
 	StorageURL                string    `db:"storage_url" form_options:"skip"`
@@ -19,7 +20,7 @@ type Bag struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (bag *Bag) PrimaryKey() int {
+func (bag *Bag) PrimaryKey() int64 {
 	return bag.Id
 }
 
@@ -43,14 +44,29 @@ func (bag *Bag) Save(validate bool) bool {
 	if !bag.Validate() {
 		return false
 	}
+	statement := SaveStatement(bag)
+	// DEBUG
+	log.Println(statement)
 	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
+	// tx, err := db.Beginx()
+	// if err != nil {
+	// 	bag.addError(err.Error())
+	// 	return false
+	// }
+	result, err := db.NamedExec(statement, bag)
 	if err != nil {
 		bag.addError(err.Error())
 		return false
 	}
-	//tx.NamedExec(statement, bag)
-	tx.Commit()
+
+	//tx.Commit()
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		bag.addError(err.Error())
+		return false
+	}
+	bag.Id = id
 	return true
 }
 

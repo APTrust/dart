@@ -14,7 +14,7 @@ import (
 func FakeBag() *models.Bag {
 	bagName := fake.Word()
 	return &models.Bag{
-		Id:                        rand.Intn(50000) + 1,
+		Id:                        int64(rand.Intn(50000) + 1),
 		Name:                      bagName,
 		Size:                      int64(rand.Intn(50000) + 1),
 		StorageURL:                fmt.Sprintf("https://s3.example.com/%s.tar", bagName),
@@ -33,7 +33,7 @@ func FakeBagItProfile() *models.BagItProfile {
 		panic(err.Error())
 	}
 	return &models.BagItProfile{
-		Id:          rand.Intn(50000) + 1,
+		Id:          int64(rand.Intn(50000) + 1),
 		Name:        fake.Word(),
 		Description: fake.Sentence(),
 		JSON:        string(data),
@@ -42,7 +42,7 @@ func FakeBagItProfile() *models.BagItProfile {
 
 func FakeCredentials() *models.Credentials {
 	return &models.Credentials{
-		Id:          rand.Intn(50000) + 1,
+		Id:          int64(rand.Intn(50000) + 1),
 		Name:        fake.Word(),
 		Description: fake.Sentence(),
 		Key:         fake.Word(),
@@ -53,7 +53,7 @@ func FakeCredentials() *models.Credentials {
 func FakeDefaultTagValue() *models.DefaultTagValue {
 	profileId := rand.Intn(50000) + 1
 	return &models.DefaultTagValue{
-		Id:        rand.Intn(50000) + 1,
+		Id:        int64(rand.Intn(50000) + 1),
 		ProfileId: &profileId,
 		TagFile:   fake.Word(),
 		TagName:   fake.Word(),
@@ -65,7 +65,7 @@ func FakeDefaultTagValue() *models.DefaultTagValue {
 func FakeFile() *models.File {
 	bagId := rand.Intn(50000) + 1
 	return &models.File{
-		Id:                rand.Intn(50000) + 1,
+		Id:                int64(rand.Intn(50000) + 1),
 		BagId:             &bagId,
 		Name:              fake.Word(),
 		Size:              int64(rand.Intn(50000) + 1),
@@ -82,7 +82,7 @@ func FakeFile() *models.File {
 
 func FakeGeneralSetting() *models.GeneralSetting {
 	return &models.GeneralSetting{
-		Id:    rand.Intn(50000) + 1,
+		Id:    int64(rand.Intn(50000) + 1),
 		Name:  fake.Word(),
 		Value: fake.Sentence(),
 	}
@@ -93,7 +93,7 @@ func FakeJob() *models.Job {
 	fileId := rand.Intn(50000) + 1
 	workflowId := rand.Intn(50000) + 1
 	return &models.Job{
-		Id:                 rand.Intn(50000) + 1,
+		Id:                 int64(rand.Intn(50000) + 1),
 		BagId:              &bagId,
 		FileId:             &fileId,
 		WorkflowId:         &workflowId,
@@ -111,7 +111,7 @@ func FakeJob() *models.Job {
 func FakeStorageService() *models.StorageService {
 	credentialsId := rand.Intn(50000) + 1
 	return &models.StorageService{
-		Id:             rand.Intn(50000) + 1,
+		Id:             int64(rand.Intn(50000) + 1),
 		Name:           fake.Word(),
 		Description:    fake.Sentence(),
 		Protocol:       fake.Word(),
@@ -123,7 +123,7 @@ func FakeStorageService() *models.StorageService {
 func FakeTag() *models.Tag {
 	bagId := rand.Intn(50000) + 1
 	return &models.Tag{
-		Id:    rand.Intn(50000) + 1,
+		Id:    int64(rand.Intn(50000) + 1),
 		BagId: &bagId,
 		Name:  fake.Word(),
 		Value: fake.Sentence(),
@@ -134,7 +134,7 @@ func FakeWorkflow() *models.Workflow {
 	profileId := rand.Intn(50000) + 1
 	storageServiceId := rand.Intn(50000) + 1
 	return &models.Workflow{
-		Id:               rand.Intn(50000) + 1,
+		Id:               int64(rand.Intn(50000) + 1),
 		Name:             fake.Word(),
 		Description:      fake.Sentence(),
 		ProfileId:        &profileId,

@@ -7,7 +7,7 @@ import (
 // File holds information about a file that easy-store has
 // either bagged or uploaded.
 type File struct {
-	Id                int       `db:"id" form_options:"skip"`
+	Id                int64     `db:"id" form_options:"skip"`
 	BagId             *int      `db:"bag_id"`
 	Name              string    `db:"name"`
 	Size              int64     `db:"size"`
@@ -23,7 +23,7 @@ type File struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (file *File) PrimaryKey() int {
+func (file *File) PrimaryKey() int64 {
 	return file.Id
 }
 

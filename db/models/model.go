@@ -18,7 +18,7 @@ type Model interface {
 	// or validating the object.
 	Errors() []string
 	// PrimaryKey returns the model's primary key (id) value.
-	PrimaryKey() int
+	PrimaryKey() int64
 	// Save saves the object the database.
 	Save(bool) bool
 	// TableName returns the name of the database table in which

@@ -12,7 +12,7 @@ import (
 // upload to S3" executed against the directory "my_photos",
 // where my_photos is bagged and uploaded to S3.
 type Job struct {
-	Id                 int       `db:"id" form_options:"skip"`
+	Id                 int64     `db:"id" form_options:"skip"`
 	BagId              *int      `db:"bag_id"`
 	FileId             *int      `db:"file_id"`
 	WorkflowId         *int      `db:"workflow_id"`
@@ -28,7 +28,7 @@ type Job struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (job *Job) PrimaryKey() int {
+func (job *Job) PrimaryKey() int64 {
 	return job.Id
 }
 

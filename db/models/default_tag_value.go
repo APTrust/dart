@@ -7,7 +7,7 @@ import (
 // DefaultTagValue holds information about a tag value that is common to
 // all bags.
 type DefaultTagValue struct {
-	Id        int       `db:"id" form_options:"skip"`
+	Id        int64     `db:"id" form_options:"skip"`
 	ProfileId *int      `db:"profile_id" form_widget:"hidden"`
 	TagFile   string    `db:"tag_file"`
 	TagName   string    `db:"tag_name"`
@@ -17,7 +17,7 @@ type DefaultTagValue struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (value *DefaultTagValue) PrimaryKey() int {
+func (value *DefaultTagValue) PrimaryKey() int64 {
 	return value.Id
 }
 

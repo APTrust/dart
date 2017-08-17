@@ -5,14 +5,14 @@ import ()
 // GeneralSetting holds information about a general application-wide setting,
 // such as the path to the directory where bags should be built.
 type GeneralSetting struct {
-	Id     int    `db:"id" form_options:"skip"`
+	Id     int64  `db:"id" form_options:"skip"`
 	Name   string `db:"name"`
 	Value  string `db:"value"`
 	errors []string
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (setting *GeneralSetting) PrimaryKey() int {
+func (setting *GeneralSetting) PrimaryKey() int64 {
 	return setting.Id
 }
 

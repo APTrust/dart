@@ -5,7 +5,7 @@ import ()
 // Credentials holds information about credentials needed to connect
 // to remote storage services, REST APIs, etc.
 type Credentials struct {
-	Id          int    `db:"id" form_options:"skip"`
+	Id          int64  `db:"id" form_options:"skip"`
 	Name        string `db:"name"`
 	Description string `db:"description"`
 	Key         string `db:"key"`
@@ -14,7 +14,7 @@ type Credentials struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (credentials *Credentials) PrimaryKey() int {
+func (credentials *Credentials) PrimaryKey() int64 {
 	return credentials.Id
 }
 

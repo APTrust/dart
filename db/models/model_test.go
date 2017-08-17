@@ -91,6 +91,10 @@ func CreateTestDB() string {
 	}
 	dbConn.MustExec(string(schema))
 
+	// Set the default connection, so other tests
+	// can save/retrieve objects from the DB
+	models.SetConnection(models.DEFAULT_CONNECTION, dbConn)
+
 	// Return the path to the DB file, so we can delete it later
 	return dbFilePath
 }

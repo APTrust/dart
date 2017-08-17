@@ -5,7 +5,7 @@ import ()
 // StorageService holds information about how to connect to a remote
 // storage service.
 type StorageService struct {
-	Id             int    `db:"id" form_options:"skip"`
+	Id             int64  `db:"id" form_options:"skip"`
 	Name           string `db:"name"`
 	Description    string `db:"description"`
 	Protocol       string `db:"protocol"`
@@ -15,7 +15,7 @@ type StorageService struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (service *StorageService) PrimaryKey() int {
+func (service *StorageService) PrimaryKey() int64 {
 	return service.Id
 }
 

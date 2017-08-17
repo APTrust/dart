@@ -5,7 +5,7 @@ import ()
 // Workflow holds information about how a bag should be built and
 // where it should be sent.
 type Workflow struct {
-	Id               int    `db:"id" form_options:"skip"`
+	Id               int64  `db:"id" form_options:"skip"`
 	Name             string `db:"name"`
 	Description      string `db:"description"`
 	ProfileId        *int   `db:"profile_id" form_widget:"hidden"`
@@ -14,7 +14,7 @@ type Workflow struct {
 }
 
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (workflow *Workflow) PrimaryKey() int {
+func (workflow *Workflow) PrimaryKey() int64 {
 	return workflow.Id
 }
 
