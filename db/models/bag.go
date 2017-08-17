@@ -19,6 +19,32 @@ type Bag struct {
 	errors                    []string
 }
 
+// GetBag returns the bag with the specified id, or an error if the
+// bag does not exist.
+func GetBag(id int64) (*Bag, error) {
+	bag := &Bag{Id: id}
+	query := SelectByIdQuery(bag)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(bag, query, id)
+	return bag, err
+}
+
+// GetBags returns the bags matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = :name and age = :age"
+// values := map[string]interface{} {
+//    "name": "Billy Bob Thornton",
+//    "age": 62,
+// }
+// bags, err := GetBags(where, values)
+func GetBags(where string, values map[string]interface{}) ([]*Bag, error) {
+	return nil, nil
+}
+
 // PrimaryKey() returns this object's Id, to conform to the Model interface.
 func (bag *Bag) PrimaryKey() int64 {
 	return bag.Id
