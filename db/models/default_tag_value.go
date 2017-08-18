@@ -16,9 +16,14 @@ type DefaultTagValue struct {
 	errors    []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (value *DefaultTagValue) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (value *DefaultTagValue) GetId() int64 {
 	return value.Id
+}
+
+// SetId() sets this object's Id.
+func (value *DefaultTagValue) SetId(id int64) {
+	value.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -44,7 +49,7 @@ func (value *DefaultTagValue) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		value.addError(err.Error())
+		value.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, value)
@@ -67,7 +72,7 @@ func (value *DefaultTagValue) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (value *DefaultTagValue) addError(message string) {
+// AddError adds an error message to the errors list.
+func (value *DefaultTagValue) AddError(message string) {
 	value.errors = append(value.errors, message)
 }

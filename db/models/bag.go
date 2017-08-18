@@ -71,9 +71,14 @@ func GetBags(where string, values map[string]interface{}) ([]*Bag, error) {
 	return bags, err
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (bag *Bag) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (bag *Bag) GetId() int64 {
 	return bag.Id
+}
+
+// SetId() sets this object's Id.
+func (bag *Bag) SetId(id int64) {
+	bag.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -93,27 +98,28 @@ func (bag *Bag) Validate() bool {
 // it validates before saving. After a successful save, the object
 // will have a non-zero Id. If this returns false, check Errors().
 func (bag *Bag) Save(validate bool) bool {
-	if !bag.Validate() {
-		return false
-	}
-	statement := SaveStatement(bag)
+	return SaveObject(bag)
+	// if !bag.Validate() {
+	// 	return false
+	// }
+	// statement := SaveStatement(bag)
 
-	// DEBUG
-	// log.Println(statement)
+	// // DEBUG
+	// // log.Println(statement)
 
-	db := GetConnection(DEFAULT_CONNECTION)
-	result, err := db.NamedExec(statement, bag)
-	if err != nil {
-		bag.addError(err.Error())
-		return false
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		bag.addError(err.Error())
-		return false
-	}
-	bag.Id = id
-	return true
+	// db := GetConnection(DEFAULT_CONNECTION)
+	// result, err := db.NamedExec(statement, bag)
+	// if err != nil {
+	// 	bag.AddError(err.Error())
+	// 	return false
+	// }
+	// id, err := result.LastInsertId()
+	// if err != nil {
+	// 	bag.AddError(err.Error())
+	// 	return false
+	// }
+	// bag.Id = id
+	// return true
 }
 
 // Errors returns a list of errors that occurred after a call to Validate()
@@ -131,8 +137,8 @@ func (bag *Bag) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (bag *Bag) addError(message string) {
+// AddError adds an error message to the errors list.
+func (bag *Bag) AddError(message string) {
 	bag.errors = append(bag.errors, message)
 }
 

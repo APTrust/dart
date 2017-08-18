@@ -17,9 +17,14 @@ type BagItProfile struct {
 	errors        []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (profile *BagItProfile) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (profile *BagItProfile) GetId() int64 {
 	return profile.Id
+}
+
+// SetId() sets this object's Id.
+func (profile *BagItProfile) SetId(id int64) {
+	profile.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -45,7 +50,7 @@ func (profile *BagItProfile) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		profile.addError(err.Error())
+		profile.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, profile)
@@ -68,8 +73,8 @@ func (profile *BagItProfile) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (profile *BagItProfile) addError(message string) {
+// AddError adds an error message to the errors list.
+func (profile *BagItProfile) AddError(message string) {
 	profile.errors = append(profile.errors, message)
 }
 

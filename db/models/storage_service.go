@@ -14,9 +14,14 @@ type StorageService struct {
 	errors         []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (service *StorageService) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (service *StorageService) GetId() int64 {
 	return service.Id
+}
+
+// SetId() sets this object's Id.
+func (service *StorageService) SetId(id int64) {
+	service.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -42,7 +47,7 @@ func (service *StorageService) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		service.addError(err.Error())
+		service.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, service)
@@ -65,8 +70,8 @@ func (service *StorageService) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (service *StorageService) addError(message string) {
+// AddError adds an error message to the errors list.
+func (service *StorageService) AddError(message string) {
 	service.errors = append(service.errors, message)
 }
 

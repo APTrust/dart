@@ -27,9 +27,14 @@ type Job struct {
 	errors             []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (job *Job) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (job *Job) GetId() int64 {
 	return job.Id
+}
+
+// SetId() sets this object's Id.
+func (job *Job) SetId(id int64) {
+	job.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -55,7 +60,7 @@ func (job *Job) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		job.addError(err.Error())
+		job.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, job)
@@ -78,7 +83,7 @@ func (job *Job) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (job *Job) addError(message string) {
+// AddError adds an error message to the errors list.
+func (job *Job) AddError(message string) {
 	job.errors = append(job.errors, message)
 }

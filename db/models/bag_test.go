@@ -10,9 +10,9 @@ import (
 	"testing"
 )
 
-func TestPrimaryKey(t *testing.T) {
+func TestGetId(t *testing.T) {
 	bag := FakeBag()
-	assert.Equal(t, bag.Id, bag.PrimaryKey())
+	assert.Equal(t, bag.Id, bag.GetId())
 }
 
 func TestTableName(t *testing.T) {

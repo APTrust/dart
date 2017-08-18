@@ -13,9 +13,14 @@ type Workflow struct {
 	errors           []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (workflow *Workflow) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (workflow *Workflow) GetId() int64 {
 	return workflow.Id
+}
+
+// SetId() sets this object's Id.
+func (workflow *Workflow) SetId(id int64) {
+	workflow.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -41,7 +46,7 @@ func (workflow *Workflow) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		workflow.addError(err.Error())
+		workflow.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, workflow)
@@ -64,8 +69,8 @@ func (workflow *Workflow) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (workflow *Workflow) addError(message string) {
+// AddError adds an error message to the errors list.
+func (workflow *Workflow) AddError(message string) {
 	workflow.errors = append(workflow.errors, message)
 }
 

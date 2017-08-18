@@ -13,9 +13,14 @@ type Credentials struct {
 	errors      []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (credentials *Credentials) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (credentials *Credentials) GetId() int64 {
 	return credentials.Id
+}
+
+// SetId() sets this object's Id.
+func (credentials *Credentials) SetId(id int64) {
+	credentials.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -41,7 +46,7 @@ func (credentials *Credentials) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		credentials.addError(err.Error())
+		credentials.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, credentials)
@@ -64,7 +69,7 @@ func (credentials *Credentials) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (credentials *Credentials) addError(message string) {
+// AddError adds an error message to the errors list.
+func (credentials *Credentials) AddError(message string) {
 	credentials.errors = append(credentials.errors, message)
 }

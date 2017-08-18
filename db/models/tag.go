@@ -12,9 +12,14 @@ type Tag struct {
 	errors []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (tag *Tag) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (tag *Tag) GetId() int64 {
 	return tag.Id
+}
+
+// SetId() sets this object's Id.
+func (tag *Tag) SetId(id int64) {
+	tag.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -40,7 +45,7 @@ func (tag *Tag) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		tag.addError(err.Error())
+		tag.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, tag)
@@ -63,7 +68,7 @@ func (tag *Tag) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (tag *Tag) addError(message string) {
+// AddError adds an error message to the errors list.
+func (tag *Tag) AddError(message string) {
 	tag.errors = append(tag.errors, message)
 }

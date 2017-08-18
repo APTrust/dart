@@ -22,9 +22,14 @@ type File struct {
 	errors            []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (file *File) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (file *File) GetId() int64 {
 	return file.Id
+}
+
+// SetId() sets this object's Id.
+func (file *File) SetId(id int64) {
+	file.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -50,7 +55,7 @@ func (file *File) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		file.addError(err.Error())
+		file.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, file)
@@ -73,7 +78,7 @@ func (file *File) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (file *File) addError(message string) {
+// AddError adds an error message to the errors list.
+func (file *File) AddError(message string) {
 	file.errors = append(file.errors, message)
 }

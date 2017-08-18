@@ -11,9 +11,14 @@ type GeneralSetting struct {
 	errors []string
 }
 
-// PrimaryKey() returns this object's Id, to conform to the Model interface.
-func (setting *GeneralSetting) PrimaryKey() int64 {
+// GetId() returns this object's Id, to conform to the Model interface.
+func (setting *GeneralSetting) GetId() int64 {
 	return setting.Id
+}
+
+// SetId() sets this object's Id.
+func (setting *GeneralSetting) SetId(id int64) {
+	setting.Id = id
 }
 
 // TableName returns the name of the database table where this model's
@@ -39,7 +44,7 @@ func (setting *GeneralSetting) Save(validate bool) bool {
 	db := GetConnection(DEFAULT_CONNECTION)
 	tx, err := db.Beginx()
 	if err != nil {
-		setting.addError(err.Error())
+		setting.AddError(err.Error())
 		return false
 	}
 	//tx.NamedExec(statement, setting)
@@ -62,7 +67,7 @@ func (setting *GeneralSetting) initErrors(clearExistingList bool) {
 	}
 }
 
-// addError adds an error message to the errors list.
-func (setting *GeneralSetting) addError(message string) {
+// AddError adds an error message to the errors list.
+func (setting *GeneralSetting) AddError(message string) {
 	setting.errors = append(setting.errors, message)
 }

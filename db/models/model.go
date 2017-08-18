@@ -11,17 +11,19 @@ import (
 	"unicode"
 )
 
-// Model is the interface for all db models. It implements an PrimaryKey()
-// method, which returns the model's database ID, simply for the
-// convenience of some of the DB helper functions in this file.
+// Model is the interface for all db models.
 type Model interface {
+	// AddError adds an error message to the Errors() list
+	AddError(string)
 	// Errors returns a list of errors that occurred while saving
 	// or validating the object.
 	Errors() []string
-	// PrimaryKey returns the model's primary key (id) value.
-	PrimaryKey() int64
+	// GetId returns the model's primary key (id) value.
+	GetId() int64
 	// Save saves the object the database.
 	Save(bool) bool
+	// SetId sets the model's Id property.
+	SetId(int64)
 	// TableName returns the name of the database table in which
 	// this model's data is stored.
 	TableName() string
@@ -111,7 +113,7 @@ func UpdateStatement(model Model) string {
 // model. If the model's id is zero, this returns an insert statement,
 // otherwise, it returns an update.
 func SaveStatement(model Model) string {
-	if model.PrimaryKey() == 0 {
+	if model.GetId() == 0 {
 		return InsertStatement(model)
 	}
 	return UpdateStatement(model)
@@ -173,10 +175,35 @@ func OrAll(params map[string]interface{}) string {
 	return fmt.Sprintf("(%s)", strings.Join(paramPairs, " or "))
 }
 
+// ExecCommand runs a SQL command and returns the result.
 func ExecCommand(command string, arg interface{}) (sql.Result, error) {
 	if arg == nil {
 		arg = map[string]interface{}{}
 	}
 	db := GetConnection(DEFAULT_CONNECTION)
 	return db.NamedExec(command, arg)
+}
+
+func SaveObject(model Model) bool {
+	if !model.Validate() {
+		return false
+	}
+	statement := SaveStatement(model)
+
+	// DEBUG
+	// log.Println(statement)
+
+	db := GetConnection(DEFAULT_CONNECTION)
+	result, err := db.NamedExec(statement, model)
+	if err != nil {
+		model.AddError(err.Error())
+		return false
+	}
+	id, err := result.LastInsertId()
+	if err != nil {
+		model.AddError(err.Error())
+		return false
+	}
+	model.SetId(id)
+	return true
 }
