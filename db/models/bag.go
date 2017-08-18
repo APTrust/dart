@@ -36,11 +36,8 @@ func GetBag(id int64) (*Bag, error) {
 //
 // For example:
 //
-// where := "name = :name and age = :age"
-// values := map[string]interface{} {
-//    "name": "Billy Bob Thornton",
-//    "age": 62,
-// }
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
 // bags, err := GetBags(where, values)
 func GetBags(where string, values []interface{}) ([]*Bag, error) {
 	bag := &Bag{}
@@ -53,23 +50,14 @@ func GetBags(where string, values []interface{}) ([]*Bag, error) {
 	bags := make([]*Bag, 0)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Select(&bags, query, values...)
-
-	// DEBUG
-	// log.Println(query, values)
-
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// for rows.Next() {
-	// 	bag = &Bag{}
-	// 	err = rows.StructScan(bag)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	bags = append(bags, bag)
-	// }
 	return bags, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (bag *Bag) Save(validate bool) bool {
+	return SaveObject(bag)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -93,34 +81,6 @@ func (bag *Bag) TableName() string {
 func (bag *Bag) Validate() bool {
 	bag.initErrors(true)
 	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (bag *Bag) Save(validate bool) bool {
-	return SaveObject(bag)
-	// if !bag.Validate() {
-	// 	return false
-	// }
-	// statement := SaveStatement(bag)
-
-	// // DEBUG
-	// // log.Println(statement)
-
-	// db := GetConnection(DEFAULT_CONNECTION)
-	// result, err := db.NamedExec(statement, bag)
-	// if err != nil {
-	// 	bag.AddError(err.Error())
-	// 	return false
-	// }
-	// id, err := result.LastInsertId()
-	// if err != nil {
-	// 	bag.AddError(err.Error())
-	// 	return false
-	// }
-	// bag.Id = id
-	// return true
 }
 
 // Errors returns a list of errors that occurred after a call to Validate()
