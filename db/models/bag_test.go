@@ -64,6 +64,14 @@ func TestGetBag(t *testing.T) {
 	require.Nil(t, err)
 	assert.Equal(t, bag.Id, retrievedBag.Id)
 	assert.Equal(t, bag.Name, retrievedBag.Name)
+	assert.Equal(t, bag.Size, retrievedBag.Size)
+	assert.Equal(t, bag.StorageURL, retrievedBag.StorageURL)
+	assert.Equal(t, bag.MetadataURL, retrievedBag.MetadataURL)
+	assert.Equal(t, bag.StorageRegistryIdentifier, retrievedBag.StorageRegistryIdentifier)
+	assert.Equal(t, bag.StoredAt, retrievedBag.StoredAt)
+	assert.Equal(t, bag.CreatedAt, retrievedBag.CreatedAt)
+	assert.Equal(t, bag.UpdatedAt, retrievedBag.UpdatedAt)
+	assert.Empty(t, bag.Errors())
 }
 
 func TestGetBags(t *testing.T) {
