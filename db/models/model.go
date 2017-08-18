@@ -83,28 +83,34 @@ func ColPlaceholders(model Model, includeId bool) []string {
 	colnames := ColNames(model, includeId)
 	placeholders := make([]string, len(colnames))
 	for i := 0; i < len(colnames); i++ {
-		placeholders[i] = ":" + colnames[i]
+		placeholders[i] = "?"
 	}
 	return placeholders
 }
 
 // Returns an insert statement for the given model.
 func InsertStatement(model Model) string {
-	cols := strings.Join(ColNames(model, false), ", ")
-	placeholders := strings.Join(ColPlaceholders(model, false), ", ")
-	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(), cols, placeholders)
+	cols := ColNames(model, false)
+	placeholders := make([]string, len(cols))
+	for i := 0; i < len(cols); i++ {
+		if cols[i] == "id" {
+			continue
+		}
+		placeholders[i] = fmt.Sprintf(":%s", cols[i])
+	}
+	return fmt.Sprintf("insert into %s (%s) values (%s)", model.TableName(),
+		strings.Join(cols, ", "), strings.Join(placeholders, ", "))
 }
 
 // Returns an update statement for the given model.
 func UpdateStatement(model Model) string {
 	cols := ColNames(model, false)
-	placeholders := ColPlaceholders(model, false)
 	colValuePairs := make([]string, len(cols))
 	for i := 0; i < len(cols); i++ {
 		if cols[i] == "id" {
 			continue
 		}
-		colValuePairs[i] = fmt.Sprintf("%s = %s", cols[i], placeholders[i])
+		colValuePairs[i] = fmt.Sprintf("%s = %s", cols[i], ":"+cols[i])
 	}
 	return fmt.Sprintf("update %s set %s where id = :id", model.TableName(), strings.Join(colValuePairs, ", "))
 }
@@ -130,7 +136,7 @@ func SelectQuery(model Model) string {
 // table by Id.
 func SelectByIdQuery(model Model) string {
 	query := SelectQuery(model)
-	return fmt.Sprintf("%s where id = :id", query)
+	return fmt.Sprintf("%s where id = ?", query)
 }
 
 // Select returns a model's select statement with the specified where clause.
@@ -184,6 +190,8 @@ func ExecCommand(command string, arg interface{}) (sql.Result, error) {
 	return db.NamedExec(command, arg)
 }
 
+// SaveObject saves model to the database and returns model
+// with its Id property filled in.
 func SaveObject(model Model) bool {
 	if !model.Validate() {
 		return false
@@ -191,7 +199,7 @@ func SaveObject(model Model) bool {
 	statement := SaveStatement(model)
 
 	// DEBUG
-	// log.Println(statement)
+	// log.Println(statement, model)
 
 	db := GetConnection(DEFAULT_CONNECTION)
 	result, err := db.NamedExec(statement, model)

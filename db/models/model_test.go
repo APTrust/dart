@@ -35,21 +35,8 @@ var CredentialsInsertStatement = "insert into credentials (name, description, ke
 
 var CredentialsUpdateStatement = "update credentials set name = :name, description = :description, key = :key, value = :value where id = :id"
 
-func ExpectedBagPlaceholders() []string {
-	list := make([]string, len(ExpectedBagCols))
-	for i, colName := range ExpectedBagCols {
-		list[i] = ":" + colName
-	}
-	return list
-}
-
-func ExpectedCredentialsPlaceholders() []string {
-	list := make([]string, len(ExpectedCredentialsCols))
-	for i, colName := range ExpectedCredentialsCols {
-		list[i] = ":" + colName
-	}
-	return list
-}
+var ExpectedBagPlaceholders = []string{"?", "?", "?", "?", "?", "?", "?", "?", "?"}
+var ExpectedCredentialsPlaceholders = []string{"?", "?", "?", "?", "?"}
 
 func TestSetAndGetConnection(t *testing.T) {
 	models.SetConnection(models.DEFAULT_CONNECTION, dbConn)
@@ -72,12 +59,12 @@ func TestColNames(t *testing.T) {
 
 func TestColPlaceholders(t *testing.T) {
 	bag := &models.Bag{}
-	expected := ExpectedBagPlaceholders()
+	expected := ExpectedBagPlaceholders
 	bagPlaceholders := models.ColPlaceholders(bag, true)
 	assert.Equal(t, expected, bagPlaceholders)
 
 	credentials := &models.Credentials{}
-	expected = ExpectedCredentialsPlaceholders()
+	expected = ExpectedCredentialsPlaceholders
 	credentialsPlaceholders := models.ColPlaceholders(credentials, true)
 	assert.Equal(t, expected, credentialsPlaceholders)
 }
@@ -137,12 +124,12 @@ func TestSelectQuery(t *testing.T) {
 func TestSelectByIdQuery(t *testing.T) {
 	bag := &models.Bag{}
 	query := models.SelectByIdQuery(bag)
-	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where id = :id"
+	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where id = ?"
 	assert.Equal(t, expected, query)
 
 	credentials := &models.Credentials{}
 	query = models.SelectByIdQuery(credentials)
-	expected = "select id, name, description, key, value from credentials where id = :id"
+	expected = "select id, name, description, key, value from credentials where id = ?"
 	assert.Equal(t, expected, query)
 }
 

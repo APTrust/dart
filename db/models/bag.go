@@ -1,7 +1,7 @@
 package models
 
 import (
-	"log"
+	//	"log"
 	"strings"
 	"time"
 )
@@ -42,7 +42,7 @@ func GetBag(id int64) (*Bag, error) {
 //    "age": 62,
 // }
 // bags, err := GetBags(where, values)
-func GetBags(where string, values map[string]interface{}) ([]*Bag, error) {
+func GetBags(where string, values []interface{}) ([]*Bag, error) {
 	bag := &Bag{}
 	var query string
 	if strings.TrimSpace(where) != "" {
@@ -50,24 +50,25 @@ func GetBags(where string, values map[string]interface{}) ([]*Bag, error) {
 	} else {
 		query = SelectQuery(bag)
 	}
+	bags := make([]*Bag, 0)
 	db := GetConnection(DEFAULT_CONNECTION)
-	rows, err := db.NamedQuery(query, values)
+	err := db.Select(&bags, query, values...)
 
 	// DEBUG
-	log.Println(query, values)
+	// log.Println(query, values)
 
-	if err != nil {
-		return nil, err
-	}
-	bags := make([]*Bag, 0)
-	for rows.Next() {
-		bag = &Bag{}
-		err = rows.StructScan(bag)
-		if err != nil {
-			return nil, err
-		}
-		bags = append(bags, bag)
-	}
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// for rows.Next() {
+	// 	bag = &Bag{}
+	// 	err = rows.StructScan(bag)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	}
+	// 	bags = append(bags, bag)
+	// }
 	return bags, err
 }
 

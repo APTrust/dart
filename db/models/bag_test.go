@@ -40,6 +40,7 @@ func TestBagSave(t *testing.T) {
 	ok := bag.Save(false)
 	assert.True(t, ok)
 	assert.NotEqual(t, 0, bag.Id)
+	assert.Empty(t, bag.Errors())
 
 	// Save as update
 	id := bag.Id
@@ -47,6 +48,7 @@ func TestBagSave(t *testing.T) {
 	ok = bag.Save(false)
 	assert.True(t, ok)
 	assert.Equal(t, id, bag.Id)
+	assert.Empty(t, bag.Errors())
 }
 
 func TestGetBag(t *testing.T) {
@@ -88,10 +90,10 @@ func TestGetBags(t *testing.T) {
 
 	// Now select
 	// Bags 3 and 9 have Odd name and empty MetadataURL
-	where := "name like :name and metadata_url = :metadata_url"
-	values := map[string]interface{}{
-		"name":         "Odd%",
-		"metadata_url": "",
+	where := "name like ? and metadata_url = ?"
+	values := []interface{}{
+		"Odd%",
+		"",
 	}
 	bags, err := models.GetBags(where, values)
 	require.Nil(t, err)
@@ -100,7 +102,7 @@ func TestGetBags(t *testing.T) {
 
 	// Should get ten bags
 	where = ""
-	values = map[string]interface{}{}
+	values = []interface{}{}
 	bags, err = models.GetBags(where, values)
 	require.Nil(t, err)
 	require.NotNil(t, bags)
@@ -108,7 +110,7 @@ func TestGetBags(t *testing.T) {
 
 	// Should also get ten bags
 	where = "name like 'Even %' or name like 'Odd%'"
-	values = map[string]interface{}{}
+	values = make([]interface{}, 0)
 	bags, err = models.GetBags(where, values)
 	require.Nil(t, err)
 	require.NotNil(t, bags)
@@ -116,8 +118,8 @@ func TestGetBags(t *testing.T) {
 
 	// Should get bags
 	where = "name like :name"
-	values = map[string]interface{}{
-		"name": "Even%",
+	values = []interface{}{
+		"Even%",
 	}
 	bags, err = models.GetBags(where, values)
 	require.Nil(t, err)
