@@ -92,7 +92,7 @@ func TestGetBagItProfiles(t *testing.T) {
 	}
 
 	// Now select
-	// Profiles 3 and 9 have Odd name and empty MetadataURL
+	// Profiles 3 and 9 have Odd name and empty description
 	where := "name like ? and description = ?"
 	values := []interface{}{
 		"Odd%",
