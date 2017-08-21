@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 )
 
@@ -27,6 +28,46 @@ type Job struct {
 	errors             []string
 }
 
+// GetJob returns the job with the specified id, or an error if the
+// job does not exist.
+func GetJob(id int64) (*Job, error) {
+	job := &Job{Id: id}
+	query := SelectByIdQuery(job)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(job, query, id)
+	return job, err
+}
+
+// GetJobs returns the jobs matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// jobs, err := GetJobs(where, values)
+func GetJobs(where string, values []interface{}) ([]*Job, error) {
+	job := &Job{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(job, where)
+	} else {
+		query = SelectQuery(job)
+	}
+	jobs := make([]*Job, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&jobs, query, values...)
+	return jobs, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (job *Job) Save(validate bool) bool {
+	return SaveObject(job)
+}
+
 // GetId() returns this object's Id, to conform to the Model interface.
 func (job *Job) GetId() int64 {
 	return job.Id
@@ -47,24 +88,6 @@ func (job *Job) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (job *Job) Validate() bool {
 	job.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (job *Job) Save(validate bool) bool {
-	if !job.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		job.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, job)
-	tx.Commit()
 	return true
 }
 
