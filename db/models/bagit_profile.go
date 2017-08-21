@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/APTrust/easy-store/bagit"
+	"strings"
 )
 
 // *** See types.JSONText for parsedProfile bagit.BagItProfile ***
@@ -12,9 +13,49 @@ type BagItProfile struct {
 	Id            int64  `db:"id" form_options:"skip"`
 	Name          string `db:"name"`
 	Description   string `db:"description" form_widget:"textarea"`
-	JSON          string `db: "json" form_widget:"textarea"`
+	JSON          string `db:"json" form_widget:"textarea"`
 	parsedProfile *bagit.BagItProfile
 	errors        []string
+}
+
+// GetBagItProfile returns the profile with the specified id,
+// or an error if the profile does not exist.
+func GetBagItProfile(id int64) (*BagItProfile, error) {
+	profile := &BagItProfile{Id: id}
+	query := SelectByIdQuery(profile)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(profile, query, id)
+	return profile, err
+}
+
+// GetBagItProfiles returns the profiles matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// profiles, err := GetBagItProfiles(where, values)
+func GetBagItProfiles(where string, values []interface{}) ([]*BagItProfile, error) {
+	profile := &BagItProfile{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(profile, where)
+	} else {
+		query = SelectQuery(profile)
+	}
+	profiles := make([]*BagItProfile, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&profiles, query, values...)
+	return profiles, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (profile *BagItProfile) Save(validate bool) bool {
+	return SaveObject(profile)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -37,24 +78,6 @@ func (profile *BagItProfile) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (profile *BagItProfile) Validate() bool {
 	profile.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (profile *BagItProfile) Save(validate bool) bool {
-	if !profile.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		profile.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, profile)
-	tx.Commit()
 	return true
 }
 

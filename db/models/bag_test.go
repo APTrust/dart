@@ -10,24 +10,24 @@ import (
 	"testing"
 )
 
-func TestGetId(t *testing.T) {
+func TestBagGetId(t *testing.T) {
 	bag := FakeBag()
 	assert.Equal(t, bag.Id, bag.GetId())
 }
 
-func TestTableName(t *testing.T) {
+func TestBagTableName(t *testing.T) {
 	bag := FakeBag()
 	assert.Equal(t, "bags", bag.TableName())
 }
 
-func TestValidate(t *testing.T) {
+func TestBagValidate(t *testing.T) {
 	bag := FakeBag()
 	assert.True(t, bag.Validate())
 	assert.NotNil(t, bag.Errors())
 	assert.Empty(t, bag.Errors())
 }
 
-func TestErrors(t *testing.T) {
+func TestBagErrors(t *testing.T) {
 	bag := FakeBag()
 	assert.NotNil(t, bag.Errors())
 	assert.Empty(t, bag.Errors())
