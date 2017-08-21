@@ -70,7 +70,7 @@ func TestGetBagItProfile(t *testing.T) {
 }
 
 func TestGetBagItProfiles(t *testing.T) {
-	// Delete bags created by other tests
+	// Delete profiles created by other tests
 	_, err := models.ExecCommand("delete from bagit_profiles", nil)
 	require.Nil(t, err)
 
@@ -92,40 +92,49 @@ func TestGetBagItProfiles(t *testing.T) {
 	}
 
 	// Now select
-	// Bags 3 and 9 have Odd name and empty MetadataURL
+	// Profiles 3 and 9 have Odd name and empty MetadataURL
 	where := "name like ? and description = ?"
 	values := []interface{}{
 		"Odd%",
 		"",
 	}
-	bags, err := models.GetBagItProfiles(where, values)
+	profiles, err := models.GetBagItProfiles(where, values)
 	require.Nil(t, err)
-	require.NotNil(t, bags)
-	assert.Equal(t, 2, len(bags))
+	require.NotNil(t, profiles)
+	assert.Equal(t, 2, len(profiles))
 
-	// Should get ten bags
+	// Should get ten profiles
 	where = ""
 	values = []interface{}{}
-	bags, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values)
 	require.Nil(t, err)
-	require.NotNil(t, bags)
-	assert.Equal(t, 10, len(bags))
+	require.NotNil(t, profiles)
+	assert.Equal(t, 10, len(profiles))
 
-	// Should also get ten bags
+	// Should also get ten profiles
 	where = "name like 'Even %' or name like 'Odd%'"
 	values = make([]interface{}, 0)
-	bags, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values)
 	require.Nil(t, err)
-	require.NotNil(t, bags)
-	assert.Equal(t, 10, len(bags))
+	require.NotNil(t, profiles)
+	assert.Equal(t, 10, len(profiles))
 
-	// Should get bags
+	// Should get profiles
 	where = "name like :name"
 	values = []interface{}{
 		"Even%",
 	}
-	bags, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values)
 	require.Nil(t, err)
-	require.NotNil(t, bags)
-	assert.Equal(t, 5, len(bags))
+	require.NotNil(t, profiles)
+	assert.Equal(t, 5, len(profiles))
+}
+
+func TestProfileUnmarshal(t *testing.T) {
+	profile := FakeBagItProfile()
+	bagItProfile, err := profile.Profile()
+	assert.Nil(t, err)
+	assert.NotNil(t, bagItProfile)
+	require.NotEmpty(t, bagItProfile.ManifestsRequired)
+	assert.Equal(t, "md5", bagItProfile.ManifestsRequired[0])
 }

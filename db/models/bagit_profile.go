@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"github.com/APTrust/easy-store/bagit"
 	"strings"
 )
@@ -102,6 +103,7 @@ func (profile *BagItProfile) AddError(message string) {
 }
 
 func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
-	// Return the parsed json profile.
-	return nil, nil
+	bagItProfile := &bagit.BagItProfile{}
+	err := json.Unmarshal([]byte(profile.JSON), bagItProfile)
+	return bagItProfile, err
 }
