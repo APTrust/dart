@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 )
 
@@ -14,6 +15,46 @@ type DefaultTagValue struct {
 	TagValue  string    `db:"tag_value"`
 	UpdatedAt time.Time `db:"updated_at" form_widget:"static"`
 	errors    []string
+}
+
+// GetDefaultTagValue returns the defaultTagValue with the specified id, or an error if the
+// defaultTagValue does not exist.
+func GetDefaultTagValue(id int64) (*DefaultTagValue, error) {
+	defaultTagValue := &DefaultTagValue{Id: id}
+	query := SelectByIdQuery(defaultTagValue)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(defaultTagValue, query, id)
+	return defaultTagValue, err
+}
+
+// GetDefaultTagValues returns the defaultTagValues matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// defaultTagValues, err := GetDefaultTagValues(where, values)
+func GetDefaultTagValues(where string, values []interface{}) ([]*DefaultTagValue, error) {
+	defaultTagValue := &DefaultTagValue{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(defaultTagValue, where)
+	} else {
+		query = SelectQuery(defaultTagValue)
+	}
+	defaultTagValues := make([]*DefaultTagValue, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&defaultTagValues, query, values...)
+	return defaultTagValues, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (defaultTagValue *DefaultTagValue) Save(validate bool) bool {
+	return SaveObject(defaultTagValue)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -36,24 +77,6 @@ func (value *DefaultTagValue) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (value *DefaultTagValue) Validate() bool {
 	value.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (value *DefaultTagValue) Save(validate bool) bool {
-	if !value.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		value.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, value)
-	tx.Commit()
 	return true
 }
 
