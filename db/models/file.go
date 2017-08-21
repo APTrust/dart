@@ -1,6 +1,7 @@
 package models
 
 import (
+	"strings"
 	"time"
 )
 
@@ -20,6 +21,46 @@ type File struct {
 	CreatedAt         time.Time `db:"created_at"`
 	UpdatedAt         time.Time `db:"updated_at"`
 	errors            []string
+}
+
+// GetFile returns the file with the specified id, or an error if the
+// file does not exist.
+func GetFile(id int64) (*File, error) {
+	file := &File{Id: id}
+	query := SelectByIdQuery(file)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(file, query, id)
+	return file, err
+}
+
+// GetFiles returns the files matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// files, err := GetFiles(where, values)
+func GetFiles(where string, values []interface{}) ([]*File, error) {
+	file := &File{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(file, where)
+	} else {
+		query = SelectQuery(file)
+	}
+	files := make([]*File, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&files, query, values...)
+	return files, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (file *File) Save(validate bool) bool {
+	return SaveObject(file)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -42,24 +83,6 @@ func (file *File) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (file *File) Validate() bool {
 	file.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (file *File) Save(validate bool) bool {
-	if !file.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		file.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, file)
-	tx.Commit()
 	return true
 }
 
