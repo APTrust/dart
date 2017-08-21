@@ -1,6 +1,8 @@
 package models
 
-import ()
+import (
+	"strings"
+)
 
 // GeneralSetting holds information about a general application-wide setting,
 // such as the path to the directory where bags should be built.
@@ -9,6 +11,46 @@ type GeneralSetting struct {
 	Name   string `db:"name"`
 	Value  string `db:"value"`
 	errors []string
+}
+
+// GetGeneralSetting returns the setting with the specified id, or an error if the
+// setting does not exist.
+func GetGeneralSetting(id int64) (*GeneralSetting, error) {
+	setting := &GeneralSetting{Id: id}
+	query := SelectByIdQuery(setting)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(setting, query, id)
+	return setting, err
+}
+
+// GetGeneralSettings returns the settings matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// settings, err := GetGeneralSettings(where, values)
+func GetGeneralSettings(where string, values []interface{}) ([]*GeneralSetting, error) {
+	setting := &GeneralSetting{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(setting, where)
+	} else {
+		query = SelectQuery(setting)
+	}
+	settings := make([]*GeneralSetting, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&settings, query, values...)
+	return settings, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (setting *GeneralSetting) Save(validate bool) bool {
+	return SaveObject(setting)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -31,24 +73,6 @@ func (setting *GeneralSetting) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (setting *GeneralSetting) Validate() bool {
 	setting.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (setting *GeneralSetting) Save(validate bool) bool {
-	if !setting.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		setting.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, setting)
-	tx.Commit()
 	return true
 }
 
