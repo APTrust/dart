@@ -1,6 +1,8 @@
 package models
 
-import ()
+import (
+	"strings"
+)
 
 // Workflow holds information about how a bag should be built and
 // where it should be sent.
@@ -11,6 +13,46 @@ type Workflow struct {
 	ProfileId        *int   `db:"profile_id" form_widget:"hidden"`
 	StorageServiceId *int   `db:"storage_service_id" form_widget:"hidden"`
 	errors           []string
+}
+
+// GetWorkflow returns the workflow with the specified id, or an error if the
+// workflow does not exist.
+func GetWorkflow(id int64) (*Workflow, error) {
+	workflow := &Workflow{Id: id}
+	query := SelectByIdQuery(workflow)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(workflow, query, id)
+	return workflow, err
+}
+
+// GetWorkflows returns the workflows matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// workflows, err := GetWorkflows(where, values)
+func GetWorkflows(where string, values []interface{}) ([]*Workflow, error) {
+	workflow := &Workflow{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(workflow, where)
+	} else {
+		query = SelectQuery(workflow)
+	}
+	workflows := make([]*Workflow, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&workflows, query, values...)
+	return workflows, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (workflow *Workflow) Save(validate bool) bool {
+	return SaveObject(workflow)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -36,24 +78,6 @@ func (workflow *Workflow) Validate() bool {
 	return true
 }
 
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (workflow *Workflow) Save(validate bool) bool {
-	if !workflow.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		workflow.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, workflow)
-	tx.Commit()
-	return true
-}
-
 // Errors returns a list of errors that occurred after a call to Validate()
 // or Save().
 func (workflow *Workflow) Errors() []string {
@@ -74,7 +98,7 @@ func (workflow *Workflow) AddError(message string) {
 	workflow.errors = append(workflow.errors, message)
 }
 
-func (workflow *Workflow) WorkflowItProfile() *BagItProfile {
+func (workflow *Workflow) WorkflowBagItProfile() *BagItProfile {
 	// Load from ProfileId, if that's not nil.
 	return nil
 }
