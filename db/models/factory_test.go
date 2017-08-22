@@ -115,6 +115,7 @@ func FakeStorageService() *models.StorageService {
 		Name:           fake.Word(),
 		Description:    fake.Sentence(),
 		Protocol:       fake.Word(),
+		URL:            fmt.Sprintf("https://s3.example.com/%s", fake.Word()),
 		BucketOrFolder: fake.Word(),
 		CredentialsId:  &credentialsId,
 	}

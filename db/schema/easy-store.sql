@@ -34,7 +34,7 @@ create table if not exists storage_services (
        description text not null default '',
        protocol text not null,
        url text not null,
-       bucket_or_folder textnot null default '',
+       bucket_or_folder text not null default '',
        credentials_id integer null,
 
        foreign key(credentials_id) references credentials(id)

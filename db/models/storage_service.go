@@ -1,6 +1,8 @@
 package models
 
-import ()
+import (
+	"strings"
+)
 
 // StorageService holds information about how to connect to a remote
 // storage service.
@@ -9,9 +11,50 @@ type StorageService struct {
 	Name           string `db:"name"`
 	Description    string `db:"description"`
 	Protocol       string `db:"protocol"`
+	URL            string `db:"url"`
 	BucketOrFolder string `db:"bucket_or_folder"`
 	CredentialsId  *int   `db:"credentials_id"`
 	errors         []string
+}
+
+// GetStorageService returns the service with the specified id, or an error if the
+// service does not exist.
+func GetStorageService(id int64) (*StorageService, error) {
+	service := &StorageService{Id: id}
+	query := SelectByIdQuery(service)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(service, query, id)
+	return service, err
+}
+
+// GetStorageServices returns the services matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// services, err := GetStorageServices(where, values)
+func GetStorageServices(where string, values []interface{}) ([]*StorageService, error) {
+	service := &StorageService{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(service, where)
+	} else {
+		query = SelectQuery(service)
+	}
+	services := make([]*StorageService, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&services, query, values...)
+	return services, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (service *StorageService) Save(validate bool) bool {
+	return SaveObject(service)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -34,24 +77,6 @@ func (service *StorageService) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (service *StorageService) Validate() bool {
 	service.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (service *StorageService) Save(validate bool) bool {
-	if !service.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		service.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, service)
-	tx.Commit()
 	return true
 }
 
