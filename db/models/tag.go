@@ -1,6 +1,8 @@
 package models
 
-import ()
+import (
+	"strings"
+)
 
 // Tag holds information about a tag in bag built by easy-store.
 // A cat in the hat from the hooka store.
@@ -10,6 +12,46 @@ type Tag struct {
 	Name   string `db:"name"`
 	Value  string `db:"value"`
 	errors []string
+}
+
+// GetTag returns the tag with the specified id, or an error if the
+// tag does not exist.
+func GetTag(id int64) (*Tag, error) {
+	tag := &Tag{Id: id}
+	query := SelectByIdQuery(tag)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Get(tag, query, id)
+	return tag, err
+}
+
+// GetTags returns the tags matching the criteria specified in where.
+// The values param should be a map of values reference in the
+// where clause.
+//
+// For example:
+//
+// where := "name = ? and age = ?"
+// values := []interface{} { "Billy Bob Thornton", 62 }
+// tags, err := GetTags(where, values)
+func GetTags(where string, values []interface{}) ([]*Tag, error) {
+	tag := &Tag{}
+	var query string
+	if strings.TrimSpace(where) != "" {
+		query = SelectWhere(tag, where)
+	} else {
+		query = SelectQuery(tag)
+	}
+	tags := make([]*Tag, 0)
+	db := GetConnection(DEFAULT_CONNECTION)
+	err := db.Select(&tags, query, values...)
+	return tags, err
+}
+
+// Save saves the object to the database. If validate is true,
+// it validates before saving. After a successful save, the object
+// will have a non-zero Id. If this returns false, check Errors().
+func (tag *Tag) Save(validate bool) bool {
+	return SaveObject(tag)
 }
 
 // GetId() returns this object's Id, to conform to the Model interface.
@@ -32,24 +74,6 @@ func (tag *Tag) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (tag *Tag) Validate() bool {
 	tag.initErrors(true)
-	return true
-}
-
-// Save saves the object to the database. If validate is true,
-// it validates before saving. After a successful save, the object
-// will have a non-zero Id. If this returns false, check Errors().
-func (tag *Tag) Save(validate bool) bool {
-	if !tag.Validate() {
-		return false
-	}
-	db := GetConnection(DEFAULT_CONNECTION)
-	tx, err := db.Beginx()
-	if err != nil {
-		tag.AddError(err.Error())
-		return false
-	}
-	//tx.NamedExec(statement, tag)
-	tx.Commit()
 	return true
 }
 
