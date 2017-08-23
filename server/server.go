@@ -32,9 +32,9 @@ func main() {
 	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 	http.HandleFunc("/", HandleRootRequest)
-	http.HandleFunc("/form", HandleFormRequest)
 
-	http.HandleFunc("/profiles", HandleProfileRequest)
+	http.HandleFunc("/profiles", HandleProfilesRequest)
+	http.HandleFunc("/profile/new", HandleProfileNewRequest)
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
@@ -68,10 +68,9 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Temp test method
-func HandleFormRequest(w http.ResponseWriter, r *http.Request) {
+func HandleProfileNewRequest(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
-	form := forms.BootstrapFormFromModel(profile, forms.POST, "/form").Render()
+	form := forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new").Render()
 	data := TemplateData{
 		Content: form,
 	}
@@ -82,7 +81,7 @@ func HandleFormRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleProfileRequest(w http.ResponseWriter, r *http.Request) {
+func HandleProfilesRequest(w http.ResponseWriter, r *http.Request) {
 	profiles, _ := models.GetBagItProfiles("", []interface{}{})
 	contentBuffer := bytes.NewBuffer(make([]byte, 0))
 	templates.ExecuteTemplate(contentBuffer, "bagit-profile-list", profiles)
