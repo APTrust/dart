@@ -11,12 +11,12 @@ import (
 // BagItProfile contains a BagIt profile that tells us how to construct
 // and validate a bag.
 type BagItProfile struct {
-	Id            int64  `db:"id" form_options:"skip"`
-	Name          string `db:"name"`
-	Description   string `db:"description" form_widget:"textarea"`
-	JSON          string `db:"json" form_widget:"textarea"`
-	parsedProfile *bagit.BagItProfile
-	errors        []string
+	Id            int64               `db:"id" form_options:"skip"`
+	Name          string              `db:"name"`
+	Description   string              `db:"description" form_widget:"textarea"`
+	JSON          string              `db:"json" form_widget:"textarea"`
+	parsedProfile *bagit.BagItProfile `form_options:"skip"`
+	errors        []string            `form_options:"skip"`
 }
 
 // GetBagItProfile returns the profile with the specified id,

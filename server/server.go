@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/APTrust/easy-store/db/models"
+	"github.com/kirves/go-form-it"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,7 +15,7 @@ import (
 var templates *template.Template
 
 type TemplateData struct {
-	Content            string
+	Content            template.HTML
 	CustomFooterScript string
 	CustomHeaderScript string
 	FooterContent      string
@@ -25,6 +27,7 @@ func main() {
 	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 	http.HandleFunc("/", HandleRootRequest)
+	http.HandleFunc("/form", HandleFormRequest)
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
@@ -51,6 +54,20 @@ func CompileTemplates() {
 
 func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	data := TemplateData{}
+	err := templates.ExecuteTemplate(w, "layout", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// Temp test method
+func HandleFormRequest(w http.ResponseWriter, r *http.Request) {
+	profile := models.BagItProfile{}
+	form := forms.BootstrapFormFromModel(profile, forms.POST, "/form.html").Render()
+	data := TemplateData{
+		Content: form,
+	}
 	err := templates.ExecuteTemplate(w, "layout", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
