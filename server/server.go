@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bytes"
 	"github.com/APTrust/easy-store/db/models"
+	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
+	_ "github.com/mattn/go-sqlite3"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,10 +28,13 @@ type TemplateData struct {
 
 func main() {
 	CompileTemplates()
+	InitDBConnection()
 	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 	http.HandleFunc("/", HandleRootRequest)
 	http.HandleFunc("/form", HandleFormRequest)
+
+	http.HandleFunc("/profiles", HandleProfileRequest)
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
@@ -64,9 +71,23 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 // Temp test method
 func HandleFormRequest(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
-	form := forms.BootstrapFormFromModel(profile, forms.POST, "/form.html").Render()
+	form := forms.BootstrapFormFromModel(profile, forms.POST, "/form").Render()
 	data := TemplateData{
 		Content: form,
+	}
+	err := templates.ExecuteTemplate(w, "layout", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func HandleProfileRequest(w http.ResponseWriter, r *http.Request) {
+	profiles, _ := models.GetBagItProfiles("", []interface{}{})
+	contentBuffer := bytes.NewBuffer(make([]byte, 0))
+	templates.ExecuteTemplate(contentBuffer, "bagit-profile-list", profiles)
+	data := TemplateData{
+		Content: template.HTML(contentBuffer.String()),
 	}
 	err := templates.ExecuteTemplate(w, "layout", data)
 	if err != nil {
@@ -95,4 +116,21 @@ func OpenBrowser(url string) {
 	} else {
 		log.Println("Opened browser")
 	}
+}
+
+// TODO: This is also used by the easy_store_setup app.
+// Put it on one place, and don't rely on testutil.GetPathToSchema()
+// as that file and directory exist in dev mode only, and users
+// won't have them.
+func InitDBConnection() {
+	schemaPath, err := testutil.GetPathToSchema()
+	if err != nil {
+		panic(err.Error())
+	}
+	dbFilePath := filepath.Join(filepath.Dir(schemaPath), "..", "..", "easy-store.db")
+	conn, err := sqlx.Connect("sqlite3", dbFilePath)
+	if err != nil {
+		panic(err.Error())
+	}
+	models.SetConnection(models.DEFAULT_CONNECTION, conn)
 }

@@ -1,0 +1,21 @@
+{{ define "bagit-profile-list" }}
+
+<h1>BagIt Profiles</h1>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .}}
+    <tr>
+      <td>{{.Name}}</td>
+      <td>{{.Description}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+{{ end }}
