@@ -24,6 +24,9 @@ type TemplateData struct {
 	CustomHeaderScript string
 	FooterContent      string
 	PageTitle          string
+	Object             interface{}
+	ObjectList         []interface{}
+	Form               *forms.Form
 }
 
 func main() {
@@ -70,9 +73,11 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 
 func HandleProfileNewRequest(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
-	form := forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new").Render()
+	form := forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new")
+	contentBuffer := bytes.NewBuffer(make([]byte, 0))
+	templates.ExecuteTemplate(contentBuffer, "bagit-profile-form", form)
 	data := TemplateData{
-		Content: form,
+		Content: template.HTML(contentBuffer.String()),
 	}
 	err := templates.ExecuteTemplate(w, "layout", data)
 	if err != nil {
