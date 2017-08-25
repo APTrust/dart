@@ -13,7 +13,7 @@ import (
 type BagItProfile struct {
 	Id            int64               `db:"id" form_options:"skip"`
 	Name          string              `db:"name"`
-	Description   string              `db:"description" form_widget:"textarea"`
+	Description   string              `db:"description"`
 	JSON          string              `db:"json" form_widget:"textarea"`
 	parsedProfile *bagit.BagItProfile `form_options:"skip"`
 	errors        []string            `form_options:"skip"`

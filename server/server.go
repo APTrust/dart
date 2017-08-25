@@ -5,6 +5,7 @@ import (
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/schema"
 	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
 	_ "github.com/mattn/go-sqlite3"
@@ -19,6 +20,7 @@ import (
 )
 
 var templates *template.Template
+var decoder = schema.NewDecoder()
 
 func main() {
 	CompileTemplates()
@@ -93,7 +95,7 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET profile", id)
 	profile, _ := models.GetBagItProfile(int64(id))
-	log.Println(profile)
+	// log.Println(profile)
 	postUrl := fmt.Sprintf("/profile/%d/edit", id)
 	data := make(map[string]interface{})
 	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
@@ -108,7 +110,16 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("POST profile", id)
-	profile, _ := models.GetBagItProfile(int64(id))
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	profile := &models.BagItProfile{}
+	err = decoder.Decode(profile, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	profile.Id = int64(id)
 	log.Println(profile)
 }
 
