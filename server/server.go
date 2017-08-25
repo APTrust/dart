@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
@@ -13,6 +14,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -28,6 +30,8 @@ func main() {
 	r.HandleFunc("/", HandleRootRequest)
 	r.HandleFunc("/profiles", HandleProfilesRequest)
 	r.HandleFunc("/profile/new", HandleProfileNewRequest)
+	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditGet).Methods("GET")
+	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST")
 	http.Handle("/", r)
 
 	go func() {
@@ -82,6 +86,30 @@ func HandleProfilesRequest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("GET profile", id)
+	profile, _ := models.GetBagItProfile(int64(id))
+	log.Println(profile)
+	postUrl := fmt.Sprintf("/profile/%d/edit", id)
+	data := make(map[string]interface{})
+	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("POST profile", id)
+	profile, _ := models.GetBagItProfile(int64(id))
+	log.Println(profile)
 }
 
 func OpenBrowser(url string) {
