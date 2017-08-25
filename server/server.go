@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
 	_ "github.com/mattn/go-sqlite3"
@@ -22,10 +23,12 @@ func main() {
 	InitDBConnection()
 	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
-	http.HandleFunc("/", HandleRootRequest)
 
-	http.HandleFunc("/profiles", HandleProfilesRequest)
-	http.HandleFunc("/profile/new", HandleProfileNewRequest)
+	r := mux.NewRouter()
+	r.HandleFunc("/", HandleRootRequest)
+	r.HandleFunc("/profiles", HandleProfilesRequest)
+	r.HandleFunc("/profile/new", HandleProfileNewRequest)
+	http.Handle("/", r)
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
