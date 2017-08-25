@@ -3,23 +3,7 @@
 
 <h1>BagIt Profile</h1>
 
-{{ if .errors }}
-<div class="alert alert-danger" role="alert">
-  <ul>
-  {{ range .errors }}
-    <li>{{ . }}</li>
-  {{ end }}
-  </ul>
-</div>
-{{ end }}
-
-{{ if .success }}
-<div class="alert alert-success" role="alert">
-  {{ .success }}
-</div>
-{{ end }}
-
-{{ if .form }}{{ .form.Render }}{{ end }}
+{{ template "form" . }}
 
 {{ template "page_bottom" . }}
 {{ end }}
