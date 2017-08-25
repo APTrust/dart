@@ -31,9 +31,10 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", HandleRootRequest)
 	r.HandleFunc("/profiles", HandleProfilesRequest)
-	r.HandleFunc("/profile/new", HandleProfileNewRequest)
+	r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
+	r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
 	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditGet).Methods("GET")
-	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST")
+	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST", "PUT")
 	http.Handle("/", r)
 
 	go func() {
@@ -68,11 +69,38 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleProfileNewRequest(w http.ResponseWriter, r *http.Request) {
+func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	profile := models.BagItProfile{}
 	data["form"] = forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new")
 	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	profile := &models.BagItProfile{}
+	err = decoder.Decode(profile, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	data := make(map[string]interface{})
+	ok := profile.Save(true)
+	postUrl := fmt.Sprintf("/profile/new")
+	if !ok {
+		data["errors"] = profile.Errors()
+		postUrl = fmt.Sprintf("/profile/%d/edit", profile.Id)
+	} else {
+		data["success"] = "Profile has been saved."
+	}
+	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
