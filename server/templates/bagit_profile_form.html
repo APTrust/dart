@@ -1,7 +1,23 @@
 {{ define "bagit-profile-form" }}
 {{ template "page_top" . }}
 
-<h1>New BagIt Profile</h1>
+<h1>BagIt Profile</h1>
+
+{{ if .errors }}
+<div class="alert alert-danger" role="alert">
+  <ul>
+  {{ range .errors }}
+    <li>{{ . }}</li>
+  {{ end }}
+  </ul>
+</div>
+{{ end }}
+
+{{ if .success }}
+<div class="alert alert-success" role="alert">
+  {{ .success }}
+</div>
+{{ end }}
 
 {{ if .form }}{{ .form.Render }}{{ end }}
 

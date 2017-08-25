@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/APTrust/easy-store/bagit"
 	"strings"
 )
@@ -79,7 +80,14 @@ func (profile *BagItProfile) TableName() string {
 // the object is valid. If this returns false, check Errors().
 func (profile *BagItProfile) Validate() bool {
 	profile.initErrors(true)
-	return true
+	p, err := profile.Profile()
+	if err != nil {
+		profile.AddError(fmt.Sprintf("Cannot parse JSON: %s", err.Error()))
+	}
+	for _, err = range p.Validate() {
+		profile.AddError(err.Error())
+	}
+	return len(profile.errors) == 0
 }
 
 // Errors returns a list of errors that occurred after a call to Validate()

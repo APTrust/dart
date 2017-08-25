@@ -120,7 +120,20 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error:", err.Error())
 	}
 	profile.Id = int64(id)
-	log.Println(profile)
+	data := make(map[string]interface{})
+	ok := profile.Save(true)
+	if !ok {
+		data["errors"] = profile.Errors()
+	} else {
+		data["success"] = "Profile has been saved."
+	}
+	postUrl := fmt.Sprintf("/profile/%d/edit", id)
+	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func OpenBrowser(url string) {
