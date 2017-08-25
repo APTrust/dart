@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/jmoiron/sqlx"
@@ -17,17 +16,6 @@ import (
 )
 
 var templates *template.Template
-
-type TemplateData struct {
-	Content            template.HTML
-	CustomFooterScript string
-	CustomHeaderScript string
-	FooterContent      string
-	PageTitle          string
-	Object             interface{}
-	ObjectList         []interface{}
-	Form               *forms.Form
-}
 
 func main() {
 	CompileTemplates()
@@ -63,8 +51,8 @@ func CompileTemplates() {
 }
 
 func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
-	data := TemplateData{}
-	err := templates.ExecuteTemplate(w, "layout", data)
+	data := make(map[string]interface{})
+	err := templates.ExecuteTemplate(w, "index", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -72,14 +60,10 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleProfileNewRequest(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
 	profile := models.BagItProfile{}
-	form := forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new")
-	contentBuffer := bytes.NewBuffer(make([]byte, 0))
-	templates.ExecuteTemplate(contentBuffer, "bagit-profile-form", form)
-	data := TemplateData{
-		Content: template.HTML(contentBuffer.String()),
-	}
-	err := templates.ExecuteTemplate(w, "layout", data)
+	data["form"] = forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new")
+	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -87,13 +71,10 @@ func HandleProfileNewRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleProfilesRequest(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
 	profiles, _ := models.GetBagItProfiles("", []interface{}{})
-	contentBuffer := bytes.NewBuffer(make([]byte, 0))
-	templates.ExecuteTemplate(contentBuffer, "bagit-profile-list", profiles)
-	data := TemplateData{
-		Content: template.HTML(contentBuffer.String()),
-	}
-	err := templates.ExecuteTemplate(w, "layout", data)
+	data["items"] = profiles
+	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

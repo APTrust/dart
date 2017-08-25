@@ -1,4 +1,6 @@
 {{ define "bagit-profile-list" }}
+{{ template "page_top" . }}
+
 
 <h1>BagIt Profiles</h1>
 <div class="pull-right">
@@ -12,7 +14,7 @@
     </tr>
   </thead>
   <tbody>
-    {{range .}}
+    {{range .items}}
     <tr>
       <td>{{.Name}}</td>
       <td>{{.Description}}</td>
@@ -21,4 +23,6 @@
   </tbody>
 </table>
 
+
+{{ template "page_bottom" . }}
 {{ end }}

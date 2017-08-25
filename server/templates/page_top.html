@@ -1,4 +1,4 @@
-{{ define "layout" }}
+{{ define "page_top" }}
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,16 +13,10 @@
 </head>
 <body>
 
-{{ template "modal" }}
+{{ template "modal" . }}
 
-{{ template "navbar" }}
+{{ template "navbar" . }}
 
 <div class="container">
-{{ .Content }}
-</div>
 
-{{ template "footer" }}
-
-</body>
-</html>
 {{ end }}

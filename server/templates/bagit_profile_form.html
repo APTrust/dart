@@ -1,7 +1,9 @@
 {{ define "bagit-profile-form" }}
+{{ template "page_top" . }}
 
 <h1>New BagIt Profile</h1>
 
-{{ .Render }}
+{{ if .form }}{{ .form.Render }}{{ end }}
 
+{{ template "page_bottom" . }}
 {{ end }}
