@@ -25,6 +25,32 @@ func TestProfileValidate(t *testing.T) {
 	assert.True(t, profile.Validate())
 	assert.NotNil(t, profile.Errors())
 	assert.Empty(t, profile.Errors())
+
+	profile.JSON = "{unparsable}"
+	assert.False(t, profile.Validate())
+	errors := profile.Errors()
+	assert.NotNil(t, errors)
+	require.Equal(t, 5, len(errors))
+	assert.Equal(t, "Cannot parse JSON: invalid character 'u' looking for beginning of object key string", errors[0])
+	assert.Equal(t, "Accept-BagIt-Version must accept at least one BagIt version.", errors[1])
+	assert.Equal(t, "Manifests-Required must require at least one algorithm.", errors[2])
+	assert.Equal(t, "Tag-Files-Required is missing bagit.txt.", errors[3])
+	assert.Equal(t, "Tag-Files-Required is missing bag-info.txt.", errors[4])
+
+	// JSON is parsable, but profile is not valid.
+	// One thing we're verifying here is that the
+	// Validate() method resets the list of errors
+	// each time it's called.
+	profile.JSON = "{}"
+	assert.False(t, profile.Validate())
+	errors = profile.Errors()
+	assert.NotNil(t, errors)
+	require.Equal(t, 4, len(errors))
+	assert.Equal(t, "Accept-BagIt-Version must accept at least one BagIt version.", errors[0])
+	assert.Equal(t, "Manifests-Required must require at least one algorithm.", errors[1])
+	assert.Equal(t, "Tag-Files-Required is missing bagit.txt.", errors[2])
+	assert.Equal(t, "Tag-Files-Required is missing bag-info.txt.", errors[3])
+
 }
 
 func TestProfileErrors(t *testing.T) {
