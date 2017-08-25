@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ .PageTitle }}</title>
     <link href="/static/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/easy_store.css" rel="stylesheet">
     <script src="/static/js/jquery-3.2.1.min.js"></script>
     <script src="/static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/js/easy_store.js"></script>
     <script>{{ .CustomHeaderScript }}</script>
 </head>
 <body>
@@ -17,6 +19,6 @@
 
 {{ template "navbar" . }}
 
-<div class="container">
+<div class="container" id="container">
 
 {{ end }}

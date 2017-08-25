@@ -15,7 +15,7 @@
   </thead>
   <tbody>
     {{range .items}}
-    <tr>
+    <tr class="clickable-row" data-href="/profile/{{ .Id }}/edit">
       <td>{{.Name}}</td>
       <td>{{.Description}}</td>
     </tr>
