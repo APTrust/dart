@@ -19,11 +19,9 @@ var ExpectedBagCols = []string{
 	"updated_at",
 }
 
-var ExpectedCredentialsCols = []string{
+var ExpectedSettingCols = []string{
 	"id",
 	"name",
-	"description",
-	"key",
 	"value",
 }
 
@@ -31,12 +29,12 @@ var BagInsertStatement = "insert into bags (name, size, storage_url, metadata_ur
 
 var BagUpdateStatement = "update bags set name = :name, size = :size, storage_url = :storage_url, metadata_url = :metadata_url, storage_registry_identifier = :storage_registry_identifier, stored_at = :stored_at, created_at = :created_at, updated_at = :updated_at where id = :id"
 
-var CredentialsInsertStatement = "insert into credentials (name, description, key, value) values (:name, :description, :key, :value)"
+var SettingInsertStatement = "insert into general_settings (name, value) values (:name, :value)"
 
-var CredentialsUpdateStatement = "update credentials set name = :name, description = :description, key = :key, value = :value where id = :id"
+var SettingUpdateStatement = "update general_settings set name = :name, value = :value where id = :id"
 
 var ExpectedBagPlaceholders = []string{"?", "?", "?", "?", "?", "?", "?", "?", "?"}
-var ExpectedCredentialsPlaceholders = []string{"?", "?", "?", "?", "?"}
+var ExpectedSettingPlaceholders = []string{"?", "?", "?"}
 
 func TestSetAndGetConnection(t *testing.T) {
 	models.SetConnection(models.DEFAULT_CONNECTION, dbConn)
@@ -52,9 +50,9 @@ func TestColNames(t *testing.T) {
 	bagCols := models.ColNames(bag, true)
 	assert.Equal(t, ExpectedBagCols, bagCols)
 
-	credentials := &models.Credentials{}
-	credentialsCols := models.ColNames(credentials, true)
-	assert.Equal(t, ExpectedCredentialsCols, credentialsCols)
+	setting := &models.GeneralSetting{}
+	settingCols := models.ColNames(setting, true)
+	assert.Equal(t, ExpectedSettingCols, settingCols)
 }
 
 func TestColPlaceholders(t *testing.T) {
@@ -63,10 +61,10 @@ func TestColPlaceholders(t *testing.T) {
 	bagPlaceholders := models.ColPlaceholders(bag, true)
 	assert.Equal(t, expected, bagPlaceholders)
 
-	credentials := &models.Credentials{}
-	expected = ExpectedCredentialsPlaceholders
-	credentialsPlaceholders := models.ColPlaceholders(credentials, true)
-	assert.Equal(t, expected, credentialsPlaceholders)
+	setting := &models.GeneralSetting{}
+	expected = ExpectedSettingPlaceholders
+	settingPlaceholders := models.ColPlaceholders(setting, true)
+	assert.Equal(t, expected, settingPlaceholders)
 }
 
 func TestInsertStatement(t *testing.T) {
@@ -74,9 +72,9 @@ func TestInsertStatement(t *testing.T) {
 	statement := models.InsertStatement(bag)
 	assert.Equal(t, BagInsertStatement, statement)
 
-	credentials := &models.Credentials{}
-	statement = models.InsertStatement(credentials)
-	assert.Equal(t, CredentialsInsertStatement, statement)
+	setting := &models.GeneralSetting{}
+	statement = models.InsertStatement(setting)
+	assert.Equal(t, SettingInsertStatement, statement)
 }
 
 func TestUpdateStatement(t *testing.T) {
@@ -84,9 +82,9 @@ func TestUpdateStatement(t *testing.T) {
 	statement := models.UpdateStatement(bag)
 	assert.Equal(t, BagUpdateStatement, statement)
 
-	credentials := &models.Credentials{}
-	statement = models.UpdateStatement(credentials)
-	assert.Equal(t, CredentialsUpdateStatement, statement)
+	setting := &models.GeneralSetting{}
+	statement = models.UpdateStatement(setting)
+	assert.Equal(t, SettingUpdateStatement, statement)
 }
 
 func TestSaveStatement(t *testing.T) {
@@ -95,18 +93,18 @@ func TestSaveStatement(t *testing.T) {
 	statement := models.UpdateStatement(bag)
 	assert.Equal(t, BagUpdateStatement, statement)
 
-	credentials := &models.Credentials{}
-	statement = models.UpdateStatement(credentials)
-	assert.Equal(t, CredentialsUpdateStatement, statement)
+	setting := &models.GeneralSetting{}
+	statement = models.UpdateStatement(setting)
+	assert.Equal(t, SettingUpdateStatement, statement)
 
 	// ...and insert statement for zero id.
 	bag.Id = 0
 	statement = models.SaveStatement(bag)
 	assert.Equal(t, BagInsertStatement, statement)
 
-	credentials.Id = 0
-	statement = models.InsertStatement(credentials)
-	assert.Equal(t, CredentialsInsertStatement, statement)
+	setting.Id = 0
+	statement = models.InsertStatement(setting)
+	assert.Equal(t, SettingInsertStatement, statement)
 }
 
 func TestSelectQuery(t *testing.T) {
@@ -115,9 +113,9 @@ func TestSelectQuery(t *testing.T) {
 	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags"
 	assert.Equal(t, expected, query)
 
-	credentials := &models.Credentials{}
-	query = models.SelectQuery(credentials)
-	expected = "select id, name, description, key, value from credentials"
+	setting := &models.GeneralSetting{}
+	query = models.SelectQuery(setting)
+	expected = "select id, name, value from general_settings"
 	assert.Equal(t, expected, query)
 }
 
@@ -127,9 +125,9 @@ func TestSelectByIdQuery(t *testing.T) {
 	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where id = ?"
 	assert.Equal(t, expected, query)
 
-	credentials := &models.Credentials{}
-	query = models.SelectByIdQuery(credentials)
-	expected = "select id, name, description, key, value from credentials where id = ?"
+	setting := &models.GeneralSetting{}
+	query = models.SelectByIdQuery(setting)
+	expected = "select id, name, value from general_settings where id = ?"
 	assert.Equal(t, expected, query)
 }
 
@@ -139,9 +137,9 @@ func TestSelectWhere(t *testing.T) {
 	expected := "select id, name, size, storage_url, metadata_url, storage_registry_identifier, stored_at, created_at, updated_at from bags where name = :name and stored_at > :stored_at"
 	assert.Equal(t, expected, query)
 
-	credentials := &models.Credentials{}
-	query = models.SelectWhere(credentials, "key = :key and value is not null")
-	expected = "select id, name, description, key, value from credentials where key = :key and value is not null"
+	setting := &models.GeneralSetting{}
+	query = models.SelectWhere(setting, "key = :key and value is not null")
+	expected = "select id, name, value from general_settings where key = :key and value is not null"
 	assert.Equal(t, expected, query)
 }
 

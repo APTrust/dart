@@ -11,17 +11,6 @@ create table if not exists general_settings (
 
 create unique index if not exists ix_general_settings_name ON general_settings ("name");
 
--- Credentials store credentials for accessing remote storage services.
-create table if not exists credentials (
-       id integer primary key,
-       "name" text not null unique,
-       description text not null default '',
-       "key" text not null,
-       "value" text not null
-);
-
-create unique index if not exists ix_credentials_name ON credentials ("name");
-
 -- Storage services stores information about storage services to
 -- which bags and files may be uploaded. The protocol column will
 -- contain values like "s3" (initially) and "sftp" (possible later).
@@ -35,9 +24,9 @@ create table if not exists storage_services (
        protocol text not null,
        url text not null,
        bucket_or_folder text not null default '',
-       credentials_id integer null,
-
-       foreign key(credentials_id) references credentials(id)
+       login_name text null,
+       login_password text null,
+       login_extra text null
 );
 
 create unique index if not exists ix_storage_services_name ON storage_services ("name");

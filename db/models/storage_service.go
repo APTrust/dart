@@ -13,7 +13,9 @@ type StorageService struct {
 	Protocol       string   `db:"protocol"`
 	URL            string   `db:"url"`
 	BucketOrFolder string   `db:"bucket_or_folder"`
-	CredentialsId  *int64   `db:"credentials_id" form_options:"skip"`
+	LoginName      string   `db:"login_name"`
+	LoginPassword  string   `db:"login_password"`
+	LoginExtra     string   `db:"login_extra"`
 	errors         []string `form_options:"skip"`
 }
 
@@ -101,11 +103,4 @@ func (service *StorageService) initErrors(clearExistingList bool) {
 // AddError adds an error message to the errors list.
 func (service *StorageService) AddError(message string) {
 	service.errors = append(service.errors, message)
-}
-
-func (service *StorageService) Credentials() (*Credentials, error) {
-	if service.CredentialsId != nil && *service.CredentialsId != 0 {
-		return GetCredential(*service.CredentialsId)
-	}
-	return nil, nil
 }

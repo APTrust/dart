@@ -40,16 +40,6 @@ func FakeBagItProfile() *models.BagItProfile {
 	}
 }
 
-func FakeCredentials() *models.Credentials {
-	return &models.Credentials{
-		Id:          int64(rand.Intn(50000) + 1),
-		Name:        fake.Word(),
-		Description: fake.Sentence(),
-		Key:         fake.Word(),
-		Value:       fake.Word(),
-	}
-}
-
 func FakeDefaultTagValue() *models.DefaultTagValue {
 	profileId := rand.Intn(50000) + 1
 	return &models.DefaultTagValue{
@@ -109,7 +99,6 @@ func FakeJob() *models.Job {
 }
 
 func FakeStorageService() *models.StorageService {
-	credentialsId := int64(rand.Intn(50000) + 1)
 	return &models.StorageService{
 		Id:             int64(rand.Intn(50000) + 1),
 		Name:           fake.Word(),
@@ -117,7 +106,9 @@ func FakeStorageService() *models.StorageService {
 		Protocol:       fake.Word(),
 		URL:            fmt.Sprintf("https://s3.example.com/%s", fake.Word()),
 		BucketOrFolder: fake.Word(),
-		CredentialsId:  &credentialsId,
+		LoginName:      fake.Word(),
+		LoginPassword:  fake.Word(),
+		LoginExtra:     fake.Word(),
 	}
 }
 
