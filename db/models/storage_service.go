@@ -7,14 +7,14 @@ import (
 // StorageService holds information about how to connect to a remote
 // storage service.
 type StorageService struct {
-	Id             int64  `db:"id" form_options:"skip"`
-	Name           string `db:"name"`
-	Description    string `db:"description"`
-	Protocol       string `db:"protocol"`
-	URL            string `db:"url"`
-	BucketOrFolder string `db:"bucket_or_folder"`
-	CredentialsId  *int64 `db:"credentials_id"`
-	errors         []string
+	Id             int64    `db:"id" form_options:"skip"`
+	Name           string   `db:"name"`
+	Description    string   `db:"description"`
+	Protocol       string   `db:"protocol"`
+	URL            string   `db:"url"`
+	BucketOrFolder string   `db:"bucket_or_folder"`
+	CredentialsId  *int64   `db:"credentials_id" form_options:"skip"`
+	errors         []string `form_options:"skip"`
 }
 
 // GetStorageService returns the service with the specified id, or an error if the
