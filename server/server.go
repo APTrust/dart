@@ -30,11 +30,12 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HandleRootRequest)
-	r.HandleFunc("/profiles", HandleProfilesRequest)
+	r.HandleFunc("/profiles", ProfilesList)
 	r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
 	r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
 	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditGet).Methods("GET")
 	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST", "PUT")
+	r.HandleFunc("/storage_services", StorageServicesList)
 	http.Handle("/", r)
 
 	go func() {
@@ -107,7 +108,7 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HandleProfilesRequest(w http.ResponseWriter, r *http.Request) {
+func ProfilesList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	profiles, _ := models.GetBagItProfiles("", []interface{}{})
 	data["items"] = profiles
@@ -158,6 +159,17 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 	postUrl := fmt.Sprintf("/profile/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func StorageServicesList(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	services, _ := models.GetStorageServices("", []interface{}{})
+	data["items"] = services
+	err := templates.ExecuteTemplate(w, "storage-service-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

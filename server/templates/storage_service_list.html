@@ -1,0 +1,36 @@
+{{ define "storage-service-list" }}
+{{ template "page_top" . }}
+
+
+<h1>Storage Services</h1>
+<div class="pull-right">
+  <a class="btn btn-primary" href="/storage_service/new" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Protocol</th>
+      <th>URL</th>
+      <th>Bucket/Folder</th>
+      <th>Credentials</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .items}}
+    <tr class="clickable-row" data-href="/storage_service/{{ .Id }}/edit">
+      <td>{{.Name}}</td>
+      <td>{{.Description}}</td>
+      <td>{{.Protocol}}</td>
+      <td>{{.URL}}</td>
+      <td>{{.BucketOrFilder}}</td>
+      <td>{{.Credentials.Name}}</td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+
+
+{{ template "page_bottom" . }}
+{{ end }}
