@@ -36,6 +36,10 @@ func main() {
 	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditGet).Methods("GET")
 	r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST", "PUT")
 	r.HandleFunc("/storage_services", StorageServicesList)
+	r.HandleFunc("/storage_service/new", StorageServiceNewGet).Methods("GET")
+	r.HandleFunc("/storage_service/new", StorageServiceNewPost).Methods("POST", "PUT")
+	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditGet).Methods("GET")
+	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditPost).Methods("POST", "PUT")
 	http.Handle("/", r)
 
 	go func() {
@@ -170,6 +174,90 @@ func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 	services, _ := models.GetStorageServices("", []interface{}{})
 	data["items"] = services
 	err := templates.ExecuteTemplate(w, "storage-service-list", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func StorageServiceNewGet(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	service := models.StorageService{}
+	data["form"] = forms.BootstrapFormFromModel(service, forms.POST, "/storage_service/new")
+	err := templates.ExecuteTemplate(w, "storage-service-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func StorageServiceNewPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	service := &models.StorageService{}
+	err = decoder.Decode(service, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	data := make(map[string]interface{})
+	ok := service.Save(true)
+	postUrl := fmt.Sprintf("/storage_service/new")
+	if !ok {
+		data["errors"] = service.Errors()
+		postUrl = fmt.Sprintf("/storage_service/%d/edit", service.Id)
+	} else {
+		data["success"] = "Service has been saved."
+	}
+	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
+	err = templates.ExecuteTemplate(w, "storage-service-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func StorageServiceEditGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("GET Storage Service", id)
+	service, _ := models.GetStorageService(int64(id))
+	// log.Println(service)
+	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
+	data := make(map[string]interface{})
+	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
+	err := templates.ExecuteTemplate(w, "storage-service-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("POST Storage Service", id)
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	service := &models.StorageService{}
+	err = decoder.Decode(service, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	service.Id = int64(id)
+	data := make(map[string]interface{})
+	ok := service.Save(true)
+	if !ok {
+		data["errors"] = service.Errors()
+	} else {
+		data["success"] = "Storage Service has been saved."
+	}
+	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
+	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
+	err = templates.ExecuteTemplate(w, "storage-service-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
