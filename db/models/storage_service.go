@@ -12,10 +12,10 @@ type StorageService struct {
 	Description    string   `db:"description"`
 	Protocol       string   `db:"protocol"`
 	URL            string   `db:"url"`
-	BucketOrFolder string   `db:"bucket_or_folder"`
-	LoginName      string   `db:"login_name"`
-	LoginPassword  string   `db:"login_password"`
-	LoginExtra     string   `db:"login_extra"`
+	BucketOrFolder string   `db:"bucket_or_folder" form_label:"Folder or Bucket Name"`
+	LoginName      string   `db:"login_name" form_label:"Login Name or S3 Key Id"`
+	LoginPassword  string   `db:"login_password" form_label:"Password or S3 Secret Key"`
+	LoginExtra     string   `db:"login_extra" form_label:"Additional Login Info"`
 	errors         []string `form_options:"skip"`
 }
 
