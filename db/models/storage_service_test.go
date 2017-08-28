@@ -132,3 +132,54 @@ func TestGetStorageServices(t *testing.T) {
 	require.NotNil(t, services)
 	assert.Equal(t, 5, len(services))
 }
+
+func TestGetStorageServiceCredentials(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	// Create a storage service record.
+	service := FakeStorageService()
+	service.Id = 0
+	service.CredentialsId = &emptyId
+	ok := service.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, service.Id)
+
+	// Should get nil with no error, because this object
+	// has no credentials
+	creds, err := service.Credentials()
+	assert.Nil(t, creds)
+	assert.Nil(t, err)
+
+	// Assign a set of credentials that doesn't exist.
+	service.CredentialsId = &nonEmptyId
+	ok = service.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, service.Id)
+
+	// Should get nil & error because credentials
+	// with the specified id don't exist.
+	creds, err = service.Credentials()
+	assert.Nil(t, creds)
+	assert.NotNil(t, err)
+
+	// Create a credentials record and assign it to this storage service.
+	creds = FakeCredentials()
+	creds.Id = emptyId
+	ok = creds.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, creds.Id)
+	assert.Empty(t, creds.Errors())
+	assert.NotEmpty(t, creds.Id)
+
+	// Assign actual existing credentials to this object,
+	// and then Credentials() should return a valid value.
+	service.CredentialsId = &creds.Id
+	creds, err = service.Credentials()
+	assert.Nil(t, err)
+	require.NotNil(t, creds)
+	assert.NotEmpty(t, creds.Name)
+	assert.NotEmpty(t, creds.Description)
+	assert.NotEmpty(t, creds.Key)
+	assert.NotEmpty(t, creds.Value)
+}

@@ -21,7 +21,10 @@ func GetTag(id int64) (*Tag, error) {
 	query := SelectByIdQuery(tag)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(tag, query, id)
-	return tag, err
+	if err == nil {
+		return tag, err
+	}
+	return nil, err
 }
 
 // GetTags returns the tags matching the criteria specified in where.

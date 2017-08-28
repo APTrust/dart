@@ -20,7 +20,10 @@ func GetGeneralSetting(id int64) (*GeneralSetting, error) {
 	query := SelectByIdQuery(setting)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(setting, query, id)
-	return setting, err
+	if err == nil {
+		return setting, err
+	}
+	return nil, err
 }
 
 // GetGeneralSettings returns the settings matching the criteria specified in where.

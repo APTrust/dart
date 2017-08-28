@@ -109,7 +109,7 @@ func FakeJob() *models.Job {
 }
 
 func FakeStorageService() *models.StorageService {
-	credentialsId := rand.Intn(50000) + 1
+	credentialsId := int64(rand.Intn(50000) + 1)
 	return &models.StorageService{
 		Id:             int64(rand.Intn(50000) + 1),
 		Name:           fake.Word(),

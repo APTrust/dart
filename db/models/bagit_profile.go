@@ -27,7 +27,10 @@ func GetBagItProfile(id int64) (*BagItProfile, error) {
 	query := SelectByIdQuery(profile)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(profile, query, id)
-	return profile, err
+	if err == nil {
+		return profile, err
+	}
+	return nil, err
 }
 
 // GetBagItProfiles returns the profiles matching the criteria specified in where.

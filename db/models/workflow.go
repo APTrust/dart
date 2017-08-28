@@ -22,7 +22,10 @@ func GetWorkflow(id int64) (*Workflow, error) {
 	query := SelectByIdQuery(workflow)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(workflow, query, id)
-	return workflow, err
+	if err == nil {
+		return workflow, err
+	}
+	return nil, err
 }
 
 // GetWorkflows returns the workflows matching the criteria specified in where.

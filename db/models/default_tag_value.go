@@ -24,7 +24,10 @@ func GetDefaultTagValue(id int64) (*DefaultTagValue, error) {
 	query := SelectByIdQuery(defaultTagValue)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(defaultTagValue, query, id)
-	return defaultTagValue, err
+	if err == nil {
+		return defaultTagValue, err
+	}
+	return nil, err
 }
 
 // GetDefaultTagValues returns the defaultTagValues matching the criteria specified in where.

@@ -30,7 +30,10 @@ func GetFile(id int64) (*File, error) {
 	query := SelectByIdQuery(file)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(file, query, id)
-	return file, err
+	if err == nil {
+		return file, err
+	}
+	return nil, err
 }
 
 // GetFiles returns the files matching the criteria specified in where.

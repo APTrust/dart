@@ -26,7 +26,10 @@ func GetBag(id int64) (*Bag, error) {
 	query := SelectByIdQuery(bag)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(bag, query, id)
-	return bag, err
+	if err == nil {
+		return bag, err
+	}
+	return nil, err
 }
 
 // GetBags returns the bags matching the criteria specified in where.

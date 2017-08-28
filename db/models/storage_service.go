@@ -13,7 +13,7 @@ type StorageService struct {
 	Protocol       string `db:"protocol"`
 	URL            string `db:"url"`
 	BucketOrFolder string `db:"bucket_or_folder"`
-	CredentialsId  *int   `db:"credentials_id"`
+	CredentialsId  *int64 `db:"credentials_id"`
 	errors         []string
 }
 
@@ -24,7 +24,10 @@ func GetStorageService(id int64) (*StorageService, error) {
 	query := SelectByIdQuery(service)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(service, query, id)
-	return service, err
+	if err == nil {
+		return service, err
+	}
+	return nil, err
 }
 
 // GetStorageServices returns the services matching the criteria specified in where.
@@ -100,7 +103,9 @@ func (service *StorageService) AddError(message string) {
 	service.errors = append(service.errors, message)
 }
 
-func (service *StorageService) Credentials() *Credentials {
-	// Load from CredentialsId, if that's not nil.
-	return nil
+func (service *StorageService) Credentials() (*Credentials, error) {
+	if service.CredentialsId != nil && *service.CredentialsId != 0 {
+		return GetCredential(*service.CredentialsId)
+	}
+	return nil, nil
 }

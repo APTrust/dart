@@ -22,7 +22,10 @@ func GetCredential(id int64) (*Credentials, error) {
 	query := SelectByIdQuery(credentials)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(credentials, query, id)
-	return credentials, err
+	if err == nil {
+		return credentials, err
+	}
+	return nil, err
 }
 
 // GetCredentials returns the credentials matching the criteria specified in where.

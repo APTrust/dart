@@ -35,7 +35,10 @@ func GetJob(id int64) (*Job, error) {
 	query := SelectByIdQuery(job)
 	db := GetConnection(DEFAULT_CONNECTION)
 	err := db.Get(job, query, id)
-	return job, err
+	if err == nil {
+		return job, err
+	}
+	return nil, err
 }
 
 // GetJobs returns the jobs matching the criteria specified in where.
