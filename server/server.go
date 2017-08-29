@@ -30,6 +30,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", HandleRootRequest)
+	r.HandleFunc("/bags", BagsList).Methods("GET")
+	r.HandleFunc("/bag/{id:[0-9]+}", BagDetail).Methods("GET")
 	r.HandleFunc("/profiles", ProfilesList)
 	r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
 	r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
@@ -258,6 +260,34 @@ func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
 	err = templates.ExecuteTemplate(w, "storage-service-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func BagsList(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	bags, _ := models.GetBags("", []interface{}{})
+	data["items"] = bags
+	err := templates.ExecuteTemplate(w, "bag-list", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func BagDetail(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("GET Bag", id)
+	bag, _ := models.GetBag(int64(id))
+	data["item"] = bag
+	params := []interface{}{int64(id)}
+	files, _ := models.GetFiles("bag_id = ?", params)
+	data["items"] = files
+	err := templates.ExecuteTemplate(w, "bag-detail", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
