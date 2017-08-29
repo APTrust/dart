@@ -123,8 +123,8 @@ func FakeTag() *models.Tag {
 }
 
 func FakeWorkflow() *models.Workflow {
-	profileId := rand.Intn(50000) + 1
-	storageServiceId := rand.Intn(50000) + 1
+	profileId := int64(rand.Intn(50000) + 1)
+	storageServiceId := int64(rand.Intn(50000) + 1)
 	return &models.Workflow{
 		Id:               int64(rand.Intn(50000) + 1),
 		Name:             fake.Word(),

@@ -130,3 +130,73 @@ func TestGetWorkflows(t *testing.T) {
 	require.NotNil(t, workflows)
 	assert.Equal(t, 5, len(workflows))
 }
+
+func TestWorkflowProfile(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	workflow := FakeWorkflow()
+	workflow.ProfileId = &nonEmptyId
+
+	// Should get error for bad profile id
+	profile, err := workflow.Profile()
+	assert.Nil(t, profile)
+	assert.NotNil(t, err)
+
+	workflow.ProfileId = &emptyId
+	profile, err = workflow.Profile()
+	assert.Nil(t, profile)
+	assert.Nil(t, err)
+
+	// Create a storage profile record
+	profile = FakeBagItProfile()
+	profile.Id = 0
+	ok := profile.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, profile.Id)
+
+	// Assign that storage profile to this workflow...
+	workflow.ProfileId = &profile.Id
+
+	// ...and now we should get a record.
+	profile, err = workflow.Profile()
+	assert.Nil(t, err)
+	require.NotNil(t, profile)
+	assert.NotEmpty(t, profile.Name)
+	assert.NotEmpty(t, profile.Description)
+}
+
+func TestWorkflowStorageService(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	workflow := FakeWorkflow()
+	workflow.StorageServiceId = &nonEmptyId
+
+	// Should get error for bad service id
+	service, err := workflow.StorageService()
+	assert.Nil(t, service)
+	assert.NotNil(t, err)
+
+	workflow.StorageServiceId = &emptyId
+	service, err = workflow.StorageService()
+	assert.Nil(t, service)
+	assert.Nil(t, err)
+
+	// Create a storage service record
+	service = FakeStorageService()
+	service.Id = 0
+	ok := service.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, service.Id)
+
+	// Assign that storage service to this workflow...
+	workflow.StorageServiceId = &service.Id
+
+	// ...and now we should get a record.
+	service, err = workflow.StorageService()
+	assert.Nil(t, err)
+	require.NotNil(t, service)
+	assert.NotEmpty(t, service.Name)
+	assert.NotEmpty(t, service.Description)
+}

@@ -10,8 +10,8 @@ type Workflow struct {
 	Id               int64  `db:"id" form_options:"skip"`
 	Name             string `db:"name"`
 	Description      string `db:"description"`
-	ProfileId        *int   `db:"profile_id" form_widget:"hidden"`
-	StorageServiceId *int   `db:"storage_service_id" form_widget:"hidden"`
+	ProfileId        *int64 `db:"profile_id" form_widget:"hidden"`
+	StorageServiceId *int64 `db:"storage_service_id" form_widget:"hidden"`
 	errors           []string
 }
 
@@ -101,12 +101,16 @@ func (workflow *Workflow) AddError(message string) {
 	workflow.errors = append(workflow.errors, message)
 }
 
-func (workflow *Workflow) WorkflowBagItProfile() *BagItProfile {
-	// Load from ProfileId, if that's not nil.
-	return nil
+func (workflow *Workflow) Profile() (*BagItProfile, error) {
+	if workflow.ProfileId != nil && *workflow.ProfileId != 0 {
+		return GetBagItProfile(*workflow.ProfileId)
+	}
+	return nil, nil
 }
 
-func (workflow *Workflow) StorageService() *StorageService {
-	// Load from StorageServiceId, if that's not nil.
-	return nil
+func (workflow *Workflow) StorageService() (*StorageService, error) {
+	if workflow.StorageServiceId != nil && *workflow.StorageServiceId != 0 {
+		return GetStorageService(*workflow.StorageServiceId)
+	}
+	return nil, nil
 }
