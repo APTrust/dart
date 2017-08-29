@@ -42,6 +42,7 @@ func main() {
 	r.HandleFunc("/storage_service/new", StorageServiceNewPost).Methods("POST", "PUT")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditGet).Methods("GET")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditPost).Methods("POST", "PUT")
+	r.HandleFunc("/workflows", WorkflowsList)
 	http.Handle("/", r)
 
 	go func() {
@@ -288,6 +289,17 @@ func BagDetail(w http.ResponseWriter, r *http.Request) {
 	files, _ := models.GetFiles("bag_id = ?", params)
 	data["items"] = files
 	err := templates.ExecuteTemplate(w, "bag-detail", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func WorkflowsList(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
+	bags, _ := models.GetWorkflows("", []interface{}{})
+	data["items"] = bags
+	err := templates.ExecuteTemplate(w, "workflow-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

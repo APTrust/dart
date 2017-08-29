@@ -15,3 +15,8 @@ insert into files (bag_id, name, size, md5, sha256, storage_url, stored_as_part_
 -- Load some storage services
 INSERT INTO "storage_services" VALUES(1,'APTrust S3 Test Bucket','Uploads files to APTrust''s test bucket','S3','https://s3.amazonaws.com','aptrust.test.test','LOGIN_ONE','PASSWORD_ONE','');
 INSERT INTO "storage_services" VALUES(2,'Other S3 service','Upload to loser S3 account','S3','https://s3.amazonaws.com','aptrust.loser.bucket','LOGIN TWO','PASSWORD TWO','');
+
+-- Load some workflows
+insert into workflows (name, description, profile_id, storage_service_id) values
+("APTrust package & upload", "Package bag in APTrust 2.0 format and upload to S3 receiving bucket", 1, 1),
+("DPN package & upload", "Package bag in DPN 2.0 format and upload to DPN bucket", 2, 2);
