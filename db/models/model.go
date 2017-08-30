@@ -218,8 +218,9 @@ func SaveObject(model Model) bool {
 	return true
 }
 
-func GetOptions(objType string) []fields.InputChoice {
+func GetOptions(objType string) map[string][]fields.InputChoice {
 	options := make([]fields.InputChoice, 0)
+	optsMap := make(map[string][]fields.InputChoice)
 	if objType == "BagItProfile" {
 		profiles, _ := GetBagItProfiles("", []interface{}{}, "order by name")
 		for _, p := range profiles {
@@ -233,5 +234,6 @@ func GetOptions(objType string) []fields.InputChoice {
 			options = append(options, fields.InputChoice{id, s.Name})
 		}
 	}
-	return options
+	optsMap[""] = options
+	return optsMap
 }

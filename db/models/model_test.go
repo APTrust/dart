@@ -187,8 +187,8 @@ func TestGetOptions(t *testing.T) {
 	}
 
 	opts := models.GetOptions("BagItProfile")
-	assert.Equal(t, 2, len(opts))
+	assert.Equal(t, 2, len(opts[""]))
 
 	opts = models.GetOptions("StorageService")
-	assert.Equal(t, 2, len(opts))
+	assert.Equal(t, 2, len(opts[""]))
 }
