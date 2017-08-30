@@ -42,13 +42,13 @@ func GetBagItProfile(id int64) (*BagItProfile, error) {
 // where := "name = ? and age = ?"
 // values := []interface{} { "Billy Bob Thornton", 62 }
 // profiles, err := GetBagItProfiles(where, values)
-func GetBagItProfiles(where string, values []interface{}) ([]*BagItProfile, error) {
+func GetBagItProfiles(where string, values []interface{}, orderAndLimit string) ([]*BagItProfile, error) {
 	profile := &BagItProfile{}
 	var query string
 	if strings.TrimSpace(where) != "" {
-		query = SelectWhere(profile, where)
+		query = SelectWhere(profile, where) + " " + orderAndLimit
 	} else {
-		query = SelectQuery(profile)
+		query = SelectQuery(profile) + " " + orderAndLimit
 	}
 	profiles := make([]*BagItProfile, 0)
 	db := GetConnection(DEFAULT_CONNECTION)

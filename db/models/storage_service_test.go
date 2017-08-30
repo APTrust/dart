@@ -100,7 +100,8 @@ func TestGetStorageServices(t *testing.T) {
 		"Odd%",
 		"",
 	}
-	services, err := models.GetStorageServices(where, values)
+	orderAndLimit := "order by name"
+	services, err := models.GetStorageServices(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, services)
 	assert.Equal(t, 2, len(services))
@@ -108,7 +109,7 @@ func TestGetStorageServices(t *testing.T) {
 	// Should get ten services
 	where = ""
 	values = []interface{}{}
-	services, err = models.GetStorageServices(where, values)
+	services, err = models.GetStorageServices(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, services)
 	assert.Equal(t, 10, len(services))
@@ -116,7 +117,7 @@ func TestGetStorageServices(t *testing.T) {
 	// Should also get ten services
 	where = "name like 'Even %' or name like 'Odd%'"
 	values = make([]interface{}, 0)
-	services, err = models.GetStorageServices(where, values)
+	services, err = models.GetStorageServices(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, services)
 	assert.Equal(t, 10, len(services))
@@ -126,7 +127,7 @@ func TestGetStorageServices(t *testing.T) {
 	values = []interface{}{
 		"Even%",
 	}
-	services, err = models.GetStorageServices(where, values)
+	services, err = models.GetStorageServices(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, services)
 	assert.Equal(t, 5, len(services))

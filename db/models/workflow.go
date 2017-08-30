@@ -10,8 +10,8 @@ type Workflow struct {
 	Id               int64  `db:"id" form_options:"skip"`
 	Name             string `db:"name"`
 	Description      string `db:"description"`
-	ProfileId        *int64 `db:"profile_id" form_widget:"hidden"`
-	StorageServiceId *int64 `db:"storage_service_id" form_widget:"hidden"`
+	ProfileId        *int64 `db:"profile_id" form_widget:"select"`
+	StorageServiceId *int64 `db:"storage_service_id" form_widget:"select"`
 	errors           []string
 }
 

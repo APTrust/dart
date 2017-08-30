@@ -108,7 +108,7 @@ func loadProfile(name string) {
 }
 
 func getProfile(name string) (profile *models.BagItProfile) {
-	profiles, err := models.GetBagItProfiles("name = ?", []interface{}{name})
+	profiles, err := models.GetBagItProfiles("name = ?", []interface{}{name}, "")
 	if err != nil {
 		panic(err.Error())
 	}

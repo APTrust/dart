@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/APTrust/easy-store/util"
 	"github.com/jmoiron/sqlx"
+	"github.com/kirves/go-form-it/fields"
 	"log"
 	"reflect"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -214,4 +216,22 @@ func SaveObject(model Model) bool {
 	}
 	model.SetId(id)
 	return true
+}
+
+func GetOptions(objType string) []fields.InputChoice {
+	options := make([]fields.InputChoice, 0)
+	if objType == "BagItProfile" {
+		profiles, _ := GetBagItProfiles("", []interface{}{}, "order by name")
+		for _, p := range profiles {
+			id := strconv.FormatInt(p.Id, 10)
+			options = append(options, fields.InputChoice{id, p.Name})
+		}
+	} else if objType == "StorageService" {
+		services, _ := GetStorageServices("", []interface{}{}, "order by name")
+		for _, s := range services {
+			id := strconv.FormatInt(s.Id, 10)
+			options = append(options, fields.InputChoice{id, s.Name})
+		}
+	}
+	return options
 }

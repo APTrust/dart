@@ -41,13 +41,13 @@ func GetStorageService(id int64) (*StorageService, error) {
 // where := "name = ? and age = ?"
 // values := []interface{} { "Billy Bob Thornton", 62 }
 // services, err := GetStorageServices(where, values)
-func GetStorageServices(where string, values []interface{}) ([]*StorageService, error) {
+func GetStorageServices(where string, values []interface{}, orderAndLimit string) ([]*StorageService, error) {
 	service := &StorageService{}
 	var query string
 	if strings.TrimSpace(where) != "" {
-		query = SelectWhere(service, where)
+		query = SelectWhere(service, where) + " " + orderAndLimit
 	} else {
-		query = SelectQuery(service)
+		query = SelectQuery(service) + " " + orderAndLimit
 	}
 	services := make([]*StorageService, 0)
 	db := GetConnection(DEFAULT_CONNECTION)

@@ -4,7 +4,9 @@ import (
 	"github.com/APTrust/easy-store/db/models"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 var ExpectedBagCols = []string{
@@ -164,4 +166,29 @@ func TestOrAll(t *testing.T) {
 	expected2 := "(name = :name or age = :age)"
 	actual := models.OrAll(params)
 	assert.True(t, (actual == expected1 || actual == expected2))
+}
+
+func TestGetOptions(t *testing.T) {
+	_, err := models.ExecCommand("delete from bagit_profiles", nil)
+	require.Nil(t, err)
+	_, err = models.ExecCommand("delete from storage_services", nil)
+	require.Nil(t, err)
+
+	for i := 0; i < 2; i++ {
+		profile := FakeBagItProfile()
+		profile.Id = 0
+		assert.True(t, profile.Save(false))
+		time.Sleep(50 * time.Millisecond)
+
+		service := FakeStorageService()
+		service.Id = 0
+		assert.True(t, service.Save(false))
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	opts := models.GetOptions("BagItProfile")
+	assert.Equal(t, 2, len(opts))
+
+	opts = models.GetOptions("StorageService")
+	assert.Equal(t, 2, len(opts))
 }

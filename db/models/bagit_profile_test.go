@@ -124,7 +124,8 @@ func TestGetBagItProfiles(t *testing.T) {
 		"Odd%",
 		"",
 	}
-	profiles, err := models.GetBagItProfiles(where, values)
+	orderAndLimit := "order by name"
+	profiles, err := models.GetBagItProfiles(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, profiles)
 	assert.Equal(t, 2, len(profiles))
@@ -132,7 +133,7 @@ func TestGetBagItProfiles(t *testing.T) {
 	// Should get ten profiles
 	where = ""
 	values = []interface{}{}
-	profiles, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, profiles)
 	assert.Equal(t, 10, len(profiles))
@@ -140,7 +141,7 @@ func TestGetBagItProfiles(t *testing.T) {
 	// Should also get ten profiles
 	where = "name like 'Even %' or name like 'Odd%'"
 	values = make([]interface{}, 0)
-	profiles, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, profiles)
 	assert.Equal(t, 10, len(profiles))
@@ -150,7 +151,7 @@ func TestGetBagItProfiles(t *testing.T) {
 	values = []interface{}{
 		"Even%",
 	}
-	profiles, err = models.GetBagItProfiles(where, values)
+	profiles, err = models.GetBagItProfiles(where, values, orderAndLimit)
 	require.Nil(t, err)
 	require.NotNil(t, profiles)
 	assert.Equal(t, 5, len(profiles))
