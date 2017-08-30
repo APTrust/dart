@@ -2,7 +2,10 @@
 {{ template "page_top" . }}
 
 
-<h1>Bags</h1>
+<h1>Workflows</h1>
+<div class="pull-right">
+  <a class="btn btn-primary" href="/workflow/new" role="button">New</a>
+</div>
 <table class="table table-hover">
   <thead class="thead-inverse">
     <tr>
@@ -12,7 +15,7 @@
   </thead>
   <tbody>
     {{range .items}}
-    <tr class="clickable-row" data-href="/workflow/{{ .Id }}">
+    <tr class="clickable-row" data-href="/workflow/{{ .Id }}/edit">
       <td>{{.Name}}</td>
       <td>{{.Description}}</td>
     </tr>

@@ -43,6 +43,8 @@ func main() {
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditGet).Methods("GET")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditPost).Methods("POST", "PUT")
 	r.HandleFunc("/workflows", WorkflowsList)
+	r.HandleFunc("/workflow/{id:[0-9]+}/edit", WorkflowEditGet).Methods("GET")
+	r.HandleFunc("/workflow/{id:[0-9]+}/edit", WorkflowEditPost).Methods("POST", "PUT")
 	http.Handle("/", r)
 
 	go func() {
@@ -117,7 +119,7 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 
 func ProfilesList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	profiles, _ := models.GetBagItProfiles("", []interface{}{})
+	profiles, _ := models.GetBagItProfiles("", []interface{}{}, "order by name")
 	data["items"] = profiles
 	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
 	if err != nil {
@@ -174,7 +176,7 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 
 func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	services, _ := models.GetStorageServices("", []interface{}{})
+	services, _ := models.GetStorageServices("", []interface{}{}, "")
 	data["items"] = services
 	err := templates.ExecuteTemplate(w, "storage-service-list", data)
 	if err != nil {
@@ -300,6 +302,64 @@ func WorkflowsList(w http.ResponseWriter, r *http.Request) {
 	bags, _ := models.GetWorkflows("", []interface{}{})
 	data["items"] = bags
 	err := templates.ExecuteTemplate(w, "workflow-list", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("GET Workflow", id)
+	workflow, _ := models.GetWorkflow(int64(id))
+	// log.Println(workflow)
+	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
+	data := make(map[string]interface{})
+	// TODO -> Replace or safely dereference Int64 pointers!
+	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
+	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	data["form"] = form
+	err := templates.ExecuteTemplate(w, "workflow-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	log.Println("POST Workflow", id)
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	workflow := &models.Workflow{}
+	err = decoder.Decode(workflow, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	workflow.Id = int64(id)
+	data := make(map[string]interface{})
+	ok := workflow.Save(true)
+	if !ok {
+		data["errors"] = workflow.Errors()
+	} else {
+		data["success"] = "Workflow has been saved."
+	}
+	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
+	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
+	// TODO -> Replace or safely dereference Int64 pointers!
+	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	data["form"] = form
+	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
