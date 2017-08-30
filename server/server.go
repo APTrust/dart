@@ -21,6 +21,7 @@ import (
 
 var templates *template.Template
 var decoder = schema.NewDecoder()
+var zero = int64(0)
 
 func main() {
 	CompileTemplates()
@@ -43,6 +44,8 @@ func main() {
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditGet).Methods("GET")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", StorageServiceEditPost).Methods("POST", "PUT")
 	r.HandleFunc("/workflows", WorkflowsList)
+	r.HandleFunc("/workflow/new", WorkflowNewGet).Methods("GET")
+	r.HandleFunc("/workflow/new", WorkflowNewPost).Methods("POST", "PUT")
 	r.HandleFunc("/workflow/{id:[0-9]+}/edit", WorkflowEditGet).Methods("GET")
 	r.HandleFunc("/workflow/{id:[0-9]+}/edit", WorkflowEditPost).Methods("POST", "PUT")
 	http.Handle("/", r)
@@ -302,6 +305,59 @@ func WorkflowsList(w http.ResponseWriter, r *http.Request) {
 	bags, _ := models.GetWorkflows("", []interface{}{})
 	data["items"] = bags
 	err := templates.ExecuteTemplate(w, "workflow-list", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
+	workflow := models.Workflow{}
+	postUrl := "/workflow/new"
+	data := make(map[string]interface{})
+	// TODO -> Replace or safely dereference Int64 pointers!
+	workflow.ProfileId = &zero
+	workflow.StorageServiceId = &zero
+	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
+	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	data["form"] = form
+	err := templates.ExecuteTemplate(w, "workflow-form", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	workflow := &models.Workflow{}
+	err = decoder.Decode(workflow, r.PostForm)
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	data := make(map[string]interface{})
+	postUrl := "/workflow/new"
+	ok := workflow.Save(true)
+	if !ok {
+		data["errors"] = workflow.Errors()
+	} else {
+		data["success"] = "Workflow has been saved."
+		postUrl = fmt.Sprintf("/workflow/%d/edit", workflow.Id)
+	}
+	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
+	// TODO -> Replace or safely dereference Int64 pointers!
+	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	data["form"] = form
+	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
