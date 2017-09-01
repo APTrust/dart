@@ -14,9 +14,9 @@ import (
 // where my_photos is bagged and uploaded to S3.
 type Job struct {
 	Id                 int64     `db:"id" form_options:"skip"`
-	BagId              *int      `db:"bag_id"`
-	FileId             *int      `db:"file_id"`
-	WorkflowId         *int      `db:"workflow_id"`
+	BagId              *int64    `db:"bag_id"`
+	FileId             *int64    `db:"file_id"`
+	WorkflowId         *int64    `db:"workflow_id"`
 	WorkflowSnapshot   string    `db:"workflow_snapshot"`
 	CreatedAt          time.Time `db:"created_at"`
 	ScheduledStartTime time.Time `db:"scheduled_start_time"`
@@ -112,4 +112,28 @@ func (job *Job) initErrors(clearExistingList bool) {
 // AddError adds an error message to the errors list.
 func (job *Job) AddError(message string) {
 	job.errors = append(job.errors, message)
+}
+
+// Returns the associated workflow.
+func (job *Job) Workflow() (*Workflow, error) {
+	if job.WorkflowId != nil && *job.WorkflowId != 0 {
+		return GetWorkflow(*job.WorkflowId)
+	}
+	return nil, nil
+}
+
+// Returns the associated file.
+func (job *Job) File() (*File, error) {
+	if job.FileId != nil && *job.FileId != 0 {
+		return GetFile(*job.FileId)
+	}
+	return nil, nil
+}
+
+// Returns the associated bag.
+func (job *Job) Bag() (*Bag, error) {
+	if job.BagId != nil && *job.BagId != 0 {
+		return GetBag(*job.BagId)
+	}
+	return nil, nil
 }

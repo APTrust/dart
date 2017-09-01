@@ -101,6 +101,7 @@ func (workflow *Workflow) AddError(message string) {
 	workflow.errors = append(workflow.errors, message)
 }
 
+// Returns the associated BagItProfile.
 func (workflow *Workflow) Profile() (*BagItProfile, error) {
 	if workflow.ProfileId != nil && *workflow.ProfileId != 0 {
 		return GetBagItProfile(*workflow.ProfileId)
@@ -108,6 +109,7 @@ func (workflow *Workflow) Profile() (*BagItProfile, error) {
 	return nil, nil
 }
 
+// Returns the associated StorageService.
 func (workflow *Workflow) StorageService() (*StorageService, error) {
 	if workflow.StorageServiceId != nil && *workflow.StorageServiceId != 0 {
 		return GetStorageService(*workflow.StorageServiceId)

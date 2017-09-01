@@ -137,3 +137,108 @@ func TestGetJobs(t *testing.T) {
 	require.NotNil(t, jobs)
 	assert.Equal(t, 5, len(jobs))
 }
+
+func TestJobWorkflow(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	job := FakeJob()
+	job.WorkflowId = &nonEmptyId
+
+	// Should get error for bad workflow id
+	workflow, err := job.Workflow()
+	assert.Nil(t, workflow)
+	assert.NotNil(t, err)
+
+	job.WorkflowId = &emptyId
+	workflow, err = job.Workflow()
+	assert.Nil(t, workflow)
+	assert.Nil(t, err)
+
+	// Create a workflow record
+	workflow = FakeWorkflow()
+	workflow.Id = 0
+	ok := workflow.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, workflow.Id)
+
+	// Assign that workflow to this job...
+	job.WorkflowId = &workflow.Id
+
+	// ...and now we should get a record.
+	workflow, err = job.Workflow()
+	assert.Nil(t, err)
+	require.NotNil(t, workflow)
+	assert.NotEmpty(t, workflow.Name)
+	assert.NotEmpty(t, workflow.Description)
+}
+
+func TestJobBag(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	job := FakeJob()
+	job.BagId = &nonEmptyId
+
+	// Should get error for bad bag id
+	bag, err := job.Bag()
+	assert.Nil(t, bag)
+	assert.NotNil(t, err)
+
+	job.BagId = &emptyId
+	bag, err = job.Bag()
+	assert.Nil(t, bag)
+	assert.Nil(t, err)
+
+	// Create a bag record
+	bag = FakeBag()
+	bag.Id = 0
+	ok := bag.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, bag.Id)
+
+	// Assign that bag to this job...
+	job.BagId = &bag.Id
+
+	// ...and now we should get a record.
+	bag, err = job.Bag()
+	assert.Nil(t, err)
+	require.NotNil(t, bag)
+	assert.NotEmpty(t, bag.Name)
+	assert.NotEmpty(t, bag.Size)
+}
+
+func TestJobFile(t *testing.T) {
+	emptyId := int64(0)
+	nonEmptyId := int64(101010)
+
+	job := FakeJob()
+	job.FileId = &nonEmptyId
+
+	// Should get error for bad file id
+	file, err := job.File()
+	assert.Nil(t, file)
+	assert.NotNil(t, err)
+
+	job.FileId = &emptyId
+	file, err = job.File()
+	assert.Nil(t, file)
+	assert.Nil(t, err)
+
+	// Create a file record
+	file = FakeFile()
+	file.Id = 0
+	ok := file.Save(true)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, file.Id)
+
+	// Assign that file to this job...
+	job.FileId = &file.Id
+
+	// ...and now we should get a record.
+	file, err = job.File()
+	assert.Nil(t, err)
+	require.NotNil(t, file)
+	assert.NotEmpty(t, file.Name)
+	assert.NotEmpty(t, file.Size)
+}

@@ -79,9 +79,9 @@ func FakeGeneralSetting() *models.GeneralSetting {
 }
 
 func FakeJob() *models.Job {
-	bagId := rand.Intn(50000) + 1
-	fileId := rand.Intn(50000) + 1
-	workflowId := rand.Intn(50000) + 1
+	bagId := int64(rand.Intn(50000) + 1)
+	fileId := int64(rand.Intn(50000) + 1)
+	workflowId := int64(rand.Intn(50000) + 1)
 	return &models.Job{
 		Id:                 int64(rand.Intn(50000) + 1),
 		BagId:              &bagId,
