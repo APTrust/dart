@@ -105,6 +105,13 @@ func (bag *Bag) AddError(message string) {
 	bag.errors = append(bag.errors, message)
 }
 
+// TODO: Implement this correctly.
+// TODO: Create a function that takes a callback, so
+//       we don't have to return 100k files. Or else
+//       implement a function that returns files in
+//       batches.
+// TODO: Implement a FileCount function that returns
+//       the number of files.
 func (bag *Bag) Files() (*[]File, error) {
 	// Return files belonging to this bag
 	db := GetConnection(DEFAULT_CONNECTION)
