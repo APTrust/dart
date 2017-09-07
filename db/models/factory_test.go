@@ -41,7 +41,7 @@ func FakeBagItProfile() *models.BagItProfile {
 }
 
 func FakeDefaultTagValue() *models.DefaultTagValue {
-	profileId := rand.Intn(50000) + 1
+	profileId := int64(rand.Intn(50000) + 1)
 	return &models.DefaultTagValue{
 		Id:        int64(rand.Intn(50000) + 1),
 		ProfileId: &profileId,

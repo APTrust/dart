@@ -65,8 +65,10 @@ func (r JobRunner) BuildBag() bool {
 		}
 
 		// Add custom tag data to bagItProfile.
+		// These are bag-level tags. We also need to merge in the default
+		// tags that pertain to all bags (e.g. sender organization).
 		for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
-			for tagname, tagdesc := range mapOfRequiredTags {
+			for tagname, _ := range mapOfRequiredTags { // _ is tag description
 				// Get value for tag with relFilePath and tagname from the tags table.
 				// TODO: Shouldn't we have relFilePath in the tags table?
 				values := []interface{}{r.bag.Id, tagname}

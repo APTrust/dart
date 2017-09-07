@@ -165,3 +165,33 @@ func TestProfileUnmarshal(t *testing.T) {
 	require.NotEmpty(t, bagItProfile.ManifestsRequired)
 	assert.Equal(t, "md5", bagItProfile.ManifestsRequired[0])
 }
+
+func TestBagItProfileGetDefaultValues(t *testing.T) {
+	// Delete profiles created by other tests
+	_, err := models.ExecCommand("delete from bagit_profiles", nil)
+	require.Nil(t, err)
+	// Delete default tag values created by other tests
+	_, err = models.ExecCommand("delete from default_tag_values", nil)
+	require.Nil(t, err)
+
+	profile := FakeBagItProfile()
+	profile.Id = 0
+	ok := profile.Save(false)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, profile.Id)
+
+	// Save some first
+	for i := 0; i < 10; i++ {
+		val := FakeDefaultTagValue()
+		val.Id = 0
+		val.ProfileId = &profile.Id
+		ok := val.Save(false)
+		assert.True(t, ok)
+		assert.NotEqual(t, 0, profile.Id)
+	}
+
+	values, err := profile.DefaultTagValues()
+	assert.Nil(t, err)
+	require.NotNil(t, values)
+	assert.Equal(t, 10, len(values))
+}
