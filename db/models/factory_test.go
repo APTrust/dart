@@ -113,12 +113,13 @@ func FakeStorageService() *models.StorageService {
 }
 
 func FakeTag() *models.Tag {
-	bagId := rand.Intn(50000) + 1
+	bagId := int64(rand.Intn(50000) + 1)
 	return &models.Tag{
-		Id:    int64(rand.Intn(50000) + 1),
-		BagId: &bagId,
-		Name:  fake.Word(),
-		Value: fake.Sentence(),
+		Id:          int64(rand.Intn(50000) + 1),
+		BagId:       &bagId,
+		Name:        fake.Word(),
+		RelFilePath: fake.Word(),
+		Value:       fake.Sentence(),
 	}
 }
 

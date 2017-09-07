@@ -106,6 +106,7 @@ create table if not exists tags (
 	   id integer primary key,
 	   bag_id integer not null,
 	   "name" text not null,
+	   "rel_file_path" text not null,
 	   "value" text not null default '',
 
 	   foreign key(bag_id) references bags(id)

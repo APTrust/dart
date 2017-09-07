@@ -7,11 +7,12 @@ import (
 // Tag holds information about a tag in bag built by easy-store.
 // A cat in the hat from the hooka store.
 type Tag struct {
-	Id     int64  `db:"id" form_options:"skip"`
-	BagId  *int   `db:"bag_id" form_widget:"hidden"`
-	Name   string `db:"name"`
-	Value  string `db:"value"`
-	errors []string
+	Id          int64  `db:"id" form_options:"skip"`
+	BagId       *int64 `db:"bag_id" form_widget:"hidden"`
+	RelFilePath string `db:"rel_file_path"`
+	Name        string `db:"name"`
+	Value       string `db:"value"`
+	errors      []string
 }
 
 // GetTag returns the tag with the specified id, or an error if the
