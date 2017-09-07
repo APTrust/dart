@@ -2,8 +2,12 @@ package workers
 
 import (
 	"fmt"
+	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/db/models"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
+	"os"
+	"path/filepath"
 )
 
 type JobRunner struct {
@@ -38,8 +42,55 @@ func (r JobRunner) Run() bool {
 // BagItProfile specified in JobRunner.Job.Profile(). If there's
 // no bag or profile specified, this is a no-op.
 func (r JobRunner) BuildBag() bool {
-	if r.profile && r.bag {
+	if r.profile != nil && r.bag != nil {
+		// TODO: Use GeneralSettings.BuildDir + r.bag.Name for bagPath
+		bagPath, err := fileutil.ExpandTilde("~/tmp/easy-store/staging")
+		if err != nil {
+			r.AddError("Cannot determine path to bag building directory: %s", err.Error())
+			return false
+		}
+		if err := os.MkdirAll(filepath.Dir(bagPath), 0755); err != nil {
+			r.AddError("Cannot create bag building directory: %s", err.Error())
+			return false
+		}
+		bagItProfile, err := r.profile.Profile()
+		if err != nil {
+			r.AddError("Error reading BagIt profile: %s", err.Error())
+			return false
+		}
+		bagger, err := bagit.NewBagger(bagPath, bagItProfile)
+		if err != nil {
+			r.AddError("Error creating bagger: %s", err.Error())
+			return false
+		}
 
+		// Add custom tag data to bagItProfile.
+		for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
+			for tagname, tagdesc := range mapOfRequiredTags {
+				// Get value for tag with relFilePath and tagname from the tags table.
+				// TODO: Shouldn't we have relFilePath in the tags table?
+				values := []interface{}{r.bag.Id, tagname}
+				tags, err := models.GetTags("bag_id = ? and name = ?", values)
+				if err != nil {
+					r.AddError("Error getting tags for %s/%s: %s", relFilePath, tagname, err.Error())
+					return false
+				}
+				for _, tag := range tags {
+					keyValuePair := bagit.NewKeyValuePair(tag.Name, tag.Value)
+					bagger.AddTag(relFilePath, &keyValuePair)
+				}
+			}
+		}
+
+		// Write the bag to disk. First true means overwrite existing bag.
+		// Second true means verify that all tags required by profile are
+		// present.
+		if !bagger.WriteBag(true, true) {
+			for _, errMsg := range bagger.Errors() {
+				r.AddError(errMsg)
+			}
+			return false
+		}
 	}
 	return true
 }
