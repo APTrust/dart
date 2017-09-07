@@ -7,9 +7,15 @@ import (
 )
 
 type JobRunner struct {
-	Job       *models.Job
-	LogWriter io.Writer
-	Errors    []string
+	Job            *models.Job
+	LogWriter      io.Writer
+	Errors         []string
+	workflow       *models.Workflow
+	profile        *models.BagItProfile
+	storageService *models.StorageService
+	bag            *models.Bag
+	file           *models.File
+	files          []*models.File
 }
 
 // TODO: track progress of bagging & upload
@@ -28,13 +34,43 @@ func (r JobRunner) Run() bool {
 	return true
 }
 
+// BuildBag assembles JobRunner.Bag.Files() into a bag using the
+// BagItProfile specified in JobRunner.Job.Profile(). If there's
+// no bag or profile specified, this is a no-op.
+func (r JobRunner) BuildBag() bool {
+	if r.profile && r.bag {
+
+	}
+	return true
+}
+
+// SerializeBag serializes the bag to the specified format.
+// Currently, tar is the only supported format.
+func (r JobRunner) SerializeBag() bool {
+	if r.workflow.SerializationFormat == "tar" {
+
+	}
+	return true
+}
+
+// CopyBagToRemote copies the bag to the remote storage area.
+// For now, only S3 is supported. In future, we may add SFTP
+// and other protocols.
+func (r JobRunner) CopyBagToRemote() bool {
+	if r.storageService != nil {
+
+	}
+	return true
+}
+
 func (r JobRunner) ConfigDataOk() bool {
 	if r.Job == nil {
 		r.AddError("Job cannot be null")
 		return false
 	}
-	workflow, err := r.Job.Workflow()
-	if workflow == nil {
+	var err error
+	r.workflow, err = r.Job.Workflow()
+	if r.workflow == nil {
 		if err != nil {
 			r.AddError("Cannot retrieve workflow: %v", err)
 		} else {
@@ -46,17 +82,17 @@ func (r JobRunner) ConfigDataOk() bool {
 	// retrievable. There will be no error if the
 	// workflow.ProfileId is nil. The same goes for the calls
 	// to StorageService(), Bag(), and File().
-	profile, err := workflow.Profile()
+	r.profile, err = r.workflow.Profile()
 	if err != nil {
 		r.AddError("Cannot retrieve BagIt profile for this workflow: %v", err)
 		return false
 	}
-	storageService, err := workflow.StorageService()
+	r.storageService, err = r.workflow.StorageService()
 	if err != nil {
 		r.AddError("Cannot retrieve storage service for this workflow: %v", err)
 		return false
 	}
-	bag, err := r.Job.Bag()
+	r.bag, err = r.Job.Bag()
 	if err != nil {
 		r.AddError("Cannot retrieve the bag record for this job: %v", err)
 		return false
@@ -64,7 +100,7 @@ func (r JobRunner) ConfigDataOk() bool {
 	// File will only exist if the Workflow does not include any
 	// bagging. In that case, the Workflow is to copy the specified
 	// file to the storage service.
-	file, err := r.Job.File()
+	r.file, err = r.Job.File()
 	if err != nil {
 		r.AddError("Cannot retrieve the file record for this job: %v", err)
 		return false
@@ -74,22 +110,29 @@ func (r JobRunner) ConfigDataOk() bool {
 	// includes creating a bag. The presence of a StorageService
 	// indicates that the job includes copying a bag or file to
 	// the remote storage service.
-	if profile == nil && storageService == nil {
+	if r.profile == nil && r.storageService == nil {
 		r.AddError("This workflow has no BagIt profile and no storage service, so there " +
 			"is nothing to do.")
 		return false
 	}
-	if profile != nil && bag == nil {
+	if r.profile != nil && r.bag == nil {
 		r.AddError("This workflow includes a bagging task, but the bag record is missing.")
 		return false
 	}
-	if storageService != nil && bag == nil && file == nil {
+	if r.storageService != nil && r.bag == nil && r.file == nil {
 		r.AddError("This workflow includes an upload task, but no bag or file is specified.")
 		return false
 	}
-
-	// TODO: if bag is specified, make sure it has files.
-
+	if r.bag != nil {
+		r.files, err = r.bag.Files()
+		if err != nil {
+			r.AddError("Cannot get files for bag %s: %s", r.bag.Name, err.Error())
+			return false
+		} else if len(r.files) == 0 {
+			r.AddError("Bag %s has no files.", r.bag.Name)
+			return false
+		}
+	}
 	return true
 }
 
