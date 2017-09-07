@@ -9,7 +9,7 @@ import (
 // either bagged or uploaded.
 type File struct {
 	Id                int64     `db:"id" form_options:"skip"`
-	BagId             *int      `db:"bag_id"`
+	BagId             *int64    `db:"bag_id"`
 	Name              string    `db:"name"`
 	Size              int64     `db:"size"`
 	Md5               string    `db:"md5"`

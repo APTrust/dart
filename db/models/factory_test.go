@@ -53,7 +53,7 @@ func FakeDefaultTagValue() *models.DefaultTagValue {
 }
 
 func FakeFile() *models.File {
-	bagId := rand.Intn(50000) + 1
+	bagId := int64(rand.Intn(50000) + 1)
 	return &models.File{
 		Id:                int64(rand.Intn(50000) + 1),
 		BagId:             &bagId,

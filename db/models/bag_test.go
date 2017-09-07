@@ -134,3 +134,36 @@ func TestGetBags(t *testing.T) {
 	require.NotNil(t, bags)
 	assert.Equal(t, 5, len(bags))
 }
+
+func TestBagGetFiles(t *testing.T) {
+	// Delete bags created by other tests
+	_, err := models.ExecCommand("delete from bags", nil)
+	require.Nil(t, err)
+
+	// Delete files created by other tests
+	_, err = models.ExecCommand("delete from files", nil)
+	require.Nil(t, err)
+
+	// Create a bag.
+	bag := FakeBag()
+	bag.Id = 0
+	ok := bag.Save(false)
+	assert.True(t, ok)
+	assert.NotEqual(t, 0, bag.Id)
+
+	// Add some files
+	for i := 0; i < 10; i++ {
+		file := FakeFile()
+		file.Id = 0
+		file.BagId = &bag.Id
+		ok := file.Save(false)
+		assert.True(t, ok)
+		assert.NotEqual(t, 0, file.Id)
+	}
+
+	// Make sure we can get them.
+	files, err := bag.Files()
+	assert.Nil(t, err)
+	require.NotNil(t, files)
+	assert.Equal(t, 10, len(files))
+}
