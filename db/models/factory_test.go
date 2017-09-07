@@ -126,11 +126,12 @@ func FakeWorkflow() *models.Workflow {
 	profileId := int64(rand.Intn(50000) + 1)
 	storageServiceId := int64(rand.Intn(50000) + 1)
 	return &models.Workflow{
-		Id:               int64(rand.Intn(50000) + 1),
-		Name:             fake.Word(),
-		Description:      fake.Sentence(),
-		ProfileId:        &profileId,
-		StorageServiceId: &storageServiceId,
+		Id:                  int64(rand.Intn(50000) + 1),
+		Name:                fake.Word(),
+		Description:         fake.Sentence(),
+		SerializationFormat: fake.Word(),
+		ProfileId:           &profileId,
+		StorageServiceId:    &storageServiceId,
 	}
 }
 

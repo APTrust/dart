@@ -17,6 +17,6 @@ INSERT INTO "storage_services" VALUES(1,'APTrust S3 Test Bucket','Uploads files 
 INSERT INTO "storage_services" VALUES(2,'Other S3 service','Upload to loser S3 account','S3','https://s3.amazonaws.com','aptrust.loser.bucket','LOGIN TWO','PASSWORD TWO','');
 
 -- Load some workflows
-insert into workflows (name, description, profile_id, storage_service_id) values
-("APTrust package & upload", "Package bag in APTrust 2.0 format and upload to S3 receiving bucket", 1, 1),
-("DPN package & upload", "Package bag in DPN 2.0 format and upload to DPN bucket", 2, 2);
+insert into workflows (name, description, serialization_format, profile_id, storage_service_id) values
+("APTrust package & upload", "Package bag in APTrust 2.0 format and upload to S3 receiving bucket", "tar", 1, 1),
+("DPN package & upload", "Package bag in DPN 2.0 format and upload to DPN bucket", "tar", 2, 2);
