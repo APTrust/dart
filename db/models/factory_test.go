@@ -41,7 +41,7 @@ func FakeBagItProfile() *models.BagItProfile {
 }
 
 func FakeDefaultTagValue() *models.DefaultTagValue {
-	profileId := rand.Intn(50000) + 1
+	profileId := int64(rand.Intn(50000) + 1)
 	return &models.DefaultTagValue{
 		Id:        int64(rand.Intn(50000) + 1),
 		ProfileId: &profileId,
@@ -53,7 +53,7 @@ func FakeDefaultTagValue() *models.DefaultTagValue {
 }
 
 func FakeFile() *models.File {
-	bagId := rand.Intn(50000) + 1
+	bagId := int64(rand.Intn(50000) + 1)
 	return &models.File{
 		Id:                int64(rand.Intn(50000) + 1),
 		BagId:             &bagId,
@@ -113,12 +113,13 @@ func FakeStorageService() *models.StorageService {
 }
 
 func FakeTag() *models.Tag {
-	bagId := rand.Intn(50000) + 1
+	bagId := int64(rand.Intn(50000) + 1)
 	return &models.Tag{
-		Id:    int64(rand.Intn(50000) + 1),
-		BagId: &bagId,
-		Name:  fake.Word(),
-		Value: fake.Sentence(),
+		Id:          int64(rand.Intn(50000) + 1),
+		BagId:       &bagId,
+		Name:        fake.Word(),
+		RelFilePath: fake.Word(),
+		Value:       fake.Sentence(),
 	}
 }
 
@@ -126,11 +127,12 @@ func FakeWorkflow() *models.Workflow {
 	profileId := int64(rand.Intn(50000) + 1)
 	storageServiceId := int64(rand.Intn(50000) + 1)
 	return &models.Workflow{
-		Id:               int64(rand.Intn(50000) + 1),
-		Name:             fake.Word(),
-		Description:      fake.Sentence(),
-		ProfileId:        &profileId,
-		StorageServiceId: &storageServiceId,
+		Id:                  int64(rand.Intn(50000) + 1),
+		Name:                fake.Word(),
+		Description:         fake.Sentence(),
+		SerializationFormat: fake.Word(),
+		ProfileId:           &profileId,
+		StorageServiceId:    &storageServiceId,
 	}
 }
 

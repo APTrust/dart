@@ -7,12 +7,13 @@ import (
 // Workflow holds information about how a bag should be built and
 // where it should be sent.
 type Workflow struct {
-	Id               int64    `db:"id" form_options:"skip"`
-	Name             string   `db:"name"`
-	Description      string   `db:"description"`
-	ProfileId        *int64   `db:"profile_id" form_widget:"select"`
-	StorageServiceId *int64   `db:"storage_service_id" form_widget:"select"`
-	errors           []string `form_options:"skip"`
+	Id                  int64    `db:"id" form_options:"skip"`
+	Name                string   `db:"name"`
+	Description         string   `db:"description"`
+	SerializationFormat string   `db:"serialization_format"`
+	ProfileId           *int64   `db:"profile_id" form_widget:"select" form_label:"BagIt Profile"`
+	StorageServiceId    *int64   `db:"storage_service_id" form_widget:"select" form_label:"Storage Service"`
+	errors              []string `form_options:"skip"`
 }
 
 // GetWorkflow returns the workflow with the specified id, or an error if the

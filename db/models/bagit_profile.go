@@ -118,3 +118,9 @@ func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	err := json.Unmarshal([]byte(profile.JSON), bagItProfile)
 	return bagItProfile, err
 }
+
+func (profile *BagItProfile) DefaultTagValues() ([]*DefaultTagValue, error) {
+	where := "profile_id = ?"
+	values := []interface{}{profile.Id}
+	return GetDefaultTagValues(where, values)
+}

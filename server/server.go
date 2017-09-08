@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/schema"
 	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
+	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
 	"log"
@@ -139,7 +140,15 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	// log.Println(profile)
 	postUrl := fmt.Sprintf("/profile/%d/edit", id)
 	data := make(map[string]interface{})
-	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	form := forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+
+	defaultValueFields := GetProfileDefaultTagFields(profile)
+	if defaultValueFields != nil {
+		fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
+		form.Elements(fieldSet)
+	}
+	data["form"] = form
+
 	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -420,6 +429,37 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func GetProfileDefaultTagFields(profile *models.BagItProfile) []fields.FieldInterface {
+	formFields := make([]fields.FieldInterface, 0)
+	bagItProfile, err := profile.Profile()
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	where := "profile_id = ? and tag_file = ? and tag_name = ?"
+	for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
+		for tagname, _ := range mapOfRequiredTags { // _ is tag description
+			values := []interface{}{profile.Id, relFilePath, tagname}
+			defaultTags, err := models.GetDefaultTagValues(where, values)
+			if err != nil {
+				log.Println(err.Error())
+				return nil
+			}
+			defaultValue := ""
+			if len(defaultTags) > 0 {
+				defaultValue = defaultTags[0].TagValue
+			}
+			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
+			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
+			formField := fields.TextField(fieldName)
+			formField.SetLabel(fieldLabel)
+			formField.SetValue(defaultValue)
+			formFields = append(formFields, formField)
+		}
+	}
+	return formFields
 }
 
 func OpenBrowser(url string) {

@@ -9,7 +9,7 @@ import (
 // all bags.
 type DefaultTagValue struct {
 	Id        int64     `db:"id" form_options:"skip"`
-	ProfileId *int      `db:"profile_id" form_widget:"hidden"`
+	ProfileId *int64    `db:"profile_id" form_widget:"hidden"`
 	TagFile   string    `db:"tag_file"`
 	TagName   string    `db:"tag_name"`
 	TagValue  string    `db:"tag_value"`
