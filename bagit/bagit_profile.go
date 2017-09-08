@@ -65,7 +65,7 @@ type BagItProfileInfo struct {
 	ContactEmail string `json:"Contact-Email"`
 	// ContactName is the name of the person maintaining this profile.
 	ContactName string `json:"Contact-Name"`
-	// ExternamDescription describes what this profile is for. For example,
+	// ExternalDescription describes what this profile is for. For example,
 	// "BagIt profile for ingesting content into APTrust."
 	ExternalDescription string `json:"External-Description"`
 	// SourceOrganization is the name of the organization maintaining this
