@@ -154,6 +154,118 @@ class BagItProfile {
     }
 }
 
+class KeyValuePair {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+    }
+}
+
+class KeyValueCollection {
+    constructor() {
+        this.items = [];
+    }
+
+    append(item) {
+
+    }
+
+    keys() {
+
+    }
+
+    values() {
+
+    }
+
+    length() {
+
+    }
+
+    allValuesFor(key) {
+
+    }
+
+    firstValueFor(key) {
+
+    }
+
+    items() {
+
+    }
+
+    deleteItem(item) {
+
+    }
+
+    deleteByKey(key) {
+
+    }
+}
+
+class Bag {
+    constructor() {
+        this.name = "";
+        this.size = 0;
+        this.storageUrl = "";
+        this.registryId = "";
+        this.files = [];
+        this.createdAt = null;
+        this.storedAt = null;
+    }
+}
+
+class File {
+    constructor() {
+        this.localPath = "";
+        this.pathInBag = "";
+        this.size = 0;
+        this.checksums = {}; // key = algorithm, value = digest
+    }
+}
+
+class StorageService {
+    constructor() {
+        this.name = "";
+        this.description = "";
+        this.protocol = "";
+        this.url = "";
+        this.root = "";
+        this.login = "";
+        this.password = "";
+        this.loginExtra = "";
+    }
+}
+
+class Workflow {
+    constructor() {
+        this.name = "";
+        this.description = "";
+        this.bagItProfile = null;
+        this.defaultTagValues = {}; // key = tagFilePath, value = KeyValuePair
+        this.storageService = null;
+        this.serializationFormat = null;
+    }
+}
+
+class Job {
+    constructor() {
+        this.bag = null;
+        this.file = null;
+        this.workflow = null;
+        this.customTagValues = {}; // key = tagFilePath, value = KeyValuePair
+        this.startedAt = null;
+        this.finishedAt = null;
+    }
+}
+
 module.exports.BagItProfile = BagItProfile
 module.exports.BagItProfileInfo = BagItProfileInfo
 module.exports.TagDefinition = TagDefinition
+module.exports.KeyValuePair = KeyValuePair;
+module.exports.KeyValueCollection = KeyValueCollection;
+module.exports.Bag = Bag;
+module.exports.File = File;
+module.exports.StorageService = StorageService;
+module.exports.Workflow = Workflow;
+module.exports.Job = Job;
