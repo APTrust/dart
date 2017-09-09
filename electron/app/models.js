@@ -251,7 +251,7 @@ class Workflow {
 class Job {
     constructor() {
         this.bag = null;
-        this.file = null;
+        this.files = [];
         this.workflow = null;
         this.customTagValues = {}; // key = tagFilePath, value = KeyValuePair
         this.startedAt = null;

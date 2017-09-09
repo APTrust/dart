@@ -1,5 +1,8 @@
 {
-  "name"    : "Sample App",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "Sample App",
+  "version": "0.1.0",
+  "main": "main.js",
+  "devDependencies": {
+    "tape": "^4.8.0"
+  }
 }
