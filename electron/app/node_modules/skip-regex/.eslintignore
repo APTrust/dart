@@ -1,0 +1,7 @@
+dist/*
+test/*
+!test/index.js
+coverage/*
+node_modules/*
+**/*.md
+**/*.json
