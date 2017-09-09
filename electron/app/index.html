@@ -1,13 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Riot todo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="todo.css">
   </head>
   <body>
-    <h1>Hello World!</h1>
-    We are using node <script>document.write(process.versions.node)</script>,
-    Chrome <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <todo></todo>
+    <script src="todo.tag" type="riot/tag"></script>
+    <script src="node_modules/riot/riot+compiler.js"></script>
+    <script>
+    riot.mount('todo', {
+      title: 'Things to do with this app',
+      items: [
+        { title: 'Find a test library', done: true },
+        { title: 'Find a templating library',  hidden: true },
+        { title: 'Write the app'  },
+        { title: 'Write unit tests' }
+      ]
+    })
+    </script>
   </body>
 </html>
