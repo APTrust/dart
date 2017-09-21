@@ -2,24 +2,88 @@
 
 <html>
   <head>
-    <title>Riot todo</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="todo.css">
+	<title>Riot todo</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- link href="static/css/easy_store.css" rel="stylesheet" -->
+	<!-- link rel="stylesheet" href="todo.css" -->
+	<link href="static/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+	<script src="static/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+	<script src="static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+	<!-- script src="static/js/easy_store.js"></script -->
   </head>
   <body>
-    <todo></todo>
-    <script src="todo.tag" type="riot/tag"></script>
-    <script src="node_modules/riot/riot+compiler.js"></script>
-    <script>
-    riot.mount('todo', {
-      title: 'Things to do with this app',
-      items: [
-        { title: 'Find a test library', done: true },
-        { title: 'Find a templating library',  hidden: true },
-        { title: 'Write the app'  },
-        { title: 'Write unit tests' }
-      ]
-    })
-    </script>
+
+
+
+	<nav class="navbar navbar-default brand-light-orange-bg">
+	  <div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+		  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		  </button>
+		  <a class="navbar-brand" href="#">Easy Store</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+		  <ul class="nav navbar-nav">
+			<li><a href="#">Dashboard</a></li>
+			<li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings<span class="caret"></span></a>
+			  <ul class="dropdown-menu" role="menu">
+				<li><a href="#">BagIt Profiles</a></li>
+				<li><a href="#">General Settings</a></li>
+				<li><a href="#">Storage Services</a></li>
+				<li><a href="#">Workflows</a></li>
+			  </ul>
+			</li>
+			<li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Jobs<span class="caret"></span></a>
+			  <ul class="dropdown-menu" role="menu">
+				<li><a href="#">New</a></li>
+				<li><a href="#">List All</a></li>
+			  </ul>
+			</li>
+			<li><a href="#">Bags</a></li>
+		  </ul>
+		  <ul class="nav navbar-nav navbar-right">
+			<li><a href="#">Your Name</a></li>
+			<li class="dropdown">
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Account <span class="caret"></span></a>
+			  <ul class="dropdown-menu" role="menu">
+				<li><a href="#">Change Password</a></li>
+				<li><a href="#">Sign Out</a></li>
+			  </ul>
+			</li>
+		  </ul>
+		</div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+
+
+	<!--
+	<todo></todo>
+	<script src="todo.tag" type="riot/tag"></script>
+	<script src="node_modules/riot/riot+compiler.js"></script>
+	<script>
+	riot.mount('todo', {
+	  title: 'Things to do with this app',
+	  items: [
+		{ title: 'Find a test library', done: true },
+		{ title: 'Find a templating library',  hidden: true },
+		{ title: 'Write the app'  },
+		{ title: 'Write unit tests' }
+	  ]
+	})
+	</script>
+	-->
   </body>
 </html>
