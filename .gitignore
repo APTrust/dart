@@ -4,3 +4,4 @@
 # Compiles binaries
 /server/server
 apps/easy_store_setup/easy_store_setup
+*/easy-store-db.json
