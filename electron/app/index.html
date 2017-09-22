@@ -20,7 +20,13 @@
 
 	<topnav></topnav>
 	<script src="tags/topnav.html" type="riot/tag"></script>
-	<script>riot.mount("topnav");</script>
+	<script>
+	  var route = require('riot-route')
+	  riot.compile(function() {
+		riot.mount('*')
+		route.start(true)
+	  })
+	</script>
 
 	<!--
 	<todo></todo>
