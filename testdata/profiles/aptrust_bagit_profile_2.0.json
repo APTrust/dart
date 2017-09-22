@@ -1,6 +1,6 @@
 {
     "BagIt-Profile-Info":{
-        "BagIt-Profile-Identifier":"http://example.com/aptrust-bagit-profile_2.0.json",
+        "BagIt-Profile-Identifier":"https://wiki.aptrust.org/APTrust_BagIt_Profile",
         "Source-Organization":"aptrust.org",
         "Contact-Name":"A. Diamond",
         "Contact-Email":"support@aptrust.org",

@@ -1,6 +1,6 @@
 {
     "BagIt-Profile-Info": {
-        "BagIt-Profile-Identifier": "http://example.com/dpn-bagit-profile.json",
+        "BagIt-Profile-Identifier": "https://wiki.aptrust.org/DPN_BagIt_Profile",
         "Source-Organization": "dpn.org",
         "Contact-Name": "A. Diamond",
         "Contact-Email": "support@dpn.org",
