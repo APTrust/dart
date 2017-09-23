@@ -10,16 +10,18 @@
 	</tr>
   </thead>
   <tbody>
-	<tr each={ p in profiles } class="clickable-row" data-href="#profile/{ p._id }/edit">
-	  <td>{ p. }</td>
+	<virtual each={ profiles }>
+	<tr class="clickable-row" data-href="#profile/{ _id }/edit">
+	  <td>{ ['BagIt-Profile-Info']['External-Description'] } xxxx</td>
 	</tr>
+	</virtual>
   </tbody>
 </table>
 
 <script>
-  var self = this;
-  var es = require('./static/js/easy-store.js');
-  self.profiles = es.profiles()
+  //var self = this;
+  //var es = require('./static/js/easy-store.js');
+  //self.profiles = es.profiles()
 </script>
 
 </profile-list>

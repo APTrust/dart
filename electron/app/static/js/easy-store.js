@@ -1,21 +1,19 @@
-//const {app, BrowserWindow} = require('electron')
-//var basepath = app.getAppPath();
 var basepath = __dirname;
 const path = require('path');
-var Datastore = require('nedb'),
-	db = new Datastore({ filename: path.join(basepath, '/easy-store-db.json'), autoload: true }),
-	dbProfiles = new Datastore({ filename: path.join(basepath, '/profiles-db.json'), autoload: true });
 
-console.log(basepath)
+// Hack. Replace later with user data path. But for now, WTF, electron??
+basepath = basepath.replace('/static/js', '');
+
+var Datastore = require('nedb'),
+	db = new Datastore({ filename: path.join(basepath, 'easy-store-db.json'), autoload: true }),
+	dbProfiles = new Datastore({ filename: path.join(basepath, 'profiles-db.json'), autoload: true });
+
+console.log(path.join(basepath, 'easy-store-db.json'))
+console.log(path.join(basepath, 'profiles-db.json'))
 
 // Returns a list of all BagIt Profiles.
-function profiles() {
-	db.find({ field: {$exists: 'BagIt-Profile-Info'}}, function (err, docs) {
-		if (err) {
-			console.log(err);
-		}
-		return docs
-	});
+function profiles(callback) {
+	dbProfiles.find({}, callback);
 }
 
 

@@ -71,9 +71,13 @@
 	  }
 
 	  function loadProfiles() {
-		self.update({
-		  selected: 'profiles'
-		});
+		var callback = function(err, docs) {
+		  if(err) { console.log(err) }
+		  console.log(docs)
+		  riot.mount(document.getElementById('container'), 'profile-list', { profiles: docs })
+		}
+		var es = require('electron').remote.getGlobal('EasyStore')
+		es.profiles(callback)
 	  }
 	  function loadSettings() {
 		self.update({
