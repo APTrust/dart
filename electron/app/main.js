@@ -12,8 +12,8 @@ function createWindow () {
 
   // and load the index.html of the app.
   win.loadURL(url.format({
-	pathname: path.join(__dirname, 'index.html'),
-	protocol: 'file:',
+	pathname: "127.0.0.1:8080",
+	protocol: 'http:',
 	slashes: true
   }))
 
@@ -57,4 +57,4 @@ app.on('activate', () => {
 // Make sure there's just one easy-store, or else nedb keeps opening
 // new DB files.
 //var EasyStore = require('./static/js/easy-store.js')
-global.EasyStore = require('./static/js/easy-store.js')
+//global.EasyStore = require('./static/js/easy-store.js')

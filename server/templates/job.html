@@ -1,0 +1,32 @@
+{{ define "job" }}
+{{ template "page_top" . }}
+
+
+<h1>New Job</h1>
+
+<body>
+
+<div id="holder" style="height:300px;width:500px;border:1px solid black;background-color:#eee;">
+  Drag your file here
+</div>
+
+<div id="output"></div>
+
+<script>
+  document.getElementById('holder').addEventListener('drop', function (e) {
+	e.preventDefault();
+	e.stopPropagation();
+	document.getElementById('output').innerHTML = '';
+	for (let f of e.dataTransfer.files) {
+	  //console.log('File(s) you dragged here: ', f.path)
+	  document.getElementById('output').innerHTML += f.path + '<br/>';
+	}
+  });
+  document.getElementById('holder').addEventListener('dragover', function (e) {
+	e.preventDefault();
+	e.stopPropagation();
+  });
+</script>
+
+{{ template "page_bottom" . }}
+{{ end }}

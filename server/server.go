@@ -34,6 +34,7 @@ func main() {
 	r.HandleFunc("/", HandleRootRequest)
 	r.HandleFunc("/bags", BagsList).Methods("GET")
 	r.HandleFunc("/bag/{id:[0-9]+}", BagDetail).Methods("GET")
+	r.HandleFunc("/job/new", JobNewGet).Methods("GET")
 	r.HandleFunc("/profiles", ProfilesList)
 	r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
 	r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
@@ -53,7 +54,8 @@ func main() {
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
-		OpenBrowser("http://localhost:8080")
+		//OpenBrowser("http://localhost:8080")
+		OpenElectron()
 	}()
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }
@@ -77,6 +79,14 @@ func CompileTemplates() {
 func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	err := templates.ExecuteTemplate(w, "index", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func JobNewGet(w http.ResponseWriter, r *http.Request) {
+	err := templates.ExecuteTemplate(w, "job", nil)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -479,6 +489,40 @@ func OpenBrowser(url string) {
 	err := exec.Command(cmd, args...).Start()
 	if err != nil {
 		log.Println("Error opening browser:", err.Error())
+	} else {
+		log.Println("Opened browser")
+	}
+}
+
+func OpenElectron() {
+	var cmd string
+	var args []string
+
+	// TODO: Fix for non-mac OS
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = "cmd"
+		args = []string{"/c", "start"}
+	case "darwin":
+		cmd = "/Applications/Electron.app/Contents/MacOS/Electron"
+	default: // "linux", "freebsd", "openbsd", "netbsd"
+		cmd = "xdg-open"
+	}
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("Rumtime cannot get caller file name.")
+	}
+	absFileName, err := filepath.Abs(filename)
+	if err != nil {
+		panic(err)
+	}
+	electronAppPath := filepath.Join(absFileName, "..", "..", "electron", "app")
+
+	args = append(args, electronAppPath)
+	err = exec.Command(cmd, args...).Start()
+	if err != nil {
+		log.Println("Error opening Electron:", err.Error())
 	} else {
 		log.Println("Opened browser")
 	}
