@@ -64,12 +64,12 @@ func TestAddToArchive(t *testing.T) {
 	}
 	checksums, err := w.AddToArchive(aptrustFile, "file1.json", algorithms)
 	assert.Nil(t, err)
-	assert.Equal(t, "a13a800ede8aa0482a0a12fdce8ead43", checksums[constants.MD5])
-	assert.Equal(t, "b27d2164559dddb7637938e96ab370d216204d4d3f163623c85fb5e65f5eca2f", checksums[constants.SHA256])
+	assert.Equal(t, "e46113f04181fa368c3026e93e7d6153", checksums[constants.MD5])
+	assert.Equal(t, "3696162e57e14a223eaafc33980769089c8c3ba383ffa8e49e24f4dbc04e7412", checksums[constants.SHA256])
 	checksums, err = w.AddToArchive(dpnFile, "data/subdir/file2.json", algorithms)
 	assert.Nil(t, err)
-	assert.Equal(t, "b850ee80942aa98d5b2e079e38aac844", checksums[constants.MD5])
-	assert.Equal(t, "6096136f84d2182e29c5252c226d531a825dba495bd3e7a1ffd2c227545a11ae", checksums[constants.SHA256])
+	assert.Equal(t, "e79ad6b879ba59c4bc953f461d1209f6", checksums[constants.MD5])
+	assert.Equal(t, "5f9353adde970689f42aa5f59162e98cf0d883b322d01675d50237ed540a3459", checksums[constants.SHA256])
 	w.Close()
 
 	file, err := os.Open(w.PathToTarFile)

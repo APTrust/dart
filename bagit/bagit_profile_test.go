@@ -39,7 +39,7 @@ func TestLoadBagItProfile(t *testing.T) {
 
 	// BagIt Profile Info
 	require.NotNil(t, profile.BagItProfileInfo)
-	assert.Equal(t, "http://example.com/aptrust-bagit-profile_2.0.json", profile.BagItProfileInfo.BagItProfileIdentifier)
+	assert.Equal(t, "https://wiki.aptrust.org/APTrust_BagIt_Profile", profile.BagItProfileInfo.BagItProfileIdentifier)
 	assert.Equal(t, "support@aptrust.org", profile.BagItProfileInfo.ContactEmail)
 	assert.Equal(t, "A. Diamond", profile.BagItProfileInfo.ContactName)
 	assert.Equal(t, "BagIt profile for ingesting content into APTrust.", profile.BagItProfileInfo.ExternalDescription)
