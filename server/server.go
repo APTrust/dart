@@ -517,7 +517,7 @@ func OpenElectron() {
 	if err != nil {
 		panic(err)
 	}
-	electronAppPath := filepath.Join(absFileName, "..", "..", "electron", "app")
+	electronAppPath := filepath.Join(absFileName, "..", "..", "electron")
 
 	args = append(args, electronAppPath)
 	err = exec.Command(cmd, args...).Start()
