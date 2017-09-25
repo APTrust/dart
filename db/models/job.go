@@ -14,18 +14,18 @@ import (
 // where my_photos is bagged and uploaded to S3.
 type Job struct {
 	Id                 int64     `db:"id" form_options:"skip"`
-	BagId              *int64    `db:"bag_id"`
-	FileId             *int64    `db:"file_id"`
-	WorkflowId         *int64    `db:"workflow_id"`
-	WorkflowSnapshot   string    `db:"workflow_snapshot"`
-	CreatedAt          time.Time `db:"created_at"`
-	ScheduledStartTime time.Time `db:"scheduled_start_time"`
-	StartedAt          time.Time `db:"started_at"`
-	FinishedAt         time.Time `db:"finished_at"`
-	Pid                int       `db:"pid"`
-	Outcome            string    `db:"outcome"`
-	CapturedOutput     string    `db:"captured_output"`
-	errors             []string
+	BagId              *int64    `db:"bag_id" form_options:"skip"`
+	FileId             *int64    `db:"file_id" form_options:"skip"`
+	WorkflowId         *int64    `db:"workflow_id" form_widget:"select" form_label:"Workflow"`
+	WorkflowSnapshot   string    `db:"workflow_snapshot" form_options:"skip"`
+	CreatedAt          time.Time `db:"created_at" form_options:"skip"`
+	ScheduledStartTime time.Time `db:"scheduled_start_time" form_options:"skip"`
+	StartedAt          time.Time `db:"started_at" form_options:"skip"`
+	FinishedAt         time.Time `db:"finished_at" form_options:"skip"`
+	Pid                int       `db:"pid" form_options:"skip"`
+	Outcome            string    `db:"outcome" form_options:"skip"`
+	CapturedOutput     string    `db:"captured_output" form_options:"skip"`
+	errors             []string  ` form_options:"skip"`
 }
 
 // GetJob returns the job with the specified id, or an error if the

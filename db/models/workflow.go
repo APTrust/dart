@@ -38,13 +38,13 @@ func GetWorkflow(id int64) (*Workflow, error) {
 // where := "name = ? and age = ?"
 // values := []interface{} { "Billy Bob Thornton", 62 }
 // workflows, err := GetWorkflows(where, values)
-func GetWorkflows(where string, values []interface{}) ([]*Workflow, error) {
+func GetWorkflows(where string, values []interface{}, orderAndLimit string) ([]*Workflow, error) {
 	workflow := &Workflow{}
 	var query string
 	if strings.TrimSpace(where) != "" {
-		query = SelectWhere(workflow, where)
+		query = SelectWhere(workflow, where) + " " + orderAndLimit
 	} else {
-		query = SelectQuery(workflow)
+		query = SelectQuery(workflow) + " " + orderAndLimit
 	}
 	workflows := make([]*Workflow, 0)
 	db := GetConnection(DEFAULT_CONNECTION)

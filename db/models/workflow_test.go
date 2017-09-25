@@ -99,7 +99,7 @@ func TestGetWorkflows(t *testing.T) {
 		"Odd%",
 		"",
 	}
-	workflows, err := models.GetWorkflows(where, values)
+	workflows, err := models.GetWorkflows(where, values, "")
 	require.Nil(t, err)
 	require.NotNil(t, workflows)
 	assert.Equal(t, 2, len(workflows))
@@ -107,7 +107,7 @@ func TestGetWorkflows(t *testing.T) {
 	// Should get ten workflows
 	where = ""
 	values = []interface{}{}
-	workflows, err = models.GetWorkflows(where, values)
+	workflows, err = models.GetWorkflows(where, values, "")
 	require.Nil(t, err)
 	require.NotNil(t, workflows)
 	assert.Equal(t, 10, len(workflows))
@@ -115,7 +115,7 @@ func TestGetWorkflows(t *testing.T) {
 	// Should also get ten workflows
 	where = "name like 'Even %' or name like 'Odd%'"
 	values = make([]interface{}, 0)
-	workflows, err = models.GetWorkflows(where, values)
+	workflows, err = models.GetWorkflows(where, values, "")
 	require.Nil(t, err)
 	require.NotNil(t, workflows)
 	assert.Equal(t, 10, len(workflows))
@@ -125,7 +125,7 @@ func TestGetWorkflows(t *testing.T) {
 	values = []interface{}{
 		"Even%",
 	}
-	workflows, err = models.GetWorkflows(where, values)
+	workflows, err = models.GetWorkflows(where, values, "")
 	require.Nil(t, err)
 	require.NotNil(t, workflows)
 	assert.Equal(t, 5, len(workflows))

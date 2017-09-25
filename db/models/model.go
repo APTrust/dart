@@ -201,7 +201,7 @@ func SaveObject(model Model) bool {
 	statement := SaveStatement(model)
 
 	// DEBUG
-	// log.Println(statement, model)
+	log.Println(statement, model)
 
 	db := GetConnection(DEFAULT_CONNECTION)
 	result, err := db.NamedExec(statement, model)
@@ -229,6 +229,12 @@ func GetOptions(objType string) map[string][]fields.InputChoice {
 		}
 	} else if objType == "StorageService" {
 		services, _ := GetStorageServices("", []interface{}{}, "order by name")
+		for _, s := range services {
+			id := strconv.FormatInt(s.Id, 10)
+			options = append(options, fields.InputChoice{id, s.Name})
+		}
+	} else if objType == "Workflow" {
+		services, _ := GetWorkflows("", []interface{}{}, "order by name")
 		for _, s := range services {
 			id := strconv.FormatInt(s.Id, 10)
 			options = append(options, fields.InputChoice{id, s.Name})

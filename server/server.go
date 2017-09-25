@@ -86,7 +86,16 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func JobNewGet(w http.ResponseWriter, r *http.Request) {
-	err := templates.ExecuteTemplate(w, "job", nil)
+	job := models.Job{}
+	postUrl := "/job/new"
+	data := make(map[string]interface{})
+	// TODO -> Replace or safely dereference Int64 pointers!
+	workflowId := &zero
+	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
+	form.Field("WorkflowId").SetSelectChoices(models.GetOptions("Workflow"))
+	form.Field("WorkflowId").SetValue(strconv.FormatInt(*workflowId, 10))
+	data["form"] = form
+	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -321,7 +330,7 @@ func BagDetail(w http.ResponseWriter, r *http.Request) {
 
 func WorkflowsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	bags, _ := models.GetWorkflows("", []interface{}{})
+	bags, _ := models.GetWorkflows("", []interface{}{}, "")
 	data["items"] = bags
 	err := templates.ExecuteTemplate(w, "workflow-list", data)
 	if err != nil {
