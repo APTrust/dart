@@ -60,9 +60,9 @@ type AppSetting struct {
 
 type Job struct {
 	gorm.Model         `form_options:"skip"`
-	Bag                Bag
-	File               File
-	Workflow           Workflow
+	Bag                Bag       `form_widget:"select"`
+	File               File      `form_widget:"select"`
+	Workflow           Workflow  `form_widget:"select"`
 	WorkflowSnapshot   string    `form_options:"skip"`
 	ScheduledStartTime time.Time `form_options:"skip"`
 	StartedAt          time.Time `form_options:"skip"`
@@ -86,7 +86,7 @@ type StorageService struct {
 
 type Tag struct {
 	gorm.Model  `form_options:"skip"`
-	Bag         Bag
+	Bag         Bag `form_widget:"select"`
 	RelFilePath string
 	Name        string
 	Value       string
@@ -96,7 +96,7 @@ type Workflow struct {
 	gorm.Model          `form_options:"skip"`
 	Name                string
 	Description         string
-	SerializationFormat string
-	BagItProfile        BagItProfile
-	StorageService      StorageService
+	SerializationFormat string         `form_widget:"select"`
+	BagItProfile        BagItProfile   `form_widget:"select"`
+	StorageService      StorageService `form_widget:"select"`
 }
