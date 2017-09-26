@@ -8,9 +8,8 @@ import (
 	"github.com/gorilla/schema"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	//	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
-	// "github.com/kirves/go-form-it/fields"
+	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
 	"log"
@@ -224,7 +223,9 @@ func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 func StorageServiceNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	service := models.StorageService{}
-	data["form"] = forms.BootstrapFormFromModel(service, forms.POST, "/storage_service/new")
+	form := forms.BootstrapFormFromModel(service, forms.POST, "/storage_service/new")
+	form.Field("Protocol").SetSelectChoices(GetOptions("Protocol"))
+	data["form"] = form
 	err := templates.ExecuteTemplate(w, "storage-service-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -271,7 +272,10 @@ func StorageServiceEditGet(w http.ResponseWriter, r *http.Request) {
 	// log.Println(service)
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data := make(map[string]interface{})
-	data["form"] = forms.BootstrapFormFromModel(service, forms.POST, postUrl)
+	form := forms.BootstrapFormFromModel(service, forms.POST, postUrl)
+	form.Field("Protocol").SetSelectChoices(GetOptions("Protocol"))
+	form.Field("Protocol").SetValue(service.Protocol)
+	data["form"] = form
 	err = templates.ExecuteTemplate(w, "storage-service-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -363,10 +367,9 @@ func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
 	postUrl := "/workflow/new"
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
-	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
+	form.Field("BagItProfile").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("StorageService").SetSelectChoices(GetOptions("StorageService"))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -418,10 +421,12 @@ func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
-	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
+	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
+	form.Field("BagItProfile").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("BagItProfile").SetValue(string(workflow.BagItProfile.ID))
+	form.Field("StorageService").SetSelectChoices(GetOptions("StorageService"))
+	form.Field("StorageService").SetValue(string(workflow.StorageService.ID))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -551,6 +556,37 @@ func OpenElectron() {
 	} else {
 		log.Println("Opened browser")
 	}
+}
+
+func GetOptions(modelName string) map[string][]fields.InputChoice {
+	// BagItProfile, StorageService
+	choices := make([]fields.InputChoice, 1)
+	choices[0] = fields.InputChoice{Id: "", Val: ""}
+	if modelName == "BagItProfile" {
+		profiles := make([]models.BagItProfile, 0)
+		db.Select("id, name").Find(&profiles).Order("name")
+		for _, profile := range profiles {
+			choices = append(choices, fields.InputChoice{Id: string(profile.ID), Val: profile.Name})
+		}
+	} else if modelName == "StorageService" {
+		services := make([]models.StorageService, 0)
+		db.Select("id, name").Find(&services).Order("name")
+		for _, service := range services {
+			choices = append(choices, fields.InputChoice{Id: string(service.ID), Val: service.Name})
+		}
+	} else if modelName == "SerializationFormat" {
+		choices = append(choices, fields.InputChoice{Id: "gzip", Val: "gzip"})
+		choices = append(choices, fields.InputChoice{Id: "tar", Val: "tar"})
+		choices = append(choices, fields.InputChoice{Id: "zip", Val: "zip"})
+	} else if modelName == "Protocol" {
+		choices = append(choices, fields.InputChoice{Id: "ftp", Val: "ftp"})
+		choices = append(choices, fields.InputChoice{Id: "rsync", Val: "rsync"})
+		choices = append(choices, fields.InputChoice{Id: "s3", Val: "s3"})
+		choices = append(choices, fields.InputChoice{Id: "scp", Val: "scp"})
+	}
+	options := make(map[string][]fields.InputChoice)
+	options[""] = choices
+	return options
 }
 
 // TODO: This is also used by the easy_store_setup app.

@@ -35,8 +35,8 @@ type BagItProfile struct {
 	gorm.Model       `form_options:"skip"`
 	Name             string
 	Description      string
-	JSON             string `form_widget:"textarea"`
-	DefaultTagValues []DefaultTagValue
+	JSON             string            `form_widget:"textarea"`
+	DefaultTagValues []DefaultTagValue `form_options:"skip"`
 }
 
 func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
@@ -76,7 +76,7 @@ type StorageService struct {
 	gorm.Model     `form_options:"skip"`
 	Name           string
 	Description    string
-	Protocol       string
+	Protocol       string `form_widget:"select"`
 	URL            string
 	BucketOrFolder string
 	LoginName      string
