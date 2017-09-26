@@ -6,9 +6,11 @@ import (
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	"github.com/jmoiron/sqlx"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	//	"github.com/jmoiron/sqlx"
 	"github.com/kirves/go-form-it"
-	"github.com/kirves/go-form-it/fields"
+	// "github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
 	"log"
@@ -23,6 +25,7 @@ import (
 var templates *template.Template
 var decoder = schema.NewDecoder()
 var zero = int64(0)
+var db *gorm.DB
 
 func main() {
 	CompileTemplates()
@@ -89,11 +92,9 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	job := models.Job{}
 	postUrl := "/job/new"
 	data := make(map[string]interface{})
-	// TODO -> Replace or safely dereference Int64 pointers!
-	workflowId := &zero
 	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
-	form.Field("WorkflowId").SetSelectChoices(models.GetOptions("Workflow"))
-	form.Field("WorkflowId").SetValue(strconv.FormatInt(*workflowId, 10))
+	// form.Field("WorkflowId").SetSelectChoices(models.GetOptions("Workflow"))
+	//	form.Field("WorkflowId").SetValue(strconv.FormatInt(*workflowId, 10))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
@@ -123,12 +124,13 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	data := make(map[string]interface{})
-	ok := profile.Save(true)
 	postUrl := fmt.Sprintf("/profile/new")
-	if !ok {
-		data["errors"] = profile.Errors()
-		postUrl = fmt.Sprintf("/profile/%d/edit", profile.Id)
+	data := make(map[string]interface{})
+	err = db.Save(&profile).Error
+	if err != nil {
+		log.Println("Error:", err.Error())
+		data["errors"] = err.Error()
+		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
 	} else {
 		data["success"] = "Profile has been saved."
 	}
@@ -142,7 +144,8 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 
 func ProfilesList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	profiles, _ := models.GetBagItProfiles("", []interface{}{}, "order by name")
+	profiles := make([]models.BagItProfile, 0)
+	db.Find(&profiles).Order("name")
 	data["items"] = profiles
 	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
 	if err != nil {
@@ -155,17 +158,18 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET profile", id)
-	profile, _ := models.GetBagItProfile(int64(id))
+	profile := models.BagItProfile{}
+	db.First(&profile, id)
 	// log.Println(profile)
 	postUrl := fmt.Sprintf("/profile/%d/edit", id)
 	data := make(map[string]interface{})
-	form := forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	form := forms.BootstrapFormFromModel(profile, forms.POST, postUrl)
 
-	defaultValueFields := GetProfileDefaultTagFields(profile)
-	if defaultValueFields != nil {
-		fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
-		form.Elements(fieldSet)
-	}
+	// defaultValueFields := GetProfileDefaultTagFields(profile)
+	// if defaultValueFields != nil {
+	// 	fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
+	// 	form.Elements(fieldSet)
+	// }
 	data["form"] = form
 
 	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
@@ -188,11 +192,11 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	profile.Id = int64(id)
+	profile.ID = uint(id)
 	data := make(map[string]interface{})
-	ok := profile.Save(true)
-	if !ok {
-		data["errors"] = profile.Errors()
+	err = db.Save(&profile).Error
+	if err != nil {
+		data["errors"] = err.Error()
 	} else {
 		data["success"] = "Profile has been saved."
 	}
@@ -207,7 +211,8 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 
 func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	services, _ := models.GetStorageServices("", []interface{}{}, "")
+	services := make([]models.StorageService, 0)
+	db.Find(&services)
 	data["items"] = services
 	err := templates.ExecuteTemplate(w, "storage-service-list", data)
 	if err != nil {
@@ -238,11 +243,11 @@ func StorageServiceNewPost(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error:", err.Error())
 	}
 	data := make(map[string]interface{})
-	ok := service.Save(true)
+	err = db.Create(&service).Error
 	postUrl := fmt.Sprintf("/storage_service/new")
-	if !ok {
-		data["errors"] = service.Errors()
-		postUrl = fmt.Sprintf("/storage_service/%d/edit", service.Id)
+	if err != nil {
+		data["errors"] = err.Error()
+		postUrl = fmt.Sprintf("/storage_service/%d/edit", service.ID)
 	} else {
 		data["success"] = "Service has been saved."
 	}
@@ -258,12 +263,16 @@ func StorageServiceEditGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET Storage Service", id)
-	service, _ := models.GetStorageService(int64(id))
+	service := models.StorageService{}
+	err := db.Find(&service, uint(id)).Error
+	if err != nil {
+		log.Println(err.Error())
+	}
 	// log.Println(service)
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data := make(map[string]interface{})
-	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
-	err := templates.ExecuteTemplate(w, "storage-service-form", data)
+	data["form"] = forms.BootstrapFormFromModel(service, forms.POST, postUrl)
+	err = templates.ExecuteTemplate(w, "storage-service-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -283,11 +292,11 @@ func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	service.Id = int64(id)
+	service.ID = uint(id)
 	data := make(map[string]interface{})
-	ok := service.Save(true)
-	if !ok {
-		data["errors"] = service.Errors()
+	err = db.Save(&service).Error
+	if err != nil {
+		data["errors"] = err.Error()
 	} else {
 		data["success"] = "Storage Service has been saved."
 	}
@@ -302,9 +311,13 @@ func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
 
 func BagsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	bags, _ := models.GetBags("", []interface{}{})
+	bags := make([]models.Bag, 0)
+	err := db.Find(&bags).Error
+	if err != nil {
+		log.Println(err.Error())
+	}
 	data["items"] = bags
-	err := templates.ExecuteTemplate(w, "bag-list", data)
+	err = templates.ExecuteTemplate(w, "bag-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -316,12 +329,14 @@ func BagDetail(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET Bag", id)
-	bag, _ := models.GetBag(int64(id))
+	bag := models.Bag{}
+	err := db.Find(&bag, id).Preload("Files").Error
+	if err != nil {
+		log.Println(err.Error())
+	}
 	data["item"] = bag
-	params := []interface{}{int64(id)}
-	files, _ := models.GetFiles("bag_id = ?", params)
-	data["items"] = files
-	err := templates.ExecuteTemplate(w, "bag-detail", data)
+	data["items"] = bag.Files
+	err = templates.ExecuteTemplate(w, "bag-detail", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -330,9 +345,13 @@ func BagDetail(w http.ResponseWriter, r *http.Request) {
 
 func WorkflowsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
-	bags, _ := models.GetWorkflows("", []interface{}{}, "")
-	data["items"] = bags
-	err := templates.ExecuteTemplate(w, "workflow-list", data)
+	workflows := make([]models.Workflow, 0)
+	err := db.Find(&workflows).Error
+	if err != nil {
+		log.Println(err.Error())
+	}
+	data["items"] = workflows
+	err = templates.ExecuteTemplate(w, "workflow-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -343,14 +362,11 @@ func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
 	workflow := models.Workflow{}
 	postUrl := "/workflow/new"
 	data := make(map[string]interface{})
-	// TODO -> Replace or safely dereference Int64 pointers!
-	workflow.ProfileId = &zero
-	workflow.StorageServiceId = &zero
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
-	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -371,19 +387,18 @@ func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
 	}
 	data := make(map[string]interface{})
 	postUrl := "/workflow/new"
-	ok := workflow.Save(true)
-	if !ok {
-		data["errors"] = workflow.Errors()
+	err = db.Save(&workflow).Error
+	if err != nil {
+		data["errors"] = err.Error()
 	} else {
 		data["success"] = "Workflow has been saved."
-		postUrl = fmt.Sprintf("/workflow/%d/edit", workflow.Id)
+		postUrl = fmt.Sprintf("/workflow/%d/edit", workflow.ID)
 	}
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	// TODO -> Replace or safely dereference Int64 pointers!
-	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -396,16 +411,17 @@ func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET Workflow", id)
-	workflow, _ := models.GetWorkflow(int64(id))
+	workflow := models.Workflow{}
+	db.Find(&workflow, uint(id))
+	//workflow, _ := models.GetWorkflow(int64(id))
 	// log.Println(workflow)
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	data := make(map[string]interface{})
-	// TODO -> Replace or safely dereference Int64 pointers!
-	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
+	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -427,21 +443,21 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	workflow.Id = int64(id)
+	workflow.ID = uint(id)
 	data := make(map[string]interface{})
-	ok := workflow.Save(true)
-	if !ok {
-		data["errors"] = workflow.Errors()
+	err = db.Save(&workflow).Error
+	if err != nil {
+		data["errors"] = err.Error()
 	} else {
 		data["success"] = "Workflow has been saved."
 	}
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
 	// TODO -> Replace or safely dereference Int64 pointers!
-	form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
+	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
+	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
+	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -450,36 +466,36 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetProfileDefaultTagFields(profile *models.BagItProfile) []fields.FieldInterface {
-	formFields := make([]fields.FieldInterface, 0)
-	bagItProfile, err := profile.Profile()
-	if err != nil {
-		log.Println(err.Error())
-		return nil
-	}
-	where := "profile_id = ? and tag_file = ? and tag_name = ?"
-	for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
-		for tagname, _ := range mapOfRequiredTags { // _ is tag description
-			values := []interface{}{profile.Id, relFilePath, tagname}
-			defaultTags, err := models.GetDefaultTagValues(where, values)
-			if err != nil {
-				log.Println(err.Error())
-				return nil
-			}
-			defaultValue := ""
-			if len(defaultTags) > 0 {
-				defaultValue = defaultTags[0].TagValue
-			}
-			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
-			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
-			formField := fields.TextField(fieldName)
-			formField.SetLabel(fieldLabel)
-			formField.SetValue(defaultValue)
-			formFields = append(formFields, formField)
-		}
-	}
-	return formFields
-}
+// func GetProfileDefaultTagFields(profile models.BagItProfile) []fields.FieldInterface {
+// 	formFields := make([]fields.FieldInterface, 0)
+// 	bagItProfile, err := profile.Profile()
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		return nil
+// 	}
+// 	where := "profile_id = ? and tag_file = ? and tag_name = ?"
+// 	for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
+// 		for tagname, _ := range mapOfRequiredTags { // _ is tag description
+// 			values := []interface{}{profile.Id, relFilePath, tagname}
+// 			defaultTags, err := models.GetDefaultTagValues(where, values)
+// 			if err != nil {
+// 				log.Println(err.Error())
+// 				return nil
+// 			}
+// 			defaultValue := ""
+// 			if len(defaultTags) > 0 {
+// 				defaultValue = defaultTags[0].TagValue
+// 			}
+// 			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
+// 			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
+// 			formField := fields.TextField(fieldName)
+// 			formField.SetLabel(fieldLabel)
+// 			formField.SetValue(defaultValue)
+// 			formFields = append(formFields, formField)
+// 		}
+// 	}
+// 	return formFields
+// }
 
 func OpenBrowser(url string) {
 	var cmd string
@@ -547,9 +563,9 @@ func InitDBConnection() {
 		panic(err.Error())
 	}
 	dbFilePath := filepath.Join(filepath.Dir(schemaPath), "..", "..", "easy-store.db")
-	conn, err := sqlx.Connect("sqlite3", dbFilePath)
+	// This sets the main global var db.
+	db, err = gorm.Open("sqlite3", dbFilePath)
 	if err != nil {
 		panic(err.Error())
 	}
-	models.SetConnection(models.DEFAULT_CONNECTION, conn)
 }

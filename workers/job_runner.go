@@ -2,12 +2,12 @@ package workers
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/bagit"
+	//	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/db/models"
-	"github.com/APTrust/easy-store/util/fileutil"
+	//	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
-	"os"
-	"path/filepath"
+	//	"os"
+	//	"path/filepath"
 )
 
 type JobRunner struct {
@@ -42,68 +42,68 @@ func (r JobRunner) Run() bool {
 // BagItProfile specified in JobRunner.Job.Profile(). If there's
 // no bag or profile specified, this is a no-op.
 func (r JobRunner) BuildBag() bool {
-	if r.profile != nil && r.bag != nil {
-		// TODO: Use GeneralSettings.BuildDir + r.bag.Name for bagPath
-		bagPath, err := fileutil.ExpandTilde("~/tmp/easy-store/staging")
-		if err != nil {
-			r.AddError("Cannot determine path to bag building directory: %s", err.Error())
-			return false
-		}
-		if err := os.MkdirAll(filepath.Dir(bagPath), 0755); err != nil {
-			r.AddError("Cannot create bag building directory: %s", err.Error())
-			return false
-		}
-		bagItProfile, err := r.profile.Profile()
-		if err != nil {
-			r.AddError("Error reading BagIt profile: %s", err.Error())
-			return false
-		}
-		bagger, err := bagit.NewBagger(bagPath, bagItProfile)
-		if err != nil {
-			r.AddError("Error creating bagger: %s", err.Error())
-			return false
-		}
+	// if r.profile != nil && r.bag != nil {
+	// 	// TODO: Use GeneralSettings.BuildDir + r.bag.Name for bagPath
+	// 	bagPath, err := fileutil.ExpandTilde("~/tmp/easy-store/staging")
+	// 	if err != nil {
+	// 		r.AddError("Cannot determine path to bag building directory: %s", err.Error())
+	// 		return false
+	// 	}
+	// 	if err := os.MkdirAll(filepath.Dir(bagPath), 0755); err != nil {
+	// 		r.AddError("Cannot create bag building directory: %s", err.Error())
+	// 		return false
+	// 	}
+	// 	bagItProfile, err := r.profile.Profile()
+	// 	if err != nil {
+	// 		r.AddError("Error reading BagIt profile: %s", err.Error())
+	// 		return false
+	// 	}
+	// 	bagger, err := bagit.NewBagger(bagPath, bagItProfile)
+	// 	if err != nil {
+	// 		r.AddError("Error creating bagger: %s", err.Error())
+	// 		return false
+	// 	}
 
-		// Add in the default tags for this profile.
-		defaults, err := r.profile.DefaultTagValues()
-		if err != nil {
-			r.AddError("Error creating bagger: %s", err.Error())
-			return false
-		}
-		for _, dtv := range defaults {
-			keyValuePair := bagit.NewKeyValuePair(dtv.TagName, dtv.TagValue)
-			bagger.AddTag(dtv.TagFile, &keyValuePair)
-		}
+	// 	// Add in the default tags for this profile.
+	// 	defaults, err := r.profile.DefaultTagValues()
+	// 	if err != nil {
+	// 		r.AddError("Error creating bagger: %s", err.Error())
+	// 		return false
+	// 	}
+	// 	for _, dtv := range defaults {
+	// 		keyValuePair := bagit.NewKeyValuePair(dtv.TagName, dtv.TagValue)
+	// 		bagger.AddTag(dtv.TagFile, &keyValuePair)
+	// 	}
 
-		// Add custom tag data to bagItProfile.
-		// These are bag-level tags. We also need to merge in the default
-		// tags that pertain to all bags (e.g. sender organization).
-		for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
-			for tagname, _ := range mapOfRequiredTags { // _ is tag description
-				// Add values for bag-level tags.
-				values := []interface{}{r.bag.Id, tagname}
-				tags, err := models.GetTags("bag_id = ? and name = ?", values)
-				if err != nil {
-					r.AddError("Error getting tags for %s/%s: %s", relFilePath, tagname, err.Error())
-					return false
-				}
-				for _, tag := range tags {
-					keyValuePair := bagit.NewKeyValuePair(tag.Name, tag.Value)
-					bagger.AddTag(relFilePath, &keyValuePair)
-				}
-			}
-		}
+	// 	// Add custom tag data to bagItProfile.
+	// 	// These are bag-level tags. We also need to merge in the default
+	// 	// tags that pertain to all bags (e.g. sender organization).
+	// 	for relFilePath, mapOfRequiredTags := range bagItProfile.TagFilesRequired {
+	// 		for tagname, _ := range mapOfRequiredTags { // _ is tag description
+	// 			// Add values for bag-level tags.
+	// 			values := []interface{}{r.bag.Id, tagname}
+	// 			tags, err := models.GetTags("bag_id = ? and name = ?", values)
+	// 			if err != nil {
+	// 				r.AddError("Error getting tags for %s/%s: %s", relFilePath, tagname, err.Error())
+	// 				return false
+	// 			}
+	// 			for _, tag := range tags {
+	// 				keyValuePair := bagit.NewKeyValuePair(tag.Name, tag.Value)
+	// 				bagger.AddTag(relFilePath, &keyValuePair)
+	// 			}
+	// 		}
+	// 	}
 
-		// Write the bag to disk. First true means overwrite existing bag.
-		// Second true means verify that all tags required by profile are
-		// present.
-		if !bagger.WriteBag(true, true) {
-			for _, errMsg := range bagger.Errors() {
-				r.AddError(errMsg)
-			}
-			return false
-		}
-	}
+	// 	// Write the bag to disk. First true means overwrite existing bag.
+	// 	// Second true means verify that all tags required by profile are
+	// 	// present.
+	// 	if !bagger.WriteBag(true, true) {
+	// 		for _, errMsg := range bagger.Errors() {
+	// 			r.AddError(errMsg)
+	// 		}
+	// 		return false
+	// 	}
+	// }
 	return true
 }
 
@@ -127,75 +127,75 @@ func (r JobRunner) CopyBagToRemote() bool {
 }
 
 func (r JobRunner) ConfigDataOk() bool {
-	if r.Job == nil {
-		r.AddError("Job cannot be null")
-		return false
-	}
-	var err error
-	r.workflow, err = r.Job.Workflow()
-	if r.workflow == nil {
-		if err != nil {
-			r.AddError("Cannot retrieve workflow: %v", err)
-		} else {
-			r.AddError("Cannot run job without workflow")
-		}
-		return false
-	}
-	// We'll get an error only if profile is set and is not
-	// retrievable. There will be no error if the
-	// workflow.ProfileId is nil. The same goes for the calls
-	// to StorageService(), Bag(), and File().
-	r.profile, err = r.workflow.Profile()
-	if err != nil {
-		r.AddError("Cannot retrieve BagIt profile for this workflow: %v", err)
-		return false
-	}
-	r.storageService, err = r.workflow.StorageService()
-	if err != nil {
-		r.AddError("Cannot retrieve storage service for this workflow: %v", err)
-		return false
-	}
-	r.bag, err = r.Job.Bag()
-	if err != nil {
-		r.AddError("Cannot retrieve the bag record for this job: %v", err)
-		return false
-	}
-	// File will only exist if the Workflow does not include any
-	// bagging. In that case, the Workflow is to copy the specified
-	// file to the storage service.
-	r.file, err = r.Job.File()
-	if err != nil {
-		r.AddError("Cannot retrieve the file record for this job: %v", err)
-		return false
-	}
+	// if r.Job == nil {
+	// 	r.AddError("Job cannot be null")
+	// 	return false
+	// }
+	// var err error
+	// r.workflow, err = r.Job.Workflow()
+	// if r.workflow == nil {
+	// 	if err != nil {
+	// 		r.AddError("Cannot retrieve workflow: %v", err)
+	// 	} else {
+	// 		r.AddError("Cannot run job without workflow")
+	// 	}
+	// 	return false
+	// }
+	// // We'll get an error only if profile is set and is not
+	// // retrievable. There will be no error if the
+	// // workflow.ProfileId is nil. The same goes for the calls
+	// // to StorageService(), Bag(), and File().
+	// r.profile, err = r.workflow.Profile()
+	// if err != nil {
+	// 	r.AddError("Cannot retrieve BagIt profile for this workflow: %v", err)
+	// 	return false
+	// }
+	// r.storageService, err = r.workflow.StorageService()
+	// if err != nil {
+	// 	r.AddError("Cannot retrieve storage service for this workflow: %v", err)
+	// 	return false
+	// }
+	// r.bag, err = r.Job.Bag()
+	// if err != nil {
+	// 	r.AddError("Cannot retrieve the bag record for this job: %v", err)
+	// 	return false
+	// }
+	// // File will only exist if the Workflow does not include any
+	// // bagging. In that case, the Workflow is to copy the specified
+	// // file to the storage service.
+	// r.file, err = r.Job.File()
+	// if err != nil {
+	// 	r.AddError("Cannot retrieve the file record for this job: %v", err)
+	// 	return false
+	// }
 
-	// The presence of a BagItProfile indicates that the job
-	// includes creating a bag. The presence of a StorageService
-	// indicates that the job includes copying a bag or file to
-	// the remote storage service.
-	if r.profile == nil && r.storageService == nil {
-		r.AddError("This workflow has no BagIt profile and no storage service, so there " +
-			"is nothing to do.")
-		return false
-	}
-	if r.profile != nil && r.bag == nil {
-		r.AddError("This workflow includes a bagging task, but the bag record is missing.")
-		return false
-	}
-	if r.storageService != nil && r.bag == nil && r.file == nil {
-		r.AddError("This workflow includes an upload task, but no bag or file is specified.")
-		return false
-	}
-	if r.bag != nil {
-		r.files, err = r.bag.Files()
-		if err != nil {
-			r.AddError("Cannot get files for bag %s: %s", r.bag.Name, err.Error())
-			return false
-		} else if len(r.files) == 0 {
-			r.AddError("Bag %s has no files.", r.bag.Name)
-			return false
-		}
-	}
+	// // The presence of a BagItProfile indicates that the job
+	// // includes creating a bag. The presence of a StorageService
+	// // indicates that the job includes copying a bag or file to
+	// // the remote storage service.
+	// if r.profile == nil && r.storageService == nil {
+	// 	r.AddError("This workflow has no BagIt profile and no storage service, so there " +
+	// 		"is nothing to do.")
+	// 	return false
+	// }
+	// if r.profile != nil && r.bag == nil {
+	// 	r.AddError("This workflow includes a bagging task, but the bag record is missing.")
+	// 	return false
+	// }
+	// if r.storageService != nil && r.bag == nil && r.file == nil {
+	// 	r.AddError("This workflow includes an upload task, but no bag or file is specified.")
+	// 	return false
+	// }
+	// if r.bag != nil {
+	// 	r.files, err = r.bag.Files()
+	// 	if err != nil {
+	// 		r.AddError("Cannot get files for bag %s: %s", r.bag.Name, err.Error())
+	// 		return false
+	// 	} else if len(r.files) == 0 {
+	// 		r.AddError("Bag %s has no files.", r.bag.Name)
+	// 		return false
+	// 	}
+	// }
 	return true
 }
 
