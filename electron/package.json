@@ -1,5 +1,8 @@
 {
-  "name"    : "Easy Store Gooey",
-  "version" : "0.1.0",
-  "main"    : "main.js"
+  "name": "Easy Store Gooey",
+  "version": "0.1.0",
+  "main": "main.js",
+  "dependencies": {
+    "electron-context-menu": "^0.9.1"
+  }
 }
