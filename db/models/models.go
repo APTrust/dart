@@ -21,6 +21,7 @@ type Bag struct {
 
 type File struct {
 	gorm.Model        `form_options:"skip"`
+	BagID             int64
 	Name              string
 	Size              int64
 	Md5               string    `form_options:"skip"`
@@ -46,10 +47,11 @@ func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 }
 
 type DefaultTagValue struct {
-	gorm.Model `form_options:"skip"`
-	TagFile    string
-	TagName    string
-	TagValue   string
+	gorm.Model     `form_options:"skip"`
+	BagItProfileID int64
+	TagFile        string
+	TagName        string
+	TagValue       string
 }
 
 type AppSetting struct {
@@ -60,9 +62,9 @@ type AppSetting struct {
 
 type Job struct {
 	gorm.Model         `form_options:"skip"`
-	Bag                Bag       `form_widget:"select"`
-	File               File      `form_widget:"select"`
-	Workflow           Workflow  `form_widget:"select"`
+	BagID              int64     `form_widget:"select"`
+	FileID             int64     `form_widget:"select"`
+	WorkflowID         int64     `form_widget:"select"`
 	WorkflowSnapshot   string    `form_options:"skip"`
 	ScheduledStartTime time.Time `form_options:"skip"`
 	StartedAt          time.Time `form_options:"skip"`
@@ -86,7 +88,7 @@ type StorageService struct {
 
 type Tag struct {
 	gorm.Model  `form_options:"skip"`
-	Bag         Bag `form_widget:"select"`
+	BagID       int64 `form_widget:"select"`
 	RelFilePath string
 	Name        string
 	Value       string
@@ -96,7 +98,7 @@ type Workflow struct {
 	gorm.Model          `form_options:"skip"`
 	Name                string
 	Description         string
-	SerializationFormat string         `form_widget:"select"`
-	BagItProfile        BagItProfile   `form_widget:"select"`
-	StorageService      StorageService `form_widget:"select"`
+	SerializationFormat string `form_widget:"select"`
+	BagItProfileID      int64  `form_widget:"select"`
+	StorageServiceID    int64  `form_widget:"select"`
 }

@@ -368,8 +368,8 @@ func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
-	form.Field("BagItProfile").SetSelectChoices(GetOptions("BagItProfile"))
-	form.Field("StorageService").SetSelectChoices(GetOptions("StorageService"))
+	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -394,14 +394,18 @@ func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		data["success"] = "Workflow has been saved."
-		postUrl = fmt.Sprintf("/workflow/%d/edit", workflow.ID)
+		// Success here. Redirect to list of workflows.
+		data["success"] = fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
+		http.Redirect(w, r, "/workflows", 303)
+		return
 	}
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
+	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
+	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("BagItProfileID").SetValue(strconv.FormatInt(workflow.BagItProfileID, 10))
+	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
+	form.Field("StorageServiceID").SetValue(strconv.FormatInt(workflow.StorageServiceID, 10))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -416,17 +420,15 @@ func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
 	log.Println("GET Workflow", id)
 	workflow := models.Workflow{}
 	db.Find(&workflow, uint(id))
-	//workflow, _ := models.GetWorkflow(int64(id))
-	// log.Println(workflow)
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
-	form.Field("BagItProfile").SetSelectChoices(GetOptions("BagItProfile"))
-	form.Field("BagItProfile").SetValue(string(workflow.BagItProfile.ID))
-	form.Field("StorageService").SetSelectChoices(GetOptions("StorageService"))
-	form.Field("StorageService").SetValue(string(workflow.StorageService.ID))
+	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("BagItProfileID").SetValue(string(workflow.BagItProfileID))
+	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
+	form.Field("StorageServiceID").SetValue(string(workflow.StorageServiceID))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -454,15 +456,19 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		data["success"] = "Workflow has been saved."
+		// Success here. Redirect to list of workflows.
+		data["success"] = fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
+		http.Redirect(w, r, "/workflows", 303)
+		return
 	}
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	// TODO -> Replace or safely dereference Int64 pointers!
-	// form.Field("ProfileId").SetSelectChoices(models.GetOptions("BagItProfile"))
-	// form.Field("ProfileId").SetValue(strconv.FormatInt(*workflow.ProfileId, 10))
-	// form.Field("StorageServiceId").SetSelectChoices(models.GetOptions("StorageService"))
-	// form.Field("StorageServiceId").SetValue(strconv.FormatInt(*workflow.StorageServiceId, 10))
+	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
+	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
+	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
+	form.Field("BagItProfileID").SetValue(string(workflow.BagItProfileID))
+	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
+	form.Field("StorageServiceID").SetValue(string(workflow.StorageServiceID))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -566,13 +572,17 @@ func GetOptions(modelName string) map[string][]fields.InputChoice {
 		profiles := make([]models.BagItProfile, 0)
 		db.Select("id, name").Find(&profiles).Order("name")
 		for _, profile := range profiles {
-			choices = append(choices, fields.InputChoice{Id: string(profile.ID), Val: profile.Name})
+			choices = append(choices, fields.InputChoice{
+				Id:  strconv.FormatUint(uint64(profile.ID), 10),
+				Val: profile.Name})
 		}
 	} else if modelName == "StorageService" {
 		services := make([]models.StorageService, 0)
 		db.Select("id, name").Find(&services).Order("name")
 		for _, service := range services {
-			choices = append(choices, fields.InputChoice{Id: string(service.ID), Val: service.Name})
+			choices = append(choices, fields.InputChoice{
+				Id:  strconv.FormatUint(uint64(service.ID), 10),
+				Val: service.Name})
 		}
 	} else if modelName == "SerializationFormat" {
 		choices = append(choices, fields.InputChoice{Id: "gzip", Val: "gzip"})
