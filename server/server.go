@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/db/models"
+	"github.com/APTrust/easy-store/util/fileutil"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
@@ -126,7 +127,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	db.Find(&workflow, workflowId)
 
 	profile := &models.BagItProfile{}
-	db.Find(&profile, workflow.BagItProfileID)
+	db.Preload("DefaultTagValues").Find(&profile, workflow.BagItProfileID)
 
 	storageService := &models.StorageService{}
 	db.Find(&storageService, workflow.StorageServiceID)
@@ -134,14 +135,50 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	stagingDir := models.AppSetting{}
 	db.Where("name = ?", "Staging Directory").First(&stagingDir)
 
-	bagName := "BAG"
-	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + "\n"))
+	sourceDir := r.PostFormValue("SourceDir")
+	bagName := filepath.Base(sourceDir)
+	bagPath := filepath.Join(stagingDir.Value, bagName)
+	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + "\n\n"))
 	bagItProfile, err := profile.Profile()
 	if err != nil {
 		log.Println(err.Error())
 	}
-	bagger, err := bagit.NewBagger(stagingDir.Value, bagItProfile)
-	log.Println(bagger)
+	bagger, err := bagit.NewBagger(bagPath, bagItProfile)
+
+	sourceFiles, _ := fileutil.RecursiveFileList(sourceDir)
+	relDestPaths := make([]string, len(sourceFiles))
+	for i, absSrcPath := range sourceFiles {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+		w.Write([]byte("Adding file " + absSrcPath + " at " + relDestPath + "\n"))
+	}
+
+	w.Write([]byte("\n"))
+
+	for _, dtv := range profile.DefaultTagValues {
+		keyValuePair := &bagit.KeyValuePair{
+			Key:   dtv.TagName,
+			Value: dtv.TagValue,
+		}
+		bagger.AddTag(dtv.TagFile, keyValuePair)
+		w.Write([]byte("Adding tag " + dtv.TagName + " to file " + dtv.TagFile + "\n"))
+	}
+
+	w.Write([]byte("\n"))
+
+	overwriteExistingBag := true
+	checkRequiredTags := true
+	bagger.WriteBag(overwriteExistingBag, checkRequiredTags)
+	if len(bagger.Errors()) > 0 {
+		w.Write([]byte("Oops! We have some errors...\n"))
+		for _, errMsg := range bagger.Errors() {
+			w.Write([]byte(errMsg + "\n"))
+		}
+	} else {
+		w.Write([]byte("Bag was written to " + bagPath + "\n"))
+	}
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
