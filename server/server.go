@@ -135,9 +135,18 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 		data["errors"] = err.Error()
 	} else {
 		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
+		log.Println(defaultTagValues)
 		for _, val := range defaultTagValues {
-			valErr := db.Save(&val).Error
+			var valErr error
+			if db.NewRecord(val) {
+				log.Println("Creating", val.TagName, "=", val.TagValue)
+				valErr = db.Create(&val).Error
+			} else {
+				log.Println("Updting", val.TagName, "=", val.TagValue)
+				valErr = db.Save(&val).Error
+			}
 			if valErr != nil {
+				log.Println("Error on", val.TagName, ":", valErr.Error())
 				err = valErr
 			}
 		}
@@ -185,7 +194,7 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET profile", id)
 	profile := models.BagItProfile{}
-	db.First(&profile, id)
+	db.Preload("DefaultTagValues").First(&profile, id)
 	data := make(map[string]interface{})
 	form, err := profile.GetForm()
 	if err != nil {
@@ -219,9 +228,30 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
+		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
+		for _, val := range defaultTagValues {
+			var valErr error
+			if db.NewRecord(val) {
+				log.Println("Creating", val.TagName, "=", val.TagValue)
+				valErr = db.Create(&val).Error
+			} else {
+				log.Println("Updting", val.TagName, "=", val.TagValue)
+				valErr = db.Save(&val).Error
+			}
+			if valErr != nil {
+				log.Println("Error on", val.TagName, ":", valErr.Error())
+				err = valErr
+			}
+		}
+	}
+
+	if err != nil {
+		data["errors"] = err.Error()
+	} else {
 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
 		return
 	}
+
 	form, err := profile.GetForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
