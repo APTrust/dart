@@ -37,6 +37,7 @@ func main() {
 	r.HandleFunc("/bags", BagsList).Methods("GET")
 	r.HandleFunc("/bag/{id:[0-9]+}", BagDetail).Methods("GET")
 	r.HandleFunc("/job/new", JobNewGet).Methods("GET")
+	r.HandleFunc("/job/run", JobRun).Methods("POST")
 	r.HandleFunc("/profiles", ProfilesList)
 	r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
 	r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
@@ -94,17 +95,38 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 
 func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	job := models.Job{}
-	postUrl := "/job/new"
+	postUrl := "/job/run"
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
-	// form.Field("WorkflowId").SetSelectChoices(models.GetOptions("Workflow"))
-	//	form.Field("WorkflowId").SetValue(strconv.FormatInt(*workflowId, 10))
+	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// This is a crude job runner for demo. Break this out later,
+// add proper error handling, etc. And fix the models too.
+// We should be able to preload, instead of getting related ids
+// and issuing new queries.
+func JobRun(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println("Error:", err.Error())
+	}
+	// xxxx
+	workflowId, _ := strconv.Atoi(r.PostFormValue("WorkflowID"))
+	workflow := &models.Workflow{}
+	db.Find(&workflow, workflowId)
+
+	profile := &models.BagItProfile{}
+	db.Find(&profile, workflow.BagItProfileID)
+
+	storageService := &models.StorageService{}
+	db.Find(&storageService, workflow.StorageServiceID)
+
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
@@ -738,6 +760,14 @@ func GetOptions(modelName string) map[string][]fields.InputChoice {
 				Id:  strconv.FormatUint(uint64(service.ID), 10),
 				Val: service.Name})
 		}
+	} else if modelName == "Workflow" {
+		workflows := make([]models.Workflow, 0)
+		db.Select("id, name").Find(&workflows).Order("name")
+		for _, workflow := range workflows {
+			choices = append(choices, fields.InputChoice{
+				Id:  strconv.FormatUint(uint64(workflow.ID), 10),
+				Val: workflow.Name})
+		}
 	} else if modelName == "SerializationFormat" {
 		choices = append(choices, fields.InputChoice{Id: "gzip", Val: "gzip"})
 		choices = append(choices, fields.InputChoice{Id: "tar", Val: "tar"})
@@ -768,4 +798,5 @@ func InitDBConnection() {
 	if err != nil {
 		panic(err.Error())
 	}
+	db.LogMode(true)
 }

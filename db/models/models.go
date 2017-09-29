@@ -155,8 +155,8 @@ type AppSetting struct {
 
 type Job struct {
 	gorm.Model         `form_options:"skip"`
-	BagID              int64     `form_widget:"select"`
-	FileID             int64     `form_widget:"select"`
+	BagID              int64     `form_options:"skip"`
+	FileID             int64     `form_options:"skip"`
 	WorkflowID         int64     `form_widget:"select"`
 	WorkflowSnapshot   string    `form_options:"skip"`
 	ScheduledStartTime time.Time `form_options:"skip"`
