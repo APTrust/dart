@@ -64,7 +64,7 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	}
 	defaultValueFields := make([]fields.FieldInterface, 0)
 	for relFilePath, mapOfRequiredTags := range profileDef.TagFilesRequired {
-		for tagname, _ := range mapOfRequiredTags { // _ is tag description
+		for tagname, tagdef := range mapOfRequiredTags {
 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
 			defaultValue := ""
 			if len(defaultTags) > 0 {
@@ -72,7 +72,16 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 			}
 			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
 			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
+
 			formField := fields.TextField(fieldName)
+			if len(tagdef.Values) > 0 {
+				options := make(map[string][]fields.InputChoice)
+				options[""] = make([]fields.InputChoice, len(tagdef.Values))
+				for i, val := range tagdef.Values {
+					options[""][i] = fields.InputChoice{Id: val, Val: val}
+				}
+				formField = fields.SelectField(fieldName, options)
+			}
 			formField.SetLabel(fieldLabel)
 			formField.SetValue(defaultValue)
 			defaultValueFields = append(defaultValueFields, formField)
