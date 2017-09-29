@@ -139,7 +139,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	sourceDir := r.PostFormValue("SourceDir")
 	bagName := filepath.Base(sourceDir)
 	bagPath := filepath.Join(stagingDir.Value, bagName)
-	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + "\n\n"))
+	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + " using profile " +
+		profile.Name + "\n\n"))
 	bagItProfile, err := profile.Profile()
 	if err != nil {
 		log.Println(err.Error())
@@ -180,6 +181,18 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		w.Write([]byte("Bag was written to " + bagPath + "\n"))
+	}
+
+	w.Write([]byte("\n\nValidating bag...\n\n"))
+	bag := bagit.NewBag(bagPath)
+	validator := bagit.NewValidator(bag, bagItProfile)
+	validator.ReadBag()
+	if len(validator.Errors()) > 0 {
+		for _, errMsg := range validator.Errors() {
+			w.Write([]byte(errMsg + "\n"))
+		}
+	} else {
+		w.Write([]byte("Bag is valid\n"))
 	}
 }
 
