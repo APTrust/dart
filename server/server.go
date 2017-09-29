@@ -14,6 +14,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -102,10 +103,15 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
-	data := make(map[string]interface{})
 	profile := models.BagItProfile{}
-	data["form"] = forms.BootstrapFormFromModel(profile, forms.POST, "/profile/new")
-	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	form, err := profile.GetForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data := make(map[string]interface{})
+	data["form"] = form
+	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -113,6 +119,7 @@ func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error:", err.Error())
@@ -122,17 +129,20 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	postUrl := fmt.Sprintf("/profile/new")
-	data := make(map[string]interface{})
 	err = db.Save(&profile).Error
 	if err != nil {
 		log.Println("Error:", err.Error())
 		data["errors"] = err.Error()
-		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
 	} else {
-		data["success"] = "Profile has been saved."
+		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
+		return
 	}
-	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	form, err := profile.GetForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data["form"] = form
 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -145,6 +155,10 @@ func ProfilesList(w http.ResponseWriter, r *http.Request) {
 	profiles := make([]models.BagItProfile, 0)
 	db.Find(&profiles).Order("name")
 	data["items"] = profiles
+	successMessage, ok := r.URL.Query()["success"]
+	if ok {
+		data["success"] = successMessage[0]
+	}
 	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -173,6 +187,7 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
+	data := make(map[string]interface{})
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("POST profile", id)
@@ -186,15 +201,19 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error:", err.Error())
 	}
 	profile.ID = uint(id)
-	data := make(map[string]interface{})
 	err = db.Save(&profile).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		data["success"] = "Profile has been saved."
+		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
+		return
 	}
-	postUrl := fmt.Sprintf("/profile/%d/edit", id)
-	data["form"] = forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	form, err := profile.GetForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data["form"] = form
 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -207,6 +226,10 @@ func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 	services := make([]models.StorageService, 0)
 	db.Find(&services)
 	data["items"] = services
+	successMessage, ok := r.URL.Query()["success"]
+	if ok {
+		data["success"] = successMessage[0]
+	}
 	err := templates.ExecuteTemplate(w, "storage-service-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -244,7 +267,9 @@ func StorageServiceNewPost(w http.ResponseWriter, r *http.Request) {
 		data["errors"] = err.Error()
 		postUrl = fmt.Sprintf("/storage_service/%d/edit", service.ID)
 	} else {
-		data["success"] = "Service has been saved."
+		msg := fmt.Sprintf("Storage Service '%s' has been saved", service.Name)
+		http.Redirect(w, r, "/storage_services?success="+url.QueryEscape(msg), 303)
+		return
 	}
 	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
 	err = templates.ExecuteTemplate(w, "storage-service-form", data)
@@ -296,7 +321,9 @@ func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		data["success"] = "Storage Service has been saved."
+		msg := fmt.Sprintf("Storage Service '%s' has been saved", service.Name)
+		http.Redirect(w, r, "/storage_services?success="+url.QueryEscape(msg), 303)
+		return
 	}
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
@@ -315,6 +342,10 @@ func BagsList(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 	data["items"] = bags
+	successMessage, ok := r.URL.Query()["success"]
+	if ok {
+		data["success"] = successMessage[0]
+	}
 	err = templates.ExecuteTemplate(w, "bag-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -349,6 +380,10 @@ func WorkflowsList(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 	}
 	data["items"] = workflows
+	successMessage, ok := r.URL.Query()["success"]
+	if ok {
+		data["success"] = successMessage[0]
+	}
 	err = templates.ExecuteTemplate(w, "workflow-list", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -388,9 +423,8 @@ func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		// Success here. Redirect to list of workflows.
-		data["success"] = fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
-		http.Redirect(w, r, "/workflows", 303)
+		msg := fmt.Sprintf("Workflow '%s' has been saved", workflow.Name)
+		http.Redirect(w, r, "/workflows?success="+url.QueryEscape(msg), 303)
 		return
 	}
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
@@ -450,9 +484,8 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
-		// Success here. Redirect to list of workflows.
-		data["success"] = fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
-		http.Redirect(w, r, "/workflows", 303)
+		msg := fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
+		http.Redirect(w, r, "/workflows?success="+url.QueryEscape(msg), 303)
 		return
 	}
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)

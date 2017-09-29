@@ -1,6 +1,11 @@
 {{ define "storage-service-list" }}
 {{ template "page_top" . }}
 
+{{ if .success }}
+<div class="alert alert-success" role="alert">
+  {{ .success }}
+</div>
+{{ end }}
 
 <h1>Storage Services</h1>
 <div class="pull-right">

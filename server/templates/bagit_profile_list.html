@@ -2,6 +2,13 @@
 {{ template "page_top" . }}
 
 
+{{ if .success }}
+<div class="alert alert-success" role="alert">
+  {{ .success }}
+</div>
+{{ end }}
+
+
 <h1>BagIt Profiles</h1>
 <div class="pull-right">
   <a class="btn btn-primary" href="/profile/new" role="button">New</a>

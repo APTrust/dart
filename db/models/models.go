@@ -58,19 +58,25 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
 	}
 	form := forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	if profile.JSON == "" {
+		return form, nil
+	}
 	profileDef, err := profile.Profile()
 	if err != nil {
 		return nil, err
 	}
 	defaultValueFields := make([]fields.FieldInterface, 0)
+	// TODO: Sort by file name into field groups, order by tag name
 	for relFilePath, mapOfRequiredTags := range profileDef.TagFilesRequired {
 		for tagname, tagdef := range mapOfRequiredTags {
 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
 			defaultValue := ""
+			defaultTagId := uint(0)
 			if len(defaultTags) > 0 {
 				defaultValue = defaultTags[0].TagValue
+				defaultTagId = defaultTags[0].ID
 			}
-			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
+			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
 			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
 
 			formField := fields.TextField(fieldName)
