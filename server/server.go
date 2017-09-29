@@ -23,7 +23,6 @@ import (
 
 var templates *template.Template
 var decoder = schema.NewDecoder()
-var zero = int64(0)
 var db *gorm.DB
 
 func main() {
@@ -160,18 +159,24 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
 	db.First(&profile, id)
 	// log.Println(profile)
-	postUrl := fmt.Sprintf("/profile/%d/edit", id)
+	// postUrl := fmt.Sprintf("/profile/%d/edit", id)
 	data := make(map[string]interface{})
-	form := forms.BootstrapFormFromModel(profile, forms.POST, postUrl)
+	//form := forms.BootstrapFormFromModel(profile, forms.POST, postUrl)
 
 	// defaultValueFields := GetProfileDefaultTagFields(profile)
 	// if defaultValueFields != nil {
 	// 	fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
 	// 	form.Elements(fieldSet)
 	// }
+
+	form, err := profile.GetForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	data["form"] = form
 
-	err := templates.ExecuteTemplate(w, "bagit-profile-form", data)
+	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

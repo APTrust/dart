@@ -2,9 +2,12 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/kirves/go-form-it"
+	"github.com/kirves/go-form-it/fields"
 	"time"
 )
 
@@ -44,6 +47,56 @@ func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	bagItProfile := &bagit.BagItProfile{}
 	err := json.Unmarshal([]byte(profile.JSON), bagItProfile)
 	return bagItProfile, err
+}
+
+// TODO: Method that returns populated form with controls
+// for DefaultTagValues.
+
+func (profile *BagItProfile) GetForm() (*forms.Form, error) {
+	postUrl := fmt.Sprintf("/profile/new")
+	if profile.ID > uint(0) {
+		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
+	}
+	form := forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	profileDef, err := profile.Profile()
+	if err != nil {
+		return nil, err
+	}
+	defaultValueFields := make([]fields.FieldInterface, 0)
+	for relFilePath, mapOfRequiredTags := range profileDef.TagFilesRequired {
+		for tagname, _ := range mapOfRequiredTags { // _ is tag description
+			// defaultTags := make([]DefaultTagValue, 0)
+			// db.Where("bagit_profile_id = ? and tag_file = ? and tag_name = ?",
+			// 	profile.ID, relFilePath, tagname).Find(&defaultTags)
+			// if db.Error != nil {
+			// 	return nil, db.Error
+			// }
+			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
+			defaultValue := ""
+			if len(defaultTags) > 0 {
+				defaultValue = defaultTags[0].TagValue
+			}
+			fieldName := fmt.Sprintf("%s_%s", relFilePath, tagname)
+			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
+			formField := fields.TextField(fieldName)
+			formField.SetLabel(fieldLabel)
+			formField.SetValue(defaultValue)
+			defaultValueFields = append(defaultValueFields, formField)
+		}
+	}
+	fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
+	form.Elements(fieldSet)
+	return form, nil
+}
+
+func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []DefaultTagValue {
+	defaults := make([]DefaultTagValue, 0)
+	for _, dtv := range profile.DefaultTagValues {
+		if dtv.TagFile == tagFile && dtv.TagName == tagName {
+			defaults = append(defaults, dtv)
+		}
+	}
+	return defaults
 }
 
 type DefaultTagValue struct {
