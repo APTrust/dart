@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
@@ -99,6 +100,9 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
 	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
+	sourceDirField := fields.HiddenField("SourceDir")
+	sourceDirField.SetId("SourceDir")
+	form.Elements(sourceDirField)
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
@@ -127,6 +131,17 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	storageService := &models.StorageService{}
 	db.Find(&storageService, workflow.StorageServiceID)
 
+	stagingDir := models.AppSetting{}
+	db.Where("name = ?", "Staging Directory").First(&stagingDir)
+
+	bagName := "BAG"
+	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + "\n"))
+	bagItProfile, err := profile.Profile()
+	if err != nil {
+		log.Println(err.Error())
+	}
+	bagger, err := bagit.NewBagger(stagingDir.Value, bagItProfile)
+	log.Println(bagger)
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {

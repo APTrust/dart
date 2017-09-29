@@ -51,9 +51,6 @@ func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	return bagItProfile, err
 }
 
-// TODO: Method that returns populated form with controls
-// for DefaultTagValues.
-
 func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	postUrl := fmt.Sprintf("/profile/new")
 	if profile.ID > uint(0) {

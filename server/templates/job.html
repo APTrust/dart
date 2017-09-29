@@ -32,6 +32,8 @@
       } else {
          output.innerHTML += '<div><span class="glyphicon glyphicon-file" aria-hidden="true">' + f.path + '</span></div>';
       }
+      // Note that for the demo, this will only save the last path
+      $('#SourceDir').val(f.path)
 	}
   });
   document.getElementById('payload').addEventListener('dragover', function (e) {
