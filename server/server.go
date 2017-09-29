@@ -134,9 +134,23 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error:", err.Error())
 		data["errors"] = err.Error()
 	} else {
+		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
+		for _, val := range defaultTagValues {
+			valErr := db.Save(&val).Error
+			if valErr != nil {
+				err = valErr
+			}
+		}
+	}
+
+	if err != nil {
+		log.Println("Error:", err.Error())
+		data["errors"] = err.Error()
+	} else {
 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
 		return
 	}
+
 	form, err := profile.GetForm()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

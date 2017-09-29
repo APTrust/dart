@@ -8,6 +8,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kirves/go-form-it"
 	"github.com/kirves/go-form-it/fields"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -58,6 +60,7 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
 	}
 	form := forms.BootstrapFormFromModel(*profile, forms.POST, postUrl)
+	form.Field("JSON").AddCss("height", "300px")
 	if profile.JSON == "" {
 		return form, nil
 	}
@@ -113,6 +116,27 @@ func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []Defa
 		}
 	}
 	return defaults
+}
+
+func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []DefaultTagValue {
+	values := make([]DefaultTagValue, 0)
+	for key, value := range data {
+		if !strings.Contains(key, "|") {
+			continue
+		}
+		keyParts := strings.Split(key, "|")
+		//tagFile, tagName, tagId
+		dtv := DefaultTagValue{
+			BagItProfileID: int64(profile.ID), // TODO: int64 or uint??
+			TagFile:        keyParts[0],
+			TagName:        keyParts[1],
+			TagValue:       value[0],
+		}
+		id, _ := strconv.Atoi(keyParts[2])
+		dtv.ID = uint(id)
+		values = append(values, dtv)
+	}
+	return values
 }
 
 type DefaultTagValue struct {
