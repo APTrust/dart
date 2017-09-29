@@ -25,13 +25,15 @@
         ],
     "Tag-Files-Required": {
         "bagit.txt": {
-            "BagIt-Version": {
-                "required": true
-                },
-            "Tag-File-Character-Encoding": {
-                "required": true
-                }
+            "BagIt-Version":{
+                "required":true,
+                "values":["0.97"]
             },
+            "Tag-File-Character-Encoding":{
+                "required":true,
+                "values":["UTF-8"]
+            }
+        },
         "bag-info.txt": {
             "Source-Organization": {
                 "required": true,
