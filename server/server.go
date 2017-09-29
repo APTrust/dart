@@ -21,6 +21,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -149,7 +150,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	relDestPaths := make([]string, len(sourceFiles))
 	for i, absSrcPath := range sourceFiles {
 		// Use forward slash, even on Windows, for path of file inside bag
-		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		origPathMinusRootDir := strings.Replace(absSrcPath, sourceDir+"/", "", 1)
+		relDestPath := fmt.Sprintf("data/%s", origPathMinusRootDir)
 		bagger.AddFile(absSrcPath, relDestPath)
 		relDestPaths[i] = relDestPath
 		w.Write([]byte("Adding file " + absSrcPath + " at " + relDestPath + "\n"))
