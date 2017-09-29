@@ -65,12 +65,6 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	defaultValueFields := make([]fields.FieldInterface, 0)
 	for relFilePath, mapOfRequiredTags := range profileDef.TagFilesRequired {
 		for tagname, _ := range mapOfRequiredTags { // _ is tag description
-			// defaultTags := make([]DefaultTagValue, 0)
-			// db.Where("bagit_profile_id = ? and tag_file = ? and tag_name = ?",
-			// 	profile.ID, relFilePath, tagname).Find(&defaultTags)
-			// if db.Error != nil {
-			// 	return nil, db.Error
-			// }
 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
 			defaultValue := ""
 			if len(defaultTags) > 0 {
@@ -84,8 +78,15 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 			defaultValueFields = append(defaultValueFields, formField)
 		}
 	}
+	// Remove the submit button from the end of the form,
+	// add our new elements, and then replace the submit button
+	// at the end.
+	submitButton := form.Field("submit")
+	form.RemoveElement("submit")
 	fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
 	form.Elements(fieldSet)
+	form.Elements(submitButton)
+
 	return form, nil
 }
 
