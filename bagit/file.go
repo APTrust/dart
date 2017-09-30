@@ -156,9 +156,10 @@ func (file *File) formatField(key string, value string) (string, error) {
 	// values that span more than one line.
 	//
 	// For manifests, write the value (checksum) first, and the
-	// key (filename) after.
+	// key (filename) after, with no color. Tag files are key first,
+	// then colon, then formatted value.
 	if fileutil.LooksLikeManifest(file.FileSummary.RelPath) {
-		return fmt.Sprintf("%s: %s", value, key), nil
+		return fmt.Sprintf("%s %s", value, key), nil
 	}
 
 	delimiter := "\n   "
