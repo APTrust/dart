@@ -243,12 +243,12 @@ func TestWriteBag_APTrust(t *testing.T) {
 	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
 	expectedBagInfo := "Source-Organization:  APTrust\n"
 	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
-	expectedManifest := `data/hemingway.jpg:  6385e86c8489b28586d03320efd57dfe
-data/lighthouse.jpg:  c3b41207c1374fa0bc2c2d323afc580d
-data/president.jpg:  a41052eecd987d8175164c48f486945c
-data/sample.docx:  8ee0d735f4120b06de6ba8a9a4047336
-data/sample.pdf:  12dae6491cc10bd8d088b70852a39e2c
-data/sample.txt:  3585ab45da8cdfdcec64f8b6460c763f
+	expectedManifest := `6385e86c8489b28586d03320efd57dfe: data/hemingway.jpg
+c3b41207c1374fa0bc2c2d323afc580d: data/lighthouse.jpg
+a41052eecd987d8175164c48f486945c: data/president.jpg
+8ee0d735f4120b06de6ba8a9a4047336: data/sample.docx
+12dae6491cc10bd8d088b70852a39e2c: data/sample.pdf
+3585ab45da8cdfdcec64f8b6460c763f: data/sample.txt
 `
 
 	actualBagit, err := ioutil.ReadFile(filepath.Join(tempDir, "bagit.txt"))
@@ -366,17 +366,17 @@ Ingest-Node-Address:  160 McCormick Rd, Charlottesville, VA 22904
 Version-Number:  1
 Bag-Type:  data
 `
-	expectedManifest := `data/hemingway.jpg:  01d46064cdd20c943a1ceb09d523dddb052e52d7f7c0fd53cc928dfe6d6e0dd5
-data/lighthouse.jpg:  66363a6b2c64a5560d7cf17f3e39545320e888968f1bcef99dde732671415c44
-data/president.jpg:  a0dea3fd2e3f565c610f9a1b48bdbb0303d855090c230ac849b62c48267704de
-data/sample.docx:  ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb
-data/sample.pdf:  1a728e9068020801cdbf24d2ba4b359459a7c415ddb43a98c43e33f6373ee4fe
-data/sample.txt:  c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4
+	expectedManifest := `01d46064cdd20c943a1ceb09d523dddb052e52d7f7c0fd53cc928dfe6d6e0dd5: data/hemingway.jpg
+66363a6b2c64a5560d7cf17f3e39545320e888968f1bcef99dde732671415c44: data/lighthouse.jpg
+a0dea3fd2e3f565c610f9a1b48bdbb0303d855090c230ac849b62c48267704de: data/president.jpg
+ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb: data/sample.docx
+1a728e9068020801cdbf24d2ba4b359459a7c415ddb43a98c43e33f6373ee4fe: data/sample.pdf
+c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4: data/sample.txt
 `
-	expectedTagManifest := `manifest-sha256.txt:  7f2b1af17d92bffd7da61ac090d97cafac9e86dc7c10bc1189ef0b8ac00f13d8
-bag-info.txt:  7b5034929ac9b5ae96dc2d38b6afb092e5f1a774a0e773959db493f76685a83c
-bagit.txt:  49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4
-dpn-tags/dpn-info.txt:  ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887
+	expectedTagManifest := `5fe1d69e4ad9269d43f34e87157220c1737596be079c2fbf7a8c027b332bb6ea: manifest-sha256.txt
+7b5034929ac9b5ae96dc2d38b6afb092e5f1a774a0e773959db493f76685a83c: bag-info.txt
+49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4: bagit.txt
+ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887: dpn-tags/dpn-info.txt
 `
 
 	actualBagit, err := ioutil.ReadFile(filepath.Join(tempDir, "bagit.txt"))

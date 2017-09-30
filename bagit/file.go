@@ -155,16 +155,14 @@ func (file *File) formatField(key string, value string) (string, error) {
 	// The delimiter for tag files includes leading spaces for tag
 	// values that span more than one line.
 	//
-	// For manifests, we don't want checksum values to span multiple
-	// lines, so we don't set a line length. We also want to use a plain
-	// line break, with no indent, after each line.
-	delimiter := "\n   "
-	maxLineLength := 79
+	// For manifests, write the value (checksum) first, and the
+	// key (filename) after.
 	if fileutil.LooksLikeManifest(file.FileSummary.RelPath) {
-		delimiter = "\n"
-		maxLineLength = 0
+		return fmt.Sprintf("%s: %s", value, key), nil
 	}
 
+	delimiter := "\n   "
+	maxLineLength := 79
 	var buff bytes.Buffer
 	writeLen, err := buff.WriteString(fmt.Sprintf("%s: ", key))
 	if err != nil {
