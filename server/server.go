@@ -140,7 +140,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	db.Where("name = ?", "Staging Directory").First(&stagingDir)
 
 	sourceDir := r.PostFormValue("SourceDir")
-	bagName := filepath.Base(sourceDir)
+	// HACK for demo: add virginia.edu. as bag name prefix
+	bagName := "virginia.edu." + filepath.Base(sourceDir)
 	bagPath := filepath.Join(stagingDir.Value, bagName)
 	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + " using profile " +
 		profile.Name + "\n\n"))
@@ -256,7 +257,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		n, err := minioClient.FPutObject(storageService.BucketOrFolder,
-			fmt.Sprintf("virginia.edu.%s", tarFileName), // we're assuming the tar file was made for this demo
+			tarFileName, // we're assuming the tar file was made for this demo
 			bagPathForValidation,
 			minio.PutObjectOptions{ContentType: "application/x-tar"})
 		if err != nil {
