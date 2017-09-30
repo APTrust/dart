@@ -17,6 +17,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -122,7 +123,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	// xxxx
+
+	// Gather the info we need to create the bag
 	workflowId, _ := strconv.Atoi(r.PostFormValue("WorkflowID"))
 	workflow := &models.Workflow{}
 	db.Find(&workflow, workflowId)
@@ -145,8 +147,10 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	bagger, err := bagit.NewBagger(bagPath, bagItProfile)
 
+	// Create the bag by copying the files into a staging dir,
+	// adding tags and manifests.
+	bagger, err := bagit.NewBagger(bagPath, bagItProfile)
 	sourceFiles, _ := fileutil.RecursiveFileList(sourceDir)
 	relDestPaths := make([]string, len(sourceFiles))
 	for i, absSrcPath := range sourceFiles {
@@ -160,6 +164,10 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("\n"))
 
+	// This adds the tags from the profile's default tag values.
+	// In reality, several of the tags cannot come from general
+	// defaults, because they're bag-specific. E.g. Title,
+	// Description, Access, etc.
 	for _, dtv := range profile.DefaultTagValues {
 		keyValuePair := &bagit.KeyValuePair{
 			Key:   dtv.TagName,
@@ -171,6 +179,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte("\n"))
 
+	// Now that the bagger knows what to do, WriteBag() tells it to
+	// go ahead and write out all the contents to the staging area.
 	overwriteExistingBag := true
 	checkRequiredTags := true
 	bagger.WriteBag(overwriteExistingBag, checkRequiredTags)
@@ -180,11 +190,40 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(errMsg + "\n"))
 		}
 	} else {
-		w.Write([]byte("Bag was written to " + bagPath + "\n"))
+		w.Write([]byte("Bag was written to " + bagPath + "\n\n"))
 	}
 
+	// Tar the bag, if the Workflow config says to do that.
+	// In the future, we may support formats other than tar.
+	// Also, we will likely have to supply our own tar program
+	// because Windows users won't have one.
+	bagPathForValidation := bagPath
+	if workflow.SerializationFormat == "tar" {
+		cleanBagPath := bagPath
+		if strings.HasSuffix(bagPath, string(os.PathSeparator)) {
+			// Chop off final path separator, so call to filepath.Dir
+			// below will return the parent dir name.
+			cleanBagPath = bagPath[0 : len(bagPath)-1]
+		}
+		tarFileName := fmt.Sprintf("%s.tar", bagName)
+		workingDir := filepath.Dir(cleanBagPath)
+		tarFileAbsPath := filepath.Join(workingDir, tarFileName)
+		w.Write([]byte("Tarring bag to " + tarFileAbsPath + "\n"))
+		//cmd := exec.Command("tar", "cf", tarFileName, "--directory", bagName)
+		cmd := exec.Command("tar", "cf", tarFileName, bagName)
+		cmd.Dir = workingDir
+		commandOutput, err := cmd.CombinedOutput()
+		if err != nil {
+			w.Write([]byte(err.Error()))
+		}
+		w.Write(commandOutput)
+		w.Write([]byte("\n\n"))
+		bagPathForValidation = tarFileAbsPath
+	}
+
+	// Validate the bag, just to make sure...
 	w.Write([]byte("\n\nValidating bag...\n\n"))
-	bag := bagit.NewBag(bagPath)
+	bag := bagit.NewBag(bagPathForValidation)
 	validator := bagit.NewValidator(bag, bagItProfile)
 	validator.ReadBag()
 	if len(validator.Errors()) > 0 {
@@ -194,6 +233,11 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.Write([]byte("Bag is valid\n"))
 	}
+
+	// If the config includes an S3 upload, do that now.
+	// Use the minio client from https://minio.io/downloads.html#minio-client
+	// Doc is at https://docs.minio.io/docs/minio-client-complete-guide
+
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
