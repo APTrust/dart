@@ -232,6 +232,10 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		w.Write([]byte("Bag is valid\n"))
+		if fileutil.LooksSafeToDelete(bagPath, 15, 3) {
+			os.RemoveAll(bagPath)
+			w.Write([]byte("Deleting working directory, kept tar file\n"))
+		}
 	}
 
 	// If the config includes an S3 upload, do that now.
