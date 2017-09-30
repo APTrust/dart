@@ -13,6 +13,7 @@ import (
 	"github.com/kirves/go-form-it"
 	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/minio/minio-go"
 	"html/template"
 	"log"
 	"net/http"
@@ -114,7 +115,7 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// This is a crude job runner for demo. Break this out later,
+// This is a crude job runner for our demo. Break this out later,
 // add proper error handling, etc. And fix the models too.
 // We should be able to preload, instead of getting related ids
 // and issuing new queries.
@@ -198,6 +199,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	// Also, we will likely have to supply our own tar program
 	// because Windows users won't have one.
 	bagPathForValidation := bagPath
+	tarFileName := fmt.Sprintf("%s.tar", bagName)
 	if workflow.SerializationFormat == "tar" {
 		cleanBagPath := bagPath
 		if strings.HasSuffix(bagPath, string(os.PathSeparator)) {
@@ -205,7 +207,6 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 			// below will return the parent dir name.
 			cleanBagPath = bagPath[0 : len(bagPath)-1]
 		}
-		tarFileName := fmt.Sprintf("%s.tar", bagName)
 		workingDir := filepath.Dir(cleanBagPath)
 		tarFileAbsPath := filepath.Join(workingDir, tarFileName)
 		w.Write([]byte("Tarring bag to " + tarFileAbsPath + "\n"))
@@ -241,7 +242,30 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	// If the config includes an S3 upload, do that now.
 	// Use the minio client from https://minio.io/downloads.html#minio-client
 	// Doc is at https://docs.minio.io/docs/minio-client-complete-guide
-
+	// We're checking for S3, because this step is for demo only, and
+	// s3 is the only storage service we've implemented.
+	if storageService != nil && storageService.Protocol == "s3" {
+		// Hack for demo: get S3 keys out of the environment.
+		accessKeyID := os.Getenv("AWS_ACCESS_KEY_ID")
+		secretAccessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
+		useSSL := true
+		minioClient, err := minio.New(storageService.URL, accessKeyID, secretAccessKey, useSSL)
+		if err != nil {
+			w.Write([]byte("Error creating S3 uploader: " + err.Error() + "\n"))
+			w.Write([]byte(storageService.URL))
+			return
+		}
+		n, err := minioClient.FPutObject(storageService.BucketOrFolder,
+			fmt.Sprintf("virginia.edu.%s", tarFileName), // we're assuming the tar file was made for this demo
+			bagPathForValidation,
+			minio.PutObjectOptions{ContentType: "application/x-tar"})
+		if err != nil {
+			w.Write([]byte("Error uploading tar file to S3: " + err.Error() + "\n"))
+		} else {
+			msg := fmt.Sprintf("Successfully uploaded %s of size %d\n", tarFileName, n)
+			w.Write([]byte(msg + "\n"))
+		}
+	}
 }
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
