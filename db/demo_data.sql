@@ -1,7 +1,7 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE "app_settings" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"value" varchar(255) );
-INSERT INTO "app_settings" VALUES(1,'2017-09-30 09:47:16.330681732-04:00','2017-09-30 09:47:16.330681732-04:00',NULL,'Staging Directory','/Users/diamond/tmp/easy-store');
+INSERT INTO "app_settings" VALUES(1,'2017-09-30 09:47:16.330681732-04:00','2017-09-30 09:47:16.330681732-04:00',NULL,'Staging Directory','/Users/apd4n/tmp/easy-store');
 CREATE TABLE "bags" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"size" bigint,"storage_url" varchar(255),"metadata_url" varchar(255),"remote_identifier" varchar(255),"stored_at" datetime );
 CREATE TABLE "bag_it_profiles" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"description" varchar(255),"json" varchar(255) );
 INSERT INTO "bag_it_profiles" VALUES(1,'0001-01-01 00:00:00+00:00','2017-09-30 10:06:06.792173172-04:00',NULL,'APTrust (Med School Settings)','Profile for APTrust bags with default settings for Med School','{
