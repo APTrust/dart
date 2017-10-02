@@ -120,6 +120,7 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 // We should be able to preload, instead of getting related ids
 // and issuing new queries.
 func JobRun(w http.ResponseWriter, r *http.Request) {
+	output := ""
 	err := r.ParseForm()
 	if err != nil {
 		log.Println("Error:", err.Error())
@@ -143,8 +144,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	// HACK for demo: add virginia.edu. as bag name prefix
 	bagName := "virginia.edu." + filepath.Base(sourceDir)
 	bagPath := filepath.Join(stagingDir.Value, bagName)
-	w.Write([]byte("Creating bag " + bagName + " in " + stagingDir.Value + " using profile " +
-		profile.Name + "\n\n"))
+	output += ("Creating bag " + bagName + " in " + stagingDir.Value + " using profile " +
+		profile.Name + "\n\n")
 	bagItProfile, err := profile.Profile()
 	if err != nil {
 		log.Println(err.Error())
@@ -161,10 +162,9 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		relDestPath := fmt.Sprintf("data/%s", origPathMinusRootDir)
 		bagger.AddFile(absSrcPath, relDestPath)
 		relDestPaths[i] = relDestPath
-		w.Write([]byte("Adding file " + absSrcPath + " at " + relDestPath + "\n"))
+		output += ("Adding file " + absSrcPath + " at " + relDestPath + "\n")
 	}
-
-	w.Write([]byte("\n"))
+	output += "\n"
 
 	// This adds the tags from the profile's default tag values.
 	// In reality, several of the tags cannot come from general
@@ -176,10 +176,9 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 			Value: dtv.TagValue,
 		}
 		bagger.AddTag(dtv.TagFile, keyValuePair)
-		w.Write([]byte("Adding tag " + dtv.TagName + " to file " + dtv.TagFile + "\n"))
+		output += ("Adding tag " + dtv.TagName + " to file " + dtv.TagFile + "\n")
 	}
-
-	w.Write([]byte("\n"))
+	output += "\n"
 
 	// Now that the bagger knows what to do, WriteBag() tells it to
 	// go ahead and write out all the contents to the staging area.
@@ -187,12 +186,12 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	checkRequiredTags := true
 	bagger.WriteBag(overwriteExistingBag, checkRequiredTags)
 	if len(bagger.Errors()) > 0 {
-		w.Write([]byte("Oops! We have some errors...\n"))
+		output += ("Oops! We have some errors...\n")
 		for _, errMsg := range bagger.Errors() {
-			w.Write([]byte(errMsg + "\n"))
+			output += (errMsg + "\n")
 		}
 	} else {
-		w.Write([]byte("Bag was written to " + bagPath + "\n\n"))
+		output += ("Bag was written to " + bagPath + "\n\n")
 	}
 
 	// Tar the bag, if the Workflow config says to do that.
@@ -210,33 +209,33 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		}
 		workingDir := filepath.Dir(cleanBagPath)
 		tarFileAbsPath := filepath.Join(workingDir, tarFileName)
-		w.Write([]byte("Tarring bag to " + tarFileAbsPath + "\n"))
+		output += ("Tarring bag to " + tarFileAbsPath + "\n")
 		//cmd := exec.Command("tar", "cf", tarFileName, "--directory", bagName)
 		cmd := exec.Command("tar", "cf", tarFileName, bagName)
 		cmd.Dir = workingDir
 		commandOutput, err := cmd.CombinedOutput()
 		if err != nil {
-			w.Write([]byte(err.Error()))
+			output += (err.Error())
 		}
-		w.Write(commandOutput)
-		w.Write([]byte("\n\n"))
+		output += string(commandOutput)
+		output += ("\n\n")
 		bagPathForValidation = tarFileAbsPath
 	}
 
 	// Validate the bag, just to make sure...
-	w.Write([]byte("\n\nValidating bag...\n\n"))
+	output += "\n\nValidating bag...\n\n"
 	bag := bagit.NewBag(bagPathForValidation)
 	validator := bagit.NewValidator(bag, bagItProfile)
 	validator.ReadBag()
 	if len(validator.Errors()) > 0 {
 		for _, errMsg := range validator.Errors() {
-			w.Write([]byte(errMsg + "\n"))
+			output += (errMsg + "\n")
 		}
 	} else {
-		w.Write([]byte("Bag is valid\n"))
+		output += ("Bag is valid\n")
 		if fileutil.LooksSafeToDelete(bagPath, 15, 3) {
 			os.RemoveAll(bagPath)
-			w.Write([]byte("Deleting working directory, kept tar file\n"))
+			output += ("Deleting working directory, kept tar file\n")
 		}
 	}
 
@@ -252,8 +251,8 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		useSSL := true
 		minioClient, err := minio.New(storageService.URL, accessKeyID, secretAccessKey, useSSL)
 		if err != nil {
-			w.Write([]byte("Error creating S3 uploader: " + err.Error() + "\n"))
-			w.Write([]byte(storageService.URL))
+			output += ("Error creating S3 uploader: " + err.Error() + "\n")
+			output += storageService.URL
 			return
 		}
 		n, err := minioClient.FPutObject(storageService.BucketOrFolder,
@@ -261,11 +260,18 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 			bagPathForValidation,
 			minio.PutObjectOptions{ContentType: "application/x-tar"})
 		if err != nil {
-			w.Write([]byte("Error uploading tar file to S3: " + err.Error() + "\n"))
+			output += ("Error uploading tar file to S3: " + err.Error() + "\n")
 		} else {
 			msg := fmt.Sprintf("Successfully uploaded %s of size %d\n", tarFileName, n)
-			w.Write([]byte(msg + "\n"))
+			output += (msg + "\n")
 		}
+	}
+	data := make(map[string]interface{})
+	data["Output"] = output
+	err = templates.ExecuteTemplate(w, "job-result", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 }
 

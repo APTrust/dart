@@ -1,0 +1,13 @@
+{{ define "job-result" }}
+{{ template "page_top" . }}
+
+<h1>Job Result</h1>
+
+<div>
+<pre>
+{{ .Output }}
+</pre>
+</div>
+
+{{ template "page_bottom" . }}
+{{ end }}
