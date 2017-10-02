@@ -25,23 +25,9 @@ Electron allows full access to the file system, and provides access to file path
 
 If Electron provides full access to the file system, why should we keep the Go server running in the background? Why not write the bagger, the bag validator, and the S3 upload tools in JavaScript, and keep all of the work in a single process, inside a single compiled binary?
 
-Because JavaScript. Period. Some sadist asked the question, "Can we make a language worse than Perl?" Well, let's try. First, we'll make sure it has no namespace support. Then, we'll take out package management and replace it with several competing module systems that don't play well together. We'll also make `this` behave in differently in different contexts, and throw in both `prototype` and `__proto__`, put new variables into the global namespaces unless you tell us not to, and make closures the only safe construct in the language, so you have to define your functions inside of other functions. Is that bad enough?
-
-No.
-
-Let's make minification a standard practice, so developers can't even read their own code. Then let's add templating languages like React and Riot.js, so you can mix markup into your code, like PHP developers. We'll also borrow some of the worst practices of Ruby on Rails, like having big chunks of template code parsed and eval'ed by other JavaScript code, to make it harder to trace errors to their source. Is that bad enough?
-
-No.
-
-OK. Let's create Node.js, so you have to think and write in terms of callbacks. Now you're passing closures full of untyped data off into the void to be executed whenever, and there's no longer any concept of linear time. When things go wrong, your stack trace will tell you that your app crashed while executing an anonymous function wrapped in a closure that was created at an unspecified time by an unknown function with untyped data that you can't inspect. Have we finally made something worse than Perl?
-
-Yes. You did it. Congratulations!
-
-I'm not enough of a masochist to rewrite in JavaScript all the Go code that was working and fully tested, but I was enough of a masochist to try. It was like trying to rewrite Shakespeare using Donald Trump's vocabulary and grammar. So we're keeping the Go code for these reasons:
-
-1. We want both the UI and the scriptable commands to use the same code base.
-2. We want the code base to be maintainable.
-3. We want to be able to distribute the scriptable commands as stand-alone binaries with no outside dependencies.
+1. The Go code that does the hard work, like packaging and validating bags, uploading to S3, etc., is already written and tested. Rewriting it in JavaScript would be an expensive undertaking.
+2. We want both the UI and the scriptable commands to use the same code base. The Go tools can be compiled as stand-alone binaries with no dependencies. Rewriting in JavaScript would require users to have node.js and a number of packages to run the command-line tools.
+3. We want the code base to be maintainable. Go is inherently maintainable. JavaScript is not.
 
 # Packaging for distribution
 
