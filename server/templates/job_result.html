@@ -3,11 +3,77 @@
 
 <h1>Job Result</h1>
 
-<div>
-<pre>
-{{ .Output }}
-</pre>
+{{ if .Error }}
+<div class="panel panel-danger">
+  <div class="panel-heading">
+    <h3 class="panel-title">Error</h3>
+  </div>
+  <div class="panel-body">
+    {{ .Error }}
+  </div>
 </div>
+{{ end }}
+
+{{ if .BagCreated }}
+<div class="panel panel-success">
+  <div class="panel-heading">
+    <h3 class="panel-title">Created Bag {{ .BagName }}</h3>
+  </div>
+  <div class="panel-body">
+    {{ .BagCreated }}
+  </div>
+</div>
+{{ end }}
+
+{{ if .Manifest }}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">manifest-md5.txt</h3>
+  </div>
+  <div class="panel-body">
+    <pre>
+{{ .Manifest }}
+    </pre>
+  </div>
+</div>
+{{ end }}
+
+{{ if .APTrustInfo }}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">aptrust-info.txt</h3>
+  </div>
+  <div class="panel-body">
+    <pre>
+{{ .APTrustInfo }}
+    </pre>
+  </div>
+</div>
+{{ end }}
+
+{{ if .BagInfo }}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">bag-info.txt</h3>
+  </div>
+  <div class="panel-body">
+    <pre>
+{{ .BagInfo }}
+    </pre>
+  </div>
+</div>
+{{ end }}
+
+{{ if .UploadResult }}
+<div class="panel panel-success">
+  <div class="panel-heading">
+    <h3 class="panel-title">Upload Result</h3>
+  </div>
+  <div class="panel-body">
+    {{ .UploadResult }}
+  </div>
+</div>
+{{ end }}
 
 {{ template "page_bottom" . }}
 {{ end }}
