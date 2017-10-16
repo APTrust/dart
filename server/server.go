@@ -25,8 +25,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HandleRootRequest)
-	// r.HandleFunc("/bags", BagsList).Methods("GET")
-	// r.HandleFunc("/bag/{id:[0-9]+}", BagDetail).Methods("GET")
+	r.HandleFunc("/bags", handlers.BagsList).Methods("GET")
+	r.HandleFunc("/bag/{id:[0-9]+}", handlers.BagDetail).Methods("GET")
 	r.HandleFunc("/job/new", handlers.JobNewGet).Methods("GET")
 	r.HandleFunc("/job/run", handlers.JobRun).Methods("POST")
 	// r.HandleFunc("/profiles", ProfilesList)
@@ -442,44 +442,6 @@ func GetImageRoot() string {
 // 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 // 	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
 // 	err = templates.ExecuteTemplate(w, "app-setting-form", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func BagsList(w http.ResponseWriter, r *http.Request) {
-// 	data := make(map[string]interface{})
-// 	bags := make([]models.Bag, 0)
-// 	err := db.Find(&bags).Error
-// 	if err != nil {
-// 		log.Println(err.Error())
-// 	}
-// 	data["items"] = bags
-// 	successMessage, ok := r.URL.Query()["success"]
-// 	if ok {
-// 		data["success"] = successMessage[0]
-// 	}
-// 	err = templates.ExecuteTemplate(w, "bag-list", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func BagDetail(w http.ResponseWriter, r *http.Request) {
-// 	data := make(map[string]interface{})
-// 	vars := mux.Vars(r)
-// 	id, _ := strconv.Atoi(vars["id"])
-// 	log.Println("GET Bag", id)
-// 	bag := models.Bag{}
-// 	err := db.Find(&bag, id).Preload("Files").Error
-// 	if err != nil {
-// 		log.Println(err.Error())
-// 	}
-// 	data["item"] = bag
-// 	data["items"] = bag.Files
-// 	err = templates.ExecuteTemplate(w, "bag-detail", data)
 // 	if err != nil {
 // 		http.Error(w, err.Error(), http.StatusInternalServerError)
 // 		return
