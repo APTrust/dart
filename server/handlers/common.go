@@ -12,7 +12,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"runtime"
 	"strconv"
 )
 
@@ -29,9 +28,8 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CompileTemplates() {
-	dir := GetServerRoot()
-	templateDir, _ := filepath.Abs(filepath.Join(dir, "..", "templates", "*.html"))
+func CompileTemplates(pathToServerRoot string) {
+	templateDir, _ := filepath.Abs(filepath.Join(pathToServerRoot, "templates", "*.html"))
 	log.Println("Loading templates:", templateDir)
 	templates = template.Must(template.ParseGlob(templateDir))
 }
@@ -95,9 +93,4 @@ func GetOptions(modelName string) map[string][]fields.InputChoice {
 	options := make(map[string][]fields.InputChoice)
 	options[""] = choices
 	return options
-}
-
-func GetServerRoot() string {
-	_, filename, _, _ := runtime.Caller(0)
-	return filepath.Dir(filename)
 }

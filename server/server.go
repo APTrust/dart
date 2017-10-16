@@ -13,14 +13,10 @@ import (
 	"time"
 )
 
-// var templates *template.Template
-// var decoder = schema.NewDecoder()
-// var db *gorm.DB
-
 func main() {
-	handlers.CompileTemplates()
+	handlers.CompileTemplates(GetServerRoot())
 	handlers.InitDBConnection()
-	http.Handle("/static/", http.FileServer(http.Dir(handlers.GetServerRoot())))
+	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 
 	r := mux.NewRouter()
@@ -59,8 +55,13 @@ func main() {
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
 }
 
+func GetServerRoot() string {
+	_, filename, _, _ := runtime.Caller(0)
+	return filepath.Dir(filename)
+}
+
 func GetImageRoot() string {
-	return filepath.Join(handlers.GetServerRoot(), "static", "img")
+	return filepath.Join(GetServerRoot(), "static", "img")
 }
 
 // func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
