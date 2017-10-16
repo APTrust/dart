@@ -30,11 +30,11 @@ func main() {
 	r.HandleFunc("/bag/{id:[0-9]+}", handlers.BagDetail).Methods("GET")
 	r.HandleFunc("/job/new", handlers.JobNewGet).Methods("GET")
 	r.HandleFunc("/job/run", handlers.JobRun).Methods("POST")
-	// r.HandleFunc("/profiles", ProfilesList)
-	// r.HandleFunc("/profile/new", ProfileNewGet).Methods("GET")
-	// r.HandleFunc("/profile/new", ProfileNewPost).Methods("POST", "PUT")
-	// r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditGet).Methods("GET")
-	// r.HandleFunc("/profile/{id:[0-9]+}/edit", ProfileEditPost).Methods("POST", "PUT")
+	r.HandleFunc("/profiles", handlers.ProfilesList)
+	r.HandleFunc("/profile/new", handlers.ProfileNewGet).Methods("GET")
+	r.HandleFunc("/profile/new", handlers.ProfileNewPost).Methods("POST", "PUT")
+	r.HandleFunc("/profile/{id:[0-9]+}/edit", handlers.ProfileEditGet).Methods("GET")
+	r.HandleFunc("/profile/{id:[0-9]+}/edit", handlers.ProfileEditPost).Methods("POST", "PUT")
 	// r.HandleFunc("/storage_services", StorageServicesList)
 	// r.HandleFunc("/storage_service/new", StorageServiceNewGet).Methods("GET")
 	// r.HandleFunc("/storage_service/new", StorageServiceNewPost).Methods("POST", "PUT")
@@ -63,169 +63,6 @@ func GetServerRoot() string {
 func GetImageRoot() string {
 	return filepath.Join(GetServerRoot(), "static", "img")
 }
-
-// func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
-// 	profile := models.BagItProfile{}
-// 	form, err := profile.GetForm()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	data := make(map[string]interface{})
-// 	data["form"] = form
-// 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
-// 	data := make(map[string]interface{})
-// 	err := r.ParseForm()
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 	}
-// 	profile := &models.BagItProfile{}
-// 	err = decoder.Decode(profile, r.PostForm)
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 	}
-// 	err = db.Save(&profile).Error
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 		data["errors"] = err.Error()
-// 	} else {
-// 		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
-// 		log.Println(defaultTagValues)
-// 		for _, val := range defaultTagValues {
-// 			var valErr error
-// 			if db.NewRecord(val) {
-// 				log.Println("Creating", val.TagName, "=", val.TagValue)
-// 				valErr = db.Create(&val).Error
-// 			} else {
-// 				log.Println("Updting", val.TagName, "=", val.TagValue)
-// 				valErr = db.Save(&val).Error
-// 			}
-// 			if valErr != nil {
-// 				log.Println("Error on", val.TagName, ":", valErr.Error())
-// 				err = valErr
-// 			}
-// 		}
-// 	}
-
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 		data["errors"] = err.Error()
-// 	} else {
-// 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
-// 		return
-// 	}
-
-// 	form, err := profile.GetForm()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	data["form"] = form
-// 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func ProfilesList(w http.ResponseWriter, r *http.Request) {
-// 	data := make(map[string]interface{})
-// 	profiles := make([]models.BagItProfile, 0)
-// 	db.Find(&profiles).Order("name")
-// 	data["items"] = profiles
-// 	successMessage, ok := r.URL.Query()["success"]
-// 	if ok {
-// 		data["success"] = successMessage[0]
-// 	}
-// 	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
-// 	vars := mux.Vars(r)
-// 	id, _ := strconv.Atoi(vars["id"])
-// 	log.Println("GET profile", id)
-// 	profile := models.BagItProfile{}
-// 	db.Preload("DefaultTagValues").First(&profile, id)
-// 	data := make(map[string]interface{})
-// 	form, err := profile.GetForm()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	data["form"] = form
-// 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
-
-// func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
-// 	data := make(map[string]interface{})
-// 	vars := mux.Vars(r)
-// 	id, _ := strconv.Atoi(vars["id"])
-// 	log.Println("POST profile", id)
-// 	err := r.ParseForm()
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 	}
-// 	profile := &models.BagItProfile{}
-// 	err = decoder.Decode(profile, r.PostForm)
-// 	if err != nil {
-// 		log.Println("Error:", err.Error())
-// 	}
-// 	profile.ID = uint(id)
-// 	err = db.Save(&profile).Error
-// 	if err != nil {
-// 		data["errors"] = err.Error()
-// 	} else {
-// 		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
-// 		for _, val := range defaultTagValues {
-// 			var valErr error
-// 			if db.NewRecord(val) {
-// 				log.Println("Creating", val.TagName, "=", val.TagValue)
-// 				valErr = db.Create(&val).Error
-// 			} else {
-// 				log.Println("Updting", val.TagName, "=", val.TagValue)
-// 				valErr = db.Save(&val).Error
-// 			}
-// 			if valErr != nil {
-// 				log.Println("Error on", val.TagName, ":", valErr.Error())
-// 				err = valErr
-// 			}
-// 		}
-// 	}
-
-// 	if err != nil {
-// 		data["errors"] = err.Error()
-// 	} else {
-// 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
-// 		return
-// 	}
-
-// 	form, err := profile.GetForm()
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	data["form"] = form
-// 	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
 
 // func StorageServicesList(w http.ResponseWriter, r *http.Request) {
 // 	data := make(map[string]interface{})

@@ -15,6 +15,7 @@ import (
 	"strconv"
 )
 
+// The following vars are shared among all files in this package.
 var templates *template.Template
 var decoder = schema.NewDecoder()
 var db *gorm.DB
