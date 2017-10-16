@@ -49,7 +49,6 @@ func main() {
 
 	go func() {
 		time.Sleep(600 * time.Millisecond)
-		//OpenBrowser("http://localhost:8080")
 		OpenElectron()
 	}()
 	log.Fatal(http.ListenAndServe("127.0.0.1:8080", nil))
@@ -62,28 +61,6 @@ func GetServerRoot() string {
 
 func GetImageRoot() string {
 	return filepath.Join(GetServerRoot(), "static", "img")
-}
-
-func OpenBrowser(url string) {
-	var cmd string
-	var args []string
-
-	switch runtime.GOOS {
-	case "windows":
-		cmd = "cmd"
-		args = []string{"/c", "start"}
-	case "darwin":
-		cmd = "open"
-	default: // "linux", "freebsd", "openbsd", "netbsd"
-		cmd = "xdg-open"
-	}
-	args = append(args, url)
-	err := exec.Command(cmd, args...).Start()
-	if err != nil {
-		log.Println("Error opening browser:", err.Error())
-	} else {
-		log.Println("Opened browser")
-	}
 }
 
 func OpenElectron() {
