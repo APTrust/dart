@@ -8,6 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kirves/go-form-it"
 	"github.com/kirves/go-form-it/fields"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -65,10 +66,35 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	if err != nil {
 		return nil, err
 	}
-	defaultValueFields := make([]fields.FieldInterface, 0)
-	// TODO: Sort by file name into field groups, order by tag name
-	for relFilePath, mapOfRequiredTags := range profileDef.TagFilesRequired {
-		for tagname, tagdef := range mapOfRequiredTags {
+
+	// TODO: Move sort into BagItProfile object.
+	sortedFileNames := make([]string, len(profileDef.TagFilesRequired))
+	i := 0
+	for relFilePath, _ := range profileDef.TagFilesRequired {
+		sortedFileNames[i] = relFilePath
+		i++
+	}
+	sort.Strings(sortedFileNames)
+
+	// Remove the submit button from the end of the form,
+	// add our new elements, and then replace the submit button
+	// at the end.
+	submitButton := form.Field("submit")
+	form.RemoveElement("submit")
+
+	for _, relFilePath := range sortedFileNames {
+		fieldsInSet := make([]fields.FieldInterface, 0)
+		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
+		// TODO: Move sort into BagItProfile object.
+		sortedTagNames := make([]string, len(mapOfRequiredTags))
+		i := 0
+		for tagname, _ := range mapOfRequiredTags {
+			sortedTagNames[i] = tagname
+			i++
+		}
+		sort.Strings(sortedTagNames)
+		for _, tagname := range sortedTagNames {
+			tagdef := mapOfRequiredTags[tagname]
 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
 			defaultValue := ""
 			defaultTagId := uint(0)
@@ -77,7 +103,7 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 				defaultTagId = defaultTags[0].ID
 			}
 			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
-			fieldLabel := fmt.Sprintf("%s: %s", relFilePath, tagname)
+			fieldLabel := tagname
 
 			formField := fields.TextField(fieldName)
 			if len(tagdef.Values) > 0 {
@@ -90,16 +116,15 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 			}
 			formField.SetLabel(fieldLabel)
 			formField.SetValue(defaultValue)
-			defaultValueFields = append(defaultValueFields, formField)
+			fieldsInSet = append(fieldsInSet, formField)
 		}
+		// Unfortunately, go-form-it does not support fieldset legends
+		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
+		fieldSetLabel.AddClass("fieldset-header")
+		form.Elements(fieldSetLabel)
+		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
+		form.Elements(fieldSet)
 	}
-	// Remove the submit button from the end of the form,
-	// add our new elements, and then replace the submit button
-	// at the end.
-	submitButton := form.Field("submit")
-	form.RemoveElement("submit")
-	fieldSet := forms.FieldSet("Default Tag Values", defaultValueFields...)
-	form.Elements(fieldSet)
 	form.Elements(submitButton)
 
 	return form, nil

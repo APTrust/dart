@@ -1,3 +1,9 @@
 .clickable-row {
     cursor: pointer;
 }
+.fieldset-header {
+    margin-top: 15px;
+    font-size: 1.3em;
+    font-weight: bold;
+    color: steelblue;
+}
