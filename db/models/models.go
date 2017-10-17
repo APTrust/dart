@@ -72,10 +72,23 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	submitButton := form.Field("submit")
 	form.RemoveElement("submit")
 
+	fieldSetNote := fields.StaticField("",
+		"Set common tag values for this profile below. "+
+			"Common tag defaults such as your organization name "+
+			"apply across all bags created with this profile. "+
+			"Leave fields such as bag title, description, etc. "+
+			"blank if they should be set individually for each bag.")
+	fieldSetNote.AddClass("well")
+	form.Elements(fieldSetNote)
+
 	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
 		fieldsInSet := make([]fields.FieldInterface, 0)
 		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
 		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
+			// This tag will always be set by the system, not the user.
+			if tagname == "Payload-Oxum" {
+				continue
+			}
 			tagdef := mapOfRequiredTags[tagname]
 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
 			defaultValue := ""
@@ -90,9 +103,10 @@ func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 			formField := fields.TextField(fieldName)
 			if len(tagdef.Values) > 0 {
 				options := make(map[string][]fields.InputChoice)
-				options[""] = make([]fields.InputChoice, len(tagdef.Values))
+				options[""] = make([]fields.InputChoice, len(tagdef.Values)+1)
+				options[""][0] = fields.InputChoice{Id: "", Val: ""}
 				for i, val := range tagdef.Values {
-					options[""][i] = fields.InputChoice{Id: val, Val: val}
+					options[""][i+1] = fields.InputChoice{Id: val, Val: val}
 				}
 				formField = fields.SelectField(fieldName, options)
 			}
