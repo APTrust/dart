@@ -115,3 +115,38 @@ func TestRequiredTagDirs(t *testing.T) {
 	require.Equal(t, 1, len(dpnProfile.RequiredTagDirs()))
 	assert.Equal(t, "dpn-tags", dpnProfile.RequiredTagDirs()[0])
 }
+
+func TestSortedTagFilesRequired(t *testing.T) {
+	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err := bagit.LoadBagItProfile(aptrustFile)
+	require.Nil(t, err)
+	expected := []string{"aptrust-info.txt", "bag-info.txt", "bagit.txt"}
+	assert.Equal(t, expected, aptrustProfile.SortedTagFilesRequired())
+
+	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
+	require.Nil(t, err)
+	expected = []string{"bag-info.txt", "bagit.txt", "dpn-tags/dpn-info.txt"}
+	assert.Equal(t, expected, dpnProfile.SortedTagFilesRequired())
+}
+
+func TestSortedTagNames(t *testing.T) {
+	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
+	require.Nil(t, err)
+	aptrustProfile, err := bagit.LoadBagItProfile(aptrustFile)
+	require.Nil(t, err)
+	expected := []string{"Access", "Description", "Title"}
+	assert.Equal(t, expected, aptrustProfile.SortedTagNames("aptrust-info.txt"))
+
+	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	require.Nil(t, err)
+	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
+	require.Nil(t, err)
+	expected = []string{"Bag-Type", "DPN-Object-ID", "First-Version-Object-ID",
+		"Ingest-Node-Address", "Ingest-Node-Contact-Email", "Ingest-Node-Contact-Name",
+		"Ingest-Node-Name", "Interpretive-Object-ID", "Local-ID", "Rights-Object-ID",
+		"Version-Number"}
+	assert.Equal(t, expected, dpnProfile.SortedTagNames("dpn-tags/dpn-info.txt"))
+}

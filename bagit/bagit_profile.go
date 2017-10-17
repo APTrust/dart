@@ -3,6 +3,7 @@ package bagit
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/util"
+	"sort"
 	"strings"
 )
 
@@ -125,4 +126,37 @@ func (profile *BagItProfile) RequiredTagDirs() []string {
 		}
 	}
 	return dirs
+}
+
+// SortedTagFileNames returns a sorted list of required tag file
+// names. Each item in the list is the relative path of a tag file
+// within the bag. E.g. bag-info.txt or dpn-tags/dpn-info.txt.
+func (profile *BagItProfile) SortedTagFilesRequired() []string {
+	sortedFileNames := make([]string, len(profile.TagFilesRequired))
+	i := 0
+	for relFilePath, _ := range profile.TagFilesRequired {
+		sortedFileNames[i] = relFilePath
+		i++
+	}
+	sort.Strings(sortedFileNames)
+	return sortedFileNames
+}
+
+// SortedTagNames returns a sorted list of tag names with the
+// specified required tag file. Param relFilePath should be something like
+// "bag-info.txt" or "dpn-tags/dpn-info.txt". If relFilePath is not a
+// required tag file, this will return an empty list.
+func (profile *BagItProfile) SortedTagNames(relFilePath string) []string {
+	mapOfRequiredTags, ok := profile.TagFilesRequired[relFilePath]
+	if !ok {
+		return make([]string, 0)
+	}
+	sortedTagNames := make([]string, len(mapOfRequiredTags))
+	i := 0
+	for tagname, _ := range mapOfRequiredTags {
+		sortedTagNames[i] = tagname
+		i++
+	}
+	sort.Strings(sortedTagNames)
+	return sortedTagNames
 }
