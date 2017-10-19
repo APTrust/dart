@@ -93,22 +93,6 @@ type AppSetting struct {
 	Value      string
 }
 
-type Job struct {
-	gorm.Model         `form_options:"skip"`
-	BagID              int64     `form_options:"skip"`
-	Bag                Bag       `form_options:"skip"`
-	FileID             int64     `form_options:"skip"`
-	WorkflowID         int64     `form_widget:"select"`
-	Workflow           Workflow  `form_options:"skip"`
-	WorkflowSnapshot   string    `form_options:"skip"`
-	ScheduledStartTime time.Time `form_options:"skip"`
-	StartedAt          time.Time `form_options:"skip"`
-	FinishedAt         time.Time `form_options:"skip"`
-	Pid                int       `form_options:"skip"`
-	Outcome            string    `form_options:"skip"`
-	CapturedOutput     string    `form_options:"skip"`
-}
-
 type StorageService struct {
 	gorm.Model     `form_options:"skip"`
 	Name           string
