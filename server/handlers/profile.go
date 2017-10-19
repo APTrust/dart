@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/kirves/go-form-it"
+	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
@@ -12,7 +15,7 @@ import (
 
 func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
-	form, err := profile.GetForm()
+	form, err := ProfileForm(profile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,8 +35,8 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	profile := &models.BagItProfile{}
-	err = decoder.Decode(profile, r.PostForm)
+	profile := models.BagItProfile{}
+	err = decoder.Decode(&profile, r.PostForm)
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
@@ -68,7 +71,7 @@ func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form, err := profile.GetForm()
+	form, err := ProfileForm(profile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -104,7 +107,7 @@ func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
 	profile := models.BagItProfile{}
 	db.Preload("DefaultTagValues").First(&profile, id)
 	data := make(map[string]interface{})
-	form, err := profile.GetForm()
+	form, err := ProfileForm(profile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -126,8 +129,8 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
-	profile := &models.BagItProfile{}
-	err = decoder.Decode(profile, r.PostForm)
+	profile := models.BagItProfile{}
+	err = decoder.Decode(&profile, r.PostForm)
 	if err != nil {
 		log.Println("Error:", err.Error())
 	}
@@ -160,7 +163,7 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	form, err := profile.GetForm()
+	form, err := ProfileForm(profile)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -171,4 +174,80 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// Returns a BagItProfile form.
+func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
+	postUrl := fmt.Sprintf("/profile/new")
+	if profile.ID > uint(0) {
+		postUrl = fmt.Sprintf("/profile/%d/edit", profile.ID)
+	}
+	form := forms.BootstrapFormFromModel(profile, forms.POST, postUrl)
+	form.Field("JSON").AddCss("height", "300px")
+	if profile.JSON == "" {
+		return form, nil
+	}
+	profileDef, err := profile.Profile()
+	if err != nil {
+		return nil, err
+	}
+
+	// Remove the submit button from the end of the form,
+	// add our new elements, and then replace the submit button
+	// at the end.
+	submitButton := form.Field("submit")
+	form.RemoveElement("submit")
+
+	fieldSetNote := fields.StaticField("",
+		"Set common tag values for this profile below. "+
+			"Common tag defaults such as your organization name "+
+			"apply across all bags created with this profile. "+
+			"Leave fields such as bag title, description, etc. "+
+			"blank if they should be set individually for each bag.")
+	fieldSetNote.AddClass("well")
+	form.Elements(fieldSetNote)
+
+	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
+		fieldsInSet := make([]fields.FieldInterface, 0)
+		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
+		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
+			// This tag will always be set by the system, not the user.
+			if tagname == "Payload-Oxum" {
+				continue
+			}
+			tagdef := mapOfRequiredTags[tagname]
+			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
+			defaultValue := ""
+			defaultTagId := uint(0)
+			if len(defaultTags) > 0 {
+				defaultValue = defaultTags[0].TagValue
+				defaultTagId = defaultTags[0].ID
+			}
+			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
+			fieldLabel := tagname
+
+			formField := fields.TextField(fieldName)
+			if len(tagdef.Values) > 0 {
+				options := make(map[string][]fields.InputChoice)
+				options[""] = make([]fields.InputChoice, len(tagdef.Values)+1)
+				options[""][0] = fields.InputChoice{Id: "", Val: ""}
+				for i, val := range tagdef.Values {
+					options[""][i+1] = fields.InputChoice{Id: val, Val: val}
+				}
+				formField = fields.SelectField(fieldName, options)
+			}
+			formField.SetLabel(fieldLabel)
+			formField.SetValue(defaultValue)
+			fieldsInSet = append(fieldsInSet, formField)
+		}
+		// Unfortunately, go-form-it does not support fieldset legends
+		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
+		fieldSetLabel.AddClass("fieldset-header")
+		form.Elements(fieldSetLabel)
+		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
+		form.Elements(fieldSet)
+	}
+	form.Elements(submitButton)
+
+	return form, nil
 }
