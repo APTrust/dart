@@ -11,6 +11,7 @@ type Job struct {
 	BagID              uint      `form_options:"skip"`
 	Bag                Bag       `form_options:"skip"`
 	FileID             uint      `form_options:"skip"`
+	File               File      `form_options:"skip"`
 	WorkflowID         uint      `form_widget:"select"`
 	Workflow           Workflow  `form_options:"skip"`
 	WorkflowSnapshot   string    `form_options:"skip"`
@@ -29,9 +30,15 @@ func JobLoad(db *gorm.DB, id uint) (*Job, error) {
 }
 
 func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
-	job, err := JobLoad(db, id)
+	job := &Job{}
+	err := db.Preload("Bag").Preload("File").First(job, id).Error
 	if err == nil {
-		err = db.Preload("BagItProfile", "StorageService").First(&job.Workflow, job.WorkflowID).Error
+		err = db.Preload("StorageService").
+			First(&job.Workflow, job.WorkflowID).Error
+	}
+	if err == nil {
+		err = db.Preload("DefaultTagValues").
+			First(&job.Workflow.BagItProfile, job.Workflow.BagItProfileID).Error
 	}
 	return job, err
 }
