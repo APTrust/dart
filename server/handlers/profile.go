@@ -198,6 +198,7 @@ func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
 	submitButton := form.Field("submit")
 	form.RemoveElement("submit")
 
+	// TODO: i18n
 	fieldSetNote := fields.StaticField("",
 		"Set common tag values for this profile below. "+
 			"Common tag defaults such as your organization name "+
