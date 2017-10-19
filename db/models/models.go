@@ -51,6 +51,7 @@ func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	return bagItProfile, err
 }
 
+// Move this into server/handlers
 func (profile *BagItProfile) GetForm() (*forms.Form, error) {
 	postUrl := fmt.Sprintf("/profile/new")
 	if profile.ID > uint(0) {
@@ -174,8 +175,10 @@ type AppSetting struct {
 type Job struct {
 	gorm.Model         `form_options:"skip"`
 	BagID              int64     `form_options:"skip"`
+	Bag                Bag       `form_options:"skip"`
 	FileID             int64     `form_options:"skip"`
 	WorkflowID         int64     `form_widget:"select"`
+	Workflow           Workflow  `form_options:"skip"`
 	WorkflowSnapshot   string    `form_options:"skip"`
 	ScheduledStartTime time.Time `form_options:"skip"`
 	StartedAt          time.Time `form_options:"skip"`
@@ -209,7 +212,9 @@ type Workflow struct {
 	gorm.Model          `form_options:"skip"`
 	Name                string
 	Description         string
-	SerializationFormat string `form_widget:"select"`
-	BagItProfileID      int64  `form_widget:"select"`
-	StorageServiceID    int64  `form_widget:"select"`
+	SerializationFormat string         `form_widget:"select"`
+	BagItProfileID      int64          `form_widget:"select"`
+	BagItProfile        BagItProfile   `form_options:"skip"`
+	StorageServiceID    int64          `form_widget:"select"`
+	StorageService      StorageService `form_options:"skip"`
 }
