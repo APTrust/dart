@@ -23,7 +23,7 @@ type Bag struct {
 
 type File struct {
 	gorm.Model        `form_options:"skip"`
-	BagID             int64
+	BagID             uint
 	Name              string
 	Size              int64
 	Md5               string    `form_options:"skip"`
@@ -67,7 +67,7 @@ func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []
 		keyParts := strings.Split(key, "|")
 		//tagFile, tagName, tagId
 		dtv := DefaultTagValue{
-			BagItProfileID: int64(profile.ID), // TODO: int64 or uint??
+			BagItProfileID: uint(profile.ID), // TODO: int64 or uint??
 			TagFile:        keyParts[0],
 			TagName:        keyParts[1],
 			TagValue:       value[0],
@@ -81,7 +81,7 @@ func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []
 
 type DefaultTagValue struct {
 	gorm.Model     `form_options:"skip"`
-	BagItProfileID int64
+	BagItProfileID uint
 	TagFile        string
 	TagName        string
 	TagValue       string
@@ -107,7 +107,7 @@ type StorageService struct {
 
 type Tag struct {
 	gorm.Model  `form_options:"skip"`
-	BagID       int64 `form_widget:"select"`
+	BagID       uint `form_widget:"select"`
 	RelFilePath string
 	Name        string
 	Value       string
@@ -118,8 +118,8 @@ type Workflow struct {
 	Name                string
 	Description         string
 	SerializationFormat string         `form_widget:"select"`
-	BagItProfileID      int64          `form_widget:"select"`
+	BagItProfileID      uint           `form_widget:"select"`
 	BagItProfile        BagItProfile   `form_options:"skip"`
-	StorageServiceID    int64          `form_widget:"select"`
+	StorageServiceID    uint           `form_widget:"select"`
 	StorageService      StorageService `form_options:"skip"`
 }

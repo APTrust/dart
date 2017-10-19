@@ -72,9 +72,9 @@ func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
 	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
-	form.Field("BagItProfileID").SetValue(strconv.FormatInt(workflow.BagItProfileID, 10))
+	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
-	form.Field("StorageServiceID").SetValue(strconv.FormatInt(workflow.StorageServiceID, 10))
+	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -95,9 +95,9 @@ func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
 	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
-	form.Field("BagItProfileID").SetValue(strconv.FormatInt(workflow.BagItProfileID, 10))
+	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
-	form.Field("StorageServiceID").SetValue(strconv.FormatInt(workflow.StorageServiceID, 10))
+	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {
@@ -134,9 +134,9 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
 	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
-	form.Field("BagItProfileID").SetValue(strconv.FormatInt(workflow.BagItProfileID, 10))
+	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
-	form.Field("StorageServiceID").SetValue(strconv.FormatInt(workflow.StorageServiceID, 10))
+	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	err = templates.ExecuteTemplate(w, "workflow-form", data)
 	if err != nil {

@@ -8,10 +8,10 @@ import (
 
 type Job struct {
 	gorm.Model         `form_options:"skip"`
-	BagID              int64     `form_options:"skip"`
+	BagID              uint      `form_options:"skip"`
 	Bag                Bag       `form_options:"skip"`
-	FileID             int64     `form_options:"skip"`
-	WorkflowID         int64     `form_widget:"select"`
+	FileID             uint      `form_options:"skip"`
+	WorkflowID         uint      `form_widget:"select"`
 	Workflow           Workflow  `form_options:"skip"`
 	WorkflowSnapshot   string    `form_options:"skip"`
 	ScheduledStartTime time.Time `form_options:"skip"`
@@ -22,13 +22,13 @@ type Job struct {
 	CapturedOutput     string    `form_options:"skip"`
 }
 
-func JobLoad(db *gorm.DB, id int64) (*Job, error) {
+func JobLoad(db *gorm.DB, id uint) (*Job, error) {
 	job := &Job{}
 	err := db.First(job, id).Error
 	return job, err
 }
 
-func JobLoadWithRelations(db *gorm.DB, id int64) (*Job, error) {
+func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
 	job, err := JobLoad(db, id)
 	if err == nil {
 		err = db.Preload("BagItProfile", "StorageService").First(&job.Workflow, job.WorkflowID).Error
