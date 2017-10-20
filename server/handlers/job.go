@@ -5,6 +5,7 @@ import (
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/kirves/go-form-it"
 	"github.com/kirves/go-form-it/fields"
@@ -38,8 +39,41 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
+	var err error
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	job := &models.Job{}
+	if id != 0 {
+		job, err = models.JobLoadWithRelations(db, uint(id))
+		// TODO: Proper, consistent error handling
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	data := make(map[string]interface{})
+	form, err := JobForm(job)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
+	sourceDirField := fields.HiddenField("SourceDir")
+	sourceDirField.SetId("SourceDir")
+	form.Elements(sourceDirField)
+	data["form"] = form
+	err = templates.ExecuteTemplate(w, "job", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // Returns a Job form.
-func JobForm(job models.Job) (*forms.Form, error) {
+func JobForm(job *models.Job) (*forms.Form, error) {
 	postUrl := fmt.Sprintf("/job/new")
 	if job.ID > uint(0) {
 		postUrl = fmt.Sprintf("/job/%d/edit", job.ID)
@@ -58,13 +92,7 @@ func JobForm(job models.Job) (*forms.Form, error) {
 	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
 		AddTagValueFields(job.Workflow.BagItProfile, form, true)
 	}
-
-	// Hide the tag fields that are filled in by default.
-	// The user doesn't need to fill these out, but they
-	// can unhide them if they want to edit them.
-
 	form.Elements(submitButton)
-
 	return form, nil
 }
 
