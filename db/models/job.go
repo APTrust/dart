@@ -23,12 +23,16 @@ type Job struct {
 	CapturedOutput     string    `form_options:"skip"`
 }
 
+// JobLoad loads a job without any of its relations.
 func JobLoad(db *gorm.DB, id uint) (*Job, error) {
 	job := &Job{}
 	err := db.First(job, id).Error
 	return job, err
 }
 
+// JobLoadWithRelations loads a job with all of its relations
+// and all of their sub-relations, all the way down. This includes
+// all the info you need to actually run a job.
 func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
 	job := &Job{}
 	err := db.Preload("Bag").Preload("File").First(job, id).Error

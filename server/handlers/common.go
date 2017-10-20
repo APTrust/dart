@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/schema"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/kirves/go-form-it"
 	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
@@ -94,4 +96,55 @@ func GetOptions(modelName string) map[string][]fields.InputChoice {
 	options := make(map[string][]fields.InputChoice)
 	options[""] = choices
 	return options
+}
+
+// AddTagValueFields adds tag value form fields for a BagItProfile to
+// the given form.
+func AddTagValueFields(profile models.BagItProfile, form *forms.Form) error {
+	profileDef, err := profile.Profile()
+	if err != nil {
+		return err
+	}
+	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
+		fieldsInSet := make([]fields.FieldInterface, 0)
+		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
+		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
+			// This tag is a basic part of the BagIt spec and will
+			// always be set by the system, not the user.
+			if tagname == "Payload-Oxum" {
+				continue
+			}
+			tagdef := mapOfRequiredTags[tagname]
+			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
+			defaultValue := ""
+			defaultTagId := uint(0)
+			if len(defaultTags) > 0 {
+				defaultValue = defaultTags[0].TagValue
+				defaultTagId = defaultTags[0].ID
+			}
+			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
+			fieldLabel := tagname
+
+			formField := fields.TextField(fieldName)
+			if len(tagdef.Values) > 0 {
+				options := make(map[string][]fields.InputChoice)
+				options[""] = make([]fields.InputChoice, len(tagdef.Values)+1)
+				options[""][0] = fields.InputChoice{Id: "", Val: ""}
+				for i, val := range tagdef.Values {
+					options[""][i+1] = fields.InputChoice{Id: val, Val: val}
+				}
+				formField = fields.SelectField(fieldName, options)
+			}
+			formField.SetLabel(fieldLabel)
+			formField.SetValue(defaultValue)
+			fieldsInSet = append(fieldsInSet, formField)
+		}
+		// Unfortunately, go-form-it does not support fieldset legends
+		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
+		fieldSetLabel.AddClass("fieldset-header")
+		form.Elements(fieldSetLabel)
+		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
+		form.Elements(fieldSet)
+	}
+	return nil
 }

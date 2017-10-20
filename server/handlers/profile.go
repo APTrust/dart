@@ -187,10 +187,6 @@ func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
 	if profile.JSON == "" {
 		return form, nil
 	}
-	profileDef, err := profile.Profile()
-	if err != nil {
-		return nil, err
-	}
 
 	// Remove the submit button from the end of the form,
 	// add our new elements, and then replace the submit button
@@ -208,46 +204,8 @@ func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
 	fieldSetNote.AddClass("well")
 	form.Elements(fieldSetNote)
 
-	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
-		fieldsInSet := make([]fields.FieldInterface, 0)
-		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
-		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
-			// This tag will always be set by the system, not the user.
-			if tagname == "Payload-Oxum" {
-				continue
-			}
-			tagdef := mapOfRequiredTags[tagname]
-			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
-			defaultValue := ""
-			defaultTagId := uint(0)
-			if len(defaultTags) > 0 {
-				defaultValue = defaultTags[0].TagValue
-				defaultTagId = defaultTags[0].ID
-			}
-			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
-			fieldLabel := tagname
-
-			formField := fields.TextField(fieldName)
-			if len(tagdef.Values) > 0 {
-				options := make(map[string][]fields.InputChoice)
-				options[""] = make([]fields.InputChoice, len(tagdef.Values)+1)
-				options[""][0] = fields.InputChoice{Id: "", Val: ""}
-				for i, val := range tagdef.Values {
-					options[""][i+1] = fields.InputChoice{Id: val, Val: val}
-				}
-				formField = fields.SelectField(fieldName, options)
-			}
-			formField.SetLabel(fieldLabel)
-			formField.SetValue(defaultValue)
-			fieldsInSet = append(fieldsInSet, formField)
-		}
-		// Unfortunately, go-form-it does not support fieldset legends
-		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
-		fieldSetLabel.AddClass("fieldset-header")
-		form.Elements(fieldSetLabel)
-		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
-		form.Elements(fieldSet)
-	}
+	// Add the tag value fields we need to display
+	AddTagValueFields(profile, form)
 	form.Elements(submitButton)
 
 	return form, nil
