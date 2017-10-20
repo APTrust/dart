@@ -106,3 +106,74 @@ func FakeWorkflow() *models.Workflow {
 		SerializationFormat: "tar",
 	}
 }
+
+func CreateFakeJobWithRelations(db *gorm.DB) (*models.Job, error) {
+	bag := FakeBag()
+	err := db.Save(bag).Error
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < 5; i++ {
+		f := FakeFile()
+		f.BagID = bag.ID
+		err = db.Save(f).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+	file := FakeFile()
+	err = db.Save(file).Error
+	if err != nil {
+		return nil, err
+	}
+	storageService := FakeStorageService()
+	err = db.Save(storageService).Error
+	if err != nil {
+		return nil, err
+	}
+	bagItProfile, err := FakeBagItProfile()
+	if err != nil {
+		return nil, err
+	}
+	err = db.Save(bagItProfile).Error
+	if err != nil {
+		return nil, err
+	}
+	p, err := bagItProfile.Profile()
+	if err != nil {
+		return nil, err
+	}
+	for relFilePath, tagMap := range p.TagFilesRequired {
+		for tagname, tagDef := range tagMap {
+			tagValue := fake.Word()
+			if len(tagDef.Values) > 0 {
+				tagValue = tagDef.Values[rand.Intn(len(tagDef.Values))]
+			}
+			dtv := FakeDefaultTagValue()
+			dtv.BagItProfileID = bagItProfile.ID
+			dtv.TagFile = relFilePath
+			dtv.TagName = tagname
+			dtv.TagValue = tagValue
+			err = db.Save(dtv).Error
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	workflow := FakeWorkflow()
+	workflow.BagItProfileID = bagItProfile.ID
+	workflow.StorageServiceID = storageService.ID
+	err = db.Save(workflow).Error
+	if err != nil {
+		return nil, err
+	}
+	job := FakeJob()
+	job.BagID = bag.ID
+	job.FileID = file.ID
+	job.WorkflowID = workflow.ID
+	err = db.Save(job).Error
+	if err != nil {
+		return nil, err
+	}
+	return job, nil
+}
