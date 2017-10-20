@@ -204,8 +204,9 @@ func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
 	fieldSetNote.AddClass("well")
 	form.Elements(fieldSetNote)
 
-	// Add the tag value fields we need to display
-	AddTagValueFields(profile, form)
+	// Add the tag value fields we need to display.
+	// Last param, false, means don't hide any fields.
+	AddTagValueFields(profile, form, false)
 	form.Elements(submitButton)
 
 	return form, nil

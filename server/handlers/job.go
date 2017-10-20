@@ -38,71 +38,35 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// func JobForm(job *models.Job) (*forms.Form, error) {
-// 	postUrl := fmt.Sprintf("/job/new")
-// 	if profile.ID > uint(0) {
-// 		postUrl = fmt.Sprintf("/job/%d/edit", profile.ID)
-// 	}
-// 	form := forms.BootstrapFormFromModel(*job, forms.POST, postUrl)
+// Returns a Job form.
+func JobForm(job models.Job) (*forms.Form, error) {
+	postUrl := fmt.Sprintf("/job/new")
+	if job.ID > uint(0) {
+		postUrl = fmt.Sprintf("/job/%d/edit", job.ID)
+	}
+	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
 
-// 	// Remove the submit button from the end of the form,
-// 	// add our new elements, and then replace the submit button
-// 	// at the end.
-// 	submitButton := form.Field("submit")
-// 	form.RemoveElement("submit")
+	// Remove the submit button from the end of the form,
+	// add our new elements, and then replace the submit button
+	// at the end.
+	submitButton := form.Field("submit")
+	form.RemoveElement("submit")
 
-// 	fieldSetNote := fields.StaticField("",
-// 		"Set common tag values for this profile below. "+
-// 			"Common tag defaults such as your organization name "+
-// 			"apply across all bags created with this profile. "+
-// 			"Leave fields such as bag title, description, etc. "+
-// 			"blank if they should be set individually for each bag.")
-// 	fieldSetNote.AddClass("well")
-// 	form.Elements(fieldSetNote)
+	// Add the tag value fields we need to display.
+	// Last param, true, means hide fields that already have
+	// default values.
+	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
+		AddTagValueFields(job.Workflow.BagItProfile, form, true)
+	}
 
-// 	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
-// 		fieldsInSet := make([]fields.FieldInterface, 0)
-// 		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
-// 		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
-// 			// This tag will always be set by the system, not the user.
-// 			if tagname == "Payload-Oxum" {
-// 				continue
-// 			}
-// 			tagdef := mapOfRequiredTags[tagname]
-// 			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
-// 			defaultValue := ""
-// 			defaultTagId := uint(0)
-// 			if len(defaultTags) > 0 {
-// 				defaultValue = defaultTags[0].TagValue
-// 				defaultTagId = defaultTags[0].ID
-// 			}
-// 			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
-// 			fieldLabel := tagname
+	// Hide the tag fields that are filled in by default.
+	// The user doesn't need to fill these out, but they
+	// can unhide them if they want to edit them.
 
-// 			formField := fields.TextField(fieldName)
-// 			if len(tagdef.Values) > 0 {
-// 				options := make(map[string][]fields.InputChoice)
-// 				options[""] = make([]fields.InputChoice, len(tagdef.Values)+1)
-// 				options[""][0] = fields.InputChoice{Id: "", Val: ""}
-// 				for i, val := range tagdef.Values {
-// 					options[""][i+1] = fields.InputChoice{Id: val, Val: val}
-// 				}
-// 				formField = fields.SelectField(fieldName, options)
-// 			}
-// 			formField.SetLabel(fieldLabel)
-// 			formField.SetValue(defaultValue)
-// 			fieldsInSet = append(fieldsInSet, formField)
-// 		}
-// 		// Unfortunately, go-form-it does not support fieldset legends
-// 		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
-// 		fieldSetLabel.AddClass("fieldset-header")
-// 		form.Elements(fieldSetLabel)
-// 		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
-// 		form.Elements(fieldSet)
-// 	}
-// 	form.Elements(submitButton)
-// 	return form, nil
-// }
+	form.Elements(submitButton)
+
+	return form, nil
+}
 
 // This is a crude job runner for our demo. Break this out later,
 // add proper error handling, etc. And fix the models too.

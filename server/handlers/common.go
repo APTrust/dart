@@ -99,13 +99,17 @@ func GetOptions(modelName string) map[string][]fields.InputChoice {
 }
 
 // AddTagValueFields adds tag value form fields for a BagItProfile to
-// the given form.
-func AddTagValueFields(profile models.BagItProfile, form *forms.Form) error {
+// the given form. Set the last param, hideNonEmpty, to true if you want
+// to hide the fields that have non-empty values. Do this on the job form,
+// for example, where the user fills in only those tags that don't already
+// have default values.
+func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmpty bool) error {
 	profileDef, err := profile.Profile()
 	if err != nil {
 		return err
 	}
 	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
+		hasVisibleFields := false
 		fieldsInSet := make([]fields.FieldInterface, 0)
 		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
 		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
@@ -137,6 +141,12 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form) error {
 			}
 			formField.SetLabel(fieldLabel)
 			formField.SetValue(defaultValue)
+			if hideNonEmpty && defaultValue != "" {
+				formField.AddClass("hidden")
+				formField.AddClass("show-hide")
+			} else {
+				hasVisibleFields = true
+			}
 			fieldsInSet = append(fieldsInSet, formField)
 		}
 		// Unfortunately, go-form-it does not support fieldset legends
@@ -145,6 +155,12 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form) error {
 		form.Elements(fieldSetLabel)
 		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
 		form.Elements(fieldSet)
+		if !hasVisibleFields {
+			fieldSetLabel.AddClass("hidden")
+			fieldSetLabel.AddClass("show-hide")
+			fieldSet.AddClass("hidden")
+			fieldSet.AddClass("show-hide")
+		}
 	}
 	return nil
 }
