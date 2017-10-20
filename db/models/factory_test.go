@@ -107,6 +107,9 @@ func FakeWorkflow() *models.Workflow {
 	}
 }
 
+// CreateFakeJobWithRelations creates and saves a Job with all of
+// its sub-components. This job includes both a File and a Bag.
+// In reality, jobs will include a File or a Bag, but not both.
 func CreateFakeJobWithRelations(db *gorm.DB) (*models.Job, error) {
 	bag := FakeBag()
 	err := db.Save(bag).Error
@@ -143,6 +146,9 @@ func CreateFakeJobWithRelations(db *gorm.DB) (*models.Job, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Add default tag values to the profile, and use valid
+	// values if the profile specifies a list of them for
+	// any given tag.
 	for relFilePath, tagMap := range p.TagFilesRequired {
 		for tagname, tagDef := range tagMap {
 			tagValue := fake.Word()
