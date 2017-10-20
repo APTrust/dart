@@ -31,6 +31,15 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	sourceDirField := fields.HiddenField("SourceDir")
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
+
+	// Fix the messed-up submit button this library creates.
+	// The default name, "submit" overrides document.forms[0].submit()
+	form.RemoveElement("submit")
+	newSubmitButton := fields.SubmitButton("submit-button", "Submit")
+	newSubmitButton.AddClass("btn")
+	newSubmitButton.AddClass("btn-default")
+	form.Elements(newSubmitButton)
+
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
@@ -46,7 +55,27 @@ func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
 	job := &models.Job{}
 	if id != 0 {
 		job, err = models.JobLoadWithRelations(db, uint(id))
-		// TODO: Proper, consistent error handling
+		// TODO: Proper, consistent error handling.
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		err = r.ParseForm()
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		workflowId, err := strconv.Atoi(r.Form.Get("WorkflowID"))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		job.WorkflowID = uint(workflowId)
+		err = db.Find(&job.Workflow, uint(workflowId)).Error
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,6 +90,7 @@ func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
+	form.Field("WorkflowID").SetValue(fmt.Sprintf("%d", job.WorkflowID))
 	sourceDirField := fields.HiddenField("SourceDir")
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
@@ -78,12 +108,11 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 	if job.ID > uint(0) {
 		postUrl = fmt.Sprintf("/job/%d/edit", job.ID)
 	}
-	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
+	form := forms.BootstrapFormFromModel(*job, forms.POST, postUrl)
 
 	// Remove the submit button from the end of the form,
 	// add our new elements, and then replace the submit button
 	// at the end.
-	submitButton := form.Field("submit")
 	form.RemoveElement("submit")
 
 	// Add the tag value fields we need to display.
@@ -92,7 +121,14 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
 		AddTagValueFields(job.Workflow.BagItProfile, form, true)
 	}
-	form.Elements(submitButton)
+	// go-form-it automatically adds a submit button with the
+	// name "submit". That overrides the JavaScript form.submit()
+	// function, so we want to change the name, but keep the bootstrap
+	// class.
+	newSubmitButton := fields.SubmitButton("submit-button", "Submit")
+	newSubmitButton.AddClass("btn")
+	newSubmitButton.AddClass("btn-default")
+	form.Elements(newSubmitButton)
 	return form, nil
 }
 
