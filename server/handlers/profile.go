@@ -191,8 +191,8 @@ func ProfileForm(profile models.BagItProfile) (*forms.Form, error) {
 	// Remove the submit button from the end of the form,
 	// add our new elements, and then replace the submit button
 	// at the end.
-	submitButton := form.Field("submit")
-	form.RemoveElement("submit")
+	submitButton := form.Field("submitButton")
+	form.RemoveElement("submitButton")
 
 	// TODO: i18n
 	fieldSetNote := fields.StaticField("",

@@ -31,15 +31,6 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	sourceDirField := fields.HiddenField("SourceDir")
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
-
-	// Fix the messed-up submit button this library creates.
-	// The default name, "submit" overrides document.forms[0].submit()
-	form.RemoveElement("submit")
-	newSubmitButton := fields.SubmitButton("submit-button", "Submit")
-	newSubmitButton.AddClass("btn")
-	newSubmitButton.AddClass("btn-default")
-	form.Elements(newSubmitButton)
-
 	data["form"] = form
 	err := templates.ExecuteTemplate(w, "job", data)
 	if err != nil {
@@ -114,7 +105,8 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 	// Remove the submit button from the end of the form,
 	// add our new elements, and then replace the submit button
 	// at the end.
-	form.RemoveElement("submit")
+	submitButton := form.Field("submitButton")
+	form.RemoveElement("submitButton")
 
 	// Add the tag value fields we need to display.
 	// Last param, true, means hide fields that already have
@@ -122,14 +114,7 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
 		AddTagValueFields(job.Workflow.BagItProfile, form, true)
 	}
-	// go-form-it automatically adds a submit button with the
-	// name "submit". That overrides the JavaScript form.submit()
-	// function, so we want to change the name, but keep the bootstrap
-	// class.
-	newSubmitButton := fields.SubmitButton("submit-button", "Submit")
-	newSubmitButton.AddClass("btn")
-	newSubmitButton.AddClass("btn-default")
-	form.Elements(newSubmitButton)
+	form.Elements(submitButton)
 	return form, nil
 }
 
