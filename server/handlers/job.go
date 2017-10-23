@@ -75,12 +75,13 @@ func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		job.WorkflowID = uint(workflowId)
-		err = db.Find(&job.Workflow, uint(workflowId)).Error
+		workflow, err := models.WorkflowLoadWithRelations(db, job.WorkflowID)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		job.Workflow = *workflow
 	}
 	data := make(map[string]interface{})
 	form, err := JobForm(job)
