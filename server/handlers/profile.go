@@ -3,10 +3,10 @@ package handlers
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/db/models"
+	"github.com/APTrust/go-form-it"
+	"github.com/APTrust/go-form-it/fields"
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/kirves/go-form-it"
-	"github.com/kirves/go-form-it/fields"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"

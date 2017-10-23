@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/db/models"
+	"github.com/APTrust/go-form-it"
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/kirves/go-form-it"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
