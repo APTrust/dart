@@ -112,14 +112,3 @@ type Tag struct {
 	Name        string
 	Value       string
 }
-
-type Workflow struct {
-	gorm.Model          `form_options:"skip"`
-	Name                string
-	Description         string
-	SerializationFormat string         `form_widget:"select"`
-	BagItProfileID      uint           `form_widget:"select"`
-	BagItProfile        BagItProfile   `form_options:"skip"`
-	StorageServiceID    uint           `form_widget:"select"`
-	StorageService      StorageService `form_options:"skip"`
-}

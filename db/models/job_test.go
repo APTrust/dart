@@ -9,49 +9,49 @@ import (
 	"testing"
 )
 
-func setupJobTest() (*gorm.DB, uint, error) {
+func setupJobTest() (*gorm.DB, *models.Job, error) {
 	db, err := InitTestDB()
 	if err != nil {
-		return nil, uint(0), err
+		return nil, nil, err
 	}
 	job, err := CreateFakeJobWithRelations(db)
 	if err != nil {
-		return nil, uint(0), err
+		return nil, nil, err
 	}
-	return db, job.ID, err
+	return db, job, err
 }
 
 func TestJobLoad(t *testing.T) {
-	db, objectId, err := setupJobTest()
+	db, job, err := setupJobTest()
 	if db != nil {
 		defer db.Close()
 	}
 	require.Nil(t, err)
-	assert.NotEqual(t, uint(0), objectId)
-	job, err := models.JobLoad(db, objectId)
+	assert.NotNil(t, job)
+	jobFromDB, err := models.JobLoad(db, job.ID)
 	assert.Nil(t, err)
-	require.NotNil(t, job)
-	assert.Equal(t, objectId, job.ID)
+	require.NotNil(t, jobFromDB)
+	assert.Equal(t, jobFromDB.ID, job.ID)
 }
 
 func TestJobLoadWithRelations(t *testing.T) {
-	db, objectId, err := setupJobTest()
+	db, job, err := setupJobTest()
 	if db != nil {
 		defer db.Close()
 	}
 	require.Nil(t, err)
-	assert.NotEqual(t, uint(0), objectId)
-	job, err := models.JobLoadWithRelations(db, objectId)
+	assert.NotNil(t, job)
+	jobFromDB, err := models.JobLoadWithRelations(db, job.ID)
 	assert.Nil(t, err)
-	require.NotNil(t, job)
-	assert.Equal(t, objectId, job.ID)
-	assert.NotNil(t, job.Bag)
-	assert.NotNil(t, job.File)
-	require.NotNil(t, job.Workflow)
-	assert.NotNil(t, job.Workflow.StorageService)
-	require.NotNil(t, job.Workflow.BagItProfile)
+	require.NotNil(t, jobFromDB)
+	assert.Equal(t, jobFromDB.ID, job.ID)
+	assert.NotNil(t, jobFromDB.Bag)
+	assert.NotNil(t, jobFromDB.File)
+	require.NotNil(t, jobFromDB.Workflow)
+	assert.NotNil(t, jobFromDB.Workflow.StorageService)
+	require.NotNil(t, jobFromDB.Workflow.BagItProfile)
 
 	// 11 is the number of required tags specified in the APTrust BagIt profile.
 	// Our tests use testdata/profiles/aptrust_bagit_profile_2.0.json
-	assert.Equal(t, 11, len(job.Workflow.BagItProfile.DefaultTagValues))
+	assert.Equal(t, 11, len(jobFromDB.Workflow.BagItProfile.DefaultTagValues))
 }

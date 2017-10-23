@@ -34,15 +34,14 @@ func JobLoad(db *gorm.DB, id uint) (*Job, error) {
 // and all of their sub-relations, all the way down. This includes
 // all the info you need to actually run a job.
 func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
+	var workflow *Workflow
 	job := &Job{}
 	err := db.Preload("Bag").Preload("File").First(job, id).Error
 	if err == nil {
-		err = db.Preload("StorageService").
-			First(&job.Workflow, job.WorkflowID).Error
-	}
-	if err == nil {
-		err = db.Preload("DefaultTagValues").
-			First(&job.Workflow.BagItProfile, job.Workflow.BagItProfileID).Error
+		workflow, err = WorkflowLoadWithRelations(db, job.WorkflowID)
+		if workflow != nil {
+			job.Workflow = *workflow
+		}
 	}
 	return job, err
 }
