@@ -149,15 +149,10 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmp
 			}
 			fieldsInSet = append(fieldsInSet, formField)
 		}
-		// Unfortunately, go-form-it does not support fieldset legends
-		fieldSetLabel := fields.StaticField("", fmt.Sprintf("Default values for %s", relFilePath))
-		fieldSetLabel.AddClass("fieldset-header")
-		form.Elements(fieldSetLabel)
-		fieldSet := forms.FieldSet(relFilePath, fieldsInSet...)
+		legend := fmt.Sprintf("Default values for %s", relFilePath)
+		fieldSet := forms.FieldSet(relFilePath, legend, fieldsInSet...)
 		form.Elements(fieldSet)
 		if !hasVisibleFields {
-			fieldSetLabel.AddClass("hidden")
-			fieldSetLabel.AddClass("show-hide")
 			fieldSet.AddClass("hidden")
 			fieldSet.AddClass("show-hide")
 		}
