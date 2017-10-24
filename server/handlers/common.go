@@ -150,8 +150,7 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmp
 			}
 			fieldsInSet = append(fieldsInSet, formField)
 		}
-		legend := fmt.Sprintf("Default values for %s", relFilePath)
-		fieldSet := forms.FieldSet(relFilePath, legend, fieldsInSet...)
+		fieldSet := forms.FieldSet(relFilePath, relFilePath, fieldsInSet...)
 		form.Elements(fieldSet)
 		if !hasVisibleFields {
 			fieldSet.AddClass("hidden")
