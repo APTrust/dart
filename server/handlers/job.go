@@ -113,6 +113,9 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 	// default values.
 	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
 		AddTagValueFields(job.Workflow.BagItProfile, form, true)
+		showHideButton := fields.Button("showHideTagFields", "Show/Hide Tag Fields")
+		showHideButton.SetId("showHideTagFields")
+		form.Elements(showHideButton)
 	}
 	form.Elements(submitButton)
 	return form, nil
