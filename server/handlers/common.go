@@ -18,6 +18,8 @@ import (
 )
 
 // The following vars are shared among all files in this package.
+//
+// TODO: Transition to middleware, env, and custom handlers.
 var templates *template.Template
 var decoder = schema.NewDecoder()
 var db *gorm.DB
@@ -31,12 +33,14 @@ func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TODO: Transition to middleware
 func CompileTemplates(pathToServerRoot string) {
 	templateDir, _ := filepath.Abs(filepath.Join(pathToServerRoot, "templates", "*.html"))
 	log.Println("Loading templates:", templateDir)
 	templates = template.Must(template.ParseGlob(templateDir))
 }
 
+// TODO: Transition to middleware
 // TODO: This is also used by the easy_store_setup app.
 // Put it on one place, and don't rely on testutil.GetPathToSchema()
 // as that file and directory exist in dev mode only, and users
@@ -158,4 +162,13 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmp
 		}
 	}
 	return nil
+}
+
+// Used by middleware. Move there?
+func logRequest(r *http.Request) {
+	r.ParseForm()
+	log.Println(r.Method, r.URL.String())
+	for k, v := range r.Form {
+		log.Println("  ", k, "->", v[0])
+	}
 }
