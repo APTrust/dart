@@ -113,9 +113,10 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmp
 		fieldsInSet := make([]fields.FieldInterface, 0)
 		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
 		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
-			// This tag is a basic part of the BagIt spec and will
-			// always be set by the system, not the user.
-			if tagname == "Payload-Oxum" {
+			// Payload-Oxum is a basic part of the BagIt spec and will
+			// always be set by the system, not the user. Bag-Size is
+			// a DPN tag that should also be set by the system.
+			if tagname == "Payload-Oxum" || tagname == "Bag-Size" {
 				continue
 			}
 			tagdef := mapOfRequiredTags[tagname]
