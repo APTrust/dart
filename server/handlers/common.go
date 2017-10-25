@@ -18,6 +18,7 @@ func HandleRootRequest(env *Environment, w http.ResponseWriter, r *http.Request)
 	return env.ExecTemplate(w, "index", data)
 }
 
+// TODO: Move into models
 func GetOptions(db *gorm.DB, modelName string) map[string][]fields.InputChoice {
 	choices := make([]fields.InputChoice, 1)
 	choices[0] = fields.InputChoice{Id: "", Val: ""}
