@@ -6,6 +6,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
 	"html/template"
+	"io"
 	"log"
 	"path/filepath"
 )
@@ -25,6 +26,14 @@ func NewEnvironment(pathToServerRoot, dbFilePath string) *Environment {
 		Decoder:   decoder,
 		Templates: compileTemplates(pathToServerRoot),
 	}
+}
+
+// func (env *Environment) Decode(dst interface{}, src map[string][]string) error {
+//	return WrapErr(env.Decoder.Decode(dst, src))
+// }
+
+func (env *Environment) ExecTemplate(w io.Writer, name string, data interface{}) error {
+	return WrapErr(env.Templates.ExecuteTemplate(w, name, data))
 }
 
 func compileTemplates(pathToServerRoot string) *template.Template {

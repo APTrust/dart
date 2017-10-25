@@ -22,7 +22,7 @@ func AppSettingsList(env *Environment, w http.ResponseWriter, r *http.Request) e
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	return templates.ExecuteTemplate(w, "app-settings-list", data)
+	return env.ExecTemplate(w, "app-settings-list", data)
 }
 
 func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
@@ -30,7 +30,7 @@ func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) 
 	setting := models.AppSetting{}
 	form := forms.BootstrapFormFromModel(setting, forms.POST, "/app_setting/new")
 	data["form"] = form
-	return templates.ExecuteTemplate(w, "app-setting-form", data)
+	return env.ExecTemplate(w, "app-setting-form", data)
 }
 
 func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
@@ -55,7 +55,7 @@ func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request)
 		return nil
 	}
 	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
-	return templates.ExecuteTemplate(w, "app-setting-form", data)
+	return env.ExecTemplate(w, "app-setting-form", data)
 }
 
 func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
@@ -71,7 +71,7 @@ func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(setting, forms.POST, postUrl)
 	data["form"] = form
-	return templates.ExecuteTemplate(w, "app-setting-form", data)
+	return env.ExecTemplate(w, "app-setting-form", data)
 }
 
 func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
@@ -100,5 +100,5 @@ func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request
 	}
 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
-	return templates.ExecuteTemplate(w, "app-setting-form", data)
+	return env.ExecTemplate(w, "app-setting-form", data)
 }
