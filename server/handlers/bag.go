@@ -5,45 +5,36 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
+	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 )
 
-func BagsList(w http.ResponseWriter, r *http.Request) {
+func BagsList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	bags := make([]models.Bag, 0)
-	err := db.Find(&bags).Error
+	err := env.DB.Find(&bags).Error
 	if err != nil {
-		log.Println(err.Error())
+		return errors.WithStack(err)
 	}
 	data["items"] = bags
 	successMessage, ok := r.URL.Query()["success"]
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	err = templates.ExecuteTemplate(w, "bag-list", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.Templates.ExecuteTemplate(w, "bag-list", data)
 }
 
-func BagDetail(w http.ResponseWriter, r *http.Request) {
+func BagDetail(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("GET Bag", id)
 	bag := models.Bag{}
-	err := db.Find(&bag, id).Preload("Files").Error
+	err := env.DB.Find(&bag, id).Preload("Files").Error
 	if err != nil {
-		log.Println(err.Error())
+		errors.WithStack(err)
 	}
 	data["item"] = bag
 	data["items"] = bag.Files
-	err = templates.ExecuteTemplate(w, "bag-detail", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.Templates.ExecuteTemplate(w, "bag-detail", data)
 }
