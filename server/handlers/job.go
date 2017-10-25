@@ -11,9 +11,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/minio/minio-go"
+	"github.com/pkg/errors"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -22,7 +22,7 @@ import (
 	"strings"
 )
 
-func JobNewGet(w http.ResponseWriter, r *http.Request) {
+func JobNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	job := models.Job{}
 	postUrl := "/job/run"
 	data := make(map[string]interface{})
@@ -32,54 +32,39 @@ func JobNewGet(w http.ResponseWriter, r *http.Request) {
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
 	data["form"] = form
-	err := templates.ExecuteTemplate(w, "job", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "job", data)
 }
 
-func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
+func JobWorkflowChanged(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	var err error
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	job := &models.Job{}
 	if id != 0 {
-		job, err = models.JobLoadWithRelations(db, uint(id))
-		// TODO: Proper, consistent error handling.
+		job, err = models.JobLoadWithRelations(env.DB, uint(id))
 		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return errors.WithStack(err)
 		}
 	} else {
 		err = r.ParseForm()
 		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return errors.WithStack(err)
 		}
 		workflowId, err := strconv.Atoi(r.Form.Get("WorkflowID"))
 		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return errors.WithStack(err)
 		}
 		job.WorkflowID = uint(workflowId)
-		workflow, err := models.WorkflowLoadWithRelations(db, job.WorkflowID)
+		workflow, err := models.WorkflowLoadWithRelations(env.DB, job.WorkflowID)
 		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
+			return errors.WithStack(err)
 		}
 		job.Workflow = *workflow
 	}
 	data := make(map[string]interface{})
 	form, err := JobForm(job)
 	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return errors.WithStack(err)
 	}
 	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
 	form.Field("WorkflowID").SetValue(fmt.Sprintf("%d", job.WorkflowID))
@@ -87,11 +72,7 @@ func JobWorkflowChanged(w http.ResponseWriter, r *http.Request) {
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "job", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "job", data)
 }
 
 // Returns a Job form.
@@ -118,6 +99,9 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 		form.Elements(showHideButton)
 	}
 	form.Elements(submitButton)
+
+	// TODO: Add run button after redoing form.
+
 	return form, nil
 }
 
@@ -125,28 +109,27 @@ func JobForm(job *models.Job) (*forms.Form, error) {
 // add proper error handling, etc. And fix the models too.
 // We should be able to preload, instead of getting related ids
 // and issuing new queries.
-func JobRun(w http.ResponseWriter, r *http.Request) {
+func JobRun(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	errMsg := ""
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
-		errMsg += fmt.Sprintf("%s <br/>", err.Error())
+		return errors.WithStack(err)
 	}
 
 	// Gather the info we need to create the bag
 	workflowId, _ := strconv.Atoi(r.PostFormValue("WorkflowID"))
 	workflow := &models.Workflow{}
-	db.Find(&workflow, workflowId)
+	env.DB.Find(&workflow, workflowId)
 
 	profile := &models.BagItProfile{}
-	db.Preload("DefaultTagValues").Find(&profile, workflow.BagItProfileID)
+	env.DB.Preload("DefaultTagValues").Find(&profile, workflow.BagItProfileID)
 
 	storageService := &models.StorageService{}
-	db.Find(&storageService, workflow.StorageServiceID)
+	env.DB.Find(&storageService, workflow.StorageServiceID)
 
 	stagingDir := models.AppSetting{}
-	db.Where("name = ?", "Staging Directory").First(&stagingDir)
+	env.DB.Where("name = ?", "Staging Directory").First(&stagingDir)
 
 	sourceDir := r.PostFormValue("SourceDir")
 	// HACK for demo: add virginia.edu. as bag name prefix
@@ -156,7 +139,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		profile.Name + "<br/>")
 	bagItProfile, err := profile.Profile()
 	if err != nil {
-		log.Println(err.Error())
+		errors.WithStack(err)
 	}
 
 	// Create the bag by copying the files into a staging dir,
@@ -207,7 +190,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	if fileutil.FileExists(manifestPath) {
 		manifestData, err := ioutil.ReadFile(manifestPath)
 		if err != nil {
-			errMsg += fmt.Sprintf("%s <br/>", err.Error())
+			return errors.WithStack(err)
 		} else {
 			data["Manifest"] = string(manifestData)
 		}
@@ -217,7 +200,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	if fileutil.FileExists(aptPath) {
 		aptData, err := ioutil.ReadFile(aptPath)
 		if err != nil {
-			errMsg += fmt.Sprintf("%s <br/>", err.Error())
+			return errors.WithStack(err)
 		} else {
 			data["APTrustInfo"] = string(aptData)
 		}
@@ -227,7 +210,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 	if fileutil.FileExists(bagInfoPath) {
 		bagInfoData, err := ioutil.ReadFile(bagInfoPath)
 		if err != nil {
-			errMsg += fmt.Sprintf("%s <br/>", err.Error())
+			return errors.WithStack(err)
 		} else {
 			data["BagInfo"] = string(bagInfoData)
 		}
@@ -254,7 +237,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		cmd.Dir = workingDir
 		commandOutput, err := cmd.CombinedOutput()
 		if err != nil {
-			errMsg += fmt.Sprintf("%s <br/>", err.Error())
+			return errors.WithStack(err)
 		}
 		bagCreated += fmt.Sprintf("%s <br/><br/>", string(commandOutput))
 		bagPathForValidation = tarFileAbsPath
@@ -293,9 +276,7 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		useSSL := true
 		minioClient, err := minio.New(storageService.URL, accessKeyID, secretAccessKey, useSSL)
 		if err != nil {
-			errMsg += ("Error creating S3 uploader: " + err.Error() + "<br/>")
-			errMsg += storageService.URL
-			return
+			return errors.WithStack(err)
 		}
 		n, err := minioClient.FPutObject(storageService.BucketOrFolder,
 			tarFileName, // we're assuming the tar file was made for this demo
@@ -313,9 +294,5 @@ func JobRun(w http.ResponseWriter, r *http.Request) {
 		data["Error"] = template.HTML(errMsg)
 	}
 
-	err = templates.ExecuteTemplate(w, "job-result", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "job-result", data)
 }
