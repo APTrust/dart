@@ -50,11 +50,11 @@ func main() {
 	r.HandleFunc("/storage_service/new", Wrap(env, handlers.StorageServiceNewPost)).Methods("POST", "PUT")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", Wrap(env, handlers.StorageServiceEditGet)).Methods("GET")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", Wrap(env, handlers.StorageServiceEditPost)).Methods("POST", "PUT")
-	r.HandleFunc("/workflows", handlers.WorkflowsList)
-	r.HandleFunc("/workflow/new", handlers.WorkflowNewGet).Methods("GET")
-	r.HandleFunc("/workflow/new", handlers.WorkflowNewPost).Methods("POST", "PUT")
-	r.HandleFunc("/workflow/{id:[0-9]+}/edit", handlers.WorkflowEditGet).Methods("GET")
-	r.HandleFunc("/workflow/{id:[0-9]+}/edit", handlers.WorkflowEditPost).Methods("POST", "PUT")
+	r.HandleFunc("/workflows", Wrap(env, handlers.WorkflowsList))
+	r.HandleFunc("/workflow/new", Wrap(env, handlers.WorkflowNewGet)).Methods("GET")
+	r.HandleFunc("/workflow/new", Wrap(env, handlers.WorkflowNewPost)).Methods("POST", "PUT")
+	r.HandleFunc("/workflow/{id:[0-9]+}/edit", Wrap(env, handlers.WorkflowEditGet)).Methods("GET")
+	r.HandleFunc("/workflow/{id:[0-9]+}/edit", Wrap(env, handlers.WorkflowEditPost)).Methods("POST", "PUT")
 	http.Handle("/", r)
 
 	go func() {

@@ -7,32 +7,28 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
+	"github.com/pkg/errors"
 	"net/http"
 	"net/url"
 	"strconv"
 )
 
-func WorkflowsList(w http.ResponseWriter, r *http.Request) {
+func WorkflowsList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	workflows := make([]models.Workflow, 0)
-	err := db.Find(&workflows).Error
+	err := env.DB.Find(&workflows).Error
 	if err != nil {
-		log.Println(err.Error())
+		return errors.WithStack(err)
 	}
 	data["items"] = workflows
 	successMessage, ok := r.URL.Query()["success"]
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	err = templates.ExecuteTemplate(w, "workflow-list", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "workflow-list", data)
 }
 
-func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
+func WorkflowNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	workflow := models.Workflow{}
 	postUrl := "/workflow/new"
 	data := make(map[string]interface{})
@@ -41,32 +37,28 @@ func WorkflowNewGet(w http.ResponseWriter, r *http.Request) {
 	form.Field("BagItProfileID").SetSelectChoices(GetOptions("BagItProfile"))
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
 	data["form"] = form
-	err := templates.ExecuteTemplate(w, "workflow-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "workflow-form", data)
 }
 
-func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
+func WorkflowNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	workflow := &models.Workflow{}
-	err = decoder.Decode(workflow, r.PostForm)
+	err = env.Decoder.Decode(workflow, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	data := make(map[string]interface{})
 	postUrl := "/workflow/new"
-	err = db.Save(&workflow).Error
+	err = env.DB.Save(&workflow).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
 		msg := fmt.Sprintf("Workflow '%s' has been saved", workflow.Name)
 		http.Redirect(w, r, "/workflows?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
 	form.Field("SerializationFormat").SetSelectChoices(GetOptions("SerializationFormat"))
@@ -76,19 +68,14 @@ func WorkflowNewPost(w http.ResponseWriter, r *http.Request) {
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "workflow-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "workflow-form", data)
 }
 
-func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
+func WorkflowEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("GET Workflow", id)
 	workflow := models.Workflow{}
-	db.Find(&workflow, uint(id))
+	env.DB.Find(&workflow, uint(id))
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
@@ -99,35 +86,30 @@ func WorkflowEditGet(w http.ResponseWriter, r *http.Request) {
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
-	err := templates.ExecuteTemplate(w, "workflow-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "workflow-form", data)
 }
 
-func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
+func WorkflowEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("POST Workflow", id)
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	workflow := &models.Workflow{}
-	err = decoder.Decode(workflow, r.PostForm)
+	err = env.Decoder.Decode(workflow, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	workflow.ID = uint(id)
 	data := make(map[string]interface{})
-	err = db.Save(&workflow).Error
+	err = env.DB.Save(&workflow).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
 		msg := fmt.Sprintf("Workflow '%s' has been saved.", workflow.Name)
 		http.Redirect(w, r, "/workflows?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
@@ -138,9 +120,5 @@ func WorkflowEditPost(w http.ResponseWriter, r *http.Request) {
 	form.Field("StorageServiceID").SetSelectChoices(GetOptions("StorageService"))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "workflow-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "workflow-form", data)
 }
