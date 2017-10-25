@@ -44,14 +44,27 @@ func initDBConnection(dbFilePath string) *gorm.DB {
 	return db
 }
 
-type CustomHandler interface {
-	HandleRequest(env *Environment, w http.ResponseWriter, r *http.Request) error
-}
-
-func WrapHandler(env *Environment, customHandler CustomHandler) http.Handler {
+// WrapHandler wraps a custom HTTP request handler inside a standard Go
+// HTTP request handler, and returns the standard handler. We wrap
+// the handler functions for a number of reasons:
+//
+// First, we want to pass in some resources that all handlers need,
+// such as the connection to the database and a reference to the
+// HTML templates.
+//
+// Second we want to standardize logging and error handling in a
+// single location, so we want our custom HTTP handlers to quit
+// early and return an error when necessary. The standard Go HTTP
+// handlers don't return anything.
+//
+// Third, this wrapper allows us to inject middleware as needed.
+// While Go's standard middleware pattern already allows this, we do
+// need this custom implementation if we want to be able to pass
+// environment data and receive errors.
+func WrapHandler(env *Environment, handler func(env *Environment, w http.ResponseWriter, r *http.Request) error) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logRequest(r)
-		err := customHandler.HandleRequest(env, w, r)
+		err := handler(env, w, r)
 		if err != nil {
 			HandleError(w, r, err)
 		}
