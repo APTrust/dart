@@ -7,53 +7,45 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
+	"github.com/pkg/errors"
 	"net/http"
 	"net/url"
 	"strconv"
 )
 
-func StorageServicesList(w http.ResponseWriter, r *http.Request) {
+func StorageServicesList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	services := make([]models.StorageService, 0)
-	db.Find(&services)
+	env.DB.Find(&services)
 	data["items"] = services
 	successMessage, ok := r.URL.Query()["success"]
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	err := templates.ExecuteTemplate(w, "storage-service-list", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "storage-service-list", data)
 }
 
-func StorageServiceNewGet(w http.ResponseWriter, r *http.Request) {
+func StorageServiceNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	service := models.StorageService{}
 	form := forms.BootstrapFormFromModel(service, forms.POST, "/storage_service/new")
 	form.Field("Protocol").SetSelectChoices(GetOptions("Protocol"))
 	data["form"] = form
-	err := templates.ExecuteTemplate(w, "storage-service-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "storage-service-form", data)
 }
 
-func StorageServiceNewPost(w http.ResponseWriter, r *http.Request) {
+func StorageServiceNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	service := &models.StorageService{}
-	err = decoder.Decode(service, r.PostForm)
+	err = env.Decoder.Decode(service, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	data := make(map[string]interface{})
-	err = db.Create(&service).Error
+	err = env.DB.Create(&service).Error
 	postUrl := fmt.Sprintf("/storage_service/new")
 	if err != nil {
 		data["errors"] = err.Error()
@@ -61,24 +53,19 @@ func StorageServiceNewPost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		msg := fmt.Sprintf("Storage Service '%s' has been saved", service.Name)
 		http.Redirect(w, r, "/storage_services?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
-	err = templates.ExecuteTemplate(w, "storage-service-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "storage-service-form", data)
 }
 
-func StorageServiceEditGet(w http.ResponseWriter, r *http.Request) {
+func StorageServiceEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("GET Storage Service", id)
 	service := models.StorageService{}
-	err := db.Find(&service, uint(id)).Error
+	err := env.DB.Find(&service, uint(id)).Error
 	if err != nil {
-		log.Println(err.Error())
+		return errors.WithStack(err)
 	}
 	// log.Println(service)
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
@@ -87,41 +74,32 @@ func StorageServiceEditGet(w http.ResponseWriter, r *http.Request) {
 	form.Field("Protocol").SetSelectChoices(GetOptions("Protocol"))
 	form.Field("Protocol").SetValue(service.Protocol)
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "storage-service-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "storage-service-form", data)
 }
 
-func StorageServiceEditPost(w http.ResponseWriter, r *http.Request) {
+func StorageServiceEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("POST Storage Service", id)
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	service := &models.StorageService{}
-	err = decoder.Decode(service, r.PostForm)
+	err = env.Decoder.Decode(service, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	service.ID = uint(id)
 	data := make(map[string]interface{})
-	err = db.Save(&service).Error
+	err = env.DB.Save(&service).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
 		msg := fmt.Sprintf("Storage Service '%s' has been saved", service.Name)
 		http.Redirect(w, r, "/storage_services?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*service, forms.POST, postUrl)
-	err = templates.ExecuteTemplate(w, "storage-service-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "storage-service-form", data)
 }
