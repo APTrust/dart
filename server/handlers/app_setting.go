@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func AppSettingsList(w http.ResponseWriter, r *http.Request) {
+func AppSettingsList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	settings := make([]models.AppSetting, 0)
 	db.Find(&settings)
@@ -22,34 +22,26 @@ func AppSettingsList(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	err := templates.ExecuteTemplate(w, "app-settings-list", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return templates.ExecuteTemplate(w, "app-settings-list", data)
 }
 
-func AppSettingNewGet(w http.ResponseWriter, r *http.Request) {
+func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	setting := models.AppSetting{}
 	form := forms.BootstrapFormFromModel(setting, forms.POST, "/app_setting/new")
 	data["form"] = form
-	err := templates.ExecuteTemplate(w, "app-setting-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return templates.ExecuteTemplate(w, "app-setting-form", data)
 }
 
-func AppSettingNewPost(w http.ResponseWriter, r *http.Request) {
+func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return err
 	}
 	setting := &models.AppSetting{}
-	err = decoder.Decode(setting, r.PostForm)
+	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return err
 	}
 	data := make(map[string]interface{})
 	err = db.Create(&setting).Error
@@ -60,48 +52,40 @@ func AppSettingNewPost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		msg := fmt.Sprintf("Setting '%s' has been saved", setting.Name)
 		http.Redirect(w, r, "/app_settings?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
-	err = templates.ExecuteTemplate(w, "app-setting-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return templates.ExecuteTemplate(w, "app-setting-form", data)
 }
 
-func AppSettingEditGet(w http.ResponseWriter, r *http.Request) {
+func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET App Setting", id)
 	setting := models.AppSetting{}
 	err := db.Find(&setting, uint(id)).Error
 	if err != nil {
-		log.Println(err.Error())
+		return err
 	}
 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(setting, forms.POST, postUrl)
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "app-setting-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return templates.ExecuteTemplate(w, "app-setting-form", data)
 }
 
-func AppSettingEditPost(w http.ResponseWriter, r *http.Request) {
+func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("POST App Setting", id)
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return err
 	}
 	setting := &models.AppSetting{}
-	err = decoder.Decode(setting, r.PostForm)
+	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return err
 	}
 	setting.ID = uint(id)
 	data := make(map[string]interface{})
@@ -111,13 +95,9 @@ func AppSettingEditPost(w http.ResponseWriter, r *http.Request) {
 	} else {
 		msg := fmt.Sprintf("Application Setting '%s' has been saved", setting.Name)
 		http.Redirect(w, r, "/app_settings?success="+url.QueryEscape(msg), 303)
-		return
+		return nil
 	}
 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
-	err = templates.ExecuteTemplate(w, "app-setting-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return templates.ExecuteTemplate(w, "app-setting-form", data)
 }

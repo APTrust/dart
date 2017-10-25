@@ -165,7 +165,7 @@ func AddTagValueFields(profile models.BagItProfile, form *forms.Form, hideNonEmp
 }
 
 // Used by middleware. Move there?
-func logRequest(r *http.Request) {
+func LogRequest(r *http.Request) {
 	r.ParseForm()
 	log.Println(r.Method, r.URL.String())
 	for k, v := range r.Form {

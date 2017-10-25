@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/APTrust/easy-store/server/handlers"
+	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
@@ -16,16 +17,24 @@ import (
 func main() {
 	handlers.CompileTemplates(GetServerRoot())
 	handlers.InitDBConnection()
+
+	schemaPath, err := testutil.GetPathToSchema()
+	if err != nil {
+		panic(err.Error())
+	}
+	dbFilePath := filepath.Join(filepath.Dir(schemaPath), "..", "..", "easy-store.db")
+	env := handlers.NewEnvironment(GetServerRoot(), dbFilePath)
+
 	http.Handle("/static/", http.FileServer(http.Dir(GetServerRoot())))
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", handlers.HandleRootRequest)
-	r.HandleFunc("/app_settings", handlers.AppSettingsList)
-	r.HandleFunc("/app_setting/new", handlers.AppSettingNewGet).Methods("GET")
-	r.HandleFunc("/app_setting/new", handlers.AppSettingNewPost).Methods("POST", "PUT")
-	r.HandleFunc("/app_setting/{id:[0-9]+}/edit", handlers.AppSettingEditGet).Methods("GET")
-	r.HandleFunc("/app_setting/{id:[0-9]+}/edit", handlers.AppSettingEditPost).Methods("POST", "PUT")
+	r.HandleFunc("/app_settings", Wrap(env, handlers.AppSettingsList)).Methods("GET")
+	r.HandleFunc("/app_setting/new", Wrap(env, handlers.AppSettingNewGet)).Methods("GET")
+	r.HandleFunc("/app_setting/new", Wrap(env, handlers.AppSettingNewPost)).Methods("POST", "PUT")
+	r.HandleFunc("/app_setting/{id:[0-9]+}/edit", Wrap(env, handlers.AppSettingEditGet)).Methods("GET")
+	r.HandleFunc("/app_setting/{id:[0-9]+}/edit", Wrap(env, handlers.AppSettingEditPost)).Methods("POST", "PUT")
 	r.HandleFunc("/bags", handlers.BagsList).Methods("GET")
 	r.HandleFunc("/bag/{id:[0-9]+}", handlers.BagDetail).Methods("GET")
 	r.HandleFunc("/job/new", handlers.JobNewGet).Methods("GET")
@@ -95,5 +104,32 @@ func OpenElectron() {
 		log.Println("Error opening Electron:", err.Error())
 	} else {
 		log.Println("Opened Electron")
+	}
+}
+
+// Wrap wraps a custom HTTP request handler inside a standard Go
+// HTTP request handler, and returns the standard handler. We wrap
+// the handler functions for a number of reasons:
+//
+// First, we want to pass in some resources that all handlers need,
+// such as the connection to the database and a reference to the
+// HTML templates.
+//
+// Second we want to standardize logging and error handling in a
+// single location, so we want our custom HTTP handlers to quit
+// early and return an error when necessary. The standard Go HTTP
+// handlers don't return anything.
+//
+// Third, this wrapper allows us to inject middleware as needed.
+// While Go's standard middleware pattern already allows this, we do
+// need this custom implementation if we want to be able to pass
+// environment data and receive errors.
+func Wrap(env *handlers.Environment, handler func(env *handlers.Environment, w http.ResponseWriter, r *http.Request) error) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		handlers.LogRequest(r)
+		err := handler(env, w, r)
+		if err != nil {
+			handlers.HandleError(w, r, err)
+		}
 	}
 }
