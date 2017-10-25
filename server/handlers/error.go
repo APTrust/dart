@@ -2,11 +2,18 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"net/url"
 	"time"
 )
+
+// WrapErr adds a stack trace to an error and returns the error.
+// If param err is nil, this returns nil.
+func WrapErr(err error) error {
+	return errors.WithStack(err)
+}
 
 // HandleError returns an error page with details about what went wrong.
 // Use this only for unrecoverable errors. Param err should be an error

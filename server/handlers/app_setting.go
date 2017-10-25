@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -37,12 +36,12 @@ func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) 
 func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
-		return errors.WithStack(err)
+		return WrapErr(err)
 	}
 	setting := &models.AppSetting{}
 	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		return errors.WithStack(err)
+		return WrapErr(err)
 	}
 	data := make(map[string]interface{})
 	err = env.DB.Create(&setting).Error
@@ -66,7 +65,7 @@ func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request)
 	setting := models.AppSetting{}
 	err := env.DB.Find(&setting, uint(id)).Error
 	if err != nil {
-		return errors.WithStack(err)
+		return WrapErr(err)
 	}
 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 	data := make(map[string]interface{})
@@ -81,12 +80,13 @@ func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request
 	log.Println("POST App Setting", id)
 	err := r.ParseForm()
 	if err != nil {
-		return errors.WithStack(err)
+		return WrapErr(err)
 	}
 	setting := &models.AppSetting{}
+	//err = decoder.Decode(setting, r.PostForm)
 	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		return errors.WithStack(err)
+		return WrapErr(err)
 	}
 	setting.ID = uint(id)
 	data := make(map[string]interface{})
