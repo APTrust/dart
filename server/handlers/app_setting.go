@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -61,7 +60,6 @@ func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request)
 func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("GET App Setting", id)
 	setting := models.AppSetting{}
 	err := env.DB.Find(&setting, uint(id)).Error
 	if err != nil {
@@ -77,13 +75,11 @@ func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request)
 func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("POST App Setting", id)
 	err := r.ParseForm()
 	if err != nil {
 		return WrapErr(err)
 	}
 	setting := &models.AppSetting{}
-	//err = decoder.Decode(setting, r.PostForm)
 	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
 		return WrapErr(err)
