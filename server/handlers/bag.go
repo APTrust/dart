@@ -22,7 +22,7 @@ func BagsList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	return env.Templates.ExecuteTemplate(w, "bag-list", data)
+	return env.ExecTemplate(w, "bag-list", data)
 }
 
 func BagDetail(env *Environment, w http.ResponseWriter, r *http.Request) error {
@@ -36,5 +36,5 @@ func BagDetail(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	}
 	data["item"] = bag
 	data["items"] = bag.Files
-	return env.Templates.ExecuteTemplate(w, "bag-detail", data)
+	return env.ExecTemplate(w, "bag-detail", data)
 }
