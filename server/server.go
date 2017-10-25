@@ -15,9 +15,6 @@ import (
 )
 
 func main() {
-	handlers.CompileTemplates(GetServerRoot())
-	handlers.InitDBConnection()
-
 	schemaPath, err := testutil.GetPathToSchema()
 	if err != nil {
 		panic(err.Error())
@@ -29,7 +26,7 @@ func main() {
 	http.Handle("/favicon.ico", http.FileServer(http.Dir(GetImageRoot())))
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", handlers.HandleRootRequest)
+	r.HandleFunc("/", Wrap(env, handlers.HandleRootRequest))
 	r.HandleFunc("/app_settings", Wrap(env, handlers.AppSettingsList)).Methods("GET")
 	r.HandleFunc("/app_setting/new", Wrap(env, handlers.AppSettingNewGet)).Methods("GET")
 	r.HandleFunc("/app_setting/new", Wrap(env, handlers.AppSettingNewPost)).Methods("POST", "PUT")
@@ -129,7 +126,7 @@ func Wrap(env *handlers.Environment, handler func(env *handlers.Environment, w h
 		handlers.LogRequest(r)
 		err := handler(env, w, r)
 		if err != nil {
-			handlers.HandleError(w, r, err)
+			handlers.HandleError(env, w, r, err)
 		}
 	}
 }

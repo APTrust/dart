@@ -19,7 +19,7 @@ func WrapErr(err error) error {
 // Use this only for unrecoverable errors. Param err should be an error
 // wrapped by github.com/pkg/errors.Wrap(err) or github.com/pkg/errors.WithStack(err)
 // if you want to print the full stack track.
-func HandleError(w http.ResponseWriter, r *http.Request, err error) {
+func HandleError(env *Environment, w http.ResponseWriter, r *http.Request, err error) {
 	r.ParseForm()
 	stacktrace := fmt.Sprintf("%+v", err)
 	data := make(map[string]interface{})
@@ -30,7 +30,7 @@ func HandleError(w http.ResponseWriter, r *http.Request, err error) {
 	data["formdata"] = r.Form
 	data["stacktrace"] = stacktrace
 	logErr(data)
-	templates.ExecuteTemplate(w, "error", data)
+	env.ExecTemplate(w, "error", data)
 }
 
 // logErr prints the error details to the log. This is the same info

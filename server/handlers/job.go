@@ -27,7 +27,7 @@ func JobNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	postUrl := "/job/run"
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
-	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
+	form.Field("WorkflowID").SetSelectChoices(GetOptions(env.DB, "Workflow"))
 	sourceDirField := fields.HiddenField("SourceDir")
 	sourceDirField.SetId("SourceDir")
 	form.Elements(sourceDirField)
@@ -66,7 +66,7 @@ func JobWorkflowChanged(env *Environment, w http.ResponseWriter, r *http.Request
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	form.Field("WorkflowID").SetSelectChoices(GetOptions("Workflow"))
+	form.Field("WorkflowID").SetSelectChoices(GetOptions(env.DB, "Workflow"))
 	form.Field("WorkflowID").SetValue(fmt.Sprintf("%d", job.WorkflowID))
 	sourceDirField := fields.HiddenField("SourceDir")
 	sourceDirField.SetId("SourceDir")

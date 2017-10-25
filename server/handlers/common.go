@@ -3,64 +3,22 @@ package handlers
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/db/models"
-	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/APTrust/go-form-it"
 	"github.com/APTrust/go-form-it/fields"
-	"github.com/gorilla/schema"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"html/template"
 	"log"
 	"net/http"
-	"path/filepath"
 	"strconv"
 )
 
-// The following vars are shared among all files in this package.
-//
-// TODO: Transition to middleware, env, and custom handlers.
-var templates *template.Template
-var decoder = schema.NewDecoder()
-var db *gorm.DB
-
-func HandleRootRequest(w http.ResponseWriter, r *http.Request) {
+func HandleRootRequest(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
-	err := templates.ExecuteTemplate(w, "index", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "index", data)
 }
 
-// TODO: Transition to middleware
-func CompileTemplates(pathToServerRoot string) {
-	templateDir, _ := filepath.Abs(filepath.Join(pathToServerRoot, "templates", "*.html"))
-	log.Println("Loading templates:", templateDir)
-	templates = template.Must(template.ParseGlob(templateDir))
-}
-
-// TODO: Transition to middleware
-// TODO: This is also used by the easy_store_setup app.
-// Put it on one place, and don't rely on testutil.GetPathToSchema()
-// as that file and directory exist in dev mode only, and users
-// won't have them.
-func InitDBConnection() {
-	schemaPath, err := testutil.GetPathToSchema()
-	if err != nil {
-		panic(err.Error())
-	}
-	dbFilePath := filepath.Join(filepath.Dir(schemaPath), "..", "..", "easy-store.db")
-	// This sets the main global var db.
-	db, err = gorm.Open("sqlite3", dbFilePath)
-	if err != nil {
-		panic(err.Error())
-	}
-	db.LogMode(true)
-}
-
-func GetOptions(modelName string) map[string][]fields.InputChoice {
-	// BagItProfile, StorageService
+func GetOptions(db *gorm.DB, modelName string) map[string][]fields.InputChoice {
 	choices := make([]fields.InputChoice, 1)
 	choices[0] = fields.InputChoice{Id: "", Val: ""}
 	if modelName == "BagItProfile" {
