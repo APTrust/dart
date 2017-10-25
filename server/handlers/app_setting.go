@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 	"net/url"
@@ -16,7 +17,7 @@ import (
 func AppSettingsList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	settings := make([]models.AppSetting, 0)
-	db.Find(&settings)
+	env.DB.Find(&settings)
 	data["items"] = settings
 	successMessage, ok := r.URL.Query()["success"]
 	if ok {
@@ -36,15 +37,15 @@ func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) 
 func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	err := r.ParseForm()
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	setting := &models.AppSetting{}
 	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	data := make(map[string]interface{})
-	err = db.Create(&setting).Error
+	err = env.DB.Create(&setting).Error
 	postUrl := fmt.Sprintf("/app_setting/new")
 	if err != nil {
 		data["errors"] = err.Error()
@@ -63,9 +64,9 @@ func AppSettingEditGet(env *Environment, w http.ResponseWriter, r *http.Request)
 	id, _ := strconv.Atoi(vars["id"])
 	log.Println("GET App Setting", id)
 	setting := models.AppSetting{}
-	err := db.Find(&setting, uint(id)).Error
+	err := env.DB.Find(&setting, uint(id)).Error
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	postUrl := fmt.Sprintf("/app_setting/%d/edit", id)
 	data := make(map[string]interface{})
@@ -80,16 +81,16 @@ func AppSettingEditPost(env *Environment, w http.ResponseWriter, r *http.Request
 	log.Println("POST App Setting", id)
 	err := r.ParseForm()
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	setting := &models.AppSetting{}
 	err = env.Decoder.Decode(setting, r.PostForm)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	setting.ID = uint(id)
 	data := make(map[string]interface{})
-	err = db.Save(&setting).Error
+	err = env.DB.Save(&setting).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
