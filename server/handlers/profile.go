@@ -8,149 +8,119 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
-	"log"
+	"github.com/pkg/errors"
 	"net/http"
 	"strconv"
 )
 
-func ProfileNewGet(w http.ResponseWriter, r *http.Request) {
+func ProfileNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	profile := models.BagItProfile{}
 	form, err := ProfileForm(profile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return errors.WithStack(err)
 	}
 	data := make(map[string]interface{})
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "bagit-profile-form", data)
 }
 
-func ProfileNewPost(w http.ResponseWriter, r *http.Request) {
+func ProfileNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	profile := models.BagItProfile{}
-	err = decoder.Decode(&profile, r.PostForm)
+	err = env.Decoder.Decode(&profile, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
-	err = db.Save(&profile).Error
+	err = env.DB.Save(&profile).Error
 	if err != nil {
-		log.Println("Error:", err.Error())
 		data["errors"] = err.Error()
 	} else {
 		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
-		log.Println(defaultTagValues)
 		for _, val := range defaultTagValues {
 			var valErr error
-			if db.NewRecord(val) {
-				log.Println("Creating", val.TagName, "=", val.TagValue)
-				valErr = db.Create(&val).Error
+			if env.DB.NewRecord(val) {
+				valErr = env.DB.Create(&val).Error
 			} else {
-				log.Println("Updting", val.TagName, "=", val.TagValue)
-				valErr = db.Save(&val).Error
+				valErr = env.DB.Save(&val).Error
 			}
 			if valErr != nil {
-				log.Println("Error on", val.TagName, ":", valErr.Error())
 				err = valErr
 			}
 		}
 	}
 
 	if err != nil {
-		log.Println("Error:", err.Error())
 		data["errors"] = err.Error()
 	} else {
 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
-		return
+		return nil
 	}
 
 	form, err := ProfileForm(profile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return errors.WithStack(err)
 	}
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "bagit-profile-form", data)
 }
 
-func ProfilesList(w http.ResponseWriter, r *http.Request) {
+func ProfilesList(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	profiles := make([]models.BagItProfile, 0)
-	db.Find(&profiles).Order("name")
+	env.DB.Find(&profiles).Order("name")
 	data["items"] = profiles
 	successMessage, ok := r.URL.Query()["success"]
 	if ok {
 		data["success"] = successMessage[0]
 	}
-	err := templates.ExecuteTemplate(w, "bagit-profile-list", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "bagit-profile-list", data)
 }
 
-func ProfileEditGet(w http.ResponseWriter, r *http.Request) {
+func ProfileEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("GET profile", id)
 	profile := models.BagItProfile{}
-	db.Preload("DefaultTagValues").First(&profile, id)
+	env.DB.Preload("DefaultTagValues").First(&profile, id)
 	data := make(map[string]interface{})
 	form, err := ProfileForm(profile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return errors.WithStack(err)
 	}
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "bagit-profile-form", data)
 }
 
-func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
+func ProfileEditPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	log.Println("POST profile", id)
 	err := r.ParseForm()
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	profile := models.BagItProfile{}
-	err = decoder.Decode(&profile, r.PostForm)
+	err = env.Decoder.Decode(&profile, r.PostForm)
 	if err != nil {
-		log.Println("Error:", err.Error())
+		return errors.WithStack(err)
 	}
 	profile.ID = uint(id)
-	err = db.Save(&profile).Error
+	err = env.DB.Save(&profile).Error
 	if err != nil {
 		data["errors"] = err.Error()
 	} else {
 		defaultTagValues := profile.DecodeDefaultTagValues(r.PostForm)
 		for _, val := range defaultTagValues {
 			var valErr error
-			if db.NewRecord(val) {
-				log.Println("Creating", val.TagName, "=", val.TagValue)
-				valErr = db.Create(&val).Error
+			if env.DB.NewRecord(val) {
+				valErr = env.DB.Create(&val).Error
 			} else {
-				log.Println("Updting", val.TagName, "=", val.TagValue)
-				valErr = db.Save(&val).Error
+				valErr = env.DB.Save(&val).Error
 			}
 			if valErr != nil {
-				log.Println("Error on", val.TagName, ":", valErr.Error())
 				err = valErr
 			}
 		}
@@ -160,20 +130,15 @@ func ProfileEditPost(w http.ResponseWriter, r *http.Request) {
 		data["errors"] = err.Error()
 	} else {
 		http.Redirect(w, r, "/profiles?success=Profile+has+been+saved.", 303)
-		return
+		return nil
 	}
 
 	form, err := ProfileForm(profile)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return errors.WithStack(err)
 	}
 	data["form"] = form
-	err = templates.ExecuteTemplate(w, "bagit-profile-form", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	return env.ExecTemplate(w, "bagit-profile-form", data)
 }
 
 // Returns a BagItProfile form.
