@@ -39,12 +39,6 @@ type DefaultTagValue struct {
 	TagValue       string
 }
 
-type AppSetting struct {
-	gorm.Model `form_options:"skip"`
-	Name       string
-	Value      string
-}
-
 type Tag struct {
 	gorm.Model  `form_options:"skip"`
 	BagID       uint `form_widget:"select"`
