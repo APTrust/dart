@@ -1,8 +1,10 @@
 package models
 
 import (
+	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"strconv"
 )
 
 type Workflow struct {
@@ -33,4 +35,19 @@ func WorkflowLoadWithRelations(db *gorm.DB, id uint) (*Workflow, error) {
 			First(&workflow.BagItProfile, workflow.BagItProfileID).Error
 	}
 	return workflow, err
+}
+
+func WorkflowOptions(db *gorm.DB) map[string][]fields.InputChoice {
+	choices := make([]fields.InputChoice, 1)
+	choices[0] = fields.InputChoice{Id: "", Val: ""}
+	workflows := make([]Workflow, 0)
+	db.Select("id, name").Find(&workflows).Order("name")
+	for _, workflow := range workflows {
+		choices = append(choices, fields.InputChoice{
+			Id:  strconv.FormatUint(uint64(workflow.ID), 10),
+			Val: workflow.Name})
+	}
+	options := make(map[string][]fields.InputChoice)
+	options[""] = choices
+	return options
 }
