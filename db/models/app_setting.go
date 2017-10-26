@@ -7,19 +7,35 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type AppSetting struct {
 	gorm.Model `form_options:"skip"`
 	Name       string
 	Value      string
+	Errors     map[string]string `sql:"-"`
 }
 
+// NewAppSetting returns a new AppSetting with the specified name and value.
 func NewAppSetting(name, value string) *AppSetting {
 	return &AppSetting{
-		Name:  name,
-		Value: value,
+		Name:   name,
+		Value:  value,
+		Errors: make(map[string]string),
 	}
+}
+
+// IsValid returns true or false to indicate whether the current model is valid.
+// If this returns false, check the settings.Errors map for specific errors.
+func (setting *AppSetting) IsValid() bool {
+	isValid := true
+	setting.Errors = make(map[string]string)
+	if strings.TrimSpace(setting.Name) == "" {
+		isValid = false
+		setting.Errors["Name"] = "Name is required."
+	}
+	return isValid
 }
 
 // Form returns a Form for this AppSetting, suitable for rendering in an HTML template.
@@ -30,8 +46,8 @@ func (setting *AppSetting) Form() *Form {
 		action = fmt.Sprintf("/app_setting/%d/edit", setting.ID)
 	}
 	form := NewForm(action, method)
-	form.Fields["Name"] = NewField("name", "name", setting.Name, nil)
-	form.Fields["Value"] = NewField("value", "value", setting.Value, nil)
+	form.Fields["Name"] = NewField("name", "name", setting.Name)
+	form.Fields["Value"] = NewField("value", "value", setting.Value)
 	return form
 }
 
