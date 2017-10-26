@@ -10,7 +10,8 @@
 
   <div class="form-group">
     <label class="control-label ">Name</label>
-    <input type="text" name="{{ $name.Name }}" class="form-control" value="{{ $name.Value }}">
+    <input type="text" id={{ $name.Id }} name="{{ $name.Name }}" value="{{ $name.Value }}"
+           class="form-control" {{ range $k, $v := $name.Attrs }}{{ $k }}="{{ $v }}"{{ end }}>
     {{ if index .obj.Errors "Name" }}
     <small id="{{ $name.Id }}" class="form-text text-danger">
       {{ index .obj.Errors "Name" }}
@@ -21,7 +22,8 @@
 
   <div class="form-group">
     <label class="control-label ">Value</label>
-    <input type="text" id="{{ $value.Id }}" name="{{ $value.Name }}" class="form-control" value="{{ $value.Value }}">
+    <input type="text" id="{{ $value.Id }}" name="{{ $value.Name }}" value="{{ $value.Value }}"
+           class="form-control" {{ range $k, $v := $name.Attrs }}{{ $k }}="{{ $v }}"{{ end }}>
     {{ if index .obj.Errors "Value" }}
     <small id="{{ $value.Id }}" class="form-text text-danger">
       {{ index .obj.Errors "Value" }}

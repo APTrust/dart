@@ -36,8 +36,6 @@ type Field struct {
 	Choices []Choice
 	// CssClasses is a string of css classes to apply to the form input.
 	CssClasses string
-	// Required indicates whether the element is required.
-	Required bool
 	// Attrs is a map of name-value attribute pairs to be added to the
 	// input's HTML.
 	Attrs map[string]string

@@ -37,27 +37,25 @@ func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) 
 }
 
 func AppSettingNewPost(env *Environment, w http.ResponseWriter, r *http.Request) error {
-	err := r.ParseForm()
-	if err != nil {
-		return WrapErr(err)
-	}
-	setting := &models.AppSetting{}
-	err = env.Decoder.Decode(setting, r.PostForm)
-	if err != nil {
-		return WrapErr(err)
-	}
 	data := make(map[string]interface{})
-	err = env.DB.Create(&setting).Error
-	postUrl := fmt.Sprintf("/app_setting/new")
+	setting, err := models.AppSettingFromRequest(r)
 	if err != nil {
-		data["errors"] = err.Error()
-		postUrl = fmt.Sprintf("/app_setting/%d/edit", setting.ID)
-	} else {
-		msg := fmt.Sprintf("Setting '%s' has been saved", setting.Name)
-		http.Redirect(w, r, "/app_settings?success="+url.QueryEscape(msg), 303)
-		return nil
+		return WrapErr(err)
 	}
-	data["form"] = forms.BootstrapFormFromModel(*setting, forms.POST, postUrl)
+	if setting.IsValid() {
+		err = env.DB.Create(&setting).Error
+		if err != nil {
+			return WrapErr(err)
+		} else {
+			msg := fmt.Sprintf("Setting '%s' has been saved", setting.Name)
+			http.Redirect(w, r, "/app_settings?success="+url.QueryEscape(msg), 303)
+			return nil
+		}
+	}
+	// Not valid. Show the form with errors.
+	form := setting.Form()
+	data["form"] = form
+	data["obj"] = setting
 	return env.ExecTemplate(w, "app-setting-form", data)
 }
 

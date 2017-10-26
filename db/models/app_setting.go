@@ -47,6 +47,8 @@ func (setting *AppSetting) Form() *Form {
 	}
 	form := NewForm(action, method)
 	form.Fields["Name"] = NewField("name", "name", setting.Name)
+	// This works, but we need to fix the behavior on the front end.
+	// form.Fields["Name"].Attrs["required"] = "true"
 	form.Fields["Value"] = NewField("value", "value", setting.Value)
 	return form
 }
