@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+var SerializationFormats = []string{"gzip", "tar", "zip"}
+
 type BagItProfile struct {
 	gorm.Model       `form_options:"skip"`
 	Name             string
@@ -71,17 +73,5 @@ func ProfileOptions(db *gorm.DB) map[string][]fields.InputChoice {
 }
 
 func SerializationFormatOptions() map[string][]fields.InputChoice {
-	formats := []string{"gzip", "tar", "zip"}
-	return OptionList(formats)
-}
-
-func OptionList(items []string) map[string][]fields.InputChoice {
-	choices := make([]fields.InputChoice, 1+len(items))
-	choices[0] = fields.InputChoice{Id: "", Val: ""}
-	for i, item := range items {
-		choices[i+1] = fields.InputChoice{Id: item, Val: item}
-	}
-	options := make(map[string][]fields.InputChoice)
-	options[""] = choices
-	return options
+	return OptionList(SerializationFormats)
 }

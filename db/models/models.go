@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"time"
@@ -44,22 +45,24 @@ type AppSetting struct {
 	Value      string
 }
 
-type StorageService struct {
-	gorm.Model     `form_options:"skip"`
-	Name           string
-	Description    string
-	Protocol       string `form_widget:"select"`
-	URL            string
-	BucketOrFolder string
-	LoginName      string
-	LoginPassword  string `form_widget:"password"`
-	LoginExtra     string `form_widget:"password"`
-}
-
 type Tag struct {
 	gorm.Model  `form_options:"skip"`
 	BagID       uint `form_widget:"select"`
 	RelFilePath string
 	Name        string
 	Value       string
+}
+
+// OptionsList returns a list of HTML Select Options for the specified list.
+// The first item in the list is empty. The Id and Value of each remaining
+// option match one item in the list.
+func OptionList(items []string) map[string][]fields.InputChoice {
+	choices := make([]fields.InputChoice, 1+len(items))
+	choices[0] = fields.InputChoice{Id: "", Val: ""}
+	for i, item := range items {
+		choices[i+1] = fields.InputChoice{Id: item, Val: item}
+	}
+	options := make(map[string][]fields.InputChoice)
+	options[""] = choices
+	return options
 }
