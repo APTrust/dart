@@ -14,7 +14,7 @@ type AppSetting struct {
 	gorm.Model `form_options:"skip"`
 	Name       string
 	Value      string
-	Errors     map[string]string `sql:"-"`
+	Errors     map[string]string `sql:"-",form_options:"skip"`
 }
 
 // NewAppSetting returns a new AppSetting with the specified name and value.

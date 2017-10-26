@@ -26,9 +26,13 @@ func AppSettingsList(env *Environment, w http.ResponseWriter, r *http.Request) e
 
 func AppSettingNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
-	setting := models.AppSetting{}
-	form := forms.BootstrapFormFromModel(setting, forms.POST, "/app_setting/new")
+	setting, err := models.AppSettingFromRequest(r)
+	if err != nil {
+		return WrapErr(err)
+	}
+	form := setting.Form()
 	data["form"] = form
+	data["obj"] = setting
 	return env.ExecTemplate(w, "app-setting-form", data)
 }
 
