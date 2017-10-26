@@ -29,7 +29,7 @@ func StorageServiceNewGet(env *Environment, w http.ResponseWriter, r *http.Reque
 	data := make(map[string]interface{})
 	service := models.StorageService{}
 	form := forms.BootstrapFormFromModel(service, forms.POST, "/storage_service/new")
-	form.Field("Protocol").SetSelectChoices(GetOptions(env.DB, "Protocol"))
+	form.Field("Protocol").SetSelectChoices(models.TransferProtocolOptions())
 	data["form"] = form
 	return env.ExecTemplate(w, "storage-service-form", data)
 }
@@ -70,7 +70,7 @@ func StorageServiceEditGet(env *Environment, w http.ResponseWriter, r *http.Requ
 	postUrl := fmt.Sprintf("/storage_service/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(service, forms.POST, postUrl)
-	form.Field("Protocol").SetSelectChoices(GetOptions(env.DB, "Protocol"))
+	form.Field("Protocol").SetSelectChoices(models.TransferProtocolOptions())
 	form.Field("Protocol").SetValue(service.Protocol)
 	data["form"] = form
 	return env.ExecTemplate(w, "storage-service-form", data)

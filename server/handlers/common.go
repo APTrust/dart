@@ -5,60 +5,15 @@ import (
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/go-form-it"
 	"github.com/APTrust/go-form-it/fields"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 func HandleRootRequest(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	return env.ExecTemplate(w, "index", data)
-}
-
-// TODO: Move into models
-func GetOptions(db *gorm.DB, modelName string) map[string][]fields.InputChoice {
-	choices := make([]fields.InputChoice, 1)
-	choices[0] = fields.InputChoice{Id: "", Val: ""}
-	if modelName == "BagItProfile" {
-		profiles := make([]models.BagItProfile, 0)
-		db.Select("id, name").Find(&profiles).Order("name")
-		for _, profile := range profiles {
-			choices = append(choices, fields.InputChoice{
-				Id:  strconv.FormatUint(uint64(profile.ID), 10),
-				Val: profile.Name})
-		}
-	} else if modelName == "StorageService" {
-		services := make([]models.StorageService, 0)
-		db.Select("id, name").Find(&services).Order("name")
-		for _, service := range services {
-			choices = append(choices, fields.InputChoice{
-				Id:  strconv.FormatUint(uint64(service.ID), 10),
-				Val: service.Name})
-		}
-	} else if modelName == "Workflow" {
-		workflows := make([]models.Workflow, 0)
-		db.Select("id, name").Find(&workflows).Order("name")
-		for _, workflow := range workflows {
-			choices = append(choices, fields.InputChoice{
-				Id:  strconv.FormatUint(uint64(workflow.ID), 10),
-				Val: workflow.Name})
-		}
-	} else if modelName == "SerializationFormat" {
-		choices = append(choices, fields.InputChoice{Id: "gzip", Val: "gzip"})
-		choices = append(choices, fields.InputChoice{Id: "tar", Val: "tar"})
-		choices = append(choices, fields.InputChoice{Id: "zip", Val: "zip"})
-	} else if modelName == "Protocol" {
-		choices = append(choices, fields.InputChoice{Id: "ftp", Val: "ftp"})
-		choices = append(choices, fields.InputChoice{Id: "rsync", Val: "rsync"})
-		choices = append(choices, fields.InputChoice{Id: "s3", Val: "s3"})
-		choices = append(choices, fields.InputChoice{Id: "scp", Val: "scp"})
-	}
-	options := make(map[string][]fields.InputChoice)
-	options[""] = choices
-	return options
 }
 
 // AddTagValueFields adds tag value form fields for a BagItProfile to
