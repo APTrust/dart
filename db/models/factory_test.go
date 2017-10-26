@@ -67,6 +67,44 @@ func FakeBagItProfile() (*models.BagItProfile, error) {
 	}, nil
 }
 
+// This creates a bagit profile with default tags and saves it
+// to the database.
+func CreateFakeBagItProfileWithTags(db *gorm.DB) (*models.BagItProfile, error) {
+	bagItProfile, err := FakeBagItProfile()
+	if err != nil {
+		return nil, err
+	}
+	err = db.Save(bagItProfile).Error
+	if err != nil {
+		return nil, err
+	}
+	p, err := bagItProfile.Profile()
+	if err != nil {
+		return nil, err
+	}
+	// Add default tag values to the profile, and use valid
+	// values if the profile specifies a list of them for
+	// any given tag.
+	for relFilePath, tagMap := range p.TagFilesRequired {
+		for tagname, tagDef := range tagMap {
+			tagValue := fake.Word()
+			if len(tagDef.Values) > 0 {
+				tagValue = tagDef.Values[rand.Intn(len(tagDef.Values))]
+			}
+			dtv := FakeDefaultTagValue()
+			dtv.BagItProfileID = bagItProfile.ID
+			dtv.TagFile = relFilePath
+			dtv.TagName = tagname
+			dtv.TagValue = tagValue
+			err = db.Save(dtv).Error
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+	return bagItProfile, nil
+}
+
 func FakeDefaultTagValue() *models.DefaultTagValue {
 	return &models.DefaultTagValue{
 		TagFile:  fake.Word(),
@@ -134,38 +172,13 @@ func CreateFakeJobWithRelations(db *gorm.DB) (*models.Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	bagItProfile, err := FakeBagItProfile()
+
+	// Creates **and saves** a BagItProfile, with tags.
+	bagItProfile, err := CreateFakeBagItProfileWithTags(db)
 	if err != nil {
 		return nil, err
 	}
-	err = db.Save(bagItProfile).Error
-	if err != nil {
-		return nil, err
-	}
-	p, err := bagItProfile.Profile()
-	if err != nil {
-		return nil, err
-	}
-	// Add default tag values to the profile, and use valid
-	// values if the profile specifies a list of them for
-	// any given tag.
-	for relFilePath, tagMap := range p.TagFilesRequired {
-		for tagname, tagDef := range tagMap {
-			tagValue := fake.Word()
-			if len(tagDef.Values) > 0 {
-				tagValue = tagDef.Values[rand.Intn(len(tagDef.Values))]
-			}
-			dtv := FakeDefaultTagValue()
-			dtv.BagItProfileID = bagItProfile.ID
-			dtv.TagFile = relFilePath
-			dtv.TagName = tagname
-			dtv.TagValue = tagValue
-			err = db.Save(dtv).Error
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
+
 	workflow := FakeWorkflow()
 	workflow.BagItProfileID = bagItProfile.ID
 	workflow.StorageServiceID = storageService.ID
