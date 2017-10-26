@@ -45,3 +45,12 @@ func TestProfileOptions(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf("%d", profiles[2].ID), choices[""][3].Id)
 	assert.Equal(t, profiles[2].Name, choices[""][3].Val)
 }
+
+func TestSeriaizationOptions(t *testing.T) {
+	options := models.SerializationFormatOptions()
+	require.Equal(t, len(models.SerializationFormats)+1, len(options[""]))
+	for i, allowed := range models.SerializationFormats {
+		assert.Equal(t, allowed, options[""][i+1].Id)
+		assert.Equal(t, allowed, options[""][i+1].Val)
+	}
+}
