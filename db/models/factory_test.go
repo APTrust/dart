@@ -36,6 +36,7 @@ func InitTestDB() (*gorm.DB, error) {
 	return db, err
 }
 
+// FakeAppSetting returns an unsaved AppSetting object with no relations.
 func FakeAppSetting() *models.AppSetting {
 	return &models.AppSetting{
 		Name:  fake.Word(),
@@ -43,6 +44,7 @@ func FakeAppSetting() *models.AppSetting {
 	}
 }
 
+// FakeBag returns an unsaved Bag object with no relations.
 func FakeBag() *models.Bag {
 	return &models.Bag{
 		Name:             fake.Word(),
@@ -51,6 +53,7 @@ func FakeBag() *models.Bag {
 	}
 }
 
+// FakeBagItProfile returns an unsaved BagItProfile object with no relations.
 func FakeBagItProfile() (*models.BagItProfile, error) {
 	filepath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
 	if err != nil {
@@ -67,6 +70,7 @@ func FakeBagItProfile() (*models.BagItProfile, error) {
 	}, nil
 }
 
+// FakeDefaultTagValue returns an unsaved DefaultTagValue object with no relations.
 func FakeDefaultTagValue() *models.DefaultTagValue {
 	return &models.DefaultTagValue{
 		TagFile:  fake.Word(),
@@ -75,6 +79,7 @@ func FakeDefaultTagValue() *models.DefaultTagValue {
 	}
 }
 
+// FakeFile returns an unsaved File object with no relations.
 func FakeFile() *models.File {
 	return &models.File{
 		Name:   strings.Replace(fake.Sentence(), " ", "/", -1),
@@ -84,10 +89,12 @@ func FakeFile() *models.File {
 	}
 }
 
+// FakeJob returns an unsaved Job object with no relations.
 func FakeJob() *models.Job {
 	return &models.Job{}
 }
 
+// FakeStorageService returns an unsaved StorageService object, with no relations.
 func FakeStorageService() *models.StorageService {
 	return &models.StorageService{
 		Name:           fake.Word(),
@@ -99,12 +106,24 @@ func FakeStorageService() *models.StorageService {
 	}
 }
 
+// FakeWorkflow returns an unsaved Workflow object, with no relations.
 func FakeWorkflow() *models.Workflow {
 	return &models.Workflow{
 		Name:                fake.Word(),
 		Description:         fake.Sentence(),
 		SerializationFormat: "tar",
 	}
+}
+
+// CreateFakeStorageService creates a StorageService, saves it to the DB,
+// and returns it.
+func CreateFakeStorageService(db *gorm.DB) (*models.StorageService, error) {
+	ss := FakeStorageService()
+	err := db.Save(ss).Error
+	if err != nil {
+		return nil, err
+	}
+	return ss, nil
 }
 
 // CreateFakeBagItProfileWithTags creates a bagit profile with
@@ -148,8 +167,7 @@ func CreateFakeBagItProfileWithTags(db *gorm.DB) (*models.BagItProfile, error) {
 // CreateFakeWorkflowWithRelations creates a Workflow record, complete
 // with BagItProfile and StorageService.
 func CreateFakeWorkflowWithRelations(db *gorm.DB) (*models.Workflow, error) {
-	storageService := FakeStorageService()
-	err := db.Save(storageService).Error
+	storageService, err := CreateFakeStorageService(db)
 	if err != nil {
 		return nil, err
 	}

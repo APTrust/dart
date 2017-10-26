@@ -37,6 +37,10 @@ func WorkflowLoadWithRelations(db *gorm.DB, id uint) (*Workflow, error) {
 	return workflow, err
 }
 
+// WorkflowOptions returns options for an HTML select list of
+// available Workflows. The Id of each option is the Workflow ID,
+// and the value is the Workflow name. Options are in alpho order
+// by name.
 func WorkflowOptions(db *gorm.DB) map[string][]fields.InputChoice {
 	choices := make([]fields.InputChoice, 1)
 	choices[0] = fields.InputChoice{Id: "", Val: ""}
