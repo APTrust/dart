@@ -44,6 +44,17 @@ func FakeAppSetting() *models.AppSetting {
 	}
 }
 
+// CreateFakeAppSetting returns an unsaved AppSetting object with no relations
+// and saves it to the database.
+func CreateFakeAppSetting(db *gorm.DB) (*models.AppSetting, error) {
+	setting := FakeAppSetting()
+	err := db.Save(setting).Error
+	if err != nil {
+		return nil, err
+	}
+	return setting, nil
+}
+
 // FakeBag returns an unsaved Bag object with no relations.
 func FakeBag() *models.Bag {
 	return &models.Bag{

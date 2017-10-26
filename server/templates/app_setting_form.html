@@ -8,6 +8,8 @@
 
 <form method="{{ .form.Method }}" action="{{ .form.Action }}">
 
+  <!-- TODO: Break abstract input into its own template -->
+
   <div class="form-group">
     <label class="control-label ">Name</label>
     <input type="text" id={{ $name.Id }} name="{{ $name.Name }}" value="{{ $name.Value }}"

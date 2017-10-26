@@ -55,6 +55,9 @@ func (setting *AppSetting) Form() *Form {
 
 // AppSettingFromRequest returns an AppSetting from the HTTP request.
 func AppSettingFromRequest(db *gorm.DB, r *http.Request) (*AppSetting, error) {
+
+	// TODO: Change AppSettingFromRequest so it does not rely on http.Request.
+
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"]) // err OK - we expect zeros for new items
 	if r.Method == "GET" && id != 0 {
