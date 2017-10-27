@@ -2,11 +2,10 @@ package models
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"net/http"
-	"strconv"
+	"net/url"
 	"strings"
 )
 
@@ -49,7 +48,7 @@ func (setting *AppSetting) Form() *Form {
 
 	// Name
 	nameField := NewField("name", "name", "Name", setting.Name)
-	nameField.Help = "* Required" // nameField.Attrs["required"] = "true" causes some confusion
+	nameField.Help = "* Required"
 	form.Fields["Name"] = nameField
 
 	// Value
@@ -60,22 +59,13 @@ func (setting *AppSetting) Form() *Form {
 }
 
 // AppSettingFromRequest returns an AppSetting from the HTTP request.
-func AppSettingFromRequest(db *gorm.DB, r *http.Request) (*AppSetting, error) {
-
-	// TODO: Change AppSettingFromRequest so it does not rely on http.Request.
-
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"]) // err OK - we expect zeros for new items
-	if r.Method == "GET" && id != 0 {
+func AppSettingFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*AppSetting, error) {
+	if method == http.MethodGet && id != uint(0) {
 		setting := NewAppSetting("", "")
 		err := db.Find(&setting, uint(id)).Error
 		return setting, err
 	}
-	err := r.ParseForm()
-	if err != nil {
-		return nil, err
-	}
-	appSetting := NewAppSetting(r.FormValue("name"), r.FormValue("value"))
+	appSetting := NewAppSetting(values.Get("name"), values.Get("value"))
 	appSetting.ID = uint(id)
 	return appSetting, nil
 }

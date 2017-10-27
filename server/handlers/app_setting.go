@@ -23,7 +23,7 @@ func AppSettingsList(env *Environment, w http.ResponseWriter, r *http.Request) e
 
 func AppSettingGetForm(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
-	setting, err := models.AppSettingFromRequest(env.DB, r)
+	setting, err := ParseSettingRequest(env, http.MethodGet, r)
 	if err != nil {
 		return WrapErr(err)
 	}
@@ -35,7 +35,7 @@ func AppSettingGetForm(env *Environment, w http.ResponseWriter, r *http.Request)
 
 func AppSettingPostForm(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
-	setting, err := models.AppSettingFromRequest(env.DB, r)
+	setting, err := ParseSettingRequest(env, http.MethodPost, r)
 	if err != nil {
 		return WrapErr(err)
 	}
@@ -58,4 +58,12 @@ func AppSettingPostForm(env *Environment, w http.ResponseWriter, r *http.Request
 	data["form"] = form
 	data["obj"] = setting
 	return env.ExecTemplate(w, "app-setting-form", data)
+}
+
+func ParseSettingRequest(env *Environment, method string, r *http.Request) (*models.AppSetting, error) {
+	id, formValues, err := ParseRequest(r)
+	if err != nil {
+		return nil, err
+	}
+	return models.AppSettingFromRequest(env.DB, method, id, formValues)
 }

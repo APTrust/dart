@@ -5,15 +5,29 @@ import (
 	"github.com/APTrust/easy-store/db/models"
 	"github.com/APTrust/go-form-it"
 	"github.com/APTrust/go-form-it/fields"
+	"github.com/gorilla/mux"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
+	"net/url"
+	"strconv"
 )
 
 func HandleRootRequest(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	return env.ExecTemplate(w, "index", data)
+}
+
+// ParseRequest parses the data from the HTTP request and returns
+// the id from the URL (or zero if there was no id), the combined
+// values from the query string and the POST form, and any error
+// that occurred during parsing.
+func ParseRequest(r *http.Request) (uint, url.Values, error) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"]) // Ignore error: id may not be part of URL
+	err := r.ParseForm()
+	return uint(id), r.PostForm, err
 }
 
 // AddTagValueFields adds tag value form fields for a BagItProfile to
