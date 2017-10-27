@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
@@ -102,7 +103,32 @@ func SerializationFormatOptions() map[string][]fields.InputChoice {
 // database. If this is not valid, it will set error messages in the
 // BagItProfile.Errors map.
 func (profile *BagItProfile) IsValid() bool {
-	return true
+	isValid := true
+	profile.Errors = make(map[string]string)
+	if strings.TrimSpace(profile.Name) == "" {
+		isValid = false
+		profile.Errors["Name"] = "Name is required."
+	}
+	if strings.TrimSpace(profile.JSON) == "" {
+		isValid = false
+		profile.Errors["JSON"] = "BagItProfile JSON is missing."
+	} else {
+		bagItProfile, err := profile.Profile()
+		if err != nil {
+			isValid = false
+			profile.Errors["JSON"] = fmt.Sprintf("BagItProfile JSON is malformed or invalid: %v", err)
+		} else {
+			errors := bagItProfile.Validate()
+			if len(errors) > 0 {
+				isValid = false
+				profile.Errors["JSON"] = "The BagItProfile described in the JSON text has the following errors:\n"
+				for _, e := range errors {
+					profile.Errors["JSON"] += fmt.Sprintf("%v\n", e)
+				}
+			}
+		}
+	}
+	return isValid
 }
 
 // Form returns a form object suitable for rendering an HTML form for
