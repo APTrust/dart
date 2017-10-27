@@ -47,6 +47,7 @@ type Tag struct {
 	Value       string
 }
 
+// TODO: *** REPLACE WITH CHOICE LIST ***
 // OptionsList returns a list of HTML Select Options for the specified list.
 // The first item in the list is empty. The Id and Value of each remaining
 // option match one item in the list.
@@ -59,4 +60,16 @@ func OptionList(items []string) map[string][]fields.InputChoice {
 	options := make(map[string][]fields.InputChoice)
 	options[""] = choices
 	return options
+}
+
+// TODO: *** WILL REPLACE OPTION LIST ***
+// ChoiceList returns a list of choices (options) suitable
+// for an HTML select list or radio group.
+func ChoiceList(items []string) []Choice {
+	choices := make([]Choice, 1+len(items))
+	choices[0] = Choice{Value: "", Label: ""}
+	for i, item := range items {
+		choices[i+1] = Choice{Value: item, Label: item}
+	}
+	return choices
 }

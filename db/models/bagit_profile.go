@@ -52,6 +52,7 @@ func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []Defa
 	return defaults
 }
 
+// TODO: Change param to type url.Values after refactor.
 // DecodeDefaultTagValues parses tag values submitted as part of an HTML form.
 func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []DefaultTagValue {
 	values := make([]DefaultTagValue, 0)
@@ -133,8 +134,36 @@ func (profile *BagItProfile) IsValid() bool {
 
 // Form returns a form object suitable for rendering an HTML form for
 // this BagItProfile.
-func (profile *BagItProfile) Form() *Form {
-	return nil
+func (profile *BagItProfile) Form() (*Form, error) {
+	action := "/profile/new"
+	method := "post"
+	if profile.ID != 0 {
+		action = fmt.Sprintf("/profile/%d/edit", profile.ID)
+	}
+	form := NewForm(action, method)
+
+	// Name
+	nameField := NewField("name", "name", "Name", profile.Name)
+	nameField.Help = "* Required"
+	form.Fields["Name"] = nameField
+
+	// Description
+	form.Fields["Description"] = NewField("description", "description", "Description", profile.Description)
+
+	// JSON
+	form.Fields["JSON"] = NewField("json", "json", "BagIt Profile JSON", profile.JSON)
+
+	// Default Tag Values
+	fields, err := profile.BuildTagValueFields()
+	if err != nil {
+		return nil, err
+	}
+	for _, field := range fields {
+		form.Fields[field.Name] = field
+	}
+
+	form.SetErrors(profile.Errors)
+	return form, nil
 }
 
 // ProfileFromRequest returns a BagItProfile object based on data in
@@ -149,6 +178,47 @@ func ProfileFromRequest(db *gorm.DB, method string, id uint, values url.Values) 
 		values.Get("name"),
 		values.Get("description"),
 		values.Get("json"))
+
+	// Get tag values from request
+	profile.DefaultTagValues = profile.DecodeDefaultTagValues(values)
+
 	profile.ID = uint(id)
 	return profile, nil
+}
+
+// BuildTagValueFields returns tag value form fields for a BagItProfile.
+func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
+	fields := make([]*Field, 0)
+	profileDef, err := profile.Profile()
+	if err != nil {
+		return nil, err
+	}
+	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
+		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
+		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
+			// Payload-Oxum is a basic part of the BagIt spec and will
+			// always be set by the system, not the user. Bag-Size is
+			// a DPN tag that should also be set by the system.
+			if tagname == "Payload-Oxum" || tagname == "Bag-Size" {
+				continue
+			}
+			tagdef := mapOfRequiredTags[tagname]
+			defaultTags := profile.GetDefaultTagValues(relFilePath, tagname)
+			defaultValue := ""
+			defaultTagId := uint(0)
+			if len(defaultTags) > 0 {
+				defaultValue = defaultTags[0].TagValue
+				defaultTagId = defaultTags[0].ID
+			}
+			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
+			fieldLabel := tagname
+
+			formField := NewField(fieldName, fieldName, fieldLabel, defaultValue)
+			if len(tagdef.Values) > 0 {
+				formField.Choices = ChoiceList(tagdef.Values)
+			}
+			fields = append(fields, formField)
+		}
+	}
+	return fields, nil
 }
