@@ -28,6 +28,8 @@ type Choice struct {
 type Field struct {
 	// Id is the id of the HTML element.
 	Id string
+	// Label is the lable to display on the form.
+	Label string
 	// Name is the name attribute of the form element.
 	Name string
 	// Value is the value of the form element.
@@ -36,16 +38,21 @@ type Field struct {
 	Choices []Choice
 	// CssClasses is a string of css classes to apply to the form input.
 	CssClasses string
+	// Error is an error message for this field.
+	Error string
+	// Help displays some help text beneath the field.
+	Help string
 	// Attrs is a map of name-value attribute pairs to be added to the
 	// input's HTML.
 	Attrs map[string]string
 }
 
 // NewField creates a new form field.
-func NewField(id, name, value string) *Field {
+func NewField(id, name, label, value string) *Field {
 	return &Field{
 		Id:      id,
 		Name:    name,
+		Label:   label,
 		Value:   value,
 		Choices: make([]Choice, 0),
 		Attrs:   make(map[string]string),

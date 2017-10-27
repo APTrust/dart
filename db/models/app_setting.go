@@ -46,10 +46,19 @@ func (setting *AppSetting) Form() *Form {
 		action = fmt.Sprintf("/app_setting/%d/edit", setting.ID)
 	}
 	form := NewForm(action, method)
-	form.Fields["Name"] = NewField("name", "name", setting.Name)
-	// This works, but we need to fix the behavior on the front end.
-	// form.Fields["Name"].Attrs["required"] = "true"
-	form.Fields["Value"] = NewField("value", "value", setting.Value)
+
+	// Name
+	nameField := NewField("name", "name", "Name", setting.Name)
+	nameField.Help = "* Required"
+	nameField.Attrs["required"] = "true"
+	nameField.Error = setting.Errors["Name"]
+	form.Fields["Name"] = nameField
+
+	// Value
+	valueField := NewField("value", "value", "Value", setting.Value)
+	valueField.Error = setting.Errors["Value"]
+	form.Fields["Value"] = valueField
+
 	return form
 }
 
