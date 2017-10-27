@@ -6,6 +6,8 @@ import (
 	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
@@ -18,14 +20,27 @@ type BagItProfile struct {
 	Description      string
 	JSON             string            `form_widget:"textarea"`
 	DefaultTagValues []DefaultTagValue `form_options:"skip"`
+	Errors           map[string]string `sql:"-"`
 }
 
+func NewBagItProfile(name, description, jsonString string) *BagItProfile {
+	return &BagItProfile{
+		Name:             name,
+		Description:      description,
+		JSON:             jsonString,
+		DefaultTagValues: make([]DefaultTagValue, 0),
+	}
+}
+
+// Profile returns the underlying bagit.BagItProfile from the parsed JSON.
 func (profile *BagItProfile) Profile() (*bagit.BagItProfile, error) {
 	bagItProfile := &bagit.BagItProfile{}
 	err := json.Unmarshal([]byte(profile.JSON), bagItProfile)
 	return bagItProfile, err
 }
 
+// GetDefaultTagValues returns the default tag values for the specified
+// tagName within the specified tagFile.
 func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []DefaultTagValue {
 	defaults := make([]DefaultTagValue, 0)
 	for _, dtv := range profile.DefaultTagValues {
@@ -36,6 +51,7 @@ func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []Defa
 	return defaults
 }
 
+// DecodeDefaultTagValues parses tag values submitted as part of an HTML form.
 func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []DefaultTagValue {
 	values := make([]DefaultTagValue, 0)
 	for key, value := range data {
@@ -57,6 +73,10 @@ func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []
 	return values
 }
 
+// ProfileOptions returns a list of HTML select options with the
+// name and id of each BagItProfile in the database. Options are
+// in alpha order by name. The option value is the profile Id,
+// and the option label is the profile name.
 func ProfileOptions(db *gorm.DB) map[string][]fields.InputChoice {
 	choices := make([]fields.InputChoice, 1)
 	choices[0] = fields.InputChoice{Id: "", Val: ""}
@@ -72,6 +92,37 @@ func ProfileOptions(db *gorm.DB) map[string][]fields.InputChoice {
 	return options
 }
 
+// SerializationFormatOptions returns a list of bag serialization formats,
+// such as "tar", "gzip", etc.
 func SerializationFormatOptions() map[string][]fields.InputChoice {
 	return OptionList(SerializationFormats)
+}
+
+// IsValid returns true if this object is valid and can be saved in the
+// database. If this is not valid, it will set error messages in the
+// BagItProfile.Errors map.
+func (profile *BagItProfile) IsValid() bool {
+	return true
+}
+
+// Form returns a form object suitable for rendering an HTML form for
+// this BagItProfile.
+func (profile *BagItProfile) Form() *Form {
+	return nil
+}
+
+// ProfileFromRequest returns a BagItProfile object based on data in
+// an HTTP request.
+func ProfileFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*BagItProfile, error) {
+	if method == http.MethodGet && id != uint(0) {
+		profile := NewBagItProfile("", "", "")
+		err := db.Find(&profile, uint(id)).Error
+		return profile, err
+	}
+	profile := NewBagItProfile(
+		values.Get("name"),
+		values.Get("description"),
+		values.Get("json"))
+	profile.ID = uint(id)
+	return profile, nil
 }
