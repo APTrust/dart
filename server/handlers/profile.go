@@ -13,6 +13,20 @@ import (
 	"strconv"
 )
 
+// TODO: Start refactor here -->
+
+func ProfilesList(env *Environment, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	profiles := make([]models.BagItProfile, 0)
+	env.DB.Find(&profiles).Order("name")
+	data["items"] = profiles
+	successMessage, ok := r.URL.Query()["success"]
+	if ok {
+		data["success"] = successMessage[0]
+	}
+	return env.ExecTemplate(w, "bagit-profile-list", data)
+}
+
 func ProfileNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	profile := models.BagItProfile{}
 	form, err := ProfileForm(profile)
@@ -66,18 +80,6 @@ func ProfileNewPost(env *Environment, w http.ResponseWriter, r *http.Request) er
 	}
 	data["form"] = form
 	return env.ExecTemplate(w, "bagit-profile-form", data)
-}
-
-func ProfilesList(env *Environment, w http.ResponseWriter, r *http.Request) error {
-	data := make(map[string]interface{})
-	profiles := make([]models.BagItProfile, 0)
-	env.DB.Find(&profiles).Order("name")
-	data["items"] = profiles
-	successMessage, ok := r.URL.Query()["success"]
-	if ok {
-		data["success"] = successMessage[0]
-	}
-	return env.ExecTemplate(w, "bagit-profile-list", data)
 }
 
 func ProfileEditGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
