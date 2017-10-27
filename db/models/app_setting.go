@@ -49,16 +49,13 @@ func (setting *AppSetting) Form() *Form {
 
 	// Name
 	nameField := NewField("name", "name", "Name", setting.Name)
-	nameField.Help = "* Required"
-	nameField.Attrs["required"] = "true"
-	nameField.Error = setting.Errors["Name"]
+	nameField.Help = "* Required" // nameField.Attrs["required"] = "true" causes some confusion
 	form.Fields["Name"] = nameField
 
 	// Value
-	valueField := NewField("value", "value", "Value", setting.Value)
-	valueField.Error = setting.Errors["Value"]
-	form.Fields["Value"] = valueField
+	form.Fields["Value"] = NewField("value", "value", "Value", setting.Value)
 
+	form.SetErrors(setting.Errors)
 	return form
 }
 

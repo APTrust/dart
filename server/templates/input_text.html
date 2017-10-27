@@ -3,7 +3,8 @@
 <div class="form-group">
   <label class="control-label" for="{{ .Id }}">{{ .Label }}</label>
   <input type="text" id="{{ .Id }}" name="{{ .Name }}" value="{{ .Value }}"
-         class="form-control" {{ range $k, $v := .Attrs }}{{ $k }}="{{ $v }}"{{ end }}>
+         class="form-control {{ .CssClasses }}"
+         {{ range $k, $v := .Attrs }}{{ $k }}="{{ $v }}"{{ end }}>
   {{ if .Error }}
   <small id="{{ .Id }}Error" class="form-text text-danger">
     {{ .Error }}

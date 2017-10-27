@@ -17,6 +17,18 @@ func NewForm(action, method string) *Form {
 	}
 }
 
+// SetErrors sets error messages on a form, based on the validation
+// errors in the underlying object/model.
+func (form *Form) SetErrors(errors map[string]string) {
+	for fieldName, errorMessage := range errors {
+		field := form.Fields[fieldName]
+		if field != nil {
+			field.Error = errorMessage
+			field.CssClasses += " is-invalid "
+		}
+	}
+}
+
 type Choice struct {
 	Value string
 	Label string
