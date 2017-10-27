@@ -2,11 +2,11 @@ package models_test
 
 import (
 	"github.com/APTrust/easy-store/db/models"
-	//	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	//	"net/http"
+	"net/http"
+	"net/url"
 	"testing"
 )
 
@@ -66,5 +66,27 @@ func TestAppSettingFromRequest(t *testing.T) {
 	require.Nil(t, err)
 	require.NotNil(t, setting)
 
-	// TODO: Change AppSettingFromRequest so it does not rely on http.Request.
+	setting1, err := models.AppSettingFromRequest(db, http.MethodGet, setting.ID, url.Values{})
+	assert.Nil(t, err)
+	assert.NotNil(t, setting1)
+	assert.Equal(t, setting.ID, setting1.ID)
+	assert.Equal(t, setting.Name, setting1.Name)
+	assert.Equal(t, setting.Value, setting1.Value)
+
+	values := url.Values{}
+	values.Set("name", "Caesar")
+	values.Set("value", "338")
+	setting2, err := models.AppSettingFromRequest(db, http.MethodGet, uint(0), values)
+	assert.Nil(t, err)
+	assert.NotNil(t, setting2)
+	assert.Equal(t, uint(0), setting2.ID)
+	assert.Equal(t, "Caesar", setting2.Name)
+	assert.Equal(t, "338", setting2.Value)
+
+	setting3, err := models.AppSettingFromRequest(db, http.MethodPost, setting.ID, values)
+	assert.Nil(t, err)
+	assert.NotNil(t, setting3)
+	assert.Equal(t, setting.ID, setting3.ID)
+	assert.Equal(t, "Caesar", setting3.Name)
+	assert.Equal(t, "338", setting3.Value)
 }
