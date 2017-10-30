@@ -1,10 +1,10 @@
-{{ define "input-text" }}
+{{ define "input-textarea" }}
 
 <div class="form-group">
   <label class="control-label" for="{{ .Id }}">{{ .Label }}</label>
-  <input type="text" id="{{ .Id }}" name="{{ .Name }}" value="{{ .Value }}"
-         class="form-control {{ .CssClasses }}"
-         {{ range $k, $v := .Attrs }}{{ $k }}="{{ $v }}"{{ end }} />
+  <textarea id="{{ .Id }}" name="{{ .Name }}"
+         class="form-control {{ .CssClasses }}" rows="8"
+         {{ range $k, $v := .Attrs }}{{ $k }}="{{ $v }}"{{ end }}>{{ .Value }}</textarea>
   {{ if .Error }}
   <small id="{{ .Id }}Error" class="form-text text-danger">
     {{ .Error }}
