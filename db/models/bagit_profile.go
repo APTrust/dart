@@ -57,18 +57,18 @@ func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []Defa
 func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []DefaultTagValue {
 	values := make([]DefaultTagValue, 0)
 	for key, value := range data {
-		if !strings.Contains(key, "|") {
+		if !strings.Contains(key, ":") {
 			continue
 		}
-		keyParts := strings.Split(key, "|")
-		//tagFile, tagName, tagId
+		keyParts := strings.Split(key, ":")
+		//tagId, tagName, tagFile
 		dtv := DefaultTagValue{
 			BagItProfileID: uint(profile.ID),
-			TagFile:        keyParts[0],
+			TagFile:        keyParts[2],
 			TagName:        keyParts[1],
 			TagValue:       value[0],
 		}
-		id, _ := strconv.Atoi(keyParts[2])
+		id, _ := strconv.Atoi(keyParts[0])
 		dtv.ID = uint(id)
 		values = append(values, dtv)
 	}
@@ -196,6 +196,7 @@ func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
 	if err != nil {
 		return nil, err
 	}
+	sortIndex := 0
 	for _, relFilePath := range profileDef.SortedTagFilesRequired() {
 		mapOfRequiredTags := profileDef.TagFilesRequired[relFilePath]
 		for _, tagname := range profileDef.SortedTagNames(relFilePath) {
@@ -213,14 +214,23 @@ func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
 				defaultValue = defaultTags[0].TagValue
 				defaultTagId = defaultTags[0].ID
 			}
-			fieldName := fmt.Sprintf("%s|%s|%d", relFilePath, tagname, defaultTagId)
+			// We don't know what tag names we'll get, but we want to make
+			// sure we generate unique field names from them. Joining these
+			// values will create a unique name. Use colon separator because
+			// it should never apper in the defaultTagId (which is numeric),
+			// or the tagname (since BagIt tag file format uses the colon as
+			// the separator between tag name and tag value. The third item,
+			// relFilePath, could contain anything.
+			fieldName := fmt.Sprintf("%d:%s:%s", defaultTagId, tagname, relFilePath)
 			fieldLabel := tagname
 
 			formField := NewField(fieldName, fieldName, fieldLabel, defaultValue)
 			if len(tagdef.Values) > 0 {
 				formField.Choices = ChoiceList(tagdef.Values)
 			}
+			formField.Attrs["data-tag-field-order"] = strconv.Itoa(sortIndex)
 			fields = append(fields, formField)
+			sortIndex++
 		}
 	}
 	return fields, nil

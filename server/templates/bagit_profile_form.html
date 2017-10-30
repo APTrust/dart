@@ -11,6 +11,22 @@
 
   {{template "input-textarea" .form.Fields.JSON }}
 
+  {{ $relFilePath := "" }}
+  {{ range $field := .form.SortedTagFields }}
+    {{ if ne $relFilePath $field.RelativeFilePath }}
+    <fieldset><legend>{{ $relFilePath }}</legend>
+    {{ end }}
+      {{ if .Choices }}
+        {{template "input-select" . }}
+      {{ else }}
+        {{template "input-text" . }}
+      {{ end }}
+    {{ if ne $relFilePath $field.RelativeFilePath }}
+    </fieldset>
+    {{ end }}
+    {{ $relFilePath := $field.RelativeFilePath }}
+  {{ end }}
+
   <button type="submit" name="submitButton" class="btn btn-default">Submit</button>
 </form>
 
