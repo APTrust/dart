@@ -189,6 +189,9 @@ func ProfileFromRequest(db *gorm.DB, method string, id uint, values url.Values) 
 // BuildTagValueFields returns tag value form fields for a BagItProfile.
 func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
 	fields := make([]*Field, 0)
+	if strings.TrimSpace(profile.JSON) == "" {
+		return fields, nil
+	}
 	profileDef, err := profile.Profile()
 	if err != nil {
 		return nil, err
