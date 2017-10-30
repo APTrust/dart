@@ -1,14 +1,12 @@
 {{ define "input-select" }}
 
-{{ $fieldValue := .Value }}
-
 <div class="form-group">
   <label class="control-label" for="{{ .Id }}">{{ .Label }}</label>
   <select id="{{ .Id }}" name="{{ .Name }}"
          class="form-control {{ .CssClasses }}"
          {{ range $k, $v := .Attrs }}{{ $k }}="{{ $v }}"{{ end }}>
     {{ range $choice := .Choices }}
-      <option value="{{ $choice.Value }}" {{ if eq $choice.Value $fieldValue }}selected{{ end }}>{{ $choice.Label }}</option>
+      <option value="{{ $choice.Value }}" {{ if eq $choice.Value $.Value }}selected{{ end }}>{{ $choice.Label }}</option>
     {{ end }}
 
   </select>

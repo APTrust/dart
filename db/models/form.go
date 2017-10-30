@@ -36,7 +36,7 @@ func (form *Form) SetErrors(errors map[string]string) {
 }
 
 // SortedTagFields returns tag fields in sorted display order.
-func (form *Form) SortedTagFields() []*Field {
+func (form *Form) SortedTagFields() TagFields {
 	tagFields := make([]*Field, 0)
 	for _, f := range form.Fields {
 		if _, ok := f.Attrs["data-tag-field-order"]; ok {
@@ -126,4 +126,12 @@ func (tf TagFields) Less(i, j int) bool {
 	order_i, _ := strconv.Atoi(tf[i].Attrs["data-tag-field-order"])
 	order_j, _ := strconv.Atoi(tf[j].Attrs["data-tag-field-order"])
 	return order_i < order_j
+}
+
+// RelFilePathChanged returns true if the RelativeFilePath of
+// this tag field differs from the RelativeFilePath of the previous field.
+// The bagit_profile_form.html template uses this to figure out when
+// to output a new fieldset.
+func (tf TagFields) RelFilePathChanged(index int) bool {
+	return index == 0 || (index < len(tf) && (tf[index].RelativeFilePath() != tf[index-1].RelativeFilePath()))
 }

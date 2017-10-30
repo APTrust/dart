@@ -12,8 +12,8 @@
   {{template "input-textarea" .form.Fields.JSON }}
 
   {{ $relFilePath := "" }}
-  {{ range $field := .form.SortedTagFields }}
-    {{ if ne $relFilePath $field.RelativeFilePath }}
+  {{ range $index, $field := .form.SortedTagFields }}
+    {{ if $.form.SortedTagFields.RelFilePathChanged $index }}
     <fieldset><legend>{{ $field.RelativeFilePath }}</legend>
     {{ end }}
       {{ if .Choices }}
@@ -21,7 +21,7 @@
       {{ else }}
         {{template "input-text" $field }}
       {{ end }}
-    {{ if ne $relFilePath $field.RelativeFilePath }}
+    {{ if $.form.SortedTagFields.RelFilePathChanged $index }}
     </fieldset>
     {{ end }}
     {{ $relFilePath := $field.RelativeFilePath }}
