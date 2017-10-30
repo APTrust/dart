@@ -14,12 +14,12 @@
   {{ $relFilePath := "" }}
   {{ range $field := .form.SortedTagFields }}
     {{ if ne $relFilePath $field.RelativeFilePath }}
-    <fieldset><legend>{{ $relFilePath }}</legend>
+    <fieldset><legend>{{ $field.RelativeFilePath }}</legend>
     {{ end }}
       {{ if .Choices }}
-        {{template "input-select" . }}
+        {{template "input-select" $field }}
       {{ else }}
-        {{template "input-text" . }}
+        {{template "input-text" $field }}
       {{ end }}
     {{ if ne $relFilePath $field.RelativeFilePath }}
     </fieldset>

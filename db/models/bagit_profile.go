@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -171,7 +172,7 @@ func (profile *BagItProfile) Form() (*Form, error) {
 func ProfileFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*BagItProfile, error) {
 	if method == http.MethodGet && id != uint(0) {
 		profile := NewBagItProfile("", "", "")
-		err := db.Find(&profile, uint(id)).Error
+		err := db.Preload("DefaultTagValues").Find(&profile, uint(id)).Error
 		return profile, err
 	}
 	profile := NewBagItProfile(
@@ -229,6 +230,7 @@ func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
 				formField.Choices = ChoiceList(tagdef.Values)
 			}
 			formField.Attrs["data-tag-field-order"] = strconv.Itoa(sortIndex)
+			log.Println(formField.Name, "=", formField.Value)
 			fields = append(fields, formField)
 			sortIndex++
 		}
