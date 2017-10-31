@@ -134,3 +134,31 @@ func TestProfileIsValid(t *testing.T) {
 	assert.True(t, strings.HasPrefix(profile.Errors["JSON"],
 		"The BagItProfile described in the JSON text has the following errors"))
 }
+
+func TestProfileForm(t *testing.T) {
+	db, profiles, err := initProfilesTest()
+	if db != nil {
+		defer db.Close()
+	}
+	require.Nil(t, err)
+	require.NotNil(t, db)
+	require.NotEmpty(t, profiles)
+	profile := profiles[0]
+
+	form, err := profile.Form()
+	require.Nil(t, err)
+	require.NotNil(t, form.Fields["Name"])
+	require.NotNil(t, form.Fields["Description"])
+	require.NotNil(t, form.Fields["JSON"])
+
+	// 13 fields: Name, Desc, JSON, plus ten default tag values
+	// for the APTrust profile from CreateFakeBagItProfileWithTags
+	require.Equal(t, 13, len(form.Fields))
+
+	for _, field := range form.Fields {
+		assert.NotEmpty(t, field.Name)
+		assert.NotEmpty(t, field.Id)
+		assert.NotEmpty(t, field.Label)
+		assert.NotEmpty(t, field.Value)
+	}
+}

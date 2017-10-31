@@ -157,8 +157,9 @@ func CreateFakeBagItProfileWithTags(db *gorm.DB) (*models.BagItProfile, error) {
 	// any given tag.
 	for relFilePath, tagMap := range p.TagFilesRequired {
 		for tagname, tagDef := range tagMap {
-			tagValue := fake.Word()
+			tagValue := fake.Sentence()
 			if len(tagDef.Values) > 0 {
+				// Choose random item from list of allowed values
 				tagValue = tagDef.Values[rand.Intn(len(tagDef.Values))]
 			}
 			dtv := FakeDefaultTagValue()
@@ -170,6 +171,7 @@ func CreateFakeBagItProfileWithTags(db *gorm.DB) (*models.BagItProfile, error) {
 			if err != nil {
 				return nil, err
 			}
+			bagItProfile.DefaultTagValues = append(bagItProfile.DefaultTagValues, *dtv)
 		}
 	}
 	return bagItProfile, nil

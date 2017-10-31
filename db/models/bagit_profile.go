@@ -228,9 +228,17 @@ func (profile *BagItProfile) BuildTagValueFields() ([]*Field, error) {
 			fieldLabel := tagname
 
 			formField := NewField(fieldName, fieldName, fieldLabel, defaultValue)
+
+			// If the BagIt profile specifies a list of allowed values for this
+			// tag, create a list of choices that will become and HTML select
+			// list on the form.
 			if len(tagdef.Values) > 0 {
 				formField.Choices = ChoiceList(tagdef.Values)
 			}
+
+			// Add a data attribute with the display order for the field,
+			// so the HTML form can group them by tag file name and display
+			// them in alpha order.
 			formField.Attrs["data-tag-field-order"] = strconv.Itoa(sortIndex)
 			fields = append(fields, formField)
 			sortIndex++
