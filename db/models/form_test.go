@@ -88,19 +88,47 @@ func TestFormSortedTagFields(t *testing.T) {
 }
 
 func TestNewField(t *testing.T) {
-
+	field := models.NewField("id", "name", "label", "value")
+	require.NotNil(t, field)
+	assert.Equal(t, "id", field.Id)
+	assert.Equal(t, "name", field.Name)
+	assert.Equal(t, "label", field.Label)
+	assert.Equal(t, "value", field.Value)
+	assert.NotNil(t, field.Choices)
+	assert.Empty(t, field.Choices)
+	assert.NotNil(t, field.Attrs)
+	assert.Empty(t, field.Attrs)
 }
 
 func TestFieldRelativeFilePath(t *testing.T) {
+	name := "13:Friday-The:dpn-tags/dpn-info.txt"
+	field := models.NewField("id", name, "label", "value")
+	assert.Equal(t, "dpn-tags/dpn-info.txt", field.RelativeFilePath())
 
+	// Should get empty string, not panic.
+	field.Name = "not-a-tag-field"
+	assert.Empty(t, field.RelativeFilePath())
 }
 
 func TestFieldTagName(t *testing.T) {
+	name := "13:Friday-The:dpn-tags/dpn-info.txt"
+	field := models.NewField("id", name, "label", "value")
+	assert.Equal(t, "Friday-The", field.TagName())
+
+	// Should get empty string, not panic.
+	field.Name = "not-a-tag-field"
+	assert.Empty(t, field.TagName())
 
 }
 
 func TestFieldTagId(t *testing.T) {
+	name := "13:Friday-The:dpn-tags/dpn-info.txt"
+	field := models.NewField("id", name, "label", "value")
+	assert.Equal(t, "13", field.TagId())
 
+	// Should get empty string, not panic.
+	field.Name = "not-a-tag-field"
+	assert.Empty(t, field.TagId())
 }
 
 func TestTagFieldsLen(t *testing.T) {
