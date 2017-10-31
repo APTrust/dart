@@ -7,6 +7,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"net/url"
+	"strconv"
 	"testing"
 )
 
@@ -24,6 +26,53 @@ func initProfilesTest() (*gorm.DB, []*models.BagItProfile, error) {
 		profiles[i] = p
 	}
 	return db, profiles, err
+}
+
+func TestNewBagItProfile(t *testing.T) {
+	profile := models.NewBagItProfile("name", "desc", `{"json": null}`)
+	assert.Equal(t, "name", profile.Name)
+	assert.Equal(t, "desc", profile.Description)
+	assert.Equal(t, `{"json": null}`, profile.JSON)
+	assert.NotNil(t, profile.DefaultTagValues)
+}
+
+func TestGetDefaultTagValues(t *testing.T) {
+	db, profiles, err := initProfilesTest()
+	if db != nil {
+		defer db.Close()
+	}
+	require.Nil(t, err)
+	require.NotNil(t, db)
+	require.NotEmpty(t, profiles)
+	profile := profiles[0]
+	for _, dtv := range profile.DefaultTagValues {
+		values := profile.GetDefaultTagValues(dtv.TagFile, dtv.TagName)
+		for _, val := range values {
+			assert.Equal(t, dtv.TagFile, val.TagFile)
+			assert.Equal(t, dtv.TagName, val.TagName)
+		}
+	}
+}
+
+func TestDecodeDefaultTagValues(t *testing.T) {
+	profile := models.NewBagItProfile("name", "desc", `{"json": null}`)
+	profile.ID = 999
+	values := url.Values{}
+	for i := 0; i < 10; i++ {
+		name := fmt.Sprintf("%d:tag_%d:file_%d", i, i, i)
+		value := fmt.Sprintf("%d", i)
+		values.Set(name, value)
+	}
+	decodedValues := profile.DecodeDefaultTagValues(values)
+	for _, dtv := range decodedValues {
+		assert.Equal(t, profile.ID, dtv.BagItProfileID)
+		expectedTagId, _ := strconv.Atoi(dtv.TagValue)
+		expectedTagFile := fmt.Sprintf("file_%d", expectedTagId)
+		expectedTagName := fmt.Sprintf("tag_%d", expectedTagId)
+		assert.Equal(t, uint(expectedTagId), dtv.ID)
+		assert.Equal(t, expectedTagFile, dtv.TagFile)
+		assert.Equal(t, expectedTagName, dtv.TagName)
+	}
 }
 
 func TestProfileOptions(t *testing.T) {

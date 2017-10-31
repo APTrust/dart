@@ -52,9 +52,12 @@ func (profile *BagItProfile) GetDefaultTagValues(tagFile, tagName string) []Defa
 	return defaults
 }
 
-// TODO: Change param to type url.Values after refactor.
 // DecodeDefaultTagValues parses tag values submitted as part of an HTML form.
-func (profile *BagItProfile) DecodeDefaultTagValues(data map[string][]string) []DefaultTagValue {
+// The form may include HTML inputs for DefaultTagValues that
+// have not yet been saved, and therefore have no ID. For that reason,
+// the form must send the TagFile and TagValue for each field. These
+// are encoded in the field names.
+func (profile *BagItProfile) DecodeDefaultTagValues(data url.Values) []DefaultTagValue {
 	values := make([]DefaultTagValue, 0)
 	for key, value := range data {
 		if !strings.Contains(key, ":") {
