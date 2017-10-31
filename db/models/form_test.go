@@ -132,17 +132,45 @@ func TestFieldTagId(t *testing.T) {
 }
 
 func TestTagFieldsLen(t *testing.T) {
-
+	form := makeForm()
+	require.NotNil(t, form)
+	tagFields := form.SortedTagFields()
+	assert.Equal(t, 5, tagFields.Len())
 }
 
 func TestTagFieldsSwap(t *testing.T) {
+	form := makeForm()
+	require.NotNil(t, form)
+	tagFields := form.SortedTagFields()
 
+	previousName3 := tagFields[3].Name
+	previousName4 := tagFields[4].Name
+	tagFields.Swap(3, 4)
+	assert.Equal(t, previousName4, tagFields[3].Name)
+	assert.Equal(t, previousName3, tagFields[4].Name)
 }
 
 func TestTagFieldsLess(t *testing.T) {
-
+	form := makeForm()
+	require.NotNil(t, form)
+	tagFields := form.SortedTagFields()
+	assert.True(t, tagFields.Less(1, 2))
+	assert.False(t, tagFields.Less(4, 3))
 }
 
 func TestTagFieldsRelFilePathChanged(t *testing.T) {
+	form := makeForm()
+	require.NotNil(t, form)
+	tagFields := form.SortedTagFields()
+	assert.True(t, tagFields.RelFilePathChanged(0))
+	assert.False(t, tagFields.RelFilePathChanged(1))
+	assert.False(t, tagFields.RelFilePathChanged(2))
+	assert.False(t, tagFields.RelFilePathChanged(3))
+	assert.False(t, tagFields.RelFilePathChanged(4))
 
+	tagFields[2].Name = "88:tag-name:file-name"
+
+	// 2 is different from 1 and 3 is different from 2
+	assert.True(t, tagFields.RelFilePathChanged(2))
+	assert.True(t, tagFields.RelFilePathChanged(3))
 }
