@@ -78,19 +78,22 @@ func (job *Job) Form(db *gorm.DB) *Form {
 	workflowField.Choices = WorkflowOptions(db)
 	form.Fields["Workflow"] = workflowField
 
+	// TODO: Fields for Title, Description, and other non-default tags.
+
 	form.SetErrors(job.Errors)
 	return form
 }
 
 func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Job, error) {
-	if method == http.MethodGet && id != uint(0) {
-		job, err := JobLoadWithRelations(db, id)
-		return job, err
-	}
 	// This will often legitimately be empty/zero.
 	workflowId, _ := strconv.Atoi(values.Get("workflowId"))
 	job := NewJob()
-	job.WorkflowID = uint(workflowId)
-	job.ID = uint(id)
-	return job, nil
+	var err error
+	if method == http.MethodGet && id != uint(0) {
+		job, err = JobLoadWithRelations(db, id)
+	}
+	if job != nil {
+		job.WorkflowID = uint(workflowId)
+	}
+	return job, err
 }
