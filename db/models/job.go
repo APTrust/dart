@@ -1,26 +1,35 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 )
 
 type Job struct {
-	gorm.Model         `form_options:"skip"`
-	BagID              uint      `form_options:"skip"`
-	Bag                Bag       `form_options:"skip"`
-	FileID             uint      `form_options:"skip"`
-	File               File      `form_options:"skip"`
-	WorkflowID         uint      `form_widget:"select"`
-	Workflow           Workflow  `form_options:"skip"`
-	WorkflowSnapshot   string    `form_options:"skip"`
-	ScheduledStartTime time.Time `form_options:"skip"`
-	StartedAt          time.Time `form_options:"skip"`
-	FinishedAt         time.Time `form_options:"skip"`
-	Pid                int       `form_options:"skip"`
-	Outcome            string    `form_options:"skip"`
-	CapturedOutput     string    `form_options:"skip"`
+	gorm.Model
+	BagID              uint
+	Bag                Bag
+	FileID             uint
+	File               File
+	WorkflowID         uint
+	Workflow           Workflow
+	WorkflowSnapshot   string
+	ScheduledStartTime time.Time
+	StartedAt          time.Time
+	FinishedAt         time.Time
+	Pid                int
+	Outcome            string
+	CapturedOutput     string
+	Errors             map[string]string `sql:"-"`
+}
+
+func NewJob() *Job {
+	return &Job{}
 }
 
 // JobLoad loads a job without any of its relations.
@@ -44,4 +53,44 @@ func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
 		}
 	}
 	return job, err
+}
+
+func (job *Job) IsValid() bool {
+	// Needs a valid Workflow, plus either a bag or a file
+	return true
+}
+
+// TODO: Move db into package-level var, so we don't have to keep
+// passing it. It's making signatures inconsistent and is otherwise
+// generally annoying.
+func (job *Job) Form(db *gorm.DB) *Form {
+	action := "/job/new"
+	method := "post"
+	if job.ID != 0 {
+		action = fmt.Sprintf("/job/%d/edit", job.ID)
+	}
+	form := NewForm(action, method)
+
+	// Workflow
+	workflowId := fmt.Sprintf("%d", job.Workflow.ID)
+	workflowField := NewField("workflow", "workflow", "Workflow", workflowId)
+	workflowField.Help = "* Required"
+	workflowField.Choices = WorkflowOptions(db)
+	form.Fields["Workflow"] = workflowField
+
+	form.SetErrors(job.Errors)
+	return form
+}
+
+func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Job, error) {
+	if method == http.MethodGet && id != uint(0) {
+		job, err := JobLoadWithRelations(db, id)
+		return job, err
+	}
+	// This will often legitimately be empty/zero.
+	workflowId, _ := strconv.Atoi(values.Get("workflowId"))
+	job := NewJob()
+	job.WorkflowID = uint(workflowId)
+	job.ID = uint(id)
+	return job, nil
 }

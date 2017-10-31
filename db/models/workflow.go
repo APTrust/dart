@@ -1,7 +1,6 @@
 package models
 
 import (
-	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"strconv"
@@ -37,21 +36,17 @@ func WorkflowLoadWithRelations(db *gorm.DB, id uint) (*Workflow, error) {
 	return workflow, err
 }
 
-// WorkflowOptions returns options for an HTML select list of
-// available Workflows. The Id of each option is the Workflow ID,
-// and the value is the Workflow name. Options are in alpho order
-// by name.
-func WorkflowOptions(db *gorm.DB) map[string][]fields.InputChoice {
-	choices := make([]fields.InputChoice, 1)
-	choices[0] = fields.InputChoice{Id: "", Val: ""}
+// WorkflowOptions returns a list of choices to populate an HTML
+// select list with all available workflows.
+func WorkflowOptions(db *gorm.DB) []Choice {
+	choices := make([]Choice, 1)
+	choices[0] = Choice{Value: "", Label: ""}
 	workflows := make([]Workflow, 0)
 	db.Select("id, name").Find(&workflows).Order("name")
 	for _, workflow := range workflows {
-		choices = append(choices, fields.InputChoice{
-			Id:  strconv.FormatUint(uint64(workflow.ID), 10),
-			Val: workflow.Name})
+		choices = append(choices, Choice{
+			Value: strconv.FormatUint(uint64(workflow.ID), 10),
+			Label: workflow.Name})
 	}
-	options := make(map[string][]fields.InputChoice)
-	options[""] = choices
-	return options
+	return choices
 }
