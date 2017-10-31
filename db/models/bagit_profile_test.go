@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"net/url"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -102,4 +103,34 @@ func TestSeriaizationOptions(t *testing.T) {
 		assert.Equal(t, allowed, options[""][i+1].Id)
 		assert.Equal(t, allowed, options[""][i+1].Val)
 	}
+}
+
+func TestProfileIsValid(t *testing.T) {
+	db, profiles, err := initProfilesTest()
+	if db != nil {
+		defer db.Close()
+	}
+	require.Nil(t, err)
+	require.NotNil(t, db)
+	require.NotEmpty(t, profiles)
+	profile := profiles[0]
+
+	assert.True(t, profile.IsValid())
+
+	profile.Name = ""
+	assert.False(t, profile.IsValid())
+	require.NotEmpty(t, profile.Errors)
+	assert.Equal(t, "Name is required.", profile.Errors["Name"])
+
+	profile.Name = "sample profile"
+	profile.JSON = "  "
+	assert.False(t, profile.IsValid())
+	require.NotEmpty(t, profile.Errors)
+	assert.Equal(t, "BagItProfile JSON is missing.", profile.Errors["JSON"])
+
+	profile.JSON = `{"json": "nosj"}`
+	assert.False(t, profile.IsValid())
+	require.NotEmpty(t, profile.Errors)
+	assert.True(t, strings.HasPrefix(profile.Errors["JSON"],
+		"The BagItProfile described in the JSON text has the following errors"))
 }
