@@ -24,7 +24,10 @@ func NewForm(action, method string) *Form {
 }
 
 // SetErrors sets error messages on a form, based on the validation
-// errors in the underlying object/model.
+// errors in the underlying object/model. In the errors map, the key
+// is the name of the field, and the value is the error message for
+// that specific field. This function tags each field with its specific
+// error, so the HTML form can display them.
 func (form *Form) SetErrors(errors map[string]string) {
 	for fieldName, errorMessage := range errors {
 		field := form.Fields[fieldName]
@@ -101,14 +104,26 @@ func (field *Field) getNamePart(index int) string {
 	return part
 }
 
+// RelativeFilePath returns the tag file name of the DefaultTagValue
+// represented by an HTML input. The path is parsed from the input name.
+// This will return an empty string if the field name does
+// not follow the naming convention for DefaultTagValue fields.
 func (field *Field) RelativeFilePath() string {
 	return field.getNamePart(2)
 }
 
+// TagName returns the name of the DefaultTagValue represented
+// by an HTML input. The TagName is parsed from the input name.
+// This will return an empty string if the field name does
+// not follow the naming convention for DefaultTagValue fields.
 func (field *Field) TagName() string {
 	return field.getNamePart(1)
 }
 
+// TagId returns the id of the DefaultTagValue represented
+// by an HTML input. The TagId is parsed from the input name.
+// This will return an empty string if the field name does
+// not follow the naming convention for DefaultTagValue fields.
 func (field *Field) TagId() string {
 	return field.getNamePart(0)
 }
@@ -116,12 +131,21 @@ func (field *Field) TagId() string {
 // TagFields implements an interface for sorting.
 type TagFields []*Field
 
+// Len returns the length of the TagFields slice.
+// This is part of the sorting interface.
 func (tf TagFields) Len() int {
 	return len(tf)
 }
+
+// Swap swaps the order of items at indexes i and j.
+// This is part of the sorting interface.
 func (tf TagFields) Swap(i, j int) {
 	tf[i], tf[j] = tf[j], tf[i]
 }
+
+// Less returns true if the item at index i should be
+// considered less than the item at index j.
+// This is part of the sorting interface.
 func (tf TagFields) Less(i, j int) bool {
 	order_i, _ := strconv.Atoi(tf[i].Attrs["data-tag-field-order"])
 	order_j, _ := strconv.Atoi(tf[j].Attrs["data-tag-field-order"])
