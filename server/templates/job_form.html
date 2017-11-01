@@ -7,6 +7,10 @@
 
   {{template "input-select" .form.Fields.Workflow }}
 
+  {{ if .form.Fields.BagName }}
+  {{template "input-text" .form.Fields.BagName }}
+  {{ end }}
+
   {{ $relFilePath := "" }}
   {{ range $index, $field := .form.SortedTagFields }}
 	{{ if $.form.SortedTagFields.RelFilePathChanged $index }}

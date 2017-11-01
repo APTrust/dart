@@ -4,7 +4,7 @@ $(function() {
 		var href = row.data("href")
 		window.location = href
 	});
-	var elements = $("select[name='workflowId']")
+	var elements = $("select[name='WorkflowId']")
 	if (elements.length > 0) {
 		var workflowList = elements[0]
 		$(workflowList).change(function () {

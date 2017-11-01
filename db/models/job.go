@@ -73,21 +73,22 @@ func (job *Job) Form(db *gorm.DB) (*Form, error) {
 
 	// Workflow
 	workflowId := fmt.Sprintf("%d", job.Workflow.ID)
-	workflowField := NewField("workflowId", "workflowId", "Workflow", workflowId)
+	workflowField := NewField("WorkflowId", "WorkflowId", "Workflow", workflowId)
 	workflowField.Help = "* Required"
 	workflowField.Choices = WorkflowOptions(db)
 	form.Fields["Workflow"] = workflowField
 
 	// Fields for BagIt tags
-	//if job.Workflow.Id != 0 && job.Workflow.BagItProfile.Id != 0 {
-	fields, err := job.Workflow.BagItProfile.BuildTagValueFields()
-	if err != nil {
-		return nil, err
+	if job.Workflow.BagItProfileID != 0 {
+		fields, err := job.Workflow.BagItProfile.BuildTagValueFields()
+		if err != nil {
+			return nil, err
+		}
+		for _, field := range fields {
+			form.Fields[field.Name] = field
+		}
+		form.Fields["BagName"] = NewField("BagName", "BagName", "Bag Name", job.Bag.Name)
 	}
-	for _, field := range fields {
-		form.Fields[field.Name] = field
-	}
-	//}
 
 	form.SetErrors(job.Errors)
 	return form, nil
@@ -95,7 +96,8 @@ func (job *Job) Form(db *gorm.DB) (*Form, error) {
 
 func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Job, error) {
 	// This will often legitimately be empty/zero.
-	workflowId, _ := strconv.Atoi(values.Get("workflowId"))
+	workflowId, _ := strconv.Atoi(values.Get("WorkflowId"))
+	bagName := values.Get("BagName")
 	job := NewJob()
 	var err error
 	if method == http.MethodGet && id != uint(0) {
@@ -109,6 +111,9 @@ func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Jo
 			if workflow != nil {
 				job.Workflow = *workflow
 			}
+		}
+		if bagName != "" {
+			job.Bag.Name = bagName
 		}
 	}
 	return job, err
