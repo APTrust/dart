@@ -116,8 +116,8 @@ func JobRun(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	checkRequiredTags := true
 	bagger.WriteBag(overwriteExistingBag, checkRequiredTags)
 	if len(bagger.Errors()) > 0 {
-		for _, errMsg := range bagger.Errors() {
-			errMsg += fmt.Sprintf("%s <br/>", err.Error())
+		for _, msg := range bagger.Errors() {
+			errMsg += fmt.Sprintf("%s <br/>", msg)
 		}
 	} else {
 		bagCreated += ("Bag was written to " + bagPath + "\n\n")

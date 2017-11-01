@@ -64,7 +64,7 @@ func (job *Job) IsValid() bool {
 // passing it. It's making signatures inconsistent and is otherwise
 // generally annoying.
 func (job *Job) Form(db *gorm.DB) (*Form, error) {
-	action := "/job/new"
+	action := "/job/new" // "/job/run"
 	method := "post"
 	if job.ID != 0 {
 		action = fmt.Sprintf("/job/%d/edit", job.ID)
