@@ -63,7 +63,7 @@ func (job *Job) IsValid() bool {
 // TODO: Move db into package-level var, so we don't have to keep
 // passing it. It's making signatures inconsistent and is otherwise
 // generally annoying.
-func (job *Job) Form(db *gorm.DB) *Form {
+func (job *Job) Form(db *gorm.DB) (*Form, error) {
 	action := "/job/new"
 	method := "post"
 	if job.ID != 0 {
@@ -73,15 +73,24 @@ func (job *Job) Form(db *gorm.DB) *Form {
 
 	// Workflow
 	workflowId := fmt.Sprintf("%d", job.Workflow.ID)
-	workflowField := NewField("workflow", "workflow", "Workflow", workflowId)
+	workflowField := NewField("workflowId", "workflowId", "Workflow", workflowId)
 	workflowField.Help = "* Required"
 	workflowField.Choices = WorkflowOptions(db)
 	form.Fields["Workflow"] = workflowField
 
-	// TODO: Fields for Title, Description, and other non-default tags.
+	// Fields for BagIt tags
+	//if job.Workflow.Id != 0 && job.Workflow.BagItProfile.Id != 0 {
+	fields, err := job.Workflow.BagItProfile.BuildTagValueFields()
+	if err != nil {
+		return nil, err
+	}
+	for _, field := range fields {
+		form.Fields[field.Name] = field
+	}
+	//}
 
 	form.SetErrors(job.Errors)
-	return form
+	return form, nil
 }
 
 func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Job, error) {
@@ -94,6 +103,13 @@ func JobFromRequest(db *gorm.DB, method string, id uint, values url.Values) (*Jo
 	}
 	if job != nil {
 		job.WorkflowID = uint(workflowId)
+		if workflowId != 0 {
+			workflow := &Workflow{}
+			workflow, err = WorkflowLoadWithRelations(db, job.WorkflowID)
+			if workflow != nil {
+				job.Workflow = *workflow
+			}
+		}
 	}
 	return job, err
 }
