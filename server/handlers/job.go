@@ -19,7 +19,6 @@ import (
 	"strings"
 )
 
-// TODO: This should now handle JobWorkflowChanged as well.
 func JobGetForm(env *Environment, w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 	job, err := ParseJobRequest(env, http.MethodGet, r)
@@ -42,89 +41,6 @@ func ParseJobRequest(env *Environment, method string, r *http.Request) (*models.
 	}
 	return models.JobFromRequest(env.DB, method, id, formValues)
 }
-
-// func JobNewGet(env *Environment, w http.ResponseWriter, r *http.Request) error {
-//	job := models.Job{}
-//	postUrl := "/job/run"
-//	data := make(map[string]interface{})
-//	form := forms.BootstrapFormFromModel(job, forms.POST, postUrl)
-//	form.Field("WorkflowID").SetSelectChoices(models.WorkflowOptions(env.DB))
-//	sourceDirField := fields.HiddenField("SourceDir")
-//	sourceDirField.SetId("SourceDir")
-//	form.Elements(sourceDirField)
-//	data["form"] = form
-//	return env.ExecTemplate(w, "job", data)
-// }
-
-// func JobWorkflowChanged(env *Environment, w http.ResponseWriter, r *http.Request) error {
-//	var err error
-//	vars := mux.Vars(r)
-//	id, _ := strconv.Atoi(vars["id"])
-//	job := &models.Job{}
-//	if id != 0 {
-//		job, err = models.JobLoadWithRelations(env.DB, uint(id))
-//		if err != nil {
-//			return errors.WithStack(err)
-//		}
-//	} else {
-//		err = r.ParseForm()
-//		if err != nil {
-//			return errors.WithStack(err)
-//		}
-//		workflowId, err := strconv.Atoi(r.Form.Get("WorkflowID"))
-//		if err != nil {
-//			return errors.WithStack(err)
-//		}
-//		job.WorkflowID = uint(workflowId)
-//		workflow, err := models.WorkflowLoadWithRelations(env.DB, job.WorkflowID)
-//		if err != nil {
-//			return errors.WithStack(err)
-//		}
-//		job.Workflow = *workflow
-//	}
-//	data := make(map[string]interface{})
-//	form, err := JobForm(job)
-//	if err != nil {
-//		return errors.WithStack(err)
-//	}
-//	form.Field("WorkflowID").SetSelectChoices(models.WorkflowOptions(env.DB))
-//	form.Field("WorkflowID").SetValue(fmt.Sprintf("%d", job.WorkflowID))
-//	sourceDirField := fields.HiddenField("SourceDir")
-//	sourceDirField.SetId("SourceDir")
-//	form.Elements(sourceDirField)
-//	data["form"] = form
-//	return env.ExecTemplate(w, "job", data)
-// }
-
-// Returns a Job form.
-// func JobForm(job *models.Job) (*forms.Form, error) {
-//	postUrl := fmt.Sprintf("/job/new")
-//	if job.ID > uint(0) {
-//		postUrl = fmt.Sprintf("/job/%d/edit", job.ID)
-//	}
-//	form := forms.BootstrapFormFromModel(*job, forms.POST, postUrl)
-
-//	// Remove the submit button from the end of the form,
-//	// add our new elements, and then replace the submit button
-//	// at the end.
-//	submitButton := form.Field("submitButton")
-//	form.RemoveElement("submitButton")
-
-//	// Add the tag value fields we need to display.
-//	// Last param, true, means hide fields that already have
-//	// default values.
-//	if &job.Workflow != nil && &job.Workflow.BagItProfile != nil {
-//		AddTagValueFields(job.Workflow.BagItProfile, form, true)
-//		showHideButton := fields.Button("showHideTagFields", "Show/Hide Tag Fields")
-//		showHideButton.SetId("showHideTagFields")
-//		form.Elements(showHideButton)
-//	}
-//	form.Elements(submitButton)
-
-//	// TODO: Add run button after redoing form.
-
-//	return form, nil
-// }
 
 // This is a crude job runner for our demo. Break this out later,
 // add proper error handling, etc. And fix the models too.
