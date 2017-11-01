@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
-	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"net/http"
@@ -82,25 +81,23 @@ func (profile *BagItProfile) DecodeDefaultTagValues(data url.Values) []DefaultTa
 // name and id of each BagItProfile in the database. Options are
 // in alpha order by name. The option value is the profile Id,
 // and the option label is the profile name.
-func ProfileOptions(db *gorm.DB) map[string][]fields.InputChoice {
-	choices := make([]fields.InputChoice, 1)
-	choices[0] = fields.InputChoice{Id: "", Val: ""}
+func ProfileOptions(db *gorm.DB) []Choice {
+	choices := make([]Choice, 1)
+	choices[0] = Choice{Label: "", Value: ""}
 	profiles := make([]BagItProfile, 0)
 	db.Select("id, name").Find(&profiles).Order("name")
 	for _, profile := range profiles {
-		choices = append(choices, fields.InputChoice{
-			Id:  strconv.FormatUint(uint64(profile.ID), 10),
-			Val: profile.Name})
+		choices = append(choices, Choice{
+			Value: strconv.FormatUint(uint64(profile.ID), 10),
+			Label: profile.Name})
 	}
-	options := make(map[string][]fields.InputChoice)
-	options[""] = choices
-	return options
+	return choices
 }
 
 // SerializationFormatOptions returns a list of bag serialization formats,
 // such as "tar", "gzip", etc.
-func SerializationFormatOptions() map[string][]fields.InputChoice {
-	return OptionList(SerializationFormats)
+func SerializationFormatOptions() []Choice {
+	return ChoiceList(SerializationFormats)
 }
 
 // IsValid returns true if this object is valid and can be saved in the

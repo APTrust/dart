@@ -27,10 +27,10 @@ func initStorageServiceTest() (*gorm.DB, []*models.StorageService, error) {
 
 func TestTransferProtocolOptions(t *testing.T) {
 	options := models.TransferProtocolOptions()
-	require.Equal(t, len(models.TransferProtocols)+1, len(options[""]))
+	require.Equal(t, len(models.TransferProtocols)+1, len(options))
 	for i, allowed := range models.TransferProtocols {
-		assert.Equal(t, allowed, options[""][i+1].Id)
-		assert.Equal(t, allowed, options[""][i+1].Val)
+		assert.Equal(t, allowed, options[i+1].Value)
+		assert.Equal(t, allowed, options[i+1].Label)
 	}
 }
 
@@ -43,13 +43,13 @@ func TestStorageServiceOptions(t *testing.T) {
 	assert.NotNil(t, db)
 	choices := models.StorageServiceOptions(db)
 	require.NotEmpty(t, choices)
-	require.Equal(t, 4, len(choices[""]))
-	assert.Equal(t, "", choices[""][0].Id)
-	assert.Equal(t, "", choices[""][0].Val)
-	assert.Equal(t, fmt.Sprintf("%d", services[0].ID), choices[""][1].Id)
-	assert.Equal(t, services[0].Name, choices[""][1].Val)
-	assert.Equal(t, fmt.Sprintf("%d", services[1].ID), choices[""][2].Id)
-	assert.Equal(t, services[1].Name, choices[""][2].Val)
-	assert.Equal(t, fmt.Sprintf("%d", services[2].ID), choices[""][3].Id)
-	assert.Equal(t, services[2].Name, choices[""][3].Val)
+	require.Equal(t, 4, len(choices))
+	assert.Equal(t, "", choices[0].Value)
+	assert.Equal(t, "", choices[0].Label)
+	assert.Equal(t, fmt.Sprintf("%d", services[0].ID), choices[1].Value)
+	assert.Equal(t, services[0].Name, choices[1].Label)
+	assert.Equal(t, fmt.Sprintf("%d", services[1].ID), choices[2].Value)
+	assert.Equal(t, services[1].Name, choices[2].Label)
+	assert.Equal(t, fmt.Sprintf("%d", services[2].ID), choices[3].Value)
+	assert.Equal(t, services[2].Name, choices[3].Label)
 }

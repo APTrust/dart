@@ -33,9 +33,9 @@ func WorkflowNewGet(env *Environment, w http.ResponseWriter, r *http.Request) er
 	postUrl := "/workflow/new"
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
-	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
-	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
-	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
+	// form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
+	// form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
+	// form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
 	data["form"] = form
 	return env.ExecTemplate(w, "workflow-form", data)
 }
@@ -61,11 +61,11 @@ func WorkflowNewPost(env *Environment, w http.ResponseWriter, r *http.Request) e
 		return nil
 	}
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
+	//	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
-	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
+	//	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
 	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
-	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
+	//	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	return env.ExecTemplate(w, "workflow-form", data)
@@ -79,11 +79,11 @@ func WorkflowEditGet(env *Environment, w http.ResponseWriter, r *http.Request) e
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	data := make(map[string]interface{})
 	form := forms.BootstrapFormFromModel(workflow, forms.POST, postUrl)
-	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
+	//	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
-	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
+	//	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
 	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
-	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
+	//	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	return env.ExecTemplate(w, "workflow-form", data)
@@ -113,11 +113,11 @@ func WorkflowEditPost(env *Environment, w http.ResponseWriter, r *http.Request) 
 	}
 	postUrl := fmt.Sprintf("/workflow/%d/edit", id)
 	form := forms.BootstrapFormFromModel(*workflow, forms.POST, postUrl)
-	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
+	//	form.Field("SerializationFormat").SetSelectChoices(models.SerializationFormatOptions())
 	form.Field("SerializationFormat").SetValue(workflow.SerializationFormat)
-	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
+	//	form.Field("BagItProfileID").SetSelectChoices(models.ProfileOptions(env.DB))
 	form.Field("BagItProfileID").SetValue(strconv.FormatUint(uint64(workflow.BagItProfileID), 10))
-	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
+	//	form.Field("StorageServiceID").SetSelectChoices(models.StorageServiceOptions(env.DB))
 	form.Field("StorageServiceID").SetValue(strconv.FormatUint(uint64(workflow.StorageServiceID), 10))
 	data["form"] = form
 	return env.ExecTemplate(w, "workflow-form", data)

@@ -85,23 +85,23 @@ func TestProfileOptions(t *testing.T) {
 	assert.NotNil(t, db)
 	choices := models.ProfileOptions(db)
 	require.NotEmpty(t, choices)
-	require.Equal(t, 4, len(choices[""]))
-	assert.Equal(t, "", choices[""][0].Id)
-	assert.Equal(t, "", choices[""][0].Val)
-	assert.Equal(t, fmt.Sprintf("%d", profiles[0].ID), choices[""][1].Id)
-	assert.Equal(t, profiles[0].Name, choices[""][1].Val)
-	assert.Equal(t, fmt.Sprintf("%d", profiles[1].ID), choices[""][2].Id)
-	assert.Equal(t, profiles[1].Name, choices[""][2].Val)
-	assert.Equal(t, fmt.Sprintf("%d", profiles[2].ID), choices[""][3].Id)
-	assert.Equal(t, profiles[2].Name, choices[""][3].Val)
+	require.Equal(t, 4, len(choices))
+	assert.Equal(t, "", choices[0].Value)
+	assert.Equal(t, "", choices[0].Label)
+	assert.Equal(t, fmt.Sprintf("%d", profiles[0].ID), choices[1].Value)
+	assert.Equal(t, profiles[0].Name, choices[1].Label)
+	assert.Equal(t, fmt.Sprintf("%d", profiles[1].ID), choices[2].Value)
+	assert.Equal(t, profiles[1].Name, choices[2].Label)
+	assert.Equal(t, fmt.Sprintf("%d", profiles[2].ID), choices[3].Value)
+	assert.Equal(t, profiles[2].Name, choices[3].Label)
 }
 
 func TestSeriaizationOptions(t *testing.T) {
 	options := models.SerializationFormatOptions()
-	require.Equal(t, len(models.SerializationFormats)+1, len(options[""]))
+	require.Equal(t, len(models.SerializationFormats)+1, len(options))
 	for i, allowed := range models.SerializationFormats {
-		assert.Equal(t, allowed, options[""][i+1].Id)
-		assert.Equal(t, allowed, options[""][i+1].Val)
+		assert.Equal(t, allowed, options[i+1].Value)
+		assert.Equal(t, allowed, options[i+1].Label)
 	}
 }
 

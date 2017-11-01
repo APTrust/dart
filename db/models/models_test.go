@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-func TestOptionList(t *testing.T) {
+func TestChoiceList(t *testing.T) {
 	values := []string{"Homer", "Barney", "Moe", "Apu"}
-	options := models.OptionList(values)
-	require.Equal(t, len(values)+1, len(options[""]))
+	choices := models.ChoiceList(values)
+	require.Equal(t, len(values)+1, len(choices))
 	for i, allowed := range values {
-		assert.Equal(t, allowed, options[""][i+1].Id)
-		assert.Equal(t, allowed, options[""][i+1].Val)
+		assert.Equal(t, allowed, choices[i+1].Value)
+		assert.Equal(t, allowed, choices[i+1].Label)
 	}
 }

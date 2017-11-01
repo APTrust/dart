@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/APTrust/go-form-it/fields"
+	//	"github.com/APTrust/go-form-it/fields"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"strconv"
@@ -21,27 +21,27 @@ type StorageService struct {
 	LoginExtra     string `form_widget:"password"`
 }
 
-// TransferProtocolOptions returns options for an HTML select list
-// of available storage service protocol types ("s3", "ftp", etc.)
-func TransferProtocolOptions() map[string][]fields.InputChoice {
-	return OptionList(TransferProtocols)
+func NewStorageService(name string) *StorageService {
+	return &StorageService{
+		Name: name,
+	}
 }
 
-// StorageServiceOptions returns options for an HTML select list of
-// available StorageServices. The Id of each option is the StorageService ID,
-// and the value is the StorageService name. Options are in alpho order
-// by name.
-func StorageServiceOptions(db *gorm.DB) map[string][]fields.InputChoice {
-	choices := make([]fields.InputChoice, 1)
-	choices[0] = fields.InputChoice{Id: "", Val: ""}
+// TransferProtocolOptions returns options for an HTML select list
+// of available storage service protocol types ("s3", "ftp", etc.)
+func TransferProtocolOptions() []Choice {
+	return ChoiceList(TransferProtocols)
+}
+
+func StorageServiceOptions(db *gorm.DB) []Choice {
+	choices := make([]Choice, 1)
+	choices[0] = Choice{Value: "", Label: ""}
 	services := make([]StorageService, 0)
 	db.Select("id, name").Find(&services).Order("name")
-	for _, ss := range services {
-		choices = append(choices, fields.InputChoice{
-			Id:  strconv.FormatUint(uint64(ss.ID), 10),
-			Val: ss.Name})
+	for _, service := range services {
+		choices = append(choices, Choice{
+			Value: strconv.FormatUint(uint64(service.ID), 10),
+			Label: service.Name})
 	}
-	options := make(map[string][]fields.InputChoice)
-	options[""] = choices
-	return options
+	return choices
 }
