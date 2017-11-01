@@ -10,11 +10,12 @@ type Workflow struct {
 	gorm.Model          `form_options:"skip"`
 	Name                string
 	Description         string
-	SerializationFormat string         `form_widget:"select"`
-	BagItProfileID      uint           `form_widget:"select"`
-	BagItProfile        BagItProfile   `form_options:"skip"`
-	StorageServiceID    uint           `form_widget:"select"`
-	StorageService      StorageService `form_options:"skip"`
+	SerializationFormat string            `form_widget:"select"`
+	BagItProfileID      uint              `form_widget:"select"`
+	BagItProfile        BagItProfile      `form_options:"skip"`
+	StorageServiceID    uint              `form_widget:"select"`
+	StorageService      StorageService    `form_options:"skip"`
+	Errors              map[string]string `sql:"-"`
 }
 
 // WorkflowLoad loads a workflow without any of its relations.
@@ -49,4 +50,9 @@ func WorkflowOptions(db *gorm.DB) []Choice {
 			Label: workflow.Name})
 	}
 	return choices
+}
+
+// TODO: Fill this in
+func (workflow *Workflow) IsValid() bool {
+	return true
 }

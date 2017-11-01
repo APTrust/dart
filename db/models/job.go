@@ -56,8 +56,23 @@ func JobLoadWithRelations(db *gorm.DB, id uint) (*Job, error) {
 }
 
 func (job *Job) IsValid() bool {
+	job.Errors = make(map[string]string)
 	// Needs a valid Workflow, plus either a bag or a file
-	return true
+	if job.Workflow.ID != 0 {
+		if job.Workflow.IsValid() == false {
+			job.Errors["Workflow"] = "This job's workflow is invalid due to the following errors."
+			for _, errMsg := range job.Workflow.Errors {
+				job.Errors["Workflow"] += fmt.Sprintf("\n%s", errMsg)
+			}
+		}
+	} else {
+		job.Errors["Workflow"] = "This job has no workflow."
+	}
+	if job.Bag.ID == 0 && job.File.ID == 0 {
+		job.Errors["Bag"] = "Job must have either a bag or a file."
+		job.Errors["File"] = "Job must have either a bag or a file."
+	}
+	return len(job.Errors) > 0
 }
 
 // TODO: Move db into package-level var, so we don't have to keep

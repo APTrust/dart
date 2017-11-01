@@ -12,6 +12,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -25,6 +26,39 @@ func JobGetForm(env *Environment, w http.ResponseWriter, r *http.Request) error 
 	if err != nil {
 		return WrapErr(err)
 	}
+	form, err := job.Form(env.DB)
+	if err != nil {
+		return WrapErr(err)
+	}
+	data["form"] = form
+	data["obj"] = job
+	return env.ExecTemplate(w, "job-form", data)
+}
+
+func JobPostForm(env *Environment, w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	job, err := ParseJobRequest(env, http.MethodPost, r)
+	if err != nil {
+		return WrapErr(err)
+	}
+
+	// Save Bag and/or File first.
+
+	if job.IsValid() {
+		if job.ID == 0 {
+			err = env.DB.Create(&job).Error
+		} else {
+			err = env.DB.Save(&job).Error
+		}
+		if err != nil {
+			return WrapErr(err)
+		} else {
+			msg := fmt.Sprintf("Job has been saved")
+			http.Redirect(w, r, "/jobs?success="+url.QueryEscape(msg), 303)
+			return nil
+		}
+	}
+	// Submitted data was not valid. Show the form with errors.
 	form, err := job.Form(env.DB)
 	if err != nil {
 		return WrapErr(err)
