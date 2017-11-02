@@ -1,9 +1,9 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE "app_settings" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"value" varchar(255) );
+--CREATE TABLE "app_settings" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"value" varchar(255) );
 INSERT INTO "app_settings" VALUES(1,'2017-09-30 09:47:16.330681732-04:00','2017-09-30 09:47:16.330681732-04:00',NULL,'Staging Directory','/Users/apd4n/tmp/easy-store');
-CREATE TABLE "bags" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"size" bigint,"storage_url" varchar(255),"metadata_url" varchar(255),"remote_identifier" varchar(255),"stored_at" datetime );
-CREATE TABLE "bag_it_profiles" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"description" varchar(255),"json" varchar(255) );
+--CREATE TABLE "bags" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"size" bigint,"storage_url" varchar(255),"metadata_url" varchar(255),"remote_identifier" varchar(255),"stored_at" datetime );
+--CREATE TABLE "bag_it_profiles" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"description" varchar(255),"json" varchar(255) );
 INSERT INTO "bag_it_profiles" VALUES(1,'0001-01-01 00:00:00+00:00','2017-09-30 10:06:06.792173172-04:00',NULL,'APTrust (Med School Settings)','Profile for APTrust bags with default settings for Med School','{
     "BagIt-Profile-Info":{
         "BagIt-Profile-Identifier":"https://wiki.aptrust.org/APTrust_BagIt_Profile",
@@ -296,7 +296,7 @@ INSERT INTO "bag_it_profiles" VALUES(3,'0001-01-01 00:00:00+00:00','2017-09-30 1
     }
 }
 ');
-CREATE TABLE "default_tag_values" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_it_profile_id" bigint,"tag_file" varchar(255),"tag_name" varchar(255),"tag_value" varchar(255) );
+--CREATE TABLE "default_tag_values" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_it_profile_id" bigint,"tag_file" varchar(255),"tag_name" varchar(255),"tag_value" varchar(255) );
 INSERT INTO "default_tag_values" VALUES(1,'0001-01-01 00:00:00+00:00','2017-09-30 10:06:06.798982802-04:00',NULL,1,'aptrust-info.txt','Description','Bag of various stuff created for a software demo');
 INSERT INTO "default_tag_values" VALUES(2,'0001-01-01 00:00:00+00:00','2017-09-30 10:06:06.800765468-04:00',NULL,1,'bag-info.txt','Internal-Sender-Description','Test bag full of stuff');
 INSERT INTO "default_tag_values" VALUES(3,'0001-01-01 00:00:00+00:00','2017-09-30 10:06:06.799988422-04:00',NULL,1,'bagit.txt','Tag-File-Character-Encoding','UTF-8');
@@ -341,23 +341,23 @@ INSERT INTO "default_tag_values" VALUES(41,'2017-09-30 10:05:36.802012382-04:00'
 INSERT INTO "default_tag_values" VALUES(42,'2017-09-30 10:05:36.802681063-04:00','2017-09-30 10:05:36.802681063-04:00',NULL,3,'aptrust-info.txt','Title','Partner Tools Demo Bag (Config #2)');
 INSERT INTO "default_tag_values" VALUES(43,'2017-09-30 10:05:36.803320708-04:00','2017-09-30 10:05:36.803320708-04:00',NULL,3,'bag-info.txt','Payload-Oxum','');
 INSERT INTO "default_tag_values" VALUES(44,'2017-09-30 10:05:36.803908935-04:00','2017-09-30 10:05:36.803908935-04:00',NULL,3,'aptrust-info.txt','Description','Demo bag full of various stuff');
-CREATE TABLE "files" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"name" varchar(255),"size" bigint,"md5" varchar(255),"sha256" varchar(255),"storage_url" varchar(255),"stored_as_part_of_bag" bool,"e_tag" varchar(255),"stored_at" datetime );
-CREATE TABLE "jobs" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"file_id" bigint,"scheduled_start_time" datetime,"started_at" datetime,"finished_at" datetime,"pid" integer,"outcome" varchar(255),"captured_output" varchar(255) );
-CREATE TABLE "storage_services" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"description" varchar(255),"protocol" varchar(255),"url" varchar(255),"bucket_or_folder" varchar(255),"login_name" varchar(255),"login_password" varchar(255),"login_extra" varchar(255) );
+--CREATE TABLE "files" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"name" varchar(255),"size" bigint,"md5" varchar(255),"sha256" varchar(255),"storage_url" varchar(255),"stored_as_part_of_bag" bool,"e_tag" varchar(255),"stored_at" datetime );
+--CREATE TABLE "jobs" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"file_id" bigint,"scheduled_start_time" datetime,"started_at" datetime,"finished_at" datetime,"pid" integer,"outcome" varchar(255),"captured_output" varchar(255) );
+--CREATE TABLE "storage_services" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"name" varchar(255),"description" varchar(255),"protocol" varchar(255),"url" varchar(255),"bucket_or_folder" varchar(255),"login_name" varchar(255),"login_password" varchar(255),"login_extra" varchar(255) );
 INSERT INTO "storage_services" VALUES(1,'0001-01-01 00:00:00+00:00','2017-09-30 11:28:44.191298-04:00',NULL,'APTrust Ingest Bucket','S3 receiving bucket for ingesting objects into APTrust','s3','s3.amazonaws.com','aptrust.receiving.test.virginia.edu','ENV:AWS_ACCESS_KEY_ID','ENV:AWS_SECRET_ACCESS_KEY','');
 INSERT INTO "storage_services" VALUES(2,'2017-09-30 10:01:29.245859352-04:00','2017-09-30 10:01:29.245859352-04:00',NULL,'Campus Data Center','FTP backup in local data center','ftp','ftp://example.com','backup/tar_files','user1','user1','');
-CREATE TABLE "tags" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"rel_file_path" varchar(255),"name" varchar(255),"value" varchar(255) );
+--CREATE TABLE "tags" ("id" integer primary key autoincrement,"created_at" datetime,"updated_at" datetime,"deleted_at" datetime,"bag_id" bigint,"rel_file_path" varchar(255),"name" varchar(255),"value" varchar(255) );
 DELETE FROM sqlite_sequence;
 INSERT INTO "sqlite_sequence" VALUES('app_settings',1);
 INSERT INTO "sqlite_sequence" VALUES('bag_it_profiles',3);
 INSERT INTO "sqlite_sequence" VALUES('default_tag_values',44);
 INSERT INTO "sqlite_sequence" VALUES('storage_services',2);
-CREATE INDEX idx_app_settings_deleted_at ON "app_settings"(deleted_at) ;
-CREATE INDEX idx_bags_deleted_at ON "bags"(deleted_at) ;
-CREATE INDEX idx_bag_it_profiles_deleted_at ON "bag_it_profiles"(deleted_at) ;
-CREATE INDEX idx_default_tag_values_deleted_at ON "default_tag_values"(deleted_at) ;
-CREATE INDEX idx_files_deleted_at ON "files"(deleted_at) ;
-CREATE INDEX idx_jobs_deleted_at ON "jobs"(deleted_at) ;
-CREATE INDEX idx_storage_services_deleted_at ON "storage_services"(deleted_at) ;
-CREATE INDEX idx_tags_deleted_at ON "tags"(deleted_at) ;
+-- CREATE INDEX idx_app_settings_deleted_at ON "app_settings"(deleted_at) ;
+-- CREATE INDEX idx_bags_deleted_at ON "bags"(deleted_at) ;
+-- CREATE INDEX idx_bag_it_profiles_deleted_at ON "bag_it_profiles"(deleted_at) ;
+-- CREATE INDEX idx_default_tag_values_deleted_at ON "default_tag_values"(deleted_at) ;
+-- CREATE INDEX idx_files_deleted_at ON "files"(deleted_at) ;
+-- CREATE INDEX idx_jobs_deleted_at ON "jobs"(deleted_at) ;
+-- CREATE INDEX idx_storage_services_deleted_at ON "storage_services"(deleted_at) ;
+-- CREATE INDEX idx_tags_deleted_at ON "tags"(deleted_at) ;
 COMMIT;
