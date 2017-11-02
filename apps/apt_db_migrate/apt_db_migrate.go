@@ -27,7 +27,6 @@ func main() {
 		&models.Job{},
 		&models.StorageService{},
 		&models.Tag{},
-		&models.Workflow{},
 	)
 
 	defer db.Close()

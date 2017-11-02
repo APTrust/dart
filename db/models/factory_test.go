@@ -31,7 +31,6 @@ func InitTestDB() (*gorm.DB, error) {
 		&models.Job{},
 		&models.StorageService{},
 		&models.Tag{},
-		&models.Workflow{},
 	).Error
 	return db, err
 }
@@ -117,15 +116,6 @@ func FakeStorageService() *models.StorageService {
 	}
 }
 
-// FakeWorkflow returns an unsaved Workflow object, with no relations.
-func FakeWorkflow() *models.Workflow {
-	return &models.Workflow{
-		Name:                fake.Word(),
-		Description:         fake.Sentence(),
-		SerializationFormat: "tar",
-	}
-}
-
 // CreateFakeStorageService creates a StorageService, saves it to the DB,
 // and returns it.
 func CreateFakeStorageService(db *gorm.DB) (*models.StorageService, error) {
@@ -177,30 +167,6 @@ func CreateFakeBagItProfileWithTags(db *gorm.DB) (*models.BagItProfile, error) {
 	return bagItProfile, nil
 }
 
-// CreateFakeWorkflowWithRelations creates a Workflow record, complete
-// with BagItProfile and StorageService.
-func CreateFakeWorkflowWithRelations(db *gorm.DB) (*models.Workflow, error) {
-	storageService, err := CreateFakeStorageService(db)
-	if err != nil {
-		return nil, err
-	}
-
-	// Creates **and saves** a BagItProfile, with tags.
-	bagItProfile, err := CreateFakeBagItProfileWithTags(db)
-	if err != nil {
-		return nil, err
-	}
-
-	workflow := FakeWorkflow()
-	workflow.BagItProfileID = bagItProfile.ID
-	workflow.StorageServiceID = storageService.ID
-	err = db.Save(workflow).Error
-	if err != nil {
-		return nil, err
-	}
-	return workflow, err
-}
-
 // CreateFakeJobWithRelations creates and saves a Job with all of
 // its sub-components. This job includes both a File and a Bag.
 // In reality, jobs will include a File or a Bag, but not both.
@@ -224,15 +190,18 @@ func CreateFakeJobWithRelations(db *gorm.DB) (*models.Job, error) {
 		return nil, err
 	}
 
-	workflow, err := CreateFakeWorkflowWithRelations(db)
+	profile, err := CreateFakeBagItProfileWithTags(db)
 	if err != nil {
 		return nil, err
 	}
 
 	job := FakeJob()
 	job.BagID = bag.ID
+	job.Bag = *bag
 	job.FileID = file.ID
-	job.WorkflowID = workflow.ID
+	job.File = *file
+	job.BagItProfileID = profile.ID
+	job.BagItProfile = *profile
 	err = db.Save(job).Error
 	if err != nil {
 		return nil, err

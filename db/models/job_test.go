@@ -47,11 +47,9 @@ func TestJobLoadWithRelations(t *testing.T) {
 	assert.Equal(t, jobFromDB.ID, job.ID)
 	assert.NotNil(t, jobFromDB.Bag)
 	assert.NotNil(t, jobFromDB.File)
-	require.NotNil(t, jobFromDB.Workflow)
-	assert.NotNil(t, jobFromDB.Workflow.StorageService)
-	require.NotNil(t, jobFromDB.Workflow.BagItProfile)
+	require.NotNil(t, jobFromDB.BagItProfile)
 
 	// 11 is the number of required tags specified in the APTrust BagIt profile.
 	// Our tests use testdata/profiles/aptrust_bagit_profile_2.0.json
-	assert.Equal(t, 11, len(jobFromDB.Workflow.BagItProfile.DefaultTagValues))
+	assert.Equal(t, 11, len(jobFromDB.BagItProfile.DefaultTagValues))
 }

@@ -35,8 +35,8 @@ func main() {
 	r.HandleFunc("/bags", Wrap(env, handlers.BagsList)).Methods("GET")
 	r.HandleFunc("/bag/{id:[0-9]+}", Wrap(env, handlers.BagDetail)).Methods("GET")
 	r.HandleFunc("/job/new", Wrap(env, handlers.JobGetForm)).Methods("GET")
-	r.HandleFunc("/job/run", Wrap(env, handlers.JobRun)).Methods("POST")
-	r.HandleFunc("/job/{id:[0-9]+}/workflow_changed", Wrap(env, handlers.JobGetForm)).Methods("POST")
+	//	r.HandleFunc("/job/run", Wrap(env, handlers.JobRun)).Methods("POST")
+	r.HandleFunc("/job/{id:[0-9]+}/profile_changed", Wrap(env, handlers.JobGetForm)).Methods("POST")
 	r.HandleFunc("/profiles", Wrap(env, handlers.ProfilesList))
 	r.HandleFunc("/profile/new", Wrap(env, handlers.ProfileGetForm)).Methods("GET")
 	r.HandleFunc("/profile/new", Wrap(env, handlers.ProfilePostForm)).Methods("POST", "PUT")
@@ -47,11 +47,6 @@ func main() {
 	r.HandleFunc("/storage_service/new", Wrap(env, handlers.StorageServicePostForm)).Methods("POST", "PUT")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", Wrap(env, handlers.StorageServiceGetForm)).Methods("GET")
 	r.HandleFunc("/storage_service/{id:[0-9]+}/edit", Wrap(env, handlers.StorageServicePostForm)).Methods("POST", "PUT")
-	r.HandleFunc("/workflows", Wrap(env, handlers.WorkflowsList))
-	r.HandleFunc("/workflow/new", Wrap(env, handlers.WorkflowNewGet)).Methods("GET")
-	r.HandleFunc("/workflow/new", Wrap(env, handlers.WorkflowNewPost)).Methods("POST", "PUT")
-	r.HandleFunc("/workflow/{id:[0-9]+}/edit", Wrap(env, handlers.WorkflowEditGet)).Methods("GET")
-	r.HandleFunc("/workflow/{id:[0-9]+}/edit", Wrap(env, handlers.WorkflowEditPost)).Methods("POST", "PUT")
 	http.Handle("/", r)
 
 	go func() {
