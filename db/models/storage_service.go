@@ -60,7 +60,7 @@ func (service *StorageService) IsValid() bool {
 	if service.URL == "" {
 		service.Errors["URL"] = "URL is required."
 	}
-	return len(service.Errors) > 0
+	return len(service.Errors) == 0
 }
 
 func (service *StorageService) Form() *Form {
@@ -82,6 +82,7 @@ func (service *StorageService) Form() *Form {
 	// Protocol
 	protocolField := NewField("protocol", "protocol", "Protocol", service.Protocol)
 	protocolField.Help = "* Required"
+	protocolField.Choices = TransferProtocolOptions()
 	form.Fields["Protocol"] = protocolField
 
 	// URL
@@ -120,6 +121,5 @@ func StorageServiceFromRequest(db *gorm.DB, method string, id uint, values url.V
 	service.LoginName = values.Get("loginName")
 	service.LoginPassword = values.Get("loginPassword")
 	service.LoginExtra = values.Get("loginExtra")
-
 	return service, nil
 }
