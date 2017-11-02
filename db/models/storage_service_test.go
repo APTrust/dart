@@ -53,3 +53,43 @@ func TestStorageServiceOptions(t *testing.T) {
 	assert.Equal(t, fmt.Sprintf("%d", services[2].ID), choices[3].Value)
 	assert.Equal(t, services[2].Name, choices[3].Label)
 }
+
+func TestIsValid(t *testing.T) {
+	db, services, err := initStorageServiceTest()
+	if db != nil {
+		defer db.Close()
+	}
+	require.Nil(t, err)
+	require.NotEmpty(t, services)
+
+	service := services[0]
+	assert.True(t, service.IsValid())
+
+	service.Name = ""
+	assert.False(t, service.IsValid())
+	assert.Equal(t, "Name is required.", service.Errors["Name"])
+
+	service.Name = "name"
+	service.Protocol = ""
+	assert.False(t, service.IsValid())
+	assert.Equal(t, "Protocol is required.", service.Errors["Protocol"])
+
+	service.Protocol = "protocol"
+	service.URL = ""
+	assert.False(t, service.IsValid())
+	assert.Equal(t, "URL is required.", service.Errors["URL"])
+
+	service.Name = ""
+	service.Protocol = ""
+	service.URL = ""
+	assert.False(t, service.IsValid())
+	assert.Equal(t, 3, len(service.Errors))
+}
+
+func TestForm(t *testing.T) {
+
+}
+
+func TestStorageServiceFromRequest(t *testing.T) {
+
+}
