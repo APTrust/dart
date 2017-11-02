@@ -3,7 +3,28 @@
 
 <h1>Storage Service</h1>
 
-{{ template "form" . }}
+<form method="{{ .form.Method }}" action="{{ .form.Action }}">
+
+  {{template "input-text" .form.Fields.Name }}
+
+  {{template "input-text" .form.Fields.Description }}
+
+  {{template "input-select" .form.Fields.Protocol }}
+
+  {{template "input-text" .form.Fields.URL }}
+
+  {{template "input-text" .form.Fields.BucketOrFolder }}
+
+  {{template "input-text" .form.Fields.LoginName }}
+
+  {{template "input-password" .form.Fields.LoginPassword }}
+
+  {{template "input-text" .form.Fields.LoginExtra }}
+
+  <button type="submit" name="submitButton" class="btn btn-default">Submit</button>
+
+</form>
+
 
 {{ template "page_bottom" . }}
 {{ end }}
