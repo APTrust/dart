@@ -38,6 +38,9 @@ $(function() {
     };
 
     function statPath(err, stats, filepath, rowNumber) {
+        // TODO: Recursion isn't working - bad filepaths.
+        // TODO: Count directories separately.
+        // TODO: Skip .DS_Store and other junk files.
         if (stats.isDirectory()) {
             fs.readdir(filepath, function(err, files) {
                 if (err != null) {
@@ -62,16 +65,13 @@ $(function() {
         var totalSizeCell = $('#totalFileSize')
         var prevCount = parseInt(totalCountCell.data('total'), 10)
         var prevSize = parseInt(totalSizeCell.data('total'), 10)
-        console.log("Old Count: " + prevCount)
-        console.log("Old Size: " + prevSize)
         var newCount = prevCount + 1
         var newSize = prevSize + stats.size
         countCell.text(newCount)
         totalCountCell.data('total', newCount)
         sizeCell.text(formatFileSize(newSize))
         totalSizeCell.data('total', newSize)
-        console.log("Count: " + newCount)
-        console.log("Size: " + newSize)
+        console.log(filepath + " " + newCount + " " + stats.size)
         // TODO: Totals in last row
     }
 
