@@ -1,13 +1,12 @@
 {{ define "job-form" }}
 {{ template "page_top" . }}
 
-
 <h1>New Job</h1>
 
 <form method="{{ .form.Method }}" action="{{ .form.Action }}">
 
   {{ if eq "files" .section }}
-  {{template "job-files" . }}
+  {{ template "job-files" . }}
   {{ end }}
 
 
@@ -51,28 +50,6 @@
 </form>
 
 <script>
-  const fs = require('fs');
-  var stat = null;
-  document.getElementById('payload').addEventListener('drop', function (e) {
-	e.preventDefault();
-	e.stopPropagation();
-	var output = document.getElementById('output');
-	for (let f of e.dataTransfer.files) {
-	  stat = fs.statSync(f.path);
-	  if (stat.isDirectory()) {
-		 output.innerHTML += '<div><span class="glyphicon glyphicon-folder-close" aria-hidden="true">' + f.path + '</span></div>';
-	  } else {
-		 output.innerHTML += '<div><span class="glyphicon glyphicon-file" aria-hidden="true">' + f.path + '</span></div>';
-	  }
-	  // Note that for the demo, this will only save the last path
-	  $('#SourceDir').val(f.path)
-	}
-  });
-  document.getElementById('payload').addEventListener('dragover', function (e) {
-	e.preventDefault();
-	e.stopPropagation();
-  });
-
   if (document.getElementById('showHideTagFields') != null) {
 	document.getElementById('showHideTagFields').addEventListener('click', function (e) {
 	  var inputs = document.getElementsByClassName('show-hide')

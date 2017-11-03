@@ -6,7 +6,7 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
-      <table class="table table-hover">
+      <table class="table table-hover" id="filesTable">
         <thead class="thead-inverse">
           <tr>
             <th>File Path</th>
@@ -15,23 +15,17 @@
           </tr>
         </thead>
         <tbody>
-          {{ range .items }}
-          <tr>
-            <td>{{ .Path }}</td>
-            <td>{{ .Count }}</td>
-            <td>{{ .Size }}</td>
-          </tr>
-          {{ end }}
-          <tr>
+          <tr id="fileTotals">
             <td></td>
-            <td>{{ .CountTotal }}</td>
-            <td>{{ .SizeTotal }}</td>
+            <td id="totalFileCount"></td>
+            <td id="totalFileSize"></td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-
 </div>
+
+<script src="/static/js/job.js"></script>
 
 {{ end }}
