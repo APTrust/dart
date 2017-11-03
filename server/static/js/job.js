@@ -1,6 +1,7 @@
 // Functions for the jobs page.
 $(function() {
     const fs = require('fs');
+    const path = require('path');
     var kb = 1024;
     var mb = 1024 * kb;
     var gb = 1024 * mb;
@@ -27,7 +28,7 @@ $(function() {
         $(row).insertBefore('#fileTotals')
         alreadyAdded[filepath] = true
         fs.stat(filepath, function(err, stats) {
-            statPath(err, stats, rowNumber)
+            statPath(err, stats, filepath, rowNumber)
         });
     };
 
@@ -36,22 +37,41 @@ $(function() {
         delete alreadyAdded[filepath]
     };
 
-    function statPath(err, stats, rowNumber) {
-        //if stats.isDirectory() {
-          // use fs.readdir()
-        //}
+    function statPath(err, stats, filepath, rowNumber) {
+        if (stats.isDirectory()) {
+            fs.readdir(filepath, function(err, files) {
+                if (err != null) {
+                    console.log(err)
+                    return
+                }
+                for (var i=0; i < files.length; i++) {
+                    var fullpath = path.join(filepath, files[i])
+                    fs.stat(fullpath, function(err, stats) {
+                        statPath(err, stats, fullpath, rowNumber)
+                    });
+                }
+            });
+        }
         if (err != null) {
             console.log(err)
             return
         }
         var countCell = $('#fileCount' + rowNumber)
         var sizeCell = $('#fileSize' + rowNumber)
-        var prevCount = parseInt(countCell.text(), 10)
-        var prevSize = parseInt(sizeCell.text(), 10)
-        countCell.text(prevCount + 1)
-        sizeCell.text(formatFileSize(prevSize + stats.size))
-        console.log("Count: " + prevCount + 1)
-        console.log("Size: " + formatFileSize(prevSize + stats.size))
+        var totalCountCell = $('#totalFileCount')
+        var totalSizeCell = $('#totalFileSize')
+        var prevCount = parseInt(totalCountCell.data('total'), 10)
+        var prevSize = parseInt(totalSizeCell.data('total'), 10)
+        console.log("Old Count: " + prevCount)
+        console.log("Old Size: " + prevSize)
+        var newCount = prevCount + 1
+        var newSize = prevSize + stats.size
+        countCell.text(newCount)
+        totalCountCell.data('total', newCount)
+        sizeCell.text(formatFileSize(newSize))
+        totalSizeCell.data('total', newSize)
+        console.log("Count: " + newCount)
+        console.log("Size: " + newSize)
         // TODO: Totals in last row
     }
 
@@ -65,7 +85,7 @@ $(function() {
         if (size > mb) {
             return (size / mb).toFixed(2) + " MB"
         }
-        return size + " KB"
+        return (size / kb).toFixed(2) + " KB"
     }
 
     function getTableRow(filepath, rowNumber, isDir) {
