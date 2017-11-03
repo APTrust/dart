@@ -21,6 +21,7 @@ func JobGetForm(env *Environment, w http.ResponseWriter, r *http.Request) error 
 	}
 	data["form"] = form
 	data["obj"] = job
+	data["section"] = "files"
 	return env.ExecTemplate(w, "job-form", data)
 }
 

@@ -6,11 +6,10 @@
 
 <form method="{{ .form.Method }}" action="{{ .form.Action }}">
 
-<div id="div-files">
-  <h2>Files</h2>
-  <p>Drag files into this window.</p>
-  <div id="div-files-list"></div>
-</div>
+  {{ if eq "files" .section }}
+  {{template "job-files" . }}
+  {{ end }}
+
 
 <div id="div-packaging">
   <h2>Packaging</h2>
