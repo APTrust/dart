@@ -72,8 +72,12 @@ func (job *Job) Form(db *gorm.DB) (*Form, error) {
 	}
 	form := NewForm(action, method)
 
+	form.Fields["BagItProfile"] = NewField("BagItProfile", "bagItProfile", "Profile",
+		fmt.Sprintf("%d", job.BagItProfile.ID))
+	form.Fields["BagItProfile"].Choices = ProfileOptions(db)
+
 	// Fields for BagIt tags
-	if job.BagItProfileID != 0 {
+	if job.BagItProfile.ID != 0 {
 		fields, err := job.BagItProfile.BuildTagValueFields()
 		if err != nil {
 			return nil, err
