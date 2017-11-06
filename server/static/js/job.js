@@ -58,7 +58,20 @@ $(function() {
 		}
 		delete filesAdded[filepath]
 
+		var totalDirCountCell = $('#totalDirCount')
+		var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
+		totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
+		totalDirCountCell.text(prevTotalDirCount - dirCount)
 
+		var totalCountCell = $('#totalFileCount')
+		var prevTotalCount = parseInt(totalCountCell.data('total'), 10) || 0
+		totalCountCell.data('total', (prevTotalCount - count))
+		totalCountCell.text(prevTotalCount - count)
+
+		var totalSizeCell = $('#totalFileSize')
+		var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
+		totalSizeCell.data('total', (prevTotalSize - size))
+		totalSizeCell.text(formatFileSize(prevTotalSize - size))
 
 		$(row).remove()
 	};
