@@ -21,6 +21,10 @@ $(function() {
 		e.stopPropagation();
 	});
 
+	$('#filesTable').on('click', '.delete-cell', function(){
+		deleteFile(this);
+	});
+
 	function addFile(filepath) {
 		$('#filesPanel').show()
 		var rowNumber = $("#filesTable > tbody tr").length
@@ -33,9 +37,30 @@ $(function() {
 		});
 	};
 
-	function deleteFile(filepath) {
-		// TODO: Delete table row
+	function deleteFile(cell) {
+		var rowNumber = $(cell).data('row-number')
+		var countCell = $('#fileCount' + rowNumber)
+		var sizeCell = $('#fileSize' + rowNumber)
+		var dirCountCell = $('#dirCount' + rowNumber)
+
+		// TODO: Refactor counts and totals
+		var count = parseInt(countCell.data('total'), 10) || 0
+		var size = parseInt(sizeCell.data('total'), 10) || 0
+		var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
+
+		var row = $(cell).parent('tr')
+		var filepath = row.data('file')
+		for (var file in Object.keys(filesAdded)) {
+			if (file.indexOf(filepath) == 0) {
+				console.log("Deleting " + file)
+				delete filesAdded[file]
+			}
+		}
 		delete filesAdded[filepath]
+
+
+
+		$(row).remove()
 	};
 
 	function statPath(err, stats, filepath, rowNumber) {
@@ -119,11 +144,12 @@ $(function() {
 
 	function getTableRow(filepath, rowNumber, isDir) {
 		var icon = getIconForPath(filepath)
-		return `<tr id="${filepath}">
+		return `<tr id="row${rowNumber}" data-file="${filepath}">
 			<td>${icon} <input type="hidden" name="files" value="${filepath}"/></td>
 			<td id="dirCount${rowNumber}">0</td>
 			<td id="fileCount${rowNumber}">0</td>
 			<td id="fileSize${rowNumber}">0</td>
+			<td id="delete${rowNumber}" class="delete-cell" data-row-number="${rowNumber}"><span class="glyphicon glyphicon-remove clickable-row" aria-hidden="true"></td>
 			</tr>`
 	}
 
