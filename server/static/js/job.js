@@ -22,6 +22,7 @@ $(function() {
 	});
 
 	function addFile(filepath) {
+		$('#filesPanel').show()
 		var rowNumber = $("#filesTable > tbody tr").length
 		var stat = fs.statSync(filepath)
 		var row = getTableRow(filepath, rowNumber, stat.isDirectory())
@@ -38,9 +39,6 @@ $(function() {
 	};
 
 	function statPath(err, stats, filepath, rowNumber) {
-		// TODO: Recursion isn't working - bad filepaths.
-		// TODO: Count directories separately.
-		// TODO: Skip .DS_Store and other junk files.
 		if (err != null) {
 			console.log(err)
 			return
