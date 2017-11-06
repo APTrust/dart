@@ -27,6 +27,8 @@ $(function() {
 
 	function addFile(filepath) {
 		$('#filesPanel').show()
+		// TODO: Row number is incorrect after deleting a row,
+		// so totals are not updated correctly.
 		var rowNumber = $("#filesTable > tbody tr").length
 		var stat = fs.statSync(filepath)
 		var row = getTableRow(filepath, rowNumber, stat.isDirectory())
@@ -50,9 +52,8 @@ $(function() {
 
 		var row = $(cell).parent('tr')
 		var filepath = row.data('file')
-		for (var file in Object.keys(filesAdded)) {
+		for (var file in filesAdded) {
 			if (file.indexOf(filepath) == 0) {
-				console.log("Deleting " + file)
 				delete filesAdded[file]
 			}
 		}
