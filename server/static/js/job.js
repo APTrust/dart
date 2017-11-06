@@ -6,7 +6,7 @@ $(function() {
 	var mb = 1024 * kb;
 	var gb = 1024 * mb;
 	var tb = 1024 * gb;
-	var alreadyAdded = {};
+	var filesAdded = {};
 	var body = document.getElementsByTagName("body")[0];
 	body.addEventListener('drop', function (e) {
 		e.preventDefault();
@@ -27,7 +27,7 @@ $(function() {
 		var stat = fs.statSync(filepath)
 		var row = getTableRow(filepath, rowNumber, stat.isDirectory())
 		$(row).insertBefore('#fileTotals')
-		alreadyAdded[filepath] = true
+		filesAdded[filepath] = true
 		fs.stat(filepath, function(err, stats) {
 			statPath(err, stats, filepath, rowNumber)
 		});
@@ -35,7 +35,7 @@ $(function() {
 
 	function deleteFile(filepath) {
 		// TODO: Delete table row
-		delete alreadyAdded[filepath]
+		delete filesAdded[filepath]
 	};
 
 	function statPath(err, stats, filepath, rowNumber) {
@@ -44,8 +44,12 @@ $(function() {
 			return
 		}
 		if (stats.isFile()) {
-			console.log("File -> " + filepath)
+			if (filesAdded[filepath] == true) {
+				console.log(filepath + ' has already been added')
+				return
+			}
 			updateFileStats(stats, rowNumber)
+			filesAdded[filepath] = true
 		} else if (stats.isDirectory()) {
 			recurseIntoDir(filepath, rowNumber)
 		} else {
@@ -65,15 +69,12 @@ $(function() {
 		totalCountCell.text(prevTotalCount + 1)
 
 		fs.readdir(filepath, function(err, files) {
-			console.log("Dir -> " + filepath)
-			console.log(files.length)
 			if (err != null) {
 				console.log(err)
 				return
 			}
 			files.forEach(function (file) {
 				var fullpath = path.join(filepath, file)
-				console.log(fullpath)
 				fs.stat(fullpath, function(err, stats) {
 					statPath(err, stats, fullpath, rowNumber)
 				});
@@ -92,7 +93,6 @@ $(function() {
 		countCell.data('total', newCount)
 		sizeCell.text(formatFileSize(newSize))
 		sizeCell.data('total', newSize)
-
 
 		var totalCountCell = $('#totalFileCount')
 		var totalSizeCell = $('#totalFileSize')
