@@ -56,6 +56,16 @@ $(function() {
 	}
 
 	function recurseIntoDir(filepath, rowNumber) {
+		var countCell = $('#dirCount' + rowNumber)
+		var prevCount = parseInt(countCell.data('total'), 10) || 0
+		countCell.text(prevCount + 1)
+		countCell.data('total', (prevCount + 1))
+
+		var totalCountCell = $('#totalDirCount')
+		var prevTotalCount = parseInt(totalCountCell.data('total'), 10) || 0
+		totalCountCell.data('total', (prevTotalCount + 1))
+		totalCountCell.text(prevTotalCount + 1)
+
 		fs.readdir(filepath, function(err, files) {
 			console.log("Dir -> " + filepath)
 			console.log(files.length)
@@ -76,18 +86,24 @@ $(function() {
 	function updateFileStats(stats, rowNumber) {
 		var countCell = $('#fileCount' + rowNumber)
 		var sizeCell = $('#fileSize' + rowNumber)
-		var totalCountCell = $('#totalFileCount')
-		var totalSizeCell = $('#totalFileSize')
-		var prevCount = parseInt(totalCountCell.data('total'), 10)
-		var prevSize = parseInt(totalSizeCell.data('total'), 10)
+		var prevCount = parseInt(countCell.data('total'), 10) || 0
+		var prevSize = parseInt(sizeCell.data('total'), 10) || 0
 		var newCount = prevCount + 1
 		var newSize = prevSize + stats.size
 		countCell.text(newCount)
-		totalCountCell.data('total', newCount)
+		countCell.data('total', newCount)
 		sizeCell.text(formatFileSize(newSize))
-		totalSizeCell.data('total', newSize)
-		//console.log(filepath + " " + newCount + " " + stats.size)
-		// TODO: Totals in last row
+		sizeCell.data('total', newSize)
+
+
+		var totalCountCell = $('#totalFileCount')
+		var totalSizeCell = $('#totalFileSize')
+		var prevTotalCount = parseInt(totalCountCell.data('total'), 10)
+		var prevTotalSize = parseInt(totalSizeCell.data('total'), 10)
+		totalCountCell.data('total', (prevTotalCount + 1))
+		totalCountCell.text(prevTotalCount + 1)
+		totalSizeCell.data('total', (prevTotalSize + stats.size))
+		totalSizeCell.text(formatFileSize(prevTotalSize + stats.size))
 	}
 
 	function formatFileSize(size) {
@@ -107,6 +123,7 @@ $(function() {
 		var icon = getIconForPath(filepath)
 		return `<tr id="${filepath}">
 			<td>${icon} <input type="hidden" name="files" value="${filepath}"/></td>
+			<td id="dirCount${rowNumber}">0</td>
 			<td id="fileCount${rowNumber}">0</td>
 			<td id="fileSize${rowNumber}">0</td>
 			</tr>`
