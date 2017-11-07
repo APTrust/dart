@@ -42,7 +42,7 @@ $(function() {
 		var dirCountCell = $(row).children('.dirCount').first()
 		var fileCountCell = $(row).children('.fileCount').first()
 		var sizeCell = $(row).children('.fileSize').first()
-		var count = parseInt(countCell.data('total'), 10) || 0
+		var fileCount = parseInt(fileCountCell.data('total'), 10) || 0
 		var size = parseInt(sizeCell.data('total'), 10) || 0
 		var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
 
@@ -58,10 +58,10 @@ $(function() {
 		totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
 		totalDirCountCell.text(prevTotalDirCount - dirCount)
 
-		var totalCountCell = $('#totalFileCount')
-		var prevTotalCount = parseInt(totalCountCell.data('total'), 10) || 0
-		totalCountCell.data('total', (prevTotalCount - count))
-		totalCountCell.text(prevTotalCount - count)
+		var totalFileCountCell = $('#totalFileCount')
+		var prevTotalFileCount = parseInt(totalFileCountCell.data('total'), 10) || 0
+		totalFileCountCell.data('total', (prevTotalFileCount - fileCount))
+		totalFileCountCell.text(prevTotalFileCount - fileCount)
 
 		var totalSizeCell = $('#totalFileSize')
 		var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
