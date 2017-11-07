@@ -21,37 +21,31 @@ $(function() {
 		e.stopPropagation();
 	});
 
-	$('#filesTable').on('click', '.delete-cell', function(){
+	$('#filesTable').on('click', '.deleteCell', function(){
 		deleteFile(this);
 	});
 
 	function addFile(filepath) {
 		$('#filesPanel').show()
-		// TODO: Row number is incorrect after deleting a row,
-		// so totals are not updated correctly.
-		var rowNumber = $("#filesTable > tbody tr").length
 		var stat = fs.statSync(filepath)
-		var row = getTableRow(filepath, rowNumber, stat.isDirectory())
-		$(row).insertBefore('#fileTotals')
+		var row = $(getTableRow(filepath, stat.isDirectory()))
+		row.insertBefore('#fileTotals')
 		filesAdded[filepath] = true
 		fs.stat(filepath, function(err, stats) {
-			statPath(err, stats, filepath, rowNumber)
+			statPath(err, stats, filepath, row)
 		});
 	};
 
 	function deleteFile(cell) {
-		var rowNumber = $(cell).data('row-number')
-		var countCell = $('#fileCount' + rowNumber)
-		var sizeCell = $('#fileSize' + rowNumber)
-		var dirCountCell = $('#dirCount' + rowNumber)
-
-		// TODO: Refactor counts and totals
+        var row = $(cell).parent('tr')
+        var filepath = $(row).prop('id')
+		var dirCountCell = $(row).children('.dirCount').first()
+		var fileCountCell = $(row).children('.fileCount').first()
+		var sizeCell = $(row).children('.fileSize').first()
 		var count = parseInt(countCell.data('total'), 10) || 0
 		var size = parseInt(sizeCell.data('total'), 10) || 0
 		var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
 
-		var row = $(cell).parent('tr')
-		var filepath = row.data('file')
 		for (var file in filesAdded) {
 			if (file.indexOf(filepath) == 0) {
 				delete filesAdded[file]
@@ -77,7 +71,7 @@ $(function() {
 		$(row).remove()
 	};
 
-	function statPath(err, stats, filepath, rowNumber) {
+	function statPath(err, stats, filepath, row) {
 		if (err != null) {
 			console.log(err)
 			return
@@ -87,26 +81,17 @@ $(function() {
 				console.log(filepath + ' has already been added')
 				return
 			}
-			updateFileStats(stats, rowNumber)
+			updateFileStats(stats, row)
 			filesAdded[filepath] = true
 		} else if (stats.isDirectory()) {
-			recurseIntoDir(filepath, rowNumber)
+			recurseIntoDir(filepath, row)
 		} else {
 			console.log("Other -> " + filepath)
 		}
 	}
 
-	function recurseIntoDir(filepath, rowNumber) {
-		var countCell = $('#dirCount' + rowNumber)
-		var prevCount = parseInt(countCell.data('total'), 10) || 0
-		countCell.text(prevCount + 1)
-		countCell.data('total', (prevCount + 1))
-
-		var totalCountCell = $('#totalDirCount')
-		var prevTotalCount = parseInt(totalCountCell.data('total'), 10) || 0
-		totalCountCell.data('total', (prevTotalCount + 1))
-		totalCountCell.text(prevTotalCount + 1)
-
+	function recurseIntoDir(filepath, row) {
+        updateStats(row, '.dirCount', 1)
 		fs.readdir(filepath, function(err, files) {
 			if (err != null) {
 				console.log(err)
@@ -115,33 +100,50 @@ $(function() {
 			files.forEach(function (file) {
 				var fullpath = path.join(filepath, file)
 				fs.stat(fullpath, function(err, stats) {
-					statPath(err, stats, fullpath, rowNumber)
+					statPath(err, stats, fullpath, row)
 				});
 			});
 		});
 	}
 
-	function updateFileStats(stats, rowNumber) {
-		var countCell = $('#fileCount' + rowNumber)
-		var sizeCell = $('#fileSize' + rowNumber)
-		var prevCount = parseInt(countCell.data('total'), 10) || 0
-		var prevSize = parseInt(sizeCell.data('total'), 10) || 0
-		var newCount = prevCount + 1
-		var newSize = prevSize + stats.size
-		countCell.text(newCount)
-		countCell.data('total', newCount)
-		sizeCell.text(formatFileSize(newSize))
-		sizeCell.data('total', newSize)
-
-		var totalCountCell = $('#totalFileCount')
-		var totalSizeCell = $('#totalFileSize')
-		var prevTotalCount = parseInt(totalCountCell.data('total'), 10)
-		var prevTotalSize = parseInt(totalSizeCell.data('total'), 10)
-		totalCountCell.data('total', (prevTotalCount + 1))
-		totalCountCell.text(prevTotalCount + 1)
-		totalSizeCell.data('total', (prevTotalSize + stats.size))
-		totalSizeCell.text(formatFileSize(prevTotalSize + stats.size))
+	function updateFileStats(stats, row) {
+        updateStats(row, '.fileCount', 1)
+        updateStats(row, '.fileSize', stats.size)
 	}
+
+    function updateStats(row, cssClass, amountToAdd) {
+        var cell = $(row).find(cssClass).first()
+        var prevValue = parseInt(cell.data('total'), 10) || 0
+        var newValue = prevValue + amountToAdd
+                cell.data('total', newValue)
+        if (cssClass.indexOf('Count') > 0) {
+            cell.text(newValue)
+        } else {
+            cell.text(formatFileSize(newValue))
+        }
+
+        var totalCell = getTotalCell(cssClass)
+        prevValue = parseInt(totalCell.data('total'), 10) || 0
+        newValue = prevValue + amountToAdd
+        totalCell.data('total', newValue)
+        if (cssClass.indexOf('Count') > 0) {
+            totalCell.text(newValue)
+        } else {
+            totalCell.text(formatFileSize(newValue))
+        }
+    }
+
+    function getTotalCell(cssClass) {
+        switch(cssClass) {
+            case '.dirCount':
+            return $('#totalDirCount')
+            case '.fileCount':
+            return $('#totalFileCount')
+            case '.fileSize':
+            return $('#totalFileSize')
+        }
+        return null
+    }
 
 	function formatFileSize(size) {
 		if (size > tb) {
@@ -156,14 +158,14 @@ $(function() {
 		return (size / kb).toFixed(2) + " KB"
 	}
 
-	function getTableRow(filepath, rowNumber, isDir) {
-		var icon = getIconForPath(filepath)
-		return `<tr id="row${rowNumber}" data-file="${filepath}">
-			<td>${icon} <input type="hidden" name="files" value="${filepath}"/></td>
-			<td id="dirCount${rowNumber}">0</td>
-			<td id="fileCount${rowNumber}">0</td>
-			<td id="fileSize${rowNumber}">0</td>
-			<td id="delete${rowNumber}" class="delete-cell" data-row-number="${rowNumber}"><span class="glyphicon glyphicon-remove clickable-row" aria-hidden="true"></td>
+	function getTableRow(filepath, isDir) {
+		var icon = getIconForPath(filepath, isDir)
+		return `<tr data-filepath="${filepath}">
+			<td>${icon}</td>
+			<td class="dirCount">0</td>
+			<td class="fileCount">0</td>
+			<td class="fileSize">0</td>
+			<td class="deleteCell"><span class="glyphicon glyphicon-remove clickable-row" aria-hidden="true"></td>
 			</tr>`
 	}
 
