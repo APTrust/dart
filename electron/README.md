@@ -36,3 +36,7 @@ The packaging process is still to be determined, but the Electron packager is he
 https://github.com/electron-userland/electron-packager
 
 And note that this page includes links to installers that will install the package on different platforms after it's built.
+
+# Starting the Electron app (without the server)
+
+`/Applications/Electron.app/Contents/MacOS/Electron electron`
