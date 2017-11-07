@@ -68,3 +68,14 @@ app.on('activate', () => {
 // new DB files.
 //var EasyStore = require('./static/js/easy-store.js')
 //global.EasyStore = require('./static/js/easy-store.js')
+
+
+/*
+Where to store persistent data:
+
+Mac OS: ~/Library/Application Support/<Your App Name (taken from the name property in package.json)>
+Windows: C:\Users\<you>\AppData\Local\<Your App Name>
+Linux: ~/.config/<Your App Name>
+
+https://codeburst.io/how-to-store-user-data-in-electron-3ba6bf66bc1e
+*/
