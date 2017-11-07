@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<link href="static/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link href="static/css/easy_store.css" rel="stylesheet">
+	<script src="static/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery = module.exports;"></script>
+	<script src="static/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+	<script src="static/js/easy_store.js"></script>
+</head>
+<body>
+
+  <nav class="navbar navbar-default brand-light-orange-bg">
+  <div class="container-fluid">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	  </button>
+	  <a class="navbar-brand" href="#">Easy Store</a>
+	</div>
+
+	<!-- Collect the nav links, forms, and other content for toggling -->
+	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	  <ul class="nav navbar-nav">
+		<li><a href="#">Dashboard</a></li>
+		<li class="dropdown">
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Settings<span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu">
+              <li><a href="javascript:alert('Settings')">Application Settings</a></li>
+			  <li><a href="javascript:alert('Profiles')">BagIt Profiles</a></li>
+			  <li><a href="javascript:alert('Storage Services')">Storage Services</a></li>
+		   </ul>
+		  </li>
+		<li class="dropdown">
+		  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Jobs<span class="caret"></span></a>
+			<ul class="dropdown-menu" role="menu">
+			  <li><a href="javascript:alert('New Job')">New</a></li>
+		   </ul>
+		  </li>
+	  </ul>
+	</div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+<div class="container" id="container">
+</div>
+
+
+</body>
+</html>
