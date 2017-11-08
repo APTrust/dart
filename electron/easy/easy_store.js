@@ -9,20 +9,6 @@ const SerializationFormats = ["gzip", "tar", "zip"];
 
 const Store = require('electron-store');
 var db = new Store({name: 'easy-store-data'});
-// var Datastore = require('nedb')
-// var DB = {}
-// DB.app_settings = new Datastore({
-//     filename: path.join(app.getPath('userData'), 'app_settings.json'),
-//     autoload: true });
-// DB.profiles = new Datastore({
-//     filename: path.join(app.getPath('userData'), 'bagit_profiles.json'),
-//     autoload: true });
-// DB.storage_services = new Datastore({
-//     filename: path.join(app.getPath('userData'), 'storage_services.json'),
-//     autoload: true });
-// DB.app_settings.loadDatabase()
-// DB.profiles.loadDatabase()
-// DB.storage_services.loadDatabase()
 
 
 class AppSetting {
@@ -45,7 +31,13 @@ class AppSetting {
         return this;
     }
     static find(id) {
-        return db.get(id);
+        var setting = null;
+        var obj = db.get(id);
+        if (obj != null) {
+            setting = new AppSetting();
+            Object.assign(setting, obj);
+        }
+        return setting;
     }
     delete() {
         db.delete(this.id);
@@ -132,7 +124,13 @@ class BagItProfile {
         return this;
     }
     static find(id) {
-        return db.get(id);
+        var profile = null;
+        var obj = db.get(id);
+        if (obj != null) {
+            profile = new BagItProfile();
+            Object.assign(profile, obj);
+        }
+        return profile;
     }
     delete() {
         db.delete(this.id);
@@ -208,7 +206,13 @@ class StorageService {
         return this;
     }
     static find(id) {
-        return db.get(id);
+        var service = null;
+        var obj = db.get(id);
+        if (obj != null) {
+            service = new StorageService();
+            Object.assign(service, obj);
+        }
+        return service;
     }
     delete() {
         db.delete(this.id);
