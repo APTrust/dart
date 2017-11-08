@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "electron-context-menu": "^0.9.1",
-    "nedb": "^1.8.0"
+    "electron-context-menu": "^0.9.1"
   },
   "devDependencies": {
     "tape": "^4.8.0"
