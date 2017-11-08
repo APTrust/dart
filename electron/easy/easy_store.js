@@ -27,13 +27,11 @@ class AppSetting {
         // Parses a form and returns an AppSetting object
     }
     save() {
-        db.set(this.id, this);
-        return this;
+        return safeSave(this.id, this);
     }
-    // Find by uuid, or if id is an int, returns the record at that ordinal.
     static find(id) {
         var setting = null;
-        var obj = db.get(id);
+        var obj = safeFind(id);
         if (obj != null) {
             setting = new AppSetting();
             Object.assign(setting, obj);
@@ -41,7 +39,7 @@ class AppSetting {
         return setting;
     }
     delete() {
-        db.delete(this.id);
+        safeDelete(this.id);
         return this;
     }
 }
@@ -121,12 +119,11 @@ class BagItProfile {
         return p;
     }
     save() {
-        db.set(this.id, this);
-        return this;
+        return safeSave(this.id, this);
     }
     static find(id) {
         var profile = null;
-        var obj = db.get(id);
+        var obj = safeFind(id);
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
@@ -134,7 +131,7 @@ class BagItProfile {
         return profile;
     }
     delete() {
-        db.delete(this.id);
+        safeDelete(this.id);
         return this;
     }
 }
@@ -203,12 +200,11 @@ class StorageService {
         // Parses a form and returns an AppSetting object
     }
     save() {
-        db.set(this.id, this);
-        return this;
+        return safeSave(this.id, this);
     }
     static find(id) {
         var service = null;
-        var obj = db.get(id);
+        var obj = safeFind(id);
         if (obj != null) {
             service = new StorageService();
             Object.assign(service, obj);
@@ -216,7 +212,7 @@ class StorageService {
         return service;
     }
     delete() {
-        db.delete(this.id);
+        safeDelete(this.id);
         return this;
     }
 }
@@ -256,7 +252,17 @@ class Util {
             }
         }
         return uuid;
-    };
+    }
+    static looksLikeUUID(str) {
+        var match = null
+        try {
+            var re = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?)$/i;
+            match = str.match(re);
+        } catch (ex) {
+            // null string or non-string
+        }
+        return match != null;
+    }
 }
 
 class ValidationResult {
@@ -265,6 +271,35 @@ class ValidationResult {
         this.errors = errors || [];
     }
 }
+
+// electron-store will find object by key or by ordinal. We want to find
+// by key only, because finding by ordinal can return objects of the wrong
+// type. For example, AppSetting.find(0) will return the first item in the
+// database, regardless of its type. If we then set properties on that
+// object as if it were an AppSetting, and then resave it, we will corrupt
+// the database.
+function safeFind(id) {
+    if (!Util.looksLikeUUID(id)) {
+        throw(`Cannot retrieve object. Id ${id} is not a valid UUID`);
+    }
+    return db.get(id);
+}
+
+function safeSave(id, obj) {
+    if (!Util.looksLikeUUID(id)) {
+        throw(`Cannot save object. Id ${id} is not a valid UUID`);
+    }
+    db.set(id, obj);
+    return obj;
+}
+
+function safeDelete(id) {
+    if (!Util.looksLikeUUID(id)) {
+        throw(`Cannot delete object. Id ${id} is not a valid UUID`);
+    }
+    return db.delete(id);
+}
+
 
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
