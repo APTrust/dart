@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "electron-context-menu": "^0.9.1"
+    "electron-context-menu": "^0.9.1",
+    "handlebars": "^4.0.11"
   },
   "devDependencies": {
     "tape": "^4.8.0"
