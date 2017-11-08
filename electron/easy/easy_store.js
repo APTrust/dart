@@ -5,9 +5,17 @@ const path = require('path')
 const builtin_profiles = require(path.resolve('electron/easy/builtin_profiles'))
 
 
-var dbFile = path.join(app.getPath('userData'), 'easy-store-db.json')
-var Datastore = require('nedb'),
-    DB = new Datastore({ filename: dbFile, autoload: true });
+var Datastore = require('nedb')
+var DB = {}
+DB.app_settings = new Datastore({
+    filename: path.join(app.getPath('userData'), 'app_settings.json'),
+    autoload: true });
+DB.profiles = new Datastore({
+    filename: path.join(app.getPath('userData'), 'bagit_profiles.json'),
+    autoload: true });
+DB.storage_services = new Datastore({
+    filename: path.join(app.getPath('userData'), 'storage_services.json'),
+    autoload: true });
 
 
 const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
@@ -207,6 +215,13 @@ class Util {
     };
 }
 
+class ValidationResult {
+    constructor(isValid, errors) {
+        this.isValid = isValid;
+        this.errors = errors || [];
+    }
+}
+
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
@@ -219,3 +234,4 @@ module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
 module.exports.TransferProtocols = TransferProtocols
 module.exports.Util = Util
+module.exports.ValidationResult = ValidationResult
