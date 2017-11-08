@@ -44,8 +44,12 @@ class AppSetting {
         db.set(this.id, this);
         return this;
     }
-    find(id) {
+    static find(id) {
         return db.get(id);
+    }
+    delete() {
+        db.delete(this.id);
+        return this;
     }
 }
 
@@ -123,6 +127,17 @@ class BagItProfile {
         }
         return p;
     }
+    save() {
+        db.set(this.id, this);
+        return this;
+    }
+    static find(id) {
+        return db.get(id);
+    }
+    delete() {
+        db.delete(this.id);
+        return this;
+    }
 }
 
 class BagItProfileInfo {
@@ -187,6 +202,17 @@ class StorageService {
     }
     static fromForm() {
         // Parses a form and returns an AppSetting object
+    }
+    save() {
+        db.set(this.id, this);
+        return this;
+    }
+    static find(id) {
+        return db.get(id);
+    }
+    delete() {
+        db.delete(this.id);
+        return this;
     }
 }
 
