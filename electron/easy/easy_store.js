@@ -4,25 +4,30 @@ const app = remote.app
 const path = require('path')
 const builtin_profiles = require(path.resolve('electron/easy/builtin_profiles'))
 
-
-var Datastore = require('nedb')
-var DB = {}
-DB.app_settings = new Datastore({
-    filename: path.join(app.getPath('userData'), 'app_settings.json'),
-    autoload: true });
-DB.profiles = new Datastore({
-    filename: path.join(app.getPath('userData'), 'bagit_profiles.json'),
-    autoload: true });
-DB.storage_services = new Datastore({
-    filename: path.join(app.getPath('userData'), 'storage_services.json'),
-    autoload: true });
-
-
 const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
 const SerializationFormats = ["gzip", "tar", "zip"];
 
+const Store = require('electron-store');
+var db = new Store({name: 'easy-store-data'});
+// var Datastore = require('nedb')
+// var DB = {}
+// DB.app_settings = new Datastore({
+//     filename: path.join(app.getPath('userData'), 'app_settings.json'),
+//     autoload: true });
+// DB.profiles = new Datastore({
+//     filename: path.join(app.getPath('userData'), 'bagit_profiles.json'),
+//     autoload: true });
+// DB.storage_services = new Datastore({
+//     filename: path.join(app.getPath('userData'), 'storage_services.json'),
+//     autoload: true });
+// DB.app_settings.loadDatabase()
+// DB.profiles.loadDatabase()
+// DB.storage_services.loadDatabase()
+
+
 class AppSetting {
     constructor(name, value) {
+        this.id = Util.uuid4();
         this.name = name;
         this.value = value;
     }
@@ -35,11 +40,19 @@ class AppSetting {
     static fromForm() {
         // Parses a form and returns an AppSetting object
     }
+    save() {
+        db.set(this.id, this);
+        return this;
+    }
+    find(id) {
+        return db.get(id);
+    }
 }
 
 class BagItProfile {
     constructor() {
         // name and description are not part of BagItProfile standard
+        this.id = Util.uuid4();
         this.name = "";
         this.description = "";
         this.acceptBagItVersion = [];
@@ -136,7 +149,6 @@ class Choice {
 
 class Field {
     constructor(id, name, label, value) {
-        this.id = id;
         this.name = name;
         this.label = label;
         this.value = value;
@@ -157,6 +169,7 @@ class Form {
 
 class StorageService {
     constructor(name) {
+        this.id = Util.uuid4();
         this.name = name;
         this.description = "";
         this.protocol = "";
@@ -226,7 +239,7 @@ module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
 module.exports.Choice = Choice;
-module.exports.DB = DB;
+module.exports.DB = db;
 module.exports.Field = Field;
 module.exports.Form = Form;
 module.exports.SerializationFormats = SerializationFormats
