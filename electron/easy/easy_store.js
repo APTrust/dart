@@ -30,8 +30,8 @@ class AppSetting {
 class BagItProfile {
     constructor() {
         // name and description are not part of BagItProfile standard
-        this.name = name;
-        this.description = description;
+        this.name = "";
+        this.description = "";
         this.acceptBagItVersion = [];
         this.acceptSerialization = [];
         this.allowFetchTxt = false;
@@ -61,9 +61,44 @@ class BagItProfile {
         // Return a string of JSON in BagItProfile format,
         // with all the bad keys they use.
     }
-    static fromBagItProfileJson() {
+    static fromBagItProfileJson(jsonString) {
         // Parse JSON from BagItProfile format, with the bad
         // keys they use. Return a BagItProfile object.
+        var obj = JSON.parse(jsonString)
+        return BagItProfile.fromBagItProfileObject(obj)
+    }
+    static fromBagItProfileObject(obj) {
+        var p = new BagItProfile();
+        p.acceptBagItVersion = obj["Accept-BagIt-Version"];
+        p.acceptSerialization = obj["Accept-Serialization"];
+        p.allowFetchTxt = obj["Allow-Fetch.txt"];
+        p.allowMiscTopLevelFiles = obj["Allow-Misc-Top-Level-Files"];
+        p.allowMiscDirectories = obj["Allow-Misc-Directories"];
+        p.manifestsRequired = obj["Manifests-Required"];
+        p.serialization = obj["Serialization"];
+        p.tagManifestsRequired = obj["Tag-Manifests-Required"];
+
+        p.bagItProfileInfo = new BagItProfileInfo();
+        p.bagItProfileInfo.bagItProfileIdentifier = obj["BagIt-Profile-Info"]["BagIt-Profile-Identifier"];
+        p.bagItProfileInfo.contactEmail = obj["BagIt-Profile-Info"]["Contact-Email"];
+        p.bagItProfileInfo.contactName = obj["BagIt-Profile-Info"]["Contact-Name"];
+        p.bagItProfileInfo.externalDescription = obj["BagIt-Profile-Info"]["External-Description"];
+        p.bagItProfileInfo.sourceOrganization = obj["BagIt-Profile-Info"]["Source-Organization"];
+        p.bagItProfileInfo.version = obj["BagIt-Profile-Info"]["Version"];
+
+        // Copy required tag definitions to our preferred structure.
+        // The BagIt profiles we're transforming don't have default values for tags.
+        for (var fileName in obj["Tag-Files-Required"]) {
+            for (var tagName in obj["Tag-Files-Required"][fileName]) {
+                var originalDef = obj["Tag-Files-Required"][fileName][tagName];
+                var tagDef = new TagDefinition(fileName, tagName);
+                tagDef.required = originalDef["required"] || false;
+                tagDef.emptyOk = originalDef["emptyOk"] || false;
+                tagDef.values = originalDef["values"] || [];
+                p.tagFilesRequired.push(tagDef);
+            }
+        }
+        return p;
     }
 }
 
