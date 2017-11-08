@@ -30,6 +30,7 @@ class AppSetting {
         db.set(this.id, this);
         return this;
     }
+    // Find by uuid, or if id is an int, returns the record at that ordinal.
     static find(id) {
         var setting = null;
         var obj = db.get(id);
