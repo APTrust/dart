@@ -2,6 +2,8 @@ const electron = require('electron')
 var remote = require('electron').remote
 const app = remote.app
 const path = require('path')
+const builtin_profiles = require(path.resolve('electron/easy/builtin_profiles'))
+
 
 var dbFile = path.join(app.getPath('userData'), 'easy-store-db.json')
 var Datastore = require('nedb'),
