@@ -8,7 +8,10 @@ const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
 const SerializationFormats = ["gzip", "tar", "zip"];
 
 const Store = require('electron-store');
-var db = new Store({name: 'easy-store-data'});
+var db = {};
+db.appSettings = new Store({name: 'app-settings'});
+db.profiles = new Store({name: 'bagit-profiles'});
+db.storageServices = new Store({name: 'storage-services'});
 
 
 class AppSetting {
@@ -27,11 +30,11 @@ class AppSetting {
         // Parses a form and returns an AppSetting object
     }
     save() {
-        return safeSave(this.id, this);
+        return db.appSettings.set(this.id, this);
     }
     static find(id) {
         var setting = null;
-        var obj = safeFind(id);
+        var obj = db.appSettings.get(id);
         if (obj != null) {
             setting = new AppSetting();
             Object.assign(setting, obj);
@@ -39,7 +42,7 @@ class AppSetting {
         return setting;
     }
     delete() {
-        safeDelete(this.id);
+        db.appSettings.delete(this.id);
         return this;
     }
 }
@@ -119,11 +122,11 @@ class BagItProfile {
         return p;
     }
     save() {
-        return safeSave(this.id, this);
+        return db.profiles.set(this.id, this);
     }
     static find(id) {
         var profile = null;
-        var obj = safeFind(id);
+        var obj = db.profiles.get(id);
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
@@ -131,7 +134,7 @@ class BagItProfile {
         return profile;
     }
     delete() {
-        safeDelete(this.id);
+        db.profiles.delete(this.id);
         return this;
     }
 }
@@ -200,11 +203,11 @@ class StorageService {
         // Parses a form and returns an AppSetting object
     }
     save() {
-        return safeSave(this.id, this);
+        return db.storageServices.set(this.id, this);
     }
     static find(id) {
         var service = null;
-        var obj = safeFind(id);
+        var obj = db.storageServices.get(id);
         if (obj != null) {
             service = new StorageService();
             Object.assign(service, obj);
@@ -212,7 +215,7 @@ class StorageService {
         return service;
     }
     delete() {
-        safeDelete(this.id);
+        db.storageServices.delete(this.id);
         return this;
     }
 }
@@ -271,35 +274,6 @@ class ValidationResult {
         this.errors = errors || [];
     }
 }
-
-// electron-store will find object by key or by ordinal. We want to find
-// by key only, because finding by ordinal can return objects of the wrong
-// type. For example, AppSetting.find(0) will return the first item in the
-// database, regardless of its type. If we then set properties on that
-// object as if it were an AppSetting, and then resave it, we will corrupt
-// the database.
-function safeFind(id) {
-    if (!Util.looksLikeUUID(id)) {
-        throw(`Cannot retrieve object. Id ${id} is not a valid UUID`);
-    }
-    return db.get(id);
-}
-
-function safeSave(id, obj) {
-    if (!Util.looksLikeUUID(id)) {
-        throw(`Cannot save object. Id ${id} is not a valid UUID`);
-    }
-    db.set(id, obj);
-    return obj;
-}
-
-function safeDelete(id) {
-    if (!Util.looksLikeUUID(id)) {
-        throw(`Cannot delete object. Id ${id} is not a valid UUID`);
-    }
-    return db.delete(id);
-}
-
 
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
