@@ -6,8 +6,10 @@ const templateDir = path.join(__dirname, "..", "templates");
 function pathTo(name) {
     return path.join(templateDir, name)
 }
+function readFile(filename) {
+    return fs.readFileSync(pathTo(filename), 'utf8');
+}
 
-var _appSettingsList = fs.readFileSync(pathTo('app_settings_list.html'), 'utf8');
-var appSettingsList = handlebars.compile(_appSettingsList);
+var appSettingsList = handlebars.compile(readFile(('app_settings_list.html')));
 
 module.exports.appSettingsList = appSettingsList;
