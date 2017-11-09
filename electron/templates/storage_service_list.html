@@ -1,0 +1,30 @@
+{{#if success }}
+<div class="alert alert-success" role="alert">
+  {{ success }}
+</div>
+{{/if }}
+
+<h1>Storage Services</h1>
+<div class="pull-right">
+  <a class="btn btn-primary" id="btnNewStorageService" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Protocol</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items}}
+    <tr class="clickable-row" data-object-id="{{ id }}">
+      <td>{{ name }}</td>
+      <td>{{ description }}</td>
+      <td>{{ protocol }}</td>
+      <td>{{ url }}</td>
+    </tr>
+    {{/each }}
+  </tbody>
+</table>

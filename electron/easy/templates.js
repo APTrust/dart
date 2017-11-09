@@ -10,6 +10,10 @@ function readFile(filename) {
     return fs.readFileSync(pathTo(filename), 'utf8');
 }
 
-var appSettingsList = handlebars.compile(readFile(('app_settings_list.html')));
+var appSettingList = handlebars.compile(readFile(('app_setting_list.html')));
+var profileList = handlebars.compile(readFile(('bagit_profile_list.html')));
+var storageServiceList = handlebars.compile(readFile(('storage_service_list.html')));
 
-module.exports.appSettingsList = appSettingsList;
+module.exports.appSettingList = appSettingList;
+module.exports.profileList = profileList;
+module.exports.storageServiceList = storageServiceList;
