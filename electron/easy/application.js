@@ -12,8 +12,18 @@ $(function() {
 
     $("#menuAppSettingList").click(function() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.appSettings)
+        data.items = es.Util.sortStore(es.DB.appSettings.store)
         $("#container").html(templates.appSettingList(data));
+    });
+    $("#menuBagItProfileList").click(function() {
+        var data = {};
+        data.items = es.Util.sortStore(es.DB.profiles.store)
+        $("#container").html(templates.profileList(data));
+    });
+    $("#menuStorageServiceList").click(function() {
+        var data = {};
+        data.items = es.Util.sortStore(es.DB.storageServices.store)
+        $("#container").html(templates.storageServiceList(data));
     });
 
 
