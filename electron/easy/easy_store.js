@@ -266,6 +266,18 @@ class Util {
         }
         return match != null;
     }
+    static sortStore(store) {
+        var list = [];
+        for (var key in es.DB.appSettings.store) {
+            list.push(es.DB.appSettings.store[key]);
+        }
+        list.sort(function(a, b) {
+            if (a < b) { return -1; }
+            if (a > b) { return 1; }
+            return 0;
+        });
+        return list;
+    }
 }
 
 class ValidationResult {
