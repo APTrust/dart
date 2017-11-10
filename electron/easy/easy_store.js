@@ -75,13 +75,8 @@ class BagItProfile {
         this.allowMiscDirectories = false;
         this.bagItProfileInfo = new BagItProfileInfo();
         this.manifestsRequired = [];
+        this.requiredTags = [];
         this.serialization = "optional";
-        // In BagItProfile format, this is a dictionary,
-        // not an array. Format is
-        // Key = name of tag file, Value = TagDefinition
-        // The fact that key names have dots in them prevents
-        // us from using nedb datastore.
-        this.tagFilesRequired = [];
         this.tagManifestsRequired = [];
     }
     validate() {
@@ -131,7 +126,7 @@ class BagItProfile {
                 tagDef.required = originalDef["required"] || false;
                 tagDef.emptyOk = originalDef["emptyOk"] || false;
                 tagDef.values = originalDef["values"] || [];
-                p.tagFilesRequired.push(tagDef);
+                p.requiredTags.push(tagDef);
             }
         }
         return p;
