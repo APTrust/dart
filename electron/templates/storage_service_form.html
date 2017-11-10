@@ -1,0 +1,26 @@
+<h1>Storage Service</h1>
+
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = fields.name }}
+
+  {{> inputText field = fields.description }}
+
+  {{> inputSelect field = fields.protocol }}
+
+  {{> inputText field = fields.url }}
+
+  {{> inputText field = fields.bucket }}
+
+  {{> inputText field = fields.loginName }}
+
+  {{> inputPassword field = fields.loginPassword }}
+
+  {{> inputText field = fields.loginExtra }}
+
+  {{> inputHidden field = fields.id }}
+
+  <div class="form-group">
+    <button type="button" id="btnStorageServiceSave" class="btn btn-default">Save</button>
+  </div>
+</form>

@@ -12,6 +12,10 @@ $(function() {
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
     $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
 
+    // StorageService Form
+    $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
+    $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
+
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
 		var id = $(this).data("object-id");

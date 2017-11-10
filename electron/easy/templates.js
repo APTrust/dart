@@ -13,6 +13,7 @@ function readFile(filename) {
 var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
 var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
 var profileList = handlebars.compile(readFile('bagit_profile_list.html'));
+var storageServiceForm = handlebars.compile(readFile('storage_service_form.html'));
 var storageServiceList = handlebars.compile(readFile('storage_service_list.html'));
 
 handlebars.registerPartial({
@@ -26,4 +27,5 @@ handlebars.registerPartial({
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
 module.exports.profileList = profileList;
+module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;

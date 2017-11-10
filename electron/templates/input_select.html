@@ -2,7 +2,7 @@
   <label class="control-label" for="{{ field.id }}">{{ field.label }}</label>
   <select id="{{ field.id }}" name="{{ field.name }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}"
-         {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }} />
+         {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
     {{#each field.choices }}
       <option value="{{ this.value }}" {{#if this.selected }}selected{{/if }}>{{ this.label }}</option>
     {{/each }}
