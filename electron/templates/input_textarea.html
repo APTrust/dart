@@ -1,7 +1,7 @@
 <div class="form-group">
   <label class="control-label" for="{{ id }}">{{ label }}</label>
   <textarea id="{{ id }}" name="{{ name }}"
-         class="form-control {{ cssClasses }}" rows="8"
+         class="form-control {{#each cssClasses }}{{ this }} {{/each }}" rows="8"
          {{#each attrs }}{{ @key }}="{{ this }}" {{/each }}>{{ value }}</textarea>
   {{#if error }}
   <small id="{{ id }}Error" class="form-text text-danger">

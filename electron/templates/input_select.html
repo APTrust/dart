@@ -1,7 +1,7 @@
 <div class="form-group">
   <label class="control-label" for="{{ id }}">{{ label }}</label>
   <select id="{{ id }}" name="{{ name }}"
-         class="form-control {{ cssClasses }}"
+         class="form-control {{#each cssClasses }}{{ this }} {{/each }}"
          {{#each attrs }}{{ @key }}="{{ this }}" {{/each }} />
     {{#each choices }}
       <option value="{{ this.value }}" {{#if this.selected }}selected{{/if }}>{{ this.label }}</option>

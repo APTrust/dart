@@ -168,6 +168,7 @@ class Field {
         this.label = label;
         this.value = value;
         this.choices = [];
+        this.cssClasses = [];
         this.attrs = {}
     }
 }

@@ -1,7 +1,7 @@
 <div class="form-group">
   <label class="control-label" for="{{ id }}">{{ label }}</label>
   <input type="text" id="{{ id }}" name="{{ name }}" value="{{ value }}"
-         class="form-control {{ cssClasses }}"
+         class="form-control {{#each cssClasses }}{{ this }} {{/each }}"
          {{#each attrs }}{{ @key }}="{{ this }}" {{/each }} />
   {{#if error }}
   <small id="{{ id }}Error" class="form-text text-danger">
