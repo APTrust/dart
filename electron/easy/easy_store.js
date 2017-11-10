@@ -38,10 +38,10 @@ class AppSetting {
         return form
     }
     static fromForm() {
-        var name = $('#appSettingName').val();
-        var value = $('#appSettingValue').val();
+        var name = $('#appSettingName').val().trim();
+        var value = $('#appSettingValue').val().trim();
         var setting = new AppSetting(name, value);
-        setting.id = $('#appSettingId').val();
+        setting.id = $('#appSettingId').val().trim();
         return setting
     }
     save() {
@@ -295,6 +295,9 @@ class Util {
             return 0;
         });
         return list;
+    }
+    static isEmpty(str) {
+        return (str == null || ((typeof str) == "string" && str.trim() == ""));
     }
 }
 
