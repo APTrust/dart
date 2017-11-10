@@ -3,27 +3,55 @@ $(function() {
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
 
+    // Top nav menu
+    $("#menuAppSettingList").on('click', appSettingShowList);
+    $("#menuBagItProfileList").click(bagItProfileShowList);
+    $("#menuStorageServiceList").click(storageServiceShowList);
+
+    // AppSetting Form
+    $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
+    $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
+
+    // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
 		var id = $(this).data("object-id");
-        console.log(id);
+        var type = $(this).data("object-type");
+        switch (type) {
+         case 'AppSetting':
+            appSettingShowForm(id);
+            break;
+         case 'BagItProfile':
+            bagItProfileShowForm(id);
+            break;
+         case 'StorageService':
+            storageServiceShowForm(id);
+            break;
+         default:
+            alert(`Type ${type}? WTF?`);
+        }
 	});
 
-
-    $("#menuAppSettingList").on('click', function() {
+    // App Setting functions
+    function appSettingShowList() {
         var data = {};
         data.items = es.Util.sortStore(es.DB.appSettings.store);
         $("#container").html(templates.appSettingList(data));
-    });
+    }
 
-    $(document).on("click", "#btnNewAppSetting", function() {
+    function appSettingShowForm(id) {
         var setting = new es.AppSetting();
+        if (!es.Util.isEmpty(id)) {
+            setting = es.AppSetting.find(id);
+        }
+        console.log(id)
+        console.log(setting)
         $("#container").html(templates.appSettingForm(setting.toForm()));
-    });
+    }
 
-    $(document).on("click", "#btnApplicationSettingSave", function() {
+    function appSettingSave() {
         var setting = es.AppSetting.fromForm();
-        var validationResult = setting.validate();
-        if (validationResult.isValid()) {
+        var result = setting.validate();
+        if (result.isValid()) {
             setting.save();
             var data = {};
             data.success = `Setting ${setting.name} has been saved`;
@@ -31,23 +59,72 @@ $(function() {
             $("#container").html(templates.appSettingList(data));
         } else {
             var form = setting.toForm();
-            form.setErrors(validationResult.errors);
+            form.setErrors(result.errors);
             $("#container").html(templates.appSettingForm(form));
         }
-    });
+    }
 
-
-    $("#menuBagItProfileList").click(function() {
+    // BagItProfile functions
+    function bagItProfileShowList() {
         var data = {};
         data.items = es.Util.sortStore(es.DB.profiles.store)
         $("#container").html(templates.profileList(data));
-    });
-    $("#menuStorageServiceList").click(function() {
+    }
+
+    function bagItProfileShowForm(id) {
+        var profile = new es.BagItProfile();
+        if (!es.Util.isEmpty(id)) {
+            profile = es.BagItProfile.find(id);
+        }
+        $("#container").html(templates.bagItProfileForm(profile.toForm()));
+    }
+
+    function bagItProfileSave() {
+        var profile = es.BagItProfile.fromForm();
+        var result = profile.validate();
+        if (result.isValid()) {
+            profile.save();
+            var data = {};
+            data.success = `Profile ${profile.name} has been saved`;
+            data.items = es.Util.sortStore(es.DB.profiles.store);
+            $("#container").html(templates.bagItProfileList(data));
+        } else {
+            var form = profile.toForm();
+            form.setErrors(result.errors);
+            $("#container").html(templates.bagItProfileForm(form));
+        }
+    }
+
+    // StorageService functions
+    function storageServiceShowList() {
         var data = {};
         data.items = es.Util.sortStore(es.DB.storageServices.store)
         $("#container").html(templates.storageServiceList(data));
-    });
+    }
 
+    function storageServiceShowForm(id) {
+        var service = new es.StorageService();
+        if (!es.Util.isEmpty(id)) {
+            service = es.StorageService.find(id);
+        }
+        $("#container").html(templates.storageServiceForm(service.toForm()));
+    }
+
+    function storageServiceSave() {
+        var service = es.StorageService.fromForm();
+        var result = service.validate();
+        if (result.isValid()) {
+            service.save();
+            var data = {};
+            data.success = `Storage service ${service.name} has been saved`;
+            data.items = es.Util.sortStore(es.DB.storageServices.store);
+            $("#container").html(templates.storageServiceList(data));
+        } else {
+            var form = service.toForm();
+            form.setErrors(result.errors);
+            $("#container").html(templates.storageServiceForm(form));
+        }
+    }
 
     // This is for interactive testing in the console.
     window.es = es;
