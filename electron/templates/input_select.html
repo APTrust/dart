@@ -1,20 +1,20 @@
 <div class="form-group">
-  <label class="control-label" for="{{ id }}">{{ label }}</label>
-  <select id="{{ id }}" name="{{ name }}"
-         class="form-control {{#each cssClasses }}{{ this }} {{/each }}"
-         {{#each attrs }}{{ @key }}="{{ this }}" {{/each }} />
-    {{#each choices }}
+  <label class="control-label" for="{{ field.id }}">{{ field.label }}</label>
+  <select id="{{ field.id }}" name="{{ field.name }}"
+         class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}"
+         {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }} />
+    {{#each field.choices }}
       <option value="{{ this.value }}" {{#if this.selected }}selected{{/if }}>{{ this.label }}</option>
     {{/each }}
   </select>
-  {{#if error }}
-  <small id="{{ id }}Error" class="form-text text-danger">
-    {{ error }}
+  {{#if field.error }}
+  <small id="{{ field.id }}Error" class="form-text text-danger">
+    {{ field.error }}
   </small>
   {{/if }}
-  {{#if help }}
-  <small id="{{ id }}Help" class="form-text text-muted">
-    {{ help }}
+  {{#if field.help }}
+  <small id="{{ field.id }}Help" class="form-text text-muted">
+    {{ field.help }}
   </small>
   {{/if }}
 </div>
