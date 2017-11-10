@@ -11,7 +11,7 @@ $(function() {
 
     $("#menuAppSettingList").on('click', function() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.appSettings.store)
+        data.items = es.Util.sortStore(es.DB.appSettings.store);
         $("#container").html(templates.appSettingList(data));
     });
 
@@ -19,6 +19,23 @@ $(function() {
         var setting = new es.AppSetting();
         $("#container").html(templates.appSettingForm(setting.toForm()));
     });
+
+    $(document).on("click", "#btnApplicationSettingSave", function() {
+        var setting = es.AppSetting.fromForm();
+        var validationResult = setting.validate();
+        if (validationResult.isValid()) {
+            setting.save();
+            var data = {};
+            data.success = `Setting ${setting.name} has been saved`;
+            data.items = es.Util.sortStore(es.DB.appSettings.store);
+            $("#container").html(templates.appSettingList(data));
+        } else {
+            var form = setting.toForm();
+            form.setErrors(validationResult.errors);
+            $("#container").html(templates.appSettingForm(form));
+        }
+    });
+
 
     $("#menuBagItProfileList").click(function() {
         var data = {};

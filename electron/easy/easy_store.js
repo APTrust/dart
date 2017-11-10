@@ -195,8 +195,9 @@ class Form {
         this.fields = {};
     }
     setErrors(errors) {
-        for (var field in this.fields) {
-            field.error = errors[field.name];
+        for (var name of Object.keys(this.fields)) {
+            var field = this.fields[name];
+            field.error = errors[name];
         }
     }
 }
