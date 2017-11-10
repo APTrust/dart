@@ -10,10 +10,10 @@ function readFile(filename) {
     return fs.readFileSync(pathTo(filename), 'utf8');
 }
 
-var appSettingForm = handlebars.compile(readFile(('app_setting_form.html')));
-var appSettingList = handlebars.compile(readFile(('app_setting_list.html')));
-var profileList = handlebars.compile(readFile(('bagit_profile_list.html')));
-var storageServiceList = handlebars.compile(readFile(('storage_service_list.html')));
+var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
+var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
+var profileList = handlebars.compile(readFile('bagit_profile_list.html'));
+var storageServiceList = handlebars.compile(readFile('storage_service_list.html'));
 
 handlebars.registerPartial({
     inputHidden: readFile('input_hidden.html'),
