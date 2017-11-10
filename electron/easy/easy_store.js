@@ -21,13 +21,28 @@ class AppSetting {
         this.value = value;
     }
     validate() {
-        // Return ValidationResult w/ isValid and errors
+        var result = new ValidationResult();
+        if (Util.isEmpty(this.id)) {
+            result.errors["id"] = "Id cannot be empty";
+        }
+        if (Util.isEmpty(this.name)) {
+            result.errors["name"] = "Name cannot be empty";
+        }
+        return result
     }
     toForm() {
-        // Return a form object that can be passed to a template
+        var form = new Form('appSettingForm');
+        form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
+        form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
+        form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
+        return form
     }
     static fromForm() {
-        // Parses a form and returns an AppSetting object
+        var name = $('#appSettingName').val();
+        var value = $('#appSettingValue').val();
+        var setting = new AppSetting(name, value);
+        setting.id = $('#appSettingId').val();
+        return setting
     }
     save() {
         return db.appSettings.set(this.id, this);
@@ -174,8 +189,9 @@ class Field {
 }
 
 class Form {
-    constructor() {
-        this.field = [];
+    constructor(id) {
+        this.id = id;
+        this.fields = {};
     }
     validate() {
         // Convert the form to the underlying object,
@@ -283,9 +299,11 @@ class Util {
 }
 
 class ValidationResult {
-    constructor(isValid, errors) {
-        this.isValid = isValid;
-        this.errors = errors || [];
+    constructor(errors) {
+        this.errors = {};
+    }
+    isValid() {
+        return Object.keys(this.errors).length == 0;
     }
 }
 
