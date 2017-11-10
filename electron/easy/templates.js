@@ -15,8 +15,10 @@ var profileList = handlebars.compile(readFile(('bagit_profile_list.html')));
 var storageServiceList = handlebars.compile(readFile(('storage_service_list.html')));
 
 var inputPassword = handlebars.compile(readFile(('input_password.html')));
+var inputPassword = handlebars.compile(readFile(('input_text.html')));
 
 module.exports.appSettingList = appSettingList;
 module.exports.inputPassword = inputPassword;
+module.exports.inputText = inputText;
 module.exports.profileList = profileList;
 module.exports.storageServiceList = storageServiceList;

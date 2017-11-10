@@ -1,0 +1,16 @@
+<div class="form-group">
+  <label class="control-label" for="{{ id }}">{{ label }}</label>
+  <input type="text" id="{{ id }}" name="{{ name }}" value="{{ value }}"
+         class="form-control {{ cssClasses }}"
+         {{#each attrs }}{{ @key }}="{{ this }}"{{/each }} />
+  {{#if error }}
+  <small id="{{ id }}Error" class="form-text text-danger">
+    {{ error }}
+  </small>
+  {{/if }}
+  {{#if help }}
+  <small id="{{ id }}Help" class="form-text text-muted">
+    {{ help }}
+  </small>
+  {{/if }}
+</div>
