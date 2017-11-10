@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label class="control-label" for="{{ field.id }}">{{ label }}</label>
+  <label class="control-label" for="{{ field.id }}">{{ field.label }}</label>
   <input type="text" id="{{ field.id }}" name="{{ field.name }}" value="{{ field.value }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }} />
