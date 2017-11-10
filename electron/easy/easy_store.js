@@ -163,6 +163,7 @@ class Choice {
 
 class Field {
     constructor(id, name, label, value) {
+        this.id = id;
         this.name = name;
         this.label = label;
         this.value = value;
