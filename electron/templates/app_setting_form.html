@@ -1,0 +1,14 @@
+<h1>Application Setting</h1>
+
+<form method="post" action="#">
+
+  {{> inputText field = fields.name }}
+
+  {{> inputText field = fields.value }}
+
+  {{> inputHidden field = fields.id }}
+
+  <div class="form-group">
+    <button type="button" name="submitButton" class="btn btn-default">Save</button>
+  </div>
+</form>

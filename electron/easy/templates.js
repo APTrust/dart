@@ -10,19 +10,20 @@ function readFile(filename) {
     return fs.readFileSync(pathTo(filename), 'utf8');
 }
 
+var appSettingForm = handlebars.compile(readFile(('app_setting_form.html')));
 var appSettingList = handlebars.compile(readFile(('app_setting_list.html')));
 var profileList = handlebars.compile(readFile(('bagit_profile_list.html')));
 var storageServiceList = handlebars.compile(readFile(('storage_service_list.html')));
 
-var inputPassword = handlebars.compile(readFile(('input_password.html')));
-var inputSelect = handlebars.compile(readFile(('input_select.html')));
-var inputText = handlebars.compile(readFile(('input_text.html')));
-var inputTextArea = handlebars.compile(readFile(('input_textarea.html')));
+handlebars.registerPartial({
+    inputHidden: readFile('input_hidden.html'),
+    inputPassword: readFile('input_password.html'),
+    inputSelect: readFile('input_select.html'),
+    inputText: readFile('input_text.html'),
+    inputTextArea: readFile('input_textarea.html')
+});
 
+module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
-module.exports.inputPassword = inputPassword;
-module.exports.inputSelect = inputSelect;
-module.exports.inputText = inputText;
-module.exports.inputTextArea = inputTextArea;
 module.exports.profileList = profileList;
 module.exports.storageServiceList = storageServiceList;
