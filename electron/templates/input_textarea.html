@@ -1,8 +1,8 @@
 <div class="form-group">
   <label class="control-label" for="{{ id }}">{{ label }}</label>
-  <input type="password" id="{{ id }}" name="{{ name }}" value="{{ value }}"
-         class="form-control {{ cssClasses }}"
-         {{#each attrs }}{{ @key }}="{{ this }}" {{/each }} />
+  <textarea id="{{ id }}" name="{{ name }}"
+         class="form-control {{ cssClasses }}" rows="8"
+         {{#each attrs }}{{ @key }}="{{ this }}" {{/each }}>{{ value }}</textarea>
   {{#if error }}
   <small id="{{ id }}Error" class="form-text text-danger">
     {{ error }}
