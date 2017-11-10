@@ -182,6 +182,7 @@ class Field {
         this.name = name;
         this.label = label;
         this.value = value;
+        this.error = "";
         this.choices = [];
         this.cssClasses = [];
         this.attrs = {}
@@ -193,9 +194,10 @@ class Form {
         this.id = id;
         this.fields = {};
     }
-    validate() {
-        // Convert the form to the underlying object,
-        // validate that, then set the errors here.
+    setErrors(errors) {
+        for (var field in this.fields) {
+            field.error = errors[field.name];
+        }
     }
 }
 
