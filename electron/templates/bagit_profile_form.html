@@ -2,35 +2,55 @@
 
 <form method="post" action="#" id="{{ id }}">
 
-  {{> inputText field = fields.name }}
+  <fieldset class="with-border">
+    <legend class="with-border">About This Profile</legend>
 
-  {{> inputText field = fields.description }}
+    {{> inputText field = fields.name }}
 
-  {{> inputText field = fields.infoIdentifier }}
+    {{> inputText field = fields.description }}
 
-  {{> inputText field = fields.infoContactEmail }}
+  </fieldset>
 
-  {{> inputText field = fields.infoContactName }}
+  <fieldset class="with-border">
+    <legend class="with-border">General Requirements</legend>
 
-  {{> inputText field = fields.infoExternalDescription }}
+    {{> inputSelect field = fields.acceptBagItVersion }}
 
-  {{> inputText field = fields.infoVersion }}
+    {{> inputSelect field = fields.allowFetchTxt }}
 
-  {{> inputSelect field = fields.acceptBagItVersion }}
+    {{> inputSelect field = fields.allowMiscTopLevelFiles }}
 
-  {{> inputSelect field = fields.allowFetchTxt }}
+    {{> inputSelect field = fields.allowMiscTopLevelDirectories }}
 
-  {{> inputSelect field = fields.allowMiscTopLevelFiles }}
+    {{> inputSelect field = fields.manifestsRequired }}
 
-  {{> inputSelect field = fields.allowMiscTopLevelDirectories }}
+    {{> inputSelect field = fields.tagManifestsRequired }}
 
-  {{> inputSelect field = fields.manifestsRequired }}
+    {{> inputSelect field = fields.serialization }}
 
-  {{> inputSelect field = fields.tagManifestsRequired }}
+  </fieldset>
 
-  {{> inputSelect field = fields.serialization }}
+  <fieldset class="with-border">
+    <legend class="with-border">BagIt Profile Info</legend>
+
+    {{> inputText field = fields.infoIdentifier }}
+
+    {{> inputText field = fields.infoContactEmail }}
+
+    {{> inputText field = fields.infoContactName }}
+
+    {{> inputText field = fields.infoExternalDescription }}
+
+    {{> inputText field = fields.infoVersion }}
+
+  </fieldset>
+
+  <fieldset class="with-border">
+    <legend class="with-border">Required Tags</legend>
 
   <!-- TODO: Add required tags -->
+
+  </fieldset>
 
   {{> inputHidden field = fields.id }}
 

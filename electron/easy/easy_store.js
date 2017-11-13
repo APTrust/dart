@@ -9,7 +9,7 @@ const SerializationFormats = ["gzip", "tar", "zip"];
 const BagItVersions = ["0.97"];
 const DigestAlgorithms = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"];
 const RequirementOptions = ["required", "optional", "forbidden"];
-const YesNo = ["yes", "no"];
+const YesNo = ["Yes", "No"];
 
 const Store = require('electron-store');
 var db = {};
@@ -93,26 +93,32 @@ class BagItProfile {
         form.fields['description'] = new Field('bagItProfileDescription',
                                                'description', 'Description',
                                                this.description);
+
         form.fields['acceptBagItVersion'] = new Field('bagItProfileAcceptBagItVersion',
                                                       'acceptBagItVersion', 'Accept BagIt Version',
                                                       this.acceptBagItVersion);
         form.fields['acceptBagItVersion'].help = "Which versions of the BagIt standard are allowed for this profile?";
-        form.fields['acceptBagItVersion'].choices = Choice.makeList(BagItVersions, this.acceptBagItVersion);
+        form.fields['acceptBagItVersion'].choices = Choice.makeList(BagItVersions, this.acceptBagItVersion, false);
+        form.fields['acceptBagItVersion'].attrs['multiple'] = true;
+
         form.fields['allowFetchTxt'] = new Field('bagItProfileAllowFetchTxt',
                                                 'allowFetchTxt',
                                                 'Allow Fetch File',
                                                 this.allowFetchTxt);
-        form.fields['allowFetchTxt'].choices = Choice.makeList(YesNo, this.allowFetchTxt);
+        form.fields['allowFetchTxt'].choices = Choice.makeList(YesNo, this.allowFetchTxt, true);
         form.fields['allowMiscTopLevelFiles'] = new Field('bagItProfileAllowMiscTopLevelFiles',
                                                 'allowMiscTopLevelFiles',
                                                 'Allow Miscellaneous Top-Level Files',
                                                 this.allowMiscTopLevelFiles);
         form.fields['allowMiscTopLevelFiles'].help = "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?";
+        form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(YesNo, this.allowFetchTxt, true);
+
         form.fields['allowMiscTopLevelDirectories'] = new Field('bagItProfileAllowMiscTopLevelDirectories',
                                                 'allowMiscTopLevelDirectories',
                                                 'Allow Miscellaneous Top-Level Directories',
                                                 this.allowMiscTopLevelDirectories);
         form.fields['allowMiscTopLevelDirectories'].help = "Can the bag contain directories other than /data in the top-level directory?";
+        form.fields['allowMiscTopLevelDirectories'].choices = Choice.makeList(YesNo, this.allowFetchTxt, true);
 
         form.fields["infoIdentifier"] = new Field("bagItProfileInfoIdentifier",
                                                  "infoIdentifier",
@@ -150,7 +156,7 @@ class BagItProfile {
                                                      'manifestsRequired',
                                                      'Required Manifests',
                                                      this.manifestsRequired);
-        form.fields['manifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.manifestsRequired);
+        form.fields['manifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.manifestsRequired, false);
         form.fields['manifestsRequired'].help = "Which payload manifests must be present in the bag? The BagIt standard requires at least one.";
         form.fields['manifestsRequired'].attrs['multiple'] = true;
 
@@ -158,7 +164,7 @@ class BagItProfile {
                                                      'tagManifestsRequired',
                                                      'Required Tag Manifests',
                                                      this.tagManifestsRequired);
-        form.fields['tagManifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.tagManifestsRequired);
+        form.fields['tagManifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.tagManifestsRequired, false);
         form.fields['tagManifestsRequired'].help = "Which tag manifests must be present in the bag? Choose zero or more.";
         form.fields['tagManifestsRequired'].attrs['multiple'] = true;
 
@@ -166,7 +172,7 @@ class BagItProfile {
                                                  'serialization',
                                                  'Serialization',
                                                  this.serialization);
-        form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization);
+        form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization, true);
         form.fields['serialization'].help = "Should the bag serialized into a single file?";
 
         // Required Tags
@@ -255,14 +261,16 @@ class Choice {
         this.label = label;
         this.selected = selected || false;
     }
-    static makeList(items, selected) {
+    static makeList(items, selected, includeEmptyFirstOption) {
         if (!Array.isArray(selected)) {
             var selValue = selected;
             var selected = []
             selected.push(selValue)
         }
         var choices = [];
-        choices.push(new Choice("", ""));
+        if (includeEmptyFirstOption == true) {
+            choices.push(new Choice("", ""));
+        }
         for (var item of items) {
             choices.push(new Choice(item, item, Util.listContains(selected, item)));
         }
@@ -330,7 +338,7 @@ class StorageService {
         form.fields['name'] = new Field('storageServiceName', 'name', 'Name', this.name);
         form.fields['description'] = new Field('storageServiceDescription', 'description', 'Description', this.description);
         form.fields['protocol'] = new Field('storageServiceProtocol', 'protocol', 'Protocol', this.protocol);
-        form.fields['protocol'].choices = Choice.makeList(TransferProtocols, this.protocol);
+        form.fields['protocol'].choices = Choice.makeList(TransferProtocols, this.protocol, true);
         form.fields['url'] = new Field('storageServiceUrl', 'url', 'URL', this.url);
         form.fields['bucket'] = new Field('storageServiceBucket', 'bucket', 'Bucket or Default Folder', this.bucket);
         form.fields['loginName'] = new Field('storageServiceLoginName', 'loginName', 'Login Name', this.loginName);
