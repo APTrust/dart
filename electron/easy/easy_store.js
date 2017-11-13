@@ -6,6 +6,10 @@ const builtin_profiles = require(path.resolve('electron/easy/builtin_profiles'))
 
 const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
 const SerializationFormats = ["gzip", "tar", "zip"];
+const BagItVersions = ["0.97"];
+const DigestAlgorithms = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"];
+const RequirementOptions = ["required", "optional", "forbidden"];
+const YesNo = ["yes", "no"];
 
 const Store = require('electron-store');
 var db = {};
@@ -83,7 +87,92 @@ class BagItProfile {
         // Return ValidationResult w/ isValid and errors
     }
     toForm() {
-        // Return a form object that can be passed to a template
+        var form = new Form('bagItProfileForm');
+        form.fields['id'] = new Field('bagItProfileId', 'id', 'id', this.id);
+        form.fields['name'] = new Field('bagItProfileName', 'name', 'Name', this.name);
+        form.fields['description'] = new Field('bagItProfileDescription',
+                                               'description', 'Description',
+                                               this.description);
+        form.fields['acceptBagItVersion'] = new Field('bagItProfileAcceptBagItVersion',
+                                                      'acceptBagItVersion', 'Accept BagIt Version',
+                                                      this.acceptBagItVersion);
+        form.fields['acceptBagItVersion'].help = "Which versions of the BagIt standard are allowed for this profile?";
+        form.fields['acceptBagItVersion'].choices = Choice.makeList(BagItVersions, this.acceptBagItVersion);
+        form.fields['allowFetchTxt'] = new Field('bagItProfileAllowFetchTxt',
+                                                'allowFetchTxt',
+                                                'Allow Fetch File',
+                                                this.allowFetchTxt);
+        form.fields['allowFetchTxt'].choices = Choice.makeList(YesNo, this.allowFetchTxt);
+        form.fields['allowMiscTopLevelFiles'] = new Field('bagItProfileAllowMiscTopLevelFiles',
+                                                'allowMiscTopLevelFiles',
+                                                'Allow Miscellaneous Top-Level Files',
+                                                this.allowMiscTopLevelFiles);
+        form.fields['allowMiscTopLevelFiles'].help = "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?";
+        form.fields['allowMiscTopLevelDirectories'] = new Field('bagItProfileAllowMiscTopLevelDirectories',
+                                                'allowMiscTopLevelDirectories',
+                                                'Allow Miscellaneous Top-Level Directories',
+                                                this.allowMiscTopLevelDirectories);
+        form.fields['allowMiscTopLevelDirectories'].help = "Can the bag contain directories other than /data in the top-level directory?";
+
+        form.fields["infoIdentifier"] = new Field("bagItProfileInfoIdentifier",
+                                                 "infoIdentifier",
+                                                 "BagIt Profile Identifier",
+                                                 this.bagItProfileInfo.bagItProfileIdentifier);
+        form.fields["infoIdentifier"].help = "The official URL where this BagIt profile is publicly available. Leave this blank if you're not publishing this BagIt profile.";
+
+        form.fields["infoContactEmail"] = new Field("bagItProfileInfoContactEmail",
+                                                 "infoContactEmail",
+                                                 "Email Address of Profile Maintainer",
+                                                 this.bagItProfileInfo.contactEmail);
+        form.fields["infoContactEmail"].help = "Leave this blank if you're not publishing this BagIt profile.";
+        form.fields["infoContactName"] = new Field("bagItProfileInfoContactName",
+                                                 "infoContactName",
+                                                 "Name of Profile Maintainer",
+                                                 this.bagItProfileInfo.contactName);
+        form.fields["infoContactName"].help = "Leave this blank if you're not publishing this BagIt profile.";
+        form.fields["infoExternalDescription"] = new Field("bagItProfileInfoExternalDescription",
+                                                 "infoExternalDescription",
+                                                 "External Description",
+                                                 this.bagItProfileInfo.externalDescription);
+        form.fields["infoExternalDescription"].help = "A description of this profile for people outside your organization. Leave this blank if you're not publishing this BagIt profile.";
+        form.fields["infoSourceOrganization"] = new Field("bagItProfileInfoSourceOrganization",
+                                                 "infoSourceOrganization",
+                                                 "Source Organization",
+                                                 this.bagItProfileInfo.externalDescription);
+        form.fields["infoExternalDescription"].help = "The name of the organization that maintains this profile. Leave this blank if you're not publishing this BagIt profile.";
+        form.fields["infoVersion"] = new Field("bagItProfileInfoVersion",
+                                                 "infoVersion",
+                                                 "Version",
+                                                 this.bagItProfileInfo.version);
+        form.fields["infoExternalDescription"].help = "The version number for this profile.";
+
+        form.fields['manifestsRequired'] = new Field('bagItProfileManifestsRequired',
+                                                     'manifestsRequired',
+                                                     'Required Manifests',
+                                                     this.manifestsRequired);
+        form.fields['manifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.manifestsRequired);
+        form.fields['manifestsRequired'].help = "Which payload manifests must be present in the bag? The BagIt standard requires at least one.";
+        form.fields['manifestsRequired'].attrs['multiple'] = true;
+
+        form.fields['tagManifestsRequired'] = new Field('bagItProfileTagManifestsRequired',
+                                                     'tagManifestsRequired',
+                                                     'Required Tag Manifests',
+                                                     this.tagManifestsRequired);
+        form.fields['tagManifestsRequired'].choices = Choice.makeList(DigestAlgorithms, this.tagManifestsRequired);
+        form.fields['tagManifestsRequired'].help = "Which tag manifests must be present in the bag? Choose zero or more.";
+        form.fields['tagManifestsRequired'].attrs['multiple'] = true;
+
+        form.fields['serialization'] = new Field('bagItProfileSerialization',
+                                                 'serialization',
+                                                 'Serialization',
+                                                 this.serialization);
+        form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization);
+        form.fields['serialization'].help = "Should the bag serialized into a single file?";
+
+        // Required Tags
+        //form.fields['requiredTags'] = new Field('bagItProfileId', 'id', 'id', this.id);
+
+        return form;
     }
     static fromForm() {
         // Parses a form and returns an AppSetting object
@@ -167,10 +256,15 @@ class Choice {
         this.selected = selected || false;
     }
     static makeList(items, selected) {
+        if (!Array.isArray(selected)) {
+            var selValue = selected;
+            var selected = []
+            selected.push(selValue)
+        }
         var choices = [];
         choices.push(new Choice("", ""));
         for (var item of items) {
-            choices.push(new Choice(item, item, (item == selected)));
+            choices.push(new Choice(item, item, Util.listContains(selected, item)));
         }
         return choices;
     }
@@ -338,6 +432,14 @@ class Util {
     }
     static isEmpty(str) {
         return (str == null || ((typeof str) == "string" && str.trim() == ""));
+    }
+    static listContains(list, item) {
+        for (var i of list) {
+            if (i == item) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

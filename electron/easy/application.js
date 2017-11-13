@@ -16,6 +16,10 @@ $(function() {
     $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
     $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
 
+    // BagItProfile Form
+    $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileShowForm(null); });
+    $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
+
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
 		var id = $(this).data("object-id");
@@ -72,7 +76,7 @@ $(function() {
     function bagItProfileShowList() {
         var data = {};
         data.items = es.Util.sortStore(es.DB.profiles.store)
-        $("#container").html(templates.profileList(data));
+        $("#container").html(templates.bagItProfileList(data));
     }
 
     function bagItProfileShowForm(id) {

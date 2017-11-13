@@ -1,0 +1,40 @@
+<h1>BagIt Profile</h1>
+
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = fields.name }}
+
+  {{> inputText field = fields.description }}
+
+  {{> inputText field = fields.infoIdentifier }}
+
+  {{> inputText field = fields.infoContactEmail }}
+
+  {{> inputText field = fields.infoContactName }}
+
+  {{> inputText field = fields.infoExternalDescription }}
+
+  {{> inputText field = fields.infoVersion }}
+
+  {{> inputSelect field = fields.acceptBagItVersion }}
+
+  {{> inputSelect field = fields.allowFetchTxt }}
+
+  {{> inputSelect field = fields.allowMiscTopLevelFiles }}
+
+  {{> inputSelect field = fields.allowMiscTopLevelDirectories }}
+
+  {{> inputSelect field = fields.manifestsRequired }}
+
+  {{> inputSelect field = fields.tagManifestsRequired }}
+
+  {{> inputSelect field = fields.serialization }}
+
+  <!-- TODO: Add required tags -->
+
+  {{> inputHidden field = fields.id }}
+
+  <div class="form-group">
+    <button type="button" id="btnBagItProfileSave" class="btn btn-default">Save</button>
+  </div>
+</form>
