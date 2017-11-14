@@ -2,7 +2,7 @@ const electron = require('electron')
 var remote = require('electron').remote
 const app = remote.app
 const path = require('path')
-const builtin_profiles = require(path.resolve('electron/easy/builtin_profiles'))
+const builtins = require(path.resolve('electron/easy/builtin_profiles'))
 
 const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
 const SerializationFormats = ["gzip", "tar", "zip"];
@@ -86,6 +86,9 @@ class BagItProfile {
         // We'll lock default APTrust and DPN BagItProfiles so
         // users can't edit anything other than default tag values.
         this.locked = false;
+    }
+    isBuiltin() {
+        return (this.id == builtins.APTrustProfileId || this.id == builtins.DPNProfileId);
     }
     validate() {
         // Return ValidationResult w/ isValid and errors

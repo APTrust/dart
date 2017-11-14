@@ -140,9 +140,13 @@ $(function() {
         var builtins = require(path.resolve('electron/easy/builtin_profiles'));
         var aptrust = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
         aptrust.id = builtins.APTrustProfileId;
+        aptrust.name = "APTrust";
+        aptrust.description = "APTrust 2.0 default BagIt profile.";
         aptrust.save();
         var dpn = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
         dpn.id = builtins.DPNProfileId;
+        dpn.name = "DPN";
+        dpn.description = "Digital Preservation Network default BagIt profile.";
         dpn.save();
     }
 
