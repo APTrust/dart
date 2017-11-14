@@ -118,14 +118,14 @@ class BagItProfile {
                                                 'Allow Miscellaneous Top-Level Files',
                                                 this.allowMiscTopLevelFiles);
         form.fields['allowMiscTopLevelFiles'].help = "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?";
-        form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(YesNo, this.allowFetchTxt, true);
+        form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(YesNo, this.allowMiscTopLevelFiles, true);
 
-        form.fields['allowMiscTopLevelDirectories'] = new Field('bagItProfileAllowMiscTopLevelDirectories',
-                                                'allowMiscTopLevelDirectories',
+        form.fields['allowMiscDirectories'] = new Field('bagItProfileAllowMiscDirectories',
+                                                'allowMiscDirectories',
                                                 'Allow Miscellaneous Top-Level Directories',
-                                                this.allowMiscTopLevelDirectories);
-        form.fields['allowMiscTopLevelDirectories'].help = "Can the bag contain directories other than /data in the top-level directory?";
-        form.fields['allowMiscTopLevelDirectories'].choices = Choice.makeList(YesNo, this.allowFetchTxt, true);
+                                                this.allowMiscDirectories);
+        form.fields['allowMiscDirectories'].help = "Can the bag contain directories other than 'data' in the top-level directory?";
+        form.fields['allowMiscDirectories'].choices = Choice.makeList(YesNo, this.allowMiscDirectories, true);
 
         form.fields["infoIdentifier"] = new Field("bagItProfileInfoIdentifier",
                                                  "infoIdentifier",
@@ -504,11 +504,25 @@ class Util {
     }
     static listContains(list, item) {
         for (var i of list) {
-            if (i == item) {
+            if (i == item || Util.boolEqual(i, item)) {
                 return true;
             }
         }
         return false;
+    }
+    static boolEqual(a, b) {
+        var aValue = Util.boolValue(a);
+        var bValue = Util.boolValue(b);
+        return (aValue != null && aValue == bValue);
+    }
+    static boolValue(str) {
+        var lcString = String(str).toLowerCase();
+        if (lcString == "true" || lcString == "yes") {
+            return true;
+        } else if (lcString == "false" || lcString == "no") {
+            return false;
+        }
+        return null;
     }
 }
 
