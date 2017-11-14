@@ -48,7 +48,9 @@
   <fieldset class="with-border">
     <legend class="with-border">Required Tags</legend>
 
-  <!-- TODO: Add required tags -->
+    {{#each profile.requiredTags }}
+      {{ this }}
+    {{/each }}
 
   </fieldset>
 

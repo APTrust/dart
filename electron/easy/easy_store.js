@@ -87,6 +87,10 @@ class BagItProfile {
         // Return ValidationResult w/ isValid and errors
     }
     toForm() {
+        // Sort the list of required tags, so that the form template
+        // gets them in order.
+        this.sortRequiredTags();
+
         var form = new Form('bagItProfileForm');
         form.fields['id'] = new Field('bagItProfileId', 'id', 'id', this.id);
         form.fields['name'] = new Field('bagItProfileName', 'name', 'Name', this.name);
@@ -176,7 +180,11 @@ class BagItProfile {
         form.fields['serialization'].help = "Should the bag serialized into a single file?";
 
         // Required Tags
-        //form.fields['requiredTags'] = new Field('bagItProfileId', 'id', 'id', this.id);
+        for (var tag of this.requiredTags) {
+            var key = tag.sortKey()
+            form.fields[key] = new Field(key, key, key, tag.defaultValue);
+            form.fields[key].choices = tag.values;
+        }
 
         return form;
     }
@@ -225,6 +233,13 @@ class BagItProfile {
             }
         }
         return p;
+    }
+    sortRequiredTags() {
+        this.requiredTags.sort(function(a, b) {
+            if (a.sortKey() < b.sortKey()) { return -1; }
+            if (a.sortKey() > b.sortKey()) { return 1; }
+            return 0;
+        });
     }
     save() {
         return db.profiles.set(this.id, this);
@@ -388,6 +403,9 @@ class TagDefinition {
         this.emptyOk = true;
         this.values = [];
         this.defaultValue = "";
+    }
+    sortKey() {
+        return `tag|${this.tagFile}|${this.tagName}`
     }
 }
 
