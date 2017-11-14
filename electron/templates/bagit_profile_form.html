@@ -49,7 +49,19 @@
     <legend class="with-border">Required Tags</legend>
 
     {{#each profile.requiredTags }}
-      {{ this }}
+
+      {{> inputText field = this.fields.tagFile }}
+
+      {{> inputText field = this.fields.tagName }}
+
+      {{> inputSelect field = this.fields.required }}
+
+      {{> inputSelect field = this.fields.emptyOk }}
+
+      {{> inputTextArea field = this.fields.values }}
+
+      {{> inputText field = this.fields.defaultValue }}
+
     {{/each }}
 
   </fieldset>

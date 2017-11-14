@@ -87,10 +87,6 @@ class BagItProfile {
         // Return ValidationResult w/ isValid and errors
     }
     toForm() {
-        // Sort the list of required tags, so that the form template
-        // gets them in order.
-        this.sortRequiredTags();
-
         var form = new Form('bagItProfileForm');
         form.fields['id'] = new Field('bagItProfileId', 'id', 'id', this.id);
         form.fields['name'] = new Field('bagItProfileName', 'name', 'Name', this.name);
@@ -179,11 +175,12 @@ class BagItProfile {
         form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization, true);
         form.fields['serialization'].help = "Should the bag serialized into a single file?";
 
-        // Required Tags
+
+        // Sort the list of required tags, so that the form template
+        // gets them in order.
+        this.sortRequiredTags();
         for (var tag of this.requiredTags) {
-            var key = tag.sortKey()
-            form.fields[key] = new Field(key, key, key, tag.defaultValue);
-            form.fields[key].choices = tag.values;
+            form.inlineForms.push(tag.toForm());
         }
 
         return form;
@@ -310,6 +307,7 @@ class Form {
     constructor(id) {
         this.id = id;
         this.fields = {};
+        this.inlineForms = [];
     }
     setErrors(errors) {
         for (var name of Object.keys(this.fields)) {
@@ -406,6 +404,36 @@ class TagDefinition {
     }
     sortKey() {
         return `tag|${this.tagFile}|${this.tagName}`
+    }
+    toForm() {
+        var form = new Form("");
+        var key = tag.sortKey()
+        form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
+        form.fields['tagFile'].attrs['data-key'] = key;
+
+        form.fields['tagName'] = new Field('tagName', 'tagName', 'Tag Name', this.tagName)
+        form.fields['tagName'].attrs['data-key'] = key;
+
+        form.fields['required'] = new Field('required', 'required', 'Presence Required?', this.required)
+        form.fields['required'].attrs['data-key'] = key;
+        form.fields['required'].choices = Choice.makeList(YesNo);
+        form.fields['required'].help = "Does this tag have to be present in the tag file?";
+
+        form.fields['emptyOk'] = new Field('emptyOk', 'emptyOk', 'Can tag value be empty?', this.emptyOk)
+        form.fields['emptyOk'].attrs['data-key'] = key;
+        form.fields['emptyOk'].choices = Choice.makeList(YesNo);
+        form.fields['emptyOk'].help = "Is it valid for this tag to be present but empty?";
+
+        form.fields['values'] = new Field('values', 'values', 'Legal Values', this.values)
+        form.fields['values'].attrs['data-key'] = key;
+        form.fields['values'].choices = Choice.makeList(this.values);
+        form.fields['values'].help = "List the legal values for this tag or leave empty to allow any value.";
+
+        form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
+        form.fields['defaultValue'].attrs['data-key'] = key;
+        form.fields['defaultValue'].help = "Optional default value for this field.";
+
+        return form;
     }
 }
 
