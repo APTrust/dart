@@ -75,7 +75,7 @@ $(function() {
     // BagItProfile functions
     function bagItProfileShowList() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.profiles.store)
+        data.items = es.Util.sortStore(es.DB.bagItProfiles.store)
         $("#container").html(templates.bagItProfileList(data));
     }
 
@@ -94,7 +94,7 @@ $(function() {
             profile.save();
             var data = {};
             data.success = `Profile ${profile.name} has been saved`;
-            data.items = es.Util.sortStore(es.DB.profiles.store);
+            data.items = es.Util.sortStore(es.DB.bagItProfiles.store);
             $("#container").html(templates.bagItProfileList(data));
         } else {
             var form = profile.toForm();
@@ -132,6 +132,18 @@ $(function() {
             form.setErrors(result.errors);
             $("#container").html(templates.storageServiceForm(form));
         }
+    }
+
+
+    // Initialize the BagItProfile DB if it's empty.
+    if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
+        var builtins = require(path.resolve('electron/easy/builtin_profiles'));
+        var aptrust = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
+        aptrust.id = builtins.APTrustProfileId;
+        aptrust.save();
+        var dpn = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
+        dpn.id = builtins.DPNProfileId;
+        dpn.save();
     }
 
     // This is for interactive testing in the console.

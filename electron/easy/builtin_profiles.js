@@ -1,7 +1,10 @@
 // These are default BagIt profiles that the system will load into
 // its database the first time it starts up.
 
-const APTrust = {
+const APTrustProfileId = "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca";
+const DPNProfileId = "09c834a7-6b51-49dd-9498-b310ee3e5a6a";
+
+const APTrustProfile = {
     "BagIt-Profile-Info":{
         "BagIt-Profile-Identifier":"https://wiki.aptrust.org/APTrust_BagIt_Profile",
         "Source-Organization":"aptrust.org",
@@ -85,7 +88,7 @@ const APTrust = {
     }
 }
 
-const DPN = {
+const DPNProfile = {
     "BagIt-Profile-Info": {
         "BagIt-Profile-Identifier": "https://wiki.aptrust.org/DPN_BagIt_Profile",
         "Source-Organization": "dpn.org",
@@ -209,5 +212,7 @@ const DPN = {
     }
 }
 
-module.exports.APTrust = APTrust;
-module.exports.DPN = DPN;
+module.exports.APTrustProfile = APTrustProfile;
+module.exports.APTrustProfileId = APTrustProfileId;
+module.exports.DPNProfile = DPNProfile;
+module.exports.DPNProfileId = DPNProfileId;

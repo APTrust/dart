@@ -14,7 +14,7 @@ const YesNo = ["Yes", "No"];
 const Store = require('electron-store');
 var db = {};
 db.appSettings = new Store({name: 'app-settings'});
-db.profiles = new Store({name: 'bagit-profiles'});
+db.bagItProfiles = new Store({name: 'bagit-profiles'});
 db.storageServices = new Store({name: 'storage-services'});
 
 
@@ -82,6 +82,10 @@ class BagItProfile {
         this.requiredTags = [];
         this.serialization = "optional";
         this.tagManifestsRequired = [];
+
+        // We'll lock default APTrust and DPN BagItProfiles so
+        // users can't edit anything other than default tag values.
+        this.locked = false;
     }
     validate() {
         // Return ValidationResult w/ isValid and errors
@@ -192,13 +196,13 @@ class BagItProfile {
         // Return a string of JSON in BagItProfile format,
         // with all the bad keys they use.
     }
-    static fromBagItProfileJson(jsonString) {
+    static fromStandardJson(jsonString) {
         // Parse JSON from BagItProfile format, with the bad
         // keys they use. Return a BagItProfile object.
         var obj = JSON.parse(jsonString)
-        return BagItProfile.fromBagItProfileObject(obj)
+        return BagItProfile.fromStandardObject(obj)
     }
-    static fromBagItProfileObject(obj) {
+    static fromStandardObject(obj) {
         var p = new BagItProfile();
         p.acceptBagItVersion = obj["Accept-BagIt-Version"];
         p.acceptSerialization = obj["Accept-Serialization"];
@@ -239,11 +243,11 @@ class BagItProfile {
         });
     }
     save() {
-        return db.profiles.set(this.id, this);
+        return db.bagItProfiles.set(this.id, this);
     }
     static find(id) {
         var profile = null;
-        var obj = db.profiles.get(id);
+        var obj = db.bagItProfiles.get(id);
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
@@ -251,7 +255,7 @@ class BagItProfile {
         return profile;
     }
     delete() {
-        db.profiles.delete(this.id);
+        db.bagItProfiles.delete(this.id);
         return this;
     }
 }
