@@ -48,19 +48,19 @@
   <fieldset class="with-border">
     <legend class="with-border">Required Tags</legend>
 
-    {{#each profile.requiredTags }}
+    {{#each inlineForms }}
 
-      {{> inputText field = this.fields.tagFile }}
+      {{> inputText field = fields.tagFile }}
 
-      {{> inputText field = this.fields.tagName }}
+      {{> inputText field = fields.tagName }}
 
-      {{> inputSelect field = this.fields.required }}
+      {{> inputSelect field = fields.required }}
 
-      {{> inputSelect field = this.fields.emptyOk }}
+      {{> inputSelect field = fields.emptyOk }}
 
-      {{> inputTextArea field = this.fields.values }}
+      {{> inputTextArea field = fields.values }}
 
-      {{> inputText field = this.fields.defaultValue }}
+      {{> inputText field = fields.defaultValue }}
 
     {{/each }}
 

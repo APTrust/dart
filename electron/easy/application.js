@@ -85,6 +85,11 @@ $(function() {
             profile = es.BagItProfile.find(id);
         }
         $("#container").html(templates.bagItProfileForm(profile.toForm()));
+
+        // DEBUG
+        window.profile = profile;
+        // END DEBUG
+
     }
 
     function bagItProfileSave() {
