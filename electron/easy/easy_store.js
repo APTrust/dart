@@ -226,13 +226,15 @@ class BagItProfile {
 
         // Copy required tag definitions to our preferred structure.
         // The BagIt profiles we're transforming don't have default values for tags.
-        for (var fileName in obj["Tag-Files-Required"]) {
-            for (var tagName in obj["Tag-Files-Required"][fileName]) {
-                var originalDef = obj["Tag-Files-Required"][fileName][tagName];
+        for (var fileName of Object.keys(obj["Tag-Files-Required"])) {
+            var tags = obj["Tag-Files-Required"][fileName]
+            for (var tagName of Object.keys(tags)) {
+                var originalDef = tags[tagName];
                 var tagDef = new TagDefinition(fileName, tagName);
                 tagDef.required = originalDef["required"] || false;
                 tagDef.emptyOk = originalDef["emptyOk"] || false;
                 tagDef.values = originalDef["values"] || [];
+                tagDef.defaultValue = originalDef["defaultValue"] || null;
                 p.requiredTags.push(tagDef);
             }
         }
@@ -254,6 +256,12 @@ class BagItProfile {
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
+            obj.requiredTags.forEach(function(item, index, array) {
+                // Convert the JSON data to a full TagDefinition object.
+                var tagDef = new TagDefinition();
+                Object.assign(tagDef, item);
+                profile.requiredTags[index] = tagDef;
+            });
         }
         return profile;
     }
@@ -414,7 +422,7 @@ class TagDefinition {
     }
     toForm() {
         var form = new Form("");
-        var key = tag.sortKey()
+        var key = this.sortKey()
         form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
         form.fields['tagFile'].attrs['data-key'] = key;
 
