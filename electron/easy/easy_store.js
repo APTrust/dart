@@ -98,11 +98,13 @@ class BagItProfile {
         form.fields['id'] = new Field('bagItProfileId', 'id', 'id', this.id);
         form.fields['name'] = new Field('bagItProfileName', 'name', 'Name', this.name);
         form.fields['description'] = new Field('bagItProfileDescription',
-                                               'description', 'Description',
+                                               'description',
+                                               'Description',
                                                this.description);
 
         form.fields['acceptBagItVersion'] = new Field('bagItProfileAcceptBagItVersion',
-                                                      'acceptBagItVersion', 'Accept BagIt Version',
+                                                      'acceptBagItVersion',
+                                                      'BagIt Version',
                                                       this.acceptBagItVersion);
         form.fields['acceptBagItVersion'].help = "Which versions of the BagIt standard are allowed for this profile?";
         form.fields['acceptBagItVersion'].choices = Choice.makeList(BagItVersions, this.acceptBagItVersion, false);

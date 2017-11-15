@@ -2,6 +2,7 @@
 
 <form method="post" action="#" id="{{ id }}">
 
+<!--
   <fieldset class="with-border">
     <legend class="with-border">About This Profile</legend>
 
@@ -65,6 +66,71 @@
     {{/each }}
 
   </fieldset>
+-->
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">About This Profile</h3>
+      </div>
+    </div>
+    <div class="panel-body">
+
+      {{> inputText field = fields.name }}
+
+      {{> inputText field = fields.description }}
+
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">General Requirements</h3>
+      </div>
+      <div class="panel-body">
+
+        {{> inputSelect field = fields.allowFetchTxt }}
+
+        {{> inputSelect field = fields.allowMiscTopLevelFiles }}
+
+        {{> inputSelect field = fields.allowMiscDirectories }}
+
+        {{> inputSelect field = fields.serialization }}
+
+        {{> inputSelect field = fields.acceptBagItVersion }}
+
+        {{> inputSelect field = fields.manifestsRequired }}
+
+        {{> inputSelect field = fields.tagManifestsRequired }}
+
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">BagIt Profile Info</h3>
+      </div>
+      <div class="panel-body">
+
+        {{> inputText field = fields.infoIdentifier }}
+
+        {{> inputText field = fields.infoContactEmail }}
+
+        {{> inputText field = fields.infoContactName }}
+
+        {{> inputText field = fields.infoExternalDescription }}
+
+        {{> inputText field = fields.infoVersion }}
+
+      </div>
+    </div>
+  </div>
+</div>
 
   {{> inputHidden field = fields.id }}
 
@@ -72,3 +138,9 @@
     <button type="button" id="btnBagItProfileSave" class="btn btn-default">Save</button>
   </div>
 </form>
+
+
+<script>
+  // Enable bootstrap popovers
+  $('[data-toggle="popover"]').popover();
+</script>

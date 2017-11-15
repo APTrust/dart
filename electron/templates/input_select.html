@@ -1,5 +1,6 @@
 <div class="form-group">
-  <label class="control-label" for="{{ field.id }}">{{ field.label }}</label>
+  <label class="control-label" for="{{ field.id }}"
+         {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }}</label>
   <select id="{{ field.id }}" name="{{ field.name }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
@@ -10,11 +11,6 @@
   {{#if field.error }}
   <small id="{{ field.id }}Error" class="form-text text-danger">
     {{ field.error }}
-  </small>
-  {{/if }}
-  {{#if field.help }}
-  <small id="{{ field.id }}Help" class="form-text text-muted">
-    {{ field.help }}
   </small>
   {{/if }}
 </div>

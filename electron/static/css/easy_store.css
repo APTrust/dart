@@ -1,3 +1,8 @@
+/* Any clickable element */
+.clickable {
+    cursor: pointer;
+}
+/* These elements have an attached event handler to display an editable form. */
 .clickable-row {
     cursor: pointer;
 }
