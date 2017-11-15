@@ -6,43 +6,43 @@
   <fieldset class="with-border">
     <legend class="with-border">About This Profile</legend>
 
-    {{> inputText field = fields.name }}
+    {{> inputText field = form.fields.name }}
 
-    {{> inputText field = fields.description }}
+    {{> inputText field = form.fields.description }}
 
   </fieldset>
 
   <fieldset class="with-border">
     <legend class="with-border">General Requirements</legend>
 
-    {{> inputSelect field = fields.acceptBagItVersion }}
+    {{> inputSelect field = form.fields.acceptBagItVersion }}
 
-    {{> inputSelect field = fields.allowFetchTxt }}
+    {{> inputSelect field = form.fields.allowFetchTxt }}
 
-    {{> inputSelect field = fields.allowMiscTopLevelFiles }}
+    {{> inputSelect field = form.fields.allowMiscTopLevelFiles }}
 
-    {{> inputSelect field = fields.allowMiscDirectories }}
+    {{> inputSelect field = form.fields.allowMiscDirectories }}
 
-    {{> inputSelect field = fields.manifestsRequired }}
+    {{> inputSelect field = form.fields.manifestsRequired }}
 
-    {{> inputSelect field = fields.tagManifestsRequired }}
+    {{> inputSelect field = form.fields.tagManifestsRequired }}
 
-    {{> inputSelect field = fields.serialization }}
+    {{> inputSelect field = form.fields.serialization }}
 
   </fieldset>
 
   <fieldset class="with-border">
     <legend class="with-border">BagIt Profile Info</legend>
 
-    {{> inputText field = fields.infoIdentifier }}
+    {{> inputText field = form.fields.infoIdentifier }}
 
-    {{> inputText field = fields.infoContactEmail }}
+    {{> inputText field = form.fields.infoContactEmail }}
 
-    {{> inputText field = fields.infoContactName }}
+    {{> inputText field = form.fields.infoContactName }}
 
-    {{> inputText field = fields.infoExternalDescription }}
+    {{> inputText field = form.fields.infoExternalDescription }}
 
-    {{> inputText field = fields.infoVersion }}
+    {{> inputText field = form.fields.infoVersion }}
 
   </fieldset>
 
@@ -51,17 +51,17 @@
 
     {{#each inlineForms }}
 
-      {{> inputText field = fields.tagFile }}
+      {{> inputText field = form.fields.tagFile }}
 
-      {{> inputText field = fields.tagName }}
+      {{> inputText field = form.fields.tagName }}
 
-      {{> inputSelect field = fields.required }}
+      {{> inputSelect field = form.fields.required }}
 
-      {{> inputSelect field = fields.emptyOk }}
+      {{> inputSelect field = form.fields.emptyOk }}
 
-      {{> inputTextArea field = fields.values }}
+      {{> inputTextArea field = form.fields.values }}
 
-      {{> inputText field = fields.defaultValue }}
+      {{> inputText field = form.fields.defaultValue }}
 
     {{/each }}
 
@@ -76,9 +76,9 @@
       </div>
       <div class="panel-body">
 
-        {{> inputText field = fields.name }}
+        {{> inputText field = form.fields.name }}
 
-        {{> inputText field = fields.description }}
+        {{> inputText field = form.fields.description }}
 
       </div>
     </div>
@@ -93,19 +93,19 @@
       </div>
       <div class="panel-body panel-collapse in" id="generalReqs">
 
-        {{> inputSelect field = fields.allowFetchTxt }}
+        {{> inputSelect field = form.fields.allowFetchTxt }}
 
-        {{> inputSelect field = fields.allowMiscTopLevelFiles }}
+        {{> inputSelect field = form.fields.allowMiscTopLevelFiles }}
 
-        {{> inputSelect field = fields.allowMiscDirectories }}
+        {{> inputSelect field = form.fields.allowMiscDirectories }}
 
-        {{> inputSelect field = fields.serialization }}
+        {{> inputSelect field = form.fields.serialization }}
 
-        {{> inputSelect field = fields.acceptBagItVersion }}
+        {{> inputSelect field = form.fields.acceptBagItVersion }}
 
-        {{> inputSelect field = fields.manifestsRequired }}
+        {{> inputSelect field = form.fields.manifestsRequired }}
 
-        {{> inputSelect field = fields.tagManifestsRequired }}
+        {{> inputSelect field = form.fields.tagManifestsRequired }}
 
       </div>
     </div>
@@ -128,15 +128,15 @@
           for internal use, leave this section blank.
         </div>
 
-        {{> inputText field = fields.infoIdentifier }}
+        {{> inputText field = form.fields.infoIdentifier }}
 
-        {{> inputText field = fields.infoContactEmail }}
+        {{> inputText field = form.fields.infoContactEmail }}
 
-        {{> inputText field = fields.infoContactName }}
+        {{> inputText field = form.fields.infoContactName }}
 
-        {{> inputText field = fields.infoExternalDescription }}
+        {{> inputText field = form.fields.infoExternalDescription }}
 
-        {{> inputText field = fields.infoVersion }}
+        {{> inputText field = form.fields.infoVersion }}
 
       </div>
     </div>
@@ -145,7 +145,7 @@
 -->
 
 
-  {{> inputHidden field = fields.id }}
+  {{> inputHidden field = form.fields.id }}
 
   <div class="form-group">
     <button type="button" id="btnBagItProfileSave" class="btn btn-default">Save</button>

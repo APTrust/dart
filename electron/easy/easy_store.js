@@ -184,18 +184,26 @@ class BagItProfile {
         form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization, true);
         form.fields['serialization'].help = "Should the bag serialized into a single file?";
 
-
-        // Sort the list of required tags, so that the form template
-        // gets them in order.
-        this.sortRequiredTags();
-        for (var tag of this.requiredTags) {
-            form.inlineForms.push(tag.toForm());
-        }
-
         return form;
     }
     static fromForm() {
         // Parses a form and returns an AppSetting object
+    }
+    tagsGroupedByFile() {
+        // Returns a hash of required tags, with filename
+        // as the key. Value is a list of required tags,
+        // in alpha order by name.
+        var tagsByFile = {};
+        for (var tag of this.requiredTags) {
+            if(tagsByFile[tag.tagFile] == null) {
+                tagsByFile[tag.tagFile] = [];
+            }
+            tagsByFile[tag.tagFile].push(tag);
+        }
+        for (var f of Object.keys(tagsByFile)) {
+            Util.sortByName(tagsByFile[f]);
+        }
+        return tagsByFile;
     }
     toBagItProfileJson() {
         // Return a string of JSON in BagItProfile format,
@@ -241,13 +249,6 @@ class BagItProfile {
             }
         }
         return p;
-    }
-    sortRequiredTags() {
-        this.requiredTags.sort(function(a, b) {
-            if (a.sortKey() < b.sortKey()) { return -1; }
-            if (a.sortKey() > b.sortKey()) { return 1; }
-            return 0;
-        });
     }
     save() {
         return db.bagItProfiles.set(this.id, this);
@@ -412,6 +413,7 @@ class StorageService {
 
 class TagDefinition {
     constructor(tagFile, tagName) {
+        this.id = Util.uuid4();
         this.tagFile = tagFile;
         this.tagName = tagName;
         this.required = false;
@@ -419,12 +421,8 @@ class TagDefinition {
         this.values = [];
         this.defaultValue = "";
     }
-    sortKey() {
-        return `tag|${this.tagFile}|${this.tagName}`
-    }
     toForm() {
         var form = new Form("");
-        var key = this.sortKey()
         form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
         form.fields['tagFile'].attrs['data-key'] = key;
 
@@ -449,6 +447,8 @@ class TagDefinition {
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
         form.fields['defaultValue'].attrs['data-key'] = key;
         form.fields['defaultValue'].help = "Optional default value for this field.";
+
+        form.fields['id'] = new Field('id', 'id', 'id', this.id)
 
         return form;
     }
@@ -489,7 +489,7 @@ class Util {
         }
         return match != null;
     }
-    static sortStore(store) {
+    static sortByName(store) {
         var list = [];
         for (var key in store) {
             list.push(store[key]);

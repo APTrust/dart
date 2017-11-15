@@ -42,7 +42,7 @@ $(function() {
     // App Setting functions
     function appSettingShowList() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.appSettings.store);
+        data.items = es.Util.sortByName(es.DB.appSettings.store);
         $("#container").html(templates.appSettingList(data));
     }
 
@@ -63,7 +63,7 @@ $(function() {
             setting.save();
             var data = {};
             data.success = `Setting ${setting.name} has been saved`;
-            data.items = es.Util.sortStore(es.DB.appSettings.store);
+            data.items = es.Util.sortByName(es.DB.appSettings.store);
             $("#container").html(templates.appSettingList(data));
         } else {
             var form = setting.toForm();
@@ -75,7 +75,7 @@ $(function() {
     // BagItProfile functions
     function bagItProfileShowList() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.bagItProfiles.store)
+        data.items = es.Util.sortByName(es.DB.bagItProfiles.store)
         $("#container").html(templates.bagItProfileList(data));
     }
 
@@ -84,7 +84,10 @@ $(function() {
         if (!es.Util.isEmpty(id)) {
             profile = es.BagItProfile.find(id);
         }
-        $("#container").html(templates.bagItProfileForm(profile.toForm()));
+        var data = {};
+        data['form'] = profile.toForm();
+        data['tags'] = profile.tagsGroupedByFile();
+        $("#container").html(templates.bagItProfileForm(data));
 
         // DEBUG
         window.profile = profile;
@@ -99,7 +102,7 @@ $(function() {
             profile.save();
             var data = {};
             data.success = `Profile ${profile.name} has been saved`;
-            data.items = es.Util.sortStore(es.DB.bagItProfiles.store);
+            data.items = es.Util.sortByName(es.DB.bagItProfiles.store);
             $("#container").html(templates.bagItProfileList(data));
         } else {
             var form = profile.toForm();
@@ -111,7 +114,7 @@ $(function() {
     // StorageService functions
     function storageServiceShowList() {
         var data = {};
-        data.items = es.Util.sortStore(es.DB.storageServices.store)
+        data.items = es.Util.sortByName(es.DB.storageServices.store)
         $("#container").html(templates.storageServiceList(data));
     }
 
@@ -130,7 +133,7 @@ $(function() {
             service.save();
             var data = {};
             data.success = `Storage service ${service.name} has been saved`;
-            data.items = es.Util.sortStore(es.DB.storageServices.store);
+            data.items = es.Util.sortByName(es.DB.storageServices.store);
             $("#container").html(templates.storageServiceList(data));
         } else {
             var form = service.toForm();
