@@ -4,7 +4,7 @@
   <textarea id="{{ field.id }}" name="{{ field.name }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}" rows="8"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
-{{ field.value }}
+{{~field.value~}}
 </textarea>
   {{#if field.error }}
   <small id="{{ field.id }}Error" class="form-text text-danger">

@@ -168,6 +168,7 @@ $(function() {
             var existingTag = es.ActiveObject.findTagById(tagFromForm.id);
             Object.assign(existingTag, tagFromForm);
             es.ActiveObject.save();
+            $('#modal').modal('hide');
             bagItProfileShowForm(es.ActiveObject.id);
         } else {
             var form = tagFromForm.toForm();
