@@ -431,6 +431,13 @@ class TagDefinition {
         this.values = [];
         this.defaultValue = "";
     }
+    validate() {
+        var result = new ValidationResult();
+        if (this.values.length > 0 && !Util.listContains(this.values, this.defaultValue)) {
+            result.errors['defaultValue'] = "The default value must be one of the allowed values.";
+        }
+        return result
+    }
     toForm() {
         var form = new Form("");
         form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
@@ -441,11 +448,10 @@ class TagDefinition {
         form.fields['emptyOk'] = new Field('emptyOk', 'emptyOk', 'Can tag value be empty?', this.emptyOk)
         form.fields['emptyOk'].choices = Choice.makeList(YesNo, this.emptyOk, false);
         form.fields['emptyOk'].help = "Is it valid for this tag to be present but empty?";
-        form.fields['values'] = new Field('values', 'values', 'Allowed Values (one per line)', this.values)
-        form.fields['values'].choices = Choice.makeList(this.values.join("\n"));
-        form.fields['values'].help = "List the legal values for this tag or leave empty to allow any value.";
+        form.fields['values'] = new Field('values', 'values', 'Allowed Values (one per line)', this.values.join("\n"))
+        form.fields['values'].help = "List the legal values for this tag, one per line. Leave this field empty to allow any value.";
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
-        form.fields['defaultValue'].help = "Optional default value for this field.";
+        form.fields['defaultValue'].help = "Optional default value for this field. If this tag has a list of allowed values, the default value must be one of the allowed values.";
         form.fields['tagDefinitionId'] = new Field('tagDefinitionId', 'tagDefinitionId', 'tagDefinitionId', this.id)
         return form;
     }
@@ -455,10 +461,7 @@ class TagDefinition {
         var tagDef = new TagDefinition(tagFile, tagName);
         tagDef.required = $('#required').val().trim();
         tagDef.emptyOk = $('#emptyOk').val().trim();
-        var vals = $('#values').val().split("\n");
-        console.log(vals);
-        tagDef.values = vals.map(item => item.trim());
-        console.log(tagDef.values);
+        tagDef.values = $('#values').val().split("\n").map(item => item.trim()).filter(item => item != "");
         tagDef.defaultValue = $('#defaultValue').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
