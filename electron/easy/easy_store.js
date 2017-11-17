@@ -17,6 +17,8 @@ db.appSettings = new Store({name: 'app-settings'});
 db.bagItProfiles = new Store({name: 'bagit-profiles'});
 db.storageServices = new Store({name: 'storage-services'});
 
+// This will be set by application.js, based on current view.
+var activeObject = null;
 
 class AppSetting {
     constructor(name, value) {
@@ -188,6 +190,14 @@ class BagItProfile {
     }
     static fromForm() {
         // Parses a form and returns an AppSetting object
+    }
+    findTagById(id) {
+        for(var t of this.requiredTags) {
+            if (t.id == id) {
+                return t;
+            }
+        }
+        return null;
     }
     tagsGroupedByFile() {
         // Returns a hash of required tags, with filename
@@ -537,6 +547,7 @@ class ValidationResult {
     }
 }
 
+module.exports.ActiveObject = activeObject;
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;

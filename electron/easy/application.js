@@ -47,6 +47,7 @@ $(function() {
         var data = {};
         data.items = es.Util.sortByName(es.DB.appSettings.store);
         $("#container").html(templates.appSettingList(data));
+        es.ActiveObject = data.items;
     }
 
     function appSettingShowForm(id) {
@@ -54,9 +55,8 @@ $(function() {
         if (!es.Util.isEmpty(id)) {
             setting = es.AppSetting.find(id);
         }
-        console.log(id)
-        console.log(setting)
         $("#container").html(templates.appSettingForm(setting.toForm()));
+        es.ActiveObject = setting;
     }
 
     function appSettingSave() {
@@ -73,6 +73,7 @@ $(function() {
             form.setErrors(result.errors);
             $("#container").html(templates.appSettingForm(form));
         }
+        es.ActiveObject = setting;
     }
 
     // BagItProfile functions
@@ -80,6 +81,7 @@ $(function() {
         var data = {};
         data.items = es.Util.sortByName(es.DB.bagItProfiles.store)
         $("#container").html(templates.bagItProfileList(data));
+        es.ActiveObject = data.items;
     }
 
     function bagItProfileShowForm(id) {
@@ -91,11 +93,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         $("#container").html(templates.bagItProfileForm(data));
-
-        // DEBUG
-        window.profile = profile;
-        // END DEBUG
-
+        es.ActiveObject = profile;
     }
 
     function bagItProfileSave() {
@@ -112,6 +110,7 @@ $(function() {
             form.setErrors(result.errors);
             $("#container").html(templates.bagItProfileForm(form));
         }
+        es.ActiveObject = profile;
     }
 
     // StorageService functions
@@ -119,6 +118,7 @@ $(function() {
         var data = {};
         data.items = es.Util.sortByName(es.DB.storageServices.store)
         $("#container").html(templates.storageServiceList(data));
+        es.ActiveObject = data.items;
     }
 
     function storageServiceShowForm(id) {
@@ -127,6 +127,7 @@ $(function() {
             service = es.StorageService.find(id);
         }
         $("#container").html(templates.storageServiceForm(service.toForm()));
+        es.ActiveObject = service;
     }
 
     function storageServiceSave() {
@@ -143,12 +144,14 @@ $(function() {
             form.setErrors(result.errors);
             $("#container").html(templates.storageServiceForm(form));
         }
+        es.ActiveObject = service;
     }
 
 
     // Tag Definition functions
     function tagDefinitionShowForm(id) {
-        alert("Tag Definition " + id);
+        var tag = es.ActiveObject.findTagById(id);
+        console.log(tag);
     }
 
 
