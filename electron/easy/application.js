@@ -34,6 +34,9 @@ $(function() {
          case 'StorageService':
             storageServiceShowForm(id);
             break;
+         case 'TagDefinition':
+            tagDefinitionShowForm(id);
+            break;
          default:
             alert(`Type ${type}? WTF?`);
         }
@@ -140,6 +143,12 @@ $(function() {
             form.setErrors(result.errors);
             $("#container").html(templates.storageServiceForm(form));
         }
+    }
+
+
+    // Tag Definition functions
+    function tagDefinitionShowForm(id) {
+        alert("Tag Definition " + id);
     }
 
 

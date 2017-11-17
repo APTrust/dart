@@ -157,7 +157,6 @@
           <thead class="thead-inverse">
             <tr>
               <th>Tag Name</th>
-              <th>Requirements</th>
               <th>Default Value</th>
             </tr>
           </thead>
@@ -165,7 +164,6 @@
             {{#each this as |tag| }}
             <tr class="clickable-row" data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
               <td>{{ tag.tagName }}</td>
-              <td>{{ tag.required }}</td>
               <td>{{ tag.defaultValue }}</td>
             </tr>
             {{/each }}
