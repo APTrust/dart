@@ -434,32 +434,19 @@ class TagDefinition {
     toForm() {
         var form = new Form("");
         form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
-        form.fields['tagFile'].attrs['data-key'] = key;
-
         form.fields['tagName'] = new Field('tagName', 'tagName', 'Tag Name', this.tagName)
-        form.fields['tagName'].attrs['data-key'] = key;
-
         form.fields['required'] = new Field('required', 'required', 'Presence Required?', this.required)
-        form.fields['required'].attrs['data-key'] = key;
         form.fields['required'].choices = Choice.makeList(YesNo);
         form.fields['required'].help = "Does this tag have to be present in the tag file?";
-
         form.fields['emptyOk'] = new Field('emptyOk', 'emptyOk', 'Can tag value be empty?', this.emptyOk)
-        form.fields['emptyOk'].attrs['data-key'] = key;
         form.fields['emptyOk'].choices = Choice.makeList(YesNo);
         form.fields['emptyOk'].help = "Is it valid for this tag to be present but empty?";
-
         form.fields['values'] = new Field('values', 'values', 'Legal Values', this.values)
-        form.fields['values'].attrs['data-key'] = key;
         form.fields['values'].choices = Choice.makeList(this.values);
         form.fields['values'].help = "List the legal values for this tag or leave empty to allow any value.";
-
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
-        form.fields['defaultValue'].attrs['data-key'] = key;
         form.fields['defaultValue'].help = "Optional default value for this field.";
-
         form.fields['id'] = new Field('id', 'id', 'id', this.id)
-
         return form;
     }
 }

@@ -16,6 +16,7 @@ var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
 var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
 var storageServiceForm = handlebars.compile(readFile('storage_service_form.html'));
 var storageServiceList = handlebars.compile(readFile('storage_service_list.html'));
+var tagDefinitionForm = handlebars.compile(readFile('tag_definition_form.html'));
 
 handlebars.registerPartial({
     inputHidden: readFile('input_hidden.html'),
@@ -31,3 +32,4 @@ module.exports.bagItProfileForm = bagItProfileForm;
 module.exports.bagItProfileList = bagItProfileList;
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;
+module.exports.tagDefinitionForm = tagDefinitionForm;

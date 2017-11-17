@@ -1,0 +1,24 @@
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = fields.tagFile }}
+
+  {{> inputText field = fields.tagName }}
+
+  {{> inputSelect field = fields.required }}
+
+  {{> inputSelect field = fields.emptyOk }}
+
+  {{> inputTextArea field = fields.values }}
+
+  {{> inputText field = fields.defaultValue }}
+
+  {{> inputHidden field = fields.id }}
+
+  <div class="form-group">
+    <button type="button" id="btnStorageServiceSave" class="btn btn-default">Save</button>
+  </div>
+</form>
+
+<script>
+  $('[data-toggle="popover"]').popover();
+</script>
