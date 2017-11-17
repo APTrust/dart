@@ -20,6 +20,9 @@ $(function() {
     $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileShowForm(null); });
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
 
+    // TagDefinition Form
+    $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
+
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
 		var id = $(this).data("object-id");
@@ -151,9 +154,25 @@ $(function() {
     // Tag Definition functions
     function tagDefinitionShowForm(id) {
         var tag = es.ActiveObject.findTagById(id);
+        console.log('To be edited');
+        console.log(tag);
         $('#modalTitle').text(tag.tagName);
         $("#modalContent").html(templates.tagDefinitionForm(tag.toForm()));
         $('#modal').modal();
+    }
+
+    function tagDefinitionSave() {
+        // Copy for values to existing tag, whic is part of the
+        // BagItProfile currently stored in es.ActiveObject.
+        var tagFromForm = es.TagDefinition.fromForm();
+        var existingTag = es.ActiveObject.findTagById(tagFromForm.id);
+        console.log('From form');
+        console.log(tagFromForm);
+        console.log('Existing tag');
+        console.log(existingTag);
+        Object.assign(existingTag, tagFromForm);
+        es.ActiveObject.save();
+        bagItProfileShowForm(es.ActiveObject.id);
     }
 
 
