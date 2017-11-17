@@ -152,6 +152,10 @@ $(function() {
     function tagDefinitionShowForm(id) {
         var tag = es.ActiveObject.findTagById(id);
         console.log(tag);
+
+        $('#modalTitle').text(tag.tagName);
+        $('#modalContent').html("Tag form will go here");
+        $('#modal').modal();
     }
 
 
