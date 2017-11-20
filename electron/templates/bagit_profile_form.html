@@ -53,7 +53,7 @@
       <div class="panel-heading">
         <h3 class="panel-title"><a href="#profileInfo" data-toggle="collapse">BagIt Profile Info</a></h3>
       </div>
-      <div class="panel-body" id="profileInfo">
+      <div class="panel-body panel-collapse in" id="profileInfo">
 
         <div class="well">
           Fill out this section only if you intend to make your
@@ -68,6 +68,8 @@
         {{> inputText field = form.fields.infoContactName }}
 
         {{> inputText field = form.fields.infoExternalDescription }}
+
+        {{> inputText field = form.fields.infoSourceOrganization }}
 
         {{> inputText field = form.fields.infoVersion }}
 

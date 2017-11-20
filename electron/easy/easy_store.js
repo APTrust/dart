@@ -155,7 +155,7 @@ class BagItProfile {
         form.fields["infoSourceOrganization"] = new Field("bagItProfileInfoSourceOrganization",
                                                  "infoSourceOrganization",
                                                  "Source Organization",
-                                                 this.bagItProfileInfo.externalDescription);
+                                                 this.bagItProfileInfo.sourceOrganization);
         form.fields["infoExternalDescription"].help = "The name of the organization that maintains this profile. Leave this blank if you're not publishing this BagIt profile.";
         form.fields["infoVersion"] = new Field("bagItProfileInfoVersion",
                                                  "infoVersion",
@@ -189,7 +189,28 @@ class BagItProfile {
         return form;
     }
     static fromForm() {
-        // Parses a form and returns an AppSetting object
+        var id = $('#bagItProfileId').val().trim();
+        var profile = BagItProfile.find(id) || new BagItProfile();
+        profile.id = id;
+        profile.name = $('#bagItProfileName').val().trim();
+        profile.description = $('#bagItProfileDescription').val().trim();
+        profile.acceptBagItVersion = $('#bagItAcceptBagItVersion').val();
+        profile.allowFetchTxt = $('#bagItProfileAllowFetchTxt').val().trim();
+        profile.allowMiscTopLevelFiles = $('#bagItProfileAllowMiscTopLevelFiles').val().trim();
+        profile.allowMiscDirectories = $('#bagItProfileAllowMiscDirectories').val().trim();
+        profile.bagItProfileInfo.bagItProfileIdentifier = $('#bagItProfileInfoIdentifier').val().trim();
+        profile.bagItProfileInfo.contactEmail = $('#bagItProfileInfoContactEmail').val().trim();
+        profile.bagItProfileInfo.contectName = $('#bagItProfileInfoContactName').val().trim();
+        profile.bagItProfileInfo.externalDescription = $('#bagItProfileInfoExternalDescription').val().trim();
+        profile.bagItProfileInfo.sourceOrganization = $('#bagItProfileInfoSourceOrganization').val().trim();
+        profile.bagItProfileInfo.version = $('#bagItProfileInfoVersion').val().trim();
+        profile.manifestsRequired = $('#bagItProfileManifestsRequired').val();
+        profile.serialization = $('#bagItProfileSerialization').val().trim();
+        profile.tagManifestsRequired = $('#bagItProfileTagManifestsRequired').val();
+        // Because each tag definition in profile.requiredTags is saved as it is
+        // edited, we don't need to load them from the form. They should have come
+        // out of the db when we called BagItProfile.find(id) above.
+        return profile;
     }
     findTagById(id) {
         for(var t of this.requiredTags) {
