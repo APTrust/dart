@@ -93,7 +93,20 @@ class BagItProfile {
         return (this.id == builtins.APTrustProfileId || this.id == builtins.DPNProfileId);
     }
     validate() {
-        // Return ValidationResult w/ isValid and errors
+        var result = new ValidationResult();
+        if (Util.isEmpty(this.id)) {
+            result.errors["id"] = "Id cannot be empty";
+        }
+        if (Util.isEmpty(this.name)) {
+            result.errors["name"] = "Name cannot be empty";
+        }
+        if (Util.isEmptyArray(this.acceptBagItVersion)) {
+            result.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
+        }
+        if (Util.isEmptyArray(this.manifestsRequired)) {
+            result.errors["manifestsRequired"] = "Profile must require at least one manifest.";
+        }
+        return result;
     }
     toForm() {
         var form = new Form('bagItProfileForm');
@@ -194,7 +207,7 @@ class BagItProfile {
         profile.id = id;
         profile.name = $('#bagItProfileName').val().trim();
         profile.description = $('#bagItProfileDescription').val().trim();
-        profile.acceptBagItVersion = $('#bagItAcceptBagItVersion').val();
+        profile.acceptBagItVersion = Util.filterEmpties($('#bagItProfileAcceptBagItVersion').val());
         profile.allowFetchTxt = $('#bagItProfileAllowFetchTxt').val().trim();
         profile.allowMiscTopLevelFiles = $('#bagItProfileAllowMiscTopLevelFiles').val().trim();
         profile.allowMiscDirectories = $('#bagItProfileAllowMiscDirectories').val().trim();
@@ -204,9 +217,9 @@ class BagItProfile {
         profile.bagItProfileInfo.externalDescription = $('#bagItProfileInfoExternalDescription').val().trim();
         profile.bagItProfileInfo.sourceOrganization = $('#bagItProfileInfoSourceOrganization').val().trim();
         profile.bagItProfileInfo.version = $('#bagItProfileInfoVersion').val().trim();
-        profile.manifestsRequired = $('#bagItProfileManifestsRequired').val();
+        profile.manifestsRequired = Util.filterEmpties($('#bagItProfileManifestsRequired').val());
         profile.serialization = $('#bagItProfileSerialization').val().trim();
-        profile.tagManifestsRequired = $('#bagItProfileTagManifestsRequired').val();
+        profile.tagManifestsRequired = Util.filterEmpties($('#bagItProfileTagManifestsRequired').val());
         // Because each tag definition in profile.requiredTags is saved as it is
         // edited, we don't need to load them from the form. They should have come
         // out of the db when we called BagItProfile.find(id) above.
@@ -482,7 +495,7 @@ class TagDefinition {
         var tagDef = new TagDefinition(tagFile, tagName);
         tagDef.required = $('#required').val().trim();
         tagDef.emptyOk = $('#emptyOk').val().trim();
-        tagDef.values = $('#values').val().split("\n").map(item => item.trim()).filter(item => item != "");
+        tagDef.values = Util.filterEmpties($('#values').val().split("\n"));
         tagDef.defaultValue = $('#defaultValue').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
@@ -538,6 +551,24 @@ class Util {
     }
     static isEmpty(str) {
         return (str == null || ((typeof str) == "string" && str.trim() == ""));
+    }
+    static isEmptyArray(arr) {
+        if(arr == null || arr.length == 0) {
+            return true;
+        }
+        for(let str of arr) {
+            if (!Util.isEmpty(str)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    static filterEmpties(arr) {
+        if(arr == null || !Array.isArray(arr)) {
+            console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
+            return [];
+        }
+        return arr.map(item => item.trim()).filter(item => item != "");
     }
     static listContains(list, item) {
         for (var i of list) {

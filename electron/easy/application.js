@@ -104,15 +104,14 @@ $(function() {
         var result = profile.validate();
         if (result.isValid()) {
             profile.save();
-            var data = {};
-            data.success = `Profile ${profile.name} has been saved`;
-            data.items = es.Util.sortByName(es.DB.bagItProfiles.store);
-            $("#container").html(templates.bagItProfileList(data));
-        } else {
-            var form = profile.toForm();
-            form.setErrors(result.errors);
-            $("#container").html(templates.bagItProfileForm(form));
+            bagItProfileShowList();
+            return
         }
+        var data = {};
+        data['form'] = profile.toForm();
+        data['form'].setErrors(result.errors);
+        data['tags'] = profile.tagsGroupedByFile();
+        $("#container").html(templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
 
