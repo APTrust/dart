@@ -2,72 +2,6 @@
 
 <form method="post" action="#" id="{{ id }}">
 
-<!--
-  <fieldset class="with-border">
-    <legend class="with-border">About This Profile</legend>
-
-    {{> inputText field = form.fields.name }}
-
-    {{> inputText field = form.fields.description }}
-
-  </fieldset>
-
-  <fieldset class="with-border">
-    <legend class="with-border">General Requirements</legend>
-
-    {{> inputSelect field = form.fields.acceptBagItVersion }}
-
-    {{> inputSelect field = form.fields.allowFetchTxt }}
-
-    {{> inputSelect field = form.fields.allowMiscTopLevelFiles }}
-
-    {{> inputSelect field = form.fields.allowMiscDirectories }}
-
-    {{> inputSelect field = form.fields.manifestsRequired }}
-
-    {{> inputSelect field = form.fields.tagManifestsRequired }}
-
-    {{> inputSelect field = form.fields.serialization }}
-
-  </fieldset>
-
-  <fieldset class="with-border">
-    <legend class="with-border">BagIt Profile Info</legend>
-
-    {{> inputText field = form.fields.infoIdentifier }}
-
-    {{> inputText field = form.fields.infoContactEmail }}
-
-    {{> inputText field = form.fields.infoContactName }}
-
-    {{> inputText field = form.fields.infoExternalDescription }}
-
-    {{> inputText field = form.fields.infoVersion }}
-
-  </fieldset>
-
-  <fieldset class="with-border">
-    <legend class="with-border">Required Tags</legend>
-
-    {{#each inlineForms }}
-
-      {{> inputText field = form.fields.tagFile }}
-
-      {{> inputText field = form.fields.tagName }}
-
-      {{> inputSelect field = form.fields.required }}
-
-      {{> inputSelect field = form.fields.emptyOk }}
-
-      {{> inputTextArea field = form.fields.values }}
-
-      {{> inputText field = form.fields.defaultValue }}
-
-    {{/each }}
-
-  </fieldset>
--->
-
 <div class="row">
   <div class="col-md-6">
     <div class="panel panel-default">
@@ -113,14 +47,13 @@
 </div>
 
 
-<!--
 <div class="row">
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">BagIt Profile Info</h3>
+        <h3 class="panel-title"><a href="#profileInfo" data-toggle="collapse">BagIt Profile Info</a></h3>
       </div>
-      <div class="panel-body">
+      <div class="panel-body" id="profileInfo">
 
         <div class="well">
           Fill out this section only if you intend to make your
@@ -142,7 +75,6 @@
     </div>
   </div>
 </div>
--->
 
 
 {{#each tags }}
