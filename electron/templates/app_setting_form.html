@@ -2,15 +2,23 @@
 
 <form method="post" action="#" id="{{ id }}">
 
-  {{> inputText field = fields.name }}
+  {{> inputText field = form.fields.name }}
 
-  {{> inputText field = fields.value }}
+  {{> inputText field = form.fields.value }}
 
-  {{> inputHidden field = fields.id }}
+  {{> inputHidden field = form.fields.id }}
 
-  <div class="form-group">
-    <button type="button" id="btnApplicationSettingSave" class="btn btn-default">Save</button>
+  <div class="modal-buttons">
+    {{#if showDeleteButton}}
+    <div class="pull-left">
+      <button type="button" id="btnApplicationSettingDelete" class="btn btn-danger">Delete</button>
+    </div>
+    {{/if}}
+    <div class="pull-right">
+      <button type="button" id="btnApplicationSettingSave" class="btn btn-primary">Save</button>
+    </div>
   </div>
+
 </form>
 
 <script>

@@ -11,6 +11,7 @@ $(function() {
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
     $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
+    $(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
 
     // StorageService Form
     $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
@@ -60,10 +61,15 @@ $(function() {
 
     function appSettingShowForm(id) {
         var setting = new es.AppSetting();
+        var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             setting = es.AppSetting.find(id);
+            showDeleteButton = true;
         }
-        $("#container").html(templates.appSettingForm(setting.toForm()));
+        var data = {};
+        data['form'] = setting.toForm();
+        data['showDeleteButton'] = showDeleteButton;
+        $("#container").html(templates.appSettingForm(data));
         es.ActiveObject = setting;
     }
 
@@ -82,6 +88,14 @@ $(function() {
             $("#container").html(templates.appSettingForm(form));
         }
         es.ActiveObject = setting;
+    }
+
+    function appSettingDelete() {
+        if (!confirm("Delete this setting?")) {
+            return;
+        }
+        es.ActiveObject.delete();
+        appSettingShowList();
     }
 
     // BagItProfile functions
