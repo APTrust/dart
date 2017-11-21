@@ -160,8 +160,6 @@ $(function() {
 
     function bagItProfileSave() {
         var profile = es.BagItProfile.fromForm();
-        console.log("Profile from form:");
-        console.log(profile);
         var result = profile.validate();
         if (result.isValid()) {
             profile.save();
@@ -254,6 +252,7 @@ $(function() {
         var tagFromForm = es.TagDefinition.fromForm();
         var result = tagFromForm.validate();
         if (result.isValid()) {
+            es.ActiveObject = Object.assign(es.ActiveObject, es.BagItProfile.fromForm());
             var existingTag = es.ActiveObject.findTagById(tagFromForm.id);
             if (existingTag == null) {
                 // This is a new tag, so add it to the profile's
