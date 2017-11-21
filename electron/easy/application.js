@@ -86,7 +86,10 @@ $(function() {
         } else {
             var form = setting.toForm();
             form.setErrors(result.errors);
-            $("#container").html(templates.appSettingForm(form));
+            var data = {};
+            data['form'] = form;
+            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null;
+            $("#container").html(templates.appSettingForm(data));
         }
         es.ActiveObject = setting;
     }
