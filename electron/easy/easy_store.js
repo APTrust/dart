@@ -85,6 +85,20 @@ class BagItProfile {
         this.serialization = "optional";
         this.tagManifestsRequired = [];
 
+        // BagIt spec says these two tags in bagit.txt file
+        // are always required.
+        var v = new TagDefinition('bagit.txt', 'BagIt-Version');
+        v.required = true;
+        v.emptyOk = false;
+        v.values = BagItVersions;
+        v.defaultValue = "0.97";
+        var e = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
+        e.required = true;
+        e.emptyOk = false;
+        e.defaultValue = "UTF-8";
+        this.requiredTags.push(v);
+        this.requiredTags.push(e);
+
         // We'll lock default APTrust and DPN BagItProfiles so
         // users can't edit anything other than default tag values.
         this.locked = false;
