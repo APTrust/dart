@@ -25,6 +25,7 @@ $(function() {
         tagDefinitionShowForm(null, $(this).data('tag-file'));
     });
     $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
+    $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
 
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
@@ -155,9 +156,17 @@ $(function() {
 
     // Tag Definition functions
     function tagDefinitionShowForm(id, tagFile) {
-        var tag = es.ActiveObject.findTagById(id) || new es.TagDefinition(tagFile, 'New-Tag');
+        var tag = es.ActiveObject.findTagById(id);
+        var showDeleteButton = true;
+        if (tag == null) {
+            tag = new es.TagDefinition(tagFile, 'New-Tag');
+            showDeleteButton = false;
+        }
+        var data = {};
+        data['form'] = tag.toForm();
+        data['showDeleteButton'] = showDeleteButton;
         $('#modalTitle').text(tag.tagName);
-        $("#modalContent").html(templates.tagDefinitionForm(tag.toForm()));
+        $("#modalContent").html(templates.tagDefinitionForm(data));
         $('#modal').modal();
     }
 
@@ -183,6 +192,18 @@ $(function() {
             form.setErrors(result.errors);
             $("#modalContent").html(templates.tagDefinitionForm(form));
         }
+    }
+
+    function tagDefinitionDelete() {
+        if (!confirm("Delete this tag?")) {
+            return;
+        }
+        var tagId = es.TagDefinition.fromForm().id;
+        console.log(tagId);
+        es.ActiveObject.requiredTags = es.ActiveObject.requiredTags.filter(item => item.id != tagId);
+        es.ActiveObject.save();
+        $('#modal').modal('hide');
+        bagItProfileShowForm(es.ActiveObject.id);
     }
 
 

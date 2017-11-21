@@ -1,24 +1,26 @@
 <form method="post" action="#" id="{{ id }}">
 
-  {{> inputText field = fields.tagFile }}
+  {{> inputText field = form.fields.tagFile }}
 
-  {{> inputText field = fields.tagName }}
+  {{> inputText field = form.fields.tagName }}
 
-  {{> inputSelect field = fields.required }}
+  {{> inputSelect field = form.fields.required }}
 
-  {{> inputSelect field = fields.emptyOk }}
+  {{> inputSelect field = form.fields.emptyOk }}
 
-  {{> inputTextArea field = fields.values }}
+  {{> inputTextArea field = form.fields.values }}
 
-  {{> inputText field = fields.defaultValue }}
+  {{> inputText field = form.fields.defaultValue }}
 
-  {{> inputHidden field = fields.tagDefinitionId }}
+  {{> inputHidden field = form.fields.tagDefinitionId }}
 
 
   <div class="modal-buttons">
+    {{#if showDeleteButton}}
     <div class="pull-left">
       <button type="button" id="btnTagDefinitionDelete" class="btn btn-danger">Delete</button>
     </div>
+    {{/if}}
     <div class="pull-right">
       <button type="button" id="btnTagDefinitionSave" class="btn btn-primary">Save</button>
     </div>
