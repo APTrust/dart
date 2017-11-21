@@ -4,9 +4,9 @@ $(function() {
     const templates = require(path.resolve('electron/easy/templates'));
 
     // Top nav menu
-    $("#menuAppSettingList").on('click', appSettingShowList);
-    $("#menuBagItProfileList").click(bagItProfileShowList);
-    $("#menuStorageServiceList").click(storageServiceShowList);
+    $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
+    $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
+    $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -55,9 +55,10 @@ $(function() {
 	});
 
     // App Setting functions
-    function appSettingShowList() {
+    function appSettingShowList(message) {
         var data = {};
         data.items = es.Util.sortByName(es.DB.appSettings.store);
+        data.success = message;
         $("#container").html(templates.appSettingList(data));
         es.ActiveObject = data.items;
     }
@@ -81,10 +82,7 @@ $(function() {
         var result = setting.validate();
         if (result.isValid()) {
             setting.save();
-            var data = {};
-            data.success = `Setting ${setting.name} has been saved`;
-            data.items = es.Util.sortByName(es.DB.appSettings.store);
-            $("#container").html(templates.appSettingList(data));
+            return appSettingShowList(`Setting ${setting.name} has been saved`);
         } else {
             var form = setting.toForm();
             form.setErrors(result.errors);
@@ -100,14 +98,15 @@ $(function() {
         if (!confirm("Delete this setting?")) {
             return;
         }
-        es.ActiveObject.delete();
-        appSettingShowList();
+        var setting = es.ActiveObject.delete();
+        appSettingShowList(`Deleted setting ${setting.name}`);
     }
 
     // BagItProfile functions
-    function bagItProfileShowList() {
+    function bagItProfileShowList(message) {
         var data = {};
         data.items = es.Util.sortByName(es.DB.bagItProfiles.store)
+        data.success = message;
         $("#container").html(templates.bagItProfileList(data));
         es.ActiveObject = data.items;
     }
@@ -132,8 +131,7 @@ $(function() {
         var result = profile.validate();
         if (result.isValid()) {
             profile.save();
-            bagItProfileShowList();
-            return
+            return bagItProfileShowList(`Profile ${profile.name} saved.`);
         }
         var data = {};
         data['form'] = profile.toForm();
@@ -147,14 +145,15 @@ $(function() {
         if (!confirm("Delete this profile?")) {
             return;
         }
-        es.ActiveObject.delete();
-        bagItProfileShowList();
+        var profile = es.ActiveObject.delete();
+        bagItProfileShowList(`Deleted profile ${profile.name}`);
     }
 
     // StorageService functions
-    function storageServiceShowList() {
+    function storageServiceShowList(message) {
         var data = {};
         data.items = es.Util.sortByName(es.DB.storageServices.store)
+        data.success = message;
         $("#container").html(templates.storageServiceList(data));
         es.ActiveObject = data.items;
     }
@@ -178,10 +177,7 @@ $(function() {
         var result = service.validate();
         if (result.isValid()) {
             service.save();
-            var data = {};
-            data.success = `Storage service ${service.name} has been saved`;
-            data.items = es.Util.sortByName(es.DB.storageServices.store);
-            $("#container").html(templates.storageServiceList(data));
+            return storageServiceShowList(`Storage service ${service.name} has been saved`);
         } else {
             var form = service.toForm();
             form.setErrors(result.errors);
@@ -197,8 +193,8 @@ $(function() {
         if (!confirm("Delete this storage service?")) {
             return;
         }
-        es.ActiveObject.delete();
-        storageServiceShowList();
+        var service = es.ActiveObject.delete();
+        storageServiceShowList(`Deleted storage service ${service.name}`);
     }
 
 
