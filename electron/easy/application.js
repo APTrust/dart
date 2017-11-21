@@ -29,7 +29,7 @@ $(function() {
     });
     $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
     $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
-    $(document).on("click", "#btnNewTagFile", newTagFileShowForm);
+    $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Clickable table rows for editing objects
@@ -254,9 +254,14 @@ $(function() {
         bagItProfileShowForm(es.ActiveObject.id);
     }
 
-    function newTagFileShowForm() {
+    function newTagFileShowForm(err) {
         var form = new es.Form();
         form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
+        if (err != null) {
+            var errs = {};
+            errs['newTagFileName'] = err;
+            form.setErrors(errs);
+        }
         var data = {};
         data['form'] = form;
         $('#modalTitle').text("New Tag File");
@@ -266,6 +271,11 @@ $(function() {
 
     function newTagFileCreate() {
         var tagFileName = $('#newTagFileName').val().trim();
+        var re = /^[A-Za-z0-9_\-\.]+\.txt$/;
+        if (!tagFileName.match(re)) {
+            err = "Tag file name must contain at least one character and end with .txt";
+            return newTagFileShowForm(err);
+        }
         tagDefinitionShowForm(null, tagFileName);
     }
 
