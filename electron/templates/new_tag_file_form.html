@@ -1,0 +1,14 @@
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = form.fields.newTagFileName }}
+
+  <div class="bottom-buttons">
+    <div class="pull-right">
+      <button type="button" id="btnNewTagFileCreate" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+</form>
+
+<script>
+  $('[data-toggle="popover"]').popover();
+</script>

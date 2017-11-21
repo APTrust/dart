@@ -29,6 +29,8 @@ $(function() {
     });
     $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
     $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
+    $(document).on("click", "#btnNewTagFile", newTagFileShowForm);
+    $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
@@ -252,6 +254,20 @@ $(function() {
         bagItProfileShowForm(es.ActiveObject.id);
     }
 
+    function newTagFileShowForm() {
+        var form = new es.Form();
+        form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
+        var data = {};
+        data['form'] = form;
+        $('#modalTitle').text("New Tag File");
+        $("#modalContent").html(templates.newTagFileForm(data));
+        $('#modal').modal();
+    }
+
+    function newTagFileCreate() {
+        var tagFileName = $('#newTagFileName').val().trim();
+        tagDefinitionShowForm(null, tagFileName);
+    }
 
     // Initialize the BagItProfile DB if it's empty.
     if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
