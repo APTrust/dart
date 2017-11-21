@@ -213,6 +213,27 @@ class BagItProfile {
         form.fields['serialization'].choices = Choice.makeList(RequirementOptions, this.serialization, true);
         form.fields['serialization'].help = "Should the bag serialized into a single file?";
 
+        // Don't allow users to edit built-in profile definitions.
+        // The can add tags and edit default tag values, but that's all.
+        if (this.isBuiltin()) {
+            var readOnly = ['acceptBagItVersion',
+                            'allowFetchTxt',
+                            'allowMiscTopLevelFiles',
+                            'allowMiscDirectories',
+                            'infoIdentifier',
+                            'infoContactEmail',
+                            'infoContactName',
+                            'infoExternalDescription',
+                            'infoVersion',
+                            'manifestsRequired',
+                            'tagManifestsRequired',
+                            'serialization'];
+            // Using disabled because user can still edit readonly fields in Electron.
+            for(var name of readOnly) {
+                form.fields[name].attrs['disabled'] = true;
+            }
+        }
+
         return form;
     }
     static fromForm() {
