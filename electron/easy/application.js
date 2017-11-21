@@ -21,6 +21,9 @@ $(function() {
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
 
     // TagDefinition Form
+    $(document).on("click", "[data-btn-type=NewTagDef]", function() {
+        tagDefinitionShowForm(null, $(this).data('tag-file'));
+    });
     $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
 
     // Clickable table rows for editing objects
@@ -38,7 +41,7 @@ $(function() {
             storageServiceShowForm(id);
             break;
          case 'TagDefinition':
-            tagDefinitionShowForm(id);
+            tagDefinitionShowForm(id, null);
             break;
          default:
             alert(`Type ${type}? WTF?`);
@@ -151,8 +154,8 @@ $(function() {
 
 
     // Tag Definition functions
-    function tagDefinitionShowForm(id) {
-        var tag = es.ActiveObject.findTagById(id);
+    function tagDefinitionShowForm(id, tagFile) {
+        var tag = es.ActiveObject.findTagById(id) || new es.TagDefinition(tagFile, 'New-Tag');
         $('#modalTitle').text(tag.tagName);
         $("#modalContent").html(templates.tagDefinitionForm(tag.toForm()));
         $('#modal').modal();
@@ -165,6 +168,12 @@ $(function() {
         var result = tagFromForm.validate();
         if (result.isValid()) {
             var existingTag = es.ActiveObject.findTagById(tagFromForm.id);
+            if (existingTag == null) {
+                // This is a new tag, so add it to the profile's
+                // list of required tags.
+                existingTag = new es.TagDefinition('', '');
+                es.ActiveObject.requiredTags.push(existingTag);
+            }
             Object.assign(existingTag, tagFromForm);
             es.ActiveObject.save();
             $('#modal').modal('hide');
