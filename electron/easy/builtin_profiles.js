@@ -4,6 +4,8 @@
 const APTrustProfileId = "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca";
 const DPNProfileId = "09c834a7-6b51-49dd-9498-b310ee3e5a6a";
 
+const ProfilesAvailable = { "APTrust Profile": APTrustProfileId, "DPN Profile": DPNProfileId };
+
 const APTrustProfile = {
     "BagIt-Profile-Info":{
         "BagIt-Profile-Identifier":"https://wiki.aptrust.org/APTrust_BagIt_Profile",
@@ -216,3 +218,4 @@ module.exports.APTrustProfile = APTrustProfile;
 module.exports.APTrustProfileId = APTrustProfileId;
 module.exports.DPNProfile = DPNProfile;
 module.exports.DPNProfileId = DPNProfileId;
+module.exports.ProfilesAvailable = ProfilesAvailable;

@@ -85,6 +85,12 @@ class BagItProfile {
         this.serialization = "optional";
         this.tagManifestsRequired = [];
 
+        // baseProfileId allows us to track whether this profile
+        // is based on a built-in. If so, we don't allow the user
+        // to modify certain elements of the profile. This will
+        // be blank for many profiles.
+        this.baseProfileId = "";
+
         // BagIt spec says these two tags in bagit.txt file
         // are always required.
         var v = new TagDefinition('bagit.txt', 'BagIt-Version');
@@ -98,13 +104,9 @@ class BagItProfile {
         e.defaultValue = "UTF-8";
         this.requiredTags.push(v);
         this.requiredTags.push(e);
-
-        // We'll lock default APTrust and DPN BagItProfiles so
-        // users can't edit anything other than default tag values.
-        this.locked = false;
     }
     isBuiltin() {
-        return (this.id == builtins.APTrustProfileId || this.id == builtins.DPNProfileId);
+        return (this.baseProfileId == builtins.APTrustProfileId || this.baseProfileId == builtins.DPNProfileId);
     }
     validate() {
         var result = new ValidationResult();
@@ -532,8 +534,10 @@ class TagDefinition {
                         'required',
                         'emptyOk',
                         'values'];
-        for (var name of readOnly) {
-            form.fields[name].attrs['disabled'] = true;
+        if (this.isBuiltIn) {
+            for (var name of readOnly) {
+                form.fields[name].attrs['disabled'] = true;
+            }
         }
 
         return form;

@@ -2,6 +2,7 @@ $(function() {
     const path = require("path");
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
+    const builtins = require(path.resolve('electron/easy/builtin_profiles'));
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
@@ -14,9 +15,10 @@ $(function() {
     $(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
 
     // BagItProfile Form
-    $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileShowForm(null); });
+    $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
     $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
+    $(document).on("click", "#btnNewBagItProfileCreate", bagItProfilePrepare);
 
     // StorageService Form
     $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
@@ -111,6 +113,36 @@ $(function() {
         es.ActiveObject = data.items;
     }
 
+    function bagItProfileChooseNew() {
+        var form = new es.Form();
+        form.fields['baseProfile'] = new es.Field("baseProfile", "baseProfile", "New Profile", "");
+        form.fields['baseProfile'].choices = [
+            new es.Choice("", "Blank", true),
+        ];
+        form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
+        var sortedKeys = Object.keys(builtins.ProfilesAvailable).sort();
+        for(var name of sortedKeys) {
+            var profileId = builtins.ProfilesAvailable[name];
+            form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
+        }
+        var data = {};
+        data.form = form;
+        $('#modalTitle').text("Create New BagIt Profile");
+        $("#modalContent").html(templates.bagItProfileNew(data));
+        $('#modal').modal();
+    }
+
+    function bagItProfilePrepare() {
+        var profileId = null;
+        var builtinId = $('#baseProfile').val().trim();
+        if (!es.Util.isEmpty(builtinId)) {
+            var profile = createProfileFromBuiltin(baseProfileId);
+            profileId = profile.Id;
+        }
+        $('#modal').modal('hide');
+        bagItProfileShowForm(profileId);
+    }
+
     function bagItProfileShowForm(id) {
         var profile = new es.BagItProfile();
         var showDeleteButton = false;
@@ -128,6 +160,8 @@ $(function() {
 
     function bagItProfileSave() {
         var profile = es.BagItProfile.fromForm();
+        console.log("Profile from form:");
+        console.log(profile);
         var result = profile.validate();
         if (result.isValid()) {
             profile.save();
@@ -201,7 +235,7 @@ $(function() {
     // Tag Definition functions
     function tagDefinitionShowForm(id, tagFile) {
         var tag = es.ActiveObject.findTagById(id);
-        var showDeleteButton = !tag.isBuiltIn;
+        var showDeleteButton = (tag != null && !tag.isBuiltIn);
         if (tag == null) {
             tag = new es.TagDefinition(tagFile, 'New-Tag');
             showDeleteButton = false;
@@ -275,25 +309,29 @@ $(function() {
         tagDefinitionShowForm(null, tagFileName);
     }
 
+    function createProfileFromBuiltin(builtinId) {
+        var profile = null;
+        if (builtinId == builtins.APTrustProfileId) {
+            profile = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
+            profile.name = "APTrust";
+            profile.description = "APTrust 2.0 default BagIt profile.";
+        } else if (builtinId == builtins.DPNProfileId) {
+            profile = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
+            profile.name = "DPN";
+            profile.description = "Digital Preservation Network default BagIt profile.";
+        }
+        profile.baseProfileId = builtinId;
+        for(var t of profile.requiredTags) {
+            t.isBuiltIn = true;
+        }
+        profile.save();
+        return profile;
+    }
+
     // Initialize the BagItProfile DB if it's empty.
     if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
-        var builtins = require(path.resolve('electron/easy/builtin_profiles'));
-        var aptrust = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
-        aptrust.id = builtins.APTrustProfileId;
-        aptrust.name = "APTrust";
-        aptrust.description = "APTrust 2.0 default BagIt profile.";
-        for(var t of aptrust.requiredTags) {
-            t.isBuiltIn = true;
-        }
-        aptrust.save();
-        var dpn = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
-        dpn.id = builtins.DPNProfileId;
-        dpn.name = "DPN";
-        dpn.description = "Digital Preservation Network default BagIt profile.";
-        for(var t of dpn.requiredTags) {
-            t.isBuiltIn = true;
-        }
-        dpn.save();
+        createProfileFromBuiltin(builtins.APTrustProfileId);
+        createProfileFromBuiltin(builtins.DPNProfileId);
     }
 
     // This is for interactive testing in the console.
