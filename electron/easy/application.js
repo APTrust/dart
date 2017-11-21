@@ -136,11 +136,11 @@ $(function() {
         var profileId = null;
         var builtinId = $('#baseProfile').val().trim();
         if (!es.Util.isEmpty(builtinId)) {
-            var profile = createProfileFromBuiltin(baseProfileId);
-            profileId = profile.Id;
+            var profile = createProfileFromBuiltin(builtinId, true);
+            profileId = profile.id;
         }
         $('#modal').modal('hide');
-        bagItProfileShowForm(profileId);
+        return bagItProfileShowForm(profileId);
     }
 
     function bagItProfileShowForm(id) {
@@ -276,7 +276,6 @@ $(function() {
             return;
         }
         var tagId = es.TagDefinition.fromForm().id;
-        console.log(tagId);
         es.ActiveObject.requiredTags = es.ActiveObject.requiredTags.filter(item => item.id != tagId);
         es.ActiveObject.save();
         $('#modal').modal('hide');
@@ -308,7 +307,7 @@ $(function() {
         tagDefinitionShowForm(null, tagFileName);
     }
 
-    function createProfileFromBuiltin(builtinId) {
+    function createProfileFromBuiltin(builtinId, tagAsCopy) {
         var profile = null;
         if (builtinId == builtins.APTrustProfileId) {
             profile = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
@@ -323,14 +322,19 @@ $(function() {
         for(var t of profile.requiredTags) {
             t.isBuiltIn = true;
         }
+        if (tagAsCopy) {
+            var timestamp = new Date().toJSON();
+            profile.name = `Copy of ${profile.name} [${timestamp}]`;
+            profile.description = `Copy of ${profile.description} [${timestamp}]`
+        }
         profile.save();
         return profile;
     }
 
     // Initialize the BagItProfile DB if it's empty.
     if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
-        createProfileFromBuiltin(builtins.APTrustProfileId);
-        createProfileFromBuiltin(builtins.DPNProfileId);
+        createProfileFromBuiltin(builtins.APTrustProfileId, false);
+        createProfileFromBuiltin(builtins.DPNProfileId, false);
     }
 
     // This is for interactive testing in the console.
