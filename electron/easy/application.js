@@ -19,6 +19,7 @@ $(function() {
     // BagItProfile Form
     $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileShowForm(null); });
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
+    $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
 
     // TagDefinition Form
     $(document).on("click", "[data-btn-type=NewTagDef]", function() {
@@ -93,12 +94,15 @@ $(function() {
 
     function bagItProfileShowForm(id) {
         var profile = new es.BagItProfile();
+        var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             profile = es.BagItProfile.find(id);
+            showDeleteButton = true;
         }
         var data = {};
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
+        data['showDeleteButton'] = showDeleteButton;
         $("#container").html(templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
@@ -117,6 +121,14 @@ $(function() {
         data['tags'] = profile.tagsGroupedByFile();
         $("#container").html(templates.bagItProfileForm(data));
         es.ActiveObject = profile;
+    }
+
+    function bagItProfileDelete() {
+        if (!confirm("Delete this profile?")) {
+            return;
+        }
+        es.ActiveObject.delete();
+        bagItProfileShowList();
     }
 
     // StorageService functions

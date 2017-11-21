@@ -118,9 +118,17 @@
 
   {{> inputHidden field = form.fields.id }}
 
-  <div class="form-group">
-    <button type="button" id="btnBagItProfileSave" class="btn btn-default">Save</button>
+  <div class="modal-buttons">
+    {{#if showDeleteButton}}
+    <div class="pull-left">
+      <button type="button" id="btnBagItProfileDelete" class="btn btn-danger">Delete</button>
+    </div>
+    {{/if}}
+    <div class="pull-right">
+      <button type="button" id="btnBagItProfileSave" class="btn btn-primary">Save</button>
+    </div>
   </div>
+
 </form>
 
 
