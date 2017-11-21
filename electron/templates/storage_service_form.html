@@ -2,27 +2,35 @@
 
 <form method="post" action="#" id="{{ id }}">
 
-  {{> inputText field = fields.name }}
+  {{> inputText field = form.fields.name }}
 
-  {{> inputText field = fields.description }}
+  {{> inputText field = form.fields.description }}
 
-  {{> inputSelect field = fields.protocol }}
+  {{> inputSelect field = form.fields.protocol }}
 
-  {{> inputText field = fields.url }}
+  {{> inputText field = form.fields.url }}
 
-  {{> inputText field = fields.bucket }}
+  {{> inputText field = form.fields.bucket }}
 
-  {{> inputText field = fields.loginName }}
+  {{> inputText field = form.fields.loginName }}
 
-  {{> inputPassword field = fields.loginPassword }}
+  {{> inputPassword field = form.fields.loginPassword }}
 
-  {{> inputText field = fields.loginExtra }}
+  {{> inputText field = form.fields.loginExtra }}
 
-  {{> inputHidden field = fields.id }}
+  {{> inputHidden field = form.fields.id }}
 
-  <div class="form-group">
-    <button type="button" id="btnStorageServiceSave" class="btn btn-default">Save</button>
+  <div class="modal-buttons">
+    {{#if showDeleteButton}}
+    <div class="pull-left">
+      <button type="button" id="btnStorageServiceDelete" class="btn btn-danger">Delete</button>
+    </div>
+    {{/if}}
+    <div class="pull-right">
+      <button type="button" id="btnStorageServiceSave" class="btn btn-primary">Save</button>
+    </div>
   </div>
+
 </form>
 
 <script>

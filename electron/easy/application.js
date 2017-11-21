@@ -13,14 +13,15 @@ $(function() {
     $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
     $(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
 
-    // StorageService Form
-    $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
-    $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
-
     // BagItProfile Form
     $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileShowForm(null); });
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
     $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
+
+    // StorageService Form
+    $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
+    $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
+    $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
 
     // TagDefinition Form
     $(document).on("click", "[data-btn-type=NewTagDef]", function() {
@@ -155,10 +156,15 @@ $(function() {
 
     function storageServiceShowForm(id) {
         var service = new es.StorageService();
+        var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             service = es.StorageService.find(id);
+            showDeleteButton = true;
         }
-        $("#container").html(templates.storageServiceForm(service.toForm()));
+        var data = {};
+        data['form'] = service.toForm();
+        data['showDeleteButton'] = showDeleteButton;
+        $("#container").html(templates.storageServiceForm(data));
         es.ActiveObject = service;
     }
 
@@ -174,9 +180,20 @@ $(function() {
         } else {
             var form = service.toForm();
             form.setErrors(result.errors);
-            $("#container").html(templates.storageServiceForm(form));
+            var data = {};
+            data['form'] = form;
+            data['showDeleteButton'] = es.StorageService.find(service.id) != null;
+            $("#container").html(templates.storageServiceForm(data));
         }
         es.ActiveObject = service;
+    }
+
+    function storageServiceDelete() {
+        if (!confirm("Delete this storage service?")) {
+            return;
+        }
+        es.ActiveObject.delete();
+        storageServiceShowList();
     }
 
 
