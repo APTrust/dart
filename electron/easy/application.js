@@ -201,7 +201,7 @@ $(function() {
     // Tag Definition functions
     function tagDefinitionShowForm(id, tagFile) {
         var tag = es.ActiveObject.findTagById(id);
-        var showDeleteButton = true;
+        var showDeleteButton = !tag.isBuiltIn;
         if (tag == null) {
             tag = new es.TagDefinition(tagFile, 'New-Tag');
             showDeleteButton = false;
@@ -282,11 +282,17 @@ $(function() {
         aptrust.id = builtins.APTrustProfileId;
         aptrust.name = "APTrust";
         aptrust.description = "APTrust 2.0 default BagIt profile.";
+        for(var t of aptrust.requiredTags) {
+            t.isBuiltIn = true;
+        }
         aptrust.save();
         var dpn = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
         dpn.id = builtins.DPNProfileId;
         dpn.name = "DPN";
         dpn.description = "Digital Preservation Network default BagIt profile.";
+        for(var t of dpn.requiredTags) {
+            t.isBuiltIn = true;
+        }
         dpn.save();
     }
 

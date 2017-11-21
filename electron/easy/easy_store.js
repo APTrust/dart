@@ -224,6 +224,7 @@ class BagItProfile {
                             'infoContactEmail',
                             'infoContactName',
                             'infoExternalDescription',
+                            'infoSourceOrganization',
                             'infoVersion',
                             'manifestsRequired',
                             'tagManifestsRequired',
@@ -499,6 +500,7 @@ class TagDefinition {
         this.emptyOk = true;
         this.values = [];
         this.defaultValue = "";
+        this.isBuiltIn = false;
     }
     validate() {
         var result = new ValidationResult();
@@ -522,6 +524,18 @@ class TagDefinition {
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
         form.fields['defaultValue'].help = "Optional default value for this field. If this tag has a list of allowed values, the default value must be one of the allowed values.";
         form.fields['tagDefinitionId'] = new Field('tagDefinitionId', 'tagDefinitionId', 'tagDefinitionId', this.id)
+
+        // Don't let users edit anything but default value if this
+        // tag definition is a native part of a built-in form.
+        var readOnly = ['tagFile',
+                        'tagName',
+                        'required',
+                        'emptyOk',
+                        'values'];
+        for (var name of readOnly) {
+            form.fields[name].attrs['disabled'] = true;
+        }
+
         return form;
     }
     static fromForm() {
