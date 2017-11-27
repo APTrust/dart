@@ -2,12 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 const macJunkFile = /._DS_Store$|.DS_Store$/i;
+const dotFile = /\/\.[^\/]+$|\\\.[^\\]+$/;
+const dotKeepFile = /\/\.keep$|\\\.keep$/i;
+
 var kb = 1024;
 var mb = 1024 * kb;
 var gb = 1024 * mb;
 var tb = 1024 * gb;
 let filesAdded = {};
-
+let options = { 'skipHiddenFiles': false };
 
 function getFiles() {
     return (Object.keys(filesAdded).sort());
@@ -74,7 +77,11 @@ function statPath(err, stats, filepath, row) {
 		return
 	}
     if (filepath.match(macJunkFile)) {
-        console.log("Ignoring junk file " + filepath);
+        console.log("Ignoring Mac junk file " + filepath);
+        return
+    }
+    if (options.skipHiddenFiles && filepath.match(dotFile) && !filepath.match(dotKeepFile)) {
+        console.log("Ignoring hidden file " + filepath);
         return
     }
 	if (filesAdded[filepath] == true) {
@@ -191,3 +198,4 @@ module.exports.addFile = addFile;
 module.exports.clearFiles = clearFiles;
 module.exports.deleteFile = deleteFile;
 module.exports.getFiles = getFiles;
+module.exports.options = options;
