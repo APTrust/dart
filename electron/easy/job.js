@@ -10,14 +10,33 @@ var mb = 1024 * kb;
 var gb = 1024 * mb;
 var tb = 1024 * gb;
 let filesAdded = {};
-let options = { 'skipHiddenFiles': false };
+let options = { 'skipDSStore': true, 'skipHiddenFiles': false, 'skipDotKeep': false };
 
 function getFiles() {
     return (Object.keys(filesAdded).sort());
 }
 
+function getFileOptions() {
+    return options;
+}
+
 function clearFiles() {
     filesAdded = {};
+}
+
+function resetFileOptions() {
+    options = { 'skipDSStore': true, 'skipHiddenFiles': false, 'skipDotKeep': false };
+}
+
+function fileOptionsChanged() {
+    options.skipDSStore = $('#filesSkipDSStore').prop('checked');
+    options.skipHiddenFiles = $('#filesSkipHidden').prop('checked');
+    options.skipDotKeep = $('#filesSkipDotKeep').prop('checked');
+    $.each($("tr[data-object-type='File']"), function(index, row) {
+        var filepath = $(row).data('filepath');
+        deleteFile($(row).find('td').first());
+        addFile(filepath);
+    });
 }
 
 function addFile(filepath) {
@@ -76,12 +95,23 @@ function statPath(err, stats, filepath, row) {
 		console.log(err)
 		return
 	}
-    if (filepath.match(macJunkFile)) {
-        console.log("Ignoring Mac junk file " + filepath);
+    var isMacJunk = filepath.match(macJunkFile);
+    var isHidden = filepath.match(dotFile);
+    var isDotKeep = filepath.match(dotKeepFile);
+    if (options.skipDSStore && isMacJunk) {
+        //console.log("Ignoring Mac junk file " + filepath);
         return
     }
-    if (options.skipHiddenFiles && filepath.match(dotFile) && !filepath.match(dotKeepFile)) {
-        console.log("Ignoring hidden file " + filepath);
+    if (options.skipHiddenFiles && isHidden && !isMacJunk && !isDotKeep) {
+        //console.log("Ignoring hidden file " + filepath);
+        return
+    }
+    if (options.skipDotKeep && !isMacJunk && (isHidden || isDotKeep)) {
+        if (isDotKeep) {
+            //console.log("Ignoring .keep file " + filepath);
+        } else {
+            //console.log("Ignoring hidden file " + filepath);
+        }
         return
     }
 	if (filesAdded[filepath] == true) {
@@ -197,5 +227,7 @@ function getFolderIcon(filepath) {
 module.exports.addFile = addFile;
 module.exports.clearFiles = clearFiles;
 module.exports.deleteFile = deleteFile;
+module.exports.fileOptionsChanged = fileOptionsChanged;
 module.exports.getFiles = getFiles;
-module.exports.options = options;
+module.exports.getFileOptions = getFileOptions;
+module.exports.resetFileOptions = resetFileOptions;

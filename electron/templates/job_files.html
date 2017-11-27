@@ -30,7 +30,7 @@
       <div class="checkbox">
         <label data-toggle="popover" data-trigger="hover" title="DS_Store Files"
                data-content="Check this option if you want to skip hidden .DS_Store files when packaging and uploading files. Hint: you usually want this to be checked.">
-          <input type="checkbox" id="filesSkipDSStore" checked/>
+          <input type="checkbox" id="filesSkipDSStore" name="filesOptionDSStore" checked/>
           Skip .DS_Store files.
         </label>
       </div>
@@ -69,4 +69,6 @@
 
 <script>
   $('[data-toggle="popover"]').popover();
+  $("input[name=filesOptionDSStore]").change(es.job.fileOptionsChanged);
+  $("input[name=filesOptionHidden]").change(es.job.fileOptionsChanged);
 </script>
