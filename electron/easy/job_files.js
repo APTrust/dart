@@ -4,21 +4,31 @@ var kb = 1024;
 var mb = 1024 * kb;
 var gb = 1024 * mb;
 var tb = 1024 * gb;
-var filesAdded = {};
+let filesAdded = {};
 
 
 function getFiles() {
     return Array.sort(Object.keys(filesAdded));
 }
 
+function clearFiles() {
+    filesAdded = {};
+}
+
 function addFile(filepath) {
 	$('#filesPanel').show()
+	if (filesAdded[filepath] == true) {
+		$('#fileWarning').html(filepath + ' has already been added')
+        $('#fileWarningContainer').show(100);
+        console.log("Returning from addFile on " + filepath);
+		return
+	}
 	var stat = fs.statSync(filepath)
 	var row = $(getTableRow(filepath, stat.isDirectory()))
 	row.insertBefore('#fileTotals')
-	filesAdded[filepath] = true
 	fs.stat(filepath, function(err, stats) {
-		statPath(err, stats, filepath, row)
+		statPath(err, stats, filepath, row);
+        filesAdded[filepath] = true;
 	});
 };
 
@@ -62,15 +72,18 @@ function statPath(err, stats, filepath, row) {
 		console.log(err)
 		return
 	}
+	if (filesAdded[filepath] == true) {
+		$('#fileWarning').html(filepath + ' has already been added')
+        $('#fileWarningContainer').show(100);
+        console.log('Returning from statPath on ' + filepath);
+		return
+	}
 	if (stats.isFile()) {
-		if (filesAdded[filepath] == true) {
-			//console.log(filepath + ' has already been added')
-			return
-		}
 		updateFileStats(stats, row)
 		filesAdded[filepath] = true
 	} else if (stats.isDirectory()) {
 		recurseIntoDir(filepath, row)
+        filesAdded[filepath] == true;
 	} else {
 		console.log("Other -> " + filepath)
 	}
@@ -171,5 +184,6 @@ function getFolderIcon(filepath) {
 }
 
 module.exports.addFile = addFile;
+module.exports.clearFiles = clearFiles;
 module.exports.deleteFile = deleteFile;
 module.exports.getFiles = getFiles;

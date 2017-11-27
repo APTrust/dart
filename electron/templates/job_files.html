@@ -2,7 +2,7 @@
   <h2>Files</h2>
   <p>Drop files into this window.</p>
 
-  <div class="panel panel-default" id="filesPanel">
+  <div class="panel panel-default" id="filesPanel" style="display:none;">
 	<div class="panel-body">
 	  <table class="table table-hover" id="filesTable">
 		<thead class="thead-inverse">
@@ -24,6 +24,12 @@
 		  </tr>
 		</tbody>
 	  </table>
+
+      <div class="alert alert-danger" role="alert" id="fileWarningContainer" style="display: none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        <div id="fileWarning"></div>
+      </div>
+
 	</div>
   </div>
 </div>

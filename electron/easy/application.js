@@ -364,6 +364,7 @@ $(function() {
 
     // Job Functions
     function jobNew() {
+        jobFiles.clearFiles();
         $("#container").html(templates.jobFiles());
         es.ActiveObject = null;
     };
@@ -376,5 +377,6 @@ $(function() {
 
     // This is for interactive testing in the console.
     window.es = es;
+    window.job = jobFiles;
     window.templates = templates;
 });
