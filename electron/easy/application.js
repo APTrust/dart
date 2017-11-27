@@ -3,7 +3,7 @@ $(function() {
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
     const builtins = require(path.resolve('electron/easy/builtin_profiles'));
-    const jobFiles = require(path.resolve('electron/easy/job_files'));
+    const job = require(path.resolve('electron/easy/job'));
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
@@ -55,13 +55,13 @@ $(function() {
             return;
         }
         for (let f of e.dataTransfer.files) {
-            jobFiles.addFile(f.path)
+            job.addFile(f.path)
         }
         return false;
     };
 
      $(document).on('click', '.deleteCell', function(){
- 	    jobFiles.deleteFile(this);
+ 	    job.deleteFile(this);
      });
 
 
@@ -364,7 +364,7 @@ $(function() {
 
     // Job Functions
     function jobNew() {
-        jobFiles.clearFiles();
+        job.clearFiles();
         $("#container").html(templates.jobFiles());
         es.ActiveObject = null;
     };
@@ -377,6 +377,6 @@ $(function() {
 
     // This is for interactive testing in the console.
     window.es = es;
-    window.job = jobFiles;
+    window.job = job;
     window.templates = templates;
 });

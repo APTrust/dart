@@ -8,7 +8,7 @@ let filesAdded = {};
 
 
 function getFiles() {
-    return Array.sort(Object.keys(filesAdded));
+    return (Object.keys(filesAdded).sort());
 }
 
 function clearFiles() {
@@ -34,7 +34,7 @@ function addFile(filepath) {
 
 function deleteFile(cell) {
     var row = $(cell).parent('tr')
-    var filepath = $(row).prop('id')
+    var filepath = $(row).data('filepath')
 	var dirCountCell = $(row).children('.dirCount').first()
 	var fileCountCell = $(row).children('.fileCount').first()
 	var sizeCell = $(row).children('.fileSize').first()
@@ -44,10 +44,12 @@ function deleteFile(cell) {
 
 	for (var file in filesAdded) {
 		if (file.indexOf(filepath) == 0) {
-			delete filesAdded[file]
+            console.log("Deleting " + file);
+			delete filesAdded[file];
 		}
 	}
-	delete filesAdded[filepath]
+    console.log("Deleting " + filepath);
+	delete filesAdded[filepath];
 
 	var totalDirCountCell = $('#totalDirCount')
 	var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
@@ -83,7 +85,7 @@ function statPath(err, stats, filepath, row) {
 		filesAdded[filepath] = true
 	} else if (stats.isDirectory()) {
 		recurseIntoDir(filepath, row)
-        filesAdded[filepath] == true;
+        filesAdded[filepath] = true;
 	} else {
 		console.log("Other -> " + filepath)
 	}
