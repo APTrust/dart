@@ -3,11 +3,13 @@ $(function() {
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
     const builtins = require(path.resolve('electron/easy/builtin_profiles'));
+    const jobFiles = require(path.resolve('electron/easy/job_files'));
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
+    $("#menuJobNew").click(jobNew);
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -34,6 +36,35 @@ $(function() {
     $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
+    document.ondragover = () => {
+        return false;
+    };
+
+    document.ondragleave = () => {
+        return false;
+    };
+
+    document.ondragend = () => {
+        return false;
+    };
+
+    document.ondrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (document.getElementById('filesPanel') == null) {
+            return;
+        }
+        for (let f of e.dataTransfer.files) {
+            jobFiles.addFile(f.path)
+        }
+        return false;
+    };
+
+     $(document).on('click', '.deleteCell', function(){
+ 	    jobFiles.deleteFile(this);
+     });
+
+
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
 		var id = $(this).data("object-id");
@@ -52,7 +83,7 @@ $(function() {
             tagDefinitionShowForm(id, null);
             break;
          default:
-            alert(`Type ${type}? WTF?`);
+            console.log(`Clickable row unknown type: ${type}?`);
         }
 	});
 
@@ -330,6 +361,12 @@ $(function() {
         profile.save();
         return profile;
     }
+
+    // Job Functions
+    function jobNew() {
+        $("#container").html(templates.jobFiles());
+        es.ActiveObject = null;
+    };
 
     // Initialize the BagItProfile DB if it's empty.
     if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
