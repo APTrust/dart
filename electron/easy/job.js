@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+
+const macJunkFile = /._DS_Store$|.DS_Store$/i;
 var kb = 1024;
 var mb = 1024 * kb;
 var gb = 1024 * mb;
@@ -20,7 +22,6 @@ function addFile(filepath) {
 	if (filesAdded[filepath] == true) {
 		$('#fileWarning').html(filepath + ' has already been added')
         $('#fileWarningContainer').show(100);
-        console.log("Returning from addFile on " + filepath);
 		return
 	}
 	var stat = fs.statSync(filepath)
@@ -44,11 +45,9 @@ function deleteFile(cell) {
 
 	for (var file in filesAdded) {
 		if (file.indexOf(filepath) == 0) {
-            console.log("Deleting " + file);
 			delete filesAdded[file];
 		}
 	}
-    console.log("Deleting " + filepath);
 	delete filesAdded[filepath];
 
 	var totalDirCountCell = $('#totalDirCount')
@@ -74,10 +73,13 @@ function statPath(err, stats, filepath, row) {
 		console.log(err)
 		return
 	}
+    if (filepath.match(macJunkFile)) {
+        console.log("Ignoring junk file " + filepath);
+        return
+    }
 	if (filesAdded[filepath] == true) {
 		$('#fileWarning').html(filepath + ' has already been added')
         $('#fileWarningContainer').show(100);
-        console.log('Returning from statPath on ' + filepath);
 		return
 	}
 	if (stats.isFile()) {
