@@ -25,8 +25,8 @@ func TestNewFileSummaryFromPath(t *testing.T) {
 
 	assert.Equal(t, absPath, fs.AbsPath)
 	assert.Empty(t, fs.RelPath)
-	assert.EqualValues(t, int64(0644), fs.Mode)
-	assert.Equal(t, int64(40960), fs.Size)
+	assert.EqualValues(t, uint32(0644), fs.Mode)
+	assert.Equal(t, int64(40960), int64(fs.Size))
 	assert.NotEmpty(t, fs.ModTime)
 	assert.False(t, fs.IsDir)
 	assert.True(t, fs.IsRegularFile)

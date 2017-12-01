@@ -332,7 +332,7 @@ func (bagger *Bagger) hasRequiredTags() bool {
 func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 	if fileutil.FileExists(bagger.bag.Path) {
 		if overwrite {
-			if fileutil.LooksSafeToDelete(bagger.bag.Path, 12, 3) {
+			if fileutil.LooksSafeToDelete(bagger.bag.Path, 14, 2) {
 				err := os.RemoveAll(bagger.bag.Path)
 				if err != nil {
 					bagger.addError("Error removing existing %s", bagger.bag.Path, err.Error())
