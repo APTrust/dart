@@ -1,9 +1,4 @@
 *~
 /bin
-*.db
-# Compiles binaries
-/server/server
+# Compiled binaries
 apps/easy_store_setup/easy_store_setup
-apps/apt_db_migrate/apt_db_migrate
-*/easy-store-db.json
-easy-store.db.orig
