@@ -3,6 +3,16 @@
 Easy Store will provide a simple way of creating BagIt files and shipping them
 off to various back ends.
 
+# Running the UI on Your Dev Machine
+
+1. Install the latest [Node.js](https://nodejs.org/en/download/), which includes npm,
+   the Node Package Manager.
+2. Install Electron using a [Mac or Windows installer](https://electronjs.org/releases),
+   or if you're running linux, [install electron using npm](https://www.npmjs.com/package/electron).
+3. Clone this repository, if you haven't already.
+4. At the command line, cd into this repository's top-level directory
+5. Run the script [electron/run.rb](electron/run.rb).
+
 # APTrust BagIt
 
 This is the APTrust library for creating and validating bags that conform to
