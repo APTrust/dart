@@ -94,7 +94,7 @@ $(function() {
     // App Setting functions
     function appSettingShowList(message) {
         var data = {};
-        data.items = es.Util.sortByName(es.DB.appSettings.store);
+        data.items = es.Util.sortByName(es.AppSetting.store());
         data.success = message;
         $("#container").html(templates.appSettingList(data));
         es.ActiveObject = data.items;
@@ -142,7 +142,7 @@ $(function() {
     // BagItProfile functions
     function bagItProfileShowList(message) {
         var data = {};
-        data.items = es.Util.sortByName(es.DB.bagItProfiles.store)
+        data.items = es.Util.sortByName(es.BagItProfile.store())
         data.success = message;
         $("#container").html(templates.bagItProfileList(data));
         es.ActiveObject = data.items;
@@ -389,7 +389,7 @@ $(function() {
     };
 
     // Initialize the BagItProfile DB if it's empty.
-    if (Object.keys(es.DB.bagItProfiles.store).length == 0) {
+    if (es.BagItProfile.storeIsEmpty()) {
         createProfileFromBuiltin(builtins.APTrustProfileId, false);
         createProfileFromBuiltin(builtins.DPNProfileId, false);
     }
