@@ -1,0 +1,22 @@
+<div id="div-files" class="jumbotron">
+  <h2>Packaging</h2>
+
+  <form>
+      {{> inputSelect field = form.fields.profile }}
+  </form>
+
+
+</div>
+
+<div class="pull-right" id="btnJobStorageDiv">
+  <a class="btn btn-primary" id="btnJobStorage" role="button">Next &gt;&gt;</a>
+</div>
+
+<div class="pull-left" id="btnJobFilesDiv">
+  <a class="btn btn-primary" id="btnJobFiles" role="button">&lt;&lt; Previous</a>
+</div>
+
+
+<script>
+  $('[data-toggle="popover"]').popover();
+</script>

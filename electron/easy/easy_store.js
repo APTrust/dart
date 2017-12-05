@@ -384,7 +384,13 @@ class Choice {
             choices.push(new Choice("", ""));
         }
         for (var item of items) {
-            choices.push(new Choice(item, item, Util.listContains(selected, item)));
+            var value = item;
+            var label = item;
+            if (typeof item == "object" && item.hasOwnProperty("id") && item.hasOwnProperty("name")) {
+                value = item.id;
+                label = item.name;
+            }
+            choices.push(new Choice(value, label, Util.listContains(selected, item)));
         }
         return choices;
     }

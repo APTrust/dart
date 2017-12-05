@@ -24,6 +24,10 @@ function clearFiles() {
     filesAdded = {};
 }
 
+function hasFiles() {
+    return Object.keys(filesAdded).length > 0;
+}
+
 function resetFileOptions() {
     options = { 'skipDSStore': true, 'skipHiddenFiles': false, 'skipDotKeep': false };
 }
@@ -53,6 +57,7 @@ function addFile(filepath) {
 		statPath(err, stats, filepath, row);
         filesAdded[filepath] = true;
 	});
+    $('#btnJobPackagingDiv').show();
 };
 
 function deleteFile(cell) {
@@ -88,6 +93,10 @@ function deleteFile(cell) {
 	totalSizeCell.text(formatFileSize(prevTotalSize - size))
 
 	$(row).remove()
+
+    if (!hasFiles()) {
+        $('#btnJobPackagingDiv').hide();
+    }
 };
 
 function statPath(err, stats, filepath, row) {
@@ -228,6 +237,7 @@ module.exports.addFile = addFile;
 module.exports.clearFiles = clearFiles;
 module.exports.deleteFile = deleteFile;
 module.exports.fileOptionsChanged = fileOptionsChanged;
+module.exports.hasFiles = hasFiles;
 module.exports.getFiles = getFiles;
 module.exports.getFileOptions = getFileOptions;
 module.exports.resetFileOptions = resetFileOptions;
