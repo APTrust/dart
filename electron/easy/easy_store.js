@@ -11,10 +11,15 @@ const DigestAlgorithms = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"]
 const RequirementOptions = ["required", "optional", "forbidden"];
 const YesNo = ["Yes", "No"];
 
+const macJunkFile = /._DS_Store$|.DS_Store$/i;
+const dotFile = /\/\.[^\/]+$|\\\.[^\\]+$/;
+const dotKeepFile = /\/\.keep$|\\\.keep$/i;
+
 const Store = require('electron-store');
 var db = {};
 db.appSettings = new Store({name: 'app-settings'});
 db.bagItProfiles = new Store({name: 'bagit-profiles'});
+db.jobs = new Store({name: 'jobs'});
 db.storageServices = new Store({name: 'storage-services'});
 
 // This will be set by application.js, based on current view.
@@ -420,6 +425,82 @@ class Form {
             var field = this.fields[name];
             field.error = errors[name];
         }
+    }
+}
+
+class Job {
+    constructor() {
+        this.id = Util.uuid4();
+        this.files = [];
+        this.bagItProfile = null;
+        this.storageServices = [];
+        this.options = new JobOptions();
+        this._fullFileList = {};
+    }
+    clearFiles() {
+        this.files = [];
+        this._fullFileList = {};
+    }
+    getFiles() {
+        return (Object.keys(this._fullFileList).sort());
+    }
+    hasFile(filepath) {
+        return this._fullFileList[filePath] || false;
+    }
+    hasFiles() {
+        return Object.keys(this._fullFileList).length > 0;
+    }
+    static filterFile(filepath, options) {
+        // Return false if this file should be filtered out of the package.
+        var isMacJunk = filepath.match(macJunkFile);
+        if (options.skipDSStore && isMacJunk) {
+            return false;
+        }
+        var isHidden = filepath.match(dotFile);
+        var isDotKeep = filepath.match(dotKeepFile);
+        if (options.skipHiddenFiles && isHidden && !isMacJunk && !isDotKeep) {
+            return false;
+        }
+        if (options.skipDotKeep && !isMacJunk && (isHidden || isDotKeep)) {
+            return false;
+        }
+        return true;
+    }
+    validate() {
+        // TODO: write me!
+        // Must include a file list, plus BagItProfile and/or StorageService.
+        // If BagItProfile is valid, make sure it's valid.
+        // If StorageService is present, make sure it's valid.
+        // Make sure the working dir where we'll build the bag exists.
+    }
+    resetFileOptions() {
+        this.options.skipDSStore = true;
+        this.options.skipHiddenFiles = false;
+        this.options.skipDotKeep = false;
+    }
+    save() {
+        return db.jobs.set(this.id, this);
+    }
+    static find(id) {
+        var job = null;
+        var obj = db.jobs.get(id);
+        if (obj != null) {
+            job = new Job();
+            Object.assign(job, obj);
+        }
+        return job;
+    }
+    delete() {
+        db.jobs.delete(this.id);
+        return this;
+    }
+}
+
+class JobOptions {
+    constructor() {
+        this.skipDSStore = true;
+        this.skipHiddenFiles = false;
+        this.skipDotKeep = false;
     }
 }
 
