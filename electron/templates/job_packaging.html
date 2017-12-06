@@ -9,7 +9,7 @@
 </div>
 
 <div class="pull-right" id="btnJobStorageDiv">
-  <a class="btn btn-primary" id="btnJobStorage" role="button">Next &gt;&gt;</a>
+  <a class="btn btn-primary" id="btnJobTagsOrStorage" role="button">Next &gt;&gt;</a>
 </div>
 
 <div class="pull-left" id="btnJobFilesDiv">
@@ -19,4 +19,28 @@
 
 <script>
   $('[data-toggle="popover"]').popover();
+  $("select[name=profile]").change(function() {
+      var job = window.es.ActiveObject;
+      var id = $("select[name=profile]").val();
+      if (id == "") {
+        job.bagItProfile = null;
+      } else {
+        job.bagItProfile = window.es.BagItProfile.find(id);
+      }
+  });
+
+  $("#btnJobFiles").click(function() {
+      es.ViewCache['jobPackaging'] = $("#container").html();
+      var job = es.ActiveObject;
+      $("#container").html(es.ViewCache['jobFiles']);
+  });
+
+  $("#btnJobTagsOrStorage").click(function() {
+      var job = es.ActiveObject;
+      if (job.bagItProfile == null) {
+          // Show storage options
+      } else {
+          // Show tag editor
+      }
+  });
 </script>

@@ -17,10 +17,12 @@ const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
 
 // This will be set by application.js, based on current view.
-var activeObject = null;
+var ActiveObject = null;
 
+// Cache some HTML views for navigating back/forward
+var ViewCache = {};
 
-module.exports.ActiveObject = activeObject;
+module.exports.ActiveObject = ActiveObject;
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
@@ -33,3 +35,4 @@ module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
 module.exports.Util = Util;
 module.exports.ValidationResult = ValidationResult;
+module.exports.ViewCache = ViewCache;

@@ -77,6 +77,22 @@ module.exports = class Job {
         this.options.skipDotKeep = false;
     }
 
+    toPackagingForm() {
+        var availableProfiles = es.Util.sortByName(es.BagItProfile.getStore())
+        var profileId = null;
+        if (this.bagItProfile != null) {
+            profileId = this.bagItProfile.id;
+        }
+        var form = new es.Form();
+        form.fields['profile'] = new es.Field("profile", "profile", "Packaging", "");
+        form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
+        var choices = es.Choice.makeList(availableProfiles, profileId, true);
+        choices[0].value = "";
+        choices[0].label = "None";
+        form.fields['profile'].choices = choices;
+        return form;
+    }
+
     save() {
         return db.set(this.id, this);
     }

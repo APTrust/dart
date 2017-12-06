@@ -24,7 +24,7 @@ module.exports = class Choice {
                 value = item.id;
                 label = item.name;
             }
-            choices.push(new Choice(value, label, Util.listContains(selected, item)));
+            choices.push(new Choice(value, label, Util.listContains(selected, value)));
         }
         return choices;
     }

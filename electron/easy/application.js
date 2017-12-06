@@ -378,16 +378,10 @@ $(function() {
     };
 
     function jobShowPackaging() {
-        var availableProfiles = es.Util.sortByName(es.BagItProfile.getStore())
-        var form = new es.Form();
-        form.fields['profile'] = new es.Field("profile", "profile", "Packaging", "");
-        form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
-        var choices = es.Choice.makeList(availableProfiles, "", true);
-        choices[0].value = "";
-        choices[0].label = "None";
-        form.fields['profile'].choices = choices;
+        var job = es.ActiveObject;
         var data = {};
-        data.form = form;
+        data.form = job.toPackagingForm();
+        es.ViewCache['jobFiles'] = $("#container").html();
         $("#container").html(templates.jobPackaging(data));
     };
 
