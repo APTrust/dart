@@ -48,8 +48,9 @@ module.exports = class BagItProfile {
         e.defaultValue = "UTF-8";
         this.requiredTags.push(v);
         this.requiredTags.push(e);
-
-        this.objectType == 'BagItProfile';
+    }
+    objectType() {
+        return 'BagItProfile';
     }
     isBuiltin() {
         return (this.baseProfileId == builtins.APTrustProfileId || this.baseProfileId == builtins.DPNProfileId);

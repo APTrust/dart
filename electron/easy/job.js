@@ -31,7 +31,9 @@ module.exports = class Job {
         this.storageServices = [];
         this.options = new JobOptions();
         this._fullFileList = {};
-        this.objectType == 'Job';
+    }
+    objectType() {
+        return 'Job';
     }
     clearFiles() {
         this.files = [];
@@ -233,6 +235,9 @@ class JobOptions {
         this.skipDSStore = true;
         this.skipHiddenFiles = false;
         this.skipDotKeep = false;
+    }
+    objectType() {
+        return 'JobOptions';
     }
 }
 

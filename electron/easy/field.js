@@ -9,4 +9,7 @@ module.exports = class Field {
         this.cssClasses = [];
         this.attrs = {}
     }
+    objectType() {
+        return 'Field';
+    }
 }

@@ -4,6 +4,9 @@ module.exports = class Form {
         this.fields = {};
         this.inlineForms = [];
     }
+    objectType() {
+        return 'Form';
+    }
     setErrors(errors) {
         for (var name of Object.keys(this.fields)) {
             var field = this.fields[name];

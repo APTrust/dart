@@ -7,6 +7,9 @@ module.exports = class Choice {
         this.label = label;
         this.selected = selected || false;
     }
+    objectType() {
+        return 'Choice';
+    }
     static makeList(items, selected, includeEmptyFirstOption) {
         if (!Array.isArray(selected)) {
             var selValue = selected;

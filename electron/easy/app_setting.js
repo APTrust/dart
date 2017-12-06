@@ -13,7 +13,9 @@ module.exports = class AppSetting {
         this.id = Util.uuid4();
         this.name = name;
         this.value = value;
-        this.objectType == 'AppSetting';
+    }
+    objectType() {
+        return 'AppSetting';
     }
     validate() {
         var result = new ValidationResult();

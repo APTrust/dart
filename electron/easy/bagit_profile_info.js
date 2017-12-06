@@ -7,4 +7,7 @@ module.exports = class BagItProfileInfo {
         this.sourceOrganization = "";
         this.version = "";
     }
+    objectType() {
+        return 'BagItProfileInfo';
+    }
 }

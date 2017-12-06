@@ -19,6 +19,9 @@ module.exports = class TagDefinition {
         this.userValue = "";
         this.isBuiltIn = false;
     }
+    objectType() {
+        return 'TagDefinition';
+    }
     validate() {
         var result = new ValidationResult();
         if (this.values.length > 0 && !Util.listContains(this.values, this.defaultValue)) {

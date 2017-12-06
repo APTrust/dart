@@ -20,7 +20,9 @@ module.exports = class StorageService {
         this.loginName = "";
         this.loginPassword = "";
         this.loginExtra = "";
-        this.objectType == 'StorageService';
+    }
+    objectType() {
+        return 'StorageService';
     }
     validate() {
         var result = new ValidationResult();
