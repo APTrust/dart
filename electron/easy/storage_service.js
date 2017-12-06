@@ -1,6 +1,10 @@
 const path = require('path');
+const Choice = require(path.resolve('electron/easy/choice'));
 const Const = require(path.resolve('electron/easy/constants'));
+const Field = require(path.resolve('electron/easy/field'));
+const Form = require(path.resolve('electron/easy/form'));
 const Util = require(path.resolve('electron/easy/util'));
+const ValidationResult = require(path.resolve('electron/easy/validation_result'));
 
 const Store = require('electron-store');
 var db = new Store({name: 'storage-services'});

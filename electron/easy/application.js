@@ -3,7 +3,7 @@ $(function() {
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
     const builtins = require(path.resolve('electron/easy/builtin_profiles'));
-    const job = require(path.resolve('electron/easy/job'));
+    const Job = require(path.resolve('electron/easy/job'));
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
@@ -53,18 +53,20 @@ $(function() {
     };
 
     document.ondrop = (e) => {
+        var job = es.ActiveObject;
         e.preventDefault();
         e.stopPropagation();
         if (document.getElementById('filesPanel') == null) {
             return;
         }
         for (let f of e.dataTransfer.files) {
-            job.addFile(f.path)
+            job.addFile(f.path);
         }
         return false;
     };
 
      $(document).on('click', '.deleteCell', function(){
+        var job = es.ActiveObject;
         job.deleteFile(this);
      });
 
@@ -368,10 +370,11 @@ $(function() {
 
     // Job Functions
     function jobNew() {
+        var job = new Job();
         job.clearFiles();
         job.resetFileOptions();
+        es.ActiveObject = job;
         $("#container").html(templates.jobFiles());
-        es.ActiveObject = null;
     };
 
     function jobShowPackaging() {
@@ -397,6 +400,5 @@ $(function() {
 
     // This is for interactive testing in the console.
     window.es = es;
-    window.es.job = job;
     window.templates = templates;
 });
