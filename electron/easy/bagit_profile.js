@@ -263,6 +263,11 @@ module.exports = class BagItProfile {
         p.bagItProfileInfo.sourceOrganization = obj["BagIt-Profile-Info"]["Source-Organization"];
         p.bagItProfileInfo.version = obj["BagIt-Profile-Info"]["Version"];
 
+        // Get rid of the default BagIt-Version and Tag-File-Character-Encoding
+        // required tags created by the constructor. The profile we're importing
+        // should set these as it likes.
+        p.requiredTags = [];
+
         // Copy required tag definitions to our preferred structure.
         // The BagIt profiles we're transforming don't have default values for tags.
         for (var fileName of Object.keys(obj["Tag-Files-Required"])) {
