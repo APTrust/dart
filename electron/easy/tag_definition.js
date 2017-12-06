@@ -57,6 +57,10 @@ module.exports = class TagDefinition {
                 form.fields[name].attrs['disabled'] = true;
             }
         }
+        if (this.systemMustSet()) {
+            form.fields['defaultValue'].attrs['disabled'] = true;
+            form.fields['defaultValue'].help = "You cannot set this tag value manually. The system will set it internally each time it generates a bag.";
+        }
 
         return form;
     }
@@ -70,6 +74,9 @@ module.exports = class TagDefinition {
         tagDef.defaultValue = $('#defaultValue').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
+    }
+    systemMustSet() {
+        return (this.tagName == 'Bagging-Date' || this.tagName == 'Bag-Size' || this.tagName == 'Payload-Oxum');
     }
     getValue() {
         return this.userValue || this.defaultValue;

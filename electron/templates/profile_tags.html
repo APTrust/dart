@@ -34,7 +34,8 @@
                     {{/each}}
                   </select>
                 {{ else }}
-                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control">{{ val }}</textarea>
+                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control"
+                            {{#if tag.systemMustSet}}disabled{{/if}}>{{ val }}</textarea>
                 {{/if}}
               </td>
             </tr>
