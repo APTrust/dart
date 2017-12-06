@@ -6,56 +6,55 @@ const ValidationResult = require(path.resolve('electron/easy/validation_result')
 
 
 const Store = require('electron-store');
-var db = {};
-db.appSettings = new Store({name: 'app-settings'});
+var db = new Store({name: 'app-settings'});
 
 module.exports = class AppSetting {
-    constructor(name, value) {
-        this.id = Util.uuid4();
-        this.name = name;
-        this.value = value;
-    }
-    validate() {
-        var result = new ValidationResult();
-        if (Util.isEmpty(this.id)) {
-            result.errors["id"] = "Id cannot be empty";
-        }
-        if (Util.isEmpty(this.name)) {
-            result.errors["name"] = "Name cannot be empty";
-        }
-        return result
-    }
-    toForm() {
-        var form = new Form('appSettingForm');
-        form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
-        form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
-        form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
-        return form
-    }
-    static fromForm() {
-        var name = $('#appSettingName').val().trim();
-        var value = $('#appSettingValue').val().trim();
-        var setting = new AppSetting(name, value);
-        setting.id = $('#appSettingId').val().trim();
-        return setting
-    }
-    save() {
-        return db.appSettings.set(this.id, this);
-    }
-    static find(id) {
-        var setting = null;
-        var obj = db.appSettings.get(id);
-        if (obj != null) {
-            setting = new AppSetting();
-            Object.assign(setting, obj);
-        }
-        return setting;
-    }
-    delete() {
-        db.appSettings.delete(this.id);
-        return this;
-    }
-    static store() {
-        return db.appSettings.store;
-    }
+	constructor(name, value) {
+		this.id = Util.uuid4();
+		this.name = name;
+		this.value = value;
+	}
+	validate() {
+		var result = new ValidationResult();
+		if (Util.isEmpty(this.id)) {
+			result.errors["id"] = "Id cannot be empty";
+		}
+		if (Util.isEmpty(this.name)) {
+			result.errors["name"] = "Name cannot be empty";
+		}
+		return result
+	}
+	toForm() {
+		var form = new Form('appSettingForm');
+		form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
+		form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
+		form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
+		return form
+	}
+	static fromForm() {
+		var name = $('#appSettingName').val().trim();
+		var value = $('#appSettingValue').val().trim();
+		var setting = new AppSetting(name, value);
+		setting.id = $('#appSettingId').val().trim();
+		return setting
+	}
+	save() {
+		return db.set(this.id, this);
+	}
+	static find(id) {
+		var setting = null;
+		var obj = db.get(id);
+		if (obj != null) {
+			setting = new AppSetting();
+			Object.assign(setting, obj);
+		}
+		return setting;
+	}
+	delete() {
+		db.delete(this.id);
+		return this;
+	}
+	static getStore() {
+		return db.store;
+	}
 }
