@@ -7,20 +7,13 @@ const AppSetting = require(path.resolve('electron/easy/app_setting'));
 const BagItProfile = require(path.resolve('electron/easy/bagit_profile'));
 const BagItProfileInfo = require(path.resolve('electron/easy/bagit_profile_info'));
 const Choice = require(path.resolve('electron/easy/choice'));
+const Const = require(path.resolve('electron/easy/constants'));
 const Form = require(path.resolve('electron/easy/form'));
 const Field = require(path.resolve('electron/easy/field'));
 const StorageService = require(path.resolve('electron/easy/storage_service'));
 const TagDefinition = require(path.resolve('electron/easy/tag_definition'));
 const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
-
-
-const TransferProtocols = ["ftp", "rsync", "s3", "sftp", "scp"];
-const SerializationFormats = ["gzip", "tar", "zip"];
-const BagItVersions = ["0.97"];
-const DigestAlgorithms = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"];
-const RequirementOptions = ["required", "optional", "forbidden"];
-const YesNo = ["Yes", "No"];
 
 const macJunkFile = /._DS_Store$|.DS_Store$/i;
 const dotFile = /\/\.[^\/]+$|\\\.[^\\]+$/;
@@ -120,12 +113,11 @@ module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
 module.exports.Choice = Choice;
+module.exports.Const = Const;
 module.exports.DB = db;
 module.exports.Field = Field;
 module.exports.Form = Form;
-module.exports.SerializationFormats = SerializationFormats;
 module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
-module.exports.TransferProtocols = TransferProtocols;
 module.exports.Util = Util;
 module.exports.ValidationResult = ValidationResult;
