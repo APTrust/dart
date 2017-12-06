@@ -1,8 +1,7 @@
 {{! This template is used both on the BagItProfile form and on
-    the job form. The flag allowEditTagDef is true on the
-    BagItProfile form, so that users can edit the profile's
-    tag definitions. It's false on the job form, so users can
-    edit only the tag values. --}}
+    the job form. On the BagItProfile form users can edit the
+    profile's tag definitions. It's false on the job form, so
+    users can edit only the tag values. --}}
 
 {{#each tags }}
 <div class="row">
@@ -16,15 +15,15 @@
           <thead class="thead-inverse">
             <tr>
               <th>Tag Name</th>
-              <th>{{#if ../allowEditTagDef }}Default{{/if}} Value</th>
+              <th>{{#if (eq ../tagContext "BagItProfileForm") }}Default{{/if}} Value</th>
             </tr>
           </thead>
           <tbody>
             {{#each this as |tag| }}
-            <tr {{#if ../../allowEditTagDef }}class="clickable-row"{{/if }} data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
+            <tr {{#if (eq ../../tagContext "BagItProfileForm") }}class="clickable-row"{{/if }} data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
               <td>{{ tag.tagName }}</td>
               <td>
-                {{#if ../../allowEditTagDef }}
+                {{#if (eq ../../tagContext "BagItProfileForm") }}
                   {{ tag.defaultValue }}
                 {{ else if tag.values }}
                   <select name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control">

@@ -43,7 +43,7 @@
           // Show tag editor
           var tags = job.bagItProfile.tagsGroupedByFile();
           data['tags'] = tags;
-          data['allowEditTagDef'] = false;
+          data['tagContext'] = 'Job';
           $("#container").html(templates.jobTags(data));
       }
   });

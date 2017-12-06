@@ -28,7 +28,7 @@ $(function() {
     $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
 
     // TagDefinition Form
-    $(document).on("click", "[data-btn-type=NewTagDef]", function() {
+    $(document).on("click", "[data-btn-type=NewTagDefForProfile]", function() {
         tagDefinitionShowForm(null, $(this).data('tag-file'));
     });
     $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
@@ -191,7 +191,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
-        data['allowEditTagDef'] = true;
+        data['tagContext'] = 'BagItProfileForm';
         $("#container").html(templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
