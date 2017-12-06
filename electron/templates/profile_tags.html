@@ -10,14 +10,20 @@
           <thead class="thead-inverse">
             <tr>
               <th>Tag Name</th>
-              <th>Default Value</th>
+              <th>{{#if ../allowEditTagDef }}Default{{/if}} Value</th>
             </tr>
           </thead>
           <tbody>
             {{#each this as |tag| }}
-            <tr class="clickable-row" data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
+            <tr {{#if ../../allowEditTagDef }}class="clickable-row"{{/if }} data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
               <td>{{ tag.tagName }}</td>
-              <td>{{ tag.defaultValue }}</td>
+              <td>
+                {{#if ../../allowEditTagDef }}
+                  {{ tag.defaultValue }}
+                {{ else }}
+                  <textarea name="{{ tag.tagName }}" rows="2" style="width:100%;">{{ tag.defaultValue }}</textarea>
+                {{/if}}
+              </td>
             </tr>
             {{/each }}
             <tr>
