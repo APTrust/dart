@@ -17,6 +17,7 @@ var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
 var bagItProfileNew = handlebars.compile(readFile('bagit_profile_new.html'));
 var jobFiles = handlebars.compile(readFile('job_files.html'));
 var jobPackaging = handlebars.compile(readFile('job_packaging.html'));
+var jobTags = handlebars.compile(readFile('job_tags.html'));
 var newTagFileForm = handlebars.compile(readFile('tag_file_new.html'));
 var storageServiceForm = handlebars.compile(readFile('storage_service_form.html'));
 var storageServiceList = handlebars.compile(readFile('storage_service_list.html'));
@@ -27,7 +28,8 @@ handlebars.registerPartial({
     inputPassword: readFile('input_password.html'),
     inputSelect: readFile('input_select.html'),
     inputText: readFile('input_text.html'),
-    inputTextArea: readFile('input_textarea.html')
+    inputTextArea: readFile('input_textarea.html'),
+    profileTags: readFile('profile_tags.html')
 });
 
 module.exports.appSettingForm = appSettingForm;
@@ -37,6 +39,7 @@ module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
 module.exports.jobFiles = jobFiles;
 module.exports.jobPackaging = jobPackaging;
+module.exports.jobTags = jobTags;
 module.exports.newTagFileForm = newTagFileForm;
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;

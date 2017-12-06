@@ -30,17 +30,20 @@
   });
 
   $("#btnJobFiles").click(function() {
-      es.ViewCache['jobPackaging'] = $("#container").html();
       var job = es.ActiveObject;
       $("#container").html(es.ViewCache['jobFiles']);
   });
 
   $("#btnJobTagsOrStorage").click(function() {
       var job = es.ActiveObject;
+      var data = {};
       if (job.bagItProfile == null) {
           // Show storage options
       } else {
           // Show tag editor
+          data['tags'] = job.bagItProfile.tagsGroupedByFile();
+          data['allowEditTagDef'] = false;
+          $("#container").html(templates.jobTags(data));
       }
   });
 </script>

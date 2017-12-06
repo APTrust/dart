@@ -1,0 +1,32 @@
+<div id="div-files" class="jumbotron">
+  <h2>Bagging Options</h2>
+
+  {{> profileTags }}
+
+</div>
+
+<div class="pull-right" id="btnJobStorageDiv">
+  <a class="btn btn-primary" id="btnJobStorage" role="button">Next &gt;&gt;</a>
+</div>
+
+<div class="pull-left" id="btnJobPackagingDiv">
+  <a class="btn btn-primary" id="btnJobPackaging" role="button">&lt;&lt; Previous</a>
+</div>
+
+
+<script>
+  $('[data-toggle="popover"]').popover();
+  $("#btnJobPackaging").click(function() {
+        var job = es.ActiveObject;
+        var data = {};
+        data.form = job.toPackagingForm();
+        $("#container").html(templates.jobPackaging(data));
+  });
+
+  $("#btnJobStorage").click(function() {
+      var job = es.ActiveObject;
+      var data = {};
+      // Validate required tags before going forward
+      // Show storage options
+  });
+</script>
