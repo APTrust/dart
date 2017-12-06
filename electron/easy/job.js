@@ -31,6 +31,7 @@ module.exports = class Job {
         this.storageServices = [];
         this.options = new JobOptions();
         this._fullFileList = {};
+        this.objectType == 'Job';
     }
     clearFiles() {
         this.files = [];
