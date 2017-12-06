@@ -279,6 +279,9 @@ module.exports = class BagItProfile {
                 tagDef.emptyOk = originalDef["emptyOk"] || false;
                 tagDef.values = originalDef["values"] || [];
                 tagDef.defaultValue = originalDef["defaultValue"] || null;
+                if (Array.isArray(originalDef["values"]) && originalDef["values"].length == 1) {
+                    tagDef.defaultValue = originalDef["values"][0];
+                }
                 p.requiredTags.push(tagDef);
             }
         }

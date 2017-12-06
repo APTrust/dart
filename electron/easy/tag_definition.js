@@ -43,6 +43,13 @@ module.exports = class TagDefinition {
         form.fields['values'].help = "List the legal values for this tag, one per line. Leave this field empty to allow any value.";
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
         form.fields['defaultValue'].help = "Optional default value for this field. If this tag has a list of allowed values, the default value must be one of the allowed values.";
+        if (this.values != null && this.values.length > 0) {
+            var defaultVal = "";
+            if (this.values.length == 1) {
+                defaultVal = this.values[0];
+            }
+            form.fields['defaultValue'].choices = Choice.makeList(this.values, defaultVal, true)
+        }
         form.fields['tagDefinitionId'] = new Field('tagDefinitionId', 'tagDefinitionId', 'tagDefinitionId', this.id)
 
         // Don't let users edit anything but default value if this
