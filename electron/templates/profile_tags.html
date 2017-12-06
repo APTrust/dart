@@ -27,14 +27,14 @@
                 {{#if ../../allowEditTagDef }}
                   {{ tag.defaultValue }}
                 {{ else if tag.values }}
-                  <select name="{{ tag.tagName }}" id="{{ tag.id }}">
+                  <select name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control">
                     <option value="">-- Choose --</option>
                     {{#each tag.values as |val| }}
                     <option value="{{ val }}" {{# if (eq val tag.getValue) }}selected{{/if}}>{{ val }}</option>
                     {{/each}}
                   </select>
                 {{ else }}
-                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}">{{ val }}</textarea>
+                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control">{{ val }}</textarea>
                 {{/if}}
               </td>
             </tr>
