@@ -1,8 +1,3 @@
-{{! This template is used both on the BagItProfile form and on
-    the job form. On the BagItProfile form users can edit the
-    profile's tag definitions. It's false on the job form, so
-    users can edit only the tag values. --}}
-
 {{#each tags }}
 <div class="row">
   <div class="col-md-6">
@@ -15,34 +10,20 @@
           <thead class="thead-inverse">
             <tr>
               <th>Tag Name</th>
-              <th>{{#if (eq ../tagContext "BagItProfileForm") }}Default{{/if}} Value</th>
+              <th>Default Value</th>
             </tr>
           </thead>
           <tbody>
             {{#each this as |tag| }}
-            <tr {{#if (eq ../../tagContext "BagItProfileForm") }}class="clickable-row"{{/if }} data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
+            <tr class="clickable-row" data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
               <td>{{ tag.tagName }}</td>
-              <td>
-                {{#if (eq ../../tagContext "BagItProfileForm") }}
-                  {{ tag.defaultValue }}
-                {{ else if tag.values }}
-                  <select name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control">
-                    <option value="">-- Choose --</option>
-                    {{#each tag.values as |val| }}
-                    <option value="{{ val }}" {{# if (eq val tag.getValue) }}selected{{/if}}>{{ val }}</option>
-                    {{/each}}
-                  </select>
-                {{ else }}
-                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}" class="form-control"
-                            {{#if tag.systemMustSet}}disabled{{/if}}>{{ val }}</textarea>
-                {{/if}}
-              </td>
+              <td>{{ tag.defaultValue }}</td>
             </tr>
             {{/each }}
             <tr>
               <td></td>
               <td><div class="pull-right">
-                  <a class="btn btn-primary btn-xs" data-btn-type="NewTagDef" data-tag-file="{{ @key }}" role="button">+</a>
+                  <a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForProfile" data-tag-file="{{ @key }}" role="button">+</a>
                 </div>
               </td>
             </tr>

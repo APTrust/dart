@@ -75,6 +75,17 @@ module.exports = class TagDefinition {
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
     }
+    toFieldForJobForm() {
+        var field = new Field(this.id, this.tagName, this.tagName, this.getValue());
+        if (this.values) {
+            field.choices = Choice.makeList(this.values, this.getValue(), true);
+        }
+        if (this.systemMustSet()) {
+            field.help = "The system will set this field's value when it creates the bag.";
+            field.attrs['disabled'] = true;
+        }
+        return field;
+    }
     systemMustSet() {
         return (this.tagName == 'Bagging-Date' || this.tagName == 'Bag-Size' || this.tagName == 'Payload-Oxum');
     }

@@ -1,7 +1,29 @@
 <div id="div-files" class="jumbotron">
   <h2>Bagging Options</h2>
 
-  {{> profileTags }}
+<form>
+{{#each tags }}
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">Tags in {{ @key }}</a></h3>
+      </div>
+      <div class="panel-body panel-collapse in" id="tags{{ @index }}">
+        {{#each this as |tag| }}
+          {{#if tag.values}}
+            {{> inputSelect field = (jobFormTagField tag) }}
+          {{else}}
+            {{> inputTextArea field = (jobFormTagField tag) }}
+          {{/if}}
+        {{/each}}
+        <div class="pull-right"><a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForJob" data-tag-file="{{ @key }}" role="button">+</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/each}}
+</form>
 
 </div>
 

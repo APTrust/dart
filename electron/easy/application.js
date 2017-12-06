@@ -191,7 +191,6 @@ $(function() {
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
-        data['tagContext'] = 'BagItProfileForm';
         $("#container").html(templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
