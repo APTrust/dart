@@ -16,6 +16,7 @@ module.exports = class TagDefinition {
         this.emptyOk = true;
         this.values = [];
         this.defaultValue = "";
+        this.userValue = "";
         this.isBuiltIn = false;
     }
     validate() {
@@ -66,5 +67,8 @@ module.exports = class TagDefinition {
         tagDef.defaultValue = $('#defaultValue').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
+    }
+    getValue() {
+        return this.userValue || this.defaultValue;
     }
 }

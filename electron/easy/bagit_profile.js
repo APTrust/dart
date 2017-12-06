@@ -276,6 +276,14 @@ module.exports = class BagItProfile {
         }
         return p;
     }
+    setTagValuesFromJobForm() {
+        var textareas = $('textarea [data-for=tagValue]');
+        for (var t in textareas) {
+            var tagId = t.attr('id');
+            var tag = this.findTagById(tagId);
+            tag.userValue = t.val();
+        }
+    }
     save() {
         return db.set(this.id, this);
     }

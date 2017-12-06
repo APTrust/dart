@@ -41,7 +41,8 @@
           // Show storage options
       } else {
           // Show tag editor
-          data['tags'] = job.bagItProfile.tagsGroupedByFile();
+          var tags = job.bagItProfile.tagsGroupedByFile();
+          data['tags'] = tags;
           data['allowEditTagDef'] = false;
           $("#container").html(templates.jobTags(data));
       }

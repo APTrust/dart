@@ -32,6 +32,10 @@ handlebars.registerPartial({
     profileTags: readFile('profile_tags.html')
 });
 
+handlebars.registerHelper('eq', function(a, b) {
+  return a == b;
+});
+
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
 module.exports.bagItProfileForm = bagItProfileForm;

@@ -1,3 +1,9 @@
+{{! This template is used both on the BagItProfile form and on
+    the job form. The flag allowEditTagDef is true on the
+    BagItProfile form, so that users can edit the profile's
+    tag definitions. It's false on the job form, so users can
+    edit only the tag values. --}}
+
 {{#each tags }}
 <div class="row">
   <div class="col-md-6">
@@ -20,8 +26,15 @@
               <td>
                 {{#if ../../allowEditTagDef }}
                   {{ tag.defaultValue }}
+                {{ else if tag.values }}
+                  <select name="{{ tag.tagName }}" id="{{ tag.id }}">
+                    <option value="">-- Choose --</option>
+                    {{#each tag.values as |val| }}
+                    <option value="{{ val }}" {{# if (eq val tag.getValue) }}selected{{/if}}>{{ val }}</option>
+                    {{/each}}
+                  </select>
                 {{ else }}
-                  <textarea name="{{ tag.tagName }}" rows="2" style="width:100%;">{{ tag.defaultValue }}</textarea>
+                  <textarea name="{{ tag.tagName }}" id="{{ tag.id }}">{{ val }}</textarea>
                 {{/if}}
               </td>
             </tr>
@@ -29,7 +42,7 @@
             <tr>
               <td></td>
               <td><div class="pull-right">
-                  <a class="btn btn-primary btn-xs" data-btn-type="NewTagDef" data-tag-file="{{ @key }}" role="button">New</a>
+                  <a class="btn btn-primary btn-xs" data-btn-type="NewTagDef" data-tag-file="{{ @key }}" role="button">+</a>
                 </div>
               </td>
             </tr>
