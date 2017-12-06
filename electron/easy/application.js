@@ -38,6 +38,9 @@ $(function() {
 
     // Jobs
     $(document).on("click", "#btnJobPackaging", jobShowPackaging);
+    $(document).on("click", "[data-btn-type=NewTagDefForJob]", function() {
+        alert("Yo, man. Someone's gotta implement this feature.");
+    });
 
 
     document.ondragover = () => {
