@@ -1,7 +1,7 @@
 <div id="div-files" class="jumbotron">
   <h2>Bagging Options</h2>
 
-<form>
+<form id="jobTagsForm">
 {{#each tags }}
 <div class="row">
   <div class="col-md-6">
@@ -29,6 +29,11 @@
 {{/each}}
 </form>
 
+<div id="jobTagsMissing" class="alert alert-danger" style="display:none" role="alert">
+  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+  One or more required fields is empty.
+</div>
+
 </div>
 
 <div class="pull-right" id="btnJobStorageDiv">
@@ -42,6 +47,7 @@
 
 <script>
   $('[data-toggle="popover"]').popover();
+
   $("#btnJobPackaging").click(function() {
         var job = es.ActiveObject;
         job.save();
@@ -51,10 +57,28 @@
   });
 
   $("#btnJobStorage").click(function() {
-      var job = es.ActiveObject;
-      job.save();
-      var data = {};
-      // Validate required tags before going forward
-      // Show storage options
+      var isValid = true;
+      for (var f of $(".form-control.required")) {
+        var field = $(f);
+        var parent = field.closest("div.form-group");
+        if (field.val() == "") {
+          isValid = false;
+          parent.removeClass("has-success");
+          parent.addClass("has-error");
+        } else {
+          parent.removeClass("has-error");
+          parent.addClass("has-success");
+        }
+      }
+      if (isValid) {
+        $("#jobTagsMissing").show();
+        var job = es.ActiveObject;
+        job.save();
+        var data = {};
+        console.log("Job was saved, can go to storage service page.");
+      } else {
+        $("#jobTagsMissing").hide();
+        console.log("Form is not valid.");
+      }
   });
 </script>
