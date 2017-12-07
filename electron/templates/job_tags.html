@@ -11,11 +11,15 @@
       </div>
       <div class="panel-body panel-collapse in" id="tags{{ @index }}">
         {{#each this as |tag| }}
-          {{#if tag.values}}
-            {{> inputSelect field = (jobFormTagField tag) }}
-          {{else}}
-            {{> inputTextArea field = (jobFormTagField tag) }}
-          {{/if}}
+          {{#unless tag.systemMustSet }}
+            {{#if tag.values}}
+              {{> inputSelect field = (jobFormTagField tag) }}
+            {{else if tag.looksLikeDescriptionTag }}
+              {{> inputTextArea field = (jobFormTagField tag) }}
+            {{else}}
+              {{> inputText field = (jobFormTagField tag) }}
+            {{/if}}
+          {{/unless}}
         {{/each}}
         <div class="pull-right"><a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForJob" data-tag-file="{{ @key }}" role="button" data-toggle="popover" data-trigger="hover" title="New Tag" data-content="Add a new tag to this file." data-placement="left">+</a></div>
       </div>
@@ -40,6 +44,7 @@
   $('[data-toggle="popover"]').popover();
   $("#btnJobPackaging").click(function() {
         var job = es.ActiveObject;
+        job.save();
         var data = {};
         data.form = job.toPackagingForm();
         $("#container").html(templates.jobPackaging(data));
@@ -47,6 +52,7 @@
 
   $("#btnJobStorage").click(function() {
       var job = es.ActiveObject;
+      job.save();
       var data = {};
       // Validate required tags before going forward
       // Show storage options
