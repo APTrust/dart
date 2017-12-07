@@ -35,17 +35,19 @@ const APTrustProfile = {
         "bagit.txt":{
             "BagIt-Version":{
                 "required":true,
-                "values":["0.97"]
+                "values":["0.97"],
+                "emptyOk":false
             },
             "Tag-File-Character-Encoding":{
                 "required":true,
-                "values":["UTF-8"]
+                "values":["UTF-8"],
+                "emptyOk":false
             }
         },
         "bag-info.txt":{
             "Source-Organization":{
                 "required":true,
-                "emptyOk":true
+                "emptyOk":false
             },
             "Bag-Count":{
                 "required":false,
@@ -119,17 +121,19 @@ const DPNProfile = {
         "bagit.txt": {
             "BagIt-Version":{
                 "required":true,
-                "values":["0.97"]
+                "values":["0.97"],
+                "emptyOk":false
             },
             "Tag-File-Character-Encoding":{
                 "required":true,
-                "values":["UTF-8"]
+                "values":["UTF-8"],
+                "emptyOk":false
             }
         },
         "bag-info.txt": {
             "Source-Organization": {
                 "required": true,
-                "emptyOK": true
+                "emptyOK": false
                 },
             "Organization-Address": {
                 "required": true,
