@@ -13,7 +13,7 @@ module.exports = class TagDefinition {
         this.tagFile = tagFile;
         this.tagName = tagName;
         this.required = false;
-        this.emptyOk = true;
+        this.emptyOk = false;
         this.values = [];
         this.defaultValue = "";
         this.userValue = "";
@@ -90,6 +90,10 @@ module.exports = class TagDefinition {
         if (this.systemMustSet()) {
             field.help = "The system will set this field's value when it creates the bag.";
             field.attrs['disabled'] = true;
+        }
+        if (this.required && !this.emptyOk) {
+            field.attrs['required'] = true;
+            field.cssClasses.push('required');
         }
         return field;
     }
