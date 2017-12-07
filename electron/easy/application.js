@@ -36,8 +36,7 @@ $(function() {
     $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
-    // Jobs
-    $(document).on("click", "#btnJobPackaging", jobShowPackaging);
+
     $(document).on("click", "[data-btn-type=NewTagDefForJob]", function() {
         alert("Yo, man. Someone's gotta implement this feature.");
     });
@@ -378,14 +377,6 @@ $(function() {
         job.resetFileOptions();
         es.ActiveObject = job;
         $("#container").html(templates.jobFiles());
-    };
-
-    function jobShowPackaging() {
-        var job = es.ActiveObject;
-        var data = {};
-        data.form = job.toPackagingForm();
-        es.ViewCache['jobFiles'] = $("#container").html();
-        $("#container").html(templates.jobPackaging(data));
     };
 
     // Initialize the BagItProfile DB if it's empty.

@@ -75,4 +75,11 @@
   $('[data-toggle="popover"]').popover();
   $("input[name=filesOptionDSStore]").change(es.ActiveObject.fileOptionsChanged);
   $("input[name=filesOptionHidden]").change(es.ActiveObject.fileOptionsChanged);
+  $("#btnJobPackaging").click(function () {
+    var job = es.ActiveObject;
+    var data = {};
+    data.form = job.toPackagingForm();
+    es.ViewCache['jobFiles'] = $("#container").html();
+    $("#container").html(templates.jobPackaging(data));
+  });
 </script>
