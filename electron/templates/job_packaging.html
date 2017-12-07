@@ -31,11 +31,13 @@
 
   $("#btnJobFiles").click(function() {
       var job = es.ActiveObject;
+      job.save();
       $("#container").html(es.ViewCache['jobFiles']);
   });
 
   $("#btnJobTagsOrStorage").click(function() {
       var job = es.ActiveObject;
+      job.save();
       var data = {};
       if (job.bagItProfile == null) {
           // Show storage options

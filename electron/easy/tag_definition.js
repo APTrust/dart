@@ -99,4 +99,7 @@ module.exports = class TagDefinition {
     getValue() {
         return this.userValue || this.defaultValue;
     }
+    looksLikeDescriptionTag() {
+        return this.tagName.toLowerCase().includes("description");
+    }
 }
