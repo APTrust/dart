@@ -7,6 +7,7 @@ const Choice = require(path.resolve('electron/easy/choice'));
 const Const = require(path.resolve('electron/easy/constants'));
 const Field = require(path.resolve('electron/easy/field'));
 const Form = require(path.resolve('electron/easy/form'));
+const JobOptions = require(path.resolve('electron/easy/job_options'));
 const StorageService = require(path.resolve('electron/easy/storage_service'));
 const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
@@ -228,17 +229,6 @@ module.exports = class Job {
         });
     }
 
-}
-
-class JobOptions {
-    constructor() {
-        this.skipDSStore = true;
-        this.skipHiddenFiles = false;
-        this.skipDotKeep = false;
-    }
-    objectType() {
-        return 'JobOptions';
-    }
 }
 
 function updateFileStats(stats, row) {
