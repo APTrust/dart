@@ -27,6 +27,7 @@ var db = new Store({name: 'jobs'});
 module.exports = class Job {
     constructor() {
         this.id = Util.uuid4();
+        this.bagName = "";
         this.files = [];
         this.bagItProfile = null;
         this.storageServices = [];
@@ -88,6 +89,8 @@ module.exports = class Job {
             profileId = this.bagItProfile.id;
         }
         var form = new es.Form();
+        form.fields['bagName'] = new es.Field("bagName", "bagName", "Bag Name", this.bagName);
+        form.fields['bagName'].help = "Provide a name for the bag you want to create. You can leave this blank if you're not creating a bag.";
         form.fields['profile'] = new es.Field("profile", "profile", "Packaging", "");
         form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
         var choices = es.Choice.makeList(availableProfiles, profileId, true);

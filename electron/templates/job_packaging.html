@@ -2,9 +2,19 @@
   <h2>Packaging</h2>
 
   <form>
-      {{> inputSelect field = form.fields.profile }}
+    {{> inputText field = form.fields.bagName }}
+
+    {{> inputSelect field = form.fields.profile }}
   </form>
 
+  <div class="alert alert-info" id="divDPNBagNameRule" style="display:none">
+    DPN bag names must be version 4 UUIDs. The name has been assigned automatically.
+  </div>
+
+  <div class="alert alert-info" id="divAPTrustBagNameRule" style="display:none">
+    APTrust bag names must follow the pattern &lt;your domain&gt;.&lt;bag_name&gt;.
+    Examples: "virginia.edu.photos", "vahistory.org.CivilWarLetters_001"
+  </div>
 
 </div>
 
@@ -19,13 +29,26 @@
 
 <script>
   $('[data-toggle="popover"]').popover();
+
   $("select[name=profile]").change(function() {
       var job = window.es.ActiveObject;
+      var bagNameOnForm = $('#bagName').val();
       var id = $("select[name=profile]").val();
       if (id == "") {
         job.bagItProfile = null;
       } else {
         job.bagItProfile = window.es.BagItProfile.find(id);
+        if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
+           $("#divDPNBagNameRule").hide();
+           $("#divAPTrustBagNameRule").show();
+        } else {
+           $("#divDPNBagNameRule").show();
+           $("#divAPTrustBagNameRule").hide();
+           if (!Util.looksLikeUUID(job.bagName) && !Util.looksLikeUUID(bagNameOnForm) {
+             job.bagName = Util.uuid4();
+             $('#bagName').val(job.bagName);
+           }
+        }
       }
   });
 
@@ -37,6 +60,10 @@
 
   $("#btnJobTagsOrStorage").click(function() {
       var job = es.ActiveObject;
+      job.bagName = $('#bagName').val();
+
+      // Make sure bag name is valid before moving forward.
+
       job.save();
       var data = {};
       if (job.bagItProfile == null) {
