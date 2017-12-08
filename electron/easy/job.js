@@ -110,8 +110,7 @@ module.exports = class Job {
     toStorageServiceForm() {
         var availableServices = Util.sortByName(StorageService.getStore());
         var form = new Form();
-        form.fields['storageServices'] = new Field("storageServices", "storageServices",
-                                                   "Storage Services", this.storageServices);
+        form.fields['storageServices'] = new Field("storageServices", "storageServices", "Storage Services", this.storageServices);
         form.fields['storageServices'].choices = Choice.makeList(availableServices, this.storageServices, false);
         return form;
     }
