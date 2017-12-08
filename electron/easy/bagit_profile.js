@@ -235,8 +235,27 @@ module.exports = class BagItProfile {
             suggestion = `${setting.value}.Bag-${Date.now()}`
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             suggestion = Util.uuid4();
+        } else {
+            suggestion = `Bag-${Date.now()}`
         }
         return suggestion;
+    }
+    isValidBagName(name) {
+        if (name == null) {
+            return false;
+        }
+        var illegal = /[<>:"\/\|\?\*]/g;
+        if (this.hasRequiredTagFile("aptrust-info.txt")) {
+            var setting = AppSetting.findByName("Institution Domain")
+            var requiredPrefix = `${setting.value}.`
+            return (name.startsWith(requiredPrefix) &&
+                    name.length > requiredPrefix &&
+                    name.match(illegal) == null);
+        } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+            return Util.looksLikeUUID(name);
+        } else {
+            return name.match(illegal) == null;
+        }
     }
     tagsGroupedByFile() {
         // Returns a hash of required tags, with filename
