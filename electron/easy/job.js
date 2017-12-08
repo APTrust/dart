@@ -39,21 +39,27 @@ module.exports = class Job {
     clearFiles() {
         this.files = [];
     }
-    hasFile(filepath) {
+
+    hasFile(filepath, omitFromCheck) {
         if (!this.hasFiles) {
             return false;
         }
+        if (!Job.shouldIncludeFile(filepath, this.options)) {
+            return false;
+        }
         var included = false;
-        for (var f in this.files) {
-            if (filepath.startsWith(f) &&
-                fs.existsSync(filepath) &&
-                Job.shouldIncludeFile(filepath)) {
+        for (var f of this.files) {
+            if (f == omitFromCheck) {
+                continue;
+            }
+            if (filepath.startsWith(f)) {
                 included = true;
                 break;
             }
         }
         return included;
     }
+
     hasFiles() {
         return this.files != null && this.files.length > 0;
     }
@@ -151,24 +157,51 @@ module.exports = class Job {
 
     addFile(filepath) {
         $('#filesPanel').show()
-        if (this.hasFile(filepath)) {
+        $('#fileWarningContainer').hide();
+        if (this.hasFile(filepath, null)) {
             $('#fileWarning').html(filepath + ' has already been added')
-            $('#fileWarningContainer').show(100);
+            $('#fileWarningContainer').show();
             return
         }
         var stat = fs.statSync(filepath)
         var row = $(getTableRow(filepath, stat.isDirectory()))
         row.insertBefore('#fileTotals')
         var job = this;
+
+        // omitFromCheck - long story, but it's because node.js and ES6 promises
+        // can't work on an async function that recursively calls itself.
+        // How COULD they work, when the promise has to be attached to the
+        // last call that will complete and you have no way of determining
+        // which call that will be?
+        //
+        // Java has countdownLatch and Golang has WaitGroup for this.
+        //
+        // Anyhow, omitFromCheck tells hasFile() above to exclude the file/directory
+        // currently being added when it checks to see if the file being added
+        // has already been added.
+        var omitFromCheck = filepath;
         fs.stat(filepath, function(err, stats) {
-            job.statPath(err, stats, filepath, row);
+            job.statPath(err, stats, filepath, row, omitFromCheck);
         });
+
+        // This line is executed BEFORE the completion of the recursive calls
+        // in the fs.stat function above. Recursive async functions = time running
+        // in circles.
+        this.files.push(filepath)
+
         $('#btnJobPackagingDiv').show();
     }
 
     deleteFile(cell) {
+        $('#fileWarningContainer').hide();
         var row = $(cell).parent('tr')
         var filepath = $(row).data('filepath')
+
+        var removeIndex = this.files.indexOf(filepath);
+        if (removeIndex > -1) {
+            this.files.splice(removeIndex, 1);
+        }
+
         var dirCountCell = $(row).children('.dirCount').first()
         var fileCountCell = $(row).children('.fileCount').first()
         var sizeCell = $(row).children('.fileSize').first()
@@ -188,6 +221,10 @@ module.exports = class Job {
         totalSizeCell.data('total', (prevTotalSize - size))
         totalSizeCell.text(formatFileSize(prevTotalSize - size))
 
+        // TODO: If the deleted item's parent folder is still in the list,
+        // we should add number of files and folders, and size of the deleted
+        // item to the parent.
+
         $(row).remove()
 
         if (!this.hasFiles()) {
@@ -195,7 +232,7 @@ module.exports = class Job {
         }
     }
 
-    statPath(err, stats, filepath, row) {
+    statPath(err, stats, filepath, row, omitFromCheck) {
         if (err != null) {
             console.log(err)
             return
@@ -203,21 +240,19 @@ module.exports = class Job {
         if (Job.shouldIncludeFile(filepath, this.options) == false) {
             return;
         }
-        if (this.hasFile(filepath)) {
-            $('#fileWarning').html(filepath + ' has already been added')
-            $('#fileWarningContainer').show(100);
-            return
+        if (this.hasFile(filepath, omitFromCheck)) {
+            return;
         }
         if (stats.isFile()) {
             updateFileStats(stats, row)
         } else if (stats.isDirectory()) {
-            this.recurseIntoDir(filepath, row)
+            this.recurseIntoDir(filepath, row, omitFromCheck)
         } else {
             console.log("Other -> " + filepath)
         }
     }
 
-    recurseIntoDir(filepath, row) {
+    recurseIntoDir(filepath, row, omitFromCheck) {
         updateStats(row, '.dirCount', 1)
         var job = this;
         fs.readdir(filepath, function(err, files) {
@@ -228,7 +263,7 @@ module.exports = class Job {
             files.forEach(function (file) {
                 var fullpath = path.join(filepath, file)
                 fs.stat(fullpath, function(err, stats) {
-                    job.statPath(err, stats, fullpath, row)
+                    job.statPath(err, stats, fullpath, row, omitFromCheck)
                 });
             });
         });
