@@ -32,6 +32,10 @@ module.exports = class AppSetting {
         var form = new Form('appSettingForm');
         form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
         form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
+        if (this.isRequired()) {
+            form.fields['name'].attrs['disabled'] = true;
+            form.fields['name'].help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
+        }
         form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
         return form
     }
