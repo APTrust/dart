@@ -46,39 +46,49 @@
 
 
 <script>
-  $('[data-toggle="popover"]').popover();
+ $('[data-toggle="popover"]').popover();
 
-  $("#btnJobPackaging").click(function() {
-        var job = es.ActiveObject;
-        job.save();
-        var data = {};
-        data.form = job.toPackagingForm();
-        $("#container").html(templates.jobPackaging(data));
-  });
+ $("#btnJobPackaging").click(function() {
+     var job = es.ActiveObject;
+     job.save();
+     var data = {};
+     data.form = job.toPackagingForm();
+     $("#container").html(templates.jobPackaging(data));
+ });
 
-  $("#btnJobStorage").click(function() {
-      var isValid = true;
-      for (var f of $(".form-control.required")) {
-        var field = $(f);
-        var parent = field.closest("div.form-group");
-        if (field.val() == "") {
-          isValid = false;
-          parent.removeClass("has-success");
-          parent.addClass("has-error");
-        } else {
-          parent.removeClass("has-error");
-          parent.addClass("has-success");
-        }
-      }
-      if (isValid) {
-        $("#jobTagsMissing").show();
-        var job = es.ActiveObject;
-        job.save();
-        var data = {};
-        console.log("Job was saved, can go to storage service page.");
-      } else {
-        $("#jobTagsMissing").hide();
-        console.log("Form is not valid.");
-      }
-  });
+ $("#btnJobStorage").click(function() {
+     var isValid = true;
+     for (var f of $(".form-control.required")) {
+         var field = $(f);
+         var parent = field.closest("div.form-group");
+         if (field.val() == "") {
+             isValid = false;
+             parent.removeClass("has-success");
+             parent.addClass("has-error");
+         } else {
+             parent.removeClass("has-error");
+             parent.addClass("has-success");
+         }
+     }
+     if (isValid) {
+         $("#jobTagsMissing").show();
+         var job = es.ActiveObject;
+         job.save();
+         goToJobStorage();
+     } else {
+         $("#jobTagsMissing").hide();
+         console.log("Form is not valid.");
+     }
+ });
+
+ function goToJobStorage() {
+     var job = es.ActiveObject;
+     var data = {};
+     data.bagOrFiles = "bag";
+     if (job.bagItProfile == null) {
+         data.bagOrFiles = "files";
+     }
+     data.form = job.toStorageServiceForm();
+     $("#container").html(templates.jobStorage(data));
+ }
 </script>

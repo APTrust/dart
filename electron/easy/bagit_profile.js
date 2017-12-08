@@ -259,11 +259,11 @@ module.exports = class BagItProfile {
             var requiredPrefix = `${setting.value}.`;
             return (name.startsWith(requiredPrefix) &&
                     name.length > requiredPrefix.length &&
-                    !BagItProfile.nameLooksLegal(name));
+                    BagItProfile.nameLooksLegal(name));
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             return Util.looksLikeUUID(name);
         } else {
-            !BagItProfile.nameLooksLegal(name)
+            BagItProfile.nameLooksLegal(name)
         }
     }
     tagsGroupedByFile() {

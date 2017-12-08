@@ -90,20 +90,29 @@ module.exports = class Job {
     }
 
     toPackagingForm() {
-        var availableProfiles = es.Util.sortByName(es.BagItProfile.getStore())
+        var availableProfiles = Util.sortByName(BagItProfile.getStore());
         var profileId = null;
         if (this.bagItProfile != null) {
             profileId = this.bagItProfile.id;
         }
-        var form = new es.Form();
-        form.fields['bagName'] = new es.Field("bagName", "bagName", "Bag Name", this.bagName);
+        var form = new Form();
+        form.fields['bagName'] = new Field("bagName", "bagName", "Bag Name", this.bagName);
         form.fields['bagName'].help = "Provide a name for the bag you want to create. You can leave this blank if you're not creating a bag.";
-        form.fields['profile'] = new es.Field("profile", "profile", "Packaging", "");
+        form.fields['profile'] = new Field("profile", "profile", "Packaging", "");
         form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
-        var choices = es.Choice.makeList(availableProfiles, profileId, true);
+        var choices = Choice.makeList(availableProfiles, profileId, true);
         choices[0].value = "";
         choices[0].label = "None";
         form.fields['profile'].choices = choices;
+        return form;
+    }
+
+    toStorageServiceForm() {
+        var availableServices = Util.sortByName(StorageService.getStore());
+        var form = new Form();
+        form.fields['storageServices'] = new Field("storageServices", "storageServices",
+                                                   "Storage Services", this.storageServices);
+        form.fields['storageServices'].choices = Choice.makeList(availableServices, this.storageServices, false);
         return form;
     }
 
