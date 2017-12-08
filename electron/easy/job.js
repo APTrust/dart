@@ -32,26 +32,33 @@ module.exports = class Job {
         this.bagItProfile = null;
         this.storageServices = [];
         this.options = new JobOptions();
-        this._fullFileList = {};
     }
     objectType() {
         return 'Job';
     }
     clearFiles() {
         this.files = [];
-        this._fullFileList = {};
-    }
-    getFiles() {
-        return (Object.keys(this._fullFileList).sort());
     }
     hasFile(filepath) {
-        return this._fullFileList[filePath] || false;
+        if (!this.hasFiles) {
+            return false;
+        }
+        var included = false;
+        for (var f in this.files) {
+            if (filepath.startsWith(f) &&
+                fs.existsSync(filepath) &&
+                Job.shouldIncludeFile(filepath)) {
+                included = true;
+                break;
+            }
+        }
+        return included;
     }
     hasFiles() {
-        return Object.keys(this._fullFileList).length > 0;
+        return this.files != null && this.files.length > 0;
     }
 
-    static filterFile(filepath, options) {
+    static shouldIncludeFile(filepath, options) {
         // Return false if this file should be filtered out of the package.
         var isMacJunk = filepath.match(macJunkFile);
         if (options.skipDSStore && isMacJunk) {
@@ -136,7 +143,7 @@ module.exports = class Job {
 
     addFile(filepath) {
         $('#filesPanel').show()
-        if (this._fullFileList[filepath] == true) {
+        if (this.hasFile(filepath)) {
             $('#fileWarning').html(filepath + ' has already been added')
             $('#fileWarningContainer').show(100);
             return
@@ -147,7 +154,6 @@ module.exports = class Job {
         var job = this;
         fs.stat(filepath, function(err, stats) {
             job.statPath(err, stats, filepath, row);
-            job._fullFileList[filepath] = true;
         });
         $('#btnJobPackagingDiv').show();
     }
@@ -161,24 +167,14 @@ module.exports = class Job {
         var fileCount = parseInt(fileCountCell.data('total'), 10) || 0
         var size = parseInt(sizeCell.data('total'), 10) || 0
         var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
-
-        for (var file in this._fullFileList) {
-            if (file.indexOf(filepath) == 0) {
-                delete this._fullFileList[file];
-            }
-        }
-        delete this._fullFileList[filepath];
-
         var totalDirCountCell = $('#totalDirCount')
         var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
         totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
         totalDirCountCell.text(prevTotalDirCount - dirCount)
-
         var totalFileCountCell = $('#totalFileCount')
         var prevTotalFileCount = parseInt(totalFileCountCell.data('total'), 10) || 0
         totalFileCountCell.data('total', (prevTotalFileCount - fileCount))
         totalFileCountCell.text(prevTotalFileCount - fileCount)
-
         var totalSizeCell = $('#totalFileSize')
         var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
         totalSizeCell.data('total', (prevTotalSize - size))
@@ -186,7 +182,7 @@ module.exports = class Job {
 
         $(row).remove()
 
-        if (!hasFiles()) {
+        if (!this.hasFiles()) {
             $('#btnJobPackagingDiv').hide();
         }
     }
@@ -196,20 +192,18 @@ module.exports = class Job {
             console.log(err)
             return
         }
-        if (Job.filterFile(filepath, this.options) == false) {
+        if (Job.shouldIncludeFile(filepath, this.options) == false) {
             return;
         }
-        if (this._fullFileList[filepath] == true) {
+        if (this.hasFile(filepath)) {
             $('#fileWarning').html(filepath + ' has already been added')
             $('#fileWarningContainer').show(100);
             return
         }
         if (stats.isFile()) {
             updateFileStats(stats, row)
-            this._fullFileList[filepath] = true
         } else if (stats.isDirectory()) {
             this.recurseIntoDir(filepath, row)
-            this._fullFileList[filepath] = true;
         } else {
             console.log("Other -> " + filepath)
         }
