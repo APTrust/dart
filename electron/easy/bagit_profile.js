@@ -1,5 +1,6 @@
 const path = require('path');
 const builtins = require(path.resolve('electron/easy/builtin_profiles'));
+const AppSetting = require(path.resolve('electron/easy/app_setting'));
 const BagItProfileInfo = require(path.resolve('electron/easy/bagit_profile_info'));
 const Choice = require(path.resolve('electron/easy/choice'));
 const Const = require(path.resolve('electron/easy/constants'));
@@ -226,6 +227,16 @@ module.exports = class BagItProfile {
             }
         }
         return false;
+    }
+    suggestBagName() {
+        var suggestion = "";
+        if (this.hasRequiredTagFile("aptrust-info.txt")) {
+            var setting = AppSetting.findByName("Institution Domain")
+            suggestion = `${setting.value}.Bag-${Date.now()}`
+        } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+            suggestion = Util.uuid4();
+        }
+        return suggestion;
     }
     tagsGroupedByFile() {
         // Returns a hash of required tags, with filename
