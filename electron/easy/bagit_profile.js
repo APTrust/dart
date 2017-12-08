@@ -241,15 +241,15 @@ module.exports = class BagItProfile {
         return suggestion;
     }
     isValidBagName(name) {
-        if (name == null) {
+        if (name == null || name == "") {
             return false;
         }
         var illegal = /[<>:"\/\|\?\*]/g;
         if (this.hasRequiredTagFile("aptrust-info.txt")) {
             var setting = AppSetting.findByName("Institution Domain")
-            var requiredPrefix = `${setting.value}.`
+            var requiredPrefix = `${setting.value}.`;
             return (name.startsWith(requiredPrefix) &&
-                    name.length > requiredPrefix &&
+                    name.length > requiredPrefix.length &&
                     name.match(illegal) == null);
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             return Util.looksLikeUUID(name);

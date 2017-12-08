@@ -36,8 +36,7 @@
     $('[data-toggle="popover"]').popover();
 
     $("select[name=profile]").change(function() {
-        $('#nameHintAPTrust').hide();
-        $('#nameHintDPN').hide();
+        hideBagNameHint();
         var job = window.es.ActiveObject;
         var bagNameOnForm = $('#bagName').val();
         var id = $("select[name=profile]").val();
@@ -51,11 +50,7 @@
                 job.bagName = job.bagItProfile.suggestBagName();
                 $('#bagName').val(job.bagName);
             }
-            if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
-                $('#nameHintAPTrust').show();
-            } else if (job.bagItProfile.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
-                $('#nameHintDPN').show();
-            }
+            showBagNameHint();
         }
     });
 
@@ -70,7 +65,23 @@
         job.bagName = $('#bagName').val();
 
         // Make sure bag name is valid before moving forward.
+        var name = $('#bagName').val();
+        var parent = $('#bagName').closest("div.form-group");
+        if (job.bagItProfile != null) {
+            if (job.bagItProfile.isValidBagName(name)) {
+                parent.removeClass("has-error");
+                parent.addClass("has-success");
+                hideBagNameHint();
+                job.bagName = name;
+            } else {
+                parent.removeClass("has-success");
+                parent.addClass("has-error");
+                showBagNameHint();
+                return;
+            }
+        }
 
+        // Bag name is valid.
         job.save();
         var data = {};
         if (job.bagItProfile == null) {
@@ -83,5 +94,19 @@
             $("#container").html(templates.jobTags(data));
         }
     });
+
+    function showBagNameHint() {
+        var job = es.ActiveObject;
+        if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
+            $('#nameHintAPTrust').show();
+        } else if (job.bagItProfile.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+            $('#nameHintDPN').show();
+        }
+    }
+
+    function hideBagNameHint() {
+        $('#nameHintAPTrust').hide();
+        $('#nameHintDPN').hide();
+    }
 
 </script>
