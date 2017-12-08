@@ -109,7 +109,9 @@ $(function() {
         var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             setting = es.AppSetting.find(id);
-            showDeleteButton = true;
+            if (!setting.isRequired()) {
+                showDeleteButton = true;
+            }
         }
         var data = {};
         data['form'] = setting.toForm();
@@ -129,7 +131,7 @@ $(function() {
             form.setErrors(result.errors);
             var data = {};
             data['form'] = form;
-            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null;
+            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && !setting.isRequired();
             $("#container").html(templates.appSettingForm(data));
         }
         es.ActiveObject = setting;
@@ -187,7 +189,7 @@ $(function() {
         var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             profile = es.BagItProfile.find(id);
-            showDeleteButton = true;
+            showDeleteButton = !profile.isBuiltIn;
         }
         var data = {};
         data['form'] = profile.toForm();
@@ -352,10 +354,12 @@ $(function() {
             profile = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
             profile.name = "APTrust";
             profile.description = "APTrust 2.0 default BagIt profile.";
+            profile.isBuiltIn = true;
         } else if (builtinId == builtins.DPNProfileId) {
             profile = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
             profile.name = "DPN";
             profile.description = "Digital Preservation Network default BagIt profile.";
+            profile.isBuiltIn = true;
         }
         profile.baseProfileId = builtinId;
         for(var t of profile.requiredTags) {
@@ -384,6 +388,11 @@ $(function() {
         console.log("Creating base profiles");
         createProfileFromBuiltin(builtins.APTrustProfileId, false);
         createProfileFromBuiltin(builtins.DPNProfileId, false);
+    }
+    if (es.AppSetting.findByName("Institution Domain") == null) {
+        console.log("Creating required app settings");
+        var setting = new es.AppSetting("Institution Domain", "example.org");
+        setting.save();
     }
 
     // This is for interactive testing in the console.

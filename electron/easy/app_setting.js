@@ -4,9 +4,10 @@ const Form = require(path.resolve('electron/easy/form'));
 const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
 
-
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});
+
+const requiredSettings = ["Institution Domain"];
 
 module.exports = class AppSetting {
     constructor(name, value) {
@@ -41,8 +42,25 @@ module.exports = class AppSetting {
         setting.id = $('#appSettingId').val().trim();
         return setting
     }
+    isRequired() {
+        for (var name of requiredSettings) {
+            if (this.name == name) {
+                return true;
+            }
+        }
+        return false;
+    }
     save() {
         return db.set(this.id, this);
+    }
+    static findByName(name) {
+        for (var key in db.store) {
+            var setting = db.store[key];
+            if (setting.name == name) {
+                return setting;
+            }
+        }
+        return null;
     }
     static find(id) {
         var setting = null;

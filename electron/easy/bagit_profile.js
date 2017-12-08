@@ -34,6 +34,7 @@ module.exports = class BagItProfile {
         // to modify certain elements of the profile. This will
         // be blank for many profiles.
         this.baseProfileId = "";
+        this.isBuiltIn = false;
 
         // BagIt spec says these two tags in bagit.txt file
         // are always required.
@@ -217,6 +218,14 @@ module.exports = class BagItProfile {
             }
         }
         return null;
+    }
+    hasRequiredTagFile(filename) {
+        for (var tag of this.requiredTags) {
+            if (tag.tagFile == filename) {
+                return true;
+            }
+        }
+        return false;
     }
     tagsGroupedByFile() {
         // Returns a hash of required tags, with filename
