@@ -8,11 +8,20 @@
       <div id="nameHintAPTrust" style="display:none">
         <small class="form-text text-muted">
           APTrust bag names must begin with your domain name, followed by a dot and a name.
+          <a href="#" class="suggest-name">Suggest</a>
         </small>
       </div>
       <div id="nameHintDPN" style="display:none">
         <small class="form-text text-muted">
           DPN bag names must be version 4 UUIDs.
+          <a href="#" class="suggest-name">Suggest</a>
+        </small>
+      </div>
+      <div id="nameHintGeneric" style="display:none">
+        <small class="form-text text-muted">
+          Bag names cannot contain spaces or any of the following chacters: &lt;, &gt;, :, ", /, |, ?, *, \,
+          space, tab or newline.
+          <a href="#" class="suggest-name">Suggest</a>
         </small>
       </div>
     </div>
@@ -33,80 +42,106 @@
 
 
 <script>
-    $('[data-toggle="popover"]').popover();
+ $('[data-toggle="popover"]').popover();
 
-    $("select[name=profile]").change(function() {
-        hideBagNameHint();
-        var job = window.es.ActiveObject;
-        var bagNameOnForm = $('#bagName').val();
-        var id = $("select[name=profile]").val();
-        if (id == "") {
-            job.bagItProfile = null;
-            $('#bagName').val(`Bag-${Date.now()}`);
-        } else {
-            job.bagItProfile = window.es.BagItProfile.find(id);
-            var name = $('#bagName').val() || job.bagItProfile.bagName;
-            if (!job.bagItProfile.isValidBagName(name)) {
-                job.bagName = job.bagItProfile.suggestBagName();
-                $('#bagName').val(job.bagName);
-            }
-            showBagNameHint();
-        }
-    });
+ $("select[name=profile]").change(function() {
+     hideBagNameHint();
+     var job = window.es.ActiveObject;
+     var bagNameOnForm = $('#bagName').val();
+     var id = $("select[name=profile]").val();
+     if (id == "") {
+         job.bagItProfile = null;
+         $('#bagName').val(`Bag-${Date.now()}`);
+     } else {
+         job.bagItProfile = window.es.BagItProfile.find(id);
+         var name = $('#bagName').val() || job.bagItProfile.bagName;
+         if (!job.bagItProfile.isValidBagName(name)) {
+             job.bagName = job.bagItProfile.suggestBagName();
+             $('#bagName').val(job.bagName);
+         }
+         showBagNameHint();
+     }
+ });
 
-    $("#btnJobFiles").click(function() {
-        var job = es.ActiveObject;
-        job.save();
-        $("#container").html(es.ViewCache['jobFiles']);
-    });
+ $(".suggest-name").click(function () {
+     var job = window.es.ActiveObject;
+     if (job.bagItProfile != null) {
+         bagName = job.bagItProfile.suggestBagName();
+     } else {
+         bagName = es.BagItProfile.suggestGenericBagName();
+     }
+     job.bagName = bagName;
+     $('#bagName').val(bagName);
+ });
 
-    $("#btnJobTagsOrStorage").click(function() {
-        var job = es.ActiveObject;
-        job.bagName = $('#bagName').val();
+ $("#btnJobFiles").click(function() {
+     var job = es.ActiveObject;
+     job.save();
+     $("#container").html(es.ViewCache['jobFiles']);
+ });
 
-        // Make sure bag name is valid before moving forward.
-        var name = $('#bagName').val();
-        var parent = $('#bagName').closest("div.form-group");
-        if (job.bagItProfile != null) {
-            if (job.bagItProfile.isValidBagName(name)) {
-                parent.removeClass("has-error");
-                parent.addClass("has-success");
-                hideBagNameHint();
-                job.bagName = name;
-            } else {
-                parent.removeClass("has-success");
-                parent.addClass("has-error");
-                showBagNameHint();
-                return;
-            }
-        }
+ $("#btnJobTagsOrStorage").click(function() {
+     var job = es.ActiveObject;
+     job.bagName = $('#bagName').val();
+     if (!validateBagName()) {
+         return
+     }
+     job.save();
+     var data = {};
+     if (job.bagItProfile == null) {
+         // Show storage options
+         alert("Storage options coming soon");
+     } else {
+         // Show tag editor
+         var tags = job.bagItProfile.tagsGroupedByFile();
+         data['tags'] = tags;
+         data['tagContext'] = 'Job';
+         $("#container").html(templates.jobTags(data));
+     }
+ });
 
-        // Bag name is valid.
-        job.save();
-        var data = {};
-        if (job.bagItProfile == null) {
-            // Show storage options
-        } else {
-            // Show tag editor
-            var tags = job.bagItProfile.tagsGroupedByFile();
-            data['tags'] = tags;
-            data['tagContext'] = 'Job';
-            $("#container").html(templates.jobTags(data));
-        }
-    });
+ function validateBagName() {
+     var job = es.ActiveObject;
+     var name = $('#bagName').val();
+     var parent = $('#bagName').closest("div.form-group");
+     if (job.bagItProfile != null) {
+         if (job.bagItProfile.isValidBagName(name)) {
+             parent.removeClass("has-error");
+             parent.addClass("has-success");
+             hideBagNameHint();
+             job.bagName = name;
+         } else {
+             parent.removeClass("has-success");
+             parent.addClass("has-error");
+             showBagNameHint();
+             return false;
+         }
+     } else if (!es.BagItProfile.nameLooksLegal(name)) {
+         parent.removeClass("has-success");
+         parent.addClass("has-error");
+         showBagNameHint();
+         return false;
+     }
+     return true;
+ }
 
-    function showBagNameHint() {
-        var job = es.ActiveObject;
-        if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
-            $('#nameHintAPTrust').show();
-        } else if (job.bagItProfile.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
-            $('#nameHintDPN').show();
-        }
-    }
+ function showBagNameHint() {
+     var job = es.ActiveObject;
+     if (job.bagItProfile == null) {
+         $('#nameHintGeneric').show();
+     } else if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
+         $('#nameHintAPTrust').show();
+     } else if (job.bagItProfile.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+         $('#nameHintDPN').show();
+     }
+ }
 
-    function hideBagNameHint() {
-        $('#nameHintAPTrust').hide();
-        $('#nameHintDPN').hide();
-    }
+ function hideBagNameHint() {
+     $('#nameHintAPTrust').hide();
+     $('#nameHintDPN').hide();
+     $('#nameHintGeneric').hide();
+ }
+
+ showBagNameHint();
 
 </script>

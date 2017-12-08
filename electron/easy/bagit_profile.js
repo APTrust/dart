@@ -236,25 +236,34 @@ module.exports = class BagItProfile {
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             suggestion = Util.uuid4();
         } else {
-            suggestion = `Bag-${Date.now()}`
+            suggestion = BagItProfile.suggestGenericBagName();
         }
         return suggestion;
+    }
+    static suggestGenericBagName() {
+        return `Bag-${Date.now()}`;
+    }
+    static nameLooksLegal(name) {
+        if (name == null || name == "") {
+            return false;
+        }
+        var illegal = /[<>:"\/\|\?\*\\\s\t\n]/g;
+        return name.match(illegal) == null;
     }
     isValidBagName(name) {
         if (name == null || name == "") {
             return false;
         }
-        var illegal = /[<>:"\/\|\?\*]/g;
         if (this.hasRequiredTagFile("aptrust-info.txt")) {
             var setting = AppSetting.findByName("Institution Domain")
             var requiredPrefix = `${setting.value}.`;
             return (name.startsWith(requiredPrefix) &&
                     name.length > requiredPrefix.length &&
-                    name.match(illegal) == null);
+                    !BagItProfile.nameLooksLegal(name));
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             return Util.looksLikeUUID(name);
         } else {
-            return name.match(illegal) == null;
+            !BagItProfile.nameLooksLegal(name)
         }
     }
     tagsGroupedByFile() {
