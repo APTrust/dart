@@ -232,7 +232,7 @@ module.exports = class BagItProfile {
         var suggestion = "";
         if (this.hasRequiredTagFile("aptrust-info.txt")) {
             var setting = AppSetting.findByName("Institution Domain")
-            suggestion = `${setting.value}.Bag-${Date.now()}`
+            suggestion = `${setting.value}.bag-${Date.now()}`
         } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
             suggestion = Util.uuid4();
         } else {
@@ -241,7 +241,7 @@ module.exports = class BagItProfile {
         return suggestion;
     }
     static suggestGenericBagName() {
-        return `Bag-${Date.now()}`;
+        return `bag-${Date.now()}`;
     }
     static nameLooksLegal(name) {
         if (name == null || name == "") {
@@ -370,5 +370,42 @@ module.exports = class BagItProfile {
     }
     static getStore() {
         return db.store;
+    }
+    // Best guess at bag title.
+    bagTitle() {
+        var exactTitle = "";
+        var maybeTitle = "";
+        for(var tag of this.requiredTags) {
+            var tagName = tag.tagName.toLowerCase();
+            if (tagName == "title") {
+                exactTitle = tag.userValue;
+            } else if (tagName.includes("title")) {
+                maybeTitle = tag.userValue;
+            }
+        }
+        return exactTitle || maybeTitle;
+    }
+    // Best guess at bag description.
+    bagDescription() {
+        var exactDesc = "";
+        var maybeDesc = "";
+        for(var tag of this.requiredTags) {
+            var tagName = tag.tagName.toLowerCase();
+            if (tagName == "internal-sender-description") {
+                exactDesc = tag.userValue;
+            } else if (tagName.includes("description")) {
+                maybeDesc = tag.userValue;
+            }
+        }
+        return exactDesc || maybeDesc;
+    }
+    bagInternalIdentifier() {
+        console.log(this.requiredTags);
+        for(var tag of this.requiredTags) {
+            var tagName = tag.tagName.toLowerCase();
+            if (tagName == "internal-sender-identifier") {
+                return tag.userValue;
+            }
+        }
     }
 }
