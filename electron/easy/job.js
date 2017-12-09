@@ -182,37 +182,12 @@ module.exports = class Job {
         $('#fileWarningContainer').hide();
         var row = $(cell).parent('tr')
         var filepath = $(row).data('filepath')
-
         var removeIndex = this.files.indexOf(filepath);
         if (removeIndex > -1) {
             this.files.splice(removeIndex, 1);
         }
-
-        var dirCountCell = $(row).children('.dirCount').first()
-        var fileCountCell = $(row).children('.fileCount').first()
-        var sizeCell = $(row).children('.fileSize').first()
-        var fileCount = parseInt(fileCountCell.data('total'), 10) || 0
-        var size = parseInt(sizeCell.data('total'), 10) || 0
-        var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
-        var totalDirCountCell = $('#totalDirCount')
-        var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
-        totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
-        totalDirCountCell.text(prevTotalDirCount - dirCount)
-        var totalFileCountCell = $('#totalFileCount')
-        var prevTotalFileCount = parseInt(totalFileCountCell.data('total'), 10) || 0
-        totalFileCountCell.data('total', (prevTotalFileCount - fileCount))
-        totalFileCountCell.text(prevTotalFileCount - fileCount)
-        var totalSizeCell = $('#totalFileSize')
-        var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
-        totalSizeCell.data('total', (prevTotalSize - size))
-        totalSizeCell.text(formatFileSize(prevTotalSize - size))
-
-        // TODO: If the deleted item's parent folder is still in the list,
-        // we should add number of files and folders, and size of the deleted
-        // item to the parent.
-
+        updateStatsForDeletion(row);
         $(row).remove()
-
         if (!this.hasFiles()) {
             $('#btnJobPackagingDiv').hide();
         }
@@ -257,6 +232,27 @@ function getTotalCell(cssClass) {
         return $('#totalFileSize')
     }
     return null
+}
+
+function updateStatsForDeletion(row) {
+    var dirCountCell = $(row).children('.dirCount').first()
+    var fileCountCell = $(row).children('.fileCount').first()
+    var sizeCell = $(row).children('.fileSize').first()
+    var fileCount = parseInt(fileCountCell.data('total'), 10) || 0
+    var size = parseInt(sizeCell.data('total'), 10) || 0
+    var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
+    var totalDirCountCell = $('#totalDirCount')
+    var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
+    totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
+    totalDirCountCell.text(prevTotalDirCount - dirCount)
+    var totalFileCountCell = $('#totalFileCount')
+    var prevTotalFileCount = parseInt(totalFileCountCell.data('total'), 10) || 0
+    totalFileCountCell.data('total', (prevTotalFileCount - fileCount))
+    totalFileCountCell.text(prevTotalFileCount - fileCount)
+    var totalSizeCell = $('#totalFileSize')
+    var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
+    totalSizeCell.data('total', (prevTotalSize - size))
+    totalSizeCell.text(formatFileSize(prevTotalSize - size))
 }
 
 function formatFileSize(size) {
