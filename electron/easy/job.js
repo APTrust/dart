@@ -218,43 +218,6 @@ module.exports = class Job {
         }
     }
 
-    // statPath(err, stats, filepath, row, omitFromCheck) {
-    //     if (err != null) {
-    //         console.log(err)
-    //         return
-    //     }
-    //     if (Job.shouldIncludeFile(filepath, this.options) == false) {
-    //         return;
-    //     }
-    //     if (this.hasFile(filepath, omitFromCheck)) {
-    //         return;
-    //     }
-    //     if (stats.isFile()) {
-    //         updateFileStats(stats, row)
-    //     } else if (stats.isDirectory()) {
-    //         this.recurseIntoDir(filepath, row, omitFromCheck)
-    //     } else {
-    //         console.log("Other -> " + filepath)
-    //     }
-    // }
-
-    // recurseIntoDir(filepath, row, omitFromCheck) {
-    //     updateStats(row, '.dirCount', 1)
-    //     var job = this;
-    //     fs.readdir(filepath, function(err, files) {
-    //         if (err != null) {
-    //             console.log(err)
-    //             return
-    //         }
-    //         files.forEach(function (file) {
-    //             var fullpath = path.join(filepath, file)
-    //             fs.stat(fullpath, function(err, stats) {
-    //                 job.statPath(err, stats, fullpath, row, omitFromCheck)
-    //             });
-    //         });
-    //     });
-    // }
-
 }
 
 function updateFileStats(stats, row) {
