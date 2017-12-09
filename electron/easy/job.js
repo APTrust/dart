@@ -8,6 +8,7 @@ const Const = require(path.resolve('electron/easy/constants'));
 const Field = require(path.resolve('electron/easy/field'));
 const Form = require(path.resolve('electron/easy/form'));
 const JobOptions = require(path.resolve('electron/easy/job_options'));
+const QuickStat = require(path.resolve('electron/easy/quick_stat'));
 const StorageService = require(path.resolve('electron/easy/storage_service'));
 const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
@@ -40,7 +41,7 @@ module.exports = class Job {
         this.files = [];
     }
 
-    hasFile(filepath, omitFromCheck) {
+    hasFile(filepath) {
         if (!this.hasFiles) {
             return false;
         }
@@ -49,9 +50,6 @@ module.exports = class Job {
         }
         var included = false;
         for (var f of this.files) {
-            if (f == omitFromCheck) {
-                continue;
-            }
             if (filepath.startsWith(f)) {
                 included = true;
                 break;
@@ -158,7 +156,7 @@ module.exports = class Job {
     addFile(filepath) {
         $('#filesPanel').show()
         $('#fileWarningContainer').hide();
-        if (this.hasFile(filepath, null)) {
+        if (this.hasFile(filepath)) {
             $('#fileWarning').html(filepath + ' has already been added')
             $('#fileWarningContainer').show();
             return
@@ -168,27 +166,15 @@ module.exports = class Job {
         row.insertBefore('#fileTotals')
         var job = this;
 
-        // omitFromCheck - long story, but it's because node.js and ES6 promises
-        // can't work on an async function that recursively calls itself.
-        // How COULD they work, when the promise has to be attached to the
-        // last call that will complete and you have no way of determining
-        // which call that will be?
-        //
-        // Java has countdownLatch and Golang has WaitGroup for this.
-        //
-        // Anyhow, omitFromCheck tells hasFile() above to exclude the file/directory
-        // currently being added when it checks to see if the file being added
-        // has already been added.
-        var omitFromCheck = filepath;
+        var dirCallback = function() { updateStats(row, '.dirCount', 1) };
+        var fileCallback = function(stats) { updateFileStats(stats, row); };
+        var shouldIncludeCallback = function(filepath) { return Job.shouldIncludeFile(filepath, job.options); };
+        var quickStat = new QuickStat(shouldIncludeCallback, fileCallback, dirCallback);
         fs.stat(filepath, function(err, stats) {
-            job.statPath(err, stats, filepath, row, omitFromCheck);
+            quickStat.statPath(err, stats, filepath);
         });
 
-        // This line is executed BEFORE the completion of the recursive calls
-        // in the fs.stat function above. Recursive async functions = time running
-        // in circles.
         this.files.push(filepath)
-
         $('#btnJobPackagingDiv').show();
     }
 
@@ -232,42 +218,42 @@ module.exports = class Job {
         }
     }
 
-    statPath(err, stats, filepath, row, omitFromCheck) {
-        if (err != null) {
-            console.log(err)
-            return
-        }
-        if (Job.shouldIncludeFile(filepath, this.options) == false) {
-            return;
-        }
-        if (this.hasFile(filepath, omitFromCheck)) {
-            return;
-        }
-        if (stats.isFile()) {
-            updateFileStats(stats, row)
-        } else if (stats.isDirectory()) {
-            this.recurseIntoDir(filepath, row, omitFromCheck)
-        } else {
-            console.log("Other -> " + filepath)
-        }
-    }
+    // statPath(err, stats, filepath, row, omitFromCheck) {
+    //     if (err != null) {
+    //         console.log(err)
+    //         return
+    //     }
+    //     if (Job.shouldIncludeFile(filepath, this.options) == false) {
+    //         return;
+    //     }
+    //     if (this.hasFile(filepath, omitFromCheck)) {
+    //         return;
+    //     }
+    //     if (stats.isFile()) {
+    //         updateFileStats(stats, row)
+    //     } else if (stats.isDirectory()) {
+    //         this.recurseIntoDir(filepath, row, omitFromCheck)
+    //     } else {
+    //         console.log("Other -> " + filepath)
+    //     }
+    // }
 
-    recurseIntoDir(filepath, row, omitFromCheck) {
-        updateStats(row, '.dirCount', 1)
-        var job = this;
-        fs.readdir(filepath, function(err, files) {
-            if (err != null) {
-                console.log(err)
-                return
-            }
-            files.forEach(function (file) {
-                var fullpath = path.join(filepath, file)
-                fs.stat(fullpath, function(err, stats) {
-                    job.statPath(err, stats, fullpath, row, omitFromCheck)
-                });
-            });
-        });
-    }
+    // recurseIntoDir(filepath, row, omitFromCheck) {
+    //     updateStats(row, '.dirCount', 1)
+    //     var job = this;
+    //     fs.readdir(filepath, function(err, files) {
+    //         if (err != null) {
+    //             console.log(err)
+    //             return
+    //         }
+    //         files.forEach(function (file) {
+    //             var fullpath = path.join(filepath, file)
+    //             fs.stat(fullpath, function(err, stats) {
+    //                 job.statPath(err, stats, fullpath, row, omitFromCheck)
+    //             });
+    //         });
+    //     });
+    // }
 
 }
 
