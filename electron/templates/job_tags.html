@@ -1,38 +1,39 @@
-<div id="div-files" class="jumbotron">
-  <h2>Bagging Options</h2>
+<div id="divJobTags">
 
-<form id="jobTagsForm">
-{{#each tags }}
-<div class="row">
-  <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">Tags in {{ @key }}</a></h3>
-      </div>
-      <div class="panel-body panel-collapse in" id="tags{{ @index }}">
-        {{#each this as |tag| }}
-          {{#unless tag.systemMustSet }}
-            {{#if tag.values}}
-              {{> inputSelect field = (jobFormTagField tag) }}
-            {{else if tag.looksLikeDescriptionTag }}
-              {{> inputTextArea field = (jobFormTagField tag) }}
-            {{else}}
-              {{> inputText field = (jobFormTagField tag) }}
-            {{/if}}
-          {{/unless}}
-        {{/each}}
-        <div class="pull-right"><a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForJob" data-tag-file="{{ @key }}" role="button" data-toggle="popover" data-trigger="hover" title="New Tag" data-content="Add a new tag to this file." data-placement="left">+</a></div>
-      </div>
+  {{> jobTabs tabMetadata = true }}
+
+  <h2>Metadata</h2>
+
+  <form id="jobTagsForm">
+    {{#each tags }}
+    <div class="row">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">Tags in {{ @key }}</a></h3>
+          </div>
+          <div class="panel-body panel-collapse in" id="tags{{ @index }}">
+            {{#each this as |tag| }}
+              {{#unless tag.systemMustSet }}
+                {{#if tag.values}}
+                  {{> inputSelect field = (jobFormTagField tag) }}
+                {{else if tag.looksLikeDescriptionTag }}
+                  {{> inputTextArea field = (jobFormTagField tag) }}
+                {{else}}
+                  {{> inputText field = (jobFormTagField tag) }}
+                {{/if}}
+              {{/unless}}
+            {{/each}}
+            <div class="pull-right"><a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForJob" data-tag-file="{{ @key }}" role="button" data-toggle="popover" data-trigger="hover" title="New Tag" data-content="Add a new tag to this file." data-placement="left">+</a></div>
+          </div>
+        </div>
     </div>
-  </div>
-</div>
-{{/each}}
-</form>
+    {{/each}}
+  </form>
 
-<div id="jobTagsMissing" class="alert alert-danger" style="display:none" role="alert">
-  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-  One or more required fields is empty.
-</div>
+  <div id="jobTagsMissing" class="alert alert-danger" style="display:none" role="alert">
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    One or more required fields is empty.
+  </div>
 
 </div>
 
