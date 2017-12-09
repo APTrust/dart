@@ -1,0 +1,55 @@
+<div id="divJobRun">
+
+  {{> jobTabs tabRun = true }}
+
+  <h2>Run Job</h2>
+
+  {{#if job.bagItProfile}}
+  <h3>Bag Info</h3>
+  <div class="row">
+    <div class="col-sm-4"><strong>Profile</strong></div>
+    <div class="col-sm-8">{{ job.bagItProfile.name }}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"><strong>Bag Name</strong></div>
+    <div class="col-sm-8">{{ job.bagName }}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"><strong>Internal Identifier</strong></div>
+    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"><strong>Title</strong></div>
+    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4"><strong>Description</strong></div>
+    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+  </div>
+  {{/if}}
+
+  {{#if job.files}}
+  <h3>Files</h3>
+  {{#each job.files}}
+  <div class="row">
+    <div class="col-sm-12">{{ this }}</div>
+  </div>
+  {{/each}}
+  {{/if}}
+
+  {{#if job.storageServices}}
+  <h3>Upload To</h3>
+  {{#each job.files}}
+  <div class="row">
+    <div class="col-sm-12">{{ this.name }}</div>
+  </div>
+  {{/each}}
+  {{/if}}
+
+  <div class="clearfix"></div>
+
+  <div class="pull-left" id="divJobStorageDiv">
+    <a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
+  </div>
+
+</div>

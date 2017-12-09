@@ -11,4 +11,30 @@
 
   </form>
 
+  <div class="pull-right" id="btnJobRunDiv">
+    <a class="btn btn-primary" id="btnJobRun" role="button">Next &gt;&gt;</a>
+  </div>
+
+  <div class="pull-left" id="divJobTagsDiv">
+    <a class="btn btn-primary" id="btnJobTags" role="button">&lt;&lt; Previous</a>
+  </div>
+
 </div>
+
+<script>
+ $('[data-toggle="popover"]').popover();
+
+ $("#btnJobRun").click(function() {
+     var job = es.ActiveObject;
+     job.save();
+     var data = {};
+     data['job'] = job;
+     $("#container").html(templates.jobRun(data));
+ });
+
+ $("#btnJobTags").click(function() {
+     var tags = job.bagItProfile.tagsGroupedByFile();
+     data['tags'] = tags;
+     $("#container").html(templates.jobTags(data));
+});
+</script>
