@@ -31,6 +31,7 @@ handlebars.registerPartial({
     inputSelect: readFile('input_select.html'),
     inputText: readFile('input_text.html'),
     inputTextArea: readFile('input_textarea.html'),
+    jobTabs: readFile('job_tabs.html'),
     profileTags: readFile('profile_tags.html')
 });
 
