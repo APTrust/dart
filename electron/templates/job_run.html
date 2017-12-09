@@ -16,15 +16,15 @@
   </div>
   <div class="row">
     <div class="col-sm-4"><strong>Internal Identifier</strong></div>
-    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+    <div class="col-sm-8">{{ bagInternalIdentifier }}</div>
   </div>
   <div class="row">
     <div class="col-sm-4"><strong>Title</strong></div>
-    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+    <div class="col-sm-8">{{ bagTitle }}</div>
   </div>
   <div class="row">
     <div class="col-sm-4"><strong>Description</strong></div>
-    <div class="col-sm-8">{{ job.bagItProfile }}</div>
+    <div class="col-sm-8">{{ bagDescription }}</div>
   </div>
   {{/if}}
 
@@ -37,11 +37,11 @@
   {{/each}}
   {{/if}}
 
-  {{#if job.storageServices}}
+  {{#if storageServices}}
   <h3>Upload To</h3>
-  {{#each job.files}}
+  {{#each storageServices as |service| }}
   <div class="row">
-    <div class="col-sm-12">{{ this.name }}</div>
+    <div class="col-sm-12">{{ service.name }}</div>
   </div>
   {{/each}}
   {{/if}}
@@ -53,3 +53,12 @@
   </div>
 
 </div>
+
+<script>
+ $("#btnJobStorage").click(function() {
+     var job = es.ActiveObject;
+     var data = {};
+     data.form = job.toStorageServiceForm();
+     $("#container").html(templates.jobStorage(data));
+ });
+</script>

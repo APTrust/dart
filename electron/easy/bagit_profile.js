@@ -407,4 +407,4 @@ module.exports = class BagItProfile {
             }
         }
     }
-}
+};

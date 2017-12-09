@@ -26,13 +26,24 @@
 
  $("#btnJobRun").click(function() {
      var job = es.ActiveObject;
+     job.setStorageServicesFromForm();
      job.save();
      var data = {};
      data['job'] = job;
+     data['storageServices'] = job.storageServices;
+     // Handlebars overwrites 'this' even inside of classes.
+     if (job.bagItProfile != null) {
+       data['bagTitle'] = job.bagItProfile.bagTitle();
+       data['bagDescription'] = job.bagItProfile.bagDescription();
+       data['bagInternalIdentifier'] = job.bagItProfile.bagInternalIdentifier();
+     }
      $("#container").html(templates.jobRun(data));
  });
 
  $("#btnJobTags").click(function() {
+     var job = es.ActiveObject;
+     job.setStorageServicesFromForm();
+     job.save();
      var tags = job.bagItProfile.tagsGroupedByFile();
      data['tags'] = tags;
      $("#container").html(templates.jobTags(data));
