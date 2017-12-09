@@ -5,6 +5,9 @@
   <h2>Packaging</h2>
 
   <form>
+
+    {{> inputSelect field = form.fields.profile }}
+
     {{> inputText field = form.fields.bagName }}
 
     <div style="margin-bottom:12px;">
@@ -28,8 +31,6 @@
         </small>
       </div>
     </div>
-
-    {{> inputSelect field = form.fields.profile }}
 
   </form>
 

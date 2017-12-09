@@ -132,6 +132,13 @@ module.exports = class Job {
         return form;
     }
 
+    setStorageServicesFromForm() {
+        this.storageServices = [];
+        for (var input of $("input[name=storageServices]:checked")) {
+            this.storageServices.push($(input).val());
+        }
+    }
+
     save() {
         return db.set(this.id, this);
     }

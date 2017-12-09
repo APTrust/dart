@@ -400,7 +400,6 @@ module.exports = class BagItProfile {
         return exactDesc || maybeDesc;
     }
     bagInternalIdentifier() {
-        console.log(this.requiredTags);
         for(var tag of this.requiredTags) {
             var tagName = tag.tagName.toLowerCase();
             if (tagName == "internal-sender-identifier") {
