@@ -111,6 +111,19 @@ module.exports = class Job {
         return form;
     }
 
+    setTagValuesFromForm() {
+        if (this.bagItProfile == null) {
+            return;
+        }
+        for (var input of $("#jobTagsForm .form-control")) {
+            var id = $(input).attr('id');
+            var tag = this.bagItProfile.findTagById(id);
+            if (tag != null) {
+                tag.userValue = $(input).val();
+            }
+        }
+    }
+
     toStorageServiceForm() {
         var availableServices = Util.sortByName(StorageService.getStore());
         var form = new Form();
@@ -167,7 +180,7 @@ module.exports = class Job {
         var job = this;
 
         var dirCallback = function() { updateStats(row, '.dirCount', 1) };
-        var fileCallback = function(stats) { updateFileStats(stats, row); };
+        var fileCallback = function(stats) { updateFileStats(stats, row) };
         var shouldIncludeCallback = function(filepath) { return Job.shouldIncludeFile(filepath, job.options); };
         var quickStat = new QuickStat(shouldIncludeCallback, fileCallback, dirCallback);
         fs.stat(filepath, function(err, stats) {

@@ -51,6 +51,7 @@
 
  $("#btnJobPackaging").click(function() {
      var job = es.ActiveObject;
+     job.setTagValuesFromForm();
      job.save();
      var data = {};
      data.form = job.toPackagingForm();
@@ -71,13 +72,14 @@
              parent.addClass("has-success");
          }
      }
+     var job = es.ActiveObject;
+     job.setTagValuesFromForm();
+     job.save();
      if (isValid) {
-         $("#jobTagsMissing").show();
-         var job = es.ActiveObject;
-         job.save();
+         $("#jobTagsMissing").hide();
          goToJobStorage();
      } else {
-         $("#jobTagsMissing").hide();
+         $("#jobTagsMissing").show();
          console.log("Form is not valid.");
      }
  });
