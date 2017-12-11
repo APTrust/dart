@@ -33,6 +33,8 @@ module.exports = class Job {
         this.bagItProfile = null;
         this.storageServices = [];
         this.options = new JobOptions();
+        this.created = Date.now();
+        this.updated = Date.now();
     }
     objectType() {
         return 'Job';
