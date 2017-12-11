@@ -308,7 +308,9 @@ $(function() {
         } else {
             var form = tagFromForm.toForm();
             form.setErrors(result.errors);
-            $("#modalContent").html(templates.tagDefinitionForm(form));
+            var data = {};
+            data['form'] = form;
+            $("#modalContent").html(templates.tagDefinitionForm(data));
         }
     }
 
