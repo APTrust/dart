@@ -37,11 +37,6 @@ $(function() {
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
 
-    $(document).on("click", "[data-btn-type=NewTagDefForJob]", function() {
-        alert("Yo, man. Someone's gotta implement this feature.");
-    });
-
-
     document.ondragover = () => {
         return false;
     };
@@ -179,6 +174,8 @@ $(function() {
         if (!es.Util.isEmpty(builtinId)) {
             var profile = createProfileFromBuiltin(builtinId, true);
             profileId = profile.id;
+            profile.isBuiltIn = false; // This is a COPY of a built-in.
+            profile.save();
         }
         $('#modal').modal('hide');
         return bagItProfileShowForm(profileId);
@@ -368,9 +365,8 @@ $(function() {
             t.isBuiltIn = true;
         }
         if (tagAsCopy) {
-            var timestamp = new Date().toJSON();
-            profile.name = `Copy of ${profile.name} [${timestamp}]`;
-            profile.description = `Copy of ${profile.description} [${timestamp}]`
+            profile.name = `Copy of ${profile.name}`;
+            profile.description = `Copy of ${profile.description}`;
         }
         profile.save();
         return profile;
