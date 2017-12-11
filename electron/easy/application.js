@@ -279,6 +279,7 @@ $(function() {
         var data = {};
         data['form'] = tag.toForm();
         data['showDeleteButton'] = showDeleteButton;
+        data['tagContext'] = "profile";
         $('#modalTitle').text(tag.tagName);
         $("#modalContent").html(templates.tagDefinitionForm(data));
         $('#modal').modal();
@@ -307,6 +308,7 @@ $(function() {
             form.setErrors(result.errors);
             var data = {};
             data['form'] = form;
+            data['tagContext'] = "profile";
             $("#modalContent").html(templates.tagDefinitionForm(data));
         }
     }
@@ -332,6 +334,7 @@ $(function() {
         }
         var data = {};
         data['form'] = form;
+        data['tagContext'] = "profile";
         $('#modalTitle').text("New Tag File");
         $("#modalContent").html(templates.newTagFileForm(data));
         $('#modal').modal();
