@@ -1,0 +1,27 @@
+{{#if success }}
+<div class="alert alert-success" role="alert">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  {{ success }}
+</div>
+{{/if }}
+
+<h1>Jobs</h1>
+<div class="pull-right">
+  <a class="btn btn-primary" id="btnNewAppSetting" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Created</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items }}
+    <tr class="clickable-row" data-object-id="{{ id }}" data-object-type="Job">
+      <td>{{ displayName }}</td>
+      <td>{{ displayDateCreated }}</td>
+    </tr>
+    {{/each }}
+  </tbody>
+</table>

@@ -45,6 +45,18 @@ module.exports = class Util {
         });
         return list;
     }
+    static sortByCreated(store) {
+        var list = [];
+        for (var key in store) {
+            list.push(store[key]);
+        }
+        list.sort(function(a, b) {
+            if (a.created < b.created) { return -1; }
+            if (a.created > b.created) { return 1; }
+            return 0;
+        });
+        return list;
+    }
     static isEmpty(str) {
         return (str == null || ((typeof str) == "string" && str.trim() == ""));
     }

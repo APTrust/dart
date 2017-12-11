@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const dateFormat = require('dateformat');
 const AppSetting = require(path.resolve('electron/easy/app_setting'));
 const BagItProfile = require(path.resolve('electron/easy/bagit_profile'));
 const BagItProfileInfo = require(path.resolve('electron/easy/bagit_profile_info'));
@@ -33,12 +34,30 @@ module.exports = class Job {
         this.bagItProfile = null;
         this.storageServices = [];
         this.options = new JobOptions();
-        this.created = Date.now();
-        this.updated = Date.now();
+        this.created = null;
+        this.updated = null;
     }
     objectType() {
         return 'Job';
     }
+
+    displayName() {
+        var dateString = this.displayDateCreated();
+        var name = `Job created ${dateString}`
+        if (this.bagName != null && this.bagName.trim() != "") {
+            name = this.bagName;
+        }
+        return name;
+    }
+
+    displayDateCreated() {
+        return dateFormat(this.created, 'longDate') + " " + dateFormat(this.created, 'shortTime');
+    }
+
+    displayDateUpdated() {
+        return dateFormat(this.updated, 'longDate') + " " + dateFormat(this.updated, 'shortTime');
+    }
+
     clearFiles() {
         this.files = [];
     }
@@ -142,12 +161,16 @@ module.exports = class Job {
     }
 
     save() {
+        if (this.created == null) {
+            this.created = Date.now();
+        }
+        this.updated = Date.now();
         return db.set(this.id, this);
     }
 
     static find(id) {
         var job = null;
-        var obj = db.jobs.get(id);
+        var obj = db.get(id);
         if (obj != null) {
             job = new Job();
             Object.assign(job, obj);
@@ -162,6 +185,17 @@ module.exports = class Job {
 
     getStore() {
         return db.store;
+    }
+
+    static list() {
+        var items = Util.sortByCreated(Job.getStore());
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var job = new es.Job();
+            Object.assign(job, item)
+            items[i] = job;
+        }
+        return items;
     }
 
     fileOptionsChanged() {
@@ -215,6 +249,9 @@ module.exports = class Job {
         }
     }
 
+    static getStore() {
+        return db.store;
+    }
 }
 
 function updateFileStats(stats, row) {

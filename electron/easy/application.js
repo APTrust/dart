@@ -9,6 +9,7 @@ $(function() {
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
+    $("#menuJobList").click(function() { jobList(null); });
     $("#menuJobNew").click(jobNew);
 
     // AppSetting Form
@@ -78,6 +79,9 @@ $(function() {
             break;
          case 'BagItProfile':
             bagItProfileShowForm(id);
+            break;
+         case 'Job':
+            alert("Coming soon");
             break;
          case 'StorageService':
             storageServiceShowForm(id);
@@ -376,6 +380,14 @@ $(function() {
     }
 
     // Job Functions
+    function jobList(message) {
+        var data = {};
+        data.items = es.Job.list();
+        data.success = message;
+        $("#container").html(templates.jobList(data));
+        es.ActiveObject = data.items;
+    }
+
     function jobNew() {
         var job = new Job();
         job.clearFiles();
