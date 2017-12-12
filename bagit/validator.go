@@ -205,7 +205,7 @@ func (validator *Validator) processFile(iterator fileutil.ReadIterator) error {
 	// reader if we're reading directly out of a tar file.
 	var errs []error
 	isRequiredTagFile := (fileType == constants.TAG_FILE &&
-		validator.Profile.TagFilesRequired[fileSummary.RelPath] != nil)
+		validator.Profile.RequiresTagFile(fileSummary.RelPath))
 	isManifest := fileType == constants.MANIFEST
 	if isManifest || isRequiredTagFile {
 		rewoundReader, isNewReader, err := validator.rewindReader(reader, fileSummary.RelPath)
@@ -333,7 +333,7 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 	ok := true
 	if validator.Profile.AllowMiscTopLevelFiles == false {
 		for filename, _ := range validator.Bag.TagFiles {
-			if _, isRequiredTagFile := validator.Profile.TagFilesRequired[filename]; isRequiredTagFile {
+			if validator.Profile.RequiresTagFile(filename) {
 				// This is a required tag file, and not some miscellaneous
 				// item floating around the top of the bag. E.g APTrust
 				// requires aptrust-info.txt, and DPN requires dpn-info.txt
@@ -481,19 +481,20 @@ func (validator *Validator) ValidateTagFiles() bool {
 	if !validator.bagHasBeenRead {
 		validator.ReadBag()
 	}
-	for filePath, tagMap := range validator.Profile.TagFilesRequired {
-		tagFile := validator.Bag.TagFiles[filePath]
+	for _, tag := range validator.Profile.RequiredTags {
+		tagFile := validator.Bag.TagFiles[tag.TagFile]
 		if tagFile == nil {
-			validator.addError("Required tag file '%s' is missing.", filePath)
+			msg := fmt.Sprintf("Required tag file '%s' is missing.", tag.TagFile)
+			if !util.StringListContains(validator.Errors(), msg) {
+				validator.addError(msg)
+			}
 			ok = false
 		} else {
 			// Check the tags
-			for tagName, tagDefinition := range tagMap {
-				tagValues := tagFile.ParsedData.ValuesForKey(tagName)
-				tagIsValid := validator.ValidateTag(filePath, tagDefinition, tagValues)
-				if !tagIsValid {
-					ok = false
-				}
+			tagValues := tagFile.ParsedData.ValuesForKey(tag.TagName)
+			tagIsValid := validator.ValidateTag(tag, tagValues)
+			if !tagIsValid {
+				ok = false
 			}
 		}
 	}
@@ -505,7 +506,7 @@ func (validator *Validator) ValidateTagFiles() bool {
 // path within the bag of the file in which the tag was found. Param
 // tagDef is a definition of the requirements for the tag. Param tagValues
 // is the list of values for this tag, as parsed from the tagfile.
-func (validator *Validator) ValidateTag(filePath string, tagDef *TagDefinition, tagValues []string) bool {
+func (validator *Validator) ValidateTag(tag *TagDefinition, tagValues []string) bool {
 	tagIsMissing := (tagValues == nil || len(tagValues) == 0)
 	tagIsEmpty := true
 	if !tagIsMissing {
@@ -515,26 +516,26 @@ func (validator *Validator) ValidateTag(filePath string, tagDef *TagDefinition, 
 			}
 		}
 	}
-	if !tagDef.Required && tagIsMissing {
+	if !tag.Required && tagIsMissing {
 		return true
 	}
-	if tagDef.EmptyOk && tagIsEmpty {
+	if tag.EmptyOk && tagIsEmpty {
 		return true
 	}
-	if tagDef.Required && tagIsMissing {
-		validator.addError("Required tag '%s' is missing from file '%s'.", tagDef.Label, filePath)
+	if tag.Required && tagIsMissing {
+		validator.addError("Required tag '%s' is missing from file '%s'.", tag.TagName, tag.TagFile)
 		return false
 	}
-	if !tagDef.EmptyOk && tagIsEmpty {
-		validator.addError("Tag '%s' in file '%s' cannot be empty.", tagDef.Label, filePath)
+	if !tag.EmptyOk && tagIsEmpty {
+		validator.addError("Tag '%s' in file '%s' cannot be empty.", tag.TagName, tag.TagFile)
 		return false
 	}
 	// We have a tag and a value. Make sure the value is allowed.
 	ok := true
 	for _, tagValue := range tagValues {
-		err := tagDef.ValueIsAllowed(tagValue)
+		err := tag.ValueIsAllowed(tagValue)
 		if err != nil {
-			validator.addError("In file '%s': %s", filePath, err.Error())
+			validator.addError("In file '%s': %s", tag.TagFile, err.Error())
 			ok = false
 		}
 	}

@@ -7,52 +7,56 @@ import (
 	"strings"
 )
 
-// BagItProfile is a slightly modified version of bagit-profiles at
+// TagFilesRequired => RequiredTags
+
+// BagItProfile is a modified version of bagit-profiles at
 // https://github.com/ruebot/bagit-profiles.
-// In this version, the Tag-Files-Required list is not a list of
-// strings, but a list of TagFile objects, like the BagInfo object
-// in bagit-profiles. This lets us validate the presence and value
-// of specific tags in any tag file the same way bagit-profile lets
-// us validate tags in the bagit.txt file.
 type BagItProfile struct {
+	// Id is a UUID (as string) that uniquely identifies this profile.
+	Id string
+	// Name is the name of the profile, usually set by the user in
+	// the EasyStore UI.
+	Name string
 	// AcceptBagItVersion is a list of BagIt versions to accept.
 	// For example, ["0.96", "0.97"]
-	AcceptBagItVersion []string `json:"Accept-BagIt-Version"`
+	AcceptBagItVersion []string `json:"acceptBagItVersion"`
 	// AcceptSerialization is a list of BagIt serialization formats
 	// to accept. For example, ["application/zip", "application/tar"]
-	AcceptSerialization []string `json:"Accept-Serialization"`
+	AcceptSerialization []string `json:"acceptSerialization"`
 	// AllowFetchTxt indicates whether we allow a fetch.txt file in the bag.
-	AllowFetchTxt bool `json:"Allow-Fetch.txt"`
+	AllowFetchTxt bool `json:"allowFetchTxt"`
 	// AllowMiscTopLevelFiles indicates whether we allow files in the top-level
 	// directory other than payload manifests and tag manifests.
-	AllowMiscTopLevelFiles bool `json:"Allow-Misc-Top-Level-Files"`
+	AllowMiscTopLevelFiles bool `json:"allowMiscTopLevelFiles"`
 	// AllowMiscDirectories indicates whether we allow miscellaneous
 	// directories to exist outside the data directory. These non-data
 	// directories often contain custom tag files whose checksums may
 	// not appear in any manifest.
-	AllowMiscDirectories bool `json:"Allow-Misc-Directories"`
+	AllowMiscDirectories bool `json:"allowMiscDirectories"`
 	// BagItProfileInfo contains descriptive information about this
 	// BagIt profile.
-	BagItProfileInfo BagItProfileInfo `json:"BagIt-Profile-Info"`
+	BagItProfileInfo BagItProfileInfo `json:"bagItProfileInfo"`
+	// BaseProfileId is the UUID (as string) of the profile on which
+	// this profile is based. When you clone a profile in the EasyStore
+	// UI, this is id of the profile you cloned.
+	BaseProfileId string
+	// IsBuiltIn indicates whether this is one of EasyStore's built-in
+	// profiles.
+	IsBuiltIn bool
 	// ManifestsRequired is a list of payload manifests that must be
 	// in the bag. Values in this list are the algoritm names. So, to
 	// require manifest-md5.txt and manifest-sha256.txt, the list
 	// should contain just ["md5", "sha256"].
-	ManifestsRequired []string `json:"Manifests-Required"`
+	ManifestsRequired []string `json:"manifestsRequired"`
+	// RequiredTags is a list of TagDefinition objects, each of which defines
+	// a tag, its name, which file it must appear in, etc.
+	RequiredTags []*TagDefinition `json:"requiredTags"`
 	// Serialization can be "required", "optional" or "forbidden."
-	Serialization string `json:"Serialization"`
-	// TagFiles is a list of TagFile objects, each of which describes
-	// a tag file in the bag. Here, we differ from the bagit-profiles
-	// specification in that ALL tag files in the list are objects
-	// instead of strings, and the objects describe tags we expect to
-	// find in the files. Since TagFile objects have a Required property,
-	// we omit bagit-profiles' TagFilesRequired, because that would be
-	// redundant.
-	TagFilesRequired map[string]map[string]*TagDefinition `json:"Tag-Files-Required"`
+	Serialization string `json:"serialization"`
 	// TagManifestsRequired is a list of required tag manifests. Like
 	// ManifestsRequired, the list contains only the names of the
 	// required hashing algorithms. E.g. ["md5", "sha256"]
-	TagManifestsRequired []string `json:"Tag-Manifests-Required"`
+	TagManifestsRequired []string `json:"tagManifestsRequired"`
 }
 
 // BagItProfileInfo contains some basic info about the bagit profile
@@ -60,18 +64,18 @@ type BagItProfile struct {
 // https://github.com/ruebot/bagit-profiles.
 type BagItProfileInfo struct {
 	// BagItProfileIdentifier is the URL where this bagit profile can be found.
-	BagItProfileIdentifier string `json:"BagIt-Profile-Identifier"`
+	BagItProfileIdentifier string `json:"bagItProfileIdentifier"`
 	// ContactEmail is the email address of the person maintaining this
 	// bagit profile.
-	ContactEmail string `json:"Contact-Email"`
+	ContactEmail string `json:"contactEmail"`
 	// ContactName is the name of the person maintaining this profile.
-	ContactName string `json:"Contact-Name"`
+	ContactName string `json:"contactName"`
 	// ExternalDescription describes what this profile is for. For example,
 	// "BagIt profile for ingesting content into APTrust."
-	ExternalDescription string `json:"External-Description"`
+	ExternalDescription string `json:"externalDescription"`
 	// SourceOrganization is the name of the organization maintaining this
 	// profile.
-	SourceOrganization string `json:"Source-Organization"`
+	SourceOrganization string `json:"sourceOrganization"`
 	// Version is the version number of this profile. E.g "1.2".
 	Version string `json:"Version"`
 }
@@ -80,16 +84,6 @@ type BagItProfileInfo struct {
 func LoadBagItProfile(filePath string) (*BagItProfile, error) {
 	profile := &BagItProfile{}
 	err := util.LoadJson(filePath, profile)
-	// The BagIt profile spec is a little out of alignment with our
-	// TagDefinition struct, so we have to copy the tag names into
-	// the struct from the JSON map keys.
-	if err == nil && profile != nil && profile.TagFilesRequired != nil {
-		for _, tagDefinitions := range profile.TagFilesRequired {
-			for tagName, tagDef := range tagDefinitions {
-				tagDef.Label = tagName
-			}
-		}
-	}
 	return profile, err
 }
 
@@ -98,18 +92,27 @@ func LoadBagItProfile(filePath string) (*BagItProfile, error) {
 func (profile *BagItProfile) Validate() []error {
 	errs := make([]error, 0)
 	if profile.AcceptBagItVersion == nil || len(profile.AcceptBagItVersion) == 0 {
-		errs = append(errs, fmt.Errorf("Accept-BagIt-Version must accept at least one BagIt version."))
+		errs = append(errs, fmt.Errorf("acceptBagItVersion must accept at least one BagIt version."))
 	}
 	if profile.ManifestsRequired == nil || len(profile.ManifestsRequired) == 0 {
-		errs = append(errs, fmt.Errorf("Manifests-Required must require at least one algorithm."))
+		errs = append(errs, fmt.Errorf("manifestsRequired must require at least one algorithm."))
 	}
-	if _, hasBagit := profile.TagFilesRequired["bagit.txt"]; !hasBagit {
-		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bagit.txt."))
+	if !profile.RequiresTagFile("bagit.txt") {
+		errs = append(errs, fmt.Errorf("requiredTags is missing requirements for bagit.txt."))
 	}
-	if _, hasBaginfo := profile.TagFilesRequired["bag-info.txt"]; !hasBaginfo {
-		errs = append(errs, fmt.Errorf("Tag-Files-Required is missing bag-info.txt."))
+	if !profile.RequiresTagFile("bag-info.txt") {
+		errs = append(errs, fmt.Errorf("requiredTags is missing requirements for bag-info.txt."))
 	}
 	return errs
+}
+
+func (profile *BagItProfile) RequiresTagFile(filename string) bool {
+	for _, tag := range profile.RequiredTags {
+		if tag.TagFile == filename {
+			return true
+		}
+	}
+	return false
 }
 
 // RequiredTagDirs returns a list of directories that the profile says
@@ -117,10 +120,10 @@ func (profile *BagItProfile) Validate() []error {
 // presence of these directories even when AllowMiscDirectories is false.
 func (profile *BagItProfile) RequiredTagDirs() []string {
 	dirs := make([]string, 0)
-	for filename := range profile.TagFilesRequired {
+	for _, tag := range profile.RequiredTags {
 		// Use "/" instead of os.PathSeparator, because BagIt spec
 		// says manifests and tag manifests should use "/".
-		parts := strings.Split(filename, "/")
+		parts := strings.Split(tag.TagFile, "/")
 		if len(parts) > 1 && !util.StringListContains(dirs, parts[0]) {
 			dirs = append(dirs, parts[0])
 		}
@@ -132,14 +135,18 @@ func (profile *BagItProfile) RequiredTagDirs() []string {
 // names. Each item in the list is the relative path of a tag file
 // within the bag. E.g. bag-info.txt or dpn-tags/dpn-info.txt.
 func (profile *BagItProfile) SortedTagFilesRequired() []string {
-	sortedFileNames := make([]string, len(profile.TagFilesRequired))
+	fileMap := make(map[string]bool)
+	for _, tag := range profile.RequiredTags {
+		fileMap[tag.TagFile] = true
+	}
+	fileNames := make([]string, len(fileMap))
 	i := 0
-	for relFilePath, _ := range profile.TagFilesRequired {
-		sortedFileNames[i] = relFilePath
+	for fileName := range fileMap {
+		fileNames[i] = fileName
 		i++
 	}
-	sort.Strings(sortedFileNames)
-	return sortedFileNames
+	sort.Strings(fileNames)
+	return fileNames
 }
 
 // SortedTagNames returns a sorted list of tag names with the
@@ -147,16 +154,16 @@ func (profile *BagItProfile) SortedTagFilesRequired() []string {
 // "bag-info.txt" or "dpn-tags/dpn-info.txt". If relFilePath is not a
 // required tag file, this will return an empty list.
 func (profile *BagItProfile) SortedTagNames(relFilePath string) []string {
-	mapOfRequiredTags, ok := profile.TagFilesRequired[relFilePath]
-	if !ok {
-		return make([]string, 0)
+	nameMap := make(map[string]bool)
+	for _, tag := range profile.RequiredTags {
+		nameMap[tag.TagName] = true
 	}
-	sortedTagNames := make([]string, len(mapOfRequiredTags))
+	tagNames := make([]string, len(nameMap))
 	i := 0
-	for tagname, _ := range mapOfRequiredTags {
-		sortedTagNames[i] = tagname
+	for tagName := range nameMap {
+		tagNames[i] = tagName
 		i++
 	}
-	sort.Strings(sortedTagNames)
-	return sortedTagNames
+	sort.Strings(tagNames)
+	return tagNames
 }

@@ -302,23 +302,21 @@ func (bagger *Bagger) writeManifests() bool {
 // BagIt profile.
 func (bagger *Bagger) hasRequiredTags() bool {
 	ok := true
-	for relFilePath, mapOfRequiredTags := range bagger.profile.TagFilesRequired {
-		for tagname, tagdesc := range mapOfRequiredTags {
-			values, tagIsPresent, hasNonEmptyValue, err := bagger.bag.GetTagValuesFromFile(relFilePath, tagname)
-			if tagdesc.Required && !tagIsPresent {
-				bagger.addError("Required tag %s for file %s is missing", tagname, relFilePath)
-				ok = false
-			}
-			if !tagdesc.EmptyOk && tagIsPresent && !hasNonEmptyValue {
-				bagger.addError("Tag %s for file %s cannot be empty", tagname, relFilePath)
-				ok = false
-			}
-			if hasNonEmptyValue && tagIsPresent {
-				for _, value := range values {
-					if err = tagdesc.ValueIsAllowed(value); err != nil {
-						bagger.addError(err.Error())
-						ok = false
-					}
+	for _, tag := range bagger.profile.RequiredTags {
+		values, tagIsPresent, hasNonEmptyValue, err := bagger.bag.GetTagValuesFromFile(tag.TagFile, tag.TagName)
+		if tag.Required && !tagIsPresent {
+			bagger.addError("Required tag %s for file %s is missing", tag.TagName, tag.TagFile)
+			ok = false
+		}
+		if !tag.EmptyOk && tagIsPresent && !hasNonEmptyValue {
+			bagger.addError("Tag %s for file %s cannot be empty", tag.TagName, tag.TagFile)
+			ok = false
+		}
+		if hasNonEmptyValue && tagIsPresent {
+			for _, value := range values {
+				if err = tag.ValueIsAllowed(value); err != nil {
+					bagger.addError(err.Error())
+					ok = false
 				}
 			}
 		}
