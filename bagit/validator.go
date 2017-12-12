@@ -484,10 +484,7 @@ func (validator *Validator) ValidateTagFiles() bool {
 	for _, tag := range validator.Profile.RequiredTags {
 		tagFile := validator.Bag.TagFiles[tag.TagFile]
 		if tagFile == nil {
-			msg := fmt.Sprintf("Required tag file '%s' is missing.", tag.TagFile)
-			if !util.StringListContains(validator.Errors(), msg) {
-				validator.addError(msg)
-			}
+			validator.addError("Required tag file '%s' is missing.", tag.TagFile)
 			ok = false
 		} else {
 			// Check the tags
@@ -635,6 +632,10 @@ func (validator *Validator) getIterator() (fileutil.ReadIterator, error) {
 }
 
 // addError adds a message to the list of validation errors.
+// It will not add duplicate messages.
 func (validator *Validator) addError(format string, a ...interface{}) {
-	validator.errors = append(validator.errors, fmt.Sprintf(format, a...))
+	msg := fmt.Sprintf(format, a...)
+	if !util.StringListContains(validator.Errors(), msg) {
+		validator.errors = append(validator.errors, msg)
+	}
 }
