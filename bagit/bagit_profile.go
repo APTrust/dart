@@ -167,3 +167,23 @@ func (profile *BagItProfile) SortedTagNames(relFilePath string) []string {
 	sort.Strings(tagNames)
 	return tagNames
 }
+
+func (profile *BagItProfile) TagsForFile(relFilePath string) []*TagDefinition {
+	tags := make([]*TagDefinition, 0)
+	for _, tag := range profile.RequiredTags {
+		if tag.TagFile == relFilePath {
+			tags = append(tags, tag)
+		}
+	}
+	return tags
+}
+
+func (profile *BagItProfile) FindTagDef(relFilePath, tagName string) *TagDefinition {
+	var matchingTag *TagDefinition
+	for _, tag := range profile.RequiredTags {
+		if tag.TagFile == relFilePath && tag.TagName == tagName {
+			matchingTag = tag
+		}
+	}
+	return matchingTag
+}
