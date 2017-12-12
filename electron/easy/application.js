@@ -357,23 +357,20 @@ $(function() {
     function createProfileFromBuiltin(builtinId, tagAsCopy) {
         var profile = null;
         if (builtinId == builtins.APTrustProfileId) {
-            profile = es.BagItProfile.fromStandardObject(builtins.APTrustProfile);
-            profile.name = "APTrust";
-            profile.description = "APTrust 2.0 default BagIt profile.";
-            profile.isBuiltIn = true;
+            profile = es.BagItProfile.toFullObject(builtins.APTrustProfile);
         } else if (builtinId == builtins.DPNProfileId) {
-            profile = es.BagItProfile.fromStandardObject(builtins.DPNProfile);
-            profile.name = "DPN";
-            profile.description = "Digital Preservation Network default BagIt profile.";
-            profile.isBuiltIn = true;
+            profile = es.BagItProfile.toFullObject(builtins.DPNProfile);
+        } else {
+            throw new Error("Unknown builtin profile id " + builtinId);
         }
-        profile.baseProfileId = builtinId;
         for(var t of profile.requiredTags) {
             t.isBuiltIn = true;
         }
         if (tagAsCopy) {
+            profile.id = es.Util.uuid4();
             profile.name = `Copy of ${profile.name}`;
             profile.description = `Copy of ${profile.description}`;
+            profile.baseProfileId = builtinId;
         }
         profile.save();
         return profile;

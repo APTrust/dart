@@ -54,9 +54,6 @@ module.exports = class BagItProfile {
     objectType() {
         return 'BagItProfile';
     }
-    isBuiltin() {
-        return (this.baseProfileId == builtins.APTrustProfileId || this.baseProfileId == builtins.DPNProfileId);
-    }
     validate() {
         var result = new ValidationResult();
         if (Util.isEmpty(this.id)) {
@@ -166,7 +163,7 @@ module.exports = class BagItProfile {
 
         // Don't allow users to edit built-in profile definitions.
         // The can add tags and edit default tag values, but that's all.
-        if (this.isBuiltin()) {
+        if (this.isBuiltIn) {
             var readOnly = ['acceptBagItVersion',
                             'allowFetchTxt',
                             'allowMiscTopLevelFiles',
@@ -310,6 +307,9 @@ module.exports = class BagItProfile {
         var obj = JSON.parse(jsonString)
         return BagItProfile.fromStandardObject(obj)
     }
+    // Used in early versions of EasyStore, and may be used later
+    // to import other profiles. This function converts standard
+    // BagIt Profiles to our format.
     static fromStandardObject(obj) {
         var p = new BagItProfile();
         p.acceptBagItVersion = obj["Accept-BagIt-Version"];
