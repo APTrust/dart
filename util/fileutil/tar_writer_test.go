@@ -14,8 +14,8 @@ import (
 	"testing"
 )
 
-var aptrustFile = pathToFile("aptrust_bagit_profile_2.0.json")
-var dpnFile = pathToFile("dpn_bagit_profile.json")
+var aptrustFile = pathToFile("aptrust_bagit_profile_2.1.json")
+var dpnFile = pathToFile("dpn_bagit_profile_2.1.json")
 var algorithms = []string{constants.MD5, constants.SHA256}
 
 func TestNewTarWriter(t *testing.T) {
