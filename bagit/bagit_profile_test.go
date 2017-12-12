@@ -44,11 +44,11 @@ func TestLoadBagItProfile(t *testing.T) {
 	assert.Equal(t, "A. Diamond", profile.BagItProfileInfo.ContactName)
 	assert.Equal(t, "BagIt profile for ingesting content into APTrust.", profile.BagItProfileInfo.ExternalDescription)
 	assert.Equal(t, "aptrust.org", profile.BagItProfileInfo.SourceOrganization)
-	assert.Equal(t, "2.0", profile.BagItProfileInfo.Version)
+	assert.Equal(t, "2.1", profile.BagItProfileInfo.Version)
 
 	// Required Tag Files
 	require.NotNil(t, profile.RequiredTags)
-	require.Equal(t, 3, len(profile.RequiredTags))
+	require.Equal(t, 11, len(profile.RequiredTags))
 
 	bagitRequiredTags := profile.TagsForFile("bagit.txt")
 	require.NotNil(t, bagitRequiredTags)
@@ -99,13 +99,13 @@ func TestBagItProfileValidate(t *testing.T) {
 }
 
 func TestRequiredTagDirs(t *testing.T) {
-	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
+	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	aptrustProfile, err := bagit.LoadBagItProfile(aptrustFile)
 	require.Nil(t, err)
 	assert.Empty(t, aptrustProfile.RequiredTagDirs())
 
-	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	dpnFile, err := getPathToProfile("dpn_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
 	require.Nil(t, err)
@@ -114,14 +114,14 @@ func TestRequiredTagDirs(t *testing.T) {
 }
 
 func TestSortedTagFilesRequired(t *testing.T) {
-	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.0.json")
+	aptrustFile, err := getPathToProfile("aptrust_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	aptrustProfile, err := bagit.LoadBagItProfile(aptrustFile)
 	require.Nil(t, err)
 	expected := []string{"aptrust-info.txt", "bag-info.txt", "bagit.txt"}
 	assert.Equal(t, expected, aptrustProfile.SortedTagFilesRequired())
 
-	dpnFile, err := getPathToProfile("dpn_bagit_profile.json")
+	dpnFile, err := getPathToProfile("dpn_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	dpnProfile, err := bagit.LoadBagItProfile(dpnFile)
 	require.Nil(t, err)

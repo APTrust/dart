@@ -64,7 +64,7 @@ func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *bagit.BagIt
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
 
-	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	aptrustProfile, err = bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
@@ -136,7 +136,7 @@ func TestHasRequiredTags(t *testing.T) {
 	require.Empty(t, errors)
 
 	// Make sure bagger flags missing required DPN tags
-	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
@@ -274,7 +274,7 @@ func TestWriteBag_DPN(t *testing.T) {
 	require.Nil(t, err)
 
 	// Load the DPN bagit profile
-	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
