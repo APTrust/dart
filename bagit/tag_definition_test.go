@@ -9,8 +9,9 @@ import (
 )
 
 func TestNewTagDefinition(t *testing.T) {
-	tagDef := bagit.NewTagDefinition("tag1", true, false, []string{"one", "two"})
-	assert.Equal(t, "tag1", tagDef.Label)
+	tagDef := bagit.NewTagDefinition("filename.txt", "Tag-Name")
+	tagDef.Values = []string{"one", "two"}
+	assert.Equal(t, "Tag-Name", tagDef.TagName)
 	assert.True(t, tagDef.Required)
 	assert.False(t, tagDef.EmptyOk)
 	assert.Equal(t, 2, len(tagDef.Values))
@@ -19,7 +20,8 @@ func TestNewTagDefinition(t *testing.T) {
 }
 
 func TestTagDefinitionValueIsAllowed(t *testing.T) {
-	tagDef := bagit.NewTagDefinition("tag1", true, false, []string{"one", "two"})
+	tagDef := bagit.NewTagDefinition("filename.txt", "Tag-Name")
+	tagDef.Values = []string{"one", "two"}
 	err := tagDef.ValueIsAllowed("one")
 	assert.Nil(t, err)
 	err = tagDef.ValueIsAllowed("two")
@@ -36,7 +38,8 @@ func TestTagDefinitionValueIsAllowed(t *testing.T) {
 	assert.IsType(t, &errtypes.EmptyError{}, err)
 
 	// Empty value ok here
-	tagDef = bagit.NewTagDefinition("tag1", true, true, nil)
+	tagDef = bagit.NewTagDefinition("filename.txt", "Tag-Name")
+	tagDef.EmptyOk = true
 	err = tagDef.ValueIsAllowed("")
 	assert.Nil(t, err)
 
