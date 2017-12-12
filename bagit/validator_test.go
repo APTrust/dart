@@ -25,12 +25,12 @@ func getValidator(t *testing.T, bagName, profileName string) *bagit.Validator {
 }
 
 func TestNewValidator(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	assert.NotNil(t, validator)
 }
 
 func TestReadBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
 	assert.Empty(t, validator.Errors())
@@ -97,7 +97,7 @@ func TestReadBag(t *testing.T) {
 }
 
 func TestValidateTopLevelFiles(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 
 	validator.Profile.AllowMiscTopLevelFiles = true
@@ -105,7 +105,7 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	assert.True(t, validator.ValidateTopLevelFiles())
 	assert.Empty(t, validator.Errors())
 
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 
 	// Items in the top-level dir that are not manifests or required
@@ -126,14 +126,14 @@ func TestValidateTopLevelFiles(t *testing.T) {
 }
 
 func TestValidateMiscDirectories(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AllowMiscDirectories = true
 	validator.ReadBag()
 	assert.True(t, validator.ValidateMiscDirectories())
 	assert.Empty(t, validator.Errors())
 
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AllowMiscDirectories = false
 	validator.ReadBag()
@@ -144,14 +144,14 @@ func TestValidateMiscDirectories(t *testing.T) {
 
 func TestValidateBagItVersion(t *testing.T) {
 	// Both profile and bag say version 0.97
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
 	assert.True(t, validator.ValidateBagItVersion())
 	assert.Empty(t, validator.Errors())
 
 	// If no accepted versions are specified, then any version will do.
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AcceptBagItVersion = nil
 	validator.ReadBag()
@@ -160,7 +160,7 @@ func TestValidateBagItVersion(t *testing.T) {
 
 	// Mismatch between accepted versions and actual version should
 	// cause a validation error.
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AcceptBagItVersion = []string{"2.22", "3.33", "4.44"}
 	validator.ReadBag()
@@ -169,7 +169,7 @@ func TestValidateBagItVersion(t *testing.T) {
 	assert.Equal(t, "BagIt version 0.97 in bagit.txt does not match allowed version(s) 2.22,3.33,4.44", validator.Errors()[0])
 
 	// Be specific about missing BagIt version
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
 	validator.Bag.TagFiles["bagit.txt"].ParsedData.DeleteByKey("BagIt-Version")
@@ -180,7 +180,7 @@ func TestValidateBagItVersion(t *testing.T) {
 
 func TestValidateAllowFetch(t *testing.T) {
 	// fetch.txt not allowed and not present
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AllowFetchTxt = false
 	assert.True(t, validator.ValidateAllowFetch())
@@ -193,7 +193,7 @@ func TestValidateAllowFetch(t *testing.T) {
 	assert.Equal(t, "Found fetch.txt, which BagIt profile says is not allowed.", validator.Errors()[0])
 
 	// Allowed, but not present
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AllowFetchTxt = true
 	assert.True(t, validator.ValidateAllowFetch())
@@ -206,7 +206,7 @@ func TestValidateAllowFetch(t *testing.T) {
 }
 
 func TestValidateSerialization(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.True(t, validator.ValidateSerialization())
 	assert.Empty(t, validator.Errors())
@@ -226,7 +226,7 @@ func TestValidateSerialization(t *testing.T) {
 }
 
 func TestValidateSerializationFormat(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 
 	// OK because profile says serialization is required
@@ -242,7 +242,7 @@ func TestValidateSerializationFormat(t *testing.T) {
 	assert.Equal(t, "Serialization format .tar is not in the Accept-Serialization list for this BagIt profile.", validator.Errors()[0])
 
 	// Unrecognized format
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Bag.Path = "path/to/unknown/format.fake"
 	assert.False(t, validator.ValidateSerializationFormat())
@@ -250,7 +250,7 @@ func TestValidateSerializationFormat(t *testing.T) {
 	assert.Equal(t, "Unknown serialization type for format .fake.", validator.Errors()[0])
 
 	// No serialization types specified in profile
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.Profile.AcceptSerialization = nil
 	assert.False(t, validator.ValidateSerializationFormat())
@@ -259,7 +259,7 @@ func TestValidateSerializationFormat(t *testing.T) {
 }
 
 func TestValidateRequiredManifests(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.True(t, validator.ValidateRequiredManifests())
 	assert.Empty(t, validator.Errors())
@@ -269,7 +269,7 @@ func TestValidateRequiredManifests(t *testing.T) {
 	assert.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Required manifest 'manifest-sha512.txt' is missing.", validator.Errors()[0])
 
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	validator.Profile.TagManifestsRequired = append(validator.Profile.TagManifestsRequired, "sha512")
 	assert.False(t, validator.ValidateRequiredManifests())
 	assert.NotEmpty(t, validator.Errors())
@@ -277,7 +277,7 @@ func TestValidateRequiredManifests(t *testing.T) {
 }
 
 func TestValidateTagFiles(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.True(t, validator.ValidateTagFiles())
 	assert.Empty(t, validator.Errors())
@@ -289,7 +289,7 @@ func TestValidateTagFiles(t *testing.T) {
 	assert.Equal(t, "Required tag file 'aptrust-info.txt' is missing.", validator.Errors()[0])
 
 	// Make sure it catches missing tags.
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	validator.ReadBag()
 	validator.Bag.TagFiles["aptrust-info.txt"].ParsedData.DeleteByKey("Title")
@@ -299,7 +299,7 @@ func TestValidateTagFiles(t *testing.T) {
 }
 
 func TestValidateTag(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	tagDef := validator.Profile.FindTagDef("aptrust-info.txt", "Access")
 	assert.True(t, validator.ValidateTag(tagDef, []string{"Consortia"}))
@@ -310,21 +310,21 @@ func TestValidateTag(t *testing.T) {
 	assert.Empty(t, validator.Errors())
 
 	// Value not explicitly allowed
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.ValidateTag(tagDef, []string{"Inertia"}))
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "In file 'aptrust-info.txt': Value 'Inertia' for tag 'Access' is not in list of allowed values (Consortia, Institution, Restricted)", validator.Errors()[0])
 
 	// Missing required tag
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.ValidateTag(tagDef, nil))
 	require.NotEmpty(t, validator.Errors())
 	assert.Equal(t, "Required tag 'Access' is missing from file 'aptrust-info.txt'.", validator.Errors()[0])
 
 	// Empty tag where empty is not OK
-	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator = getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.ValidateTag(tagDef, []string{"", "", ""}))
 	require.NotEmpty(t, validator.Errors())
@@ -333,7 +333,7 @@ func TestValidateTag(t *testing.T) {
 }
 
 func TestValidateChecksums(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 
 	assert.True(t, validator.ValidateChecksums())
@@ -343,7 +343,7 @@ func TestValidateChecksums(t *testing.T) {
 // ---------- Test specific bags with specific issues --------- //
 
 func TestValidateBadAccessBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_bad_access.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_bad_access.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -352,7 +352,7 @@ func TestValidateBadAccessBag(t *testing.T) {
 }
 
 func TestValidateBadChecksumsBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_bad_checksums.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_bad_checksums.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -372,7 +372,7 @@ func TestValidateBadChecksumsBag(t *testing.T) {
 }
 
 func TestValidateGoodBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.True(t, validator.Validate())
 	errors := validator.Errors()
@@ -380,7 +380,7 @@ func TestValidateGoodBag(t *testing.T) {
 }
 
 func TestValidateMissingDataFileBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_missing_data_file.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_missing_data_file.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -397,7 +397,7 @@ func TestValidateMissingDataFileBag(t *testing.T) {
 }
 
 func TestValidateMissingAPTrustInfoBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_aptrust_info.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_aptrust_info.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -406,7 +406,7 @@ func TestValidateMissingAPTrustInfoBag(t *testing.T) {
 }
 
 func TestValidateNoBagInfoBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_bag_info.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_bag_info.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -422,7 +422,7 @@ func TestValidateNoBagInfoBag(t *testing.T) {
 }
 
 func TestValidateNoBagItBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_bagit.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_bagit.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -439,7 +439,7 @@ func TestValidateNoBagItBag(t *testing.T) {
 }
 
 func TestValidateNoDataDirBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_data_dir.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_data_dir.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -457,7 +457,7 @@ func TestValidateNoDataDirBag(t *testing.T) {
 }
 
 func TestValidateNoMd5ManifestBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_md5_manifest.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_md5_manifest.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -466,7 +466,7 @@ func TestValidateNoMd5ManifestBag(t *testing.T) {
 }
 
 func TestValidateNoTitleBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_no_title.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_no_title.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -475,7 +475,7 @@ func TestValidateNoTitleBag(t *testing.T) {
 }
 
 func TestValidateWrongFolderNameBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.sample_wrong_folder_name.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.sample_wrong_folder_name.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -484,7 +484,7 @@ func TestValidateWrongFolderNameBag(t *testing.T) {
 }
 
 func TestValidateBadTagSampleBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_bad.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_bad.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -505,7 +505,7 @@ func TestValidateBadTagSampleBag(t *testing.T) {
 }
 
 func TestValidateGoodTagSampleBag(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.0.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "aptrust_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.True(t, validator.Validate())
 	assert.Empty(t, validator.Errors())
@@ -515,7 +515,7 @@ func TestValidateGoodTagSampleBag(t *testing.T) {
 // BagIt profile, but not valid according to the DPN profile. So although
 // it passed in the test above, it should fail here.
 func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
-	validator := getValidator(t, "example.edu.tagsample_good.tar", "dpn_bagit_profile.json")
+	validator := getValidator(t, "example.edu.tagsample_good.tar", "dpn_bagit_profile_2.1.json")
 	require.NotNil(t, validator)
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
@@ -536,7 +536,7 @@ func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
 
 func TestValidateUntarredGoodBag(t *testing.T) {
 	// Load the APTrust BagIt Profile
-	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	aptrustProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
@@ -565,7 +565,7 @@ func TestValidateUntarredGoodBag(t *testing.T) {
 
 func TestValidateUntarredBadBag(t *testing.T) {
 	// Load the APTrust BagIt Profile
-	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.0.json")
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.1.json")
 	require.Nil(t, err)
 	aptrustProfile, err := bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
