@@ -15,8 +15,8 @@
     <a class="btn btn-primary" id="btnJobRun" role="button">Next &gt;&gt;</a>
   </div>
 
-  <div class="pull-left" id="divJobTagsDiv">
-    <a class="btn btn-primary" id="btnJobTags" role="button">&lt;&lt; Previous</a>
+  <div class="pull-left" id="divPrevious">
+    <a class="btn btn-primary" id="btnPrevious" role="button">&lt;&lt; Previous</a>
   </div>
 
 </div>
@@ -40,12 +40,18 @@
      $("#container").html(templates.jobReview(data));
  });
 
- $("#btnJobTags").click(function() {
+ $("#btnPrevious").click(function() {
      var job = es.ActiveObject;
      job.setStorageServicesFromForm();
      job.save();
-     var tags = job.bagItProfile.tagsGroupedByFile();
-     data['tags'] = tags;
-     $("#container").html(templates.jobTags(data));
+     var data = {};
+     if (job.bagItProfile != null) {
+         var tags = job.bagItProfile.tagsGroupedByFile();
+         data['tags'] = tags;
+         $("#container").html(templates.jobTags(data));
+     } else {
+         data.form = job.toPackagingForm();
+         $("#container").html(templates.jobPackaging(data));
+     }
 });
 </script>

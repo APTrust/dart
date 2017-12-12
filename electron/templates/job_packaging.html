@@ -55,7 +55,7 @@
      var id = $("select[name=profile]").val();
      if (id == "") {
          job.bagItProfile = null;
-         $('#bagName').val(`Bag-${Date.now()}`);
+         $('#bagName').val("");
      } else {
          job.bagItProfile = window.es.BagItProfile.find(id);
          var name = $('#bagName').val() || job.bagItProfile.bagName;
@@ -81,20 +81,21 @@
  $("#btnJobFiles").click(function() {
      var job = es.ActiveObject;
      job.save();
-     $("#container").html(es.ViewCache['jobFiles']);
+     $("#container").html(templates.jobFiles());
+     job.setFileListUI();
  });
 
  $("#btnJobTagsOrStorage").click(function() {
      var job = es.ActiveObject;
      job.bagName = $('#bagName').val();
-     if (!validateBagName()) {
+     if (job.bagItProfile != null && !validateBagName()) {
          return
      }
      job.save();
      var data = {};
      if (job.bagItProfile == null) {
          // Show storage options
-         alert("Storage options coming soon");
+         goToJobStorage();
      } else {
          // Show tag editor
          var tags = job.bagItProfile.tagsGroupedByFile();
@@ -143,6 +144,17 @@
      $('#nameHintAPTrust').hide();
      $('#nameHintDPN').hide();
      $('#nameHintGeneric').hide();
+ }
+
+ function goToJobStorage() {
+     var job = es.ActiveObject;
+     var data = {};
+     data.bagOrFiles = "bag";
+     if (job.bagItProfile == null) {
+         data.bagOrFiles = "files";
+     }
+     data.form = job.toStorageServiceForm();
+     $("#container").html(templates.jobStorage(data));
  }
 
  showBagNameHint();
