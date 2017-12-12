@@ -149,14 +149,16 @@ module.exports = class Job {
         var availableServices = Util.sortByName(StorageService.getStore());
         var form = new Form();
         form.fields['storageServices'] = new Field("storageServices", "storageServices", "Storage Services", this.storageServices);
-        form.fields['storageServices'].choices = Choice.makeList(availableServices, this.storageServices, false);
+        var selectedIds = this.storageServices.map(ss => ss.id);
+        form.fields['storageServices'].choices = Choice.makeList(availableServices, selectedIds, false);
         return form;
     }
 
     setStorageServicesFromForm() {
         this.storageServices = [];
         for (var input of $("input[name=storageServices]:checked")) {
-            this.storageServices.push($(input).val());
+            var service = StorageService.find($(input).val());
+            this.storageServices.push(service);
         }
     }
 
@@ -174,6 +176,13 @@ module.exports = class Job {
         if (obj != null) {
             job = new Job();
             Object.assign(job, obj);
+        }
+        if (obj.bagItProfile != null) {
+            job.bagItProfile = BagItProfile.fromStorage(obj.bagItProfile);
+        }
+        for (var i=0; i < obj.storageServices.length; i++) {
+            job.storageServices[i] = new StorageService();
+            Object.assign(job.storageServices[i], obj.storageServices[i]);
         }
         return job;
     }
@@ -207,6 +216,16 @@ module.exports = class Job {
             deleteFile($(row).find('td').first());
             addFile(filepath);
         });
+    }
+
+    // We call this when we load an existing job, so the list of
+    // files, file sizes, etc. shows up in the UI.
+    setFileListUI() {
+        var files = this.files.slice();
+        this.files = [];
+        for(var filepath of files) {
+            this.addFile(filepath);
+        }
     }
 
     addFile(filepath) {

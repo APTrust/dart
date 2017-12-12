@@ -81,7 +81,7 @@ $(function() {
             bagItProfileShowForm(id);
             break;
          case 'Job':
-            alert("Coming soon");
+            jobShow(id);
             break;
          case 'StorageService':
             storageServiceShowForm(id);
@@ -395,6 +395,13 @@ $(function() {
         es.ActiveObject = job;
         $("#container").html(templates.jobFiles());
     };
+
+    function jobShow(id) {
+        var job = es.Job.find(id);
+        es.ActiveObject = job;
+        $("#container").html(templates.jobFiles());
+        job.setFileListUI();
+    }
 
     // Initialize the BagItProfile DB if it's empty.
     if (es.BagItProfile.storeIsEmpty()) {

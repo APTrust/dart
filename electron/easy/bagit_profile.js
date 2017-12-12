@@ -347,8 +347,14 @@ module.exports = class BagItProfile {
         return db.set(this.id, this);
     }
     static find(id) {
-        var profile = null;
         var obj = db.get(id);
+        return BagItProfile.fromStorage(obj);
+    }
+
+    // Convert the stored representation, which is basically a hash,
+    // to a full-fledged BagItProfile object.
+    static fromStorage(obj) {
+        var profile = null;
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
@@ -361,6 +367,7 @@ module.exports = class BagItProfile {
         }
         return profile;
     }
+
     delete() {
         db.delete(this.id);
         return this;
