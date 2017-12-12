@@ -37,6 +37,8 @@ $(function() {
     $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
+    // Jobs
+    $(document).on("click", "#btnNewJob", jobNew);
 
     document.ondragover = () => {
         return false;
