@@ -13,6 +13,7 @@
   <thead class="thead-inverse">
     <tr>
       <th>Name</th>
+      <th>Title</th>
       <th>Created</th>
     </tr>
   </thead>
@@ -20,6 +21,7 @@
     {{#each items }}
     <tr class="clickable-row" data-object-id="{{ id }}" data-object-type="Job">
       <td>{{ displayName }}</td>
+      <td>{{ displayTitle }}</td>
       <td>{{ displayDateCreated }}</td>
     </tr>
     {{/each }}

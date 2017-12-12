@@ -220,6 +220,24 @@ module.exports = class BagItProfile {
         }
         return null;
     }
+    // Returns the FIRST tag with a matching name.
+    findTagByName(name) {
+        for(var t of this.requiredTags) {
+            if (t.tagName == name) {
+                return t;
+            }
+        }
+        return null;
+    }
+    firstTagWithMatchingName(listOfNames) {
+        for(var name of listOfNames) {
+            var tag = this.findTagByName(name);
+            if (tag != null) {
+                return tag;
+            }
+        }
+        return null;
+    }
     hasRequiredTagFile(filename) {
         for (var tag of this.requiredTags) {
             if (tag.tagFile == filename) {
@@ -348,12 +366,12 @@ module.exports = class BagItProfile {
     }
     static find(id) {
         var obj = db.get(id);
-        return BagItProfile.fromStorage(obj);
+        return BagItProfile.toFullObject(obj);
     }
 
     // Convert the stored representation, which is basically a hash,
     // to a full-fledged BagItProfile object.
-    static fromStorage(obj) {
+    static toFullObject(obj) {
         var profile = null;
         if (obj != null) {
             profile = new BagItProfile();

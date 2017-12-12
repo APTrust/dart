@@ -58,6 +58,20 @@ module.exports = class Job {
         return dateFormat(this.updated, 'longDate') + " " + dateFormat(this.updated, 'shortTime');
     }
 
+    displayTitle() {
+        var title = "";
+        var tagNames = ["Title", "Description", "Internal-Sender-Identifier",
+                        "Local-ID",  "External-Description", "Internal-Sender-Description",
+                        "External-Identifier"]
+        if (this.bagItProfile != null) {
+            var tag = this.bagItProfile.firstTagWithMatchingName(tagNames);
+            if (tag != null) {
+                title = tag.userValue;
+            }
+        }
+        return title;
+    }
+
     clearFiles() {
         this.files = [];
     }
@@ -178,7 +192,7 @@ module.exports = class Job {
             Object.assign(job, obj);
         }
         if (obj.bagItProfile != null) {
-            job.bagItProfile = BagItProfile.fromStorage(obj.bagItProfile);
+            job.bagItProfile = BagItProfile.toFullObject(obj.bagItProfile);
         }
         for (var i=0; i < obj.storageServices.length; i++) {
             var ss = new StorageService();
@@ -203,6 +217,9 @@ module.exports = class Job {
             var item = items[i];
             var job = new es.Job();
             Object.assign(job, item)
+            if (item.bagItProfile != null) {
+                job.bagItProfile = BagItProfile.toFullObject(item.bagItProfile);
+            }
             items[i] = job;
         }
         return items;
