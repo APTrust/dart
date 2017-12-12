@@ -156,7 +156,9 @@ func (profile *BagItProfile) SortedTagFilesRequired() []string {
 func (profile *BagItProfile) SortedTagNames(relFilePath string) []string {
 	nameMap := make(map[string]bool)
 	for _, tag := range profile.RequiredTags {
-		nameMap[tag.TagName] = true
+		if tag.TagFile == relFilePath {
+			nameMap[tag.TagName] = true
+		}
 	}
 	tagNames := make([]string, len(nameMap))
 	i := 0
