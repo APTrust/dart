@@ -181,8 +181,9 @@ module.exports = class Job {
             job.bagItProfile = BagItProfile.fromStorage(obj.bagItProfile);
         }
         for (var i=0; i < obj.storageServices.length; i++) {
-            job.storageServices[i] = new StorageService();
-            Object.assign(job.storageServices[i], obj.storageServices[i]);
+            var ss = new StorageService();
+            Object.assign(ss, obj.storageServices[i]);
+            job.storageServices[i] = ss;
         }
         return job;
     }

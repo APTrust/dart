@@ -21,7 +21,8 @@ module.exports = class QuickStat {
         } else if (stats.isDirectory()) {
             this.recurseIntoDir(filepath)
         } else {
-            console.log("Other -> " + filepath)
+            // Symlinks, sockets, etc.
+            //console.log("Other -> " + filepath)
         }
     }
 
