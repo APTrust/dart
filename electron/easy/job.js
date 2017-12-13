@@ -120,6 +120,38 @@ module.exports = class Job {
         // If BagItProfile is valid, make sure it's valid.
         // If StorageService is present, make sure it's valid.
         // Make sure the working dir where we'll build the bag exists.
+        var result = new ValidationResult();
+        if (this.files == null || this.files.length == 0) {
+            result.errors["files"] = "This job has no files.";
+        }
+        if (this.bagItProfile == null && (this.storageServices == null || this.storageServices.length == 0)) {
+            result.errors["general"] = "This job must have either a BagIt Profile, or a Storage Service, or both.";
+        }
+        if (this.bagItProfile != null) {
+            var profileResult = this.bagItProfile.validate();
+            if (!profileResult.isValid()) {
+                for (var k of Object.keys(profileResult.errors)) {
+                    var key = `BagItProfile:${k}`;
+                    var message = `In BagIt Profile: ${profileResult.errors[k]}`;
+                    result.errors[key] = message;
+                }
+            }
+            // TODO: Ensure that all required tags are present
+        }
+        if (this.storageServices != null) {
+            for (var ss of this.storageServices) {
+                var ssResult = ss.validate();
+                if (!ssResult.isValid()) {
+                    for (var k of Object.keys(ssResult.errors)) {
+                        var name = ss.name || "Unnamed";
+                        var key = `StorageService ${name}:${k}`
+                        var message = `In Storage Service ${name}: ${ssResult.errors[k]}`
+                        result.errors[key] = message;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     resetFileOptions() {

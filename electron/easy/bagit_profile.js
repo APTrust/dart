@@ -68,6 +68,12 @@ module.exports = class BagItProfile {
         if (Util.isEmptyArray(this.manifestsRequired)) {
             result.errors["manifestsRequired"] = "Profile must require at least one manifest.";
         }
+        if (!this.hasRequiredTagFile("bagit.txt")) {
+            result.errors["requiredTags"] = "Profile lacks requirements for bagit.txt tag file.";
+        }
+        if (!this.hasRequiredTagFile("bag-info.txt")) {
+            result.errors["requiredTags"] = "Profile lacks requirements for bag-info.txt tag file.";
+        }
         return result;
     }
     toForm() {
