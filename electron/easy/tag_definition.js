@@ -29,6 +29,16 @@ module.exports = class TagDefinition {
         }
         return result
     }
+    validateForJob() {
+        var errors = [];
+        var tagIsEmpty = (this.userValue == null || this.userValue == "");
+        if (this.tagRequired && !this.emptyOk) {
+            errors.push(`Tag ${this.tagName} in file ${this.tagFile} cannot be empty.`);
+        } else if (this.values.length > 0 && !Util.listContains(this.values, this.userValue)) {
+            errors.push(`Tag ${this.tagName} in file ${this.tagFile} has a value that is not on the list of allowed values.`);
+        }
+        return errors;
+    }
     toForm() {
         var form = new Form("");
         form.fields['tagFile'] = new Field('tagFile', 'tagFile', 'Tag File', this.tagFile)
