@@ -30,12 +30,18 @@ module.exports = class Job {
     constructor() {
         this.id = Util.uuid4();
         this.bagName = "";
+        this.baggingDirectory = "";
         this.files = [];
         this.bagItProfile = null;
         this.storageServices = [];
         this.options = new JobOptions();
         this.created = null;
         this.updated = null;
+
+        var setting = AppSetting.findByName("Bagging Directory");
+        if (setting != null) {
+            this.baggingDirectory = setting.value;
+        }
     }
     objectType() {
         return 'Job';
@@ -125,6 +131,9 @@ module.exports = class Job {
             result.errors["general"] = ["This job must have either a BagIt Profile, or a Storage Service, or both."];
         }
         if (this.bagItProfile != null) {
+            if (this.baggingDirectory == "" || this.baggingDirectory == null) {
+                result.errors["baggingDirectory"] = ["You must specify a bagging directory."];
+            }
             let errors = []
             var profileResult = this.bagItProfile.validate();
             if (!profileResult.isValid()) {
@@ -173,6 +182,8 @@ module.exports = class Job {
         var form = new Form();
         form.fields['bagName'] = new Field("bagName", "bagName", "Bag Name", this.bagName);
         form.fields['bagName'].help = "Provide a name for the bag you want to create. You can leave this blank if you're not creating a bag.";
+        form.fields['baggingDirectory'] = new Field("baggingDirectory", "baggingDirectory", "Bagging Directory", this.baggingDirectory);
+        form.fields['baggingDirectory'].help = "Where should the bag be assembled?";
         form.fields['profile'] = new Field("profile", "profile", "Packaging", "");
         form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
         var choices = Choice.makeList(availableProfiles, profileId, true);

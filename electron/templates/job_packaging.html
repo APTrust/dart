@@ -8,6 +8,8 @@
 
     {{> inputSelect field = form.fields.profile }}
 
+    {{> inputText field = form.fields.baggingDirectory }}
+
     {{> inputText field = form.fields.bagName }}
 
     <div style="margin-bottom:12px;">
@@ -80,6 +82,8 @@
 
  $("#btnJobFiles").click(function() {
      var job = es.ActiveObject;
+     job.bagName = $('#bagName').val();
+     job.baggingDirectory = $('#baggingDirectory').val();
      job.save();
      $("#container").html(templates.jobFiles());
      job.setFileListUI();
@@ -88,7 +92,11 @@
  $("#btnJobTagsOrStorage").click(function() {
      var job = es.ActiveObject;
      job.bagName = $('#bagName').val();
+     job.baggingDirectory = $('#baggingDirectory').val();
      if (job.bagItProfile != null && !validateBagName()) {
+         return
+     }
+     if (job.bagItProfile != null && !validateBaggingDirectory()) {
          return
      }
      job.save();
@@ -127,6 +135,22 @@
          return false;
      }
      return true;
+ }
+
+ function validateBaggingDirectory() {
+     var job = es.ActiveObject;
+     var isValid = true;
+     var dir = $('#baggingDirectory').val();
+     var parent = $('#baggingDirectory').closest("div.form-group");
+     if (job.bagItProfile != null && !dir) {
+         parent.removeClass("has-success");
+         parent.addClass("has-error");
+         isValid = false;
+     } else {
+         parent.removeClass("has-error");
+         parent.addClass("has-success");
+     }
+     return isValid;
  }
 
  function showBagNameHint() {
