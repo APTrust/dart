@@ -1,6 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
+// This callback setup is awkward. It should be more straightforward,
+// simple, and clear.
+
 module.exports = class QuickStat {
     constructor(shouldInclude, fileCallback, dirCallback) {
         this.shouldInclude = shouldInclude;

@@ -13,10 +13,10 @@ import (
 // https://github.com/ruebot/bagit-profiles.
 type BagItProfile struct {
 	// Id is a UUID (as string) that uniquely identifies this profile.
-	Id string
+	Id string `json:"id"`
 	// Name is the name of the profile, usually set by the user in
-	// the EasyStore UI.
-	Name string
+	// the EasyStore UI
+	Name string `json:"name"`
 	// AcceptBagItVersion is a list of BagIt versions to accept.
 	// For example, ["0.96", "0.97"]
 	AcceptBagItVersion []string `json:"acceptBagItVersion"`
