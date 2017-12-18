@@ -79,8 +79,14 @@
 <script>
   $('[data-toggle="popover"]').popover();
   $('#linkAdvanced').click(function() { $("#divAdvanced").toggle(); });
-  $("input[name=filesOptionDSStore]").change(es.ActiveObject.fileOptionsChanged);
-  $("input[name=filesOptionHidden]").change(es.ActiveObject.fileOptionsChanged);
+  $("input[name=filesOptionDSStore]").change(function() {
+      var job = es.ActiveObject;
+      job.fileOptionsChanged();
+  });
+  $("input[name=filesOptionHidden]").change(function() {
+      var job = es.ActiveObject;
+      job.fileOptionsChanged();
+  });
   $("#btnJobPackaging").click(function () {
     var job = es.ActiveObject;
     var data = {};

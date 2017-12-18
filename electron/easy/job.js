@@ -225,6 +225,8 @@ module.exports = class Job {
             job = new Job();
             Object.assign(job, obj);
         }
+        job.options = new JobOptions();
+        Object.assign(job.options, obj.options);
         if (obj.bagItProfile != null) {
             job.bagItProfile = BagItProfile.toFullObject(obj.bagItProfile);
         }
@@ -251,6 +253,8 @@ module.exports = class Job {
             var item = items[i];
             var job = new es.Job();
             Object.assign(job, item)
+            job.options = new JobOptions();
+            Object.assign(job.options, item.options);
             if (item.bagItProfile != null) {
                 job.bagItProfile = BagItProfile.toFullObject(item.bagItProfile);
             }
@@ -263,10 +267,11 @@ module.exports = class Job {
         this.options.skipDSStore = $('#filesSkipDSStore').prop('checked');
         this.options.skipHiddenFiles = $('#filesSkipHidden').prop('checked');
         this.options.skipDotKeep = $('#filesSkipDotKeep').prop('checked');
+        var job = this;
         $.each($("tr[data-object-type='File']"), function(index, row) {
             var filepath = $(row).data('filepath');
-            deleteFile($(row).find('td').first());
-            addFile(filepath);
+            job.deleteFile($(row).find('td').first());
+            job.addFile(filepath);
         });
     }
 
