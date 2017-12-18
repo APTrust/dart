@@ -7,7 +7,7 @@ const ValidationResult = require(path.resolve('electron/easy/validation_result')
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});
 
-const requiredSettings = ["Institution Domain"];
+const requiredSettings = ["Institution Domain", "Bagging Directory"];
 
 module.exports = class AppSetting {
     constructor(name, value) {
@@ -34,7 +34,11 @@ module.exports = class AppSetting {
         form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
         if (this.isRequired()) {
             form.fields['name'].attrs['disabled'] = true;
-            form.fields['name'].help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
+            if (this.name == "Institution Domain") {
+                form.fields['name'].help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
+            } else if (this.name = "Bagging Directory") {
+                form.fields['name'].help = "Where should Easy Store create bags?"
+            }
         }
         form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
         return form

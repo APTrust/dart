@@ -1,5 +1,6 @@
 $(function() {
     const path = require("path");
+    const os = require('os');
     const es = require(path.resolve('electron/easy/easy_store'));
     const templates = require(path.resolve('electron/easy/templates'));
     const builtins = require(path.resolve('electron/easy/builtin_profiles'));
@@ -411,6 +412,12 @@ $(function() {
     if (es.AppSetting.findByName("Institution Domain") == null) {
         console.log("Creating required app settings");
         var setting = new es.AppSetting("Institution Domain", "example.org");
+        setting.save();
+    }
+    if (es.AppSetting.findByName("Bagging Directory") == null) {
+        console.log("Creating required app settings");
+        var dir = path.join(os.homedir(), "tmp", "easy-store");
+        var setting = new es.AppSetting("Bagging Directory", dir);
         setting.save();
     }
 
