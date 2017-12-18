@@ -100,15 +100,17 @@ module.exports = class Job {
     static shouldIncludeFile(filepath, options) {
         // Return false if this file should be filtered out of the package.
         var isMacJunk = filepath.match(macJunkFile);
-        if (options.skipDSStore && isMacJunk) {
-            return false;
-        }
         var isHidden = filepath.match(dotFile);
         var isDotKeep = filepath.match(dotKeepFile);
-        if (options.skipHiddenFiles && isHidden && !isMacJunk && !isDotKeep) {
+        var skipMacJunk = (options.skipDSStore || options.skipDotKeep || options.skipHiddenFiles);
+
+        if (isMacJunk && skipMacJunk) {
             return false;
         }
-        if (options.skipDotKeep && !isMacJunk && (isHidden || isDotKeep)) {
+        else if (isDotKeep && options.skipDotKeep) {
+            return false;
+        }
+        else if (isHidden && options.skipHiddenFiles) {
             return false;
         }
         return true;
