@@ -225,9 +225,9 @@ module.exports = class Job {
 
     save() {
         if (this.created == null) {
-            this.created = Date.now();
+            this.created = new Date().toJSON();
         }
-        this.updated = Date.now();
+        this.updated = new Date().toJSON();
         return db.set(this.id, this);
     }
 
