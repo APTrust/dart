@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bufio"
+	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -154,8 +158,20 @@ func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
 }
 
 func loadJob() *bagit.Job {
+	var stdin bool
+	flag.BoolVar(&stdin, "stdin", false, "Load job from stdin instead of reading from file.")
+	flag.Parse()
+	if stdin {
+		job, err := loadJobFromStdin()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+		return job
+	}
+
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "You must specify a job file.")
+		fmt.Fprintln(os.Stderr, "You must specify a job file, or pass the job JSON in through STDIN.")
 		os.Exit(1)
 	}
 	job, err := bagit.LoadJobFromFile(os.Args[1])
@@ -171,4 +187,27 @@ func loadJob() *bagit.Job {
 		os.Exit(1)
 	}
 	return job
+}
+
+func loadJobFromStdin() (*bagit.Job, error) {
+	jsonBytes := make([]byte, 0)
+	data := make([]byte, 4096)
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		bytesRead, err := reader.Read(data)
+		jsonBytes = append(jsonBytes, data[0:bytesRead]...)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Fprintln(os.Stderr, err.Error())
+			os.Exit(1)
+		}
+		if bytesRead < len(data) {
+			break
+		}
+	}
+	job := &bagit.Job{}
+	err := json.Unmarshal(jsonBytes, job)
+	return job, err
 }
