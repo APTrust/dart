@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 const dateFormat = require('dateformat');
 const AppSetting = require(path.resolve('electron/easy/app_setting'));
 const BagItProfile = require(path.resolve('electron/easy/bagit_profile'));
@@ -250,12 +251,10 @@ module.exports = class Job {
 			Object.assign(ss, obj.storageServices[i]);
 			job.storageServices[i] = ss;
 		}
-		if (obj.jobResults != null) {
-			for (var i=0; i < obj.jobResults.length; i++) {
-				var result = new JobResult();
-				Object.assign(result, obj.jobResults[i]);
-				job.jobResults[i] = result;
-			}
+		for (var i=0; i < obj.jobResults.length; i++) {
+			var result = new JobResult();
+			Object.assign(result, obj.jobResults[i]);
+			job.jobResults[i] = result;
 		}
 		return job;
 	}
@@ -354,7 +353,29 @@ module.exports = class Job {
 	// Run this job
 	run() {
 		if (job.bagItProfile != null) {
-			// Bag it
+			// Start the bagger executable
+			var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
+			var bagger = spawn(baggerProgram, [ "--stdin" ]);
+
+			bagger.on('error', (err) => {
+				console.log(`Oopsie! This happened: ${err}`);
+			});
+
+			bagger.on('exit', function (code, signal) {
+				console.log(`Bagger exited with code ${code} and signal ${signal}`);
+			});
+
+			bagger.stdout.on('data', (data) => {
+				console.log(`Bagger stdout:\n${data}`);
+			});
+
+			bagger.stderr.on('data', (data) => {
+				console.error(`Bagger stderr:\n${data}`);
+			});
+
+			// Send the job to the bagging program
+			bagger.stdin.write(JSON.stringify(this));
+
 		}
 		if (job.storageServices.length > 0) {
 			// Store it
