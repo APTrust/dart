@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"os"
 	"path/filepath"
+	"strings"
+	"sync"
 	"time"
 )
 
@@ -28,6 +31,7 @@ func createBag(job *bagit.Job) (string, error) {
 	}
 
 	// Add files
+	// TODO: *** PRESERVE TIMESTAMPS ON COPY ***
 	for _, fpath := range job.Files {
 		if fileutil.IsFile(fpath) {
 			addFile(bagger, job, fpath)
@@ -70,12 +74,48 @@ func createBag(job *bagit.Job) (string, error) {
 		os.Exit(1)
 	}
 
-	// TODO: tar bag, if required
+	// Tar the bag, if required
+	// TODO: This will have to be more flexible in the future.
+	// TODO: Clean this up
+	// TODO: *** TAR WRITER MUST PRESERVE USER/GROUP ***
+	validationPath := bagPath
+	canTar := util.StringListContains(job.BagItProfile.AcceptSerialization, "application/tar")
+	if canTar && job.BagItProfile.Serialization == "required" {
+		algorithms := make([]string, 0)
+		tarPath := bagPath + ".tar"
+		validationPath = tarPath
+		fmt.Println("Tarring bag to", tarPath)
+		writer := fileutil.NewTarWriter(tarPath)
+		writer.Open()
+		defer writer.Close()
+
+		var wg sync.WaitGroup
+
+		err := filepath.Walk(bagPath, func(filePath string, f os.FileInfo, err error) error {
+			wg.Add(1)
+			var e error
+			if f != nil && f.Mode().IsRegular() {
+				relPath := strings.Replace(filePath, job.BaggingDirectory+"/", "", 1)
+				_, e := writer.AddToArchive(filePath, relPath, algorithms)
+				if e != nil {
+					fmt.Fprintf(os.Stderr, e.Error())
+				}
+			}
+			wg.Done()
+			return e
+		})
+
+		wg.Wait()
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, err.Error())
+		}
+	}
 
 	// Validate bag
-	bag := bagit.NewBag(bagPath)
+	bag := bagit.NewBag(validationPath)
 	validator := bagit.NewValidator(bag, job.BagItProfile)
-	fmt.Println("Validating bag at", bagPath)
+	fmt.Println("Validating bag at", validationPath)
 	if !validator.Validate() {
 		fmt.Fprintln(os.Stderr, "Bag failed validation with the following errors:")
 		for _, errMsg := range validator.Errors() {
@@ -83,10 +123,19 @@ func createBag(job *bagit.Job) (string, error) {
 		}
 		os.Exit(1)
 	} else {
-		fmt.Println("Bag", bagPath, "is valid")
+		fmt.Println("Bag at", validationPath, "is valid")
 	}
 
-	return bagPath, nil
+	// Delete the bag directory that we just tarred up
+	if strings.HasSuffix(validationPath, ".tar") && validationPath != bagPath {
+		if fileutil.LooksSafeToDelete(bagPath, 12, 3) {
+			fmt.Println("Deleting bag directory", bagPath)
+			fmt.Println("Bag is in", validationPath)
+			os.RemoveAll(bagPath)
+		}
+	}
+
+	return validationPath, nil
 }
 
 func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
