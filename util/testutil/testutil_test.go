@@ -41,10 +41,10 @@ func TestGetPathToTestFileDir(t *testing.T) {
 	assert.True(t, strings.HasSuffix(path, "/easy-store/testdata/files"))
 }
 
-func TestGetPathToSchema(t *testing.T) {
-	path, err := testutil.GetPathToSchema()
+func TestGetPathToJob(t *testing.T) {
+	path, err := testutil.GetPathToJob("job_sample.json")
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, "/easy-store/db/schema/easy-store.sql"))
+	assert.True(t, strings.HasSuffix(path, "/testdata/jobs/job_sample.json"))
 }
 
 func TestUntarTestBag(t *testing.T) {

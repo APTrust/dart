@@ -55,17 +55,12 @@ func GetPathToTestFileDir() (string, error) {
 	return filepath.Join(dataPath, "files"), nil
 }
 
-func GetPathToSchema() (string, error) {
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", fmt.Errorf("Rumtime cannot get caller file name.")
-	}
-	absFileName, err := filepath.Abs(filename)
+func GetPathToJob(filename string) (string, error) {
+	dataPath, err := GetPathToTestData()
 	if err != nil {
 		return "", err
 	}
-	schemaPath := filepath.Join(absFileName, "..", "..", "..", "db", "schema", "easy-store.sql")
-	return filepath.Abs(schemaPath)
+	return filepath.Join(dataPath, "jobs", filename), nil
 }
 
 // UntarTestBag untars a bag into a temporary directory for testing.

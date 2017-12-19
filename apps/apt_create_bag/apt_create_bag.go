@@ -41,5 +41,12 @@ func loadJob() *bagit.Job {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
+	errors := job.Validate()
+	if len(errors) > 0 {
+		for _, err := range errors {
+			fmt.Fprintln(os.Stderr, err.Error())
+		}
+		os.Exit(1)
+	}
 	return job
 }

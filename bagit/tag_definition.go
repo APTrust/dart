@@ -49,3 +49,7 @@ func (tagDef *TagDefinition) ValueIsAllowed(value string) (err error) {
 	}
 	return err
 }
+
+func (tagDef *TagDefinition) Validate() error {
+	return tagDef.ValueIsAllowed(tagDef.UserValue)
+}
