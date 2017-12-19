@@ -356,6 +356,19 @@ func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 	return true
 }
 
+// getPayloadOxum returns ByteCount.FileCount for the payload.
+// This is only accurate after you've added all files through AddFile.
+// See Payload-Oxum at https://tools.ietf.org/html/draft-kunze-bagit-14
+func (bagger *Bagger) GetPayloadOxum() string {
+	byteCount := int64(0)
+	fileCount := 0
+	for _, file := range bagger.bag.Payload {
+		byteCount += file.FileSummary.Size
+		fileCount += 1
+	}
+	return fmt.Sprintf("%d.%d", byteCount, fileCount)
+}
+
 // addError adds a message to the list of bagging errors.
 func (bagger *Bagger) addError(format string, a ...interface{}) {
 	bagger.errors = append(bagger.errors, fmt.Sprintf(format, a...))

@@ -399,3 +399,34 @@ ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-in
 	require.Nil(t, err)
 	require.Equal(t, expectedTagManifest, string(actualTagManifest))
 }
+
+func TestPayloadOxum(t *testing.T) {
+	// Get a tmp dir name
+	tempDir, err := ioutil.TempDir("", "bagger_test")
+	require.Nil(t, err)
+
+	// Load the DPN bagit profile
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
+	require.Nil(t, err)
+	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
+
+	// Get our bagger
+	bagger, err := bagit.NewBagger(tempDir, dpnProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
+
+	// Add files. The "files" var contains relative file paths.
+	testFileDir, _ := testutil.GetPathToTestFileDir()
+	absSourcePath, _ := fileutil.RecursiveFileList(testFileDir)
+	relDestPaths := make([]string, len(absSourcePath))
+	for i, absSrcPath := range absSourcePath {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+	}
+
+	// Check the Oxum value. 6 files, approx. 632kb
+	assert.Equal(t, "632046.6", bagger.GetPayloadOxum())
+}

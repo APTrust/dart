@@ -6,6 +6,7 @@ import (
 	"github.com/APTrust/easy-store/util/fileutil"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 func main() {
@@ -40,15 +41,26 @@ func createBag(job *bagit.Job) (string, error) {
 			})
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err.Error())
-				//os.Exit(1)
+				os.Exit(1)
 			}
 		}
 	}
 
 	// Add tags
+	for _, tagDef := range job.BagItProfile.RequiredTags {
+		kvp := bagit.NewKeyValuePair(tagDef.TagName, tagDef.UserValue)
+		if tagDef.TagFile == "bag-info.txt" {
+			if tagDef.TagName == "Bagging-Date" {
+				kvp.Value = time.Now().Format("2006-01-02")
+			} else if tagDef.TagName == "Payload-Oxum" {
+				kvp.Value = bagger.GetPayloadOxum()
+			}
+		}
+		bagger.AddTag(tagDef.TagFile, &kvp)
+	}
 
 	// Write bag
-	bagger.WriteBag(true, false)
+	bagger.WriteBag(true, true)
 
 	errors := bagger.Errors()
 	for _, errMsg := range errors {
