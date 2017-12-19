@@ -5,9 +5,7 @@ import (
 	"github.com/APTrust/easy-store/bagit"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"os"
-	"path"
 	"path/filepath"
-	"strings"
 )
 
 func main() {
@@ -31,19 +29,18 @@ func createBag(job *bagit.Job) (string, error) {
 	// Add files
 	for _, fpath := range job.Files {
 		if fileutil.IsFile(fpath) {
-			baseDir := path.Dir(fpath)
-			addFile(bagger, job, fpath, baseDir)
+			addFile(bagger, job, fpath)
 		} else if fileutil.IsDir(fpath) {
 			err := filepath.Walk(fpath, func(filePath string, f os.FileInfo, err error) error {
 				var e error
-				if f != nil && f.IsDir() == false {
-					e = addFile(bagger, job, filePath, fpath)
+				if f != nil && f.Mode().IsRegular() {
+					e = addFile(bagger, job, filePath)
 				}
 				return e
 			})
 			if err != nil {
 				fmt.Fprintln(os.Stderr, err.Error())
-				os.Exit(1)
+				//os.Exit(1)
 			}
 		}
 	}
@@ -51,19 +48,19 @@ func createBag(job *bagit.Job) (string, error) {
 	// Add tags
 
 	// Write bag
-	if !bagger.WriteBag(true, false) {
-		errors := bagger.Errors()
-		for _, errMsg := range errors {
-			fmt.Fprintln(os.Stderr, errMsg)
-		}
+	bagger.WriteBag(true, false)
+
+	errors := bagger.Errors()
+	for _, errMsg := range errors {
+		fmt.Fprintln(os.Stderr, errMsg)
 	}
 
 	return bagPath, nil
 }
 
-func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath, baseDir string) error {
+func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
 	if job.ShouldIncludeFile(sourcePath) {
-		relPath := strings.Replace(sourcePath, baseDir, "data", 1)
+		relPath := "data" + sourcePath
 		fmt.Println("Adding", sourcePath, "at", relPath)
 		if !bagger.AddFile(sourcePath, relPath) {
 			errors := bagger.Errors()
