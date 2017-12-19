@@ -87,8 +87,3 @@ func (job *Job) ShouldIncludeFile(filePath string) bool {
 	}
 	return true
 }
-
-func (job *Job) EachFile(f func(string)) {
-	// Recurse into directories, call f on each file
-	// that passes ShouldIncludeFile test
-}
