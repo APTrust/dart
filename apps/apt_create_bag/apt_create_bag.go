@@ -66,6 +66,25 @@ func createBag(job *bagit.Job) (string, error) {
 	for _, errMsg := range errors {
 		fmt.Fprintln(os.Stderr, errMsg)
 	}
+	if len(errors) > 0 {
+		os.Exit(1)
+	}
+
+	// TODO: tar bag, if required
+
+	// Validate bag
+	bag := bagit.NewBag(bagPath)
+	validator := bagit.NewValidator(bag, job.BagItProfile)
+	fmt.Println("Validating bag at", bagPath)
+	if !validator.Validate() {
+		fmt.Fprintln(os.Stderr, "Bag failed validation with the following errors:")
+		for _, errMsg := range validator.Errors() {
+			fmt.Fprintln(os.Stderr, errMsg)
+		}
+		os.Exit(1)
+	} else {
+		fmt.Println("Bag", bagPath, "is valid")
+	}
 
 	return bagPath, nil
 }
