@@ -1,0 +1,46 @@
+<div id="divJobRun">
+
+  <div class="pull-left" id="divJobRunDiv">
+	<a class="btn btn-primary" id="btnJobRun" role="button">Run Job</a>
+  </div>
+
+  <div class="row">
+	  <div class="col-sm-1"></div>
+	  <div class="col-sm-10" id="jobStdout"></div>
+	  <div class="col-sm-1"></div>
+  </div>
+
+  <div class="row">
+	  <div class="col-sm-1"></div>
+	  <div class="col-sm-10" id="jobError"></div>
+	  <div class="col-sm-1"></div>
+  </div>
+
+  <div class="clearfix" style="height: 30px;"></div>
+
+  <div class="pull-left" id="divJobReviewDiv">
+	<a class="btn btn-primary" id="btnJobReview" role="button">&lt;&lt; Previous</a>
+  </div>
+
+</div>
+
+<script>
+ $("#btnJobReview").click(function() {
+	 var job = es.ActiveObject;
+	 job.setStorageServicesFromForm();
+	 job.save();
+	 var data = {};
+	 data['job'] = job;
+	 data['storageServices'] = job.storageServices;
+	 if (job.bagItProfile != null) {
+	   data['bagTitle'] = job.bagItProfile.bagTitle();
+	   data['bagDescription'] = job.bagItProfile.bagDescription();
+	   data['bagInternalIdentifier'] = job.bagItProfile.bagInternalIdentifier();
+	 }
+	 $("#container").html(templates.jobReview(data));
+ });
+ $("#btnJobRun").click(function() {
+	 var job = es.ActiveObject;
+	 job.run();
+ });
+</script>

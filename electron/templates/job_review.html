@@ -1,4 +1,4 @@
-<div id="divJobRun">
+<div id="divJobReview">
 
   {{> jobTabs tabReview = true }}
 
@@ -7,24 +7,24 @@
   {{#if job.bagItProfile}}
   <h3>Bag Info</h3>
   <div class="row">
-    <div class="col-sm-4"><strong>Profile</strong></div>
-    <div class="col-sm-8">{{ job.bagItProfile.name }}</div>
+	<div class="col-sm-4"><strong>Profile</strong></div>
+	<div class="col-sm-8">{{ job.bagItProfile.name }}</div>
   </div>
   <div class="row">
-    <div class="col-sm-4"><strong>Bag Name</strong></div>
-    <div class="col-sm-8">{{ job.bagName }}</div>
+	<div class="col-sm-4"><strong>Bag Name</strong></div>
+	<div class="col-sm-8">{{ job.bagName }}</div>
   </div>
   <div class="row">
-    <div class="col-sm-4"><strong>Internal Identifier</strong></div>
-    <div class="col-sm-8">{{ bagInternalIdentifier }}</div>
+	<div class="col-sm-4"><strong>Internal Identifier</strong></div>
+	<div class="col-sm-8">{{ bagInternalIdentifier }}</div>
   </div>
   <div class="row">
-    <div class="col-sm-4"><strong>Title</strong></div>
-    <div class="col-sm-8">{{ bagTitle }}</div>
+	<div class="col-sm-4"><strong>Title</strong></div>
+	<div class="col-sm-8">{{ bagTitle }}</div>
   </div>
   <div class="row">
-    <div class="col-sm-4"><strong>Description</strong></div>
-    <div class="col-sm-8">{{ bagDescription }}</div>
+	<div class="col-sm-4"><strong>Description</strong></div>
+	<div class="col-sm-8">{{ bagDescription }}</div>
   </div>
   {{/if}}
 
@@ -32,7 +32,7 @@
   <h3>Files</h3>
   {{#each job.files}}
   <div class="row">
-    <div class="col-sm-12">{{ this }}</div>
+	<div class="col-sm-12">{{ this }}</div>
   </div>
   {{/each}}
   {{/if}}
@@ -41,24 +41,32 @@
   <h3>Upload To</h3>
   {{#each storageServices as |service| }}
   <div class="row">
-    <div class="col-sm-12">{{ service.name }}</div>
+	<div class="col-sm-12">{{ service.name }}</div>
   </div>
   {{/each}}
   {{/if}}
 
-  <div class="clearfix"></div>
+  <div class="clearfix" style="height: 30px;"></div>
+
+  <div class="pull-right" id="divJobReady">
+	  <a class="btn btn-primary" id="btnJobReady" role="button">Next &gt;&gt;</a>
+  </div>
 
   <div class="pull-left" id="divJobStorageDiv">
-    <a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
+	<a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
   </div>
 
 </div>
 
 <script>
  $("#btnJobStorage").click(function() {
-     var job = es.ActiveObject;
-     var data = {};
-     data.form = job.toStorageServiceForm();
-     $("#container").html(templates.jobStorage(data));
+	 var job = es.ActiveObject;
+	 var data = {};
+	 data.form = job.toStorageServiceForm();
+	 $("#container").html(templates.jobStorage(data));
+ });
+ $("#btnJobReady").click(function() {
+	 var job = es.ActiveObject;
+	 $("#container").html(templates.jobRun(job));
  });
 </script>

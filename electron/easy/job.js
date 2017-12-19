@@ -352,32 +352,33 @@ module.exports = class Job {
 
 	// Run this job
 	run() {
-		if (job.bagItProfile != null) {
+		if (this.bagItProfile != null) {
 			// Start the bagger executable
 			var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
 			var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
 			bagger.on('error', (err) => {
-				console.log(`Oopsie! This happened: ${err}`);
+				$("#jobStderr").append("<br/>" + err + "<br/>");
 			});
 
 			bagger.on('exit', function (code, signal) {
-				console.log(`Bagger exited with code ${code} and signal ${signal}`);
+				$("#jobStdout").append("<br/><br/>");
+				$("#jobStdout").append(`Bagger exited with code ${code} and signal ${signal}`);
 			});
 
 			bagger.stdout.on('data', (data) => {
-				console.log(`Bagger stdout:\n${data}`);
+				$("#jobStdout").append(data + "<br/>");
 			});
 
 			bagger.stderr.on('data', (data) => {
-				console.error(`Bagger stderr:\n${data}`);
+				$("#jobStderr").append(data + "<br/>");
 			});
 
 			// Send the job to the bagging program
 			bagger.stdin.write(JSON.stringify(this));
 
 		}
-		if (job.storageServices.length > 0) {
+		if (this.storageServices.length > 0) {
 			// Store it
 		}
 	}

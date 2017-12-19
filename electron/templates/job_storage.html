@@ -7,16 +7,18 @@
 
   <form>
 
-      {{> inputCheckboxGroup field = form.fields.storageServices }}
+	  {{> inputCheckboxGroup field = form.fields.storageServices }}
 
   </form>
 
-  <div class="pull-right" id="btnJobRunDiv">
-    <a class="btn btn-primary" id="btnJobRun" role="button">Next &gt;&gt;</a>
+  <div class="clearfix" style="height: 30px;"></div>
+
+  <div class="pull-right" id="btnJobReviewDiv">
+	<a class="btn btn-primary" id="btnJobReview" role="button">Next &gt;&gt;</a>
   </div>
 
   <div class="pull-left" id="divPrevious">
-    <a class="btn btn-primary" id="btnPrevious" role="button">&lt;&lt; Previous</a>
+	<a class="btn btn-primary" id="btnPrevious" role="button">&lt;&lt; Previous</a>
   </div>
 
 </div>
@@ -24,34 +26,34 @@
 <script>
  $('[data-toggle="popover"]').popover();
 
- $("#btnJobRun").click(function() {
-     var job = es.ActiveObject;
-     job.setStorageServicesFromForm();
-     job.save();
-     var data = {};
-     data['job'] = job;
-     data['storageServices'] = job.storageServices;
-     // Handlebars overwrites 'this' even inside of classes.
-     if (job.bagItProfile != null) {
-       data['bagTitle'] = job.bagItProfile.bagTitle();
-       data['bagDescription'] = job.bagItProfile.bagDescription();
-       data['bagInternalIdentifier'] = job.bagItProfile.bagInternalIdentifier();
-     }
-     $("#container").html(templates.jobReview(data));
+ $("#btnJobReview").click(function() {
+	 var job = es.ActiveObject;
+	 job.setStorageServicesFromForm();
+	 job.save();
+	 var data = {};
+	 data['job'] = job;
+	 data['storageServices'] = job.storageServices;
+	 // Handlebars overwrites 'this' even inside of classes.
+	 if (job.bagItProfile != null) {
+	   data['bagTitle'] = job.bagItProfile.bagTitle();
+	   data['bagDescription'] = job.bagItProfile.bagDescription();
+	   data['bagInternalIdentifier'] = job.bagItProfile.bagInternalIdentifier();
+	 }
+	 $("#container").html(templates.jobReview(data));
  });
 
  $("#btnPrevious").click(function() {
-     var job = es.ActiveObject;
-     job.setStorageServicesFromForm();
-     job.save();
-     var data = {};
-     if (job.bagItProfile != null) {
-         var tags = job.bagItProfile.tagsGroupedByFile();
-         data['tags'] = tags;
-         $("#container").html(templates.jobTags(data));
-     } else {
-         data.form = job.toPackagingForm();
-         $("#container").html(templates.jobPackaging(data));
-     }
+	 var job = es.ActiveObject;
+	 job.setStorageServicesFromForm();
+	 job.save();
+	 var data = {};
+	 if (job.bagItProfile != null) {
+		 var tags = job.bagItProfile.tagsGroupedByFile();
+		 data['tags'] = tags;
+		 $("#container").html(templates.jobTags(data));
+	 } else {
+		 data.form = job.toPackagingForm();
+		 $("#container").html(templates.jobPackaging(data));
+	 }
 });
 </script>
