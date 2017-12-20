@@ -145,7 +145,7 @@ func createBag(job *bagit.Job) (string, error) {
 func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
 	if job.ShouldIncludeFile(sourcePath) {
 		relPath := "data" + sourcePath
-		fmt.Println("Adding", sourcePath, "at", relPath)
+		fmt.Println("Adding", sourcePath)
 		if !bagger.AddFile(sourcePath, relPath) {
 			errors := bagger.Errors()
 			lastError := errors[len(errors)-1]
