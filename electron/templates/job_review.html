@@ -7,24 +7,24 @@
   {{#if job.bagItProfile}}
   <h3>Bag Info</h3>
   <div class="row">
-	<div class="col-sm-4"><strong>Profile</strong></div>
-	<div class="col-sm-8">{{ job.bagItProfile.name }}</div>
+	  <div class="col-sm-4"><strong>Profile</strong></div>
+	  <div class="col-sm-8">{{ job.bagItProfile.name }}</div>
   </div>
   <div class="row">
-	<div class="col-sm-4"><strong>Bag Name</strong></div>
-	<div class="col-sm-8">{{ job.bagName }}</div>
+	  <div class="col-sm-4"><strong>Bag Name</strong></div>
+	  <div class="col-sm-8">{{ job.bagName }}</div>
   </div>
   <div class="row">
-	<div class="col-sm-4"><strong>Internal Identifier</strong></div>
-	<div class="col-sm-8">{{ bagInternalIdentifier }}</div>
+	  <div class="col-sm-4"><strong>Internal Identifier</strong></div>
+	  <div class="col-sm-8">{{ bagInternalIdentifier }}</div>
   </div>
   <div class="row">
-	<div class="col-sm-4"><strong>Title</strong></div>
-	<div class="col-sm-8">{{ bagTitle }}</div>
+	  <div class="col-sm-4"><strong>Title</strong></div>
+	  <div class="col-sm-8">{{ bagTitle }}</div>
   </div>
   <div class="row">
-	<div class="col-sm-4"><strong>Description</strong></div>
-	<div class="col-sm-8">{{ bagDescription }}</div>
+	  <div class="col-sm-4"><strong>Description</strong></div>
+	  <div class="col-sm-8">{{ bagDescription }}</div>
   </div>
   {{/if}}
 
@@ -48,13 +48,42 @@
 
   <div class="clearfix" style="height: 30px;"></div>
 
-  <div class="pull-right" id="divJobReady">
-	  <a class="btn btn-primary" id="btnJobReady" role="button">Next &gt;&gt;</a>
+  <div id="jobRun" style="display:none">
+
+      <h3>Running Job</h3>
+
+      <div id="jobRunFiles" class="alert alert-info" role="alert">
+          Adding files to bag...
+      </div>
+
+      <div id="jobPackage" class="alert alert-info" role="alert" style="display:none;">
+
+      </div>
+
+      <div id="jobValidate" class="alert alert-info" role="alert" style="display:none;">
+
+      </div>
+
+      <div id="jobBagLocation" class="alert alert-success" role="alert" style="display:none;">
+
+      </div>
+
+      <div id="jobError" class="alert alert-danger" role="alert" style="display:none;">
+
+      </div>
+
   </div>
+
+  <div class="clearfix" style="height: 30px;"></div>
 
   <div class="pull-left" id="divJobStorageDiv">
 	<a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
   </div>
+
+  <div class="pull-right" id="divJobRun">
+	  <a class="btn btn-primary" id="btnJobRun" role="button">Run Job</a>
+  </div>
+
 
 </div>
 
@@ -65,8 +94,8 @@
 	 data.form = job.toStorageServiceForm();
 	 $("#container").html(templates.jobStorage(data));
  });
- $("#btnJobReady").click(function() {
+ $("#btnJobRun").click(function() {
 	 var job = es.ActiveObject;
-	 $("#container").html(templates.jobRun(job));
+	 job.run();
  });
 </script>

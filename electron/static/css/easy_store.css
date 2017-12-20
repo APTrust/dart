@@ -10,14 +10,3 @@
 	margin-top: 15px;
 	min-height: 40px;
 }
-
-#jobStdout {
-   overflow:auto;
-   max-height: 300px;
-}
-
-#jobStderr {
-   overflow:auto;
-   max-height: 300px;
-   color: #d43f3a; /* Bootstrap's Danger color*/
-}

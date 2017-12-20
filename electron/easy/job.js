@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
+const NEWLINE = require('os').EOL;
 const dateFormat = require('dateformat');
 const AppSetting = require(path.resolve('electron/easy/app_setting'));
 const BagItProfile = require(path.resolve('electron/easy/bagit_profile'));
@@ -352,7 +353,13 @@ module.exports = class Job {
 
 	// Run this job
 	run() {
+        var decoder = new TextDecoder("utf-8");
+        var fileCount = 0;
+
 		if (this.bagItProfile != null) {
+
+            $('#jobRun').show();
+
 			// Start the bagger executable
 			var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
 			var bagger = spawn(baggerProgram, [ "--stdin" ]);
@@ -367,11 +374,41 @@ module.exports = class Job {
 			});
 
 			bagger.stdout.on('data', (data) => {
-				$("#jobStdout").append(data + "<br/>");
+                var lines = decoder.decode(data).split(NEWLINE);
+                for (var line of lines) {
+                    if (line.startsWith('Adding')) {
+                        fileCount += 1;
+				        $("#jobRunFiles").text(line);
+                    } else if (line.startsWith('Tarring')) {
+                        $("#jobRunFiles").text(`Added ${fileCount} files`);
+                        $("#jobRunFiles").removeClass("alert-info");
+                        $("#jobRunFiles").addClass("alert-success");
+                        $("#jobPackage").show()
+				        $("#jobPackage").text(line);
+                    } else if (line.startsWith('Validating')) {
+                        $("#jobPackage").removeClass("alert-info");
+                        $("#jobPackage").addClass("alert-success");
+                        $("#jobValidate").show();
+                        $("#jobValidate").html(line);
+                    } else if (line.startsWith('Bag at') && line.endsWith("is valid")) {
+                        $("#jobValidate").removeClass("alert-info");
+                        $("#jobValidate").addClass("alert-success");
+                        $("#jobValidate").show();
+                        $("#jobValidate").append("<br/>" + line);
+                    } else if (line.startsWith('Created')) {
+                        $("#jobBagLocation").show();
+                        $("#jobBagLocation").html(line);
+                    }
+                }
+                // console.log(decoder.decode(data));
 			});
 
 			bagger.stderr.on('data', (data) => {
-				$("#jobStderr").append(data + "<br/>");
+                $("#jobError").show()
+                var lines = decoder.decode(data).split(NEWLINE);
+                for (var line of lines) {
+                    $("#jobError").append(line + "<br/>")
+                }
 			});
 
 			// Send the job to the bagging program
