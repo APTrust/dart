@@ -1,8 +1,8 @@
-class JobResult {
+module.exports = class JobResult {
 	constructor(operation) {
 		// operation should be either "Bagging" or "Storage"
 		this.operation = operation;
-		this.attemptNumber = 1;
+		this.attemptNumber = 0;
 		this.started = null;
 		this.completed = null;
 		this.succeeded = false;
@@ -10,4 +10,11 @@ class JobResult {
 		this.stdout = "";
 		this.stderr = "";
 	}
+    reset() {
+		this.started = null;
+		this.completed = null;
+		this.succeeded = false;
+		this.stdout = "";
+		this.stderr = "";
+    }
 }

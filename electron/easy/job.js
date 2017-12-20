@@ -17,6 +17,10 @@ const StorageService = require(path.resolve('electron/easy/storage_service'));
 const Util = require(path.resolve('electron/easy/util'));
 const ValidationResult = require(path.resolve('electron/easy/validation_result'));
 
+const Store = require('electron-store');
+var db = new Store({name: 'jobs'});
+
+
 const macJunkFile = /._DS_Store$|.DS_Store$/i;
 const dotFile = /\/\.[^\/]+$|\\\.[^\\]+$/;
 const dotKeepFile = /\/\.keep$|\\\.keep$/i;
@@ -26,8 +30,6 @@ var mb = 1024 * kb;
 var gb = 1024 * mb;
 var tb = 1024 * gb;
 
-const Store = require('electron-store');
-var db = new Store({name: 'jobs'});
 
 module.exports = class Job {
 	constructor() {
@@ -351,12 +353,33 @@ module.exports = class Job {
 		return db.store;
 	}
 
+    findResult(operation) {
+        var result = null;
+        for (var r of this.jobResults) {
+            if (r.operation == operation) {
+                result = r;
+                break;
+            }
+        }
+        return result;
+    }
+
 	// Run this job
 	run() {
         var decoder = new TextDecoder("utf-8");
         var fileCount = 0;
 
 		if (this.bagItProfile != null) {
+
+            var job = this;
+            var result = this.findResult("package");
+            if (result == null) {
+                result = new JobResult("package");
+                job.jobResults.push(result);
+            }
+            result.reset();
+            result.attemptNumber += 1;
+            result.started = (new Date()).toJSON();
 
             $('#jobRun').show();
 
@@ -365,12 +388,15 @@ module.exports = class Job {
 			var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
 			bagger.on('error', (err) => {
-				$("#jobStderr").append("<br/>" + err + "<br/>");
+                $("#jobError").show();
+				$("#jobError").append(err + "<br/>");
+                result.stderr += err + NEWLINE;
 			});
 
 			bagger.on('exit', function (code, signal) {
-				$("#jobStdout").append("<br/><br/>");
-				$("#jobStdout").append(`Bagger exited with code ${code} and signal ${signal}`);
+				result.stdout += `Bagger exited with code ${code} and signal ${signal}`;
+                result.completed = (new Date()).toJSON();
+                job.save(); // save job with JobResult
 			});
 
 			bagger.stdout.on('data', (data) => {
@@ -378,26 +404,33 @@ module.exports = class Job {
                 for (var line of lines) {
                     if (line.startsWith('Adding')) {
                         fileCount += 1;
-				        $("#jobRunFiles").text(line);
+				        $("#jobRunFiles .message").text(line);
                     } else if (line.startsWith('Tarring')) {
-                        $("#jobRunFiles").text(`Added ${fileCount} files`);
+                        $("#jobRunFiles .message").text(`Added ${fileCount} files`);
                         $("#jobRunFiles").removeClass("alert-info");
                         $("#jobRunFiles").addClass("alert-success");
+                        $("#jobRunFiles .glyphicon").removeClass("glyphicon-hand-right");
+                        $("#jobRunFiles .glyphicon").addClass("glyphicon-thumbs-up");
                         $("#jobPackage").show()
-				        $("#jobPackage").text(line);
+				        $("#jobPackage .message").text(line);
                     } else if (line.startsWith('Validating')) {
                         $("#jobPackage").removeClass("alert-info");
                         $("#jobPackage").addClass("alert-success");
+                        $("#jobPackage .glyphicon").removeClass("glyphicon-hand-right");
+                        $("#jobPackage .glyphicon").addClass("glyphicon-thumbs-up");
                         $("#jobValidate").show();
-                        $("#jobValidate").html(line);
+                        $("#jobValidate .message").html(line);
                     } else if (line.startsWith('Bag at') && line.endsWith("is valid")) {
                         $("#jobValidate").removeClass("alert-info");
                         $("#jobValidate").addClass("alert-success");
+                        $("#jobValidate .glyphicon").removeClass("glyphicon-hand-right");
+                        $("#jobValidate .glyphicon").addClass("glyphicon-thumbs-up");
                         $("#jobValidate").show();
-                        $("#jobValidate").append("<br/>" + line);
+                        $("#jobValidate .message").append("<br/>" + line);
                     } else if (line.startsWith('Created')) {
                         $("#jobBagLocation").show();
-                        $("#jobBagLocation").html(line);
+                        $("#jobBagLocation .message").html(line);
+                        result.succeeded = true;
                     }
                 }
                 // console.log(decoder.decode(data));
@@ -409,6 +442,7 @@ module.exports = class Job {
                 for (var line of lines) {
                     $("#jobError").append(line + "<br/>")
                 }
+                result.stderr += lines;
 			});
 
 			// Send the job to the bagging program
