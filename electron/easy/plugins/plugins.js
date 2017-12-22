@@ -1,3 +1,4 @@
+const EventEmitter = require('events');
 const requireDir = require('require-dir');
 const path = require('path');
 
@@ -71,6 +72,72 @@ function getPackageProviderByMimeType(mimetype) {
     }
     return null;
 }
+
+// See https://nodejs.org/api/events.html
+
+function newPackageEmitter() {
+    var emitter = new EventEmitter();
+    emitter.on('start', function() {
+
+    });
+    emitter.on('complete', function(succeeded, message) {
+
+    });
+    emitter.on('fileAddStart', function(message) {
+
+    });
+    emitter.on('fileProgress', function(intPercentComplete) {
+
+    });
+    emitter.on('fileAddComplete', function(succeeded, message) {
+
+    });
+    emitter.on('packageStart', function(message) {
+
+    });
+    emitter.on('packageComplete', function(succeeded, message) {
+
+    });
+    emitter.on('validateStart', function(message) {
+
+    });
+    emitter.on('validateComplete', function(succeeded, message) {
+
+    });
+    emitter.on('warning', function(message) {
+
+    });
+    emitter.on('error', function(message) {
+
+    });
+    return emitter;
+}
+
+function newStorageEmitter() {
+    emitter.on('start', function(message) {
+
+    });
+    emitter.on('complete', function(succeeded, message) {
+
+    });
+    emitter.on('uploadStart', function(message) {
+
+    });
+    emitter.on('uploadProgress', function(intPercentComplete) {
+
+    });
+    emitter.on('uploadComplete', function(succeeded, message) {
+
+    });
+    emitter.on('warning', function(message) {
+
+    });
+    emitter.on('error', function(message) {
+
+    });
+    return emitter;
+}
+
 
 module.exports.listStorageProviders = listStorageProviders;
 module.exports.listPackageProviders = listPackageProviders;

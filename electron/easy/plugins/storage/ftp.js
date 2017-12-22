@@ -14,10 +14,12 @@ class FTP {
      * @param {object} storageService - A storage service object describing
      * the service protocol, credentials, URL, and other info.
      * See easy/storage_service.js.
+     * @param {object} emitter - An Node event object that can emit events
      * @returns {object} - A new custom storage provider.
      */
-    constructor(storageService) {
+    constructor(storageService, emitter) {
         this.storageService = storageService;
+        this.emitter = emitter;
         // ... code ...
     }
 
@@ -48,6 +50,8 @@ class FTP {
         var result = new OperationResult();
         try {
             // ... code ...
+            // Can emit events: 'start', 'complete', 'uploadStart',
+            // 'uploadProgress', 'uploadComplete', 'warning', 'error'
         } catch (ex) {
            // ... code ...
         }

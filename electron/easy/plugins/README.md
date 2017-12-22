@@ -43,10 +43,12 @@ class <YourClassName> {
      * Custom packager.
      * @constructor
      * @param {object} job - The job object. See easy/job.js.
+     * @param {object} emitter - An Node event object that can emit events
      * @returns {object} - A new custom packager.
      */
-    constructor(job) {
+    constructor(job, emitter) {
         this.job = job;
+        this.emitter = emitter;
         // ... code ...
     }
 
@@ -74,6 +76,9 @@ class <YourClassName> {
         var result = new OperationResult();
         try {
             // ... code ...
+            // Can emit events: 'start', 'complete', 'fileAddStart',
+            // 'fileProgress', 'fileAddComplete', 'packageStart', 'packageComplete',
+            // 'validateStart', 'validateComplete', 'warning', 'error'
         } catch (ex) {
             // ... code ...
         }
@@ -119,10 +124,12 @@ class <YourClassName> {
      * @param {object} storageService - A storage service object describing
      * the service protocol, credentials, URL, and other info.
      * See easy/storage_service.js.
+     * @param {object} emitter - An Node event object that can emit events
      * @returns {object} - A new custom storage provider.
      */
-    constructor(storageService) {
+    constructor(storageService, emitter) {
         this.storageService = storageService;
+        this.emitter = emitter;
         // ... code ...
     }
 
@@ -153,6 +160,8 @@ class <YourClassName> {
         var result = new OperationResult();
         try {
             // ... code ...
+            // Can emit events: 'start', 'complete', 'uploadStart',
+            // 'uploadProgress', 'uploadComplete', 'warning', 'error'
         } catch (ex) {
            // ... code ...
         }

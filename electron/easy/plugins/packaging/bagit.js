@@ -13,10 +13,12 @@ class BagIt {
      * Custom packager.
      * @constructor
      * @param {object} job - The job object. See easy/job.js.
+     * @param {object} emitter - An Node event object that can emit events
      * @returns {object} - A new custom packager.
      */
-    constructor(job) {
+    constructor(job, emitter) {
         this.job = job;
+        this.emitter = emitter;
         // ... code ...
     }
 
@@ -43,6 +45,9 @@ class BagIt {
         var result = new OperationResult();
         try {
             // ... code ...
+            // Can emit events: 'start', 'complete', 'fileAddStart',
+            // 'fileProgress', 'fileAddComplete', 'packageStart', 'packageComplete',
+            // 'validateStart', 'validateComplete', 'warning', 'error'
         } catch (ex) {
             // ... code ...
         }
