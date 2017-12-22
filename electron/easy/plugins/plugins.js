@@ -50,9 +50,9 @@ function getStorageProviderByProtocol(protocol) {
 // format. Format can be 'tar', 'bagit', 'bzip', etc.
 function getPackageProviderByFormat(format) {
     for(var moduleName in PackageProviders) {
-        var provider = PackageProviders[moduleName];
-        if (provider.format == format) {
-            return provider;
+        var module = PackageProviders[moduleName];
+        if (module.format == format) {
+            return module.Provider;
         }
     }
     return null;
@@ -64,9 +64,9 @@ function getPackageProviderByFormat(format) {
 // getPackageProviderByFormat for the bagit format.
 function getPackageProviderByMimeType(mimetype) {
     for(var moduleName in PackageProviders) {
-        var provider = PackageProviders[moduleName];
-        if (provider.formatMimeType == formatMimeType) {
-            return provider;
+        var module = PackageProviders[moduleName];
+        if (module.formatMimeType == mimetype) {
+            return module.Provider;
         }
     }
     return null;

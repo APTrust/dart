@@ -54,5 +54,5 @@ class S3 {
     }
 }
 
-module.exports.S3 = S3;
+module.exports.Provider = S3;
 module.exports.protocol = protocol;

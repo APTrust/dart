@@ -54,5 +54,5 @@ class FTP {
     }
 }
 
-module.exports.FTP = FTP;
+module.exports.Provider = FTP;
 module.exports.protocol = protocol;

@@ -34,6 +34,6 @@ class Tar {
     }
 }
 
-module.exports.Tar = Tar;
+module.exports.Provider = Tar;
 module.exports.format = format;
 module.exports.formatMimeType = formatMimeType;

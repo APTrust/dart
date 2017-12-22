@@ -34,6 +34,6 @@ class BagIt {
     }
 }
 
-module.exports.BagIt = BagIt;
+module.exports.Provider = BagIt;
 module.exports.format = format;
 module.exports.formatMimeType = formatMimeType;

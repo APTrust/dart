@@ -14,13 +14,16 @@ interchangeable at runtime. The interfaces are described below.
 
 ## Packaging Plugin
 
-Packaging plugins must export a class that implements the methods shown
-below. The plugin must also export string fields called Format and
-FormatMimeType that describe what packaging format the plugin provides.
+Packaging plugins must export a field called 'Provider', which is the
+class that implements the methods shown below. The plugin must also export
+string fields called Format and FormatMimeType that describe what packaging
+format the plugin provides.
+
 Formats should be file extensions without the leading dot. For example,
 "tar", "zip", "parchive", etc. FormatMimeType should be the corresponding
 mime type for the file extension. For example, "application/x-tar",
 "application/zip", "application/x-par2".
+
 
 ```javascript
 
@@ -60,7 +63,7 @@ class <YourClassName> {
     }
 }
 
-module.exports.<YourClassName> = <YourClassName>;
+module.exports.Provider = <YourClassName>;
 module.exports.format = format;
 module.exports.formatMimeType = formatMimeType;
 
@@ -68,8 +71,10 @@ module.exports.formatMimeType = formatMimeType;
 
 ## Storage Plugin
 
-Storage plugins must export a class that implements the methods shown
-below. The plugin must also export a string fields called Protocol,
+Storage plugins must export a field called 'Provider', which is the
+class that implements the methods shown below.
+
+The plugin must also export a string fields called Protocol,
 which describes the protocol that the plugin provides. E.g. "ftp",
 "sftp", "s3", "rsync", "scp", etc.
 
@@ -132,7 +137,7 @@ class <YourClassName> {
     }
 }
 
-module.exports.<YourClassName> = <YourClassName>;
+module.exports.Provider = <YourClassName>;
 module.exports.protocol = protocol;
 
 ```
