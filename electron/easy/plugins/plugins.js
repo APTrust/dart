@@ -29,7 +29,7 @@ function listPackageProviders() {
     var formats = {};
     for(var moduleName in PackageProviders) {
         var provider = PackageProviders[moduleName];
-        formats[provider.Format] = provider.FormatMimeType;
+        formats[provider.format] = provider.formatMimeType;
     }
     return formats;
 }

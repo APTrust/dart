@@ -25,7 +25,7 @@ mime type for the file extension. For example, "application/x-tar",
 ```javascript
 
 const path = require('path');
-const JobResult = require(path.resolve('electron/easy/job_result'));
+const OperationResult = require(path.resolve('electron/easy/job_result'));
 
 const format = "<file ext>";
 const formatMimeType = "<mime type>";
@@ -46,10 +46,11 @@ class <YourClassName> {
     /**
      * Assembles all job.files into a package (e.g. a zip file,
      * tar file, rar file, etc.).
-     * @returns {object} - An instance of JobResult. See easy/job_result.js.
+     * @returns {object} - An instance of OperationResult.
+     * See easy/operation_result.js.
      */
     package() {
-        var result = new JobResult();
+        var result = new OperationResult();
         try {
             // ... code ...
         } catch (ex) {
@@ -76,7 +77,7 @@ which describes the protocol that the plugin provides. E.g. "ftp",
 ```javascript
 
 const path = require('path');
-const UploadResult = require(path.resolve('electron/easy/upload_result'));
+const OperationResult = require(path.resolve('electron/easy/operation_result'));
 
 const protocol = "<protocol>";
 
@@ -103,10 +104,11 @@ class <YourClassName> {
      * function will create the file 'mybucket/private/photo.jpg' on the remote
      * storage provider.
      * @param {string} filepath - Absolute path to the file to be uploaded.
-     * @returns {object} - An instance of UploadResult. See easy/upload_result.js.
+     * @returns {object} - An instance of OperationResult.
+     * See easy/operation_result.js.
      */
     upload(filepath) {
-        var result = new UploadResult();
+        var result = new OperationResult();
         try {
             // ... code ...
         } catch (ex) {
