@@ -12,6 +12,7 @@ const Field = require(path.resolve('electron/easy/field'));
 const Form = require(path.resolve('electron/easy/form'));
 const JobOptions = require(path.resolve('electron/easy/job_options'));
 const JobResult = require(path.resolve('electron/easy/job_result'));
+const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
 const QuickStat = require(path.resolve('electron/easy/quick_stat'));
 const StorageService = require(path.resolve('electron/easy/storage_service'));
 const Util = require(path.resolve('electron/easy/util'));

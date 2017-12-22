@@ -5,6 +5,7 @@ $(function() {
     const templates = require(path.resolve('electron/easy/templates'));
     const builtins = require(path.resolve('electron/easy/builtin_profiles'));
     const Job = require(path.resolve('electron/easy/job'));
+    const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
@@ -423,5 +424,6 @@ $(function() {
 
     // This is for interactive testing in the console.
     window.es = es;
-    window.templates = templates;
+    window.esPlugins = Plugins;
+    window.esTemplates = templates;
 });
