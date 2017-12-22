@@ -11,7 +11,7 @@ const Const = require(path.resolve('electron/easy/constants'));
 const Field = require(path.resolve('electron/easy/field'));
 const Form = require(path.resolve('electron/easy/form'));
 const JobOptions = require(path.resolve('electron/easy/job_options'));
-const JobResult = require(path.resolve('electron/easy/job_result'));
+const OperationResult = require(path.resolve('electron/easy/operation_result'));
 const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
 const QuickStat = require(path.resolve('electron/easy/quick_stat'));
 const StorageService = require(path.resolve('electron/easy/storage_service'));
@@ -41,7 +41,7 @@ module.exports = class Job {
 		this.bagItProfile = null;
 		this.storageServices = [];
 		this.options = new JobOptions();
-		this.jobResults = [];
+		this.operationResults = [];
 		this.created = null;
 		this.updated = null;
 
@@ -255,10 +255,10 @@ module.exports = class Job {
 			Object.assign(ss, obj.storageServices[i]);
 			job.storageServices[i] = ss;
 		}
-		for (var i=0; i < obj.jobResults.length; i++) {
-			var result = new JobResult();
-			Object.assign(result, obj.jobResults[i]);
-			job.jobResults[i] = result;
+		for (var i=0; i < obj.operationResults.length; i++) {
+			var result = new OperationResult();
+			Object.assign(result, obj.operationResults[i]);
+			job.operationResults[i] = result;
 		}
 		return job;
 	}
@@ -356,7 +356,7 @@ module.exports = class Job {
 
     findResult(operation) {
         var result = null;
-        for (var r of this.jobResults) {
+        for (var r of this.operationResults) {
             if (r.operation == operation) {
                 result = r;
                 break;
@@ -375,8 +375,8 @@ module.exports = class Job {
             var job = this;
             var result = this.findResult("package");
             if (result == null) {
-                result = new JobResult("package");
-                job.jobResults.push(result);
+                result = new OperationResult("package");
+                job.operationResults.push(result);
             }
             result.reset();
             result.attemptNumber += 1;
@@ -391,13 +391,13 @@ module.exports = class Job {
 			bagger.on('error', (err) => {
                 $("#jobError").show();
 				$("#jobError").append(err + "<br/>");
-                result.stderr += err + NEWLINE;
+                result.error += err + NEWLINE;
 			});
 
 			bagger.on('exit', function (code, signal) {
-				result.stdout += `Bagger exited with code ${code} and signal ${signal}`;
+				result.info += `Bagger exited with code ${code} and signal ${signal}`;
                 result.completed = (new Date()).toJSON();
-                job.save(); // save job with JobResult
+                job.save(); // save job with OperationResult
 			});
 
 			bagger.stdout.on('data', (data) => {
@@ -443,7 +443,7 @@ module.exports = class Job {
                 for (var line of lines) {
                     $("#jobError").append(line + "<br/>")
                 }
-                result.stderr += lines;
+                result.error += lines;
 			});
 
 			// Send the job to the bagging program

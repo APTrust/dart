@@ -425,5 +425,5 @@ $(function() {
     // This is for interactive testing in the console.
     window.es = es;
     window.esPlugins = Plugins;
-    window.esTemplates = templates;
+    window.templates = templates;
 });
