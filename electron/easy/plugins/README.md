@@ -17,7 +17,8 @@ interchangeable at runtime. The interfaces are described below.
 Packaging plugins must export a field called 'Provider', which is the
 class that implements the methods shown below. The plugin must also export
 string fields called Format and FormatMimeType that describe what packaging
-format the plugin provides.
+format the plugin provides. It should also exportname, description, and
+version strings.
 
 Formats should be file extensions without the leading dot. For example,
 "tar", "zip", "parchive", etc. FormatMimeType should be the corresponding
@@ -28,8 +29,11 @@ mime type for the file extension. For example, "application/x-tar",
 ```javascript
 
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/job_result'));
+const OperationResult = require(path.resolve('electron/easy/operation_result'));
 
+const name = "<name of package>";
+const description = "<package description>";
+const version = "<version>";
 const format = "<file ext>";
 const formatMimeType = "<mime type>";
 
@@ -47,12 +51,26 @@ class <YourClassName> {
     }
 
     /**
+     * Returns a map with descriptive info about this provider.
+     * @returns {object} - Contains descriptive info about this provider.
+     */
+     describe() {
+         return { name: name,
+                  description: description,
+                  version: version,
+                  format: format,
+                  formatMimeType: formatMimeType
+                };
+     }
+
+
+    /**
      * Assembles all job.files into a package (e.g. a zip file,
      * tar file, rar file, etc.).
      * @returns {object} - An instance of OperationResult.
      * See easy/operation_result.js.
      */
-    package() {
+    packageFiles() {
         var result = new OperationResult();
         try {
             // ... code ...
@@ -64,6 +82,9 @@ class <YourClassName> {
 }
 
 module.exports.Provider = <YourClassName>;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;
 module.exports.format = format;
 module.exports.formatMimeType = formatMimeType;
 
@@ -72,7 +93,8 @@ module.exports.formatMimeType = formatMimeType;
 ## Storage Plugin
 
 Storage plugins must export a field called 'Provider', which is the
-class that implements the methods shown below.
+class that implements the methods shown below. It should also export
+name, description, and version strings.
 
 The plugin must also export a string fields called Protocol,
 which describes the protocol that the plugin provides. E.g. "ftp",
@@ -84,6 +106,9 @@ which describes the protocol that the plugin provides. E.g. "ftp",
 const path = require('path');
 const OperationResult = require(path.resolve('electron/easy/operation_result'));
 
+const name = "<name of package>";
+const description = "<package description>";
+const version = "<version>";
 const protocol = "<protocol>";
 
 class <YourClassName> {
@@ -100,6 +125,18 @@ class <YourClassName> {
         this.storageService = storageService;
         // ... code ...
     }
+
+    /**
+     * Returns a map with descriptive info about this provider.
+     * @returns {object} - Contains descriptive info about this provider.
+     */
+     describe() {
+         return { name: name,
+                  description: description,
+                  version: version,
+                  protocol: protocol
+                };
+     }
 
     /**
      * Uploads a file to the storage provider. Note that because StorageService
@@ -138,6 +175,9 @@ class <YourClassName> {
 }
 
 module.exports.Provider = <YourClassName>;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;
 module.exports.protocol = protocol;
 
 ```

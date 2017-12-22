@@ -1,6 +1,9 @@
 const path = require('path');
 const OperationResult = require(path.resolve('electron/easy/operation_result'));
 
+const name = "APTrust S3 uploader";
+const description = "Uploads files to any service that supports the S3 API.";
+const version = "0.1";
 const protocol = "s3";
 
 class S3 {
@@ -17,6 +20,18 @@ class S3 {
         this.storageService = storageService;
         // ... code ...
     }
+
+    /**
+     * Returns a map with descriptive info about this provider.
+     * @returns {object} - Contains descriptive info about this provider.
+     */
+     describe() {
+         return { name: name,
+                  description: description,
+                  version: version,
+                  protocol: protocol
+                };
+     }
 
     /**
      * Uploads a file to the storage provider. Note that because StorageService
@@ -55,4 +70,7 @@ class S3 {
 }
 
 module.exports.Provider = S3;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;
 module.exports.protocol = protocol;

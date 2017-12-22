@@ -1,6 +1,9 @@
 const path = require('path');
 const OperationResult = require(path.resolve('electron/easy/operation_result'));
 
+const name = "FTP uploader";
+const description = "Uploads files to an FTP server.";
+const version = "0.1";
 const protocol = "ftp";
 
 class FTP {
@@ -17,6 +20,18 @@ class FTP {
         this.storageService = storageService;
         // ... code ...
     }
+
+    /**
+     * Returns a map with descriptive info about this provider.
+     * @returns {object} - Contains descriptive info about this provider.
+     */
+     describe() {
+         return { name: name,
+                  description: description,
+                  version: version,
+                  protocol: protocol
+                };
+     }
 
     /**
      * Uploads a file to the storage provider. Note that because StorageService
@@ -55,4 +70,7 @@ class FTP {
 }
 
 module.exports.Provider = FTP;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;
 module.exports.protocol = protocol;
