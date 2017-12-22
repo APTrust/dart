@@ -1,5 +1,5 @@
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/operation_result'));
+const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 
 const name = "FTP uploader";
 const description = "Uploads files to an FTP server.";

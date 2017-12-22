@@ -1,5 +1,5 @@
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/operation_result'));
+const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 
 const name = "APTrust S3 uploader";
 const description = "Uploads files to any service that supports the S3 API.";

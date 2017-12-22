@@ -29,7 +29,7 @@ mime type for the file extension. For example, "application/x-tar",
 ```javascript
 
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/operation_result'));
+const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 
 const name = "<name of package>";
 const description = "<package description>";
@@ -104,7 +104,7 @@ which describes the protocol that the plugin provides. E.g. "ftp",
 ```javascript
 
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/operation_result'));
+const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 
 const name = "<name of package>";
 const description = "<package description>";

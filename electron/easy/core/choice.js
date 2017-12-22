@@ -1,5 +1,5 @@
 const path = require('path');
-const Util = require(path.resolve('electron/easy/util'));
+const Util = require(path.resolve('electron/easy/core/util'));
 
 module.exports = class Choice {
     constructor(value, label, selected) {

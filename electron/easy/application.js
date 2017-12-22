@@ -1,10 +1,10 @@
 $(function() {
     const path = require("path");
     const os = require('os');
-    const es = require(path.resolve('electron/easy/easy_store'));
-    const templates = require(path.resolve('electron/easy/templates'));
-    const builtins = require(path.resolve('electron/easy/builtin_profiles'));
-    const Job = require(path.resolve('electron/easy/job'));
+    const es = require(path.resolve('electron/easy/core/easy_store'));
+    const templates = require(path.resolve('electron/easy/core/templates'));
+    const builtins = require(path.resolve('electron/easy/core/builtin_profiles'));
+    const Job = require(path.resolve('electron/easy/core/job'));
     const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
 
     // Top nav menu

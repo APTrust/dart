@@ -1,10 +1,10 @@
 const path = require('path');
-const Choice = require(path.resolve('electron/easy/choice'));
-const Const = require(path.resolve('electron/easy/constants'));
-const Form = require(path.resolve('electron/easy/form'));
-const Field = require(path.resolve('electron/easy/field'));
-const Util = require(path.resolve('electron/easy/util'));
-const ValidationResult = require(path.resolve('electron/easy/validation_result'));
+const Choice = require(path.resolve('electron/easy/core/choice'));
+const Const = require(path.resolve('electron/easy/core/constants'));
+const Form = require(path.resolve('electron/easy/core/form'));
+const Field = require(path.resolve('electron/easy/core/field'));
+const Util = require(path.resolve('electron/easy/core/util'));
+const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
 
 
 module.exports = class TagDefinition {
@@ -85,8 +85,8 @@ module.exports = class TagDefinition {
         var tagName = $('#tagName').val().trim();
         var tagFile = $('#tagFile').val().trim();
         var tagDef = new TagDefinition(tagFile, tagName);
-        tagDef.required = $('#required').val().trim();
-        tagDef.emptyOk = $('#emptyOk').val().trim();
+        tagDef.required = Util.boolValue($('#required').val().trim());
+        tagDef.emptyOk = Util.boolValue($('#emptyOk').val().trim());
         tagDef.values = Util.filterEmpties($('#values').val().split("\n"));
         tagDef.defaultValue = $('#defaultValue').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();

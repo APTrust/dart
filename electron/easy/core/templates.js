@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const handlebars = require('handlebars')
-const templateDir = path.join(__dirname, "..", "templates");
+const templateDir = path.join(__dirname, "..", "..", "templates");
 
 function pathTo(name) {
 	return path.join(templateDir, name)
