@@ -354,96 +354,96 @@ module.exports = class Job {
 		return db.store;
 	}
 
-    findResult(operation) {
-        var result = null;
-        for (var r of this.operationResults) {
-            if (r.operation == operation) {
-                result = r;
-                break;
-            }
-        }
-        return result;
-    }
+	findResult(operation) {
+		var result = null;
+		for (var r of this.operationResults) {
+			if (r.operation == operation) {
+				result = r;
+				break;
+			}
+		}
+		return result;
+	}
 
 	// Run this job
 	run() {
-        var decoder = new TextDecoder("utf-8");
-        var fileCount = 0;
+		var decoder = new TextDecoder("utf-8");
+		var fileCount = 0;
 
 		if (this.bagItProfile != null) {
 
-            var job = this;
-            var result = this.findResult("package");
-            if (result == null) {
-                result = new OperationResult("package");
-                job.operationResults.push(result);
-            }
-            result.reset();
-            result.attemptNumber += 1;
-            result.started = (new Date()).toJSON();
+			var job = this;
+			var result = this.findResult("package");
+			if (result == null) {
+				result = new OperationResult("package");
+				job.operationResults.push(result);
+			}
+			result.reset();
+			result.attemptNumber += 1;
+			result.started = (new Date()).toJSON();
 
-            $('#jobRun').show();
+			$('#jobRun').show();
 
 			// Start the bagger executable
 			var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
 			var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
 			bagger.on('error', (err) => {
-                $("#jobError").show();
+				$("#jobError").show();
 				$("#jobError").append(err + "<br/>");
-                result.error += err + NEWLINE;
+				result.error += err + NEWLINE;
 			});
 
 			bagger.on('exit', function (code, signal) {
 				result.info += `Bagger exited with code ${code} and signal ${signal}`;
-                result.completed = (new Date()).toJSON();
-                job.save(); // save job with OperationResult
+				result.completed = (new Date()).toJSON();
+				job.save(); // save job with OperationResult
 			});
 
 			bagger.stdout.on('data', (data) => {
-                var lines = decoder.decode(data).split(NEWLINE);
-                for (var line of lines) {
-                    if (line.startsWith('Adding')) {
-                        fileCount += 1;
-				        $("#jobRunFiles .message").text(line);
-                    } else if (line.startsWith('Tarring')) {
-                        $("#jobRunFiles .message").text(`Added ${fileCount} files`);
-                        $("#jobRunFiles").removeClass("alert-info");
-                        $("#jobRunFiles").addClass("alert-success");
-                        $("#jobRunFiles .glyphicon").removeClass("glyphicon-hand-right");
-                        $("#jobRunFiles .glyphicon").addClass("glyphicon-thumbs-up");
-                        $("#jobPackage").show()
-				        $("#jobPackage .message").text(line);
-                    } else if (line.startsWith('Validating')) {
-                        $("#jobPackage").removeClass("alert-info");
-                        $("#jobPackage").addClass("alert-success");
-                        $("#jobPackage .glyphicon").removeClass("glyphicon-hand-right");
-                        $("#jobPackage .glyphicon").addClass("glyphicon-thumbs-up");
-                        $("#jobValidate").show();
-                        $("#jobValidate .message").html(line);
-                    } else if (line.startsWith('Bag at') && line.endsWith("is valid")) {
-                        $("#jobValidate").removeClass("alert-info");
-                        $("#jobValidate").addClass("alert-success");
-                        $("#jobValidate .glyphicon").removeClass("glyphicon-hand-right");
-                        $("#jobValidate .glyphicon").addClass("glyphicon-thumbs-up");
-                        $("#jobValidate").show();
-                        $("#jobValidate .message").append("<br/>" + line);
-                    } else if (line.startsWith('Created')) {
-                        $("#jobBagLocation").show();
-                        $("#jobBagLocation .message").html(line);
-                        result.succeeded = true;
-                    }
-                }
-                // console.log(decoder.decode(data));
+				var lines = decoder.decode(data).split(NEWLINE);
+				for (var line of lines) {
+					if (line.startsWith('Adding')) {
+						fileCount += 1;
+						$("#jobRunFiles .message").text(line);
+					} else if (line.startsWith('Writing')) {
+						$("#jobRunFiles .message").text(`Added ${fileCount} files`);
+						$("#jobRunFiles").removeClass("alert-info");
+						$("#jobRunFiles").addClass("alert-success");
+						$("#jobRunFiles .glyphicon").removeClass("glyphicon-hand-right");
+						$("#jobRunFiles .glyphicon").addClass("glyphicon-thumbs-up");
+						$("#jobPackage").show()
+						$("#jobPackage .message").text(line);
+					} else if (line.startsWith('Validating')) {
+						$("#jobPackage").removeClass("alert-info");
+						$("#jobPackage").addClass("alert-success");
+						$("#jobPackage .glyphicon").removeClass("glyphicon-hand-right");
+						$("#jobPackage .glyphicon").addClass("glyphicon-thumbs-up");
+						$("#jobValidate").show();
+						$("#jobValidate .message").html(line);
+					} else if (line.startsWith('Bag at') && line.endsWith("is valid")) {
+						$("#jobValidate").removeClass("alert-info");
+						$("#jobValidate").addClass("alert-success");
+						$("#jobValidate .glyphicon").removeClass("glyphicon-hand-right");
+						$("#jobValidate .glyphicon").addClass("glyphicon-thumbs-up");
+						$("#jobValidate").show();
+						$("#jobValidate .message").append("<br/>" + line);
+					} else if (line.startsWith('Created')) {
+						$("#jobBagLocation").show();
+						$("#jobBagLocation .message").html(line);
+						result.succeeded = true;
+					}
+				}
+				// console.log(decoder.decode(data));
 			});
 
 			bagger.stderr.on('data', (data) => {
-                $("#jobError").show()
-                var lines = decoder.decode(data).split(NEWLINE);
-                for (var line of lines) {
-                    $("#jobError").append(line + "<br/>")
-                }
-                result.error += lines;
+				$("#jobError").show()
+				var lines = decoder.decode(data).split(NEWLINE);
+				for (var line of lines) {
+					$("#jobError").append(line + "<br/>")
+				}
+				result.error += lines;
 			});
 
 			// Send the job to the bagging program
