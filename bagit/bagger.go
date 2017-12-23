@@ -126,9 +126,10 @@ func (bagger *Bagger) Errors() []string {
 	return bagger.errors
 }
 
-// WriteBag writes the bag to disk, returning true on success,
-// and false if there were errors. Check bagger.Errors() if this
-// returns false.
+// WriteBag writes the bag to a directory on disk. (See WriteBagToTarFile
+// if you want to write directly to a tar file instead of to a directory.
+// This returns true on success, and false if there were errors. Check
+// bagger.Errors() if this returns false.
 //
 // Set overwrite to true if you want the bagger to overwrite
 // an existing version of the bag.
@@ -139,6 +140,55 @@ func (bagger *Bagger) Errors() []string {
 // if you are copying in tag files like bag-info.txt through
 // bagger.AddFile().
 func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
+	if !bagger.prepareForWrite(overwrite, checkRequiredTags) {
+		return false
+	}
+	bagger.ensureManifests()
+	bagger.copyExistingFiles()
+	bagger.writeTags()
+	bagger.writeManifests()
+	return true
+}
+
+// WriteBagToTarFile writes the bag directly to a tar file instead
+// of writing it to a directory. (See WriteBag if you want to write
+// an untarred bag.) This returns true on success, and false if there
+// were errors. Check bagger.Errors() if this returns false.
+//
+// Set overwrite to true if you want the bagger to overwrite
+// an existing version of the bag.
+//
+// Set param checkRequiredTags to true if you are
+// passing in tags through bagger.AddTag() and you want to make
+// sure all required tags are present and valid. Set it to false
+// if you are copying in tag files like bag-info.txt through
+// bagger.AddFile().
+// func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool {
+//	if !strings.HasSuffix(bagger.bag.Path, ".tar") {
+//		bagger.addError(fmt.Sprintf("Bag path '%s' should end in .tar "+
+//			"when calling WriteBagToTarFile", bagger.bag.Path))
+//		return false
+//	}
+//	if !bagger.prepareForWrite(overwrite, checkRequiredTags) {
+//		return false
+//	}
+//	bagger.ensureManifests()
+
+//	writer := fileutil.NewTarWriter(tempFilePath)
+//	defer writer.Close()
+//	err = writer.Open()
+//	if err != nil {
+//		bagger.addError(fmt.Sprintf("Error opening tar writer for '%s': %v", bagger.bag.Path, err))
+//		return false
+//	}
+
+//	bagger.tarExistingFiles(writer)
+//	bagger.tarTagFiles(writer)
+//	bagger.tarManifests(writer)
+//	return true
+// }
+
+func (bagger *Bagger) prepareForWrite(overwrite, checkRequiredTags bool) bool {
 	bagger.errors = make([]string, 0)
 	errs := bagger.profile.Validate()
 	if errs != nil && len(errs) > 0 {
@@ -157,10 +207,6 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 			return false
 		}
 	}
-	bagger.ensureManifests()
-	bagger.copyExistingFiles()
-	bagger.writeTags()
-	bagger.writeManifests()
 	return true
 }
 
