@@ -147,6 +147,7 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 	}
 	bagger.ensureManifests()
 	bagger.copyExistingFiles()
+	bagger.addOxumToBagInfo()
 	bagger.writeTags()
 	bagger.writeManifests()
 	return true
@@ -185,6 +186,7 @@ func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool 
 	}
 
 	bagger.tarExistingFiles(writer)
+	bagger.addOxumToBagInfo()
 	bagger.tarTagFiles(writer)
 	bagger.tarManifests(writer)
 	return true
@@ -548,6 +550,14 @@ func (bagger *Bagger) GetPayloadOxum() string {
 		fileCount += 1
 	}
 	return fmt.Sprintf("%d.%d", byteCount, fileCount)
+}
+
+func (bagger *Bagger) addOxumToBagInfo() {
+	bagInfo := bagger.bag.TagFiles["bag-info.txt"]
+	oxum := bagInfo.ParsedData.FirstValueForKey("Payload-Oxum")
+	if oxum == "" {
+		bagInfo.ParsedData.Append("Payload-Oxum", bagger.GetPayloadOxum())
+	}
 }
 
 // addError adds a message to the list of bagging errors.

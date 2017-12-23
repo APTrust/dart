@@ -241,7 +241,7 @@ func TestWriteBag_APTrust(t *testing.T) {
 
 	// Verify contents of tag files and the manifest.
 	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
-	expectedBagInfo := "Source-Organization:  APTrust\n"
+	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\n"
 	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
 	expectedManifest := `6385e86c8489b28586d03320efd57dfe data/hemingway.jpg
 c3b41207c1374fa0bc2c2d323afc580d data/lighthouse.jpg
@@ -353,6 +353,7 @@ Contact-Name:  Homer Simpson
 Contact-Phone:  555-555-1212
 Bag-Size:  411
 Bag-Group-Identifier:  None
+Payload-Oxum:  632046.6
 `
 	expectedDPNInfo := `Ingest-Node-Name:  aptrust
 Ingest-Node-Contact-Name:  Apu Nahasapeemapetilon
@@ -374,7 +375,7 @@ ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb data/sample.doc
 c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4 data/sample.txt
 `
 	expectedTagManifest := `f7745fbcab89c3ec2b570b3d9ffd14c7201df609891d50f0d98b232d49531a19 manifest-sha256.txt
-7b5034929ac9b5ae96dc2d38b6afb092e5f1a774a0e773959db493f76685a83c bag-info.txt
+ff21b499d8843e7450007c3b60a7b1657d4c9ff8bd0d6c5b62d791eb76d6a617 bag-info.txt
 49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4 bagit.txt
 ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-info.txt
 `
@@ -468,6 +469,11 @@ func TestWriteBagToTarFile_APTrust(t *testing.T) {
 	assert.True(t, validator.Validate())
 	errors := validator.Errors()
 	require.Empty(t, errors)
+
+	bagInfo := bag.TagFiles["bag-info.txt"]
+	require.NotNil(t, bagInfo)
+	oxum := bagInfo.ParsedData.FirstValueForKey("Payload-Oxum")
+	assert.Equal(t, "632046.6", oxum)
 }
 
 func TestWriteBagToTarFile_DPN(t *testing.T) {
@@ -513,4 +519,9 @@ func TestWriteBagToTarFile_DPN(t *testing.T) {
 	assert.True(t, validator.Validate())
 	errors := validator.Errors()
 	require.Empty(t, errors)
+
+	bagInfo := bag.TagFiles["bag-info.txt"]
+	require.NotNil(t, bagInfo)
+	oxum := bagInfo.ParsedData.FirstValueForKey("Payload-Oxum")
+	assert.Equal(t, "632046.6", oxum)
 }
