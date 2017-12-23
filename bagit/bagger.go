@@ -234,6 +234,10 @@ func (bagger *Bagger) copyExistingFiles() bool {
 // copyFile copies one file from its source location into the
 // bag directory. The file being copied may be part of the payload
 // or it could be a tag file.
+//
+// ---------------------------------------------------------------------
+// TODO: *** PRESERVE TIMESTAMPS ON COPY ***
+// ---------------------------------------------------------------------
 func (bagger *Bagger) copyFile(file *File) bool {
 	if bagger.skipCopy[file.FileSummary.RelPath] {
 		// This is a tag file we'll write ourselves,
