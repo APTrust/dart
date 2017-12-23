@@ -176,7 +176,7 @@ func TestHasRequiredTags(t *testing.T) {
 
 func TestWriteBag_APTrust(t *testing.T) {
 	tempDir, aptrustProfile := getBaggerPreReqs(t)
-	os.RemoveAll(tempDir)
+	defer os.RemoveAll(tempDir)
 
 	bagger, err := bagit.NewBagger(tempDir, aptrustProfile)
 	require.Nil(t, err)
@@ -272,6 +272,7 @@ func TestWriteBag_DPN(t *testing.T) {
 	// Get a tmp dir name
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
+	defer os.RemoveAll(tempDir)
 
 	// Load the DPN bagit profile
 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
@@ -405,6 +406,7 @@ func TestPayloadOxum(t *testing.T) {
 	// Get a tmp dir name
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
+	defer os.RemoveAll(tempDir)
 
 	// Load the DPN bagit profile
 	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
