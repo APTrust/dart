@@ -58,12 +58,22 @@ func (writer *TarWriter) AddToArchive(filePath, pathWithinArchive string, algori
 	if err != nil {
 		return nil, fmt.Errorf("Cannot add '%s' to archive: %v", filePath, err)
 	}
-	header := &tar.Header{
-		Name:    pathWithinArchive,
-		Size:    finfo.Size(),
-		Mode:    int64(finfo.Mode().Perm()),
-		ModTime: finfo.ModTime(),
+	linkTarget := ""
+	if finfo.Mode()&os.ModeSymlink != 0 {
+		// This is a symlink
+		linkTarget, err = os.Readlink(filePath)
+		if err != nil {
+			return nil, fmt.Errorf("Error getting target of symlink '%s': %v", filePath, err)
+		}
 	}
+
+	// Create the tar header with all the info we can get:
+	// modtime, uid, gid, permissions, etc. Then we have to manually set
+	// the headerName, because finfo may include only the
+	// file's basename. See comments in FileInfoHeader at
+	// https://golang.org/src/archive/tar/common.go?s=5939:6004#L193
+	header, err := tar.FileInfoHeader(finfo, linkTarget)
+	header.Name = pathWithinArchive
 
 	// Write the header entry
 	if err := writer.tarWriter.WriteHeader(header); err != nil {
