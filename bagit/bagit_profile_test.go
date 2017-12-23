@@ -3,6 +3,7 @@ package bagit_test
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/easy-store/constants"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"path/filepath"
@@ -146,4 +147,31 @@ func TestSortedTagNames(t *testing.T) {
 		"Ingest-Node-Name", "Interpretive-Object-ID", "Local-ID", "Rights-Object-ID",
 		"Version-Number"}
 	assert.Equal(t, expected, dpnProfile.SortedTagNames("dpn-tags/dpn-info.txt"))
+}
+
+func TestCanBeTarred(t *testing.T) {
+	profile := &bagit.BagItProfile{}
+	profile.AcceptSerialization = []string{"application/tar"}
+	assert.True(t, profile.CanBeTarred())
+	profile.AcceptSerialization = []string{"application/x-tar"}
+	assert.True(t, profile.CanBeTarred())
+	profile.AcceptSerialization = []string{"application/zip", "application/gzip"}
+	assert.False(t, profile.CanBeTarred())
+}
+
+func TestMustBeTarred(t *testing.T) {
+	profile := &bagit.BagItProfile{}
+	profile.Serialization = constants.REQUIRED
+	profile.AcceptSerialization = []string{"application/tar"}
+	assert.True(t, profile.MustBeTarred())
+	profile.AcceptSerialization = []string{"application/x-tar"}
+	assert.True(t, profile.MustBeTarred())
+	profile.AcceptSerialization = []string{"application/zip", "application/gzip"}
+	assert.False(t, profile.MustBeTarred())
+
+	profile.Serialization = constants.OPTIONAL
+	profile.AcceptSerialization = []string{"application/tar"}
+	assert.False(t, profile.MustBeTarred())
+	profile.AcceptSerialization = []string{"application/x-tar"}
+	assert.False(t, profile.MustBeTarred())
 }

@@ -2,6 +2,7 @@ package bagit
 
 import (
 	"fmt"
+	"github.com/APTrust/easy-store/constants"
 	"github.com/APTrust/easy-store/util"
 	"sort"
 	"strings"
@@ -188,4 +189,13 @@ func (profile *BagItProfile) FindTagDef(relFilePath, tagName string) *TagDefinit
 		}
 	}
 	return matchingTag
+}
+
+func (profile *BagItProfile) CanBeTarred() bool {
+	return util.StringListContains(profile.AcceptSerialization, "application/tar") ||
+		util.StringListContains(profile.AcceptSerialization, "application/x-tar")
+}
+
+func (profile *BagItProfile) MustBeTarred() bool {
+	return profile.CanBeTarred() && profile.Serialization == constants.REQUIRED
 }
