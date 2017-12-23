@@ -430,3 +430,42 @@ func TestPayloadOxum(t *testing.T) {
 	// Check the Oxum value. 6 files, approx. 632kb
 	assert.Equal(t, "632046.6", bagger.GetPayloadOxum())
 }
+
+func TestWriteBagToTarFile_APTrust(t *testing.T) {
+	tempDir, aptrustProfile := getBaggerPreReqs(t)
+	defer os.RemoveAll(tempDir)
+
+	tarFilePath := filepath.Join(tempDir, "aptrust_test_bag.tar")
+	bagger, err := bagit.NewBagger(tarFilePath, aptrustProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
+
+	// Add tags
+	for filename, list := range APTrustDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
+
+	// Add files. The "files" var contains relative file paths.
+	testFileDir, _ := testutil.GetPathToTestFileDir()
+	absSourcePath, _ := fileutil.RecursiveFileList(testFileDir)
+	relDestPaths := make([]string, len(absSourcePath))
+	for i, absSrcPath := range absSourcePath {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+	}
+
+	assert.True(t, bagger.WriteBagToTarFile(true, true))
+	require.Empty(t, bagger.Errors())
+
+	// Not a pure unit test, since we're relying on another code module here,
+	// but it's pretty thorough.
+	bag := bagit.NewBag(tarFilePath)
+	validator := bagit.NewValidator(bag, aptrustProfile)
+	assert.True(t, validator.Validate())
+	errors := validator.Errors()
+	require.Empty(t, errors)
+}

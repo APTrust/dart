@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -43,6 +44,18 @@ func IsDir(filePath string) bool {
 		return stat.IsDir()
 	}
 	return false
+}
+
+// BaseNameWithoutExtension returns the basename of a filepath,
+// minus the extension. So for filePath "/home/josie/dissertation.pdf",
+// this returns "dissertation". If filePath is a directory, this will
+// return either the last component of the directory name. If filePath
+// is "" (empty string), this will return ".".
+func BaseNameWithoutExtension(filePath string) string {
+	base := path.Base(filePath)
+	ext := path.Ext(filePath)
+	end := len(base) - len(ext)
+	return base[0:end]
 }
 
 // Expands the tilde in a directory path to the current

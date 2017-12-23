@@ -36,6 +36,13 @@ func TestIsDir(t *testing.T) {
 	assert.True(t, fileutil.IsDir(filepath.Dir(filename)))
 }
 
+func TestBaseNameWithoutExtension(t *testing.T) {
+	assert.Equal(t, "image", fileutil.BaseNameWithoutExtension("/tmp/photos/image.jpg"))
+	assert.Equal(t, "image", fileutil.BaseNameWithoutExtension("/tmp/photos/image"))
+	assert.Equal(t, "run", fileutil.BaseNameWithoutExtension("/var/run/"))
+	assert.Equal(t, ".", fileutil.BaseNameWithoutExtension(""))
+}
+
 func TestExpandTilde(t *testing.T) {
 	expanded, err := fileutil.ExpandTilde("~/tmp")
 	if err != nil {

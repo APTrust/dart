@@ -317,8 +317,19 @@ func (bagger *Bagger) addTarFile(tarWriter *fileutil.TarWriter, file *File) bool
 		// This file has already been added to the tar archive.
 		return true
 	}
+
+	// srcPath is the full path to the file we're going to copy into
+	// the tar archive.
 	srcPath := file.FileSummary.AbsPath
-	destPath := file.FileSummary.RelPath
+
+	// destPath is the path the file will have inside the archive.
+	// Note that the bagit spec says the tar file must untar to a
+	// directory whose name matches the tar file, minus the .tar
+	// extension. E.g. my_bag.tar must untar to a directory called
+	// my_bag. For that to happen, we have to add the bag name prefix
+	// onto the relative path of every file.
+	prefix := fileutil.BaseNameWithoutExtension(tarWriter.PathToTarFile)
+	destPath := filepath.Join(prefix, file.FileSummary.RelPath)
 
 	// Copy src to dest, and keep track of the checksums.
 	// Note that param bagger.profile.ManifestsRequired is a list
@@ -405,7 +416,9 @@ func (bagger *Bagger) writeTempFileIntoArchive(tarWriter *fileutil.TarWriter, fi
 	}
 	// Copy the temp file into the archive. We don't need to capture the
 	// checksums, because they were set in the call to file.Write above.
-	destPath := file.FileSummary.RelPath
+	// See comment above in addTarFile for why we add the prefix.
+	prefix := fileutil.BaseNameWithoutExtension(tarWriter.PathToTarFile)
+	destPath := filepath.Join(prefix, file.FileSummary.RelPath)
 	_, err = tarWriter.AddToArchive(tmpFile, destPath, []string{})
 	if err != nil {
 		bagger.addError(err.Error())
@@ -514,10 +527,12 @@ func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 			return false
 		}
 	}
-	err := os.MkdirAll(bagger.bag.Path, 0755)
-	if err != nil {
-		bagger.addError(err.Error())
-		return false
+	if !strings.HasSuffix(bagger.bag.Path, ".tar") {
+		err := os.MkdirAll(bagger.bag.Path, 0755)
+		if err != nil {
+			bagger.addError(err.Error())
+			return false
+		}
 	}
 	return true
 }
