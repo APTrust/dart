@@ -352,34 +352,64 @@ func (bagger *Bagger) writeTags() bool {
 // tarTagFiles writes the tag files into the archive.
 func (bagger *Bagger) tarTagFiles(tarWriter *fileutil.TarWriter) bool {
 	for _, file := range bagger.bag.TagFiles {
-		// Write to temp file, then copy into tar archive
-		tmpDir, err := ioutil.TempDir("", "easy-store")
-		if err != nil {
-			bagger.addError("Could not create temp file to write tags: %s", err.Error())
+		if !bagger.writeTempFileIntoArchive(tarWriter, file) {
 			return false
 		}
-		defer os.RemoveAll(tmpDir) // doesn't execute until we exit for loop
+	}
+	return true
+}
 
-		// Create a name for the temp file.
-		slash := "/"
-		if strings.Contains(file.FileSummary.RelPath, "\\") &&
-			!strings.Contains(file.FileSummary.RelPath, "/") {
-			slash = "\\"
-		}
-		tmpFile := filepath.Join(tmpDir, strings.Replace(file.FileSummary.RelPath, slash, "_", 0))
-		err = file.Write(tmpFile, bagger.profile.TagManifestsRequired)
-		if err != nil {
-			bagger.addError("Error writing tag file '%s'", tmpFile, err.Error())
+// tarManifests writes payload and tag manifests into the tar archive.
+func (bagger *Bagger) tarManifests(tarWriter *fileutil.TarWriter) bool {
+	// Write the manifest-*.txt files, and track the checksums of those
+	// files so we can add their checksums into the tag manifest files.
+	bagger.bag.AddChecksumsToManifests()
+	for _, file := range bagger.bag.Manifests {
+		if !bagger.writeTempFileIntoArchive(tarWriter, file) {
 			return false
 		}
-		// Copy the temp file into the archive. We don't need to capture the
-		// checksums, because they were set in the call to file.Write above.
-		destPath := file.FileSummary.RelPath
-		_, err = tarWriter.AddToArchive(tmpFile, destPath, []string{})
-		if err != nil {
-			bagger.addError(err.Error())
+	}
+	// Write the tagmanifest-*.txt files. Don't bother calculating
+	// checksums on these.
+	bagger.bag.AddChecksumsToTagManifests()
+	for _, file := range bagger.bag.TagManifests {
+		if !bagger.writeTempFileIntoArchive(tarWriter, file) {
 			return false
 		}
+	}
+	return true
+}
+
+// writeTempFileIntoArchive writes a tag file or manifest to a temp file,
+// copies it into the tar archive, and then deletes it. Returns true if
+// it succeeds.
+func (bagger *Bagger) writeTempFileIntoArchive(tarWriter *fileutil.TarWriter, file *File) bool {
+	tmpDir, err := ioutil.TempDir("", "easy-store")
+	if err != nil {
+		bagger.addError("Could not create temp file to write tags: %s", err.Error())
+		return false
+	}
+	defer os.RemoveAll(tmpDir) // doesn't execute until we exit for loop
+
+	// Create a name for the temp file.
+	slash := "/"
+	if strings.Contains(file.FileSummary.RelPath, "\\") &&
+		!strings.Contains(file.FileSummary.RelPath, "/") {
+		slash = "\\"
+	}
+	tmpFile := filepath.Join(tmpDir, strings.Replace(file.FileSummary.RelPath, slash, "_", 0))
+	err = file.Write(tmpFile, bagger.profile.TagManifestsRequired)
+	if err != nil {
+		bagger.addError("Error writing tag file '%s'", tmpFile, err.Error())
+		return false
+	}
+	// Copy the temp file into the archive. We don't need to capture the
+	// checksums, because they were set in the call to file.Write above.
+	destPath := file.FileSummary.RelPath
+	_, err = tarWriter.AddToArchive(tmpFile, destPath, []string{})
+	if err != nil {
+		bagger.addError(err.Error())
+		return false
 	}
 	return true
 }
