@@ -6,13 +6,11 @@ import (
 	"flag"
 	"fmt"
 	"github.com/APTrust/easy-store/bagit"
-	//	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
-	//	"sync"
 	"time"
 )
 
@@ -86,44 +84,6 @@ func createBag(job *bagit.Job) (string, error) {
 		os.Exit(1)
 	}
 
-	// // Tar the bag, if required
-	// // TODO: This will have to be more flexible in the future.
-	// // TODO: Clean this up
-	// // TODO: *** TAR WRITER MUST PRESERVE USER/GROUP ***
-	// validationPath := bagPath
-	// canTar := util.StringListContains(job.BagItProfile.AcceptSerialization, "application/tar")
-	// if canTar && job.BagItProfile.Serialization == "required" {
-	//	algorithms := make([]string, 0)
-	//	tarPath := bagPath + ".tar"
-	//	validationPath = tarPath
-	//	fmt.Println("Tarring bag to", tarPath)
-	//	writer := fileutil.NewTarWriter(tarPath)
-	//	writer.Open()
-	//	defer writer.Close()
-
-	//	var wg sync.WaitGroup
-
-	//	err := filepath.Walk(bagPath, func(filePath string, f os.FileInfo, err error) error {
-	//		wg.Add(1)
-	//		var e error
-	//		if f != nil && f.Mode().IsRegular() {
-	//			relPath := strings.Replace(filePath, job.BaggingDirectory+"/", "", 1)
-	//			_, e := writer.AddToArchive(filePath, relPath, algorithms)
-	//			if e != nil {
-	//				fmt.Fprintf(os.Stderr, e.Error())
-	//			}
-	//		}
-	//		wg.Done()
-	//		return e
-	//	})
-
-	//	wg.Wait()
-
-	//	if err != nil {
-	//		fmt.Fprintf(os.Stderr, err.Error())
-	//	}
-	// }
-
 	// Validate bag
 	bag := bagit.NewBag(bagPath)
 	validator := bagit.NewValidator(bag, job.BagItProfile)
@@ -137,15 +97,6 @@ func createBag(job *bagit.Job) (string, error) {
 	} else {
 		fmt.Println("Bag at", bagPath, "is valid")
 	}
-
-	// Delete the bag directory that we just tarred up
-	// if strings.HasSuffix(validationPath, ".tar") && validationPath != bagPath {
-	//	if fileutil.LooksSafeToDelete(bagPath, 12, 3) {
-	//		fmt.Println("Deleting bag directory", bagPath)
-	//		fmt.Println("Bag is in", validationPath)
-	//		os.RemoveAll(bagPath)
-	//	}
-	// }
 
 	return bagPath, nil
 }
