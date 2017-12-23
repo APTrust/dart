@@ -520,13 +520,12 @@ func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
 	require.NotEmpty(t, errors)
-	assert.Equal(t, 10, len(errors))
+	assert.Equal(t, 9, len(errors))
 
 	expected := []string{
 		"Non-manifest file 'aptrust-info.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
 		"Non-manifest file 'custom_tag_file.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
 		"Non-manifest file 'junk_file.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
-		"Required tag manifest 'tagmanifest-sha256.txt' is missing.",
 		"Required tag 'Organization-Address' is missing from file 'bag-info.txt'.",
 		"Required tag 'Contact-Name' is missing from file 'bag-info.txt'.",
 		"Required tag 'Contact-Phone' is missing from file 'bag-info.txt'.",

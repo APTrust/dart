@@ -464,7 +464,7 @@ func (validator *Validator) ValidateRequiredManifests() bool {
 	}
 	for _, algorithm := range validator.Profile.TagManifestsRequired {
 		filePath := fmt.Sprintf("tagmanifest-%s.txt", algorithm)
-		if validator.Bag.Manifests[filePath] == nil {
+		if validator.Bag.TagManifests[filePath] == nil {
 			validator.addError("Required tag manifest '%s' is missing.", filePath)
 			ok = false
 		}

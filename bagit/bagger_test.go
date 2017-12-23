@@ -469,3 +469,48 @@ func TestWriteBagToTarFile_APTrust(t *testing.T) {
 	errors := validator.Errors()
 	require.Empty(t, errors)
 }
+
+func TestWriteBagToTarFile_DPN(t *testing.T) {
+	tempDir, _ := getBaggerPreReqs(t)
+	defer os.RemoveAll(tempDir)
+
+	// Load the DPN bagit profile
+	profilePath, err := testutil.GetPathToTestProfile("dpn_bagit_profile_2.1.json")
+	require.Nil(t, err)
+	dpnProfile, err := bagit.LoadBagItProfile(profilePath)
+	require.Nil(t, err)
+
+	tarFilePath := filepath.Join(tempDir, "dpn_test_bag.tar")
+	bagger, err := bagit.NewBagger(tarFilePath, dpnProfile)
+	require.Nil(t, err)
+	require.NotNil(t, bagger)
+
+	// Add tags
+	for filename, list := range DPNDefaultTags {
+		for _, kvPair := range list {
+			bagger.AddTag(filename, &kvPair)
+		}
+	}
+
+	// Add files. The "files" var contains relative file paths.
+	testFileDir, _ := testutil.GetPathToTestFileDir()
+	absSourcePath, _ := fileutil.RecursiveFileList(testFileDir)
+	relDestPaths := make([]string, len(absSourcePath))
+	for i, absSrcPath := range absSourcePath {
+		// Use forward slash, even on Windows, for path of file inside bag
+		relDestPath := fmt.Sprintf("data/%s", filepath.Base(absSrcPath))
+		bagger.AddFile(absSrcPath, relDestPath)
+		relDestPaths[i] = relDestPath
+	}
+
+	assert.True(t, bagger.WriteBagToTarFile(true, true))
+	require.Empty(t, bagger.Errors())
+
+	// Not a pure unit test, since we're relying on another code module here,
+	// but it's pretty thorough.
+	bag := bagit.NewBag(tarFilePath)
+	validator := bagit.NewValidator(bag, dpnProfile)
+	assert.True(t, validator.Validate())
+	errors := validator.Errors()
+	require.Empty(t, errors)
+}
