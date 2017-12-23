@@ -3,8 +3,10 @@ package bagit
 import (
 	"fmt"
 	"github.com/APTrust/easy-store/util/fileutil"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Bagger struct {
@@ -163,30 +165,30 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 // sure all required tags are present and valid. Set it to false
 // if you are copying in tag files like bag-info.txt through
 // bagger.AddFile().
-// func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool {
-//	if !strings.HasSuffix(bagger.bag.Path, ".tar") {
-//		bagger.addError(fmt.Sprintf("Bag path '%s' should end in .tar "+
-//			"when calling WriteBagToTarFile", bagger.bag.Path))
-//		return false
-//	}
-//	if !bagger.prepareForWrite(overwrite, checkRequiredTags) {
-//		return false
-//	}
-//	bagger.ensureManifests()
+func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool {
+	if !strings.HasSuffix(bagger.bag.Path, ".tar") {
+		bagger.addError(fmt.Sprintf("Bag path '%s' should end in .tar "+
+			"when calling WriteBagToTarFile", bagger.bag.Path))
+		return false
+	}
+	if !bagger.prepareForWrite(overwrite, checkRequiredTags) {
+		return false
+	}
+	bagger.ensureManifests()
 
-//	writer := fileutil.NewTarWriter(tempFilePath)
-//	defer writer.Close()
-//	err = writer.Open()
-//	if err != nil {
-//		bagger.addError(fmt.Sprintf("Error opening tar writer for '%s': %v", bagger.bag.Path, err))
-//		return false
-//	}
+	writer := fileutil.NewTarWriter(bagger.bag.Path)
+	defer writer.Close()
+	err := writer.Open()
+	if err != nil {
+		bagger.addError(fmt.Sprintf("Error opening tar writer for '%s': %v", bagger.bag.Path, err))
+		return false
+	}
 
-//	bagger.tarExistingFiles(writer)
-//	bagger.tarTagFiles(writer)
-//	bagger.tarManifests(writer)
-//	return true
-// }
+	bagger.tarExistingFiles(writer)
+	bagger.tarTagFiles(writer)
+	bagger.tarManifests(writer)
+	return true
+}
 
 func (bagger *Bagger) prepareForWrite(overwrite, checkRequiredTags bool) bool {
 	bagger.errors = make([]string, 0)
@@ -270,6 +272,9 @@ func (bagger *Bagger) copyFile(file *File) bool {
 	}
 
 	// Copy src to dest, and keep track of the checksums
+	// Note that param bagger.profile.ManifestsRequired is a list
+	// of algorithms for required checksum manifests. E.g.
+	// "md5", "sha256", etc.
 	checksums, err := fileutil.WriteWithChecksums(srcFile, destFile, bagger.profile.ManifestsRequired)
 	if err != nil {
 		bagger.addError(err.Error())
@@ -282,12 +287,97 @@ func (bagger *Bagger) copyFile(file *File) bool {
 	return true
 }
 
+// tarExistingFiles copies any files that already exist on disk
+// into the tar archive. Existing files should include all payload
+// files, and may include some tag files.
+func (bagger *Bagger) tarExistingFiles(tarWriter *fileutil.TarWriter) bool {
+	for _, file := range bagger.bag.Payload {
+		if !bagger.addTarFile(tarWriter, file) {
+			return false
+		}
+	}
+	for _, file := range bagger.bag.TagFiles {
+		if !bagger.addTarFile(tarWriter, file) {
+			return false
+		}
+	}
+	return true
+}
+
+// addTarFile adds one file from its source location into the
+// tar archive. The file being added may be part of the payload
+// or it could be a tag file.
+func (bagger *Bagger) addTarFile(tarWriter *fileutil.TarWriter, file *File) bool {
+	if bagger.skipCopy[file.FileSummary.RelPath] {
+		// This is a tag file we'll write ourselves,
+		// based on tags added through AddTag()
+		return true
+	}
+	if file.Checksums != nil && len(file.Checksums) > 0 {
+		// This file has already been added to the tar archive.
+		return true
+	}
+	srcPath := file.FileSummary.AbsPath
+	destPath := file.FileSummary.RelPath
+
+	// Copy src to dest, and keep track of the checksums.
+	// Note that param bagger.profile.ManifestsRequired is a list
+	// of algorithms for required checksum manifests. E.g.
+	// "md5", "sha256", etc.
+	checksums, err := tarWriter.AddToArchive(srcPath, destPath, bagger.profile.ManifestsRequired)
+	if err != nil {
+		bagger.addError(err.Error())
+		return false
+	}
+
+	// Attach the file's checksums, which we'll need
+	// soon when we write the manifests.
+	file.Checksums = checksums
+	return true
+}
+
+// writeTags writes the tag files into the bag
 func (bagger *Bagger) writeTags() bool {
 	for _, file := range bagger.bag.TagFiles {
 		destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
 		err := file.Write(destPath, bagger.profile.TagManifestsRequired)
 		if err != nil {
 			bagger.addError("Error writing tag file '%s'", destPath, err.Error())
+			return false
+		}
+	}
+	return true
+}
+
+// tarTagFiles writes the tag files into the archive.
+func (bagger *Bagger) tarTagFiles(tarWriter *fileutil.TarWriter) bool {
+	for _, file := range bagger.bag.TagFiles {
+		// Write to temp file, then copy into tar archive
+		tmpDir, err := ioutil.TempDir("", "easy-store")
+		if err != nil {
+			bagger.addError("Could not create temp file to write tags: %s", err.Error())
+			return false
+		}
+		defer os.RemoveAll(tmpDir) // doesn't execute until we exit for loop
+
+		// Create a name for the temp file.
+		slash := "/"
+		if strings.Contains(file.FileSummary.RelPath, "\\") &&
+			!strings.Contains(file.FileSummary.RelPath, "/") {
+			slash = "\\"
+		}
+		tmpFile := filepath.Join(tmpDir, strings.Replace(file.FileSummary.RelPath, slash, "_", 0))
+		err = file.Write(tmpFile, bagger.profile.TagManifestsRequired)
+		if err != nil {
+			bagger.addError("Error writing tag file '%s'", tmpFile, err.Error())
+			return false
+		}
+		// Copy the temp file into the archive. We don't need to capture the
+		// checksums, because they were set in the call to file.Write above.
+		destPath := file.FileSummary.RelPath
+		_, err = tarWriter.AddToArchive(tmpFile, destPath, []string{})
+		if err != nil {
+			bagger.addError(err.Error())
 			return false
 		}
 	}
