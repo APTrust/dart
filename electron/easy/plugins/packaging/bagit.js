@@ -44,6 +44,7 @@ class BagIt {
      */
     packageFiles() {
         var packager = this;
+        packager.job.packagedFile = "";
         var result = new OperationResult();
         try {
             // Set up the result object.
@@ -102,8 +103,9 @@ class BagIt {
                         }
                         packager.emitter.emit('validateComplete', isValid, line);
                     } else if (line.startsWith('Created')) {
+                        var filePath = line.substring(7);
+                        packager.job.packagedFile = filePath;
                         packager.emitter.emit('complete', true, line);
-                        result.succeeded = true;
                     }
                 }
                 // console.log(decoder.decode(data));

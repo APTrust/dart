@@ -40,6 +40,7 @@ module.exports = class Job {
         this.storageServices = [];
         this.options = new JobOptions();
         this.operationResults = [];
+        this.packagedFile = "";
         this.created = null;
         this.updated = null;
 
@@ -373,11 +374,8 @@ module.exports = class Job {
             if (PackagerClass == null) {
                 emitter.emit('error', "Cannot find package provider for BagIt format.<br/>");
             } else {
-                console.log("Creating packager");
                 var packager = new PackagerClass(job, emitter);
-                console.log("Running packager");
                 packager.packageFiles();
-                console.log("Packager returned");
             }
         }
         // Send the bag to storage.
