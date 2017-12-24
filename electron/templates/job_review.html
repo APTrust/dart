@@ -7,24 +7,24 @@
   {{#if job.bagItProfile}}
   <h3>Bag Info</h3>
   <div class="row">
-	  <div class="col-sm-4"><strong>Profile</strong></div>
-	  <div class="col-sm-8">{{ job.bagItProfile.name }}</div>
+      <div class="col-sm-4"><strong>Profile</strong></div>
+      <div class="col-sm-8">{{ job.bagItProfile.name }}</div>
   </div>
   <div class="row">
-	  <div class="col-sm-4"><strong>Bag Name</strong></div>
-	  <div class="col-sm-8">{{ job.bagName }}</div>
+      <div class="col-sm-4"><strong>Bag Name</strong></div>
+      <div class="col-sm-8">{{ job.bagName }}</div>
   </div>
   <div class="row">
-	  <div class="col-sm-4"><strong>Internal Identifier</strong></div>
-	  <div class="col-sm-8">{{ bagInternalIdentifier }}</div>
+      <div class="col-sm-4"><strong>Internal Identifier</strong></div>
+      <div class="col-sm-8">{{ bagInternalIdentifier }}</div>
   </div>
   <div class="row">
-	  <div class="col-sm-4"><strong>Title</strong></div>
-	  <div class="col-sm-8">{{ bagTitle }}</div>
+      <div class="col-sm-4"><strong>Title</strong></div>
+      <div class="col-sm-8">{{ bagTitle }}</div>
   </div>
   <div class="row">
-	  <div class="col-sm-4"><strong>Description</strong></div>
-	  <div class="col-sm-8">{{ bagDescription }}</div>
+      <div class="col-sm-4"><strong>Description</strong></div>
+      <div class="col-sm-8">{{ bagDescription }}</div>
   </div>
   {{/if}}
 
@@ -32,7 +32,7 @@
   <h3>Files</h3>
   {{#each job.files}}
   <div class="row">
-	<div class="col-sm-12">{{ this }}</div>
+    <div class="col-sm-12">{{ this }}</div>
   </div>
   {{/each}}
   {{/if}}
@@ -41,7 +41,7 @@
   <h3>Upload To</h3>
   {{#each storageServices as |service| }}
   <div class="row">
-	<div class="col-sm-12">{{ service.name }}</div>
+    <div class="col-sm-12">{{ service.name }}</div>
   </div>
   {{/each}}
   {{/if}}
@@ -67,7 +67,7 @@
           <span class="message"></span>
       </div>
 
-      <div id="jobBagLocation" class="alert alert-success" role="alert" style="display:none;">
+      <div id="jobPackageComplete" class="alert alert-success" role="alert" style="display:none;">
           <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
           <span class="message"></span>
       </div>
@@ -82,11 +82,11 @@
   <div class="clearfix" style="height: 30px;"></div>
 
   <div class="pull-left" id="divJobStorageDiv">
-	<a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
+    <a class="btn btn-primary" id="btnJobStorage" role="button">&lt;&lt; Previous</a>
   </div>
 
   <div class="pull-right" id="divJobRun">
-	  <a class="btn btn-primary" id="btnJobRun" role="button">Run Job</a>
+      <a class="btn btn-primary" id="btnJobRun" role="button">Run Job</a>
   </div>
 
 
@@ -94,13 +94,13 @@
 
 <script>
  $("#btnJobStorage").click(function() {
-	 var job = es.ActiveObject;
-	 var data = {};
-	 data.form = job.toStorageServiceForm();
-	 $("#container").html(templates.jobStorage(data));
+     var job = es.ActiveObject;
+     var data = {};
+     data.form = job.toStorageServiceForm();
+     $("#container").html(templates.jobStorage(data));
  });
  $("#btnJobRun").click(function() {
-	 var job = es.ActiveObject;
-	 job.run();
+     var job = es.ActiveObject;
+     job.run();
  });
 </script>

@@ -38,8 +38,6 @@ class Tar {
     /**
      * Assembles all job.files into a package (e.g. a zip file,
      * tar file, rar file, etc.).
-     * @returns {object} - An instance of OperationResult.
-     * See easy/operation_result.js.
      */
     packageFiles() {
         var result = new OperationResult();
@@ -51,7 +49,6 @@ class Tar {
         } catch (ex) {
             // ... code ...
         }
-        return result;
     }
 }
 

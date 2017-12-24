@@ -75,44 +75,111 @@ function getPackageProviderByMimeType(mimetype) {
 
 // See https://nodejs.org/api/events.html
 
+// newPackageEmitter returns an event emitter that allows a package
+// plugin to send events back to the UI.
 function newPackageEmitter() {
     var emitter = new EventEmitter();
-    emitter.on('start', function() {
 
+    emitter.on('start', function(message) {
+        $("#jobRun").show();
     });
+
     emitter.on('complete', function(succeeded, message) {
-
+        if (succeeded == true) {
+            $("#jobPackageComplete").show();
+            $("#jobPackageComplete .message").append(message + "<br/>");
+        } else {
+            showError(message);
+        }
     });
+
     emitter.on('fileAddStart', function(message) {
-
+        $("#jobRunFiles").show();
+        $("#jobRunFiles .message").html(message);
     });
+
     emitter.on('fileProgress', function(intPercentComplete) {
-
+        // No UI for this yet.
     });
+
     emitter.on('fileAddComplete', function(succeeded, message) {
-
+        if (succeeded == true) {
+            showSuccess("#jobRunFiles");
+        } else {
+            showFailure("#jobRunFiles");
+            showError(message);
+        }
+        $("#jobRunFiles .message").html(message);
     });
+
     emitter.on('packageStart', function(message) {
-
+        $("#jobPackage").show()
+        $("#jobPackage .message").html(message);
     });
+
     emitter.on('packageComplete', function(succeeded, message) {
-
+        if (succeeded == true) {
+            showSuccess("#jobPackage");
+        } else {
+            showSuccess("#jobPackage");
+            showError(message);
+        }
+        $("#jobPackage .message").html(message);
     });
+
     emitter.on('validateStart', function(message) {
-
+        $("#jobValidate").show();
+        $("#jobValidate .message").html(message);
     });
+
     emitter.on('validateComplete', function(succeeded, message) {
-
+        if (succeeded == true) {
+            showSuccess("#jobValidate");
+        } else {
+            showFailure("#jobValidate");
+        }
+        $("#jobValidate .message").append(message + "<br/>");
     });
+
     emitter.on('warning', function(message) {
-
+        // No UI for this yet
     });
+
     emitter.on('error', function(message) {
-
+        showError(message);
     });
+
+    function showSuccess(divId, message) {
+        var div = $(divId)
+        var icon = $(divId + " .glyphicon")
+        div.removeClass("alert-info");
+        div.addClass("alert-success");
+        icon.removeClass("glyphicon-hand-right");
+        icon.addClass("glyphicon-thumbs-up");
+        div.show();
+    }
+
+    function showFailure(divId, message) {
+        var div = $(divId)
+        var icon = $(divId + " .glyphicon")
+        div.removeClass("alert-info");
+        div.removeClass("alert-success");
+        div.addClass("alert-danger");
+        icon.removeClass("glyphicon-hand-right");
+        icon.addClass("glyphicon-thumbs-down");
+        div.show();
+    }
+
+    function showError(message) {
+        $("#jobError").show();
+        $("#jobError").append(message + "<br/>");
+    }
+
     return emitter;
 }
 
+// newPackageEmitter returns an event emitter that allows a storage
+// plugin to send events back to the UI.
 function newStorageEmitter() {
     emitter.on('start', function(message) {
 
@@ -144,3 +211,5 @@ module.exports.listPackageProviders = listPackageProviders;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;
+module.exports.newPackageEmitter = newPackageEmitter;
+module.exports.newStorageEmitter = newStorageEmitter;

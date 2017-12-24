@@ -43,8 +43,6 @@ class FTP {
      * function will create the file 'mybucket/private/photo.jpg' on the remote
      * storage provider.
      * @param {string} filepath - Absolute path to the file to be uploaded.
-     * @returns {object} - An instance of OperationResult.
-     * See easy/operation_result.js.
      */
     upload(filepath) {
         var result = new OperationResult();

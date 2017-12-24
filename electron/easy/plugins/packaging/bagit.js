@@ -1,3 +1,6 @@
+const { spawn } = require('child_process');
+const decoder = new TextDecoder("utf-8");
+const NEWLINE = require('os').EOL;
 const path = require('path');
 const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 
@@ -19,7 +22,7 @@ class BagIt {
     constructor(job, emitter) {
         this.job = job;
         this.emitter = emitter;
-        // ... code ...
+        this.outputFile = "";
     }
 
     /**
@@ -38,20 +41,92 @@ class BagIt {
     /**
      * Assembles all job.files into a package (e.g. a zip file,
      * tar file, rar file, etc.).
-     * @returns {object} - An instance of OperationResult.
-     * See easy/operation_result.js.
      */
     packageFiles() {
+        var packager = this;
         var result = new OperationResult();
         try {
-            // ... code ...
-            // Can emit events: 'start', 'complete', 'fileAddStart',
-            // 'fileProgress', 'fileAddComplete', 'packageStart', 'packageComplete',
-            // 'validateStart', 'validateComplete', 'warning', 'error'
+            // Set up the result object.
+            var result = packager.job.findResult("package");
+            if (result == null) {
+                result = new OperationResult("package");
+                packager.job.operationResults.push(result);
+            }
+            result.reset();
+            result.attemptNumber += 1;
+            result.started = (new Date()).toJSON();
+
+            // Start the bagger executable
+            var started = false;
+            var fileCount = 0;
+            var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
+            var bagger = spawn(baggerProgram, [ "--stdin" ]);
+
+            bagger.on('error', (err) => {
+                packager.emitter.emit('error', err)
+                result.error += err + NEWLINE;
+            });
+
+            bagger.on('exit', function (code, signal) {
+                var msg = `Bagger exited with code ${code} and signal ${signal}`;
+                var succeeded = false;
+                if (code == 0) {
+                    msg = `Bagger completed successfully with code ${code} and signal ${signal}`;
+                    succeeded = true;
+                }
+                result.completed = (new Date()).toJSON();
+                packager.job.save(); // save job with OperationResult
+                packager.emitter.emit('complete', succeeded, msg);
+            });
+
+            bagger.stdout.on('data', (data) => {
+                if (started == false) {
+                    packager.emitter.emit('start', 'Building bag...');
+                    started = true;
+                }
+                var lines = decoder.decode(data).split(NEWLINE);
+                for (var line of lines) {
+                    if (line.startsWith('Adding')) {
+                        fileCount += 1;
+                        packager.emitter.emit('fileAddStart', line);
+                    } else if (line.startsWith('Writing')) {
+                        packager.emitter.emit('fileAddComplete', true, `Added ${fileCount} files`);
+                        packager.emitter.emit('packageStart', line);
+                    } else if (line.startsWith('Validating')) {
+                        packager.emitter.emit('packageComplete', true, 'Finished packaging');
+                        packager.emitter.emit('validateStart', line);
+                    } else if (line.startsWith('Bag at')) {
+                        var isValid = false;
+                        if (line.endsWith("is valid")) {
+                            isValid = true;
+                        }
+                        packager.emitter.emit('validateComplete', isValid, line);
+                    } else if (line.startsWith('Created')) {
+                        packager.emitter.emit('complete', true, line);
+                        result.succeeded = true;
+                    }
+                }
+                // console.log(decoder.decode(data));
+            });
+
+            bagger.stderr.on('data', (data) => {
+                var lines = decoder.decode(data).split(NEWLINE);
+                for (var line of lines) {
+                    packager.emitter.emit('error', line);
+                }
+                result.error += lines;
+            });
+
+            // Send the job to the bagging program
+            bagger.stdin.write(JSON.stringify(packager.job));
+
         } catch (ex) {
-            // ... code ...
+            result.succeeded = false;
+            result.completed = (new Date()).toJSON();
+            packager.job.save();  // save job with operation result
+            packager.emitter.emit('error', ex);
+            console.error(ex);
         }
-        return result;
     }
 }
 
