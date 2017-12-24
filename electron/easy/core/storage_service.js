@@ -15,7 +15,8 @@ module.exports = class StorageService {
         this.name = name;
         this.description = "";
         this.protocol = "";
-        this.url = "";
+        this.host = "";
+        this.port = "";
         this.bucket = "";
         this.loginName = "";
         this.loginPassword = "";
@@ -35,8 +36,11 @@ module.exports = class StorageService {
         if (Util.isEmpty(this.protocol)) {
             result.errors["protocol"] = "Protocol cannot be empty";
         }
-        if (Util.isEmpty(this.url)) {
-            result.errors["url"] = "URL cannot be empty";
+        if (Util.isEmpty(this.host)) {
+            result.errors["host"] = "Host cannot be empty";
+        }
+        if (!Util.isEmpty(this.port) && parseInt(this.port, 10) != this.port) {
+            result.errors["port"] = "Port must be a whole number, or leave blank to use the default port.";
         }
         return result
     }
@@ -47,7 +51,10 @@ module.exports = class StorageService {
         form.fields['description'] = new Field('storageServiceDescription', 'description', 'Description', this.description);
         form.fields['protocol'] = new Field('storageServiceProtocol', 'protocol', 'Protocol', this.protocol);
         form.fields['protocol'].choices = Choice.makeList(Const.TransferProtocols, this.protocol, true);
-        form.fields['url'] = new Field('storageServiceUrl', 'url', 'URL', this.url);
+        form.fields['host'] = new Field('storageServiceHost', 'host', 'Host', this.host);
+        form.fields['host'].help = "The name of the server to connect to. For example, s3.amazonaws.com."
+        form.fields['port'] = new Field('storageServicePort', 'port', 'Port', this.port);
+        form.fields['port'].help = "The port number to connect to. Leave this blank if you're in doubt."
         form.fields['bucket'] = new Field('storageServiceBucket', 'bucket', 'Bucket or Default Folder', this.bucket);
         form.fields['loginName'] = new Field('storageServiceLoginName', 'loginName', 'Login Name', this.loginName);
         form.fields['loginName'].help = "Login name or S3 Access Key ID.";
@@ -63,7 +70,8 @@ module.exports = class StorageService {
         service.id = $('#storageServiceId').val().trim();
         service.description = $('#storageServiceDescription').val().trim();
         service.protocol = $('#storageServiceProtocol').val().trim();
-        service.url = $('#storageServiceUrl').val().trim();
+        service.host = $('#storageServiceHost').val().trim();
+        service.port = $('#storageServicePort').val().trim();
         service.bucket = $('#storageServiceBucket').val().trim();
         service.loginName = $('#storageServiceLoginName').val().trim();
         service.loginPassword = $('#storageServiceLoginPassword').val().trim();
