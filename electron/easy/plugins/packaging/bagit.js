@@ -1,8 +1,7 @@
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
-const NEWLINE = require('os').EOL;
 const path = require('path');
-const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
+const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
 const description = "Provides access to the APTrust command-line bagging library."
@@ -45,18 +44,7 @@ class BagIt {
     packageFiles() {
         var packager = this;
         packager.job.packagedFile = "";
-        var result = new OperationResult();
         try {
-            // Set up the result object.
-            var result = packager.job.findResult("package");
-            if (result == null) {
-                result = new OperationResult("package");
-                packager.job.operationResults.push(result);
-            }
-            result.reset();
-            result.attemptNumber += 1;
-            result.started = (new Date()).toJSON();
-
             // Start the bagger executable
             var started = false;
             var fileCount = 0;
@@ -65,7 +53,6 @@ class BagIt {
 
             bagger.on('error', (err) => {
                 packager.emitter.emit('error', err)
-                result.error += err + NEWLINE;
             });
 
             bagger.on('exit', function (code, signal) {
@@ -75,8 +62,6 @@ class BagIt {
                     msg = `Bagger completed successfully with code ${code} and signal ${signal}`;
                     succeeded = true;
                 }
-                result.completed = (new Date()).toJSON();
-                packager.job.save(); // save job with OperationResult
                 packager.emitter.emit('complete', succeeded, msg);
             });
 
@@ -116,16 +101,12 @@ class BagIt {
                 for (var line of lines) {
                     packager.emitter.emit('error', line);
                 }
-                result.error += lines;
             });
 
             // Send the job to the bagging program
             bagger.stdin.write(JSON.stringify(packager.job));
 
         } catch (ex) {
-            result.succeeded = false;
-            result.completed = (new Date()).toJSON();
-            packager.job.save();  // save job with operation result
             packager.emitter.emit('error', ex);
             console.error(ex);
         }

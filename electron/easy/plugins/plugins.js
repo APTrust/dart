@@ -1,7 +1,9 @@
 const EventEmitter = require('events');
+const NEWLINE = require('os').EOL;
 const requireDir = require('require-dir');
 const path = require('path');
 
+const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 const PackageProviders = requireDir(path.resolve("electron/easy/plugins/packaging"));
 const StorageProviders = requireDir(path.resolve("electron/easy/plugins/storage"));
 
@@ -76,11 +78,22 @@ function getPackageProviderByMimeType(mimetype) {
 // See https://nodejs.org/api/events.html
 
 // newPackageEmitter returns an event emitter that allows a package
-// plugin to send events back to the UI.
-function newPackageEmitter() {
+// plugin to send events back to the UI. Param job is the job being
+// worked on. The emitter will update the job's operation result
+// with info about when the work started and ended, whether it was
+// successful, etc.
+function newPackageEmitter(job, provider) {
     var emitter = new EventEmitter();
+    var result = job.findResult("package", provider);
+    if (result == null) {
+        result = new OperationResult("package", provider);
+        job.operationResults.push(result);
+    }
+    result.reset();
+    result.attemptNumber += 1;
 
     emitter.on('start', function(message) {
+        result.started = (new Date()).toJSON();
         $("#jobRun").show();
     });
 
@@ -88,9 +101,13 @@ function newPackageEmitter() {
         if (succeeded == true) {
             $("#jobPackageComplete").show();
             $("#jobPackageComplete .message").append(message + "<br/>");
+            result.filename = job.packagedFile;
         } else {
             showError(message);
         }
+        result.succeeded = succeeded;
+        result.completed = (new Date()).toJSON();
+        job.save(); // save job with OperationResult
     });
 
     emitter.on('fileAddStart', function(message) {
@@ -146,6 +163,7 @@ function newPackageEmitter() {
     });
 
     emitter.on('error', function(message) {
+        result.error += err + NEWLINE;
         showError(message);
     });
 
