@@ -62,6 +62,7 @@
      job.save();
      var data = {};
      data.form = job.toPackagingForm();
+     data.domainName = es.AppSetting.findByName("Institution Domain").value;
      $("#container").html(templates.jobPackaging(data));
  });
 

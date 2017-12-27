@@ -91,6 +91,7 @@
     var job = es.ActiveObject;
     var data = {};
     data.form = job.toPackagingForm();
+    data.domainName = es.AppSetting.findByName("Institution Domain").value;
     es.ViewCache['jobFiles'] = $("#container").html();
     $("#container").html(templates.jobPackaging(data));
   });
