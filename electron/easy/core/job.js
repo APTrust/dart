@@ -353,10 +353,10 @@ module.exports = class Job {
         return db.store;
     }
 
-    findResult(operation) {
+    findResult(operation, provider) {
         var result = null;
         for (var r of this.operationResults) {
-            if (r.operation == operation) {
+            if (r.operation == operation && r.provider == provider) {
                 result = r;
                 break;
             }
@@ -369,8 +369,12 @@ module.exports = class Job {
         // Bag the files
         if (this.bagItProfile != null) {
             var job = this;
-            var emitter = Plugins.newPackageEmitter();
             var PackagerClass = Plugins.getPackageProviderByFormat('bagit');
+            var provider = null;
+            if (PackagerClass != null) {
+                provider = new PackagerClass(null, null).describe()['name'];
+            }
+            var emitter = Plugins.newPackageEmitter(job, provider);
             if (PackagerClass == null) {
                 emitter.emit('error', "Cannot find package provider for BagIt format.<br/>");
             } else {
