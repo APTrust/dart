@@ -75,6 +75,15 @@ function getPackageProviderByMimeType(mimetype) {
     return null;
 }
 
+function showStorageReset() {
+    var div = $("#jobStorageStart");
+    div.removeClass("alert-success");
+    div.removeClass("alert-danger");
+    div.addClass("alert-info");
+    div.html("");
+    div.show();
+}
+
 function showFilesReset() {
     var div = $("#jobFilesStart");
     div.removeClass("alert-success");
@@ -243,6 +252,7 @@ function newStorageEmitter(job, provider) {
     result.attemptNumber += 1;
 
     emitter.on('start', function(message) {
+        showStorageReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
     });
@@ -250,8 +260,9 @@ function newStorageEmitter(job, provider) {
         if (succeeded == true) {
             $("#jobStorageComplete").show();
             $("#jobStorageComplete .message").append(message + "<br/>");
-            result.filename = job.packagedFile;
+            showSuccess("#jobStorageStart");
         } else {
+            showFailure("#jobStorageStart");
             showError("#jobError", message);
         }
         result.succeeded = succeeded;
@@ -259,13 +270,15 @@ function newStorageEmitter(job, provider) {
         job.save(); // save job with OperationResult
     });
     emitter.on('uploadStart', function(message) {
-
+        $("#jobUploadFile .message").html(message + "<br/>");
+        $("#jobUploadFile").show();
     });
     emitter.on('uploadProgress', function(intPercentComplete) {
 
     });
     emitter.on('uploadComplete', function(succeeded, message) {
-
+        $("#jobUploadFile .message").html(message + "<br/>");
+        $("#jobUploadFile").show();
     });
     emitter.on('warning', function(message) {
 
