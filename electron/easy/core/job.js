@@ -366,9 +366,9 @@ module.exports = class Job {
 
     // Run this job
     run() {
+        var job = this;
         // Bag the files
         if (this.bagItProfile != null) {
-            var job = this;
             var PackagerClass = Plugins.getPackageProviderByFormat('bagit');
             var provider = null;
             if (PackagerClass != null) {
@@ -383,9 +383,21 @@ module.exports = class Job {
             }
         }
         // Send the bag to storage.
-        if (this.storageServices.length > 0) {
-            // Store it
+        for (var service of job.storageServices) {
+            var StorerClass = Plugins.getStorageProviderByProtocol(service.protocol);
+            var provider = null;
+            if (StorerClass != null) {
+                provider = new StorerClass(null, null).describe()['name'];
+            }
+            var emitter = Plugins.newStorageEmitter(job, provider);
+            if (StorerClass == null) {
+                emitter.emit('error', `Cannot find storage provider for ${service.protocol}.<br/>`);
+            } else {
+                var storer = new StorerClass(job, emitter);
+                packager.upload(job.packagedFile);
+            }
         }
+
     }
 }
 

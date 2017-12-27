@@ -75,13 +75,41 @@ function getPackageProviderByMimeType(mimetype) {
     return null;
 }
 
+function showSuccess(divId, message) {
+    var div = $(divId)
+    var icon = $(divId + " .glyphicon")
+    div.removeClass("alert-info");
+    div.addClass("alert-success");
+    icon.removeClass("glyphicon-hand-right");
+    icon.addClass("glyphicon-thumbs-up");
+    div.show();
+}
+
+function showFailure(divId, message) {
+    var div = $(divId)
+    var icon = $(divId + " .glyphicon")
+    div.removeClass("alert-info");
+    div.removeClass("alert-success");
+    div.addClass("alert-danger");
+    icon.removeClass("glyphicon-hand-right");
+    icon.addClass("glyphicon-thumbs-down");
+    div.show();
+}
+
+function showError(divId, message) {
+    $(divId).show();
+    $(divId).append(message + "<br/>");
+}
+
+
 // See https://nodejs.org/api/events.html
 
 // newPackageEmitter returns an event emitter that allows a package
 // plugin to send events back to the UI. Param job is the job being
 // worked on. The emitter will update the job's operation result
 // with info about when the work started and ended, whether it was
-// successful, etc.
+// successful, etc. Param provider is the name of the plugin that
+// will be performing the operation.
 function newPackageEmitter(job, provider) {
     var emitter = new EventEmitter();
     var result = job.findResult("package", provider);
@@ -103,7 +131,7 @@ function newPackageEmitter(job, provider) {
             $("#jobPackageComplete .message").append(message + "<br/>");
             result.filename = job.packagedFile;
         } else {
-            showError(message);
+            showError("#jobError", message);
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
@@ -124,7 +152,7 @@ function newPackageEmitter(job, provider) {
             showSuccess("#jobRunFiles");
         } else {
             showFailure("#jobRunFiles");
-            showError(message);
+            showError("#jobError", message);
         }
         $("#jobRunFiles .message").html(message);
     });
@@ -139,7 +167,7 @@ function newPackageEmitter(job, provider) {
             showSuccess("#jobPackage");
         } else {
             showSuccess("#jobPackage");
-            showError(message);
+            showError("#jobError", message);
         }
         $("#jobPackage .message").html(message);
     });
@@ -164,46 +192,43 @@ function newPackageEmitter(job, provider) {
 
     emitter.on('error', function(message) {
         result.error += err + NEWLINE;
-        showError(message);
+        showError("#jobError", message);
     });
-
-    function showSuccess(divId, message) {
-        var div = $(divId)
-        var icon = $(divId + " .glyphicon")
-        div.removeClass("alert-info");
-        div.addClass("alert-success");
-        icon.removeClass("glyphicon-hand-right");
-        icon.addClass("glyphicon-thumbs-up");
-        div.show();
-    }
-
-    function showFailure(divId, message) {
-        var div = $(divId)
-        var icon = $(divId + " .glyphicon")
-        div.removeClass("alert-info");
-        div.removeClass("alert-success");
-        div.addClass("alert-danger");
-        icon.removeClass("glyphicon-hand-right");
-        icon.addClass("glyphicon-thumbs-down");
-        div.show();
-    }
-
-    function showError(message) {
-        $("#jobError").show();
-        $("#jobError").append(message + "<br/>");
-    }
 
     return emitter;
 }
 
 // newPackageEmitter returns an event emitter that allows a storage
-// plugin to send events back to the UI.
-function newStorageEmitter() {
-    emitter.on('start', function(message) {
+// plugin to send events back to the UI. Param job is the job being
+// worked on. The emitter will update the job's operation result
+// with info about when the work started and ended, whether it was
+// successful, etc. Param provider is the name of the plugin that
+// will be performing the operation.
+function newStorageEmitter(job, provider) {
+    var emitter = new EventEmitter();
+    var result = job.findResult("storage", provider);
+    if (result == null) {
+        result = new OperationResult("storage", provider);
+        job.operationResults.push(result);
+    }
+    result.reset();
+    result.attemptNumber += 1;
 
+    emitter.on('start', function(message) {
+        result.started = (new Date()).toJSON();
+        $("#jobRun").show();
     });
     emitter.on('complete', function(succeeded, message) {
-
+        if (succeeded == true) {
+            $("#jobStorageComplete").show();
+            $("#jobStorageComplete .message").append(message + "<br/>");
+            result.filename = job.packagedFile;
+        } else {
+            showError("#jobError", message);
+        }
+        result.succeeded = succeeded;
+        result.completed = (new Date()).toJSON();
+        job.save(); // save job with OperationResult
     });
     emitter.on('uploadStart', function(message) {
 
@@ -218,7 +243,8 @@ function newStorageEmitter() {
 
     });
     emitter.on('error', function(message) {
-
+        result.error += err + NEWLINE;
+        showError("#jobError", message);
     });
     return emitter;
 }
