@@ -41,9 +41,9 @@ function listPackageProviders() {
 // protocol. Protocol can be 's3', 'ftp', etc.
 function getStorageProviderByProtocol(protocol) {
     for(var moduleName in StorageProviders) {
-        var provider = StorageProviders[moduleName];
-        if (provider.protocol == protocol) {
-            return provider;
+        var module = StorageProviders[moduleName];
+        if (module.protocol == protocol) {
+            return module.Provider;
         }
     }
     return null;
@@ -80,7 +80,10 @@ function showStorageReset() {
     div.removeClass("alert-success");
     div.removeClass("alert-danger");
     div.addClass("alert-info");
-    div.html("");
+    resetThumbs("#jobUploadFile");
+    resetThumbs("#jobStorageComplete");
+    $("#jobUploadFile .message").html("");
+    $("#jobStorageComplete .message").html("");
     div.show();
 }
 
@@ -89,6 +92,10 @@ function showFilesReset() {
     div.removeClass("alert-success");
     div.removeClass("alert-danger");
     div.addClass("alert-info");
+    resetThumbs("#jobRunFiles");
+    resetThumbs("#jobPackage");
+    resetThumbs("#jobValidate");
+    resetThumbs("#jobPackageComplete");
     $("#jobRunFiles .message").html("");
     $("#jobPackage .message").html("");
     $("#jobValidate .message").html("");
@@ -126,7 +133,15 @@ function showFailure(divId, message) {
     icon.removeClass("glyphicon-hand-right");
     icon.addClass("glyphicon-thumbs-down");
     div.show();
-    showFilesFailed();
+}
+
+function resetThumbs(divId) {
+    var div = $(divId)
+    var icon = $(divId + " .glyphicon")
+    icon.removeClass("glyphicon-thumbs-up");
+    icon.removeClass("glyphicon-thumbs-down");
+    icon.addClass("glyphicon-hand-right");
+    div.show();
 }
 
 function showError(divId, message) {
@@ -164,7 +179,7 @@ function newPackageEmitter(job, provider) {
             $("#jobPackageComplete").show();
             $("#jobPackageComplete .message").append(message + "<br/>");
             $("#jobFilesStart").show();
-            result.filename = job.packagedFile;
+            result.filename = job.packagedFile.trim();
             showFilesSucceeded();
         } else {
             showError("#jobError", message);
@@ -173,6 +188,9 @@ function newPackageEmitter(job, provider) {
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
         job.save(); // save job with OperationResult
+
+        // Need to find a better place for this...
+        job.uploadFiles();
     });
 
     emitter.on('fileAddStart', function(message) {
@@ -189,6 +207,7 @@ function newPackageEmitter(job, provider) {
             showSuccess("#jobRunFiles");
         } else {
             showFailure("#jobRunFiles");
+            showFilesFailed();
             showError("#jobError", message);
         }
         $("#jobRunFiles .message").html(message);
@@ -219,6 +238,7 @@ function newPackageEmitter(job, provider) {
             showSuccess("#jobValidate");
         } else {
             showFailure("#jobValidate");
+            showFilesFailed();
         }
         $("#jobValidate .message").append(message + "<br/>");
     });
@@ -252,11 +272,14 @@ function newStorageEmitter(job, provider) {
     result.attemptNumber += 1;
 
     emitter.on('start', function(message) {
+        console.log('Storage started ' + message);
         showStorageReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
     });
+
     emitter.on('complete', function(succeeded, message) {
+        console.log('Storage completed ' + message);
         if (succeeded == true) {
             $("#jobStorageComplete").show();
             $("#jobStorageComplete .message").append(message + "<br/>");
@@ -269,22 +292,35 @@ function newStorageEmitter(job, provider) {
         result.completed = (new Date()).toJSON();
         job.save(); // save job with OperationResult
     });
+
     emitter.on('uploadStart', function(message) {
+        console.log('Upload started ' + message);
         $("#jobUploadFile .message").html(message + "<br/>");
         $("#jobUploadFile").show();
     });
+
     emitter.on('uploadProgress', function(intPercentComplete) {
-
+        console.log('Upload progress ' + message);
     });
+
     emitter.on('uploadComplete', function(succeeded, message) {
+        console.log('Upload complete ' + message);
         $("#jobUploadFile .message").html(message + "<br/>");
         $("#jobUploadFile").show();
+        if (succeeded) {
+            showSuccess("#jobUploadComplete");
+        } else {
+            showFailure("#jobUploadComplete");
+        }
     });
-    emitter.on('warning', function(message) {
 
+    emitter.on('warning', function(message) {
+        console.log('Storage warning ' + message);
     });
+
     emitter.on('error', function(message) {
-        result.error += err + NEWLINE;
+        console.log('Storage error ' + message);
+        result.error += message + NEWLINE;
         showError("#jobError", message);
     });
     return emitter;

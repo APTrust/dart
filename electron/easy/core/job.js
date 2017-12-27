@@ -366,8 +366,12 @@ module.exports = class Job {
 
     // Run this job
     run() {
-        var job = this;
         // Bag the files
+        // Currently, the 'complete' event that packager.packageFiles() emits
+        // when it's finished calls job.uploadFiles(), which is defined below.
+        // That's a hack.
+        // We should have some kind of controller to handle that event.
+        var job = this;
         if (this.bagItProfile != null) {
             var PackagerClass = Plugins.getPackageProviderByFormat('bagit');
             var provider = null;
@@ -382,7 +386,10 @@ module.exports = class Job {
                 packager.packageFiles();
             }
         }
+    }
+    uploadFiles() {
         // Send the bag to storage.
+        var job = this;
         for (var service of job.storageServices) {
             var StorerClass = Plugins.getStorageProviderByProtocol(service.protocol);
             var provider = null;
@@ -393,11 +400,10 @@ module.exports = class Job {
             if (StorerClass == null) {
                 emitter.emit('error', `Cannot find storage provider for ${service.protocol}.<br/>`);
             } else {
-                var storer = new StorerClass(job, emitter);
-                packager.upload(job.packagedFile);
+                var storer = new StorerClass(service, emitter);
+                storer.upload(job.packagedFile);
             }
         }
-
     }
 }
 

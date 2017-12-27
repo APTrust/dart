@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
 const Minio = require('minio')
 
@@ -12,15 +13,13 @@ class S3 {
     /**
      * Custom storage provider.
      * @constructor
-     * @param {object} job - A job object.
      * @param {object} storageService - A storage service object describing
      * the service protocol, credentials, URL, and other info.
      * See easy/storage_service.js.
      * @param {object} emitter - An Node event object that can emit events
      * @returns {object} - A new custom storage provider.
      */
-    constructor(job, storageService, emitter) {
-        this.job = job;
+    constructor(storageService, emitter) {
         this.storageService = storageService;
         this.emitter = emitter;
         // ... code ...
@@ -50,30 +49,15 @@ class S3 {
     upload(filepath) {
         var started = false;
         var fileCount = 0;
-        var result = new OperationResult();
         var uploader = this;
         try {
             // ... code ...
             // Can emit events: 'start', 'complete', 'uploadStart',
             // 'uploadProgress', 'uploadComplete', 'warning', 'error'
-            var operationName = "storage:" + uploader.result.storageService.name
-            var result = uploader.job.findResult(operationName);
-            if (result == null) {
-                result = new OperationResult(operationName);
-                uploader.job.operationResults.push(result);
-            }
-            result.reset();
-            result.attemptNumber += 1;
-            result.started = (new Date()).toJSON();
-
             var localStat = fs.lstatSync(filepath);
             if (localStat == null || !(localStat.isFile() || localStat.isSymbolicLink())) {
                 var msg = `${filepath} is not a file`;
                 uploader.emitter.emit('error', msg);
-                result.succeeded = false;
-                result.error = msg;
-                result.completed = (new Date()).toJSON();
-                uploader.job.save(); // save job with new OperationResult
                 return;
             }
 
@@ -87,60 +71,38 @@ class S3 {
                 endPoint:  uploader.storageService.host,
                 accessKey: uploader.storageService.loginName,
                 secretKey: uploader.storageService.loginPassword
-            })
+            });
             if (uploader.storageService.port == parseInt(uploader.storageService.port, 10)) {
                 s3Client.port = port;
             }
             uploader.emitter.emit('uploadStart', `Uploading ${filepath} to ${host} ${bucket}/${objectName}`)
             s3Client.fPutObject(bucket, objectName, filepath, function(err) {
                 if (err) {
-                    uploader.emitter.emit('error', err);
-                    uploader.emitter.emit('complete', "Upload failed with error. " + err);
-                    result.succeeded = false;
-                    result.error = err;
-                    result.completed = (new Date()).toJSON();
-                    uploader.job.save();
+                    uploader.emitter.emit('complete', false, "Upload failed with error. " + err);
                     return;
                 }
                 uploader.emitter.emit('uploadComplete', `Finished uploading ${objectName}`)
                 s3Client.statObject(bucket, objectName, function(err, remoteStat){
                     if (err) {
-                        uploader.emitter.emit('error', err);
-                        uploader.emitter.emit('complete', "After upload, could not get object stats. " + err);
-                        result.succeeded = false;
-                        result.error = err;
-                        result.completed = (new Date()).toJSON();
-                        uploader.job.save();
+                        uploader.emitter.emit('complete', false, "After upload, could not get object stats. " + err);
                         return;
                     }
                     if (remoteStat.size != localStat.size) {
                         var msg = `Object was not correctly uploaded. Local size is ${localStat.size}, remote size is ${remoteStat.size}`;
-                        uploader.emitter.emit('error', msg);
-                        uploader.emitter.emit('complete', msg);
-                        result.succeeded = false;
-                        result.error = msg;
-                        result.completed = (new Date()).toJSON();
-                        uploader.job.save();
+                        uploader.emitter.emit('complete', false, msg);
                         return;
                     } else {
                         var msg = `Object uploaded successfully. Size: ${remoteStat.size}, ETag: ${remoteStat.etag}`;
-                        result.succeeded = true;
-                        result.error = msg;
-                        result.completed = (new Date()).toJSON();
-                        uploader.job.save();
-                        uploader.emitter.emit('uploadComplete', msg);
-                        uploader.emitter.emit('complete', msg);
+                        uploader.emitter.emit('uploadComplete', true, msg);
+                        uploader.emitter.emit('complete', true, msg);
                     }
                 });
             })
         } catch (ex) {
            // ... code ...
-            uploader.emitter.emit('error', msg);
-            uploader.emitter.emit('complete', msg);
-            result.succeeded = false;
-            result.error = ex;
-            result.completed = (new Date()).toJSON();
-            uploader.job.save();
+            console.log(typeof ex);
+            console.log(ex);
+            uploader.emitter.emit('complete', false, ex);
         }
     }
 
