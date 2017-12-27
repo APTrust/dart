@@ -75,11 +75,36 @@ function getPackageProviderByMimeType(mimetype) {
     return null;
 }
 
+function showFilesReset() {
+    var div = $("#jobFilesStart");
+    div.removeClass("alert-success");
+    div.removeClass("alert-danger");
+    div.addClass("alert-info");
+    $("#jobRunFiles .message").html("");
+    $("#jobPackage .message").html("");
+    $("#jobValidate .message").html("");
+    $("#jobPackageComplete .message").html("");
+    $("#jobError .message").html("");
+    $("#jobError").hide();
+}
+
+function showFilesSucceeded() {
+    var div = $("#jobFilesStart");
+    div.removeClass("alert-info");
+    div.removeClass("alert-danger");
+    div.addClass("alert-success");
+}
+
+function showFilesFailed() {
+    var div = $("#jobFilesStart");
+    div.removeClass("alert-info");
+    div.removeClass("alert-success");
+    div.addClass("alert-danger");
+}
+
 function showSuccess(divId, message) {
     var div = $(divId)
     var icon = $(divId + " .glyphicon")
-    div.removeClass("alert-info");
-    div.addClass("alert-success");
     icon.removeClass("glyphicon-hand-right");
     icon.addClass("glyphicon-thumbs-up");
     div.show();
@@ -88,12 +113,11 @@ function showSuccess(divId, message) {
 function showFailure(divId, message) {
     var div = $(divId)
     var icon = $(divId + " .glyphicon")
-    div.removeClass("alert-info");
-    div.removeClass("alert-success");
-    div.addClass("alert-danger");
+    var parent = div.parent();
     icon.removeClass("glyphicon-hand-right");
     icon.addClass("glyphicon-thumbs-down");
     div.show();
+    showFilesFailed();
 }
 
 function showError(divId, message) {
@@ -121,6 +145,7 @@ function newPackageEmitter(job, provider) {
     result.attemptNumber += 1;
 
     emitter.on('start', function(message) {
+        showFilesReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
     });
@@ -129,9 +154,12 @@ function newPackageEmitter(job, provider) {
         if (succeeded == true) {
             $("#jobPackageComplete").show();
             $("#jobPackageComplete .message").append(message + "<br/>");
+            $("#jobFilesStart").show();
             result.filename = job.packagedFile;
+            showFilesSucceeded();
         } else {
             showError("#jobError", message);
+            showFilesFailed();
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
