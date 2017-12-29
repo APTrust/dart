@@ -67,22 +67,19 @@ class S3 {
 
             uploader.emitter.emit('start', `Connecting to ${host}`)
 
-            var s3Client = new Minio.Client({
-                endPoint:  uploader.storageService.host,
-                accessKey: uploader.storageService.loginName,
-                secretKey: uploader.storageService.loginPassword
-            });
-            if (uploader.storageService.port == parseInt(uploader.storageService.port, 10)) {
-                s3Client.port = port;
-            }
+            var s3Client = uploader.getClient();
+            console.log(s3Client);
             uploader.emitter.emit('uploadStart', `Uploading ${filepath} to ${host} ${bucket}/${objectName}`)
             s3Client.fPutObject(bucket, objectName, filepath, function(err) {
                 if (err) {
                     uploader.emitter.emit('complete', false, "Upload failed with error. " + err);
                     return;
                 }
-                uploader.emitter.emit('uploadComplete', `Finished uploading ${objectName}`)
-                s3Client.statObject(bucket, objectName, function(err, remoteStat){
+                uploader.emitter.emit('uploadComplete', true, `Finished uploading ${objectName}`)
+                var statClient = uploader.getClient();
+                console.log("Stat client: " + statClient);
+                //s3Client.statObject(bucket, objectName, function(err, remoteStat){
+                statClient.statObject(bucket, objectName, function(err, remoteStat){
                     if (err) {
                         uploader.emitter.emit('complete', false, "After upload, could not get object stats. " + err);
                         return;
@@ -104,6 +101,35 @@ class S3 {
             console.log(ex);
             uploader.emitter.emit('complete', false, ex);
         }
+    }
+
+    list(bucket) {
+        var uploader = this;
+        var s3Client = new Minio.Client({
+            endPoint:  uploader.storageService.host,
+            accessKey: uploader.storageService.loginName,
+            secretKey: uploader.storageService.loginPassword,
+            region: 'us-east-1'
+        });
+        //console.log(s3Client);
+        var stream = s3Client.listObjects(bucket, '', false);
+        stream.on('data', function(obj) { console.log(obj) } )
+        stream.on('error', function(err) { console.log("Error: " + err) } )
+    }
+
+    getClient() {
+        var s3Client = new Minio.Client({
+            endPoint:  this.storageService.host,
+            accessKey: this.storageService.loginName,
+            secretKey: this.storageService.loginPassword
+        });
+        if (this.storageService.host == 's3.amazonaws.com' && this.storageService.bucket.startsWith('aptrust.')) {
+            s3Client.region = 'us-east-1';
+        }
+        if (this.storageService.port == parseInt(this.storageService.port, 10)) {
+            s3Client.port = port;
+        }
+        return s3Client;
     }
 
     /**

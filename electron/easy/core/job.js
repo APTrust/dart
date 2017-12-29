@@ -402,6 +402,7 @@ module.exports = class Job {
             } else {
                 var storer = new StorerClass(service, emitter);
                 storer.upload(job.packagedFile);
+                //storer.list(service.bucket);
             }
         }
     }
