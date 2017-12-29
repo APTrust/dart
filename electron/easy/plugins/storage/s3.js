@@ -68,18 +68,16 @@ class S3 {
             uploader.emitter.emit('start', `Connecting to ${host}`)
 
             var s3Client = uploader.getClient();
-            console.log(s3Client);
             uploader.emitter.emit('uploadStart', `Uploading ${filepath} to ${host} ${bucket}/${objectName}`)
             s3Client.fPutObject(bucket, objectName, filepath, function(err) {
                 if (err) {
                     uploader.emitter.emit('complete', false, "Upload failed with error. " + err);
                     return;
                 }
-                uploader.emitter.emit('uploadComplete', true, `Finished uploading ${objectName}`)
-                var statClient = uploader.getClient();
-                console.log("Stat client: " + statClient);
-                //s3Client.statObject(bucket, objectName, function(err, remoteStat){
-                statClient.statObject(bucket, objectName, function(err, remoteStat){
+                // TODO: Allow GetObject in receiving buckets for our depositors!!
+                // Otherwise, this will return error about "valid credentials required."
+                // Logged in PT #153962363.
+                s3Client.statObject(bucket, objectName, function(err, remoteStat){
                     if (err) {
                         uploader.emitter.emit('complete', false, "After upload, could not get object stats. " + err);
                         return;
@@ -89,9 +87,8 @@ class S3 {
                         uploader.emitter.emit('complete', false, msg);
                         return;
                     } else {
-                        var msg = `Object uploaded successfully. Size: ${remoteStat.size}, ETag: ${remoteStat.etag}`;
-                        uploader.emitter.emit('uploadComplete', true, msg);
-                        uploader.emitter.emit('complete', true, msg);
+                        uploader.emitter.emit('uploadComplete', true, `Saved ${objectName} in ${bucket}.`);
+                        uploader.emitter.emit('complete', true, `Object uploaded successfully. Size: ${remoteStat.size}, ETag: ${remoteStat.etag}`);
                     }
                 });
             })
@@ -104,14 +101,7 @@ class S3 {
     }
 
     list(bucket) {
-        var uploader = this;
-        var s3Client = new Minio.Client({
-            endPoint:  uploader.storageService.host,
-            accessKey: uploader.storageService.loginName,
-            secretKey: uploader.storageService.loginPassword,
-            region: 'us-east-1'
-        });
-        //console.log(s3Client);
+        var s3Client = this.getClient();
         var stream = s3Client.listObjects(bucket, '', false);
         stream.on('data', function(obj) { console.log(obj) } )
         stream.on('error', function(err) { console.log("Error: " + err) } )

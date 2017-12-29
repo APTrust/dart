@@ -118,6 +118,20 @@ function showFilesFailed() {
     div.addClass("alert-danger");
 }
 
+function showUploadSucceeded() {
+    var div = $("#jobStorageStart");
+    div.removeClass("alert-info");
+    div.removeClass("alert-danger");
+    div.addClass("alert-success");
+}
+
+function showUploadFailed() {
+    var div = $("#jobStorageStart");
+    div.removeClass("alert-info");
+    div.removeClass("alert-success");
+    div.addClass("alert-danger");
+}
+
 function showSuccess(divId, message) {
     var div = $(divId)
     var icon = $(divId + " .glyphicon")
@@ -261,6 +275,8 @@ function newPackageEmitter(job, provider) {
 // with info about when the work started and ended, whether it was
 // successful, etc. Param provider is the name of the plugin that
 // will be performing the operation.
+//
+// TODO: Correctly handle multiple uploads in the UI.
 function newStorageEmitter(job, provider) {
     var emitter = new EventEmitter();
     var result = job.findResult("storage", provider);
@@ -272,14 +288,12 @@ function newStorageEmitter(job, provider) {
     result.attemptNumber += 1;
 
     emitter.on('start', function(message) {
-        console.log('Storage started ' + message);
         showStorageReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
     });
 
     emitter.on('complete', function(succeeded, message) {
-        console.log('Storage completed ' + message);
         if (succeeded == true) {
             $("#jobStorageComplete").show();
             $("#jobStorageComplete .message").append(message + "<br/>");
@@ -294,7 +308,6 @@ function newStorageEmitter(job, provider) {
     });
 
     emitter.on('uploadStart', function(message) {
-        console.log('Upload started ' + message);
         $("#jobUploadFile .message").html(message + "<br/>");
         $("#jobUploadFile").show();
     });
@@ -304,13 +317,14 @@ function newStorageEmitter(job, provider) {
     });
 
     emitter.on('uploadComplete', function(succeeded, message) {
-        console.log('Upload complete ' + message);
         $("#jobUploadFile .message").html(message + "<br/>");
         $("#jobUploadFile").show();
         if (succeeded) {
             showSuccess("#jobUploadComplete");
+            showUploadSucceeded();
         } else {
             showFailure("#jobUploadComplete");
+            showUploadFailed();
         }
     });
 
@@ -319,7 +333,6 @@ function newStorageEmitter(job, provider) {
     });
 
     emitter.on('error', function(message) {
-        console.log('Storage error ' + message);
         result.error += message + NEWLINE;
         showError("#jobError", message);
     });

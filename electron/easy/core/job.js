@@ -389,6 +389,7 @@ module.exports = class Job {
     }
     uploadFiles() {
         // Send the bag to storage.
+        // TODO: Correctly handle multiple uploads in the UI.
         var job = this;
         for (var service of job.storageServices) {
             var StorerClass = Plugins.getStorageProviderByProtocol(service.protocol);
