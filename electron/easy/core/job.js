@@ -63,11 +63,41 @@ module.exports = class Job {
     }
 
     displayDateCreated() {
-        return dateFormat(this.created, 'longDate') + " " + dateFormat(this.created, 'shortTime');
+        return dateFormat(this.created, 'shortDate') + " " + dateFormat(this.created, 'shortTime');
     }
 
     displayDateUpdated() {
-        return dateFormat(this.updated, 'longDate') + " " + dateFormat(this.updated, 'shortTime');
+        return dateFormat(this.updated, 'shortDate') + " " + dateFormat(this.updated, 'shortTime');
+    }
+
+    packageStatus() {
+        var status = "";
+        for (var result of this.operationResults) {
+            var datetime = dateFormat(result.completed, 'shortDate') + " " + dateFormat(result.completed, 'shortTime');
+            if (result.operation == "package") {
+                if (result.succeeded) {
+                    status = datetime
+                } else {
+                    status = `${datetime} (failed)`
+                }
+            }
+        }
+        return status;
+    }
+
+    storageStatus() {
+        var status = "";
+        for (var result of this.operationResults) {
+            var datetime = dateFormat(result.completed, 'shortDate') + " " + dateFormat(result.completed, 'shortTime');
+            if (result.operation == "storage") {
+                if (result.succeeded) {
+                    status = datetime
+                } else {
+                    status = `${datetime} (failed)`
+                }
+            }
+        }
+        return status;
     }
 
     displayTitle() {
