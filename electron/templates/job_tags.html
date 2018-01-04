@@ -9,11 +9,11 @@
     <div class="row">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <a href="#tags{{ @index }}" class="pull-right" data-toggle="collapse"><img src="static/img/expand_thick.png" height="22px" width="22px" /></a>
+            <a href="#tags{{ @index }}" class="pull-right" data-toggle="collapse"><img src="static/img/expand_thick.png" class="es-small-icon" data-toggle="popover" data-trigger="hover" title="Show/Hide Tags" data-content="Show/hide tags in this file" data-placement="left" /></a>
             <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">Tags in {{ @key }}</a></h3>
             <div class="file-complete"></div>
           </div>
-          <div class="panel-body panel-collapse in" id="tags{{ @index }}">
+          <div class="panel-body panel-collapse in" id="tags{{ @index }}" data-file-name="{{ @key }}">
             {{#each this as |tag| }}
               {{#unless tag.systemMustSet }}
                 {{#if tag.values}}
@@ -58,10 +58,15 @@
 <script>
  $('[data-toggle="popover"]').popover();
 
-function checkAllTagsSet(filename) {
+function initTagDivs(filename) {
      var job = es.ActiveObject;
-     if (job.bagItProfile.fileHasAllRequiredValues(filename)) {
-
+     for (var div of $(".panel-body.panel-collapse")) {
+         var filename = $(div).data('file-name');
+         console.log(filename);
+         if (job.bagItProfile.fileHasAllRequiredValues(filename)) {
+             $(div).collapse('hide');
+             //div.parent
+         }
      }
 }
 

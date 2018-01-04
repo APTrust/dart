@@ -17,3 +17,8 @@
 .row-spaced {
    margin-bottom: 5px;
 }
+/* Small custom icons, like expand/collapse */
+.es-small-icon {
+   height: 20px;
+   width: 20px;
+}
