@@ -10,7 +10,7 @@
         <div class="panel panel-default">
           <div class="panel-heading">
             <a href="#tags{{ @index }}" class="pull-right" data-toggle="collapse"><img src="static/img/expand_thick.png" class="es-small-icon" data-toggle="popover" data-trigger="hover" title="Show/Hide Tags" data-content="Show/hide tags in this file" data-placement="left" /></a>
-            <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">Tags in {{ @key }}</a></h3>
+            <h3 class="panel-title"><a href="#tags{{ @index }}" data-toggle="collapse">{{ @key }}</a></h3>
             <div class="file-complete"></div>
           </div>
           <div class="panel-body panel-collapse in" id="tags{{ @index }}" data-file-name="{{ @key }}">
@@ -58,17 +58,17 @@
 <script>
  $('[data-toggle="popover"]').popover();
 
-function initTagDivs(filename) {
+ function initTagDivs(filename) {
      var job = es.ActiveObject;
      for (var div of $(".panel-body.panel-collapse")) {
          var filename = $(div).data('file-name');
-         console.log(filename);
          if (job.bagItProfile.fileHasAllRequiredValues(filename)) {
              $(div).collapse('hide');
-             //div.parent
+             var msgDiv = $(div).parent().children('.panel-heading').children('.file-complete');
+             msgDiv.html("All required tags have been filled in.");
          }
      }
-}
+ }
 
  $("#btnJobPackaging").click(function() {
      var job = es.ActiveObject;
@@ -222,5 +222,8 @@ function initTagDivs(filename) {
      }
      jobTagDefinitionShowForm(null, tagFileName);
  }
+
+ // This is called on load...
+ initTagDivs();
 
 </script>

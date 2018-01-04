@@ -319,7 +319,7 @@ module.exports = class BagItProfile {
         for (var tag of this.requiredTags) {
             if(tag.tagFile == tagFileName) {
                 var needsValue = (tag.required && !tag.emptyOk);
-                var hasValue = (tag.userValue != null && tag.userValue.trim() != "");
+                var hasValue = (!Util.isEmpty(tag.defaultValue) || !Util.isEmpty(tag.userValue));
                 if (needsValue && !hasValue) {
                     return false;
                 }
