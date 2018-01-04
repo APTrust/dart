@@ -303,6 +303,39 @@ module.exports = class BagItProfile {
         }
         return tagsByFile;
     }
+    // Returns the names of all required tag files.
+    requiredTagFileNames() {
+        var fileNames = new Set();
+        for (var tag of this.requiredTags) {
+            if (!fileNames.has(tag.tagFile)) {
+                fileNames.add(tag.tagFile);
+            }
+        }
+        return fileNames;
+    }
+    // Returns true if the specified tag file has values for all
+    // required tags.
+    fileHasAllRequiredValues(tagFileName) {
+        for (var tag of this.requiredTags) {
+            if(tag.tagFile == tagFileName) {
+                var needsValue = (tag.required && !tag.emptyOk);
+                var hasValue = (tag.userValue != null && tag.userValue.trim() != "");
+                if (needsValue && !hasValue) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    // Returns a hash, where key is tag file name and value is true/false,
+    // indicating whether are required values in that file are present.
+    tagFileCompletionStatus() {
+        var status = {};
+        for (var fileName of this.requiredTagFileNames()) {
+            status[fileName] = this.fileHasAllRequiredValues(fileName);
+        }
+        return status;
+    }
     toBagItProfileJson() {
         // Return a string of JSON in BagItProfile format,
         // with all the bad keys they use.
