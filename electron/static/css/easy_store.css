@@ -27,6 +27,6 @@
     width: 45%;
     display: inline;
 }
-div.form-group:first-child input.custom-tag {
+.custom-tag-name {
     margin-right: 20px;
 }

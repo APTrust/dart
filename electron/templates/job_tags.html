@@ -27,7 +27,12 @@
                 {{/if}}
               {{/unless}}
             {{/each}}
+
+            {{!-- Show add tag button for all EXCEPT custom tag files. --}}
+            {{#unless this.[0].addedForJob }}
             <div class="pull-right"><a class="btn btn-primary btn-xs" data-btn-type="NewTagDefForJob" data-tag-file="{{ @key }}" role="button" data-toggle="popover" data-trigger="hover" title="New Tag" data-content="Add a new tag to this file." data-placement="left">+</a></div>
+            {{/unless}}
+
           </div>
         </div>
     </div>
@@ -239,5 +244,44 @@
      $('#modal').modal('hide');
      showJobTagForm();
  }
+
+ function hasEmptyCustomFields() {
+     var fields = $(".custom-tag");
+     for(var i=0; i < fields.length; i += 2) {
+         var name = $(fields[i]).val();
+         var value = $(fields[i]).val();
+         if (es.Util.isEmpty(name) && es.Util.isEmpty(value)) {
+             return true;
+         }
+     }
+     return false;
+ }
+
+ function addEmptyCustomField(parentElement, tagFileName) {
+     var job = es.ActiveObject;
+     var tagDef = new es.TagDefinition(tagFileName, "");
+     tagDef.addedForJob = true;
+     job.bagItProfile.requiredTags.push(tagDef);
+     var data = {};
+     data.field = tagDef.toFieldForJobForm();
+     // hackety hack!
+     var handlebars = require('handlebars')
+     var customTagTemplate = handlebars.partials['customTag'];
+     $(parentElement).append(customTagTemplate(data));
+ }
+
+ function autoAddCustomFields(event) {
+     if(!hasEmptyCustomFields()) {
+         // Why does .first() return an array here?
+         var parentElement = $(event.target).closest('.panel-body')[0];
+         var tagId = $(event.target).data('tag-id');
+         var tagDef = es.ActiveObject.bagItProfile.findTagById(tagId);
+         addEmptyCustomField(parentElement, tagDef.tagFile);
+     }
+ }
+
+ $("body").on("keyup", ".custom-tag-value", autoAddCustomFields);
+
+ // TODO: Save/restore custom tag values.
 
 </script>
