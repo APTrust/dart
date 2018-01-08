@@ -22,3 +22,11 @@
    height: 20px;
    width: 20px;
 }
+/* Form inputs for custom tags */
+.custom-tag {
+    width: 45%;
+    display: inline;
+}
+div.form-group:first-child input.custom-tag {
+    margin-right: 20px;
+}

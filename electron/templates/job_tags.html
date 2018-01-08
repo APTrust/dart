@@ -20,6 +20,8 @@
                   {{> inputSelect field = (jobFormTagField tag) }}
                 {{else if tag.looksLikeDescriptionTag }}
                   {{> inputTextArea field = (jobFormTagField tag) }}
+                {{else if tag.addedForJob}}
+                  {{> customTag field = (jobFormTagField tag) }}
                 {{else}}
                   {{> inputText field = (jobFormTagField tag) }}
                 {{/if}}

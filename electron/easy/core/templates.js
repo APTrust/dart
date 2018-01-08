@@ -27,6 +27,7 @@ var storageServiceList = handlebars.compile(readFile('storage_service_list.html'
 var tagDefinitionForm = handlebars.compile(readFile('tag_definition_form.html'));
 
 handlebars.registerPartial({
+	customTag: readFile('custom_tag.html'),
 	inputCheckboxGroup: readFile('input_checkbox_group.html'),
 	inputHidden: readFile('input_hidden.html'),
 	inputPassword: readFile('input_password.html'),
