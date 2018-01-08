@@ -13,6 +13,8 @@
  $('[data-toggle="popover"]').popover();
  $('#newTagFileName').keydown( function(event) {
      if (event.which === 13) {
+         event.preventDefault();
+         event.stopPropagation();
          jobNewTagFileCreate();
      }
  });
