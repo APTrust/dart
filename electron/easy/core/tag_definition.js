@@ -17,7 +17,16 @@ module.exports = class TagDefinition {
         this.values = [];
         this.defaultValue = "";
         this.userValue = "";
+
+        // isBuiltIn flag is true for built-in tags whose
+        // definition should not be altered or even changeable
+        // by the user.
         this.isBuiltIn = false;
+
+        // addedForJob is a special flag for tags belonging
+        // to custom tag files that were added for a specific
+        // job. The UI handles these a little differently.
+        this.addedForJob = false;
     }
     objectType() {
         return 'TagDefinition';

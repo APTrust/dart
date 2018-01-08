@@ -318,6 +318,16 @@ module.exports = class BagItProfile {
     fileHasAllRequiredValues(tagFileName) {
         for (var tag of this.requiredTags) {
             if(tag.tagFile == tagFileName) {
+                if (tag.addedForJob) {
+                    // This is a custom tag file that the user
+                    // added for one specific job. We have no
+                    // way of knowing what's required for this
+                    // file because the tags don't have complete
+                    // definitions, so return false. False also
+                    // forces the UI to display the tag value form
+                    // for this file.
+                    return false;
+                }
                 var needsValue = (tag.required && !tag.emptyOk);
                 var hasValue = (!Util.isEmpty(tag.defaultValue) || !Util.isEmpty(tag.userValue));
                 if (needsValue && !hasValue) {

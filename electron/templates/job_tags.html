@@ -179,6 +179,25 @@
      var tags = job.bagItProfile.tagsGroupedByFile();
      data['tags'] = tags;
      data['tagContext'] = "job";
+
+     // TODO: Refactor. This code repeats in two other template files.
+     data['cssClassFor'] = {};
+     data['messageFor'] = {};
+     var fileStatus = job.bagItProfile.tagFileCompletionStatus();
+     for (var filename in fileStatus) {
+         var allRequiredTagsHaveValues = fileStatus[filename];
+         if (allRequiredTagsHaveValues) {
+             // Collapsed
+             data['cssClassFor'][filename] = 'collapse';
+             data['messageFor'][filename] = 'All required tags for this file have been filled in.';
+         } else {
+             // Visible
+             data['cssClassFor'][filename] = 'panel-collapse';
+             data['messageFor'][filename] = 'Required items are marked with an asterisk. *';
+         }
+     }
+     // End repeated code.
+
      $("#container").html(templates.jobTags(data));
  }
 
@@ -210,7 +229,13 @@
          err = "Tag file name must contain at least one character and end with .txt";
          return jobNewTagFileShowForm(err);
      }
-     jobTagDefinitionShowForm(null, tagFileName);
+     var job = es.ActiveObject;
+     var tagDef = new es.TagDefinition(tagFileName, "");
+     tagDef.addedForJob = true;
+     job.bagItProfile.requiredTags.push(tagDef);
+     job.save();
+     $('#modal').modal('hide');
+     showJobTagForm();
  }
 
 </script>
