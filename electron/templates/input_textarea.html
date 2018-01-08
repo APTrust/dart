@@ -1,6 +1,6 @@
 <div class="form-group">
   <label class="control-label" for="{{ field.id }}"
-         {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }}</label>
+         {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}*{{/if}}</label>
   <textarea id="{{ field.id }}" name="{{ field.name }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}" rows="8"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
