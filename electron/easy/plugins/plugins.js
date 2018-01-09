@@ -262,7 +262,7 @@ function newPackageEmitter(job, provider) {
     });
 
     emitter.on('error', function(message) {
-        result.error += err + NEWLINE;
+        result.error += message + NEWLINE;
         showError("#jobError", message);
     });
 
