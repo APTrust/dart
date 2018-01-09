@@ -303,6 +303,17 @@ module.exports = class BagItProfile {
         }
         return tagsByFile;
     }
+    // returns true if filename is a custom file added for a
+    // specific job (i.e. is not part of the core profile)
+    // All tags in a custom tag file have addedForJob = true.
+    isCustomTagFile(filename) {
+        for (var tag of this.requiredTags) {
+            if (tag.tagFile == filename && tag.addedForJob == true) {
+                return true;
+            }
+        }
+        return false;
+    }
     // Returns the names of all required tag files.
     requiredTagFileNames() {
         var fileNames = new Set();
