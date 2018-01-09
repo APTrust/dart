@@ -17,6 +17,12 @@ type TagDefinition struct {
 	DefaultValue string   `json:"defaultValue"`
 	UserValue    string   `json:"userValue"`
 	IsBuiltIn    bool     `json:"isBuiltIn"`
+
+	// AddedForJob is true if the tag definition is not part
+	// of the base BagIt profile, but was added by the user
+	// later (usually through the Easy Store UI) as a special
+	// one-off tag specific to one bag.
+	AddedForJob bool `json:"addedForJob"`
 }
 
 func NewTagDefinition(tagFile, tagName string) *TagDefinition {
