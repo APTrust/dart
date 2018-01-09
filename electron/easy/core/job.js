@@ -233,11 +233,23 @@ module.exports = class Job {
         if (this.bagItProfile == null) {
             return;
         }
+        // Regular tags from the job's bagit profile.
         for (var input of $("#jobTagsForm .form-control")) {
             var id = $(input).attr('id');
             var tag = this.bagItProfile.findTagById(id);
             if (tag != null) {
                 tag.userValue = $(input).val();
+            }
+        }
+        // Custom job-specific tags added by the user.
+        for (var input of $("#jobTagsForm .custom-tag-name")) {
+            var name = $(input).val();
+            var id = $(input).data('tag-id');
+            var value = $(`#${id}-value`).val();
+            var tag = this.bagItProfile.findTagById(id);
+            if (tag != null) {
+                tag.tagName = name;
+                tag.userValue = value;
             }
         }
     }

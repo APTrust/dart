@@ -105,6 +105,7 @@
 
  function goToJobStorage() {
      var job = es.ActiveObject;
+     job.save();
      var data = {};
      data.bagOrFiles = "bag";
      if (job.bagItProfile == null) {
@@ -119,7 +120,7 @@
  });
 
  $(document).on("click", "#btnTagDefinitionDeleteFromJob", jobTagDefinitionDelete);
- $(document).on("click", "#btnTagDefinitionSaveForJob", jobTagDefinitionSave);
+ //$(document).on("click", "#btnTagDefinitionSaveForJob", jobTagDefinitionSave);
  $(document).on("click", "#btnNewTagFileForJob", function() { jobNewTagFileShowForm(null); });
  $(document).on("click", "#btnNewTagFileCreateForJob", jobNewTagFileCreate);
 
@@ -142,32 +143,32 @@
      $('#modal').modal();
  }
 
- function jobTagDefinitionSave() {
-     var job = es.ActiveObject;
-     var tagFromForm = es.TagDefinition.fromForm();
-     var result = tagFromForm.validate();
-     if (result.isValid()) {
-         var existingTag = job.bagItProfile.findTagById(tagFromForm.id);
-         if (existingTag == null) {
-             // This is a new tag, so add it to the profile's
-             // list of required tags.
-             existingTag = new es.TagDefinition('', '');
-             job.bagItProfile.requiredTags.push(existingTag);
-         }
-         Object.assign(existingTag, tagFromForm);
-         job.save();
-         $('#modal').modal('hide');
-         showJobTagForm();
-     } else {
-         var form = tagFromForm.toForm();
-         form.setErrors(result.errors);
-         var data = {};
-         data['form'] = form;
-         data['tagContext'] = "job";
-         $("#modalContent").html(templates.tagDefinitionForm(data));
-     }
- }
-
+ /* function jobTagDefinitionSave() {
+  *     var job = es.ActiveObject;
+  *     var tagFromForm = es.TagDefinition.fromForm();
+  *     var result = tagFromForm.validate();
+  *     if (result.isValid()) {
+  *         var existingTag = job.bagItProfile.findTagById(tagFromForm.id);
+  *         if (existingTag == null) {
+  *             // This is a new tag, so add it to the profile's
+  *             // list of required tags.
+  *             existingTag = new es.TagDefinition('', '');
+  *             job.bagItProfile.requiredTags.push(existingTag);
+  *         }
+  *         Object.assign(existingTag, tagFromForm);
+  *         job.save();
+  *         $('#modal').modal('hide');
+  *         showJobTagForm();
+  *     } else {
+  *         var form = tagFromForm.toForm();
+  *         form.setErrors(result.errors);
+  *         var data = {};
+  *         data['form'] = form;
+  *         data['tagContext'] = "job";
+  *         $("#modalContent").html(templates.tagDefinitionForm(data));
+  *     }
+  * }
+  */
  function jobTagDefinitionDelete() {
      if (!confirm("Delete this tag?")) {
          return;
@@ -281,7 +282,5 @@
  }
 
  $("body").on("keyup", ".custom-tag-value", autoAddCustomFields);
-
- // TODO: Save/restore custom tag values.
 
 </script>
