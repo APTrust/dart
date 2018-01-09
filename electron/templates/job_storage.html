@@ -48,26 +48,7 @@
      job.save();
      var data = {};
      if (job.bagItProfile != null) {
-         // TODO: Refactor. This code also appears in job_packaging.html.
-         var tags = job.bagItProfile.tagsGroupedByFile();
-         data['tags'] = tags;
-         data['cssClassFor'] = {};
-         data['messageFor'] = {};
-         var fileStatus = job.bagItProfile.tagFileCompletionStatus();
-         for (var filename in fileStatus) {
-             var allRequiredTagsHaveValues = fileStatus[filename];
-             if (allRequiredTagsHaveValues) {
-                 // Collapsed
-                 data['cssClassFor'][filename] = 'collapse';
-                 data['messageFor'][filename] = 'All required tags for this file have been filled in.';
-             } else {
-                 // Visible
-                 data['cssClassFor'][filename] = 'panel-collapse';
-                 data['messageFor'][filename] = 'Required items are marked with an asterisk. *';
-             }
-         }
-
-         $("#container").html(templates.jobTags(data));
+         $("#container").html(templates.jobTags(job.dataForTagEditor()));
      } else {
          data.form = job.toPackagingForm();
          data.domainName = es.AppSetting.findByName("Institution Domain").value;

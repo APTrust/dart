@@ -331,6 +331,29 @@ module.exports = class Job {
         return items;
     }
 
+    // returns a data hash for the job_tags.html template.
+    dataForTagEditor() {
+        var data = {};
+        var tags = this.bagItProfile.tagsGroupedByFile();
+        data['tags'] = tags;
+        data['cssClassFor'] = {};
+        data['messageFor'] = {};
+        var fileStatus = this.bagItProfile.tagFileCompletionStatus();
+        for (var filename in fileStatus) {
+            var allRequiredTagsHaveValues = fileStatus[filename];
+            if (allRequiredTagsHaveValues) {
+                // Collapsed
+                data['cssClassFor'][filename] = 'collapse';
+                data['messageFor'][filename] = 'All required tags for this file have been filled in.';
+            } else {
+                // Visible
+                data['cssClassFor'][filename] = 'panel-collapse';
+                data['messageFor'][filename] = 'Required items are marked with an asterisk. *';
+            }
+        }
+        return data;
+    }
+
     fileOptionsChanged() {
         this.options.skipDSStore = $('#filesSkipDSStore').prop('checked');
         this.options.skipHiddenFiles = $('#filesSkipHidden').prop('checked');
