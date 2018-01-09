@@ -101,7 +101,7 @@ $(function() {
     // App Setting functions
     function appSettingShowList(message) {
         var data = {};
-        data.items = es.Util.sortByName(es.AppSetting.getStore());
+        data.items = es.AppSetting.list();
         data.success = message;
         $("#container").html(templates.appSettingList(data));
         es.ActiveObject = data.items;
