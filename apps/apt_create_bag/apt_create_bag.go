@@ -57,6 +57,10 @@ func createBag(job *bagit.Job) (string, error) {
 
 	// Add tags
 	for _, tagDef := range job.BagItProfile.RequiredTags {
+		// Empty tags can come from Easy Store UI for custom tag files.
+		if tagDef.TagName == "" && tagDef.UserValue == "" {
+			continue
+		}
 		kvp := bagit.NewKeyValuePair(tagDef.TagName, tagDef.UserValue)
 		if tagDef.TagFile == "bag-info.txt" {
 			if tagDef.TagName == "Bagging-Date" {
