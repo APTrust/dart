@@ -247,13 +247,18 @@
          }
      }
      if (index > -1) {
-         console.log("Removing item at index " + index);
          es.ActiveObject.bagItProfile.requiredTags.splice(index, 1);
-         console.log(`div [data-custom-tag-id="${tagId}"]`);
          $(`div [data-custom-tag-id="${tagId}"]`).remove();
      }
  }
 
  $("body").on("keyup", ".custom-tag-value", autoAddCustomFields);
 
+ $('.form-control.required').each(function(index, element) {
+     if ($(element).val() == "") {
+         $(element).addClass("input-attention");
+     } else {
+         $(element).removeClass("input-attention");
+     }
+ });
 </script>

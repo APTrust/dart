@@ -30,3 +30,9 @@
 .custom-tag-name {
     margin-right: 20px;
 }
+/* For input items that require the user's attention.
+   This is bootstrap's background color for warnings.
+*/
+.input-attention {
+    background-color: #fcf8e3;
+}
