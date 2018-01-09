@@ -120,7 +120,6 @@
  });
 
  $(document).on("click", "#btnTagDefinitionDeleteFromJob", jobTagDefinitionDelete);
- //$(document).on("click", "#btnTagDefinitionSaveForJob", jobTagDefinitionSave);
  $(document).on("click", "#btnNewTagFileForJob", function() { jobNewTagFileShowForm(null); });
  $(document).on("click", "#btnNewTagFileCreateForJob", jobNewTagFileCreate);
 
@@ -143,32 +142,6 @@
      $('#modal').modal();
  }
 
- /* function jobTagDefinitionSave() {
-  *     var job = es.ActiveObject;
-  *     var tagFromForm = es.TagDefinition.fromForm();
-  *     var result = tagFromForm.validate();
-  *     if (result.isValid()) {
-  *         var existingTag = job.bagItProfile.findTagById(tagFromForm.id);
-  *         if (existingTag == null) {
-  *             // This is a new tag, so add it to the profile's
-  *             // list of required tags.
-  *             existingTag = new es.TagDefinition('', '');
-  *             job.bagItProfile.requiredTags.push(existingTag);
-  *         }
-  *         Object.assign(existingTag, tagFromForm);
-  *         job.save();
-  *         $('#modal').modal('hide');
-  *         showJobTagForm();
-  *     } else {
-  *         var form = tagFromForm.toForm();
-  *         form.setErrors(result.errors);
-  *         var data = {};
-  *         data['form'] = form;
-  *         data['tagContext'] = "job";
-  *         $("#modalContent").html(templates.tagDefinitionForm(data));
-  *     }
-  * }
-  */
  function jobTagDefinitionDelete() {
      if (!confirm("Delete this tag?")) {
          return;
@@ -278,6 +251,24 @@
          var tagId = $(event.target).data('tag-id');
          var tagDef = es.ActiveObject.bagItProfile.findTagById(tagId);
          addEmptyCustomField(parentElement, tagDef.tagFile);
+     }
+ }
+
+ function deleteCustomTag(tagId) {
+     var tags = es.ActiveObject.bagItProfile.requiredTags;
+     var index = -1;
+     for(var i=0; i < tags.length; i++) {
+         if (tags[i].id == tagId) {
+             index = i;
+             console.log("Item at " + i + "matches " + tagId);
+             break;
+         }
+     }
+     if (index > -1) {
+         console.log("Removing item at index " + index);
+         es.ActiveObject.bagItProfile.requiredTags.splice(index, 1);
+         console.log(`div [data-custom-tag-id="${tagId}"]`);
+         $(`div [data-custom-tag-id="${tagId}"]`).remove();
      }
  }
 
