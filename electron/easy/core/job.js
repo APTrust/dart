@@ -313,10 +313,12 @@ module.exports = class Job {
         return db.store;
     }
 
-    static list() {
-        var items = Util.sortByCreated(Job.getStore());
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
+    static list(limit = 50, offset = 0) {
+        var items = [];
+        var allItems = Util.sortByCreated(Job.getStore());
+        var end = Math.min((offset + limit), allItems.length);
+        for (var i = offset; i < end; i++) {
+            var item = allItems[i];
             var job = new es.Job();
             Object.assign(job, item)
             job.options = new JobOptions();
@@ -324,7 +326,7 @@ module.exports = class Job {
             if (item.bagItProfile != null) {
                 job.bagItProfile = BagItProfile.toFullObject(item.bagItProfile);
             }
-            items[i] = job;
+            items.push(job);
         }
         return items;
     }
