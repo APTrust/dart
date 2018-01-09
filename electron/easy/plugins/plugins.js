@@ -254,7 +254,7 @@ function newPackageEmitter(job, provider) {
             showFailure("#jobValidate");
             showFilesFailed();
         }
-        $("#jobValidate .message").append(message + "<br/>");
+        $("#jobValidate .message").html(message);
     });
 
     emitter.on('warning', function(message) {
