@@ -347,8 +347,12 @@ module.exports = class Job {
                 data['messageFor'][filename] = 'All required tags for this file have been filled in.';
             } else {
                 // Visible
-                data['cssClassFor'][filename] = 'panel-collapse';
-                data['messageFor'][filename] = 'Required items are marked with an asterisk. *';
+                data['cssClassFor'][filename] = 'panel-collapse in';
+                if (this.bagItProfile.isCustomTagFile(filename)) {
+                    data['messageFor'][filename] = 'Custom tag file. All items are optional.';
+                } else {
+                    data['messageFor'][filename] = 'Required items are marked with an asterisk. *';
+                }
             }
         }
         return data;
