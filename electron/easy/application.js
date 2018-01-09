@@ -151,7 +151,7 @@ $(function() {
     // BagItProfile functions
     function bagItProfileShowList(message) {
         var data = {};
-        data.items = es.Util.sortByName(es.BagItProfile.getStore())
+        data.items = es.BagItProfile.list();
         data.success = message;
         $("#container").html(templates.bagItProfileList(data));
         es.ActiveObject = data.items;
@@ -230,7 +230,7 @@ $(function() {
     // StorageService functions
     function storageServiceShowList(message) {
         var data = {};
-        data.items = es.Util.sortByName(es.StorageService.getStore())
+        data.items = es.StorageService.list();
         data.success = message;
         $("#container").html(templates.storageServiceList(data));
         es.ActiveObject = data.items;

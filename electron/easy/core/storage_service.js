@@ -97,4 +97,13 @@ module.exports = class StorageService {
     static getStore() {
         return db.store;
     }
+    static list(limit = 50, offset = 0) {
+        var items = [];
+        var allItems = Util.sortByName(db.store);
+        var end = Math.min((offset + limit), allItems.length);
+        for (var i = offset; i < end; i++) {
+            items.push(allItems[i]);
+        }
+        return items;
+    }
 }
