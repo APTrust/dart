@@ -124,7 +124,9 @@ module.exports = class TagDefinition {
         return field;
     }
     systemMustSet() {
-        return (this.tagName == 'Bagging-Date' || this.tagName == 'Payload-Oxum');
+        // Hack. Need a more formal way of setting this.
+        return (this.tagName == 'Bagging-Date' || this.tagName == 'Payload-Oxum' ||
+               this.tagName == 'DPN-Object-ID' || this.tagName == 'First-Version-Object-ID');
     }
     getValue() {
         return this.userValue || this.defaultValue;

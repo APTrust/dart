@@ -15,17 +15,15 @@
           </div>
           <div class="panel-body {{lookup ../cssClassFor @key }}" id="tags{{ @index }}" data-file-name="{{ @key }}">
             {{#each this as |tag| }}
-              {{#unless tag.systemMustSet }}
-                {{#if tag.values}}
-                  {{> inputSelect field = (jobFormTagField tag) }}
-                {{else if tag.looksLikeDescriptionTag }}
-                  {{> inputTextArea field = (jobFormTagField tag) }}
-                {{else if tag.addedForJob}}
-                  {{> customTag field = (jobFormTagField tag) }}
-                {{else}}
-                  {{> inputText field = (jobFormTagField tag) }}
-                {{/if}}
-              {{/unless}}
+              {{#if tag.values}}
+                {{> inputSelect field = (jobFormTagField tag) }}
+              {{else if tag.looksLikeDescriptionTag }}
+                {{> inputTextArea field = (jobFormTagField tag) }}
+              {{else if tag.addedForJob}}
+                {{> customTag field = (jobFormTagField tag) }}
+              {{else}}
+                {{> inputText field = (jobFormTagField tag) }}
+              {{/if}}
             {{/each}}
 
             {{!-- Show add tag button for all EXCEPT custom tag files. --}}

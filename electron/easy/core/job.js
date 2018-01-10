@@ -334,6 +334,11 @@ module.exports = class Job {
     // returns a data hash for the job_tags.html template.
     dataForTagEditor() {
         var data = {};
+        // PT #154193552: DPN-Object-Id tag must match bag name.
+        // They are both version 4 UUIDs.
+        if (this.bagItProfile.isDPNProfile()) {
+            this.bagItProfile.setDPNIdTags(this.bagName);
+        }
         var tags = this.bagItProfile.tagsGroupedByFile();
         data['tags'] = tags;
         data['cssClassFor'] = {};

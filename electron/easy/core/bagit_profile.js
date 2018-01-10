@@ -342,7 +342,7 @@ module.exports = class BagItProfile {
                     // for this file.
                     return false;
                 }
-                var needsValue = (tag.required && !tag.emptyOk);
+                var needsValue = (tag.required && !tag.emptyOk && !tag.systemMustSet());
                 var hasValue = (!Util.isEmpty(tag.defaultValue) || !Util.isEmpty(tag.userValue));
                 if (needsValue && !hasValue) {
                     return false;
@@ -502,6 +502,21 @@ module.exports = class BagItProfile {
             if (tagName == "internal-sender-identifier") {
                 return tag.userValue;
             }
+        }
+    }
+    isDPNProfile() {
+        return (this.id == builtins.DPNProfileId || this.baseProfileId == builtins.DPNProfileId);
+    }
+    setDPNIdTags(uuid) {
+        var dpnIdTag = this.findTagByName("DPN-Object-ID");
+        if (dpnIdTag != null) {
+            dpnIdTag.userValue = uuid;
+        }
+        // As of early 2018, DPN only supports first version bags,
+        // so First-Version-Object-ID will always match DPN-Object-ID.
+        var firstVersionTag = this.findTagByName("First-Version-Object-ID");
+        if (firstVersionTag != null) {
+            firstVersionTag.userValue = uuid;
         }
     }
 };
