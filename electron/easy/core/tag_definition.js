@@ -18,6 +18,9 @@ module.exports = class TagDefinition {
         this.defaultValue = "";
         this.userValue = "";
 
+        // help tells the user what the tag means.
+        this.help = "";
+
         // isBuiltIn flag is true for built-in tags whose
         // definition should not be altered or even changeable
         // by the user.
@@ -85,7 +88,7 @@ module.exports = class TagDefinition {
         }
         if (this.systemMustSet()) {
             form.fields['defaultValue'].attrs['disabled'] = true;
-            form.fields['defaultValue'].help = "You cannot set this tag value manually. The system will set it internally each time it generates a bag.";
+            form.fields['defaultValue'].help = this.help + " You cannot set this tag value manually. The system will set it internally each time it generates a bag.";
         }
 
         return form;
@@ -107,7 +110,7 @@ module.exports = class TagDefinition {
             field.choices = Choice.makeList(this.values, this.getValue(), true);
         }
         if (this.systemMustSet()) {
-            field.help = "The system will set this field's value when it creates the bag.";
+            field.help = this.help + " The system will set this field's value when it creates the bag.";
             field.attrs['disabled'] = true;
         }
         if (this.required && !this.emptyOk) {

@@ -34,7 +34,8 @@
             ],
             "defaultValue": "0.97",
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "Which version of the BagIt specification describes this bag's format?"
         },
         {
             "id": "2a914ea2-ee3b-4c53-96e1-4f93f641338b",
@@ -47,7 +48,8 @@
             ],
             "defaultValue": "UTF-8",
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)"
         },
         {
             "id": "567451b6-1f30-4bda-b66b-9a657426d5e5",
@@ -58,7 +60,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The name of the organization that produced this bag, or is responsible for its contents."
         },
         {
             "id": "117e46d8-096f-41f1-8c94-7d9202b9477b",
@@ -69,7 +72,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags."
         },
         {
             "id": "41b75504-e54d-49a1-aad4-c8a4921d15ce",
@@ -80,7 +84,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The date this bag was created. The bagging software should set this automatically."
         },
         {
             "id": "917fc560-5bd1-4a5b-acb6-b7a4ce749252",
@@ -91,7 +96,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "A description of the bag's contents for the sender's internal use. This description will appear in the APTrust registry if you do not set the Description tag in the aptrust-info.txt file."
         },
         {
             "id": "018c0706-5597-4406-a705-205c608d827f",
@@ -102,7 +108,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "A unique identifier for this bag inside your organization."
         },
         {
             "id": "de2c8f3e-fadb-4811-88a2-83aafa44fb50",
@@ -113,7 +120,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The number of files and bytes in this bag's payload. This should be calculated and set by the bagging software."
         },
         {
             "id": "9b7344ae-9d06-4444-9d8a-dda7e5c2b8dc",
@@ -124,7 +132,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The title or name of that describes this bag's contents."
         },
         {
             "id": "60ef466a-6d9c-4825-92cf-e472fb05f3d4",
@@ -139,7 +148,8 @@
             ],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "Access rights for this bag describe who can see that it exists in the repository."
         },
         {
             "id": "d94d1d47-49cb-4569-8d27-d9ebbf25c9b2",
@@ -150,7 +160,8 @@
             "values": [],
             "defaultValue": null,
             "userValue": "",
-            "isBuiltIn": true
+            "isBuiltIn": true,
+            "help": "The description of the bag that you want to appear in the APTrust registry."
         }
     ],
     "serialization": "required",

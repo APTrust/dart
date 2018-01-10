@@ -16,6 +16,7 @@ type TagDefinition struct {
 	Values       []string `json:"values"`
 	DefaultValue string   `json:"defaultValue"`
 	UserValue    string   `json:"userValue"`
+	Help         string   `json:"help"`
 	IsBuiltIn    bool     `json:"isBuiltIn"`
 
 	// AddedForJob is true if the tag definition is not part
