@@ -120,7 +120,7 @@ module.exports = class TagDefinition {
         return field;
     }
     systemMustSet() {
-        return (this.tagName == 'Bagging-Date' || this.tagName == 'Bag-Size' || this.tagName == 'Payload-Oxum');
+        return (this.tagName == 'Bagging-Date' || this.tagName == 'Payload-Oxum');
     }
     getValue() {
         return this.userValue || this.defaultValue;
