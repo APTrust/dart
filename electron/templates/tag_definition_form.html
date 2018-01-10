@@ -10,6 +10,8 @@
 
   {{> inputTextArea field = form.fields.values }}
 
+  {{> inputTextArea field = form.fields.help }}
+
   {{#if form.fields.defaultValue.choices }}
     {{> inputSelect field = form.fields.defaultValue }}
   {{else}}

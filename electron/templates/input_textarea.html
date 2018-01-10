@@ -2,7 +2,7 @@
   <label class="control-label" for="{{ field.id }}"
          {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}*{{/if}} {{#if field.help}}<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>{{/if}}</label>
   <textarea id="{{ field.id }}" name="{{ field.name }}"
-         class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}" rows="8"
+         class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}" rows="4"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
 {{~field.value~}}
 </textarea>

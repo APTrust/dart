@@ -63,6 +63,7 @@ module.exports = class TagDefinition {
         form.fields['emptyOk'].help = "Is it valid for this tag to be present but empty?";
         form.fields['values'] = new Field('values', 'values', 'Allowed Values (one per line)', this.values.join("\n"))
         form.fields['values'].help = "List the legal values for this tag, one per line. Leave this field empty to allow any value.";
+        form.fields['help'] = new Field('tagDefHelp', 'tagDefHelp', 'Help Text', this.help);
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
         form.fields['defaultValue'].help = "Optional default value for this field. If this tag has a list of allowed values, the default value must be one of the allowed values.";
         if (this.values != null && this.values.length > 0) {
@@ -80,7 +81,8 @@ module.exports = class TagDefinition {
                         'tagName',
                         'required',
                         'emptyOk',
-                        'values'];
+                        'values',
+                        'help'];
         if (this.isBuiltIn) {
             for (var name of readOnly) {
                 form.fields[name].attrs['disabled'] = true;
@@ -101,11 +103,13 @@ module.exports = class TagDefinition {
         tagDef.emptyOk = Util.boolValue($('#emptyOk').val().trim());
         tagDef.values = Util.filterEmpties($('#values').val().split("\n"));
         tagDef.defaultValue = $('#defaultValue').val().trim();
+        tagDef.help = $('#tagDefHelp').val().trim();
         tagDef.id = $('#tagDefinitionId').val().trim();
         return tagDef;
     }
     toFieldForJobForm() {
         var field = new Field(this.id, this.tagName, this.tagName, this.getValue());
+        field.help = this.help;
         if (this.values) {
             field.choices = Choice.makeList(this.values, this.getValue(), true);
         }

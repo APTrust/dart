@@ -44,10 +44,12 @@ module.exports = class BagItProfile {
         v.emptyOk = false;
         v.values = Const.BagItVersions;
         v.defaultValue = "0.97";
+        v.help = "Which version of the BagIt specification describes this bag's format?";
         var e = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
         e.required = true;
         e.emptyOk = false;
         e.defaultValue = "UTF-8";
+        e.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
         this.requiredTags.push(v);
         this.requiredTags.push(e);
     }
@@ -98,6 +100,7 @@ module.exports = class BagItProfile {
                                                 'Allow Fetch File',
                                                 this.allowFetchTxt);
         form.fields['allowFetchTxt'].choices = Choice.makeList(Const.YesNo, this.allowFetchTxt, true);
+        form.fields['allowFetchTxt'].help = "Are fetch.txt files allowed? These files contain URLs of files that should be part of the bag.";
         form.fields['allowMiscTopLevelFiles'] = new Field('bagItProfileAllowMiscTopLevelFiles',
                                                 'allowMiscTopLevelFiles',
                                                 'Allow Miscellaneous Top-Level Files',
