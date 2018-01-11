@@ -11,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 func main() {
@@ -62,11 +61,6 @@ func createBag(job *bagit.Job) (string, error) {
 			continue
 		}
 		kvp := bagit.NewKeyValuePair(tagDef.TagName, tagDef.UserValue)
-		if tagDef.TagFile == "bag-info.txt" {
-			if tagDef.TagName == "Bagging-Date" {
-				kvp.Value = time.Now().Format("2006-01-02")
-			}
-		}
 		bagger.AddTag(tagDef.TagFile, &kvp)
 	}
 

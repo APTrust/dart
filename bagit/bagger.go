@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type Bagger struct {
@@ -148,7 +149,7 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 	}
 	bagger.ensureManifests()
 	bagger.copyExistingFiles()
-	bagger.addOxumAndSize()
+	bagger.addAutoTags()
 	bagger.writeTags()
 	bagger.writeManifests()
 	return true
@@ -187,7 +188,7 @@ func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool 
 	}
 
 	bagger.tarExistingFiles(writer)
-	bagger.addOxumAndSize()
+	bagger.addAutoTags()
 	bagger.tarTagFiles(writer)
 	bagger.tarManifests(writer)
 	return true
@@ -557,7 +558,7 @@ func (bagger *Bagger) GetPayloadBytesAndFileCount() (int64, int) {
 	return byteCount, fileCount
 }
 
-func (bagger *Bagger) addOxumAndSize() {
+func (bagger *Bagger) addAutoTags() {
 	bagInfo := bagger.bag.TagFiles["bag-info.txt"]
 	oxum := bagInfo.ParsedData.FirstValueForKey("Payload-Oxum")
 	if oxum == "" {
@@ -567,6 +568,8 @@ func (bagger *Bagger) addOxumAndSize() {
 		bagInfo.ParsedData.Append("Payload-Oxum", oxum)
 		bagInfo.ParsedData.DeleteByKey("Bag-Size")
 		bagInfo.ParsedData.Append("Bag-Size", util.HumanSize(byteCount))
+		bagInfo.ParsedData.DeleteByKey("Bagging-Date")
+		bagInfo.ParsedData.Append("Bagging-Date", time.Now().Format("2006-01-02"))
 	}
 }
 

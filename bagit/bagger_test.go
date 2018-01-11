@@ -38,7 +38,7 @@ var DPNDefaultTags = map[string][]bagit.KeyValuePair{
 		bagit.NewKeyValuePair("Source-Organization", "APTrust"),
 		bagit.NewKeyValuePair("Organization-Address", "160 McCormick Rd, Charlottesville, VA 22904"),
 		bagit.NewKeyValuePair("Contact-Email", "homer@example.com"),
-		bagit.NewKeyValuePair("Bagging-Date", "2017-07-26"),
+		bagit.NewKeyValuePair("Bagging-Date", "2017-07-26"), // Bagger overwrites, sets this to current date
 		bagit.NewKeyValuePair("Bag-Count", "1"),
 		bagit.NewKeyValuePair("Contact-Name", "Homer Simpson"),
 		bagit.NewKeyValuePair("Contact-Phone", "555-555-1212"),
@@ -348,14 +348,14 @@ func TestWriteBag_DPN(t *testing.T) {
 	expectedBagInfo := `Source-Organization:  APTrust
 Organization-Address:  160 McCormick Rd, Charlottesville, VA 22904
 Contact-Email:  homer@example.com
-Bagging-Date:  2017-07-26
 Bag-Count:  1
 Contact-Name:  Homer Simpson
 Contact-Phone:  555-555-1212
 Bag-Group-Identifier:  None
 Payload-Oxum:  632046.6
 Bag-Size:  617.23 KB
-`
+Bagging-Date:  ` + time.Now().Format("2006-01-02") + "\n"
+
 	expectedDPNInfo := `Ingest-Node-Name:  aptrust
 Ingest-Node-Contact-Name:  Apu Nahasapeemapetilon
 Ingest-Node-Contact-Email:  apu@example.com
