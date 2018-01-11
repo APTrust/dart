@@ -25,6 +25,14 @@ func TestStringListContains(t *testing.T) {
 	assert.False(t, util.StringListContains(nil, "mars"))
 }
 
+func TestHumanSize(t *testing.T) {
+	assert.Equal(t, "999.00 bytes", util.HumanSize(999))
+	assert.Equal(t, "293.51 KB", util.HumanSize(300553))
+	assert.Equal(t, "830.55 MB", util.HumanSize(870898776))
+	assert.Equal(t, "21.74 GB", util.HumanSize(23346677876))
+	assert.Equal(t, "24.87 TB", util.HumanSize(27346677876776))
+}
+
 func TestJsonDumpAndLoad(t *testing.T) {
 	tempfile, err := ioutil.TempFile("", "json_util_test")
 	if tempfile != nil {

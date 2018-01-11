@@ -2,6 +2,7 @@ package bagit
 
 import (
 	"fmt"
+	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"io/ioutil"
 	"os"
@@ -147,7 +148,7 @@ func (bagger *Bagger) WriteBag(overwrite, checkRequiredTags bool) bool {
 	}
 	bagger.ensureManifests()
 	bagger.copyExistingFiles()
-	bagger.addOxumToBagInfo()
+	bagger.addOxumAndSize()
 	bagger.writeTags()
 	bagger.writeManifests()
 	return true
@@ -186,7 +187,7 @@ func (bagger *Bagger) WriteBagToTarFile(overwrite, checkRequiredTags bool) bool 
 	}
 
 	bagger.tarExistingFiles(writer)
-	bagger.addOxumToBagInfo()
+	bagger.addOxumAndSize()
 	bagger.tarTagFiles(writer)
 	bagger.tarManifests(writer)
 	return true
@@ -543,24 +544,29 @@ func (bagger *Bagger) initFileOrDir(overwrite bool) bool {
 	return true
 }
 
-// getPayloadOxum returns ByteCount.FileCount for the payload.
-// This is only accurate after you've added all files through AddFile.
-// See Payload-Oxum at https://tools.ietf.org/html/draft-kunze-bagit-14
-func (bagger *Bagger) GetPayloadOxum() string {
+// GetPayloadBytesAndFileCount returns the number of bytes and the
+// number of files in the payload. From this, you can construct
+// the Payload-Oxum as ByteCount.FileCount
+func (bagger *Bagger) GetPayloadBytesAndFileCount() (int64, int) {
 	byteCount := int64(0)
 	fileCount := 0
 	for _, file := range bagger.bag.Payload {
 		byteCount += file.FileSummary.Size
 		fileCount += 1
 	}
-	return fmt.Sprintf("%d.%d", byteCount, fileCount)
+	return byteCount, fileCount
 }
 
-func (bagger *Bagger) addOxumToBagInfo() {
+func (bagger *Bagger) addOxumAndSize() {
 	bagInfo := bagger.bag.TagFiles["bag-info.txt"]
 	oxum := bagInfo.ParsedData.FirstValueForKey("Payload-Oxum")
 	if oxum == "" {
-		bagInfo.ParsedData.Append("Payload-Oxum", bagger.GetPayloadOxum())
+		byteCount, fileCount := bagger.GetPayloadBytesAndFileCount()
+		oxum = fmt.Sprintf("%d.%d", byteCount, fileCount)
+		bagInfo.ParsedData.DeleteByKey("Payload-Oxum")
+		bagInfo.ParsedData.Append("Payload-Oxum", oxum)
+		bagInfo.ParsedData.DeleteByKey("Bag-Size")
+		bagInfo.ParsedData.Append("Bag-Size", util.HumanSize(byteCount))
 	}
 }
 

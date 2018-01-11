@@ -339,6 +339,14 @@ module.exports = class Job {
         if (this.bagItProfile.isDPNProfile()) {
             this.bagItProfile.setDPNIdTags(this.bagName);
         }
+        var bagSizeTag = this.bagItProfile.findTagByName("Bag-Size");
+        if (bagSizeTag != null && bagSizeTag.tagFile == "bag-info.txt") {
+            bagSizeTag.userValue = "0"; // system will set this
+        }
+        var baggingDateTag = this.bagItProfile.findTagByName("Bagging-Date");
+        if (baggingDateTag != null && baggingDateTag.tagFile == "bag-info.txt") {
+            baggingDateTag.userValue = dateFormat(new Date(), "yyyy-mm-dd");
+        }
         var tags = this.bagItProfile.tagsGroupedByFile();
         data['tags'] = tags;
         data['cssClassFor'] = {};

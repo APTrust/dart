@@ -65,8 +65,6 @@ func createBag(job *bagit.Job) (string, error) {
 		if tagDef.TagFile == "bag-info.txt" {
 			if tagDef.TagName == "Bagging-Date" {
 				kvp.Value = time.Now().Format("2006-01-02")
-			} else if tagDef.TagName == "Payload-Oxum" {
-				kvp.Value = bagger.GetPayloadOxum()
 			}
 		}
 		bagger.AddTag(tagDef.TagFile, &kvp)

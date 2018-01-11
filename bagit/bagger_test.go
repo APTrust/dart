@@ -241,7 +241,7 @@ func TestWriteBag_APTrust(t *testing.T) {
 
 	// Verify contents of tag files and the manifest.
 	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
-	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\n"
+	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\nBag-Size:  617.23 KB\n"
 	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
 	expectedManifest := `6385e86c8489b28586d03320efd57dfe data/hemingway.jpg
 c3b41207c1374fa0bc2c2d323afc580d data/lighthouse.jpg
@@ -352,9 +352,9 @@ Bagging-Date:  2017-07-26
 Bag-Count:  1
 Contact-Name:  Homer Simpson
 Contact-Phone:  555-555-1212
-Bag-Size:  411
 Bag-Group-Identifier:  None
 Payload-Oxum:  632046.6
+Bag-Size:  617.23 KB
 `
 	expectedDPNInfo := `Ingest-Node-Name:  aptrust
 Ingest-Node-Contact-Name:  Apu Nahasapeemapetilon
@@ -376,7 +376,7 @@ ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb data/sample.doc
 c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4 data/sample.txt
 `
 	expectedTagManifest := `f7745fbcab89c3ec2b570b3d9ffd14c7201df609891d50f0d98b232d49531a19 manifest-sha256.txt
-ff21b499d8843e7450007c3b60a7b1657d4c9ff8bd0d6c5b62d791eb76d6a617 bag-info.txt
+2484630bd2b8a7e848b68701205e1f0d2f13fded9ec834f2036ffebb5a35a9cd bag-info.txt
 49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4 bagit.txt
 ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-info.txt
 `
@@ -402,7 +402,7 @@ ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-in
 	require.Equal(t, expectedTagManifest, string(actualTagManifest))
 }
 
-func TestPayloadOxum(t *testing.T) {
+func TestGetPayloadBytesAndFileCount(t *testing.T) {
 	// Get a tmp dir name
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
@@ -431,7 +431,9 @@ func TestPayloadOxum(t *testing.T) {
 	}
 
 	// Check the Oxum value. 6 files, approx. 632kb
-	assert.Equal(t, "632046.6", bagger.GetPayloadOxum())
+	byteCount, fileCount := bagger.GetPayloadBytesAndFileCount()
+	assert.Equal(t, int64(632046), byteCount)
+	assert.Equal(t, 6, fileCount)
 }
 
 func TestWriteBagToTarFile_APTrust(t *testing.T) {

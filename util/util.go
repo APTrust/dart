@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -44,4 +45,19 @@ func LoadJson(filePath string, obj interface{}) error {
 // IsTesting returns true if we are running under "go test" (as in unit tests).
 func IsTesting() bool {
 	return flag.Lookup("test.v") != nil
+}
+
+func HumanSize(bytes int64) string {
+	kb := float64(1024)
+	fbytes := float64(bytes)
+	suffixes := []string{"bytes", "KB", "MB", "GB", "TB", "PB"}
+	suffix := ""
+	for i := 0; i < len(suffixes); i++ {
+		if fbytes < kb {
+			suffix = suffixes[i]
+			break
+		}
+		fbytes = fbytes / kb
+	}
+	return fmt.Sprintf("%.2f %s", fbytes, suffix)
 }

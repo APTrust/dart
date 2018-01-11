@@ -129,7 +129,7 @@ module.exports = class TagDefinition {
         // We can't set this in the profile JSON unless we have internal
         // code to actually set the tag value. For now, we'll add to
         // tagsSetBySystem (defined above) as we can.
-        return Util.listContains(this.tagName, tagsSetBySystem);
+        return Util.listContains(tagsSetBySystem, this.tagName);
     }
     getValue() {
         return this.userValue || this.defaultValue;
