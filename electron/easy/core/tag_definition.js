@@ -6,6 +6,8 @@ const Field = require(path.resolve('electron/easy/core/field'));
 const Util = require(path.resolve('electron/easy/core/util'));
 const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
 
+const tagsSetBySystem = ['Bagging-Date', 'Payload-Oxum', 'DPN-Object-ID',
+                         'First-Version-Object-ID', 'Bag-Size'];
 
 module.exports = class TagDefinition {
     constructor(tagFile, tagName) {
@@ -124,9 +126,10 @@ module.exports = class TagDefinition {
         return field;
     }
     systemMustSet() {
-        // Hack. Need a more formal way of setting this.
-        return (this.tagName == 'Bagging-Date' || this.tagName == 'Payload-Oxum' ||
-               this.tagName == 'DPN-Object-ID' || this.tagName == 'First-Version-Object-ID');
+        // We can't set this in the profile JSON unless we have internal
+        // code to actually set the tag value. For now, we'll add to
+        // tagsSetBySystem (defined above) as we can.
+        return Util.listContains(this.tagName, tagsSetBySystem);
     }
     getValue() {
         return this.userValue || this.defaultValue;
