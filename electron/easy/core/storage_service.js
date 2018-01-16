@@ -3,6 +3,7 @@ const Choice = require(path.resolve('electron/easy/core/choice'));
 const Const = require(path.resolve('electron/easy/core/constants'));
 const Field = require(path.resolve('electron/easy/core/field'));
 const Form = require(path.resolve('electron/easy/core/form'));
+const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
 const Util = require(path.resolve('electron/easy/core/util'));
 const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
 
@@ -50,7 +51,7 @@ module.exports = class StorageService {
         form.fields['name'] = new Field('storageServiceName', 'name', 'Name', this.name);
         form.fields['description'] = new Field('storageServiceDescription', 'description', 'Description', this.description);
         form.fields['protocol'] = new Field('storageServiceProtocol', 'protocol', 'Protocol', this.protocol);
-        form.fields['protocol'].choices = Choice.makeList(Const.TransferProtocols, this.protocol, true);
+        form.fields['protocol'].choices = Choice.makeList(Plugins.listStorageProviders(), this.protocol, true);
         form.fields['host'] = new Field('storageServiceHost', 'host', 'Host', this.host);
         form.fields['host'].help = "The name of the server to connect to. For example, s3.amazonaws.com."
         form.fields['port'] = new Field('storageServicePort', 'port', 'Port', this.port);
