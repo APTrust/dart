@@ -1,22 +1,45 @@
 {
-  "name": "EasyStore",
-  "version": "0.1.0",
-  "main": "main.js",
-  "dependencies": {
-    "dateformat": "^3.0.2",
-    "electron-context-menu": "^0.9.1",
-    "electron-store": "^1.3.0",
-    "handlebars": "^4.0.11",
-    "minio": "^3.2.3",
-    "require-dir": "^0.3.2"
-  },
-  "devDependencies": {
-    "electron": "^1.7.10",
-    "electron-builder": "^19.54.0",
-    "electron-toolkit": "^1.0.24",
-    "tape": "^4.8.0"
-  },
-  "scripts": {
-    "electron-toolkit": "electron ./node_modules/electron-toolkit"
-  }
+    "name": "EasyStore",
+    "version": "0.1.0",
+    "main": "main.js",
+    "dependencies": {
+        "dateformat": "^3.0.2",
+        "electron-context-menu": "^0.9.1",
+        "electron-store": "^1.3.0",
+        "handlebars": "^4.0.11",
+        "minio": "^3.2.3",
+        "require-dir": "^0.3.2"
+    },
+    "devDependencies": {
+        "electron": "^1.7.10",
+        "electron-builder": "^19.54.0",
+        "electron-toolkit": "^1.0.24",
+        "tape": "^4.8.0"
+    },
+    "scripts": {
+        "electron-toolkit": "electron ./node_modules/electron-toolkit"
+    },
+    "description": "EasyStore packages files in BagIt format and uploads them to various storage backends. A fuller description of the project's goals and capabilities is available at https://github.com/APTrust/easy-store.",
+    "build": {
+        "appId": "org.aptrust.EasyStore",
+        "copyright": "Copyright © 2018 APTrust. Apache 2.0 License",
+        "productName": "EasyStore",
+        "electronVersion": "1.7.10",
+        "asar": true,
+        "directories": {
+            "app": "/Users/apd4n/go/src/github.com/APTrust/easy-store/electron",
+            "output": "dist"
+        },
+        "mac": {
+            "category": "public.app-category.productivity",
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ]
+        }
+    }
 }
