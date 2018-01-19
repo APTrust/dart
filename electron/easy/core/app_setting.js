@@ -1,8 +1,8 @@
 const path = require('path');
-const Field = require(path.resolve('electron/easy/core/field'));
-const Form = require(path.resolve('electron/easy/core/form'));
-const Util = require(path.resolve('electron/easy/core/util'));
-const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
+const Field = require('./field');
+const Form = require('./form');
+const Util = require('./util');
+const ValidationResult = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});

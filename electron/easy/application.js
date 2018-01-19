@@ -1,11 +1,11 @@
 $(function() {
     const path = require("path");
     const os = require('os');
-    const es = require(path.resolve('electron/easy/core/easy_store'));
-    const templates = require(path.resolve('electron/easy/core/templates'));
-    const builtins = require(path.resolve('electron/easy/core/builtin_profiles'));
-    const Job = require(path.resolve('electron/easy/core/job'));
-    const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
+    const es = require('./easy/core/easy_store');
+    const templates = require('./easy/core/templates');
+    const builtins = require('./easy/core/builtin_profiles');
+    const Job = require('./easy/core/job');
+    const Plugins = require('./easy/plugins/plugins');
 
     // Top nav menu
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });

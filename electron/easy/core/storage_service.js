@@ -1,11 +1,11 @@
 const path = require('path');
-const Choice = require(path.resolve('electron/easy/core/choice'));
-const Const = require(path.resolve('electron/easy/core/constants'));
-const Field = require(path.resolve('electron/easy/core/field'));
-const Form = require(path.resolve('electron/easy/core/form'));
-const Plugins = require(path.resolve('electron/easy/plugins/plugins'));
-const Util = require(path.resolve('electron/easy/core/util'));
-const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
+const Choice = require('./choice');
+const Const = require('./constants');
+const Field = require('./field');
+const Form = require('./form');
+const Plugins = require('../plugins/plugins');
+const Util = require('./util');
+const ValidationResult = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'storage-services'});

@@ -1,10 +1,10 @@
 const path = require('path');
-const Choice = require(path.resolve('electron/easy/core/choice'));
-const Const = require(path.resolve('electron/easy/core/constants'));
-const Form = require(path.resolve('electron/easy/core/form'));
-const Field = require(path.resolve('electron/easy/core/field'));
-const Util = require(path.resolve('electron/easy/core/util'));
-const ValidationResult = require(path.resolve('electron/easy/core/validation_result'));
+const Choice = require('./choice');
+const Const = require('./constants');
+const Form = require('./form');
+const Field = require('./field');
+const Util = require('./util');
+const ValidationResult = require('./validation_result');
 
 const tagsSetBySystem = ['Bagging-Date', 'Payload-Oxum', 'DPN-Object-ID',
                          'First-Version-Object-ID', 'Bag-Size'];

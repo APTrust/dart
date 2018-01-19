@@ -3,9 +3,9 @@ const NEWLINE = require('os').EOL;
 const requireDir = require('require-dir');
 const path = require('path');
 
-const OperationResult = require(path.resolve('electron/easy/core/operation_result'));
-const PackageProviders = requireDir(path.resolve("electron/easy/plugins/packaging"));
-const StorageProviders = requireDir(path.resolve("electron/easy/plugins/storage"));
+const OperationResult = require('../core/operation_result');
+const PackageProviders = requireDir("./packaging");
+const StorageProviders = requireDir("./storage");
 
 // Returns a list of StorageProvider protocols.
 // For example, ["s3", "ftp", "rsync"]

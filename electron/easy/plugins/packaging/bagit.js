@@ -48,8 +48,9 @@ class BagIt {
             // Start the bagger executable
             var started = false;
             var fileCount = 0;
-            var baggerProgram = path.resolve("apps/apt_create_bag/apt_create_bag");
+            var baggerProgram = "apt_create_bag";
             var bagger = spawn(baggerProgram, [ "--stdin" ]);
+            console.log(`Calling external program ${baggerProgram}. Make sure the program exists and is in your path.`);
 
             bagger.on('error', (err) => {
                 packager.emitter.emit('error', err)
