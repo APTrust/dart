@@ -46,14 +46,21 @@ class BagIt {
         packager.job.packagedFile = "";
         try {
             // Start the bagger executable
+            // TODO: Set up the spawn env to include the PATH in which apt_create_bag resides.
+            // Maybe that goes in AppSettings?
             var started = false;
             var fileCount = 0;
             var baggerProgram = "apt_create_bag";
             var bagger = spawn(baggerProgram, [ "--stdin" ]);
-            console.log(`Calling external program ${baggerProgram}. Make sure the program exists and is in your path.`);
 
             bagger.on('error', (err) => {
-                packager.emitter.emit('error', err)
+                var msg = `Bagger ${baggerProgram} exited with error: ${err}`;
+                if (String(err).includes("ENOENT")) {
+                    msg += ". Make sure the program exists and is in your PATH.";
+                }
+                packager.emitter.emit('error', msg);
+                console.log(msg);
+                return;
             });
 
             bagger.on('exit', function (code, signal) {
@@ -103,7 +110,7 @@ class BagIt {
                 }
             });
 
-            // Send the job to the bagging program
+
             bagger.stdin.write(JSON.stringify(packager.job));
 
         } catch (ex) {

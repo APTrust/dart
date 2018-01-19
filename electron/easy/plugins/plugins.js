@@ -159,8 +159,9 @@ function resetThumbs(divId) {
 }
 
 function showError(divId, message) {
+    $("#jobRun").show();
+    $(divId + " .message").append(message + "<br/>");
     $(divId).show();
-    $(divId).append(message + "<br/>");
 }
 
 
