@@ -17,14 +17,26 @@ The Easy Store UI could have been built with just the Go server talking to a loc
 
 Electron allows full access to the file system, and provides access to file paths.
 
-# Packaging for distribution
+# Useful commands
 
-The packaging process is still to be determined, but the Electron packager is here:
+Run these from the electron directory.
 
-https://github.com/electron-userland/electron-packager
+## Starting the Electron app in developer mode
 
-And note that this page includes links to installers that will install the package on different platforms after it's built.
+`run.rb`
 
-# Starting the Electron app
+## Building the app
 
-`./electron/run.rb`
+`npm run electron-toolkit`
+
+Click the Installer button, fill out the required fields, and click the Generate Installer button. Note that although the installer can generate cross-platform packages, the documentation discourages it. You should build the Mac package on a Mac, the Windows package on Windows, and the Linux package on Linux.
+
+## Examining the contents of an packaged electron build
+
+This shows you what's packaged in the Electron archive, which should contain the core Electron scripts:
+
+`node node_modules/asar/bin/asar.js list dist/mac/EasyStore.app/Contents/Resources/electron.asar`
+
+This shows you what's packaged in the app archive, which should contain our custom app scripts, along with all of the node modules we depend on, our HTML files, CSS files, custom images, etc.
+
+`node node_modules/asar/bin/asar.js list dist/mac/EasyStore.app/Contents/Resources/app.asar`
