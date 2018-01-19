@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 def electron_cmd
-  path = path_to_node_electron
+  path = path_to_node_electron()
   if path != nil
     return path
   end
@@ -35,7 +35,7 @@ end
 if __FILE__ == $0
   cmd = "#{electron_cmd} #{easy_store_path}"
   puts cmd
-  pid = Process.spawn(cmd)
+  pid = Process.spawn(cmd, { chdir: easy_store_path() })
   puts "Running with pid #{pid}. Control-C to exit."
   Process.wait(pid)
 end
