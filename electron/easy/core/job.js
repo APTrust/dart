@@ -467,8 +467,8 @@ module.exports = class Job {
         // That's a hack.
         // We should have some kind of controller to handle that event.
         var job = this;
-        if (this.bagItProfile != null) {
-            var PackagerClass = Plugins.getPackageProviderByFormat('bagit');
+        if (this.packageFormat == "BagIt" && this.bagItProfile != null) {
+            var PackagerClass = Plugins.getPackageProviderByFormat('BagIt');
             var provider = null;
             if (PackagerClass != null) {
                 provider = new PackagerClass(null, null).describe()['name'];
