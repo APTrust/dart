@@ -107,6 +107,9 @@
      job.bagName = $('#bagName').val();
      job.packageFormat = $('#packageFormat').val();
      job.baggingDirectory = $('#baggingDirectory').val();
+     if (!validateProfilePresence()) {
+         return
+     }
      if (job.bagItProfile != null && !validateBagName()) {
          return
      }
@@ -122,6 +125,23 @@
          $("#container").html(templates.jobTags(job.dataForTagEditor()));
      }
  });
+
+ function validateProfilePresence() {
+     var job = es.ActiveObject;
+     var profile = $('#profile').val();
+     var parent = $('#profile').closest("div.form-group");
+     if (job.packageFormat == "BagIt" && job.bagItProfile == null) {
+         parent.removeClass("has-success");
+         parent.addClass("has-error");
+         $('#profileError').text("Select a BagIt profile.")
+         return false;
+     } else {
+         parent.removeClass("has-error");
+         parent.addClass("has-success");
+         $('#profileError').text("")
+         return true;
+     }
+ }
 
  function validateBagName() {
      var job = es.ActiveObject;
