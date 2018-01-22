@@ -6,7 +6,7 @@ const NEWLINE = require('os').EOL;
 const name = "APTrust BagIt Provider";
 const description = "Provides access to the APTrust command-line bagging library."
 const version = "0.1";
-const format = "bagit";
+const format = "BagIt";
 const formatMimeType = "";
 
 /*

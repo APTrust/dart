@@ -12,4 +12,18 @@ module.exports = class Field {
     objectType() {
         return 'Field';
     }
+    getSelected() {
+        var selected = [];
+        for (var choice of this.choices) {
+            if (choice.selected) {
+                selected.push(choice.value);
+            }
+        }
+        if (selected.length == 0) {
+            return null;
+        } else if (selected.length == 1) {
+            return selected[0];
+        }
+        return selected;
+    }
 }

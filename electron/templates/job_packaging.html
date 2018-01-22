@@ -6,7 +6,11 @@
 
   <form>
 
+    {{> inputSelect field = form.fields.packageFormat }}
+
+    <div id="jobProfileContainer" style="display: {{#if showProfileList}}block{{else}}none{{/if}};">
     {{> inputSelect field = form.fields.profile }}
+    </div>
 
     {{> inputText field = form.fields.baggingDirectory }}
 
@@ -50,6 +54,15 @@
 <script>
  $('[data-toggle="popover"]').popover();
 
+ $("select[name=packageFormat]").change(function() {
+     var format = $("select[name=packageFormat]").val();
+     if (format == 'BagIt') {
+         $('#jobProfileContainer').show();
+     } else {
+         $('#jobProfileContainer').hide();
+     }
+ });
+
  $("select[name=profile]").change(function() {
      hideBagNameHint();
      var job = window.es.ActiveObject;
@@ -92,6 +105,7 @@
  $("#btnJobTagsOrStorage").click(function() {
      var job = es.ActiveObject;
      job.bagName = $('#bagName').val();
+     job.packageFormat = $('#packageFormat').val();
      job.baggingDirectory = $('#baggingDirectory').val();
      if (job.bagItProfile != null && !validateBagName()) {
          return

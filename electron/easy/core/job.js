@@ -36,6 +36,7 @@ module.exports = class Job {
         this.bagName = "";
         this.baggingDirectory = "";
         this.files = [];
+        this.packageFormat = null;
         this.bagItProfile = null;
         this.storageServices = [];
         this.options = new JobOptions();
@@ -166,6 +167,9 @@ module.exports = class Job {
         if (this.bagItProfile == null && (this.storageServices == null || this.storageServices.length == 0)) {
             result.errors["general"] = ["This job must have either a BagIt Profile, or a Storage Service, or both."];
         }
+        if (this.packageFormat == 'BagIt' && this.bagItProfile == null) {
+            result.errors["bagItProfile"] = ["You must specify a BagIt Profile."];
+        }
         if (this.bagItProfile != null) {
             if (this.baggingDirectory == "" || this.baggingDirectory == null) {
                 result.errors["baggingDirectory"] = ["You must specify a bagging directory."];
@@ -220,8 +224,15 @@ module.exports = class Job {
         form.fields['bagName'].help = "Provide a name for the bag you want to create. You can leave this blank if you're not creating a bag.";
         form.fields['baggingDirectory'] = new Field("baggingDirectory", "baggingDirectory", "Bagging Directory", this.baggingDirectory);
         form.fields['baggingDirectory'].help = "Where should the bag be assembled?";
-        form.fields['profile'] = new Field("profile", "profile", "Packaging", "");
-        form.fields['profile'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
+        form.fields['packageFormat'] = new Field("packageFormat", "packageFormat", "Packaging Format", "");
+        form.fields['packageFormat'].help = "Select a packaging format, or None if you just want to send files to the storage area as-is.";
+        var choices = Choice.makeList(Plugins.listPackageProviders(), this.packageFormat, true);
+        choices[0].value = "";
+        choices[0].label = "None";
+        form.fields['packageFormat'].choices = choices;
+
+        form.fields['profile'] = new Field("profile", "profile", "BagIt Profile", "");
+        form.fields['profile'].help = "Select a BagIt profile.";
         var choices = Choice.makeList(availableProfiles, profileId, true);
         choices[0].value = "";
         choices[0].label = "None";

@@ -52,6 +52,7 @@
      } else {
          data.form = job.toPackagingForm();
          data.domainName = es.AppSetting.findByName("Institution Domain").value;
+         data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
          $("#container").html(templates.jobPackaging(data));
      }
 });

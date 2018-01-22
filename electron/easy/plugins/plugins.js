@@ -18,21 +18,13 @@ function listStorageProviders() {
     return protocols;
 }
 
-// Returns a map of PackageProviders in which the keys
-// are file formats and values are mimetypes. For example:
-//
-// {
-//   'tar': 'application/x-tar',
-//   'zip': 'application/zip',
-//   'bagit': ''
-// }
-//
-// Note that there is no mimetype for bagit.
+// Returns a list of PackageProvider formats. E.g.
+// [bagit, tar, zip, ...]
 function listPackageProviders() {
-    var formats = {};
+    var formats = [];
     for(var moduleName in PackageProviders) {
         var provider = PackageProviders[moduleName];
-        formats[provider.format] = provider.formatMimeType;
+        formats.push(provider.format)
     }
     return formats;
 }
