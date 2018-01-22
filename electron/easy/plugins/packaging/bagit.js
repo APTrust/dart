@@ -9,6 +9,23 @@ const version = "0.1";
 const format = "bagit";
 const formatMimeType = "";
 
+/*
+  TODO: Implement bagger in JavaScript. Will need the following:
+
+  1. Crypto: https://nodejs.org/api/crypto.html#crypto_class_hash
+     Md5 example: https://gist.github.com/kitek/1579117
+
+  2. Tar: https://www.npmjs.com/package/archiver
+     Supports streams and zip.
+
+  3. Multiwriter candidates:
+     https://github.com/mafintosh/multi-write-stream
+     https://www.npmjs.com/package/multiwriter
+
+     Or use builtin Node streams and pipes, as described here:
+     https://stackoverflow.com/questions/17957525/multiple-consumption-of-single-stream
+*/
+
 class BagIt {
 
     /**
