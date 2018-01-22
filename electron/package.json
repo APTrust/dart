@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "main": "main.js",
     "dependencies": {
+        "archiver": "^2.1.1",
         "asar": "^0.14.0",
         "dateformat": "^3.0.2",
         "electron-context-menu": "^0.9.1",
