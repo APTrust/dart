@@ -7,15 +7,27 @@ off to various back ends.
 
 Easy Store has a five-step process for packing and shipping bags.
 
-![Drag and drop files](electron/screenshots/ES_Files.png "Drag and drop the files and folders you want to bag.")
+1. Drag and drop the files and folders you want to bag.
 
-![Choose your packaging](electron/screenshots/ES_Packaging.png "Choose your packaging format. Easy Store supports APTrust and DPN BagIt profiles out of the box, and you can easily define new formats to suit your organization's needs.")
+![Drag and drop files](electron/screenshots/ES_Files.png "Drag and drop files")
 
-![Add your metadata](electron/screenshots/ES_Metadata.png "Add the metadata you want to save with your bag. Easy Store lets you define default values, so you don't have to repeatedly enter common data for each bag.")
+2. Choose your packaging format. Easy Store supports APTrust and DPN BagIt profiles out of the box, and you can easily define new formats to suit your organization's needs.
 
-![Choose a storage location](electron/screenshots/ES_Storage.png "Choose a location to deliver your bags. The software can currently upload to any S3-compatible service, and will add other protocols life FTP in the future.")
+![Choose your packaging](electron/screenshots/ES_Packaging.png "Choose your packaging")
 
-![Review and run](electron/screenshots/ES_Run_Job.png "Review and run your job. Easy Store will package and validate the bag, then copy it to the remote location.")
+3. Add the metadata you want to save with your bag. Easy Store lets you define default values, so you don't have to repeatedly enter common data for each bag.
+
+![Add your metadata](electron/screenshots/ES_Metadata.png "Add your metadata")
+
+4. Choose a location to deliver your bags. The software can currently upload to any S3-compatible service, and will add other protocols life FTP in the future.
+
+![Choose a storage location](electron/screenshots/ES_Storage.png "Choose a storage location")
+
+5. Review and run your job. Easy Store will package and validate the bag, then copy it to the remote location.
+
+![Review and run](electron/screenshots/ES_Run_Job.png "Review and run")
+
+You can define multiple BagIt formats, default metadata values, and multiple storage backends through a simple UI.
 
 The underlying bagging software can be scripted using Ruby, Python, JavaScript, PHP, or any other language that can generate JSON and call external programs.
 
