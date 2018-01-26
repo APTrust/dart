@@ -13,7 +13,7 @@
         "require-dir": "^0.3.2"
     },
     "devDependencies": {
-        "electron": "^1.7.10",
+        "electron": "^1.7.11",
         "electron-builder": "^19.54.0",
         "electron-toolkit": "^1.0.24",
         "tape": "^4.8.0"
