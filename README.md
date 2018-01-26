@@ -3,6 +3,24 @@
 Easy Store will provide a simple way of creating BagIt files and shipping them
 off to various back ends.
 
+# Screenshots
+
+Easy Store has a five-step process for packing and shipping bags.
+
+![Drag and drop files](screenshots/ES_Files.png "Drag and drop the files and folders you want to bag.")
+
+![Choose your packaging](screenshots/ES_Packaging.png "Choose your packaging format. Easy Store supports APTrust and DPN BagIt profiles out of the box, and you can easily define new formats to suit your organization's needs.")
+
+![Add your metadata](screenshots/ES_Metadata.png "Add the metadata you want to save with your bag. Easy Store lets you define default values, so you don't have to repeatedly enter common data for each bag.")
+
+![Choose a storage location](screenshots/ES_Storage.png "Choose a location to deliver your bags. The software can currently upload to any S3-compatible service, and will add other protocols life FTP in the future.")
+
+![Review and run](screenshots/ES_Run_Job.png "Review and run your job. Easy Store will package and validate the bag, then copy it to the remote location.")
+
+The underlying bagging software can be scripted using Ruby, Python, JavaScript, PHP, or any other language that can generate JSON and call external programs.
+
+Easy Store is open source and its service layer is composed of plugins, making it easy to add support for new packaging formats (tar, zip, rar, etc.) and network protocols (ftp, sftp, rsync, etc.).
+
 # Running the UI on Your Dev Machine
 
 1. Install the latest [Node.js](https://nodejs.org/en/download/), which includes npm,
