@@ -21,6 +21,8 @@ The underlying bagging software can be scripted using Ruby, Python, JavaScript, 
 
 Easy Store is open source and its service layer is composed of plugins, making it easy to add support for new packaging formats (tar, zip, rar, etc.) and network protocols (ftp, sftp, rsync, etc.).
 
+Easy Store is built on Electron and can run on Windows, Mac, and Linux.
+
 # Running the UI on Your Dev Machine
 
 1. Install the latest [Node.js](https://nodejs.org/en/download/), which includes npm,
