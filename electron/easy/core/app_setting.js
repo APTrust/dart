@@ -83,6 +83,10 @@ module.exports = class AppSetting {
         db.delete(this.id);
         return this;
     }
+
+    // TODO: Much of getStore, list, nextLink, and previousLink
+    // is common to AppSetting, BagItProfile, Job, and StorageService.
+    // Factor this out to common code.
     static getStore() {
         return db.store;
     }

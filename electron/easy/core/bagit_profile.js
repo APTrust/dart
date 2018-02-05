@@ -456,6 +456,10 @@ module.exports = class BagItProfile {
     static storeIsEmpty() {
         return (Object.keys(db.store).length == 0);
     }
+
+    // TODO: Much of getStore, list, nextLink, and previousLink
+    // is common to AppSetting, BagItProfile, Job, and StorageService.
+    // Factor this out to common code.
     static getStore() {
         return db.store;
     }
@@ -468,6 +472,21 @@ module.exports = class BagItProfile {
         }
         return items;
     }
+    static nextLink(limit = 50, offset = 0) {
+        if (offset + limit < Object.keys(db.store).length) {
+            var nextOffset = offset + limit
+            return `bagItProfileShowList('', ${limit}, ${nextOffset})`;
+        }
+        return "";
+    }
+    static previousLink(limit = 50, offset = 0) {
+        if (offset > 0) {
+            var prevOffset = Math.max((offset - limit), 0);
+            return `bagItProfileShowList('', ${limit}, ${prevOffset})`;
+        }
+        return "";
+    }
+
     // Best guess at bag title.
     bagTitle() {
         var exactTitle = "";

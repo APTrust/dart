@@ -156,13 +156,20 @@ $(function() {
     }
 
     // BagItProfile functions
-    function bagItProfileShowList(message) {
+    function bagItProfileShowList(message, limit = 50, offset = 0) {
         var data = {};
-        data.items = es.BagItProfile.list();
+        data.items = es.BagItProfile.list(limit, offset);
         data.success = message;
+        data.previousLink = es.BagItProfile.previousLink(limit, offset)
+        data.nextLink = es.BagItProfile.nextLink(limit, offset)
         $("#container").html(templates.bagItProfileList(data));
         es.ActiveObject = data.items;
     }
+
+    // TODO: Refactor into a UI manager class, because this needs to
+    // accessible from the outside.
+    window.bagItProfileShowList = bagItProfileShowList;
+
 
     function bagItProfileChooseNew() {
         var form = new es.Form();
@@ -235,13 +242,19 @@ $(function() {
     }
 
     // StorageService functions
-    function storageServiceShowList(message) {
+    function storageServiceShowList(message, limit = 50, offset = 0) {
         var data = {};
-        data.items = es.StorageService.list();
+        data.items = es.StorageService.list(limit, offset);
         data.success = message;
+        data.previousLink = es.StorageService.previousLink(limit, offset)
+        data.nextLink = es.StorageService.nextLink(limit, offset)
         $("#container").html(templates.storageServiceList(data));
         es.ActiveObject = data.items;
     }
+
+    // TODO: Refactor into a UI manager class, because this needs to
+    // accessible from the outside.
+    window.storageServiceShowList = storageServiceShowList;
 
     function storageServiceShowForm(id) {
         var service = new es.StorageService();
@@ -388,13 +401,19 @@ $(function() {
     }
 
     // Job Functions
-    function jobList(message) {
+    function jobList(message, limit = 50, offset = 0) {
         var data = {};
-        data.items = es.Job.list();
+        data.items = es.Job.list(limit, offset);
+        data.previousLink = es.Job.previousLink(limit, offset);
+        data.nextLink = es.Job.nextLink(limit, offset);
         data.success = message;
         $("#container").html(templates.jobList(data));
         es.ActiveObject = data.items;
     }
+
+    // TODO: Refactor into a UI manager class, because this needs to
+    // accessible from the outside.
+    window.jobList = jobList;
 
     function jobNew() {
         var job = new Job();

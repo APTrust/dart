@@ -95,6 +95,9 @@ module.exports = class StorageService {
         db.delete(this.id);
         return this;
     }
+    // TODO: Much of getStore, list, nextLink, and previousLink
+    // is common to AppSetting, BagItProfile, Job, and StorageService.
+    // Factor this out to common code.
     static getStore() {
         return db.store;
     }
@@ -106,5 +109,19 @@ module.exports = class StorageService {
             items.push(allItems[i]);
         }
         return items;
+    }
+    static nextLink(limit = 50, offset = 0) {
+        if (offset + limit < Object.keys(db.store).length) {
+            var nextOffset = offset + limit
+            return `storageServiceShowList('', ${limit}, ${nextOffset})`;
+        }
+        return "";
+    }
+    static previousLink(limit = 50, offset = 0) {
+        if (offset > 0) {
+            var prevOffset = Math.max((offset - limit), 0);
+            return `storageServiceShowList('', ${limit}, ${prevOffset})`;
+        }
+        return "";
     }
 }

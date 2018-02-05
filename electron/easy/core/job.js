@@ -320,6 +320,11 @@ module.exports = class Job {
         return this;
     }
 
+
+    // TODO: Much of getStore, list, nextLink, and previousLink
+    // is common to AppSetting, BagItProfile, Job, and StorageService.
+    // Factor this out to common code.
+
     getStore() {
         return db.store;
     }
@@ -340,6 +345,22 @@ module.exports = class Job {
             items.push(job);
         }
         return items;
+    }
+
+    static nextLink(limit = 50, offset = 0) {
+        if (offset + limit < Object.keys(db.store).length) {
+            var nextOffset = offset + limit
+            return `jobList('', ${limit}, ${nextOffset})`;
+        }
+        return "";
+    }
+
+    static previousLink(limit = 50, offset = 0) {
+        if (offset > 0) {
+            var prevOffset = Math.max((offset - limit), 0);
+            return `jobList('', ${limit}, ${prevOffset})`;
+        }
+        return "";
     }
 
     // returns a data hash for the job_tags.html template.
