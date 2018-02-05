@@ -35,7 +35,8 @@ handlebars.registerPartial({
 	inputText: readFile('input_text.html'),
 	inputTextArea: readFile('input_textarea.html'),
 	jobTabs: readFile('job_tabs.html'),
-	profileTags: readFile('profile_tags.html')
+	profileTags: readFile('profile_tags.html'),
+	tableBottomLinks: readFile('table_bottom_links.html')
 });
 
 handlebars.registerHelper('eq', function(a, b) {

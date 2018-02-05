@@ -99,13 +99,20 @@ $(function() {
     });
 
     // App Setting functions
-    function appSettingShowList(message) {
+    function appSettingShowList(message, limit = 50, offset = 0) {
         var data = {};
-        data.items = es.AppSetting.list();
+        data.items = es.AppSetting.list(limit, offset);
         data.success = message;
+        data.previousLink = es.AppSetting.previousLink(limit, offset)
+        data.nextLink = es.AppSetting.nextLink(limit, offset)
         $("#container").html(templates.appSettingList(data));
         es.ActiveObject = data.items;
     }
+
+    // TODO: Refactor into a UI manager class, because this needs to
+    // accessible from the outside.
+    window.appSettingShowList = appSettingShowList;
+
 
     function appSettingShowForm(id) {
         var setting = new es.AppSetting();
