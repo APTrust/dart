@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 )
 
 var APTrustDefaultTags = map[string][]bagit.KeyValuePair{
@@ -241,7 +242,7 @@ func TestWriteBag_APTrust(t *testing.T) {
 
 	// Verify contents of tag files and the manifest.
 	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
-	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\nBag-Size:  617.23 KB\n"
+	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\nBag-Size:  617.23 KB\nBagging-Date:  " + time.Now().Format("2006-01-02") + "\n"
 	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
 	expectedManifest := `6385e86c8489b28586d03320efd57dfe data/hemingway.jpg
 c3b41207c1374fa0bc2c2d323afc580d data/lighthouse.jpg
@@ -375,11 +376,11 @@ ac90bd87d53b9ab8d24f2cdbdf36721c4e1021ade78c7f16997ceec105c303eb data/sample.doc
 1a728e9068020801cdbf24d2ba4b359459a7c415ddb43a98c43e33f6373ee4fe data/sample.pdf
 c7346cc676d1721ac50e5b66a5ce54549d839e6deff92220fd9f233f4c5cefa4 data/sample.txt
 `
-	expectedTagManifest := `f7745fbcab89c3ec2b570b3d9ffd14c7201df609891d50f0d98b232d49531a19 manifest-sha256.txt
-2484630bd2b8a7e848b68701205e1f0d2f13fded9ec834f2036ffebb5a35a9cd bag-info.txt
-49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4 bagit.txt
-ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-info.txt
-`
+	expectedTagManifestLines := []string{
+		"f7745fbcab89c3ec2b570b3d9ffd14c7201df609891d50f0d98b232d49531a19 manifest-sha256.txt",
+		"49b477e8662d591f49fce44ca5fc7bfe76c5a71f69c85c8d91952a538393e5f4 bagit.txt",
+		"ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-info.txt",
+	}
 
 	actualBagit, err := ioutil.ReadFile(filepath.Join(tempDir, "bagit.txt"))
 	require.Nil(t, err)
@@ -397,9 +398,16 @@ ad841d4fd1c40c44d19f6b960f1cde6f73962c290bbaf41e77274fe2852b0887 dpn-tags/dpn-in
 	require.Nil(t, err)
 	require.Equal(t, expectedManifest, string(actualManifest))
 
-	actualTagManifest, err := ioutil.ReadFile(filepath.Join(tempDir, "tagmanifest-sha256.txt"))
+	actualTagData, err := ioutil.ReadFile(filepath.Join(tempDir, "tagmanifest-sha256.txt"))
 	require.Nil(t, err)
-	require.Equal(t, expectedTagManifest, string(actualTagManifest))
+	actualTagManifest := string(actualTagData)
+	for _, line := range expectedTagManifestLines {
+		assert.True(t, strings.Contains(actualTagManifest, line))
+	}
+	// Bagging-Date in bag-info.txt changes every time we test, so
+	// we can't predict the checksum, but we want to make sure the
+	// entry is there.
+	assert.True(t, strings.Contains(actualTagManifest, "bag-info.txt"))
 }
 
 func TestGetPayloadBytesAndFileCount(t *testing.T) {
