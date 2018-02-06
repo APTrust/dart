@@ -1,3 +1,5 @@
+const electron = require('electron');
+const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
 const fs = require('fs');
@@ -139,13 +141,26 @@ class BagIt {
         }
     }
 
+    getManifestDirName() {
+        var dir = app.getPath('userData');
+        return path.join(dir, 'manifests');
+    }
+
+    ensureManifestDir() {
+        var packager = this;
+        var manifestDir = packager.getManifestDirName();
+        if (!fs.existsSync(manifestDir)){
+            fs.mkdirSync(manifestDir);
+        }
+    }
+
     dumpManifests() {
         // For each manifest listed in profile,
         // copy from bag or tar to special dir or to Electron Storage.
         // Throw exception if there is one, so the UI can show it.
-        // See https://stackoverflow.com/questions/19978452/how-to-extract-single-file-from-tar-gz-archive-using-node-js
         // We wouldn't need this if we were creating the bag in JavaScript.
         var packager = this;
+        packager.ensureManifestDir();
         if (packager.job.packagedFile.endsWith(".tar")) {
             return packager.dumpTarredManifests();
         } else if (packager.job.packagedFile.endsWith(".gzip")) {
@@ -165,11 +180,13 @@ class BagIt {
         var extract = tar.extract();
         var filename = '';
         var data = '';
+        var manifestDir = packager.getManifestDirName();
 
         extract.on('entry', function(header, stream, cb) {
             stream.on('data', function(chunk) {
+                var isTagManifest = header.name.match(/tagmanifest-(\w+).txt$/) != null;
                 var match = header.name.match(/manifest-(\w+).txt$/);
-                if (match) {
+                if (match && !isTagManifest) {
                     filename = `${packager.job.id}_${match[1]}_${new Date().getTime()}.txt`;
                     console.log(filename);
                     data += chunk;
@@ -177,14 +194,13 @@ class BagIt {
             });
 
             stream.on('end', function() {
-                // XXXXXXXXXX
-                //var fullFileName = ""
-                //fs.writeFile(fullFileName, data);
-                if (data != "") {
-                    console.log(data);
+                if (filename != '') {
+                    var fullFileName = path.join(manifestDir, filename);
+                    fs.writeFileSync(fullFileName, data);
+                    console.log(`Wrote manifest to ${fullFileName}`);
+                    data = '';
+                    filename = '';
                 }
-                data = '';
-                filename = '';
                 cb();
             });
 
