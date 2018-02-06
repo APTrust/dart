@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
 const path = require('path');
+const tar = require('tar-stream')
 const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
@@ -87,6 +88,7 @@ class BagIt {
                     msg = `Bagger completed successfully with code ${code} and signal ${signal}`;
                     succeeded = true;
                 }
+                packager.dumpManifests();
                 packager.emitter.emit('complete', succeeded, msg);
             });
 
@@ -134,6 +136,13 @@ class BagIt {
             packager.emitter.emit('error', ex);
             console.error(ex);
         }
+    }
+
+    dumpManifests() {
+        // For each manifest listed in profile,
+        // copy from bag or tar to special dir or to Electron Storage.
+        // Throw exception if there is one, so the UI can show it.
+        console.log("Dump manifests...")
     }
 }
 
