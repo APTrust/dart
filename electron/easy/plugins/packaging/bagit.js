@@ -1,7 +1,9 @@
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
+const fs = require('fs');
 const path = require('path');
 const tar = require('tar-stream')
+const Util = require('../../core/util');
 const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
@@ -39,7 +41,6 @@ class BagIt {
     constructor(job, emitter) {
         this.job = job;
         this.emitter = emitter;
-        this.outputFile = "";
     }
 
     /**
@@ -142,7 +143,61 @@ class BagIt {
         // For each manifest listed in profile,
         // copy from bag or tar to special dir or to Electron Storage.
         // Throw exception if there is one, so the UI can show it.
-        console.log("Dump manifests...")
+        // See https://stackoverflow.com/questions/19978452/how-to-extract-single-file-from-tar-gz-archive-using-node-js
+        // We wouldn't need this if we were creating the bag in JavaScript.
+        var packager = this;
+        if (packager.job.packagedFile.endsWith(".tar")) {
+            return packager.dumpTarredManifests();
+        } else if (packager.job.packagedFile.endsWith(".gzip")) {
+            console.log("Dump manifests does not yet support gzip format")
+        } else if (packager.job.packagedFile.endsWith(".tgz")) {
+            console.log("Dump manifests does not yet support tgz format")
+        } else if (packager.job.packagedFile.endsWith(".rar")) {
+            console.log("Dump manifests does not yet support rar format")
+        } else if (packager.job.packagedFile.endsWith(".zip")) {
+            console.log("Dump manifests does not yet support zip format")
+        } else {
+            console.log("Dump manifests: unknown and unsupported format")
+        }
+    }
+    dumpTarredManifests() {
+        var packager = this;
+        var extract = tar.extract();
+        var filename = '';
+        var data = '';
+
+        extract.on('entry', function(header, stream, cb) {
+            stream.on('data', function(chunk) {
+                var match = header.name.match(/manifest-(\w+).txt$/);
+                if (match) {
+                    filename = `${packager.job.id}_${match[1]}_${new Date().getTime()}.txt`;
+                    console.log(filename);
+                    data += chunk;
+                }
+            });
+
+            stream.on('end', function() {
+                // XXXXXXXXXX
+                //var fullFileName = ""
+                //fs.writeFile(fullFileName, data);
+                if (data != "") {
+                    console.log(data);
+                }
+                data = '';
+                filename = '';
+                cb();
+            });
+
+            //stream.resume();
+        });
+
+        extract.on('finish', function() {
+            //fs.writeFile(filename, data);
+        });
+
+        fs.createReadStream(packager.job.packagedFile)
+            //.pipe(zlib.createGunzip())
+            .pipe(extract);
     }
 }
 
