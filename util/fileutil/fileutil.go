@@ -204,3 +204,30 @@ func WriteWithChecksums(reader io.Reader, writer io.Writer, algorithms []string)
 	}
 	return digests, nil
 }
+
+// Copy copies a file from fromPath to toPath.
+func Copy(fromPath, toPath string) error {
+	finfo, err := os.Stat(fromPath)
+	if err != nil {
+		return err
+	}
+	reader, err := os.Open(fromPath)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+	writer, err := os.OpenFile(toPath, os.O_RDWR|os.O_CREATE, finfo.Mode())
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+	bytesCopied, err := io.Copy(writer, reader)
+	if err != nil {
+		return err
+	}
+	if bytesCopied != finfo.Size() {
+		return fmt.Errorf("Copied only %d of %d bytes from %s to %s",
+			bytesCopied, finfo.Size(), fromPath, toPath)
+	}
+	return nil
+}

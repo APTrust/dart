@@ -187,3 +187,13 @@ func TestLooksLikeManifest(t *testing.T) {
 	assert.False(t, fileutil.LooksLikeManifest("tagfiles/manifest-md5.txt"))
 	assert.False(t, fileutil.LooksLikeManifest("manifesto.txt"))
 }
+
+func TestCopy(t *testing.T) {
+	tempdir, err := ioutil.TempDir("", "FileUtilTest")
+	require.Nil(t, err)
+	defer os.RemoveAll(tempdir)
+	toThere := filepath.Join(tempdir, "testfile.go")
+	_, fromHere, _, _ := runtime.Caller(0)
+	assert.Nil(t, fileutil.Copy(fromHere, toThere))
+
+}
