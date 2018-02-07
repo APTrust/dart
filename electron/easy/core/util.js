@@ -34,27 +34,34 @@ module.exports = class Util {
         return match != null;
     }
     static sortByName(store) {
-        var list = [];
-        for (var key in store) {
-            list.push(store[key]);
-        }
-        list.sort(function(a, b) {
-            if (a.name < b.name) { return -1; }
-            if (a.name > b.name) { return 1; }
-            return 0;
-        });
-        return list;
+        return Util.sort(store, 'name', 'asc');
     }
     static sortByCreated(store) {
+        return Util.sort(store, 'created', 'desc');
+    }
+    static sortByUpdated(store) {
+        return Util.sort(store, 'updated', 'desc');
+    }
+    static sort(store, field, direction) {
         var list = [];
         for (var key in store) {
             list.push(store[key]);
         }
-        list.sort(function(a, b) {
-            if (a.created < b.created) { return -1; }
-            if (a.created > b.created) { return 1; }
-            return 0;
-        });
+        if (direction == 'desc') {
+            list.sort(function(a, b) {
+                // descending sort
+                if (a[field] < b[field]) { return 1; }
+                if (a[field] > b[field]) { return -1; }
+                return 0;
+            });
+        } else {
+            list.sort(function(a, b) {
+                // ascending sort
+                if (a[field] < b[field]) { return -1; }
+                if (a[field] > b[field]) { return 1; }
+                return 0;
+            });
+        }
         return list;
     }
     static isEmpty(str) {
