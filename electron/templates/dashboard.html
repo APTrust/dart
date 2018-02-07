@@ -1,0 +1,40 @@
+
+
+<div class="row">
+  <div class="col-sm-4">
+      <h4>Recent Jobs</h4>
+      {{#each jobs }}
+        <div class="dashboard-job clickable" id="{{id}}" data-object-type="job" onclick="showJobDetail('{{id}}')">
+            <p><label>Bag:</label> {{ bagName }}</p>
+            {{#each operationResults}}
+            <div class="{{#if succeeded}}text-success{{else if error}}text-danger{{/if}}">
+                <p>
+                    {{operation}} completed {{ completed }}
+                </p>
+                {{#if info}}
+                  <p>{{info}}</p>
+                {{/if}}
+                {{#if warning}}
+                  <p class="text-warning">{{warning}}</p>
+                {{/if}}
+                {{#if error}}
+                  <p class="text-danger">{{error}}</p>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+      {{/each }}
+  </div>
+  <div class="col-sm-8" id="jobDetail">
+
+  </div>
+</div>
+
+<script>
+ $('[data-toggle="popover"]').popover();
+ function showJobDetail(id) {
+     var job = es.Job.find(id);
+     $('#jobDetail').html("TODO: Show details and bag manifest for job " + job.bagName);
+     es.ActiveObject = job;
+ }
+</script>

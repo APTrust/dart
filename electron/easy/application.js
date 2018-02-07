@@ -8,6 +8,7 @@ $(function() {
     const Plugins = require('./easy/plugins/plugins');
 
     // Top nav menu
+    $("#menuDashboard").on('click', function() { dashboardShow(null); });
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
@@ -97,6 +98,19 @@ $(function() {
             console.log(`Clickable row unknown type: ${type}?`);
         }
     });
+
+    // Dashboard
+    function dashboardShow(message) {
+        var data = {};
+        data.jobs = es.Job.list(10, 0);
+        $("#container").html(templates.dashboard(data));
+        es.ActiveObject = null;
+    }
+
+    // TODO: Refactor into a UI manager class, because this needs to
+    // accessible from the outside.
+    window.dashboardShow = dashboardShow;
+
 
     // App Setting functions
     function appSettingShowList(message, limit = 50, offset = 0) {
@@ -452,4 +466,6 @@ $(function() {
     window.es = es;
     window.esPlugins = Plugins;
     window.templates = templates;
+
+    dashboardShow();
 });

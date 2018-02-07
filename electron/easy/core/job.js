@@ -329,9 +329,9 @@ module.exports = class Job {
         return db.store;
     }
 
-    static list(limit = 50, offset = 0) {
+    static list(limit = 50, offset = 0, sortBy = 'updated', sortDir = 'desc') {
         var items = [];
-        var allItems = Util.sortByCreated(Job.getStore());
+        var allItems = Util.sort(Job.getStore(), sortBy, sortDir);
         var end = Math.min((offset + limit), allItems.length);
         for (var i = offset; i < end; i++) {
             var item = allItems[i];
