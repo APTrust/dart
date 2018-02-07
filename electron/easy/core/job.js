@@ -291,28 +291,33 @@ module.exports = class Job {
     }
 
     static find(id) {
-        var job = null;
         var obj = db.get(id);
-        if (obj != null) {
+        return Job.inflateFromJson(obj);
+    }
+
+    static inflateFromJson(jsonObj) {
+        var job = null;
+        if (jsonObj != null) {
             job = new Job();
-            Object.assign(job, obj);
+            Object.assign(job, jsonObj);
         }
         job.options = new JobOptions();
-        Object.assign(job.options, obj.options);
-        if (obj.bagItProfile != null) {
-            job.bagItProfile = BagItProfile.toFullObject(obj.bagItProfile);
+        Object.assign(job.options, jsonObj.options);
+        if (jsonObj.bagItProfile != null) {
+            job.bagItProfile = BagItProfile.toFullObject(jsonObj.bagItProfile);
         }
-        for (var i=0; i < obj.storageServices.length; i++) {
+        for (var i=0; i < jsonObj.storageServices.length; i++) {
             var ss = new StorageService();
-            Object.assign(ss, obj.storageServices[i]);
+            Object.assign(ss, jsonObj.storageServices[i]);
             job.storageServices[i] = ss;
         }
-        for (var i=0; i < obj.operationResults.length; i++) {
+        for (var i=0; i < jsonObj.operationResults.length; i++) {
             var result = new OperationResult();
-            Object.assign(result, obj.operationResults[i]);
+            Object.assign(result, jsonObj.operationResults[i]);
             job.operationResults[i] = result;
         }
         return job;
+
     }
 
     delete() {
@@ -335,14 +340,7 @@ module.exports = class Job {
         var end = Math.min((offset + limit), allItems.length);
         for (var i = offset; i < end; i++) {
             var item = allItems[i];
-            var job = new es.Job();
-            Object.assign(job, item)
-            job.options = new JobOptions();
-            Object.assign(job.options, item.options);
-            if (item.bagItProfile != null) {
-                job.bagItProfile = BagItProfile.toFullObject(item.bagItProfile);
-            }
-            items.push(job);
+            items.push(Job.inflateFromJson(item));
         }
         return items;
     }

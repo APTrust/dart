@@ -88,6 +88,8 @@ $(function() {
          case 'Job':
             jobShow(id);
             break;
+         case 'Ignore':
+            break;
          case 'StorageService':
             storageServiceShowForm(id);
             break;

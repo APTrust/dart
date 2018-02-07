@@ -1,3 +1,5 @@
+const dateFormat = require('dateformat');
+
 module.exports = class OperationResult {
     constructor(operation, provider) {
         // operation should be either "Bagging" or "Storage"
@@ -28,5 +30,22 @@ module.exports = class OperationResult {
         this.info = "";
         this.warning = "";
         this.error = "";
+    }
+    summary() {
+        var result = this;
+        var op = result.operation[0].toUpperCase() + result.operation.slice(1);
+        var outcome = '';
+        var when = '';
+        if (result.started) {
+            if (result.succeeded) {
+                outcome = 'succeeded';
+            } else {
+                outcome = 'failed';
+            }
+        }
+        if (result.completed) {
+            when = dateFormat(result.completed, 'shortDate') + " " + dateFormat(result.completed, 'shortTime');
+        }
+        return `${op} ${outcome} ${when}`
     }
 }

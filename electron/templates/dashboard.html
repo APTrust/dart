@@ -1,31 +1,32 @@
 
 
 <div class="row">
-  <div class="col-sm-4">
+  <div class="col-sm-6">
       <h4>Recent Jobs</h4>
-      {{#each jobs }}
-        <div class="dashboard-job clickable" id="{{id}}" data-object-type="job" onclick="showJobDetail('{{id}}')">
-            <p><label>Bag:</label> {{ bagName }}</p>
-            {{#each operationResults}}
-            <div class="{{#if succeeded}}text-success{{else if error}}text-danger{{/if}}">
-                <p>
-                    {{operation}} completed {{ completed }}
-                </p>
-                {{#if info}}
-                  <p>{{info}}</p>
-                {{/if}}
-                {{#if warning}}
-                  <p class="text-warning">{{warning}}</p>
-                {{/if}}
-                {{#if error}}
-                  <p class="text-danger">{{error}}</p>
-                {{/if}}
-            </div>
-            {{/each}}
-        </div>
-      {{/each }}
+      <table class="table table-hover">
+          <thead class="thead-inverse">
+              <tr>
+                  <th>Job</th>
+                  <th>Details</th>
+              </tr>
+          </thead>
+          <tbody>
+              {{#each jobs}}
+              <tr class="clickable-row" id="{{ id }}" data-object-type="Ignore" onclick="showJobDetail('{{id}}')">
+                  <td>{{ bagName }}</td>
+                  <td>
+                      {{#each operationResults as |result resultIndex|}}
+                        {{ resultSummary result }} <br/>
+                      {{else}}
+                        Job has not been run.
+                      {{/each}}
+                  </td>
+              </tr>
+              {{/each }}
+          </tbody>
+      </table>
   </div>
-  <div class="col-sm-8" id="jobDetail">
+  <div class="col-sm-6" id="jobDetail">
 
   </div>
 </div>

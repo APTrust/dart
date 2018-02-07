@@ -48,6 +48,10 @@ handlebars.registerHelper('jobFormTagField', function(tag) {
 	return tag.toFieldForJobForm();
 });
 
+handlebars.registerHelper('resultSummary', function(result) {
+    return result.summary();
+});
+
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
 module.exports.bagItProfileForm = bagItProfileForm;
