@@ -34,7 +34,13 @@
 
 <script>
  $('[data-toggle="popover"]').popover();
+
+ // TODO: refactor/move this to a module with common UI code.
  function showJobDetail(id) {
+     var electron = require('electron');
+     var app = (process.type === 'renderer') ? electron.remote.app : electron.app;
+     var path = require('path');
+     var fs = require('fs');
      var data = {};
      var job = es.Job.find(id);
      data.job = job;
@@ -52,6 +58,15 @@
              warning: result.warning,
              error: result.error
          });
+         if (result.provider == "APTrust BagIt Provider") {
+             var path = path.join(app.getPath('userData'), 'manifests');
+             for (var filename of fs.readdirSync(path)) {
+                 if (filename.startsWith(job.id)) {
+                     data.hasManifest = true;
+                     break;
+                 }
+             }
+         }
      }
      $('#jobDetail').html(templates.jobSummaryPanel(data));
      es.ActiveObject = job;

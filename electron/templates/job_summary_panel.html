@@ -66,6 +66,11 @@
   </div>
   {{/if}}
 
+  {{#if hasManifest}}
+  <div class="text-center" style="margin-top:25px;">
+      <button type="button" id="btnViewManifest" class="btn btn-primary" onclick="viewManifests('{{ job.id }}')">View Manifests</button>
+  </div>
+  {{/if}}
 
 </div>
 
