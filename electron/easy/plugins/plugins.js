@@ -2,6 +2,7 @@ const EventEmitter = require('events');
 const NEWLINE = require('os').EOL;
 const requireDir = require('require-dir');
 const path = require('path');
+const fs = require('fs');
 
 const OperationResult = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
@@ -194,6 +195,16 @@ function newPackageEmitter(job, provider) {
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
+        try {
+            // TODO: Make this work for unserialized bags,
+            // where we're working with a directory instead
+            // of a tar, gzip, or zip file.
+            var stats = fs.statSync(job.packagedFile)
+            result.filesize = stats["size"];
+        } catch(ex) {
+            console.log(`Cannot get file size for ${job.packagedFile}`);
+            console.log(ex);
+        }
         job.save(); // save job with OperationResult
 
         // Need to find a better place for this...

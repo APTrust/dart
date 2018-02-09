@@ -158,6 +158,7 @@ class BagIt {
         // For each manifest listed in profile,
         // copy from bag or tar to special dir or to Electron Storage.
         // Throw exception if there is one, so the UI can show it.
+        // This will cause performance problems for larger bags.
         // We wouldn't need this if we were creating the bag in JavaScript.
         var packager = this;
         packager.ensureManifestDir();

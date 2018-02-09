@@ -7,8 +7,11 @@ module.exports = class OperationResult {
         // provider is the name of the plugin performing the
         // operation.
         this.provider = provider;
-        // filename of bag or item to be stored
+        // filename of bag or item that was packaged or stored
         this.filename = "";
+        // filesize is the size of the file that was packaged or stored
+        this.filesize = 0;
+        // attemptNumber is how many times we've attempted this operation
         this.attemptNumber = 0;
         // timestamp for started
         this.started = null;
@@ -27,6 +30,8 @@ module.exports = class OperationResult {
         this.started = null;
         this.completed = null;
         this.succeeded = false;
+        this.filename = "";
+        this.filesize = 0;
         this.info = "";
         this.warning = "";
         this.error = "";
