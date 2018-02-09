@@ -35,8 +35,15 @@
 <script>
  $('[data-toggle="popover"]').popover();
  function showJobDetail(id) {
+     var data = {};
      var job = es.Job.find(id);
-     $('#jobDetail').html("TODO: Show details and bag manifest for job " + job.bagName);
+     data.job = job;
+     if (job.bagItProfile != null) {
+         data.bagInternalIdentifier = job.bagItProfile.bagInternalIdentifier();
+         data.bagTitle = job.bagItProfile.bagTitle();
+         data.bagDescription =job.bagItProfile.bagDescription();
+     }
+     $('#jobDetail').html(templates.jobSummaryPanel(data));
      es.ActiveObject = job;
  }
 </script>

@@ -1,0 +1,58 @@
+<div id="divJobSummary">
+
+  {{#if job.bagItProfile}}
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Profile</strong></div>
+      <div class="col-sm-10">{{ job.bagItProfile.name }}</div>
+  </div>
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Bag Name</strong></div>
+      <div class="col-sm-10">{{ job.bagName }}</div>
+  </div>
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Internal Identifier</strong></div>
+      <div class="col-sm-10">{{ bagInternalIdentifier }}</div>
+  </div>
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Title</strong></div>
+      <div class="col-sm-10">{{ bagTitle }}</div>
+  </div>
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Description</strong></div>
+      <div class="col-sm-10">{{ bagDescription }}</div>
+  </div>
+  {{/if}}
+
+  {{#if job.files}}
+  <div class="row row-spaced">
+    <div class="col-sm-2"><strong>Files</strong></div>
+    <div class="col-sm-10">
+        <ol class="ol-aligned">
+        {{#each job.files}}
+          <li>{{ this }}</li>
+        {{/each}}
+        </ol>
+    </div>
+  </div>
+  {{/if}}
+
+  {{#if storageServices}}
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Upload To</strong></div>
+      <div class="col-sm-10">
+          <ol class="ol-aligned">
+              {{#each storageServices as |service| }}
+              <li>{{ service.name }}</li>
+              {{/each}}
+          </ol>
+      </div>
+  </div>
+  {{/if}}
+
+  <div class="clearfix" style="height: 30px;"></div>
+
+
+</div>
+
+<script>
+</script>
