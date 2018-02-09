@@ -315,6 +315,17 @@ function newStorageEmitter(job, provider) {
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
+        try {
+            // TODO: Make this work for unserialized bags,
+            // where we're working with a directory instead
+            // of a tar, gzip, or zip file.
+            result.filename = job.packagedFile;
+            var stats = fs.statSync(job.packagedFile)
+            result.filesize = stats["size"];
+        } catch(ex) {
+            console.log(`Cannot get file size for ${job.packagedFile}`);
+            console.log(ex);
+        }
         job.save(); // save job with OperationResult
     });
 
