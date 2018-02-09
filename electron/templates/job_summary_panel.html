@@ -23,33 +23,48 @@
   </div>
   {{/if}}
 
-  {{#if job.files}}
-  <div class="row row-spaced">
-    <div class="col-sm-2"><strong>Files</strong></div>
-    <div class="col-sm-10">
-        <ol class="ol-aligned">
-        {{#each job.files}}
-          <li>{{ this }}</li>
-        {{/each}}
-        </ol>
-    </div>
-  </div>
-  {{/if}}
-
-  {{#if storageServices}}
+  {{#if job.storageServices}}
   <div class="row row-spaced">
       <div class="col-sm-2"><strong>Upload To</strong></div>
       <div class="col-sm-10">
-          <ol class="ol-aligned">
-              {{#each storageServices as |service| }}
-              <li>{{ service.name }}</li>
-              {{/each}}
-          </ol>
+          {{#each job.storageServices as |service| }}
+          {{ service.name }}<br/>
+          {{/each}}
       </div>
   </div>
   {{/if}}
 
-  <div class="clearfix" style="height: 30px;"></div>
+  <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Results</strong></div>
+      <div class="col-sm-10">
+          {{#each opResults as |result| }}
+          <span class="{{ result.cssClass }}">{{ result.summary }}</span><br/>
+            {{#if result.note}}
+            <span class="{{ result.cssClass }}">{{ result.note }}</span><br/>
+            {{/if}}
+            {{#if result.warning}}
+            <span class="{{ result.cssClass }}">{{ result.warning }}</span><br/>
+            {{/if}}
+            {{#if result.error}}
+            <span class="text-danger">{{ result.error }}</span><br/>
+            {{/if}}
+          <br/>
+          {{else}}
+          This job has not been run.
+          {{/each}}
+      </div>
+  </div>
+
+  {{#if job.files}}
+  <div class="row row-spaced">
+    <div class="col-sm-2"><strong>Files</strong></div>
+    <div class="col-sm-10">
+        {{#each job.files}}
+          {{ this }}<br/>
+        {{/each}}
+    </div>
+  </div>
+  {{/if}}
 
 
 </div>

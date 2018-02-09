@@ -43,6 +43,16 @@
          data.bagTitle = job.bagItProfile.bagTitle();
          data.bagDescription =job.bagItProfile.bagDescription();
      }
+     data.opResults = [];
+     for (var result of job.operationResults) {
+         data.opResults.push({
+             cssClass: result.succeeded ? 'text-success' : 'text-warning',
+             summary: result.summary(),
+             note: result.note,
+             warning: result.warning,
+             error: result.error
+         });
+     }
      $('#jobDetail').html(templates.jobSummaryPanel(data));
      es.ActiveObject = job;
  }

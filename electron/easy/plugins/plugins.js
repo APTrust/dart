@@ -175,6 +175,7 @@ function newPackageEmitter(job, provider) {
     }
     result.reset();
     result.attemptNumber += 1;
+    result.note = `Packaged by ${provider}`;
 
     emitter.on('start', function(message) {
         showFilesReset();
@@ -280,7 +281,7 @@ function newPackageEmitter(job, provider) {
 // successful, etc. Param provider is the name of the plugin that
 // will be performing the operation.
 //
-// TODO: Correctly handle multiple uploads in the UI.
+// TODO: Correctly handle multiple uploads here and in the UI.
 function newStorageEmitter(job, provider) {
     var emitter = new EventEmitter();
     var result = job.findResult("storage", provider);
@@ -290,6 +291,12 @@ function newStorageEmitter(job, provider) {
     }
     result.reset();
     result.attemptNumber += 1;
+
+    var serviceName = '?';
+    if (job && job.storageServices && job.storageServices[0]) {
+        serviceName = job.storageServices[0].name;
+    }
+    result.note = `Upload to ${serviceName}`;
 
     emitter.on('start', function(message) {
         showStorageReset();
