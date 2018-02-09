@@ -10,6 +10,10 @@
       <div class="col-sm-10">{{ job.bagName }}</div>
   </div>
   <div class="row row-spaced">
+      <div class="col-sm-2"><strong>Bag Name</strong></div>
+      <div class="col-sm-10">{{ job.bagName }}</div>
+  </div>
+  <div class="row row-spaced">
       <div class="col-sm-2"><strong>Internal Identifier</strong></div>
       <div class="col-sm-10">{{ bagInternalIdentifier }}</div>
   </div>
@@ -41,6 +45,12 @@
           <span class="{{ result.cssClass }}">{{ result.summary }}</span><br/>
             {{#if result.note}}
             <span class="{{ result.cssClass }}">{{ result.note }}</span><br/>
+            {{/if}}
+            {{#if result.filename}}
+            <span class="{{ result.cssClass }}">File name: {{ result.filename }}</span><br/>
+            {{/if}}
+            {{#if result.filesize}}
+            <span class="{{ result.cssClass }}">Size: {{ result.filesize }}</span><br/>
             {{/if}}
             {{#if result.warning}}
             <span class="{{ result.cssClass }}">{{ result.warning }}</span><br/>

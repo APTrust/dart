@@ -54,13 +54,15 @@
          data.opResults.push({
              cssClass: result.succeeded ? 'text-success' : 'text-warning',
              summary: result.summary(),
+             filename: path.basename(result.filename),
+             filesize: result.filesize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
              note: result.note,
              warning: result.warning,
              error: result.error
          });
          if (result.provider == "APTrust BagIt Provider") {
-             var path = path.join(app.getPath('userData'), 'manifests');
-             for (var filename of fs.readdirSync(path)) {
+             var manifestDir = path.join(app.getPath('userData'), 'manifests');
+             for (var filename of fs.readdirSync(manifestDir)) {
                  if (filename.startsWith(job.id)) {
                      data.hasManifest = true;
                      break;
