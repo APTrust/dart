@@ -1,3 +1,8 @@
+
+// Temporary, for testing.
+const bagger = require('./easy/bagit/bagger');
+// End temp
+
 $(function() {
     const path = require("path");
     const os = require('os');

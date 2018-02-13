@@ -1,0 +1,199 @@
+const BagItFile = require('./bagit_file');
+const crypto = require('crypto');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const stream = require('stream');
+const tar = require('tar-stream');
+
+
+const WRITE_AS_DIR = 'dir';
+const WRITE_AS_TAR = 'tar';
+
+class Bagger {
+
+    constructor(bagPath, profile, writeAs = WRITE_AS_TAR) {
+        this.bagPath = bagPath;
+        this.profile = profile;
+        this.writeAs = writeAs;
+        this.files = [];
+        this.errors = [];
+
+        // The following two are for Payload-Oxum.
+        this.payloadFileCount = 0;
+        this.payloadByteCount = 0;
+
+        // Private
+        this._tarPacker = null;
+        this._tarOutputWriter = null;
+        this._outputDirInitialized = false;
+    }
+
+    preValidate() {
+        // Validate profile.
+        // Ensure required tags are present.
+    }
+
+    initOutputDir() {
+        if (!this._outputDirInitialized) {
+            if (path.extname(this.bagPath) == '' && !fs.existsSync(this.bagPath)) {
+                fs.mkdirSync(this.bagPath, 0o755);
+            } else if (!fs.existsSync(path.dirname(this.bagPath))) {
+                fs.mkdirSync(path.dirname(this.bagPath), 0o755);
+            }
+            this._outputDirInitialized = true;
+        }
+    }
+
+    getTarPacker() {
+        if (this._tarPacker == null) {
+            this._tarPacker = tar.pack();
+        }
+        return this._tarPacker;
+    }
+
+    getTarOutputWriter() {
+        if (this._tarOutputWriter == null) {
+            if (!this.bagPath.endsWith(".tar")) {
+                var msg = `bagPath '${this.bagPath}' must have .tar extension`;
+                this.errors.push(msg);
+                throw msg;
+            }
+            var options = {
+                mode: 0o644,
+                autoClose: false
+            };
+            this._tarOutputWriter = fs.createWriteStream(this.bagPath, options);
+        }
+        return this._tarOutputWriter;
+    }
+
+    create() {
+        // validate BagItProfile
+        // ensure required tags are present
+        this.initOutputDir();
+        // copy all files
+        // write tag files
+        // write manifests
+        // write tag manifests
+        // validate bag
+        // copy tag data to database
+        // copy manifest data to database
+
+        if (this.writeAs == WRITE_AS_TAR) {
+            this.closeTarFile();
+        }
+    }
+
+    closeTarFile() {
+        console.log("Finalizing tar file.");
+        this.getTarPacker().finalize();
+        this.getTarOutputWriter().end();
+    }
+
+    copyFile(absSourcePath, relDestPath) {
+        // Copy file from src to dest
+        // stat file and save srcPath, destPath, size, and checksums
+        // as a BagItFile and push that into the files array.
+        // Preserve owner, group, permissions and timestamps on copy.
+        if (!fs.existsSync(absSourcePath)) {
+            var msg = `File does not exist: ${absSourcePath}`;
+            this.errors.push(msg);
+            throw err;
+        }
+        var stats = fs.statSync(absSourcePath);
+        var bagItFile = new BagItFile(absSourcePath, relDestPath, stats.size);
+        this.files.push(bagItFile);
+        console.log(`Copying ${absSourcePath} to ${relDestPath}`);
+        if (this.writeAs == WRITE_AS_DIR) {
+            this._copyIntoDir(bagItFile, stats);
+        } else if (this.writeAs == WRITE_AS_TAR) {
+            this._copyIntoTar(bagItFile, stats);
+        } else {
+            throw `Unknown writeAs value: '${this.writeAs}'`
+        }
+    }
+
+    // Copies a file into a directory (unserialized bag)
+    _copyIntoDir(bagItFile, stats) {
+        var absDestPath = path.join(this.bagPath, bagItFile.relDestPath);
+        var writer = fs.createWriteStream(absDestPath);
+        var reader = fs.createReadStream(bagItFile.absSourcePath);
+        this._writePipeline(reader, writer, bagItFile);
+    }
+
+    // Copies a file into a tarred bag
+    _copyIntoTar(bagItFile, stats) {
+        var bagger = this;
+        var tar = this.getTarPacker();
+        var header = {
+            name: bagItFile.relDestPath,
+            size: stats.size,
+            mode: stats.mode,
+            uid: stats.uid,
+            gid: stats.gid,
+            mtime: stats.mtimeMs
+        };
+        var reader = fs.createReadStream(bagItFile.absSourcePath);
+        var writer = tar.entry(header, function(err) {
+            if (err) {
+                console.log(err);
+                bagger.errors.push(err);
+                //tar.finalize();
+            }
+        });
+        this._writePipeline(reader, writer, bagItFile);
+    }
+
+    // Pipes the contents of a file through all of the digest
+    // algorithms into the destination file or tar file,
+    // and stores the digests in BagItFile.checksums.
+    _writePipeline(reader, writer, bagItFile) {
+        // First, pipe the data from the reader through all
+        // of the digest algorithms (md5, sha256, etc.).
+        // Not sure if we can do this in a loop...
+        var hashes = this._getCryptoHashes(bagItFile);
+        console.log(`Setting up pipes for ${hashes.length} digests + file`);
+        for (var h of hashes) {
+            reader.pipe(h)
+        }
+        reader.pipe(writer);
+        if (this.writeAs == WRITE_AS_TAR) {
+            this.getTarPacker().pipe(this.getTarOutputWriter());
+            // reader.on('end', function() {
+            //     writer.end();
+            // });
+        }
+    }
+
+    _getCryptoHashes(bagItFile) {
+        var hashes = [];
+        for (var algorithm of this.profile.manifestsRequired) {
+            console.log(`Adding ${algorithm} for ${bagItFile.relDestPath}`);
+            var hash = crypto.createHash(algorithm);
+            hash.setEncoding('hex');
+            hash.on('finish', function() {
+                console.log('Calling hash on end');
+                hash.end();
+                console.log(hash.read());
+            });
+            hashes.push(hash);
+        }
+        return hashes;
+    }
+
+    writeManifest(algorithm) {
+        // Write payload manifest with data from files.
+    }
+
+    writeTagFile(relDestPath) {
+        // Write tag file with data from profile.
+        // Tag file data has to go through the hashing algorithms,
+        // so we can put the checksums in the tag manifests.
+    }
+
+}
+
+module.exports.Bagger = Bagger;
+module.exports.WRITE_AS_DIR = WRITE_AS_DIR;
+module.exports.WRITE_AS_TAR = WRITE_AS_TAR;

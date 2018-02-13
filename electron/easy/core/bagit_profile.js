@@ -538,4 +538,5 @@ module.exports = class BagItProfile {
             firstVersionTag.userValue = uuid;
         }
     }
+
 };
