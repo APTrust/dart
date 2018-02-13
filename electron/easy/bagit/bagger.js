@@ -48,6 +48,7 @@ class Bagger {
     getTarPacker() {
         if (this._tarPacker == null) {
             this._tarPacker = tar.pack();
+            this._tarPacker.pipe(this.getTarOutputWriter());
         }
         return this._tarPacker;
     }
@@ -85,10 +86,11 @@ class Bagger {
         }
     }
 
+    // TODO: This needs to wait for writes to complete.
     closeTarFile() {
         console.log("Finalizing tar file.");
+        // finalize closes the output stream we're piping to
         this.getTarPacker().finalize();
-        this.getTarOutputWriter().end();
     }
 
     copyFile(absSourcePath, relDestPath) {
@@ -122,7 +124,9 @@ class Bagger {
         this._writePipeline(reader, writer, bagItFile);
     }
 
-    // Copies a file into a tarred bag
+    // Copies a file into a tarred bag.
+    // These calls need to be synchronized, because the tar library
+    // can write only one entry at a time.
     _copyIntoTar(bagItFile, stats) {
         var bagger = this;
         var tar = this.getTarPacker();
@@ -135,13 +139,9 @@ class Bagger {
             mtime: stats.mtimeMs
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
-        var writer = tar.entry(header, function(err) {
-            if (err) {
-                console.log(err);
-                bagger.errors.push(err);
-                //tar.finalize();
-            }
-        });
+        // If we add a callback when we call tar.entry, we always
+        // get a corrupt tar file. Why?
+        var writer = tar.entry(header);
         this._writePipeline(reader, writer, bagItFile);
     }
 
@@ -151,19 +151,12 @@ class Bagger {
     _writePipeline(reader, writer, bagItFile) {
         // First, pipe the data from the reader through all
         // of the digest algorithms (md5, sha256, etc.).
-        // Not sure if we can do this in a loop...
         var hashes = this._getCryptoHashes(bagItFile);
         console.log(`Setting up pipes for ${hashes.length} digests + file`);
         for (var h of hashes) {
             reader.pipe(h)
         }
         reader.pipe(writer);
-        if (this.writeAs == WRITE_AS_TAR) {
-            this.getTarPacker().pipe(this.getTarOutputWriter());
-            // reader.on('end', function() {
-            //     writer.end();
-            // });
-        }
     }
 
     _getCryptoHashes(bagItFile) {
@@ -191,7 +184,6 @@ class Bagger {
         // Tag file data has to go through the hashing algorithms,
         // so we can put the checksums in the tag manifests.
     }
-
 }
 
 module.exports.Bagger = Bagger;
