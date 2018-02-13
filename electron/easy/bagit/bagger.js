@@ -19,10 +19,6 @@ class Bagger {
         this.files = [];
         this.errors = [];
 
-        // The following two are for Payload-Oxum.
-        this.payloadFileCount = 0;
-        this.payloadByteCount = 0;
-
         // Private
         this._tarPacker = null;
         this._tarOutputWriter = null;
@@ -171,6 +167,22 @@ class Bagger {
             hashes.push(hash);
         }
         return hashes;
+    }
+
+    payloadFileCount() {
+        return this.files.length;
+    }
+
+    payloadByteCount() {
+        var byteCount = 0;
+        for (var f of this.files) {
+            byteCount += f.size;
+        }
+        return byteCount;
+    }
+
+    payloadOxum() {
+        return `${this.payloadByteCount()}.${this.payloadFileCount()}`
     }
 
     writeManifest(algorithm) {
