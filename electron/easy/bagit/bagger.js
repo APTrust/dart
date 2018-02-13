@@ -88,8 +88,6 @@ class Bagger {
 
     // TODO: This needs to wait for writes to complete.
     closeTarFile() {
-        console.log("Finalizing tar file.");
-        // finalize closes the output stream we're piping to
         this.getTarPacker().finalize();
     }
 
@@ -166,9 +164,9 @@ class Bagger {
             var hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {
-                console.log('Calling hash on end');
                 hash.end();
-                console.log(hash.read());
+                //console.log(hash.read());
+                bagItFile.checksums[algorithm] = hash.read();
             });
             hashes.push(hash);
         }
