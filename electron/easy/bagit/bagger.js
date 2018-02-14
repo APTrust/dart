@@ -1,4 +1,5 @@
 const BagItFile = require('./bagit_file');
+const async = require('async');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
@@ -10,6 +11,15 @@ const tar = require('tar-stream');
 const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
 
+function writeIntoTarArchive(data, done) {
+    console.log(data);
+    var writer = data.tar.entry(data.header, done);
+    for (var h of data.hashes) {
+        data.reader.pipe(h)
+    }
+    data.reader.pipe(writer);
+}
+
 class Bagger {
 
     constructor(bagPath, profile, writeAs = WRITE_AS_TAR) {
@@ -18,6 +28,9 @@ class Bagger {
         this.writeAs = writeAs;
         this.files = [];
         this.errors = [];
+
+        // Curses!
+        this.asyncQueue = async.queue(writeIntoTarArchive, 1);
 
         // Private
         this._tarPacker = null;
@@ -123,7 +136,7 @@ class Bagger {
     // can write only one entry at a time.
     _copyIntoTar(bagItFile, stats) {
         var bagger = this;
-        var tar = this.getTarPacker();
+        //var tar = this.getTarPacker();
         var header = {
             name: bagItFile.relDestPath,
             size: stats.size,
@@ -137,8 +150,15 @@ class Bagger {
         // get a corrupt tar file. Why? And why does documentation
         // throughout the entire JavaScript/Node ecosystem suck so
         // bad? Most of it's useless, when it's not flat-out wrong.
-        var writer = tar.entry(header);
-        this._writePipeline(reader, writer, bagItFile);
+        //var writer = tar.entry(header);
+        //this._writePipeline(reader, writer, bagItFile);
+        var data = {
+            reader: reader,
+            header: header,
+            tar: this.getTarPacker(),
+            hashes: this._getCryptoHashes(bagItFile)
+        };
+        this.asyncQueue.push(data);
     }
 
     // Pipes the contents of a file through all of the digest
