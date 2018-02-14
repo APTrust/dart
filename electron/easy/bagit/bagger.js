@@ -134,7 +134,9 @@ class Bagger {
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         // If we add a callback when we call tar.entry, we always
-        // get a corrupt tar file. Why?
+        // get a corrupt tar file. Why? And why does documentation
+        // throughout the entire JavaScript/Node ecosystem suck so
+        // bad? Most of it's useless, when it's not flat-out wrong.
         var writer = tar.entry(header);
         this._writePipeline(reader, writer, bagItFile);
     }
@@ -143,8 +145,15 @@ class Bagger {
     // algorithms into the destination file or tar file,
     // and stores the digests in BagItFile.checksums.
     _writePipeline(reader, writer, bagItFile) {
+        // Writes to tar file must be synchronous and one at a time.
+        // Add reader.on('end') event to pull next file from queue.
+        // ---------------------------------------------------------
+
         // First, pipe the data from the reader through all
         // of the digest algorithms (md5, sha256, etc.).
+        // Problem is that the reader starts sending data
+        // as soon as the first pipe is attached. Do we need
+        // to detach and then reattach the reader's pipe event?
         var hashes = this._getCryptoHashes(bagItFile);
         console.log(`Setting up pipes for ${hashes.length} digests + file`);
         for (var h of hashes) {
@@ -161,7 +170,6 @@ class Bagger {
             hash.setEncoding('hex');
             hash.on('finish', function() {
                 hash.end();
-                //console.log(hash.read());
                 bagItFile.checksums[algorithm] = hash.read();
             });
             hashes.push(hash);
