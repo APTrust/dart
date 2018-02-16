@@ -103,8 +103,25 @@ class Bagger {
             }
         }
         // write tag files
+        //    - use job.bagItProfile.requiredTagFileNames()
+        //      to get list of tag files
+        //    - use job.bagItProfile.getTagFileContents('tag-file-name.txt')
+        //      to get the contents to write
+        //    - use copyFile, so we get checksums
+        //    - what about non-parsable custom tag files
+        //      and tag files in special directories?
         // write manifests
+        //    - use copyFile, so we get checksums
+        //    - loop through this.files & write out checksums
+        //      for anything that's a payload file
+        //    - call BagItFile.getManifestEntry(algorithm) to get the
+        //      manifest entry
         // write tag manifests
+        //    - use copyFile, so we get checksums
+        //    - loop through this.files & write out checksums
+        //      for anything that's a tag file
+        //    - call BagItFile.getManifestEntry(algorithm) to get the
+        //      manifest entry
         // validate bag
         // copy tag data to database
         // copy manifest data to database
