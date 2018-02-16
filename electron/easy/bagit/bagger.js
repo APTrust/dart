@@ -96,6 +96,12 @@ class Bagger {
         for (var f of this.job.filesToPackage()) {
             this.copyFile(f, 'data' + f.absPath);
         }
+        if (this.writeAs == WRITE_AS_TAR) {
+            this.asyncQueue.drain = function () {
+                console.log("Done adding payload files");
+                //this.writeTagFiles();
+            }
+        }
         // write tag files
         // write manifests
         // write tag manifests
