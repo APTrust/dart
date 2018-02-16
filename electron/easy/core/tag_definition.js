@@ -143,6 +143,6 @@ module.exports = class TagDefinition {
     // tag on a single line, replacing newlines with spaces.
     toFormattedString() {
         var val = (this.userValue || this.defaultValue || "").replace(/(\r\n)|\n|\r/, ' ');
-        return `${this.tagName}: ${val}\n`;
+        return `${this.tagName}: ${val}`;
     }
 }
