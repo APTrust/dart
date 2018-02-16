@@ -364,6 +364,13 @@ module.exports = class BagItProfile {
         // Return a string of JSON in BagItProfile format,
         // with all the bad keys they use.
     }
+    // Returns true if this profile says the bag must be tarred.
+    mustBeTarred() {
+        return (this.acceptSerialization &&
+                this.acceptSerialization.length == 1 &&
+                this.acceptSerialization[0] == "application/tar" &&
+                this.serialization == "required");
+    }
     static fromStandardJson(jsonString) {
         // Parse JSON from BagItProfile format, with the bad
         // keys they use. Return a BagItProfile object.

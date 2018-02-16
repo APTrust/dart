@@ -6,10 +6,10 @@ const TAG_FILE = 'tagfile';
 
 module.exports = class BagItFile {
 
-    constructor(absSourcePath, relDestPath, size) {
+    constructor(absSourcePath, relDestPath, stats) {
         this.absSourcePath = absSourcePath;
         this.relDestPath = relDestPath;
-        this.size = size;
+        this.stats = stats;
         this.fileType = BagItFile.getFileType(relDestPath);
         this.checksums = {};
     }

@@ -25,10 +25,14 @@ function writeIntoTarArchive(data, done) {
 
 class Bagger {
 
-    constructor(bagPath, job, writeAs = WRITE_AS_TAR) {
-        this.bagPath = bagPath;
+    constructor(job) {
         this.job = job;
-        this.writeAs = writeAs;
+        this.writeAs = WRITE_AS_DIR;
+        this.bagPath = path.join(job.baggingDirectory, job.bagName);
+        if (job.bagItProfile.mustBeTarred()) {
+            this.bagPath += ".tar";
+            this.writeAs = WRITE_AS_TAR;
+        }
         this.files = [];
         this.errors = [];
 
@@ -89,7 +93,9 @@ class Bagger {
             return false;
         }
         this.initOutputDir();
-        // copy all files
+        for (var f of this.job.filesToPackage()) {
+            this.copyFile(f, 'data' + f.absPath);
+        }
         // write tag files
         // write manifests
         // write tag manifests
@@ -97,42 +103,44 @@ class Bagger {
         // copy tag data to database
         // copy manifest data to database
 
+        // TODO: Call this when all writing is done.
         if (this.writeAs == WRITE_AS_TAR) {
-            this.getTarPacker().finalize();
+        //     this.getTarPacker().finalize();
         }
     }
 
-    // copyFile copies file at absSourcePath into relDestPath of the bag.
-    // E.g. /user/josie/file.txt -> data/file.txt
-    copyFile(absSourcePath, relDestPath) {
+    // copyFile copies file at f.absSourcePath into relDestPath of the bag.
+    // Param f is a hash with keys absSourcePath (absolute path to file)
+    // and stats (Node fs.Stats object).
+    copyFile(f, relDestPath) {
         // Copy file from src to dest
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
-        if (!fs.existsSync(absSourcePath)) {
-            var msg = `File does not exist: ${absSourcePath}`;
-            this.errors.push(msg);
-            throw err;
-        }
-        var stats = fs.statSync(absSourcePath);
-        var bagItFile = new BagItFile(absSourcePath, relDestPath, stats.size);
+        // if (!fs.existsSync(absSourcePath)) {
+        //     var msg = `File does not exist: ${absSourcePath}`;
+        //     this.errors.push(msg);
+        //     throw msg;
+        // }
+        // var stats = fs.statSync(absSourcePath);
+        var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
-        console.log(`Copying ${absSourcePath} to ${relDestPath}`);
+        console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
         if (this.writeAs == WRITE_AS_DIR) {
-            this._copyIntoDir(bagItFile, stats);
+            this._copyIntoDir(bagItFile);
         } else if (this.writeAs == WRITE_AS_TAR) {
-            this._copyIntoTar(bagItFile, stats);
+            this._copyIntoTar(bagItFile);
         } else {
             throw `Unknown writeAs value: '${this.writeAs}'`
         }
     }
 
     // Copies a file into a directory (unserialized bag)
-    _copyIntoDir(bagItFile, stats) {
+    _copyIntoDir(bagItFile) {
         var absDestPath = path.join(this.bagPath, bagItFile.relDestPath);
         var writer = fs.createWriteStream(absDestPath);
         var reader = fs.createReadStream(bagItFile.absSourcePath);
-        var hashes = this._getCryptoHashes(bagItFile);
+        var hashes = this._getCryptoHashes(f);
         console.log(`Setting up pipes for ${hashes.length} digests + file`);
         for (var h of hashes) {
             reader.pipe(h)
@@ -143,15 +151,15 @@ class Bagger {
     // Copies a file into a tarred bag.
     // These calls need to be synchronized, because the tar library
     // can write only one entry at a time.
-    _copyIntoTar(bagItFile, stats) {
+    _copyIntoTar(bagItFile) {
         var bagger = this;
         var header = {
             name: bagItFile.relDestPath,
-            size: stats.size,
-            mode: stats.mode,
-            uid: stats.uid,
-            gid: stats.gid,
-            mtime: stats.mtimeMs
+            size: bagItFile.stats.size,
+            mode: bagItFile.stats.mode,
+            uid: bagItFile.stats.uid,
+            gid: bagItFile.stats.gid,
+            mtime: bagItFile.stats.mtimeMs
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         var data = {
@@ -187,7 +195,7 @@ class Bagger {
     payloadByteCount() {
         var byteCount = 0;
         for (var f of this.files) {
-            byteCount += f.size;
+            byteCount += f.stats.size;
         }
         return byteCount;
     }
