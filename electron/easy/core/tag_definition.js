@@ -137,4 +137,12 @@ module.exports = class TagDefinition {
     looksLikeDescriptionTag() {
         return this.tagName.toLowerCase().includes("description");
     }
+    // toFormattedString returns the tag as string in a format suitable
+    // for writing to a tag file. Following LOC's bagit.py, this function
+    // does not break lines into 79 character chunks. It prints the whole
+    // tag on a single line, replacing newlines with spaces.
+    toFormattedString() {
+        var val = (this.userValue || this.defaultValue || "").replace(/(\r\n)|\n|\r/, ' ');
+        return `${this.tagName}: ${val}\n`;
+    }
 }
