@@ -11,6 +11,9 @@ const tar = require('tar-stream');
 const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
 
+// writeIntoTarArchive is the function that the async queue
+// will manage. When writing to a tar archive, we must add
+// files one at a time.
 function writeIntoTarArchive(data, done) {
     console.log(data);
     var writer = data.tar.entry(data.header, done);
@@ -22,9 +25,9 @@ function writeIntoTarArchive(data, done) {
 
 class Bagger {
 
-    constructor(bagPath, profile, writeAs = WRITE_AS_TAR) {
+    constructor(bagPath, job, writeAs = WRITE_AS_TAR) {
         this.bagPath = bagPath;
-        this.profile = profile;
+        this.job = job;
         this.writeAs = writeAs;
         this.files = [];
         this.errors = [];
@@ -32,15 +35,16 @@ class Bagger {
         // Curses!
         this.asyncQueue = async.queue(writeIntoTarArchive, 1);
 
+        // preValidationResult: we validate the job before running it
+        // and store the result here. This is a ValidationResult object.
+        // Check .isValid() to see if it's valid.
+        // Check the .errors hash for info about what went wrong.
+        this.preValidationResult = null;
+
         // Private
         this._tarPacker = null;
         this._tarOutputWriter = null;
         this._outputDirInitialized = false;
-    }
-
-    preValidate() {
-        // Validate profile.
-        // Ensure required tags are present.
     }
 
     initOutputDir() {
@@ -79,8 +83,11 @@ class Bagger {
     }
 
     create() {
-        // validate BagItProfile
-        // ensure required tags are present
+        this.preValidationResult = this.job.validate();
+        if (!this.preValidationResult.isValid()) {
+            this.errors.push("See job validation errors");
+            return false;
+        }
         this.initOutputDir();
         // copy all files
         // write tag files
@@ -91,15 +98,12 @@ class Bagger {
         // copy manifest data to database
 
         if (this.writeAs == WRITE_AS_TAR) {
-            this.closeTarFile();
+            this.getTarPacker().finalize();
         }
     }
 
-    // TODO: This needs to wait for writes to complete.
-    closeTarFile() {
-        this.getTarPacker().finalize();
-    }
-
+    // copyFile copies file at absSourcePath into relDestPath of the bag.
+    // E.g. /user/josie/file.txt -> data/file.txt
     copyFile(absSourcePath, relDestPath) {
         // Copy file from src to dest
         // stat file and save srcPath, destPath, size, and checksums
@@ -128,7 +132,12 @@ class Bagger {
         var absDestPath = path.join(this.bagPath, bagItFile.relDestPath);
         var writer = fs.createWriteStream(absDestPath);
         var reader = fs.createReadStream(bagItFile.absSourcePath);
-        this._writePipeline(reader, writer, bagItFile);
+        var hashes = this._getCryptoHashes(bagItFile);
+        console.log(`Setting up pipes for ${hashes.length} digests + file`);
+        for (var h of hashes) {
+            reader.pipe(h)
+        }
+        reader.pipe(writer);
     }
 
     // Copies a file into a tarred bag.
@@ -136,7 +145,6 @@ class Bagger {
     // can write only one entry at a time.
     _copyIntoTar(bagItFile, stats) {
         var bagger = this;
-        //var tar = this.getTarPacker();
         var header = {
             name: bagItFile.relDestPath,
             size: stats.size,
@@ -146,45 +154,20 @@ class Bagger {
             mtime: stats.mtimeMs
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
-        // If we add a callback when we call tar.entry, we always
-        // get a corrupt tar file. Why? And why does documentation
-        // throughout the entire JavaScript/Node ecosystem suck so
-        // bad? Most of it's useless, when it's not flat-out wrong.
-        //var writer = tar.entry(header);
-        //this._writePipeline(reader, writer, bagItFile);
         var data = {
             reader: reader,
             header: header,
             tar: this.getTarPacker(),
             hashes: this._getCryptoHashes(bagItFile)
         };
+        // Write files one at a time.
         this.asyncQueue.push(data);
-    }
-
-    // Pipes the contents of a file through all of the digest
-    // algorithms into the destination file or tar file,
-    // and stores the digests in BagItFile.checksums.
-    _writePipeline(reader, writer, bagItFile) {
-        // Writes to tar file must be synchronous and one at a time.
-        // Add reader.on('end') event to pull next file from queue.
-        // ---------------------------------------------------------
-
-        // First, pipe the data from the reader through all
-        // of the digest algorithms (md5, sha256, etc.).
-        // Problem is that the reader starts sending data
-        // as soon as the first pipe is attached. Do we need
-        // to detach and then reattach the reader's pipe event?
-        var hashes = this._getCryptoHashes(bagItFile);
-        console.log(`Setting up pipes for ${hashes.length} digests + file`);
-        for (var h of hashes) {
-            reader.pipe(h)
-        }
-        reader.pipe(writer);
     }
 
     _getCryptoHashes(bagItFile) {
         var hashes = [];
-        for (var algorithm of this.profile.manifestsRequired) {
+        var profile = this.job.bagItProfile;
+        for (var algorithm of profile.manifestsRequired) {
             console.log(`Adding ${algorithm} for ${bagItFile.relDestPath}`);
             var hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
