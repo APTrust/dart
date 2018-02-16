@@ -1,3 +1,6 @@
+const path = require('path');
+const fs = require('fs');
+
 module.exports = class Util {
     // Thanks https://gist.github.com/kaizhu256/4482069
     static uuid4() {
@@ -107,4 +110,32 @@ module.exports = class Util {
         }
         return null;
     }
+    // walkSync recursively lists all files in a directory and its
+    // subdirectories and returns them in filelist. If you want to
+    // filter the list, include a callback filterFunction, which takes
+    // the filepath as its sole param (a string) and returns true or
+    // false to indicate whether to include the file in the list.
+    //
+    // The returned list is a list of hashes, and each hash has keys
+    // absPath: the absolute path to the file
+    // stats: a Node fs.Stats object with info about the file
+    static walkSync(dir, filelist, filterFunction) {
+        var files = fs.readdirSync(dir);
+        filelist = filelist || [];
+        filterFunction = filterFunction || function(file) { return true };
+        files.forEach(function(file) {
+            var absPath = path.join(dir, file);
+            var stats = fs.statSync(absPath);
+            if (stats.isDirectory()) {
+                filelist = Util.walkSync(absPath, filelist, filterFunction);
+            }
+            else if (filterFunction(absPath)) {
+                filelist.push({
+                    absPath: absPath,
+                    stats: stats
+                });
+            }
+        });
+        return filelist;
+    };
 }
