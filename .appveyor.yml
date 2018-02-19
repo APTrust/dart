@@ -33,7 +33,7 @@ install:
 
 
 build_script:
-	- npm run dist
+  - npm run dist
   - go build -o buildOutput\myapp -i .
 
 artifacts:
