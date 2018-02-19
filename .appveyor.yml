@@ -23,7 +23,6 @@ install:
   - npm install npm -g
   - npm install electron-builder@next # force install next version to test electron-builder
   - npm install electron
-  - npm prune
   - echo %PATH%
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
