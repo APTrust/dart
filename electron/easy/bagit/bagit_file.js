@@ -1,8 +1,4 @@
-
-const PAYLOAD_FILE = 'payload';
-const PAYLOAD_MANIFEST = 'manifest';
-const TAG_MANIFEST = 'tagmanifest';
-const TAG_FILE = 'tagfile';
+const constants = require('./constants');
 
 module.exports = class BagItFile {
 
@@ -31,12 +27,12 @@ module.exports = class BagItFile {
 
     static getFileType(relDestPath) {
         if (relDestPath.startsWith('data/')) {
-            return PAYLOAD_FILE;
+            return constants.PAYLOAD_FILE;
         } else if (relDestPath.startsWith('manifest-')) {
-            return PAYLOAD_MANIFEST;
+            return constants.PAYLOAD_MANIFEST;
         } else if (relDestPath.startsWith('tagmanifest-')) {
-            return TAG_MANIFEST;
+            return constants.TAG_MANIFEST;
         }
-        return TAG_FILE;
+        return constants.TAG_FILE;
     }
 }

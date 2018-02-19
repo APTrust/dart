@@ -1,12 +1,13 @@
 const BagItFile = require('./bagit_file');
 const async = require('async');
+const constants = require('./constants');
 const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const stream = require('stream');
 const tar = require('tar-stream');
-
+const tmp = require('tmp');
 
 const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
@@ -36,8 +37,17 @@ class Bagger {
         this.files = [];
         this.errors = [];
 
-        // Curses!
+        // Keep a list of temp files so we can clean them up
+        // when we're done. These are tag files and manifests
+        // that we copy into the bag.
+        this.tmpFiles = [];
+
+        // Async: factor back in the principles of synchronocity and chronology
+        // that Node.js factored out.
         this.payloadQueue = async.queue(writeIntoTarArchive, 1);
+        this.tagFileQueue = async.queue(writeIntoTarArchive, 1);
+        this.manifestQueue = async.queue(writeIntoTarArchive, 1);
+        this.tagManifestQueue = async.queue(writeIntoTarArchive, 1);
 
         // preValidationResult: we validate the job before running it
         // and store the result here. This is a ValidationResult object.
@@ -86,6 +96,8 @@ class Bagger {
         return this._tarOutputWriter;
     }
 
+    // TODO: Separate tar writer and dir writer into separate providers
+    // that implement the same interface.
     create() {
         var bagger = this;
         this.preValidationResult = this.job.validate();
@@ -103,20 +115,6 @@ class Bagger {
                 bagger.tarTagFiles();
             }
         }
-        // write tag files
-        //    - use job.bagItProfile.requiredTagFileNames()
-        //      to get list of tag files
-        //    - use job.bagItProfile.getTagFileContents('tag-file-name.txt')
-        //      to get the contents to write
-        //    - use copyFile, so we get checksums
-        //    - what about non-parsable custom tag files
-        //      and tag files in special directories?
-        // write manifests
-        //    - use copyFile, so we get checksums
-        //    - loop through this.files & write out checksums
-        //      for anything that's a payload file
-        //    - call BagItFile.getManifestEntry(algorithm) to get the
-        //      manifest entry
         // write tag manifests
         //    - use copyFile, so we get checksums
         //    - loop through this.files & write out checksums
@@ -142,6 +140,48 @@ class Bagger {
         //    - use copyFile, so we get checksums
         //    - what about non-parsable custom tag files
         //      and tag files in special directories?
+        console.log("Writing tag files");
+        var bagger = this;
+        var oxumTag = bagger.job.bagItProfile.findTagByName('Payload-Oxum');
+        if (oxumTag) {
+            oxumTag.userValue = bagger.payloadOxum();
+        }
+        for (var tagFileName of this.job.bagItProfile.requiredTagFileNames()) {
+            var content = this.job.bagItProfile.getTagFileContents(tagFileName);
+            var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
+            var bytes = fs.writeSync(tmpFile.fd, content,  0, 'utf8');
+            if (bytes != content.length) {
+                throw `In tag file ${tagFileName} wrote only ${bytes} of ${content.length} bytes`;
+            }
+            fs.closeSync(tmpFile.fd);
+            this.tmpFiles.push(tmpFile.name);
+            console.log(tmpFile.name);
+            var source = {
+                absPath: tmpFile.name,
+                stats: fs.statSync(tmpFile.name)
+            }
+            this.copyFile(source, tagFileName);
+        }
+        // On done, create manifests
+        this.tagFileQueue.drain = function () {
+            console.log("Done adding tag files");
+            bagger.tarManifests();
+        }
+    }
+
+    tarManifests() {
+        // write manifests
+        //    - use copyFile, so we get checksums
+        //    - loop through this.files & write out checksums
+        //      for anything that's a payload file
+        //    - call BagItFile.getManifestEntry(algorithm) to get the
+        //      manifest entry
+
+        console.log("Writing manifests");
+
+        // On done, close the tar archive. Clean up all temp files.
+        // TODO: Move this to the end of all manifest writing.
+        this.getTarPacker().finalize();
     }
 
     // copyFile copies file at f.absSourcePath into relDestPath of the bag.
@@ -152,12 +192,6 @@ class Bagger {
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
-        // if (!fs.existsSync(absSourcePath)) {
-        //     var msg = `File does not exist: ${absSourcePath}`;
-        //     this.errors.push(msg);
-        //     throw msg;
-        // }
-        // var stats = fs.statSync(absSourcePath);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
         console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
@@ -204,7 +238,15 @@ class Bagger {
             hashes: this._getCryptoHashes(bagItFile)
         };
         // Write files one at a time.
-        this.payloadQueue.push(data);
+        if (bagItFile.fileType == constants.PAYLOAD_FILE) {
+            this.payloadQueue.push(data);
+        } else if (bagItFile.fileType == constants.TAG_FILE) {
+            this.tagFileQueue.push(data);
+        } else if (bagItFile.fileType == constants.TAG_MANIFEST) {
+            this.tagManifestQueue.push(data);
+        } else {
+            this.manifestQueue.push(data);
+        }
     }
 
     _getCryptoHashes(bagItFile) {
@@ -224,13 +266,15 @@ class Bagger {
     }
 
     payloadFileCount() {
-        return this.files.length;
+        return this.files.filter(f => f.fileType == constants.PAYLOAD_FILE).length;
     }
 
     payloadByteCount() {
         var byteCount = 0;
         for (var f of this.files) {
-            byteCount += f.stats.size;
+            if (f.fileType == constants.PAYLOAD_FILE) {
+                byteCount += f.stats.size;
+            }
         }
         return byteCount;
     }
