@@ -37,7 +37,7 @@ class Bagger {
         this.errors = [];
 
         // Curses!
-        this.asyncQueue = async.queue(writeIntoTarArchive, 1);
+        this.payloadQueue = async.queue(writeIntoTarArchive, 1);
 
         // preValidationResult: we validate the job before running it
         // and store the result here. This is a ValidationResult object.
@@ -87,6 +87,7 @@ class Bagger {
     }
 
     create() {
+        var bagger = this;
         this.preValidationResult = this.job.validate();
         if (!this.preValidationResult.isValid()) {
             this.errors.push("See job validation errors");
@@ -97,9 +98,9 @@ class Bagger {
             this.copyFile(f, 'data' + f.absPath);
         }
         if (this.writeAs == WRITE_AS_TAR) {
-            this.asyncQueue.drain = function () {
+            this.payloadQueue.drain = function () {
                 console.log("Done adding payload files");
-                //this.writeTagFiles();
+                bagger.tarTagFiles();
             }
         }
         // write tag files
@@ -130,6 +131,17 @@ class Bagger {
         if (this.writeAs == WRITE_AS_TAR) {
         //     this.getTarPacker().finalize();
         }
+    }
+
+    tarTagFiles() {
+        // write tag files
+        //    - use job.bagItProfile.requiredTagFileNames()
+        //      to get list of tag files
+        //    - use job.bagItProfile.getTagFileContents('tag-file-name.txt')
+        //      to get the contents to write
+        //    - use copyFile, so we get checksums
+        //    - what about non-parsable custom tag files
+        //      and tag files in special directories?
     }
 
     // copyFile copies file at f.absSourcePath into relDestPath of the bag.
@@ -192,7 +204,7 @@ class Bagger {
             hashes: this._getCryptoHashes(bagItFile)
         };
         // Write files one at a time.
-        this.asyncQueue.push(data);
+        this.payloadQueue.push(data);
     }
 
     _getCryptoHashes(bagItFile) {
