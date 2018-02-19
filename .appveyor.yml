@@ -29,7 +29,7 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - go version
   - go env
-	- npm install
+  - npm install
 
 
 build_script:
