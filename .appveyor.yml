@@ -1,0 +1,54 @@
+version: 1.0.0.{build}
+
+platform: x64
+
+cache:
+  - node_modules
+  - app\node_modules
+  - '%APPDATA%\npm-cache'
+  - '%USERPROFILE%\.electron'
+
+branches:
+  only:
+    - master
+
+clone_folder: c:\gopath\src\github.com\APTrust\easy-store
+
+environment:
+  GOPATH: c:\gopath
+
+install:
+  - ps: Install-Product node 6 x64
+  - git reset --hard HEAD
+  - npm install npm -g
+  - npm install electron-builder@next # force install next version to test electron-builder
+  - npm install
+  - npm prune
+  - echo %PATH%
+  - echo %GOPATH%
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - go version
+  - go env
+	- npm install
+
+
+build_script:
+	- npm run dist
+  - go build -o buildOutput\myapp -i .
+
+artifacts:
+  - path: buildOutput/myapp
+    name: binary
+
+test: off
+#deploy:
+#  release: myapp-$(appveyor_build_version)
+#  description: 'This is a release of my awesome application.'
+#  provider: GitHub
+#  auth_token:
+#    secure: FW3tJ3fMncxvs58/ifSP7w+kBl9BlxvRMr9liHmnBs14ALRG8Vfyol+sNhj9u2JA
+#  artifact: binary # This is the name we specified in the artifacts section.
+#  draft: false
+#  prerelease: false
+#  on:
+#    branch: master
