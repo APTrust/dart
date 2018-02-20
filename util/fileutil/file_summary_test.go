@@ -92,3 +92,14 @@ func TestWindowsPath(t *testing.T) {
 	}
 	assert.Equal(t, "\\usr\\local\\bin\\whatnot", fs.WindowsPath())
 }
+
+func TestFileSystemPath(t *testing.T) {
+	fs := &fileutil.FileSummary{
+		RelPath: "/usr/local/bin/whatnot",
+	}
+	if runtime.GOOS == "windows" {
+		assert.Equal(t, "\\usr\\local\\bin\\whatnot", fs.FileSystemPath())
+	} else {
+		assert.Equal(t, "/usr/local/bin/whatnot", fs.FileSystemPath())
+	}
+}
