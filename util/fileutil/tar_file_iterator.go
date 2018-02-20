@@ -111,7 +111,6 @@ func (iter *TarFileIterator) FindMatchingFiles(regex *regexp.Regexp) ([]string, 
 // multiple top-level directories.
 func (iter *TarFileIterator) setTopLevelDirName(headerName string) {
 	topLevelDir := strings.Split(headerName, "/")[0]
-	//topLevelDir := strings.Split(headerName, string(os.PathSeparator))[0]
 	if strings.HasSuffix(topLevelDir, "/") {
 		topLevelDir = topLevelDir[0:len(topLevelDir)-1]
 	}
