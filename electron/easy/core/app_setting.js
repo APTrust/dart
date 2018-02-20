@@ -7,7 +7,7 @@ const ValidationResult = require('./validation_result');
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});
 
-const requiredSettings = ["Institution Domain", "Bagging Directory"];
+const requiredSettings = ["Institution Domain", "Bagging Directory", "Path to Bagger"];
 
 module.exports = class AppSetting {
     constructor(name, value) {
@@ -36,8 +36,10 @@ module.exports = class AppSetting {
             form.fields['name'].attrs['disabled'] = true;
             if (this.name == "Institution Domain") {
                 form.fields['name'].help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
-            } else if (this.name = "Bagging Directory") {
+            } else if (this.name == "Bagging Directory") {
                 form.fields['name'].help = "Where should Easy Store create bags?"
+            } else if (this.name == "Path to Bagger") {
+                form.fields['name'].help = "What is the full path to the apt_create_bag executable?"
             }
         }
         form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
