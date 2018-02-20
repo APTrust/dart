@@ -3,6 +3,7 @@ const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const tar = require('tar-stream')
 const Util = require('../../core/util');
@@ -72,6 +73,9 @@ class BagIt {
             var started = false;
             var fileCount = 0;
             var baggerProgram = "apt_create_bag";
+            if (os.platform == 'win32') {
+                baggerProgram = "apt_create_bag.exe";
+            }
             var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
             bagger.on('error', (err) => {
