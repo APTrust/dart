@@ -60,6 +60,8 @@ func NewBagger(bagPath string, profile *BagItProfile) (*Bagger, error) {
 //
 // Don't add manifests here, or you'll get an error.
 func (bagger *Bagger) AddFile(absSourcePath, relDestPath string) bool {
+	// Get rid of Windows "C:" and "\\host\share" prefixes
+	relDestPath = strings.Replace(relDestPath, filepath.VolumeName(absSourcePath), "", 1)
 	if fileutil.LooksLikeManifest(relDestPath) {
 		bagger.addError("Don't add manifest '%s' through AddFile", relDestPath)
 		return false
