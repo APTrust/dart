@@ -85,3 +85,10 @@ func TestNewFileSummaryFromTarHeader(t *testing.T) {
 	assert.Equal(t, 1001, fs.Uid)
 	assert.Equal(t, 501, fs.Gid)
 }
+
+func TestWindowsPath(t *testing.T) {
+	fs := &fileutil.FileSummary{
+		RelPath: "/usr/local/bin/whatnot",
+	}
+	assert.Equal(t, "\\usr\\local\\bin\\whatnot", fs.WindowsPath())
+}

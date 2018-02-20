@@ -107,3 +107,9 @@ func NewFileSummaryFromTarHeader(header *tar.Header, trimPrefix string) (*FileSu
 		Gid:           header.Gid,
 	}, nil
 }
+
+// WindowsPath returns the file's RelPath with backslashes
+// instead of forward slashes.
+func (summary *FileSummary) WindowsPath() string {
+	return strings.Replace(summary.RelPath, "/", "\\", -1)
+}
