@@ -463,6 +463,13 @@ $(function() {
         var setting = new es.AppSetting("Bagging Directory", dir);
         setting.save();
     }
+    if (es.AppSetting.findByName("Path to Bagger") == null) {
+        console.log("Creating required app settings");
+        var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
+        var appPath = path.join(os.homedir(), appName);
+        var setting = new es.AppSetting("Path to Bagger", appPath);
+        setting.save();
+    }
 
     // This is for interactive testing in the console.
     window.es = es;

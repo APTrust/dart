@@ -3,8 +3,10 @@ const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const tar = require('tar-stream')
+const AppSetting = require('../../core/app_setting');
 const Util = require('../../core/util');
 const NEWLINE = require('os').EOL;
 
@@ -71,7 +73,7 @@ class BagIt {
             // Maybe that goes in AppSettings?
             var started = false;
             var fileCount = 0;
-            var baggerProgram = "apt_create_bag";
+            var baggerProgram = this.getBaggerProgramPath();
             var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
             bagger.on('error', (err) => {
@@ -139,6 +141,22 @@ class BagIt {
             packager.emitter.emit('error', ex);
             console.error(ex);
         }
+    }
+
+    getBaggerProgramPath() {
+        var baggerProgram = "";
+        var setting = AppSetting.findByName("Path to Bagger");
+        if (setting) {
+            baggerProgram = setting.value;
+        } else {
+            if (os.platform == 'win32') {
+                baggerProgram = "apt_create_bag.exe";
+            } else {
+                baggerProgram = "apt_create_bag";
+            }
+        }
+        console.log("Bagger program: " + baggerProgram);
+        return baggerProgram;
     }
 
     getManifestDirName() {
