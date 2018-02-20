@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -337,7 +338,12 @@ func (bagger *Bagger) addTarFile(tarWriter *fileutil.TarWriter, file *File) bool
 	// my_bag. For that to happen, we have to add the bag name prefix
 	// onto the relative path of every file.
 	prefix := fileutil.BaseNameWithoutExtension(tarWriter.PathToTarFile)
+
+	// destPath in tar archive must use forward slash (this becomes the header.Name)
 	destPath := filepath.Join(prefix, file.FileSummary.RelPath)
+	if runtime.GOOS == "windows" {
+		destPath = strings.Replace(destPath, "\\", "/", -1)
+	}
 
 	// Copy src to dest, and keep track of the checksums.
 	// Note that param bagger.profile.ManifestsRequired is a list
@@ -426,7 +432,12 @@ func (bagger *Bagger) writeTempFileIntoArchive(tarWriter *fileutil.TarWriter, fi
 	// checksums, because they were set in the call to file.Write above.
 	// See comment above in addTarFile for why we add the prefix.
 	prefix := fileutil.BaseNameWithoutExtension(tarWriter.PathToTarFile)
+
+	// destPath in tar archive must use forward slash (this becomes the header.Name)
 	destPath := filepath.Join(prefix, file.FileSummary.RelPath)
+	if runtime.GOOS == "windows" {
+		destPath = strings.Replace(destPath, "\\", "/", -1)
+	}
 	_, err = tarWriter.AddToArchive(tmpFile, destPath, []string{})
 	if err != nil {
 		bagger.addError(err.Error())

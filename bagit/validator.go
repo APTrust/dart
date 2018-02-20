@@ -343,7 +343,7 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 				// have to be included in the tag manifests.
 				continue
 			}
-			// Changed os.PathSeparator to "/" because BagIt uses forward slash
+			// Changed string(os.PathSeparator) to "/" because BagIt uses forward slash
 			if !strings.Contains(filename, "/") {
 				validator.addError("Non-manifest file '%s' is not allowed "+
 					"in top-level directory when BagIt profile says "+
