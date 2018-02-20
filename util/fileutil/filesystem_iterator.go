@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -59,9 +60,13 @@ func (iter *FileSystemIterator) Next() (io.ReadCloser, *FileSummary, error) {
 	if stat, err = os.Stat(filePath); os.IsNotExist(err) {
 		return nil, nil, fmt.Errorf("File '%s' does not exist.", filePath)
 	}
+	relPath := strings.Replace(filePath, iter.rootPath+string(os.PathSeparator), "", 1)
+	if runtime.GOOS == "windows" {
+		relPath = strings.Replace(relPath, "\\", "/", -1)
+	}
 	fileMode := stat.Mode()
 	fs := &FileSummary{
-		RelPath:       strings.Replace(filePath, iter.rootPath+string(os.PathSeparator), "", 1),
+		RelPath:       relPath,
 		Mode:          fileMode,
 		Size:          stat.Size(),
 		ModTime:       stat.ModTime(),
