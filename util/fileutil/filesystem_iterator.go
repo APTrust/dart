@@ -115,7 +115,9 @@ func (iter *FileSystemIterator) FindMatchingFiles(regex *regexp.Regexp) ([]strin
 // instead of a string to maintain API compatibility with the ReadIterator
 // interface.
 func (iter *FileSystemIterator) GetTopLevelDirNames() []string {
-	pathParts := strings.Split(iter.rootPath, string(os.PathSeparator))
+	// cleanRootPath removes "C:" or "\\host\share" from Windows paths
+	cleanRootPath := strings.Replace(iter.rootPath, filepath.VolumeName(iter.rootPath), "", 1)
+	pathParts := strings.Split(cleanRootPath, string(os.PathSeparator))	
 	topLevelDirs := make([]string, 1)
 	topLevelDirs[0] = pathParts[len(pathParts)-1]
 	return topLevelDirs

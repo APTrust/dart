@@ -361,7 +361,7 @@ func (bagger *Bagger) writeTags() bool {
 		destPath := filepath.Join(bagger.bag.Path, file.FileSummary.RelPath)
 		err := file.Write(destPath, bagger.profile.TagManifestsRequired)
 		if err != nil {
-			bagger.addError("Error writing tag file '%s'", destPath, err.Error())
+			bagger.addError("Error writing tag file '%s': %v", destPath, err.Error())
 			return false
 		}
 	}
