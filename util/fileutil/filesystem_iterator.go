@@ -5,7 +5,6 @@ import (
 	"github.com/APTrust/easy-store/util/platform"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -18,7 +17,7 @@ type FileSystemIterator struct {
 }
 
 func NewFileSystemIterator(pathToDir string) (*FileSystemIterator, error) {
-	if !path.IsAbs(pathToDir) {
+	if !filepath.IsAbs(pathToDir) {
 		return nil, fmt.Errorf("Path '%s' must be absolute.", pathToDir)
 	}
 	var stat os.FileInfo
