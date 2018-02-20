@@ -21,7 +21,10 @@ def electron_cmd
 end
 
 def easy_store_path
-  File.expand_path(File.dirname(__FILE__))
+  if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM)
+    return '.'
+  end
+  return File.expand_path(File.dirname(__FILE__))
 end
 
 def path_to_node_electron
