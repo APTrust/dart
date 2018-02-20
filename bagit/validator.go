@@ -7,7 +7,6 @@ import (
 	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
-	//"os"
 	"path/filepath"
 	"strings"
 )
