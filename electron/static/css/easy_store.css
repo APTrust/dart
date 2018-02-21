@@ -17,6 +17,25 @@
 .row-spaced {
    margin-bottom: 5px;
 }
+/* Prevent anchor links from looking like clickable links. */
+.anchor, .anchor:hover {
+   color: inherit;
+   text-decoration: none;
+}
+/* Indents are for indenting items in hierarchal lists, as in a table of contents */
+.indent-1 {
+   padding-left: 25px;
+}
+.indent-2 {
+   padding-left: 50px;
+}
+.indent-3 {
+   padding-left: 75px;
+}
+.indent-4 {
+   padding-left: 100px;
+}
+
 /* Small custom icons, like expand/collapse */
 .es-small-icon {
    height: 20px;

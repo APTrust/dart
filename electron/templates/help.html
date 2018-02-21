@@ -1,6 +1,21 @@
 <h1>Table of Contents</h1>
 
-<h2>About</h2>
+<p><a href="#About EasyStore">About EasyStore</a></p>
+<p><a href="#Getting Started">Getting Started</a></p>
+<p class="indent-1"><a href="#Customizing Your BagIt Profile">Customizing Your BagIt Profile</a></p>
+<p class="indent-1"><a href="#Adding a Storage Service">Adding a Storage Service</a></p>
+<p class="indent-1"><a href="#Running Your First Job">Running Your First Job</a></p>
+<p class="indent-1"><a href="#Viewing Job Manifests">Viewing Job Manifests</a></p>
+<p><a href="#Application Settings">Application Settings</a></p>
+<p><a href="#Storage Services">Storage Services</a></p>
+<p><a href="#BagIt Profiles">BagIt Profiles</a></p>
+<p><a href="#Creating a Custom BagIt Profile">Creating a Custom BagIt Profile</a></p>
+<p><a href="#Additional Resources for APTrust Members">Additional Resources for APTrust Members</a></p>
+<p><a href="#Additional Resources for DPN Members">Additional Resources for DPN Members</a></p>
+<p><a href="#Release Notes">Release Notes</a></p>
+
+
+<h2><a name="About EasyStore" class="anchor">About EasyStore</a></h2>
 
 <p>You're using EasyStore 0.1.0, which is an early release with limited functionality and limited real-world testing. It currently supports the following operations:</p>
 
@@ -12,26 +27,27 @@
 
 <p>The product currently consists of two applications: EasyStore, which is the graphical component you're looking at now, and apt_create_bag which packages files into BagIt format. In the months to come, apt_create_bag will be wrapped into EasyStore. We plan on adding new Storage Service types (in addition to S3) and a few other features. We'll also improve documentation, testing, and quality control.</p>
 
-<h2>Getting Started</h2>
+<h2><a name="Getting Started" class="anchor">Getting Started</a></h2>
 
-<h3>Customizing Your BagIt Profile</h3>
+<h3><a name="Customizing Your BagIt Profile" class="anchor">Customizing Your BagIt Profile</a></h3>
 
-<h3>Adding a Storage Service</h3>
+<h3><a name="Adding a Storage Service" class="anchor">Adding a Storage Service</a></h3>
 
-<h3>Running Your First Job</h3>
+<h3><a name="Running Your First Job" class="anchor">Running Your First Job</a></h3>
 
-<h3>Viewing Job Manifests</h3>
+<h3><a name="Viewing Job Manifests" class="anchor">Viewing Job Manifests</a></h3>
 
-<h2>Application Settings</h2>
+<h2><a name="Application Settings" class="anchor">Application Settings</a></h2>
 
-<h2>Storage Services</h2>
+<h2><a name="Storage Services" class="anchor">Storage Services</a></h2>
 
-<h2>BagIt Profiles</h2>
+<h2><a name="BagIt Profiles" class="anchor">BagIt Profiles</a></h2>
 
-<h2>Creating a Custom BagIt Profile</h2>
-For advanced users and needs.
+<h2><a name="Creating a Custom BagIt Profile" class="anchor">Creating a Custom BagIt Profile</a></h2>
 
-<h2><a name="Additional Resources for APTrust Members">Additional Resources for APTrust Members</a></h2>
+<p>For advanced users and needs.</p>
+
+<h2><a name="Additional Resources for APTrust Members" class="anchor">Additional Resources for APTrust Members</a></h2>
 
 <p>APTrust members who have questions or need help can contact support at <a href="mailto:support@aptrust.org">support@aptrust.org</a></p>
 
@@ -50,11 +66,24 @@ For advanced users and needs.
     <li>Bugs and feature requests: <a class="external-link clickable" data-href="https://github.com/APTrust/easy-store/issues">https://github.com/APTrust/easy-store/issues</a></li>
 </ul>
 
-<h2><a name="Additional Resources for DPN Members">Additional Resources for DPN Members</a></h2>
+<h2><a name="Additional Resources for DPN Members" class="anchor">Additional Resources for DPN Members</a></h2>
 
 <p>Please note that while you can use EasyStore to create DPN bags, you cannot deposit data directly into DPN. Deposits must go through a DPN node such as APTrust, Hathi Trust, Chronopolis, or the Texas Digital Repository.</p>
 
 <p>For more information about DPN, go to <a class="external-link clickable" data-href="http://dpn.org/">http://dpn.org/</a>, or the DPN wiki at <a class="external-link clickable" data-href="https://wiki.duraspace.org/display/DPNC/">The DPN Wiki</a>, but note that some parts of the wiki are out of date.</p>
+
+<h2><a name="Release Notes" class="anchor">Release Notes</a></h2>
+
+<h3>Version 0.1.0 - Feb. 22, 2018</h3>
+
+<p>Initial release.</p>
+
+<ul>
+    <li>Windows only</li>
+    <li>Suports bagging in APTrust and DPN formats.</li>
+    <li>Supports uploads to any server running an S3-compliant API.</li>
+    <li>Supports defining custom BagIt formats and producing bags based on those formats.</li>
+</ul>
 
 <script>
 $(function() {
