@@ -8,7 +8,13 @@ const path = require('path');
 const tar = require('tar-stream')
 const AppSetting = require('../../core/app_setting');
 const Util = require('../../core/util');
-const NEWLINE = require('os').EOL;
+
+// We're reading output from a Golang program, which uses "\n"
+// as the newline character when printing to STDOUT on all 
+// platforms, including Windows. See:
+// https://golang.org/src/fmt/print.go?s=7595:7644#L253
+const NEWLINE = "\n";
+//const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
 const description = "Provides access to the APTrust command-line bagging library."
