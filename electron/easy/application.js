@@ -14,6 +14,7 @@ $(function() {
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
     $("#menuJobNew").click(jobNew);
+    $("#menuHelp").on('click', function() { helpShow(null); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -106,6 +107,12 @@ $(function() {
         var data = {};
         data.jobs = es.Job.list(10, 0);
         $("#container").html(templates.dashboard(data));
+        es.ActiveObject = null;
+    }
+
+    // Help doc
+    function helpShow(message) {
+        $("#container").html(templates.help());
         es.ActiveObject = null;
     }
 
