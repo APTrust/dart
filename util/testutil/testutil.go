@@ -75,11 +75,27 @@ func UntarTestBag(pathToTarFile string) (tempDir string, pathToUntarredBag strin
 	tempDir, err = ioutil.TempDir("", "bagit-test")
 	if err != nil {
 		return "", "", fmt.Errorf("Cannot create temp dir: %v", err)
-	}
-	cmd := exec.Command("tar", "xf", pathToTarFile, "--directory", tempDir)
-	err = cmd.Run()
-	if err != nil {
-		return "", "", fmt.Errorf("Cannot untar test bag into temp dir: %v", err)
+	}	
+    if runtime.GOOS == "windows" {
+		// mingw tar util can't figure out windows paths that begin with "c:"
+		// http://mingw-users.1079350.n2.nabble.com/tar-doesn-t-accept-Windows-style-path-names-with-drive-letters-td7583282.html
+		driveLetter := string(pathToTarFile[0])
+	    winTarFilePath := "/" + driveLetter + pathToTarFile[2:len(pathToTarFile)]
+		driveLetter = string(tempDir[0])
+		winTempDir := "/" + driveLetter + tempDir[2:len(tempDir)]
+		winTarFilePath = strings.Replace(winTarFilePath, "\\", "/", -1)
+		winTempDir = strings.Replace(winTempDir, "\\", "/", -1)
+		cmd := exec.Command("tar", "xf", winTarFilePath, "--directory", winTempDir)
+		err = cmd.Run()
+		if err != nil {
+			return "", "", fmt.Errorf("Cannot untar test bag '%s' into temp dir '%s': %v", winTarFilePath, winTempDir, err)
+		}
+	} else {
+		cmd := exec.Command("tar", "xf", pathToTarFile, "--directory", tempDir)
+		err = cmd.Run()
+		if err != nil {
+			return "", "", fmt.Errorf("Cannot untar test bag '%s' into temp dir '%s': %v", pathToTarFile, tempDir, err)
+		}
 	}
 	nameOfOutputDir := filepath.Base(pathToTarFile)
 	index := strings.LastIndex(nameOfOutputDir, ".tar")

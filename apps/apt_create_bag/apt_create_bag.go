@@ -10,6 +10,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -99,8 +100,13 @@ func createBag(job *bagit.Job) (string, error) {
 
 func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
 	if job.ShouldIncludeFile(sourcePath) {
-		relPath := "data" + sourcePath
-		fmt.Println("Adding", sourcePath)
+		cleanPath := sourcePath
+		if runtime.GOOS == "windows" {
+			cleanPath = strings.Replace(sourcePath, "\\", "/", -1)
+			cleanPath = strings.Replace(cleanPath, filepath.VolumeName(sourcePath), "", 1);
+		}
+		relPath := "data" + cleanPath
+		fmt.Println("Adding", sourcePath, "at", relPath)
 		if !bagger.AddFile(sourcePath, relPath) {
 			errors := bagger.Errors()
 			lastError := errors[len(errors)-1]
