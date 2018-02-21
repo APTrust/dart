@@ -122,7 +122,9 @@ class BagIt {
                     } else if (line.startsWith('Created')) {
                         var filePath = line.substring(7);
                         packager.job.packagedFile = filePath.trim();
-                    }
+                    } else {
+						console.log(line);
+					}
                 }
                 // console.log(decoder.decode(data));
             });
