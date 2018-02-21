@@ -44,7 +44,7 @@ func TestBaseNameWithoutExtension(t *testing.T) {
 }
 
 func TestExpandTilde(t *testing.T) {
-	expanded, err := fileutil.ExpandTilde("~/tmp")
+	expanded, err := fileutil.ExpandTilde(filepath.Join("~", "tmp"))
 	if err != nil {
 		t.Error(err)
 	}
@@ -86,8 +86,10 @@ func TestRecursiveFileList(t *testing.T) {
 }
 
 func TestLooksSafeToDelete(t *testing.T) {
-	assert.True(t, fileutil.LooksSafeToDelete("/mnt/apt/data/some_dir", 15, 3))
-	assert.False(t, fileutil.LooksSafeToDelete("/usr/local", 12, 3))
+    path1 := filepath.Join("mnt", "apt", "data", "some_dir")
+	path2 := filepath.Join("usr", "local")
+	assert.True(t, fileutil.LooksSafeToDelete(path1, 15, 3))
+	assert.False(t, fileutil.LooksSafeToDelete(path2, 12, 3))
 }
 
 func TestCalculateChecksums(t *testing.T) {

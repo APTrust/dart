@@ -6,8 +6,15 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const tar = require('tar-stream')
+const AppSetting = require('../../core/app_setting');
 const Util = require('../../core/util');
-const NEWLINE = require('os').EOL;
+
+// We're reading output from a Golang program, which uses "\n"
+// as the newline character when printing to STDOUT on all 
+// platforms, including Windows. See:
+// https://golang.org/src/fmt/print.go?s=7595:7644#L253
+const NEWLINE = "\n";
+//const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
 const description = "Provides access to the APTrust command-line bagging library."
@@ -72,10 +79,7 @@ class BagIt {
             // Maybe that goes in AppSettings?
             var started = false;
             var fileCount = 0;
-            var baggerProgram = "apt_create_bag";
-            if (os.platform == 'win32') {
-                baggerProgram = "apt_create_bag.exe";
-            }
+            var baggerProgram = this.getBaggerProgramPath();
             var bagger = spawn(baggerProgram, [ "--stdin" ]);
 
             bagger.on('error', (err) => {
@@ -124,7 +128,9 @@ class BagIt {
                     } else if (line.startsWith('Created')) {
                         var filePath = line.substring(7);
                         packager.job.packagedFile = filePath.trim();
-                    }
+                    } else {
+						console.log(line);
+					}
                 }
                 // console.log(decoder.decode(data));
             });
@@ -143,6 +149,22 @@ class BagIt {
             packager.emitter.emit('error', ex);
             console.error(ex);
         }
+    }
+
+    getBaggerProgramPath() {
+        var baggerProgram = "";
+        var setting = AppSetting.findByName("Path to Bagger");
+        if (setting) {
+            baggerProgram = setting.value;
+        } else {
+            if (os.platform == 'win32') {
+                baggerProgram = "apt_create_bag.exe";
+            } else {
+                baggerProgram = "apt_create_bag";
+            }
+        }
+        console.log("Bagger program: " + baggerProgram);
+        return baggerProgram;
     }
 
     getManifestDirName() {

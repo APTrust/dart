@@ -18,6 +18,10 @@ import (
 func getTestDataPath() string {
 	_, filename, _, _ := runtime.Caller(0)
 	testDataPath, _ := filepath.Abs(path.Join(filepath.Dir(filename), "..", "..", "testdata"))
+	if runtime.GOOS == "windows" {
+		// WTF??
+		testDataPath, _ = filepath.Abs(path.Join(filepath.Dir(filename), "..", "..", "..", "testdata"))
+	}
 	return testDataPath
 }
 
@@ -47,7 +51,8 @@ func TestNewFileSystemIterator(t *testing.T) {
 }
 
 func TestFSINext(t *testing.T) {
-	fsi, _ := fileutil.NewFileSystemIterator(getTestDataPath())
+	fsi, err := fileutil.NewFileSystemIterator(getTestDataPath())
+	require.Nil(t, err)
 	if fsi == nil {
 		assert.Fail(t, "Could not get a FileSystemIterator")
 	}
@@ -117,9 +122,9 @@ func TestFSIFindMatchingFiles(t *testing.T) {
 	fileNames, err := fsi.FindMatchingFiles(reJsonFile)
 	require.Nil(t, err)
 	require.Equal(t, 3, len(fileNames))
-	assert.True(t, util.StringListContains(fileNames, "profiles/aptrust_bagit_profile_2.1.json"))
-	assert.True(t, util.StringListContains(fileNames, "profiles/dpn_bagit_profile_2.1.json"))
-	assert.True(t, util.StringListContains(fileNames, "jobs/sample_job.json"))
+	assert.True(t, util.StringListContains(fileNames, filepath.Join("profiles", "aptrust_bagit_profile_2.1.json")))
+	assert.True(t, util.StringListContains(fileNames, filepath.Join("profiles", "dpn_bagit_profile_2.1.json")))
+	assert.True(t, util.StringListContains(fileNames, filepath.Join("jobs", "sample_job.json")))
 
 	reTarFile := regexp.MustCompile(".*\\.tar$")
 	fileNames, err = fsi.FindMatchingFiles(reTarFile)

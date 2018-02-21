@@ -14,7 +14,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/user"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -52,8 +51,8 @@ func IsDir(filePath string) bool {
 // return either the last component of the directory name. If filePath
 // is "" (empty string), this will return ".".
 func BaseNameWithoutExtension(filePath string) string {
-	base := path.Base(filePath)
-	ext := path.Ext(filePath)
+	base := filepath.Base(filePath)
+	ext := filepath.Ext(filePath)
 	end := len(base) - len(ext)
 	return base[0:end]
 }
