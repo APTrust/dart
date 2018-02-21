@@ -1,3 +1,4 @@
+{{#if jobs}}
 <div class="row">
   <div class="col-sm-6">
       <h4>Recent Jobs</h4>
@@ -28,9 +29,23 @@
 
   </div>
 </div>
+{{else}}
+<h1>Welcome!</h1>
+<p>To get started with EasyStore, you'll need to define a few settings. <a href="#" id="gettingStarted">Start here.</a></p>
+{{/if}}
 
 <script>
  $('[data-toggle="popover"]').popover();
+
+ $(function() {
+     $('#gettingStarted').click(function(e) {
+         // This is the same as helpShow in application.js.
+         // Should be moved to one UI class.
+         $("#container").html(templates.help());
+         es.ActiveObject = null;
+     });
+ });
+
 
  // TODO: refactor/move this to a module with common UI code.
  function showJobDetail(id) {
