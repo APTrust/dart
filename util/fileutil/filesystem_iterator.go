@@ -5,9 +5,9 @@ import (
 	"github.com/APTrust/easy-store/util/platform"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -18,7 +18,7 @@ type FileSystemIterator struct {
 }
 
 func NewFileSystemIterator(pathToDir string) (*FileSystemIterator, error) {
-	if !path.IsAbs(pathToDir) {
+	if !filepath.IsAbs(pathToDir) {
 		return nil, fmt.Errorf("Path '%s' must be absolute.", pathToDir)
 	}
 	var stat os.FileInfo
@@ -60,9 +60,13 @@ func (iter *FileSystemIterator) Next() (io.ReadCloser, *FileSummary, error) {
 	if stat, err = os.Stat(filePath); os.IsNotExist(err) {
 		return nil, nil, fmt.Errorf("File '%s' does not exist.", filePath)
 	}
+	relPath := strings.Replace(filePath, iter.rootPath+string(os.PathSeparator), "", 1)
+	if runtime.GOOS == "windows" {
+		relPath = strings.Replace(relPath, "\\", "/", -1)
+	}
 	fileMode := stat.Mode()
 	fs := &FileSummary{
-		RelPath:       strings.Replace(filePath, iter.rootPath+string(os.PathSeparator), "", 1),
+		RelPath:       relPath,
 		Mode:          fileMode,
 		Size:          stat.Size(),
 		ModTime:       stat.ModTime(),
@@ -116,7 +120,9 @@ func (iter *FileSystemIterator) FindMatchingFiles(regex *regexp.Regexp) ([]strin
 // instead of a string to maintain API compatibility with the ReadIterator
 // interface.
 func (iter *FileSystemIterator) GetTopLevelDirNames() []string {
-	pathParts := strings.Split(iter.rootPath, string(os.PathSeparator))
+	// cleanRootPath removes "C:" or "\\host\share" from Windows paths
+	cleanRootPath := strings.Replace(iter.rootPath, filepath.VolumeName(iter.rootPath), "", 1)
+	pathParts := strings.Split(cleanRootPath, string(os.PathSeparator))	
 	topLevelDirs := make([]string, 1)
 	topLevelDirs[0] = pathParts[len(pathParts)-1]
 	return topLevelDirs

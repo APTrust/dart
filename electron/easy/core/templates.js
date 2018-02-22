@@ -4,10 +4,10 @@ const handlebars = require('handlebars')
 const templateDir = path.join(__dirname, "..", "..", "templates");
 
 function pathTo(name) {
-	return path.join(templateDir, name)
+    return path.join(templateDir, name)
 }
 function readFile(filename) {
-	return fs.readFileSync(pathTo(filename), 'utf8');
+    return fs.readFileSync(pathTo(filename), 'utf8');
 }
 
 var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
@@ -16,6 +16,7 @@ var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
 var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
 var bagItProfileNew = handlebars.compile(readFile('bagit_profile_new.html'));
 var dashboard = handlebars.compile(readFile('dashboard.html'));
+var help = handlebars.compile(readFile('help.html'));
 var jobFiles = handlebars.compile(readFile('job_files.html'));
 var jobList = handlebars.compile(readFile('job_list.html'));
 var jobPackaging = handlebars.compile(readFile('job_packaging.html'));
@@ -30,16 +31,16 @@ var storageServiceList = handlebars.compile(readFile('storage_service_list.html'
 var tagDefinitionForm = handlebars.compile(readFile('tag_definition_form.html'));
 
 handlebars.registerPartial({
-	customTag: readFile('custom_tag.html'),
-	inputCheckboxGroup: readFile('input_checkbox_group.html'),
-	inputHidden: readFile('input_hidden.html'),
-	inputPassword: readFile('input_password.html'),
-	inputSelect: readFile('input_select.html'),
-	inputText: readFile('input_text.html'),
-	inputTextArea: readFile('input_textarea.html'),
-	jobTabs: readFile('job_tabs.html'),
-	profileTags: readFile('profile_tags.html'),
-	tableBottomLinks: readFile('table_bottom_links.html')
+    customTag: readFile('custom_tag.html'),
+    inputCheckboxGroup: readFile('input_checkbox_group.html'),
+    inputHidden: readFile('input_hidden.html'),
+    inputPassword: readFile('input_password.html'),
+    inputSelect: readFile('input_select.html'),
+    inputText: readFile('input_text.html'),
+    inputTextArea: readFile('input_textarea.html'),
+    jobTabs: readFile('job_tabs.html'),
+    profileTags: readFile('profile_tags.html'),
+    tableBottomLinks: readFile('table_bottom_links.html')
 });
 
 handlebars.registerHelper('eq', function(a, b) {
@@ -47,7 +48,7 @@ handlebars.registerHelper('eq', function(a, b) {
 });
 
 handlebars.registerHelper('jobFormTagField', function(tag) {
-	return tag.toFieldForJobForm();
+    return tag.toFieldForJobForm();
 });
 
 handlebars.registerHelper('resultSummary', function(result) {
@@ -60,6 +61,7 @@ module.exports.bagItProfileForm = bagItProfileForm;
 module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
 module.exports.dashboard = dashboard;
+module.exports.help = help;
 module.exports.jobFiles = jobFiles;
 module.exports.jobList = jobList;
 module.exports.jobPackaging = jobPackaging;

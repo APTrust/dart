@@ -7,6 +7,7 @@ import (
 	"github.com/APTrust/easy-store/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -25,7 +26,11 @@ func TestNewFileSummaryFromPath(t *testing.T) {
 
 	assert.Equal(t, absPath, fs.AbsPath)
 	assert.Empty(t, fs.RelPath)
-	assert.EqualValues(t, uint32(0644), fs.Mode)
+	if runtime.GOOS == "windows" {
+		assert.EqualValues(t, os.FileMode(0x1b6), fs.Mode)
+	} else {
+		assert.EqualValues(t, uint32(0644), fs.Mode)
+	}
 	assert.Equal(t, int64(40960), int64(fs.Size))
 	assert.NotEmpty(t, fs.ModTime)
 	assert.False(t, fs.IsDir)
@@ -79,4 +84,22 @@ func TestNewFileSummaryFromTarHeader(t *testing.T) {
 	assert.True(t, fs.IsRegularFile)
 	assert.Equal(t, 1001, fs.Uid)
 	assert.Equal(t, 501, fs.Gid)
+}
+
+func TestWindowsPath(t *testing.T) {
+	fs := &fileutil.FileSummary{
+		RelPath: "/usr/local/bin/whatnot",
+	}
+	assert.Equal(t, "\\usr\\local\\bin\\whatnot", fs.WindowsPath())
+}
+
+func TestFileSystemPath(t *testing.T) {
+	fs := &fileutil.FileSummary{
+		RelPath: "/usr/local/bin/whatnot",
+	}
+	if runtime.GOOS == "windows" {
+		assert.Equal(t, "\\usr\\local\\bin\\whatnot", fs.FileSystemPath())
+	} else {
+		assert.Equal(t, "/usr/local/bin/whatnot", fs.FileSystemPath())
+	}
 }

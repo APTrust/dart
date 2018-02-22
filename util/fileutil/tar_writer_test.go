@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -136,7 +137,11 @@ func TestAddToArchiveWithBadFilePath(t *testing.T) {
 	// This file doesn't exist. Make sure we get the right error.
 	_, err = w.AddToArchive(pathToFile("this_file_does_not_exist"), "file1.json", algorithms)
 	require.NotNil(t, err)
-	assert.True(t, strings.Contains(err.Error(), "no such file or directory"))
+	if runtime.GOOS == "windows" {
+		assert.True(t, strings.Contains(err.Error(), "system cannot find the file specified"), err.Error())
+	} else {
+		assert.True(t, strings.Contains(err.Error(), "no such file or directory"), err.Error())
+	}
 }
 
 func pathToFile(filename string) string {

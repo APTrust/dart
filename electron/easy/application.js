@@ -19,6 +19,7 @@ $(function() {
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
     $("#menuJobNew").click(jobNew);
+    $("#menuHelp").on('click', function() { helpShow(null); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -111,6 +112,12 @@ $(function() {
         var data = {};
         data.jobs = es.Job.list(10, 0);
         $("#container").html(templates.dashboard(data));
+        es.ActiveObject = null;
+    }
+
+    // Help doc
+    function helpShow(message) {
+        $("#container").html(templates.help());
         es.ActiveObject = null;
     }
 
@@ -466,6 +473,13 @@ $(function() {
         console.log("Creating required app settings");
         var dir = path.join(os.homedir(), "tmp", "easy-store");
         var setting = new es.AppSetting("Bagging Directory", dir);
+        setting.save();
+    }
+    if (es.AppSetting.findByName("Path to Bagger") == null) {
+        console.log("Creating required app settings");
+        var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
+        var appPath = path.join(os.homedir(), appName);
+        var setting = new es.AppSetting("Path to Bagger", appPath);
         setting.save();
     }
 

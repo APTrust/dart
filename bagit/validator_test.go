@@ -117,7 +117,7 @@ func TestValidateTopLevelFiles(t *testing.T) {
 	validator.ReadBag()
 	assert.False(t, validator.ValidateTopLevelFiles())
 	errs := validator.Errors()
-	require.Equal(t, 2, len(errs))
+	require.Equal(t, 2, len(errs), "%v", errs)
 	// These two may come back in different order.
 	assert.True(t, strings.Contains(errs[0], "custom_tag_file.txt") ||
 		strings.Contains(errs[0], "junk_file.txt"))
@@ -520,7 +520,7 @@ func TestValidateAPTrustBagUsingDPNProfile(t *testing.T) {
 	assert.False(t, validator.Validate())
 	errors := validator.Errors()
 	require.NotEmpty(t, errors)
-	assert.Equal(t, 9, len(errors))
+	assert.Equal(t, 9, len(errors), "%v", errors)
 
 	expected := []string{
 		"Non-manifest file 'aptrust-info.txt' is not allowed in top-level directory when BagIt profile says AllowMiscTopLevelFiles is false.",
