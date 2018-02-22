@@ -12,6 +12,7 @@
 <p><a href="#Creating a Custom BagIt Profile">Creating a Custom BagIt Profile</a></p>
 <p><a href="#Additional Resources for APTrust Members">Additional Resources for APTrust Members</a></p>
 <p><a href="#Additional Resources for DPN Members">Additional Resources for DPN Members</a></p>
+<p class="indent-1"><a href="#Customizing the Builtin DPN BagIt Profile">Customizing the Builtin DPN BagIt Profile</a></p>
 <p><a href="#Release Notes">Release Notes</a></p>
 
 
@@ -30,6 +31,34 @@
 <h2><a name="Getting Started" class="anchor">Getting Started</a></h2>
 
 <h3><a name="Customizing Your BagIt Profile" class="anchor">Customizing Your BagIt Profile</a></h3>
+
+<p>A BagIt profile describes how to create a bag so that it meets an organization's specific set of criteria. These criteria generally include:</p>
+
+<ul>
+    <li>What type of payload manifest must be present (md5, sha256, etc.)</li>
+    <li>What type of tag manifest must be present</li>
+    <li>Which tag files must be present</li>
+    <li>Which tags must be present</li>
+    <li>Which values are allowed for each tag</li>
+    <li>Whether the bag should be serialized or compressed (tar format, zip format, etc)</li>
+    <li>And more...</li>
+</ul>
+
+<p>When you create a bag with EasyStore, you will select the files that go into the bag and the BagIt profile that describes how the bag will be packaged. While you must set some tags, such as the bag name and description, individually for each bag, a number of tags, such as your organization name and address, will be the same across all bags. When you customize your BagIt profile, you fill in default values for a number of tags so that you won't have to fill those in each time you create a new bag.</p>
+
+<p>Here's how to customize the built-in APTrust BagIt profile:</p>
+
+<ol>
+    <li>From the menu, choose <b>Settings &gt; BagIt Profiles</b></li>
+    <li>Click on the <b>APTrust</b> profile.</li>
+    <li>Under <b>Tags in bag-info.txt</b> click <b>Source-Organization</b>.</li>
+    <li>In the popup dialog, fill in the name of your organization in the <b>Default Value</b> field at the bottom.<br/>
+        <img src="static/img/help/SourceOrgDefault.png"></img>
+    </li>
+    <li>Click <b>Save</b>.</li>
+</ol>
+
+<p>That's the only field you'll need to customize for your APTrust profile. If you're customizing the DPN profile, see <a href="#Customizing the Builtin DPN BagIt Profile">Customizing the Builtin DPN BagIt Profile</a> below.</p>
 
 <h3><a name="Adding a Storage Service" class="anchor">Adding a Storage Service</a></h3>
 
@@ -71,6 +100,26 @@
 <p>Please note that while you can use EasyStore to create DPN bags, you cannot deposit data directly into DPN. Deposits must go through a DPN node such as APTrust, Hathi Trust, Chronopolis, or the Texas Digital Repository.</p>
 
 <p>For more information about DPN, go to <a class="external-link clickable" data-href="http://dpn.org/">http://dpn.org/</a>, or the DPN wiki at <a class="external-link clickable" data-href="https://wiki.duraspace.org/display/DPNC/">The DPN Wiki</a>, but note that some parts of the wiki are out of date.</p>
+
+<h3><a name="Customizing the Builtin DPN BagIt Profile" class="anchor">Customizing the Builtin DPN BagIt Profile</a></h3>
+
+<p>To customize the built-in DPN BagIt profile, follow the steps outlined above for customizing the APTrust profile, and set default values for each of the following:</p>
+
+<ul>
+    <li>Source-Organization</li>
+    <li>Organization-Address</li>
+    <li>Contact-Name</li>
+    <li>Contact-Phone</li>
+    <li>Contact-Email</li>
+    <li>Bag-Count (set the default to "1 of 1")</li>
+    <li>Ingest-Node-Name</li>
+    <li>Ingest-Node-Address</li>
+    <li>Ingest-Node-Contact-Name</li>
+    <li>Ingest-Node-Contact-Email</li>
+    <li>Version-Number (default should be 1)</li>
+    <li>Bag-Type (default should be "data")</li>
+</ul>
+
 
 <h2><a name="Release Notes" class="anchor">Release Notes</a></h2>
 
