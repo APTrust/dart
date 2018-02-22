@@ -101,6 +101,9 @@ module.exports = class StorageService {
     static getStore() {
         return db.store;
     }
+    static storeIsEmpty() {
+        return (Object.keys(db.store).length == 0);
+    }
     static list(limit = 50, offset = 0) {
         var items = [];
         var allItems = Util.sortByName(db.store);

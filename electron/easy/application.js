@@ -459,6 +459,8 @@ $(function() {
         createProfileFromBuiltin(builtins.APTrustProfileId, false);
         createProfileFromBuiltin(builtins.DPNProfileId, false);
     }
+
+    // Ensure that required, built-in AppSettings are present
     if (es.AppSetting.findByName("Institution Domain") == null) {
         console.log("Creating required app settings");
         var setting = new es.AppSetting("Institution Domain", "example.org");
@@ -476,6 +478,26 @@ $(function() {
         var appPath = path.join(os.homedir(), appName);
         var setting = new es.AppSetting("Path to Bagger", appPath);
         setting.save();
+    }
+
+    // Create APTrust Storage Service entries.
+    // Users will have to fill in AWS keys on their own.
+    if (es.StorageService.storeIsEmpty()) {
+        var aptDemo = new es.StorageService();
+        aptDemo.id = "739b14fd-0b02-4bb8-9a64-8d8c74ab9e4c";
+        aptDemo.name = "APTrust Test Repository";
+        aptDemo.description = "APTrust demo/test repository for testing your workflows.";
+        aptDemo.protocol = "s3";
+        aptDemo.host = "s3.amazonaws.com";
+        aptDemo.save();
+
+        var aptLive = new es.StorageService();
+        aptLive.id = "40aa1fe2-8463-47ac-a582-4bf92db361ee";
+        aptLive.name = "APTrust Production Repository";
+        aptLive.description = "APTrust production repository for long-term preservation.";
+        aptLive.protocol = "s3";
+        aptLive.host = "s3.amazonaws.com";
+        aptLive.save();
     }
 
     // This is for interactive testing in the console.
