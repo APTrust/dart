@@ -44,7 +44,7 @@
     <li>And more...</li>
 </ul>
 
-<p>When you create a bag with EasyStore, you will select the files that go into the bag and the BagIt profile that describes how the bag will be packaged. While you must set some tags, such as the bag name and description, individually for each bag, a number of tags, such as your organization name and address, will be the same across all bags. When you customize your BagIt profile, you fill in default values for a number of tags so that you won't have to fill those in each time you create a new bag.</p>
+<p>When you create a bag with EasyStore, you will select the files that go into the bag, and then you'll select the BagIt profile that describes how the bag will be packaged. While you must set some tags, such as the bag name and description, individually for each bag, a number of tags, such as your organization name and address, will be the same across all bags. When you customize your BagIt profile, you fill in default values for a number of tags so that you won't have to fill those in each time you create a new bag.</p>
 
 <p>Here's how to customize the built-in APTrust BagIt profile:</p>
 
@@ -61,6 +61,24 @@
 <p>That's the only field you'll need to customize for your APTrust profile. If you're customizing the DPN profile, see <a href="#Customizing the Builtin DPN BagIt Profile">Customizing the Builtin DPN BagIt Profile</a> below.</p>
 
 <h3><a name="Adding a Storage Service" class="anchor">Adding a Storage Service</a></h3>
+
+<p>A Storage Service is a place you'll upload a bags to. It may be an S3 bucket, or an FTP server, or some other type of service. When you add a Storage Service, you'r simply providing information about where the service is and how to connect to it. To add a Storage Service:</p>
+
+<ol>
+    <li>Choose <b>Settings &gt; Storage Services</b> from the main menu.</li>
+    <li>Click the <b>New</b> button.</li>
+    <li>Enter the following information:
+        <li><b>Name</b> - Choose a name that describes the service unambiguously. This name will appear on the Jobs page when you are choosing where to send a bag. The name should distinguish between test and production environments so you don't send items to the wrong place.</li>
+        <li><b>Description</b> - Enter a description of the service for your own reference. Because you have a lot going on, don't you? And you know you'll forget what this is later. So do yourself a favor now.</li>
+        <li><b>Protocol</b> - Choose the protocol for connecting to the server. S3 connects to Amazon's S3 service, or any other service that implements the S3 API. FTP connects to FTP servers.</li>
+        <li><b>Host</b> - Enter the name or IP address of the host to connect to. <u>Do not include any prefixes like "ftp://" or "https://".</u> If you're connecting to Amazon's S3 service, the host should be <u>s3.amazonaws.com</u>.</li>
+        <li><b>Port</b> - Enter the port number only of the service is running on a non-standard port. You will almost always want to leave this blank.</li>
+        <li><b>Bucket or Default Folder</b> - If you're connecting to an S3-compliant service, you <u>must</u> enter the name of the bucket here. This is the name of the bucket into which your uploads will be sent. If you're connecting to an FTP service, this setting is optional. When you do specify a folder for FTP uploads, the uploads will go into that folder on the FTP server. If you leave this blank, files will be uploaded into the root directory of the FTP server.</li>
+        <li><b>Login Name</b> - For FTP and other service types that use a login/password combination, your login name should go here. For S3-type services, the Access Key Id should go in this field. If you have S3 credentials, the Access Key Id is generally the shorter of two item.</li>
+        <li><b>Password or Secret Key</b> - For FTP and other service types that use a login/password combination, your login name should go here. For S3-type services, your Secret Key should go here. The Secret Key is the longer of the two S3 credentials.</li>
+    </li>
+    <li><b>Login Extra</b> - This field is not currently used, but it may be used in future for additional storage plugins.</li>
+</ol>
 
 <h3><a name="Running Your First Job" class="anchor">Running Your First Job</a></h3>
 
