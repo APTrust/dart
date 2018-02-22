@@ -2,6 +2,7 @@
 
 <p><a href="#About EasyStore">About EasyStore</a></p>
 <p><a href="#Getting Started">Getting Started</a></p>
+<p class="indent-1"><a href="#Customizing Your Application Settings">Customizing Your Application Settings</a></p>
 <p class="indent-1"><a href="#Customizing Your BagIt Profile">Customizing Your BagIt Profile</a></p>
 <p class="indent-1"><a href="#Adding a Storage Service">Adding a Storage Service</a></p>
 <p class="indent-1"><a href="#Running Your First Job">Running Your First Job</a></p>
@@ -29,6 +30,27 @@
 <p>The product currently consists of two applications: EasyStore, which is the graphical component you're looking at now, and apt_create_bag which packages files into BagIt format. In the months to come, apt_create_bag will be wrapped into EasyStore. We plan on adding new Storage Service types (in addition to S3) and a few other features. We'll also improve documentation, testing, and quality control.</p>
 
 <h2><a name="Getting Started" class="anchor">Getting Started</a></h2>
+
+<p>To run your first job on EasyStore, you'll need to customize a few settings. If you have the required information, this usually takes less than five minutes.</p>
+
+<h3><a name="Customizing Your Application Settings" class="anchor">Customizing Your Application Settings</a></h3>
+
+<p>Application Settings define some basic information EasyStore needs to create bags. To change an application setting:</p>
+
+<ol>
+    <li>From the menu, choose <b>Settings &gt; Application Settings</b></li>
+    <li>Click on the name of the setting you want to change</li>
+    <li>Enter the new value in the <b>Value</b> field.</li>
+    <li>Click <b>Save</b>.</li>
+</ol>
+
+<p>The following built-in settings must be set correctly:</p>
+
+<ul>
+    <li><b>Bagging Directory</b> - Set this to the directory in which EasyStore should build its bags. When you create a bag of 1 GB of data, EasyStore will create a new directory or tar file in the Bagging Directory that requires just over 1 GB of space (for the original files and a few tag files). The Bagging Directory you set here will be used as the default for all new jobs. You can, however, change the bagging directory for any individual job whenever you please. There will be times when you need to do this, such as when you're bagging 1 TB of data and you know the Bagging Directory does not have that much space. In Application Settings, set Bagging Directory to the directory you'll want to use most of the time.</li>
+    <li><b>Institution Domain</b> - This is required for APTrust users, and will be ignored for most other users. Set this to your institution's domain name: for example, "virginia.edu" or "unc.edu". If your institution has multiple accounts with APTrust, use your organization's subdomain. For example, "library.unc.edu" or "med.virginia.edu". For APTrust depositors, your domain name becomes part of all of your bag names.</li>
+    <li><b>Path To Bagger</b> - This is required for early versions of EasyStore. The installation package you downloaded included two items: an EasyStore installer, and an application called apt_create_bag, which is responsible for packaging your data. You can save apt_create_bag anywhere on your computer, but you must enter the path to the program here. Examples: (Mac) "/Users/josie/apt_create_bag". (Windows) "C:\Users\josie\apt_create_bag.exe". Note that the path should end with ".exe" on Windows. Later versions of EasyStore will be able to build bags without apt_create_bag, so this setting will go away in a future release.</li>
+</ul>
 
 <h3><a name="Customizing Your BagIt Profile" class="anchor">Customizing Your BagIt Profile</a></h3>
 
