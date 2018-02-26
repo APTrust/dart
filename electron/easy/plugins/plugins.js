@@ -41,6 +41,18 @@ function listSetupProviders() {
     return providers;
 }
 
+// Returns the setup provider with the specified name
+function getSetupProviderByName(name) {
+    var providers = [];
+    for(var moduleName in SetupProviders) {
+        var provider = SetupProviders[moduleName];
+        if (provider.name == name) {
+            return provider;
+        }
+    }
+    return null;
+}
+
 // Returns the storage provider that supports the specified
 // protocol. Protocol can be 's3', 'ftp', etc.
 function getStorageProviderByProtocol(protocol) {
@@ -376,6 +388,7 @@ function newStorageEmitter(job, provider) {
 module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
 module.exports.listPackageProviders = listPackageProviders;
+module.exports.getSetupProviderByName = getSetupProviderByName;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;

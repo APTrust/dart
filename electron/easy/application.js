@@ -148,7 +148,7 @@ $(function() {
         var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             setting = es.AppSetting.find(id);
-            if (!setting.isRequired()) {
+            if (setting.userCanDelete) {
                 showDeleteButton = true;
             }
         }
@@ -170,7 +170,7 @@ $(function() {
             form.setErrors(result.errors);
             var data = {};
             data['form'] = form;
-            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && !setting.isRequired();
+            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
             $("#container").html(templates.appSettingForm(data));
         }
         es.ActiveObject = setting;
@@ -464,26 +464,6 @@ $(function() {
         console.log("Creating base profiles");
         createProfileFromBuiltin(builtinProfiles.APTrustProfileId, false);
         createProfileFromBuiltin(builtinProfiles.DPNProfileId, false);
-    }
-
-    // Ensure that required, built-in AppSettings are present
-    if (es.AppSetting.findByName("Institution Domain") == null) {
-        console.log("Creating required app settings");
-        var setting = new es.AppSetting("Institution Domain", "example.org");
-        setting.save();
-    }
-    if (es.AppSetting.findByName("Bagging Directory") == null) {
-        console.log("Creating required app settings");
-        var dir = path.join(os.homedir(), "tmp", "easy-store");
-        var setting = new es.AppSetting("Bagging Directory", dir);
-        setting.save();
-    }
-    if (es.AppSetting.findByName("Path to Bagger") == null) {
-        console.log("Creating required app settings");
-        var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
-        var appPath = path.join(os.homedir(), appName);
-        var setting = new es.AppSetting("Path to Bagger", appPath);
-        setting.save();
     }
 
     // Create APTrust Storage Service entries.

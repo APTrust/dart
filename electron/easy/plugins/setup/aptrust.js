@@ -1,22 +1,72 @@
 // Field is a form field.
+const os = require('os');
+const path = require('path');
 const process = require('process');
+const AppSetting = require('../../core/app_setting');
+const BagItProfile = require('../../core/bagit_profile');
 const Field = require('../../core/field');
+const StorageService = require('../../core/storage_service');
 
 const name = "APTrust";
 const description = "Provides setup questions for APTrust";
 const version = "0.1";
 
 class APTrust {
+
+    // Constructor is required for this type of plugin.
     constructor() {
-        this.fields = this._initFields();
+        this.fields = [];
+        this._initFields();
     }
 
-     describe() {
-         return { name: name,
-                  description: description,
-                  version: version,
-                };
-     }
+    // describe returns descriptive info about the plugin, so it
+    // can be discovered by the app.
+    describe() {
+        return { name: name,
+                 description: description,
+                 version: version,
+               };
+    }
+
+    // Plugin manager will call this to add app settings that you need.
+    installAppSettings() {
+        // Ensure that required, built-in AppSettings are present
+        if (es.AppSetting.findByName("Institution Domain") == null) {
+            console.log("Adding APTrust setting 'Institution Domain'");
+            var setting = new es.AppSetting("Institution Domain", "example.org");
+            setting.userCanDelete = false;
+            setting.help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
+            setting.save();
+        }
+        if (es.AppSetting.findByName("Bagging Directory") == null) {
+            console.log("Adding APTrust setting 'Bagging Directory'");
+            var dir = path.join(os.homedir(), "tmp", "easy-store");
+            var setting = new es.AppSetting("Bagging Directory", dir);
+            setting.userCanDelete = false;
+            setting.help = "Where should Easy Store create bags?";
+            setting.save();
+        }
+        if (es.AppSetting.findByName("Path to Bagger") == null) {
+            console.log("Adding APTrust setting 'Path to Bagger'");
+            var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
+            var appPath = path.join(os.homedir(), appName);
+            var setting = new es.AppSetting("Path to Bagger", appPath);
+            setting.userCanDelete = false;
+            setting.help = "What is the full path to the apt_create_bag executable?";
+            setting.save();
+        }
+
+    }
+
+    // Plugin manager will call this to add BagItProfiles.
+    installBagItProfiles() {
+
+    }
+
+    // Plugin manager will call this to add storage services.
+    installStorageServices() {
+
+    }
 
     _initFields() {
         var domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
