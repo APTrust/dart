@@ -60,19 +60,46 @@ class APTrust {
 
         var baggingDir = this._getSetupField('baggingDir', 'Bagging Directory');
         baggingDir.help = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\APTrustBags', '/User/josie/temp'.";
-        var baggingDir.validator = function(value) {
-
+        baggingDir.validator = function(value) {
+            var pattern = macLinuxFilePattern;
+            var errMsg = "Enter an absolute path that begins with a forward slash.";
+            if (process.platform == 'windows') {
+                pattern = windowsFilePattern;
+                errMsg = "Enter an absolute path, like C:\Users\josie or \\server\share\folder";
+            }
+            if (value && value.match(pattern)) {
+                baggingDir.error = "";
+                return true;
+            }
+            baggingDir.error = errMsg;
+            return false;
         }
         this.fields.push(baggingDir);
 
         var awsAccessKeyId = this._getSetupField('awsAccessKeyId', 'AWS Access Key ID');
         awsAccessKeyId.help = "Enter your AWS Access Key ID here, if you received one. This is the shorter of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one."
         awsAccessKeyId.attrs['required'] = false;
+        awsAccessKeyId.validator = function(value) {
+            if (value && (value.length < 16 || value.length > 128)) {
+                awsAccessKeyId.error = "Value should be between 16 and 128 characters long.";
+                return false;
+            }
+            awsAccessKeyId.error = "";
+            return true;
+        }
         this.fields.push(awsAccessKeyId);
 
         var awsSecretAccessKey = this._getSetupField('awsSecretAccessKey', 'AWS Secret Access Key');
         awsSecretAccessKey.help = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one."
         awsSecretAccessKey.attrs['required'] = false;
+        awsSecretAccessKey.validator = function(value) {
+            if (value && (value.length < 16 || value.length > 128)) {
+                awsSecretAccessKey.error = "Value should be between 16 and 128 characters long.";
+                return false;
+            }
+            awsSecretAccessKey.error = "";
+            return true;
+        }
         this.fields.push(awsSecretAccessKey);
 
     }
