@@ -8,7 +8,8 @@ $(function() {
     const os = require('os');
     const es = require('./easy/core/easy_store');
     const templates = require('./easy/core/templates');
-    const builtins = require('./easy/core/builtin_profiles');
+    const builtinProfiles = require('./easy/core/builtin_profiles');
+    const builtinServices = require('./easy/core/builtin_services');
     const Job = require('./easy/core/job');
     const Plugins = require('./easy/plugins/plugins');
 
@@ -206,9 +207,9 @@ $(function() {
             new es.Choice("", "Blank", true),
         ];
         form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
-        var sortedKeys = Object.keys(builtins.ProfilesAvailable).sort();
+        var sortedKeys = Object.keys(builtinProfiles.ProfilesAvailable).sort();
         for(var name of sortedKeys) {
-            var profileId = builtins.ProfilesAvailable[name];
+            var profileId = builtinProfiles.ProfilesAvailable[name];
             form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
         }
         var data = {};
@@ -408,10 +409,10 @@ $(function() {
 
     function createProfileFromBuiltin(builtinId, tagAsCopy) {
         var profile = null;
-        if (builtinId == builtins.APTrustProfileId) {
-            profile = es.BagItProfile.toFullObject(builtins.APTrustProfile);
-        } else if (builtinId == builtins.DPNProfileId) {
-            profile = es.BagItProfile.toFullObject(builtins.DPNProfile);
+        if (builtinId == builtinProfiles.APTrustProfileId) {
+            profile = es.BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
+        } else if (builtinId == builtinProfiles.DPNProfileId) {
+            profile = es.BagItProfile.toFullObject(builtinProfiles.DPNProfile);
         } else {
             throw new Error("Unknown builtin profile id " + builtinId);
         }
@@ -461,8 +462,8 @@ $(function() {
     // Initialize the BagItProfile DB if it's empty.
     if (es.BagItProfile.storeIsEmpty()) {
         console.log("Creating base profiles");
-        createProfileFromBuiltin(builtins.APTrustProfileId, false);
-        createProfileFromBuiltin(builtins.DPNProfileId, false);
+        createProfileFromBuiltin(builtinProfiles.APTrustProfileId, false);
+        createProfileFromBuiltin(builtinProfiles.DPNProfileId, false);
     }
 
     // Ensure that required, built-in AppSettings are present
@@ -488,21 +489,8 @@ $(function() {
     // Create APTrust Storage Service entries.
     // Users will have to fill in AWS keys on their own.
     if (es.StorageService.storeIsEmpty()) {
-        var aptDemo = new es.StorageService();
-        aptDemo.id = "739b14fd-0b02-4bb8-9a64-8d8c74ab9e4c";
-        aptDemo.name = "APTrust Test Repository";
-        aptDemo.description = "APTrust demo/test repository for testing your workflows.";
-        aptDemo.protocol = "s3";
-        aptDemo.host = "s3.amazonaws.com";
-        aptDemo.save();
-
-        var aptLive = new es.StorageService();
-        aptLive.id = "40aa1fe2-8463-47ac-a582-4bf92db361ee";
-        aptLive.name = "APTrust Production Repository";
-        aptLive.description = "APTrust production repository for long-term preservation.";
-        aptLive.protocol = "s3";
-        aptLive.host = "s3.amazonaws.com";
-        aptLive.save();
+        builtinServices.APTrustDemoService.save();
+        builtinServices.APTrustProdService.save();
     }
 
     // This is for interactive testing in the console.
