@@ -130,6 +130,21 @@ class APTrust {
         }
         orgName.value = orgNameFromProfile;
         orgName.help = OrgNameHelp;
+        orgName.validator = function(value) {
+            orgName.value = value;
+            if (value != null && value.length > 1) {
+                // If value is OK, copy it into the APTrust BagIt profile.
+                if (aptrustProfile) {
+                    var tag = aptrustProfile.findTagByName("Source-Organization");
+                    if (tag) {
+                        tag.defaultValue = value;
+                        aptrustProfile.save();
+                    }
+                }
+            }
+            orgName.error = "Please enter your organization name.";
+            return false;
+        }
         return orgName;
     }
 
@@ -141,11 +156,18 @@ class APTrust {
         }
         domain.help = DomainHelp;
         domain.validator = function(value) {
+            domain.value = value;
+            // If value is OK, save it into AppSettings.
             if(value && value.match(domainNamePattern)) {
+                if (setting) {
+                    setting.value = value;
+                    setting.save();
+                }
                 domain.error = "";
                 return true
             }
             domain.error = "Please enter a valid domain name.";
+            return false;
         }
         return domain;
     }
@@ -158,6 +180,7 @@ class APTrust {
         }
         pathToBagger.help = PathToBaggerHelp;
         pathToBagger.validator = function(value) {
+            pathToBagger.value = value;
             var pattern = macLinuxFilePattern;
             var suffix = "apt_create_bag";
             var errMsg = "Enter an absolute path that begins with a forward slash and ends with /apt_create_bag";
@@ -166,7 +189,12 @@ class APTrust {
                 suffix = "apt_create_bag.exe"
                 errMsg = "Enter an absolute path that ends with \apt_create_bag.exe";
             }
+            // If value is OK, save it into AppSettings.
             if (value && value.match(pattern) && value.endsWith(suffix)) {
+                if (setting) {
+                    setting.value = value;
+                    setting.save();
+                }
                 pathToBagger.error = "";
                 return true;
             }
@@ -184,6 +212,7 @@ class APTrust {
         }
         baggingDir.help = BaggingDirHelp;
         baggingDir.validator = function(value) {
+            baggingDir.value = value;
             var pattern = macLinuxFilePattern;
             var errMsg = "Enter an absolute path that begins with a forward slash.";
             if (process.platform == 'windows') {
@@ -191,6 +220,11 @@ class APTrust {
                 errMsg = "Enter an absolute path, like C:\Users\josie or \\server\share\folder";
             }
             if (value && value.match(pattern)) {
+                // If value is OK, save it into AppSettings.
+                if (setting) {
+                    setting.value = value;
+                    setting.save();
+                }
                 baggingDir.error = "";
                 return true;
             }
@@ -202,38 +236,56 @@ class APTrust {
 
     _getAwsAccessKeyIdField() {
         var awsAccessKeyId = this._getSetupField('awsAccessKeyId', 'AWS Access Key ID');
-        var service = StorageService.find(builtinServices.APTrustProdId) || StorageService.find(builtinServices.APTrustDemoId);
+        var prodService = StorageService.find(builtinServices.APTrustProdId);
+        var demoService = StorageService.find(builtinServices.APTrustDemoId);
+        var service = prodService || demoService;
         if (service) {
            awsAccessKeyId.value = service.loginName;
         }
         awsAccessKeyId.help = AwsAccessKeyIdHelp;
         awsAccessKeyId.attrs['required'] = false;
         awsAccessKeyId.validator = function(value) {
-            if (value && (value.length < 16 || value.length > 128)) {
-                awsAccessKeyId.error = "Value should be between 16 and 128 characters long.";
-                return false;
+            awsAccessKeyId.value = value;
+            if (value && value.length >= 16 && value.length<= 128) {
+                if (prodService) {
+                    prodService.loginName = value;
+                }
+                if (demoService) {
+                    demoService.loginName = value;
+                }
+                awsAccessKeyId.error = "";
+                return true;
             }
-            awsAccessKeyId.error = "";
-            return true;
+            awsAccessKeyId.error = "Value should be between 16 and 128 characters long.";
+            return false;
         }
         return awsAccessKeyId;
     }
 
     _getAwsSecretAccessKeyField() {
         var awsSecretAccessKey = this._getSetupField('awsSecretAccessKey', 'AWS Secret Access Key');
-        var service = StorageService.find(builtinServices.APTrustProdId) || StorageService.find(builtinServices.APTrustDemoId);
+        var prodService = StorageService.find(builtinServices.APTrustProdId);
+        var demoService = StorageService.find(builtinServices.APTrustDemoId);
+        var service = prodService || demoService;
         if (service) {
            awsSecretAccessKey.value = service.loginPassword;
         }
         awsSecretAccessKey.help = AwsSecretKeyHelp;
         awsSecretAccessKey.attrs['required'] = false;
         awsSecretAccessKey.validator = function(value) {
-            if (value && (value.length < 16 || value.length > 128)) {
-                awsSecretAccessKey.error = "Value should be between 16 and 128 characters long.";
-                return false;
+            awsSecretAccessKey.value = value;
+            if (value && value.length >= 16 && value.length<= 128) {
+                if (prodService) {
+                    prodService.loginPassword = value;
+                }
+                if (demoService) {
+                    demoService.loginPassword = value;
+                }
+                awsSecretAccessKey.error = "";
+                return true;
             }
-            awsSecretAccessKey.error = "";
-            return true;
+            awsSecretAccessKey.error = "Value should be between 16 and 128 characters long.";
+            return false;
         }
         return awsSecretAccessKey;
     }
