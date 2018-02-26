@@ -566,9 +566,9 @@ module.exports = class BagItProfile {
     static createProfileFromBuiltIn(builtinId, tagAsCopy) {
         var profile = null;
         if (builtinId == builtinProfiles.APTrustProfileId) {
-            profile = es.BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
+            profile = BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
         } else if (builtinId == builtinProfiles.DPNProfileId) {
-            profile = es.BagItProfile.toFullObject(builtinProfiles.DPNProfile);
+            profile = BagItProfile.toFullObject(builtinProfiles.DPNProfile);
         } else {
             throw new Error("Unknown builtin profile id " + builtinId);
         }

@@ -436,19 +436,10 @@ $(function() {
         job.setFileListUI();
     }
 
-    // Initialize the BagItProfile DB if it's empty.
-    // if (es.BagItProfile.storeIsEmpty()) {
-    //     console.log("Creating base profiles");
-    //     createProfileFromBuiltin(builtinProfiles.APTrustProfileId, false);
-    //     createProfileFromBuiltin(builtinProfiles.DPNProfileId, false);
-    // }
-
-    // Create APTrust Storage Service entries.
-    // Users will have to fill in AWS keys on their own.
-    if (es.StorageService.storeIsEmpty()) {
-        builtinServices.APTrustDemoService.save();
-        builtinServices.APTrustProdService.save();
-    }
+    // Initialize core APTrust settings.
+    var aptProvider = Plugins.getSetupProviderByName('APTrust');
+    var aptSetup = new aptProvider.Setup();
+    aptSetup.installRequiredSettings();
 
     // This is for interactive testing in the console.
     window.es = es;

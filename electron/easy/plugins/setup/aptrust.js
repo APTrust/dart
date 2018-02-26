@@ -40,26 +40,26 @@ class APTrust {
     // Add app settings required by APTrust.
     _installAppSettings() {
         // Ensure that required, built-in AppSettings are present
-        if (es.AppSetting.findByName("Institution Domain") == null) {
+        if (AppSetting.findByName("Institution Domain") == null) {
             console.log("Adding APTrust setting 'Institution Domain'");
-            var setting = new es.AppSetting("Institution Domain", "example.org");
+            var setting = new AppSetting("Institution Domain", "example.org");
             setting.userCanDelete = false;
             setting.help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
             setting.save();
         }
-        if (es.AppSetting.findByName("Bagging Directory") == null) {
+        if (AppSetting.findByName("Bagging Directory") == null) {
             console.log("Adding APTrust setting 'Bagging Directory'");
             var dir = path.join(os.homedir(), "tmp", "easy-store");
-            var setting = new es.AppSetting("Bagging Directory", dir);
+            var setting = new AppSetting("Bagging Directory", dir);
             setting.userCanDelete = false;
             setting.help = "Where should Easy Store create bags?";
             setting.save();
         }
-        if (es.AppSetting.findByName("Path to Bagger") == null) {
+        if (AppSetting.findByName("Path to Bagger") == null) {
             console.log("Adding APTrust setting 'Path to Bagger'");
             var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
             var appPath = path.join(os.homedir(), appName);
-            var setting = new es.AppSetting("Path to Bagger", appPath);
+            var setting = new AppSetting("Path to Bagger", appPath);
             setting.userCanDelete = false;
             setting.help = "What is the full path to the apt_create_bag executable?";
             setting.save();
@@ -81,7 +81,14 @@ class APTrust {
 
     // Install storage services required by APTrust
     _installStorageServices() {
-
+        if (!StorageService.find(builtinServices.APTrustDemoId)) {
+            console.log("Creating APTrust demo service");
+            builtinServices.APTrustDemoService.save();
+        }
+        if (!StorageService.find(builtinServices.APTrustProdId)) {
+            console.log("Creating APTrust production service");
+            builtinServices.APTrustProdService.save();
+        }
     }
 
     _initFields() {
