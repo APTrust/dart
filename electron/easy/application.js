@@ -223,10 +223,8 @@ $(function() {
         var profileId = null;
         var builtinId = $('#baseProfile').val().trim();
         if (!es.Util.isEmpty(builtinId)) {
-            var profile = createProfileFromBuiltin(builtinId, true);
+            var profile = es.BagItProfile.createProfileFromBuiltIn(builtinId, true);
             profileId = profile.id;
-            profile.isBuiltIn = false; // This is a COPY of a built-in.
-            profile.save();
         }
         $('#modal').modal('hide');
         return bagItProfileShowForm(profileId);
@@ -407,27 +405,6 @@ $(function() {
         tagDefinitionShowForm(null, tagFileName);
     }
 
-    function createProfileFromBuiltin(builtinId, tagAsCopy) {
-        var profile = null;
-        if (builtinId == builtinProfiles.APTrustProfileId) {
-            profile = es.BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
-        } else if (builtinId == builtinProfiles.DPNProfileId) {
-            profile = es.BagItProfile.toFullObject(builtinProfiles.DPNProfile);
-        } else {
-            throw new Error("Unknown builtin profile id " + builtinId);
-        }
-        for(var t of profile.requiredTags) {
-            t.isBuiltIn = true;
-        }
-        if (tagAsCopy) {
-            profile.id = es.Util.uuid4();
-            profile.name = `Copy of ${profile.name}`;
-            profile.description = `Copy of ${profile.description}`;
-            profile.baseProfileId = builtinId;
-        }
-        profile.save();
-        return profile;
-    }
 
     // Job Functions
     function jobList(message, limit = 50, offset = 0) {
@@ -460,11 +437,11 @@ $(function() {
     }
 
     // Initialize the BagItProfile DB if it's empty.
-    if (es.BagItProfile.storeIsEmpty()) {
-        console.log("Creating base profiles");
-        createProfileFromBuiltin(builtinProfiles.APTrustProfileId, false);
-        createProfileFromBuiltin(builtinProfiles.DPNProfileId, false);
-    }
+    // if (es.BagItProfile.storeIsEmpty()) {
+    //     console.log("Creating base profiles");
+    //     createProfileFromBuiltin(builtinProfiles.APTrustProfileId, false);
+    //     createProfileFromBuiltin(builtinProfiles.DPNProfileId, false);
+    // }
 
     // Create APTrust Storage Service entries.
     // Users will have to fill in AWS keys on their own.

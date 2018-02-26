@@ -4,6 +4,8 @@ const path = require('path');
 const process = require('process');
 const AppSetting = require('../../core/app_setting');
 const BagItProfile = require('../../core/bagit_profile');
+const builtinProfiles = require('../../core/builtin_profiles');
+const builtinServices = require('../../core/builtin_services');
 const Field = require('../../core/field');
 const StorageService = require('../../core/storage_service');
 
@@ -28,8 +30,15 @@ class APTrust {
                };
     }
 
-    // Plugin manager will call this to add app settings that you need.
-    installAppSettings() {
+    // Plugin manager will call this...
+    installRequiredSettings() {
+        this._installAppSettings();
+        this._installBagItProfiles();
+        this._installStorageServices();
+    }
+
+    // Add app settings required by APTrust.
+    _installAppSettings() {
         // Ensure that required, built-in AppSettings are present
         if (es.AppSetting.findByName("Institution Domain") == null) {
             console.log("Adding APTrust setting 'Institution Domain'");
@@ -58,13 +67,20 @@ class APTrust {
 
     }
 
-    // Plugin manager will call this to add BagItProfiles.
-    installBagItProfiles() {
-
+    // Add required BagIt profiles
+    _installBagItProfiles() {
+        if (!BagItProfile.find(builtinProfiles.APTrustProfileId)) {
+            console.log("Creating APTrust bagit profile");
+            BagItProfile.createProfileFromBuiltIn(builtinProfiles.APTrustProfileId);
+        }
+        if (!BagItProfile.find(builtinProfiles.DPNProfileId)) {
+            console.log("Creating DPN bagit profile");
+            BagItProfile.createProfileFromBuiltIn(builtinProfiles.DPNProfileId);
+        }
     }
 
-    // Plugin manager will call this to add storage services.
-    installStorageServices() {
+    // Install storage services required by APTrust
+    _installStorageServices() {
 
     }
 

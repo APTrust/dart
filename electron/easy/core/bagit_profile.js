@@ -1,5 +1,5 @@
 const path = require('path');
-const builtins = require('./builtin_profiles');
+const builtinProfiles = require('./builtin_profiles');
 const AppSetting = require('./app_setting');
 const BagItProfileInfo = require('./bagit_profile_info');
 const Choice = require('./choice');
@@ -548,7 +548,7 @@ module.exports = class BagItProfile {
         }
     }
     isDPNProfile() {
-        return (this.id == builtins.DPNProfileId || this.baseProfileId == builtins.DPNProfileId);
+        return (this.id == builtinProfiles.DPNProfileId || this.baseProfileId == builtinProfiles.DPNProfileId);
     }
     setDPNIdTags(uuid) {
         var dpnIdTag = this.findTagByName("DPN-Object-ID");
@@ -561,6 +561,31 @@ module.exports = class BagItProfile {
         if (firstVersionTag != null) {
             firstVersionTag.userValue = uuid;
         }
+    }
+
+    static createProfileFromBuiltIn(builtinId, tagAsCopy) {
+        var profile = null;
+        if (builtinId == builtinProfiles.APTrustProfileId) {
+            profile = es.BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
+        } else if (builtinId == builtinProfiles.DPNProfileId) {
+            profile = es.BagItProfile.toFullObject(builtinProfiles.DPNProfile);
+        } else {
+            throw new Error("Unknown builtin profile id " + builtinId);
+        }
+        for(var t of profile.requiredTags) {
+            t.isBuiltIn = true;
+        }
+        if (tagAsCopy) {
+            profile.id = es.Util.uuid4();
+            profile.name = `Copy of ${profile.name}`;
+            profile.description = `Copy of ${profile.description}`;
+            profile.baseProfileId = builtinId;
+            profile.isBuiltIn = false;
+        } else {
+            profile.isBuiltIn = true;
+        }
+        profile.save();
+        return profile;
     }
 
 };
