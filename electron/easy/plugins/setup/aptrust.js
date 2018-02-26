@@ -108,12 +108,37 @@ class APTrust {
     }
 
     _initFields() {
+        // Set up the questions the user will have to answer.
+        // Questions will be presented in the order they are added.
+        this.fields.push(this._getOrgNameField());
+        this.fields.push(this._getDomainField());
+        this.fields.push(this._getPathToBaggerField());
+        this.fields.push(this._getBaggingDirField());
+        this.fields.push(this._getAwsAccessKeyIdField());
+        this.fields.push(this._getAwsSecretAccessKeyField());
+    }
 
+    _getOrgNameField() {
         var orgName = this._getSetupField('orgName', 'Organization Name');
+        var orgNameFromProfile = '';
+        var aptrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId);
+        if (aptrustProfile) {
+            var tag = aptrustProfile.findTagByName("Source-Organization");
+            if (tag) {
+                orgNameFromProfile = tag.defaultValue;
+            }
+        }
+        orgName.value = orgNameFromProfile;
         orgName.help = OrgNameHelp;
-        this.fields.push(orgName);
+        return orgName;
+    }
 
+    _getDomainField() {
         var domain = this._getSetupField('domain', 'Domain Name');
+        var setting = AppSetting.findByName("Institution Domain");
+        if (setting) {
+            domain.value = setting.value;
+        }
         domain.help = DomainHelp;
         domain.validator = function(value) {
             if(value && value.match(domainNamePattern)) {
@@ -122,9 +147,15 @@ class APTrust {
             }
             domain.error = "Please enter a valid domain name.";
         }
-        this.fields.push(domain);
+        return domain;
+    }
 
+    _getPathToBaggerField() {
         var pathToBagger = this._getSetupField('pathToBagger', 'Path to Bagger');
+        var setting = AppSetting.findByName("Path to Bagger");
+        if (setting) {
+            pathToBagger.value = setting.value;
+        }
         pathToBagger.help = PathToBaggerHelp;
         pathToBagger.validator = function(value) {
             var pattern = macLinuxFilePattern;
@@ -142,9 +173,15 @@ class APTrust {
             pathToBagger.error = errMsg;
             return false;
         }
-        this.fields.push(pathToBagger);
+        return pathToBagger;
+    }
 
+    _getBaggingDirField() {
         var baggingDir = this._getSetupField('baggingDir', 'Bagging Directory');
+        var setting = AppSetting.findByName("Bagging Directory");
+        if (setting) {
+            baggingDir.value = setting.value;
+        }
         baggingDir.help = BaggingDirHelp;
         baggingDir.validator = function(value) {
             var pattern = macLinuxFilePattern;
@@ -160,9 +197,15 @@ class APTrust {
             baggingDir.error = errMsg;
             return false;
         }
-        this.fields.push(baggingDir);
+        return baggingDir;
+    }
 
+    _getAwsAccessKeyIdField() {
         var awsAccessKeyId = this._getSetupField('awsAccessKeyId', 'AWS Access Key ID');
+        var service = StorageService.find(builtinServices.APTrustProdId) || StorageService.find(builtinServices.APTrustDemoId);
+        if (service) {
+           awsAccessKeyId.value = service.loginName;
+        }
         awsAccessKeyId.help = AwsAccessKeyIdHelp;
         awsAccessKeyId.attrs['required'] = false;
         awsAccessKeyId.validator = function(value) {
@@ -173,9 +216,15 @@ class APTrust {
             awsAccessKeyId.error = "";
             return true;
         }
-        this.fields.push(awsAccessKeyId);
+        return awsAccessKeyId;
+    }
 
+    _getAwsSecretAccessKeyField() {
         var awsSecretAccessKey = this._getSetupField('awsSecretAccessKey', 'AWS Secret Access Key');
+        var service = StorageService.find(builtinServices.APTrustProdId) || StorageService.find(builtinServices.APTrustDemoId);
+        if (service) {
+           awsSecretAccessKey.value = service.loginPassword;
+        }
         awsSecretAccessKey.help = AwsSecretKeyHelp;
         awsSecretAccessKey.attrs['required'] = false;
         awsSecretAccessKey.validator = function(value) {
@@ -186,8 +235,7 @@ class APTrust {
             awsSecretAccessKey.error = "";
             return true;
         }
-        this.fields.push(awsSecretAccessKey);
-
+        return awsSecretAccessKey;
     }
 
     // _getSetupField is a utility function that returns a Field object for a
