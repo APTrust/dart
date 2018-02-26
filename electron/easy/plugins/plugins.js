@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const OperationResult = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
+const SetupProviders = requireDir("./setup");
 const StorageProviders = requireDir("./storage");
 
 // Returns a list of StorageProvider protocols.
@@ -28,6 +29,16 @@ function listPackageProviders() {
         formats.push(provider.format)
     }
     return formats;
+}
+
+// Returns a list of SetupProviders
+function listSetupProviders() {
+    var providers = [];
+    for(var moduleName in SetupProviders) {
+        var provider = SetupProviders[moduleName];
+        formats.push(provider.format)
+    }
+    return providers;
 }
 
 // Returns the storage provider that supports the specified
@@ -362,6 +373,7 @@ function newStorageEmitter(job, provider) {
 }
 
 
+module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
 module.exports.listPackageProviders = listPackageProviders;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
