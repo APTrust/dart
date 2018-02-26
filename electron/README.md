@@ -40,3 +40,20 @@ This shows you what's packaged in the Electron archive, which should contain the
 This shows you what's packaged in the app archive, which should contain our custom app scripts, along with all of the node modules we depend on, our HTML files, CSS files, custom images, etc.
 
 `node node_modules/asar/bin/asar.js list dist/mac/EasyStore.app/Contents/Resources/app.asar`
+
+## Bucket Permissions
+
+If you are using EasyStore to upload data into S3 buckets, or into buckets that comply with the S3 REST API, you will need to ensure that the target buckets inlclude the following permissions:
+
+```
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket",
+                "s3:ListMultipartUploadParts",
+                "s3:ListBucketMultipartUploads",
+                "s3:PutObject",
+                "s3:GetObject"
+            ],
+```
+
+You can add `s3:DeleteObject` if you want to be able to delete from the bucket as well. EasyStore uses the Minio S3 client, which checks for left-over pieces of previously failed upload attempts before it begins a new attempt to upload data. If attempts to upload to S3 fail with the message "Access denied" even though you do have access to Get, Put, and List, it's because the Multipart permissions are missing.
