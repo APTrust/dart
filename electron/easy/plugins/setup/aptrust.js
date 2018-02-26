@@ -9,9 +9,25 @@ const builtinServices = require('../../core/builtin_services');
 const Field = require('../../core/field');
 const StorageService = require('../../core/storage_service');
 
+// Stuff we have to set for the plugin loader to be able to
+// discover and describe our plugin.
 const name = "APTrust";
 const description = "Provides setup questions for APTrust";
 const version = "0.1";
+
+// Help messages for our setup questions.
+const OrgNameHelp = "Enter the name of your organization. This name will be written into the Source-Organization field of the bag-info.txt file of each APTrust bag you create. Examples: 'University of Virginia', 'University of Virginia School of Law'.";
+const DomainHelp = "Enter your institution's domain name. For example, 'unc.edu', 'virginia.edu'. If you are making deposits for only one part of a larger organization, enter your group's sub-domain. For example, 'med.virginia.edu', 'law.virginia.edu', etc.";
+const PathToBaggerHelp = "The EasyStore installation package includes a program called apt_create_bag, which packages your files into BagIt bags. Save that program to a safe place on your computer and enter the location here. For Windows users, the path should end with '.exe'; for Mac and Linux users, it should not. For example: 'c:\Users\josie\Documents\apt_create_bag.exe', '/User/josie/bin/apt_create_bag'.";
+const BaggingDirHelp = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\APTrustBags', '/User/josie/temp'.";
+const AwsAccessKeyIdHelp = "Enter your AWS Access Key ID here, if you received one. This is the shorter of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
+const AwsSecretKeyHelp = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
+
+// Regex patterns for validation.
+const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
+const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
+const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/;
+
 
 class APTrust {
 
@@ -92,16 +108,13 @@ class APTrust {
     }
 
     _initFields() {
-        var domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
-        var macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
-        var windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/;
 
         var orgName = this._getSetupField('orgName', 'Organization Name');
-        orgName.help = "Enter the name of your organization. This name will be written into the Source-Organization field of the bag-info.txt file of each APTrust bag you create. Examples: 'University of Virginia', 'University of Virginia School of Law'.";
+        orgName.help = OrgNameHelp;
         this.fields.push(orgName);
 
         var domain = this._getSetupField('domain', 'Domain Name');
-        domain.help = "Enter your institution's domain name. For example, 'unc.edu', 'virginia.edu'. If you are making deposits for only one part of a larger organization, enter your group's sub-domain. For example, 'med.virginia.edu', 'law.virginia.edu', etc.";
+        domain.help = DomainHelp;
         domain.validator = function(value) {
             if(value && value.match(domainNamePattern)) {
                 domain.error = "";
@@ -112,7 +125,7 @@ class APTrust {
         this.fields.push(domain);
 
         var pathToBagger = this._getSetupField('pathToBagger', 'Path to Bagger');
-        pathToBagger.help = "The EasyStore installation package includes a program called apt_create_bag, which packages your files into BagIt bags. Save that program to a safe place on your computer and enter the location here. For Windows users, the path should end with '.exe'; for Mac and Linux users, it should not. For example: 'c:\Users\josie\Documents\apt_create_bag.exe', '/User/josie/bin/apt_create_bag'."
+        pathToBagger.help = PathToBaggerHelp;
         pathToBagger.validator = function(value) {
             var pattern = macLinuxFilePattern;
             var suffix = "apt_create_bag";
@@ -132,7 +145,7 @@ class APTrust {
         this.fields.push(pathToBagger);
 
         var baggingDir = this._getSetupField('baggingDir', 'Bagging Directory');
-        baggingDir.help = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\APTrustBags', '/User/josie/temp'.";
+        baggingDir.help = BaggingDirHelp;
         baggingDir.validator = function(value) {
             var pattern = macLinuxFilePattern;
             var errMsg = "Enter an absolute path that begins with a forward slash.";
@@ -150,7 +163,7 @@ class APTrust {
         this.fields.push(baggingDir);
 
         var awsAccessKeyId = this._getSetupField('awsAccessKeyId', 'AWS Access Key ID');
-        awsAccessKeyId.help = "Enter your AWS Access Key ID here, if you received one. This is the shorter of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one."
+        awsAccessKeyId.help = AwsAccessKeyIdHelp;
         awsAccessKeyId.attrs['required'] = false;
         awsAccessKeyId.validator = function(value) {
             if (value && (value.length < 16 || value.length > 128)) {
@@ -163,7 +176,7 @@ class APTrust {
         this.fields.push(awsAccessKeyId);
 
         var awsSecretAccessKey = this._getSetupField('awsSecretAccessKey', 'AWS Secret Access Key');
-        awsSecretAccessKey.help = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one."
+        awsSecretAccessKey.help = AwsSecretKeyHelp;
         awsSecretAccessKey.attrs['required'] = false;
         awsSecretAccessKey.validator = function(value) {
             if (value && (value.length < 16 || value.length > 128)) {
