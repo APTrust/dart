@@ -113,3 +113,8 @@ class APTrust {
     }
 
 }
+
+module.exports.Setup = APTrust;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;

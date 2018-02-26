@@ -36,7 +36,7 @@ function listSetupProviders() {
     var providers = [];
     for(var moduleName in SetupProviders) {
         var provider = SetupProviders[moduleName];
-        formats.push(provider.format)
+        providers.push(provider.name)
     }
     return providers;
 }
