@@ -46,14 +46,10 @@ class APTrust {
                };
     }
 
-    // The setup manager will call this. This should a hash with two elements:
-    // format: 'text'|'html'
-    // content: a string of text or html to display to the user
+    // The setup manager will call this. This should a string of text or
+    // html to display to the user
     startMessage() {
-        return {
-            format: 'html',
-            content: `The APTrust setup process will install required APTrust settings, and will ask you to answer a series of ${this.fields.length} questions. If you are an APTrust member and you have questions or run into problems, contact us at <a href='mailto:help@aptrust.org'>help@aptrust.org</a> for assistance. Click <b>Next</b> to continue.`;
-        }
+        return `The APTrust setup process will install required APTrust settings, and will ask you to answer a series of ${this.fields.length} questions. If you are an APTrust member and you have questions or run into problems, contact us at <a href='mailto:help@aptrust.org'>help@aptrust.org</a> for assistance. Click <b>Next</b> to continue.`;
     }
 
     // Add app settings required by APTrust.
