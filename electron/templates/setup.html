@@ -29,7 +29,15 @@
  $('[data-toggle="popover"]').popover();
  $(function() {
      $('#setupProvider').change(function(e) {
-         alert("Selected " + $('#setupProvider').val());
+         var name = $('#setupProvider').val();
+         var provider = es.Plugins.getSetupProviderByName(name);
+         if (provider == null) {
+             var message = "Cannot find setup for " + name;
+             console.log(message);
+             alert(message);
+             return;
+         }
+         //var setup = new es.
      });
  });
 

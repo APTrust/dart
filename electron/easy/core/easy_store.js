@@ -14,6 +14,8 @@ const Job = require('./job');
 const Plugins = require('../plugins/plugins');
 const StorageService = require('./storage_service');
 const TagDefinition = require('./tag_definition');
+const Templates = require('./templates');
+const UI = require('../ui/ui');
 const Util = require('./util');
 const ValidationResult = require('./validation_result');
 
@@ -35,6 +37,8 @@ module.exports.Job = Job;
 module.exports.Plugins = Plugins;
 module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
+module.exports.Templates = Templates;
+module.exports.UI = UI;
 module.exports.Util = Util;
 module.exports.ValidationResult = ValidationResult;
 module.exports.ViewCache = ViewCache;

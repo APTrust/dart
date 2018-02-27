@@ -44,7 +44,7 @@
      $('#gettingStarted').click(function(e) {
          // This is the same as helpShow in application.js.
          // Should be moved to one UI class.
-         $("#container").html(templates.help());
+         $("#container").html(es.Templates.help());
          es.ActiveObject = null;
      });
      $('#setupPage').click(function(e) {
@@ -55,7 +55,7 @@
          var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
          setupList.choices = es.Choice.makeList(es.Plugins.listSetupProviders(), '', true);
          data.setupList = setupList;
-         $("#container").html(templates.setup(data));
+         $("#container").html(es.Templates.setup(data));
          es.ActiveObject = null;
      });
  });
@@ -96,7 +96,7 @@
              }
          }
      }
-     $('#jobDetail').html(templates.jobSummaryPanel(data));
+     $('#jobDetail').html(es.Templates.jobSummaryPanel(data));
      es.ActiveObject = job;
  }
 
@@ -130,7 +130,7 @@
      var data = {};
      data.manifests = manifests;
      $('#modalTitle').text("Manifests");
-     $("#modalContent").html(templates.manifest(data));
+     $("#modalContent").html(es.Templates.manifest(data));
      $('#modal').modal();
  }
 </script>

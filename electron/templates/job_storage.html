@@ -39,7 +39,7 @@
        data['bagDescription'] = job.bagItProfile.bagDescription();
        data['bagInternalIdentifier'] = job.bagItProfile.bagInternalIdentifier();
      }
-     $("#container").html(templates.jobReview(data));
+     $("#container").html(es.Templates.jobReview(data));
  });
 
  $("#btnPrevious").click(function() {
@@ -48,12 +48,12 @@
      job.save();
      var data = {};
      if (job.bagItProfile != null) {
-         $("#container").html(templates.jobTags(job.dataForTagEditor()));
+         $("#container").html(es.Templates.jobTags(job.dataForTagEditor()));
      } else {
          data.form = job.toPackagingForm();
          data.domainName = es.AppSetting.findByName("Institution Domain").value;
          data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
-         $("#container").html(templates.jobPackaging(data));
+         $("#container").html(es.Templates.jobPackaging(data));
      }
 });
 </script>

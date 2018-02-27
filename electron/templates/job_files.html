@@ -94,6 +94,6 @@
     data.domainName = es.AppSetting.findByName("Institution Domain").value;
     data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
     //es.ViewCache['jobFiles'] = $("#container").html();
-    $("#container").html(templates.jobPackaging(data));
+    $("#container").html(es.Templates.jobPackaging(data));
   });
 </script>

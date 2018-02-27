@@ -7,10 +7,9 @@ $(function() {
     const path = require("path");
     const os = require('os');
     const es = require('./easy/core/easy_store');
-    const templates = require('./easy/core/templates');
     const builtinProfiles = require('./easy/core/builtin_profiles');
     const builtinServices = require('./easy/core/builtin_services');
-    const Job = require('./easy/core/job');
+
 
     // Top nav menu
     $("#menuDashboard").on('click', function() { dashboardShow(null); });
@@ -112,7 +111,7 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
-        $("#container").html(templates.dashboard(data));
+        $("#container").html(es.Templates.dashboard(data));
         es.ActiveObject = null;
     }
 
@@ -122,13 +121,13 @@ $(function() {
         var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
         setupList.choices = es.Choice.makeList(es.Plugins.listSetupProviders(), '', true);
         data.setupList = setupList;
-        $("#container").html(templates.setup(data));
+        $("#container").html(es.Templates.setup(data));
         es.ActiveObject = null;
     }
 
     // Help doc
     function helpShow(message) {
-        $("#container").html(templates.help());
+        $("#container").html(es.Templates.help());
         es.ActiveObject = null;
     }
 
@@ -144,7 +143,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.AppSetting.previousLink(limit, offset)
         data.nextLink = es.AppSetting.nextLink(limit, offset)
-        $("#container").html(templates.appSettingList(data));
+        $("#container").html(es.Templates.appSettingList(data));
         es.ActiveObject = data.items;
     }
 
@@ -165,7 +164,7 @@ $(function() {
         var data = {};
         data['form'] = setting.toForm();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.appSettingForm(data));
+        $("#container").html(es.Templates.appSettingForm(data));
         es.ActiveObject = setting;
     }
 
@@ -181,7 +180,7 @@ $(function() {
             var data = {};
             data['form'] = form;
             data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
-            $("#container").html(templates.appSettingForm(data));
+            $("#container").html(es.Templates.appSettingForm(data));
         }
         es.ActiveObject = setting;
     }
@@ -201,7 +200,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.BagItProfile.previousLink(limit, offset)
         data.nextLink = es.BagItProfile.nextLink(limit, offset)
-        $("#container").html(templates.bagItProfileList(data));
+        $("#container").html(es.Templates.bagItProfileList(data));
         es.ActiveObject = data.items;
     }
 
@@ -225,7 +224,7 @@ $(function() {
         var data = {};
         data.form = form;
         $('#modalTitle').text("Create New BagIt Profile");
-        $("#modalContent").html(templates.bagItProfileNew(data));
+        $("#modalContent").html(es.Templates.bagItProfileNew(data));
         $('#modal').modal();
     }
 
@@ -251,7 +250,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.bagItProfileForm(data));
+        $("#container").html(es.Templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
 
@@ -266,7 +265,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['form'].setErrors(result.errors);
         data['tags'] = profile.tagsGroupedByFile();
-        $("#container").html(templates.bagItProfileForm(data));
+        $("#container").html(es.Templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
 
@@ -285,7 +284,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.StorageService.previousLink(limit, offset)
         data.nextLink = es.StorageService.nextLink(limit, offset)
-        $("#container").html(templates.storageServiceList(data));
+        $("#container").html(es.Templates.storageServiceList(data));
         es.ActiveObject = data.items;
     }
 
@@ -303,7 +302,7 @@ $(function() {
         var data = {};
         data['form'] = service.toForm();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.storageServiceForm(data));
+        $("#container").html(es.Templates.storageServiceForm(data));
         es.ActiveObject = service;
     }
 
@@ -319,7 +318,7 @@ $(function() {
             var data = {};
             data['form'] = form;
             data['showDeleteButton'] = es.StorageService.find(service.id) != null;
-            $("#container").html(templates.storageServiceForm(data));
+            $("#container").html(es.Templates.storageServiceForm(data));
         }
         es.ActiveObject = service;
     }
@@ -346,7 +345,7 @@ $(function() {
         data['showDeleteButton'] = showDeleteButton;
         data['tagContext'] = "profile";
         $('#modalTitle').text(tag.tagName);
-        $("#modalContent").html(templates.tagDefinitionForm(data));
+        $("#modalContent").html(es.Templates.tagDefinitionForm(data));
         $('#modal').modal();
     }
 
@@ -374,7 +373,7 @@ $(function() {
             var data = {};
             data['form'] = form;
             data['tagContext'] = "profile";
-            $("#modalContent").html(templates.tagDefinitionForm(data));
+            $("#modalContent").html(es.Templates.tagDefinitionForm(data));
         }
     }
 
@@ -401,7 +400,7 @@ $(function() {
         data['form'] = form;
         data['tagContext'] = "profile";
         $('#modalTitle').text("New Tag File");
-        $("#modalContent").html(templates.newTagFileForm(data));
+        $("#modalContent").html(es.Templates.newTagFileForm(data));
         $('#modal').modal();
     }
 
@@ -423,7 +422,7 @@ $(function() {
         data.previousLink = es.Job.previousLink(limit, offset);
         data.nextLink = es.Job.nextLink(limit, offset);
         data.success = message;
-        $("#container").html(templates.jobList(data));
+        $("#container").html(es.Templates.jobList(data));
         es.ActiveObject = data.items;
     }
 
@@ -432,17 +431,17 @@ $(function() {
     window.jobList = jobList;
 
     function jobNew() {
-        var job = new Job();
+        var job = new es.Job();
         job.clearFiles();
         job.resetFileOptions();
         es.ActiveObject = job;
-        $("#container").html(templates.jobFiles());
+        $("#container").html(es.Templates.jobFiles());
     };
 
     function jobShow(id) {
         var job = es.Job.find(id);
         es.ActiveObject = job;
-        $("#container").html(templates.jobFiles());
+        $("#container").html(es.Templates.jobFiles());
         job.setFileListUI();
     }
 
@@ -452,11 +451,6 @@ $(function() {
     console.log(aptSetup.installAppSettings());
     console.log(aptSetup.installBagItProfiles());
     console.log(aptSetup.installStorageServices());
-
-
-    // This is for interactive testing in the console.
-    window.es = es;
-    window.templates = templates;
 
     $('.modal-content').resizable({
         //alsoResize: ".modal-dialog",
@@ -471,5 +465,9 @@ $(function() {
         });
     });
 
+    // Show the dashboard on startup.
     dashboardShow();
+
+    // This is for interactive testing in the console.
+    window.es = es;
 });

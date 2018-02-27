@@ -1,7 +1,7 @@
 // setup.js includes functions to display and manage the walk-through
 // setup process defined in any of the setup plugins.
 
-class Setup {
+module.exports = class Setup {
     // Param provider is a setup plugin, from the easy/plugins/setup directory.
     constructor(provider) {
         this.provider = provider;
@@ -44,6 +44,5 @@ class Setup {
     end() {
 
     }
-
 
 }
