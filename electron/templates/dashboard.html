@@ -30,14 +30,11 @@
   </div>
 </div>
 {{else}}
+
 <h1>Welcome!</h1>
-<p>To get started with EasyStore, you'll need to define some basic settings. Choose the name of the repository you're working with from the list below, and we'll walk you through the setup process. If you're not working with any specific repository, choose <b>No Repository</b> to configure the basic options.</p>
 
-<form id="dashboardSetup">
-    {{> inputSelect field = setupList }}
-</form>
+<p>It looks like you're just getting started with EasyStore. The <a href="#" id="setupPage">setup page will walk you through the setup process</a>.</p>
 
-<p>If you want to skip setup and learn more about EasyStore, <a href="#" id="gettingStarted">start here.</a></p>
 {{/if}}
 
 <script>
@@ -50,8 +47,14 @@
          $("#container").html(templates.help());
          es.ActiveObject = null;
      });
-     $('#setupProvider').change(function(e) {
-         alert("Selected " + $('#setupProvider').val());
+     $('#setupPage').click(function(e) {
+         // Make this part of ui/Setup?
+         var data = {};
+         var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
+         setupList.choices = es.Choice.makeList(es.Plugins.listSetupProviders(), '', true);
+         data.setupList = setupList;
+         $("#container").html(templates.setup(data));
+         es.ActiveObject = null;
      });
  });
 
