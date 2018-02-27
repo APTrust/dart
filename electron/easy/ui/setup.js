@@ -4,7 +4,7 @@
 module.exports = class Setup {
     // Param provider is a setup plugin, from the easy/plugins/setup directory.
     constructor(provider) {
-        this.provider = provider;
+        this.provider = new provider.Provider();
         this.currentQuestion = 0;
     }
 
@@ -12,22 +12,28 @@ module.exports = class Setup {
     // first setup question.
     start() {
         var setup = this;
-        $('#setupContent').html(provider.startMessage());
+        $('#setupContent').html(setup.provider.startMessage());
         $('#btnPrevious').hide();
         $('#btnNext').show();
-        $('#btnNext').click(setup.installSettings);
+        $('#btnNext').click(function() {
+            setup.installSettings();
+        });
     }
 
     installSettings() {
         var setup = this;
-        var appSettingsMsg = `<p>${provider.installAppSettings()}</p>`;
-        var profilesMsg = `<p>${provider.installBagItProfiles()}</p>`;
-        var servicesMsg = `<p>${provider.installStorageServices()}</p>`;
+        var appSettingsMsg = `<p>${setup.provider.installAppSettings()}</p>`;
+        var profilesMsg = `<p>${setup.provider.installBagItProfiles()}</p>`;
+        var servicesMsg = `<p>${setup.provider.installStorageServices()}</p>`;
         $('#setupContent').html(appSettingsMsg + profilesMsg + servicesMsg);
         $('#btnPrevious').show();
-        $('#btnPrevious').click(setup.start);
+        $('#btnPrevious').click(function() {
+            setup.start()
+        });
         $('#btnNext').show();
-        $('#btnNext').click(setup.next);
+        $('#btnNext').click(function() {
+            setup.next
+        });
     }
 
     // Shows the next panel in the setup process.

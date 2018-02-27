@@ -447,7 +447,7 @@ $(function() {
 
     // Initialize core APTrust settings.
     var aptProvider = es.Plugins.getSetupProviderByName('APTrust');
-    var aptSetup = new aptProvider.Setup();
+    var aptSetup = new aptProvider.Provider();
     console.log(aptSetup.installAppSettings());
     console.log(aptSetup.installBagItProfiles());
     console.log(aptSetup.installStorageServices());

@@ -16,7 +16,7 @@
 
     <div class="bottom-buttons">
         <div class="pull-left">
-            <button type="button" id="btnPrevious" class="btn btn-previous" style="display:none">&lt;&lt; Previous</button>
+            <button type="button" id="btnPrevious" class="btn btn-primary" style="display:none">&lt;&lt; Previous</button>
         </div>
         <div class="pull-right">
             <button type="button" id="btnNext" class="btn btn-primary" style="display:none">Next &gt;&gt;</button>
@@ -37,7 +37,9 @@
              alert(message);
              return;
          }
-         //var setup = new es.
+         var setup = new es.UI.Setup(provider);
+         window.setup = setup;
+         setup.start();
      });
  });
 
