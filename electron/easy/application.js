@@ -442,7 +442,10 @@ $(function() {
     // Initialize core APTrust settings.
     var aptProvider = Plugins.getSetupProviderByName('APTrust');
     var aptSetup = new aptProvider.Setup();
-    aptSetup.installRequiredSettings();
+    console.log(aptSetup.installAppSettings());
+    console.log(aptSetup.installBagItProfiles());
+    console.log(aptSetup.installStorageServices());
+
 
     // This is for interactive testing in the console.
     window.es = es;

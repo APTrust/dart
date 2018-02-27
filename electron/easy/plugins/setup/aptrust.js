@@ -46,70 +46,85 @@ class APTrust {
                };
     }
 
-    // Plugin manager will call this...
-    installRequiredSettings() {
-        this._installAppSettings();
-        this._installBagItProfiles();
-        this._installStorageServices();
+    // The setup manager will call this. This should return a string of
+    // HTML to display a welcome message to the user.
+    startMessage() {
+
     }
 
     // Add app settings required by APTrust.
-    _installAppSettings() {
-        // Ensure that required, built-in AppSettings are present
+    installAppSettings() {
+        var installed = [];
         if (AppSetting.findByName("Institution Domain") == null) {
-            console.log("Adding APTrust setting 'Institution Domain'");
             var setting = new AppSetting("Institution Domain", "example.org");
             setting.userCanDelete = false;
             setting.help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
             setting.save();
+            installed.push("Institution Domain");
         }
         if (AppSetting.findByName("Bagging Directory") == null) {
-            console.log("Adding APTrust setting 'Bagging Directory'");
             var dir = path.join(os.homedir(), "tmp", "easy-store");
             var setting = new AppSetting("Bagging Directory", dir);
             setting.userCanDelete = false;
             setting.help = "Where should Easy Store create bags?";
             setting.save();
+            installed.push("Bagging Directory");
         }
         if (AppSetting.findByName("Path to Bagger") == null) {
-            console.log("Adding APTrust setting 'Path to Bagger'");
             var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
             var appPath = path.join(os.homedir(), appName);
             var setting = new AppSetting("Path to Bagger", appPath);
             setting.userCanDelete = false;
             setting.help = "What is the full path to the apt_create_bag executable?";
             setting.save();
+            installed.push("Path to Bagger");
         }
-
+        var message = "Required APTrust application variables are already installed.";
+        if (installed.length > 0) {
+            message = "Installed required APTrust application variables: " + installed.join(', ');
+        }
+        return message;
     }
 
     // Add required BagIt profiles
-    _installBagItProfiles() {
+    installBagItProfiles() {
+        var installed = [];
         if (!BagItProfile.find(builtinProfiles.APTrustProfileId)) {
-            console.log("Creating APTrust bagit profile");
             BagItProfile.createProfileFromBuiltIn(builtinProfiles.APTrustProfileId);
+            installed.push("APTrust BagIt Profile");
         }
         if (!BagItProfile.find(builtinProfiles.DPNProfileId)) {
-            console.log("Creating DPN bagit profile");
             BagItProfile.createProfileFromBuiltIn(builtinProfiles.DPNProfileId);
+            installed.push("DPN BagIt Profile");
         }
+        var message = "Required APTrust BagIt profiles are already installed.";
+        if (installed.length > 0) {
+            message = "Installed BagIt profiles: " + installed.join(', ');
+        }
+        return message;
     }
 
     // Install storage services required by APTrust
-    _installStorageServices() {
+    installStorageServices() {
+        var installed = [];
         if (!StorageService.find(builtinServices.APTrustDemoId)) {
-            console.log("Creating APTrust demo service");
             builtinServices.APTrustDemoService.save();
+            installed.push("APTrust Demo Storage");
         }
         if (!StorageService.find(builtinServices.APTrustProdId)) {
-            console.log("Creating APTrust production service");
             builtinServices.APTrustProdService.save();
+            installed.push("APTrust Production Storage");
         }
+        var message = "Required APTrust storage services are already installed.";
+        if (installed.length > 0) {
+            message = "Installed storage services: " + installed.join(', ');
+        }
+        return message;
     }
 
+    // _initFields sets up the questions the user will have to answer.
+    // Questions will be presented in the order they are added.
     _initFields() {
-        // Set up the questions the user will have to answer.
-        // Questions will be presented in the order they are added.
         this.fields.push(this._getOrgNameField());
         this.fields.push(this._getDomainField());
         this.fields.push(this._getPathToBaggerField());
