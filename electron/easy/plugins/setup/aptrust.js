@@ -154,6 +154,8 @@ class APTrust {
                     if (tag) {
                         tag.defaultValue = value;
                         aptrustProfile.save();
+                        orgName.error = '';
+                        return true;
                     }
                 }
             }

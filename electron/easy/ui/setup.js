@@ -16,7 +16,7 @@ module.exports = class Setup {
         $('#setupContent').html(setup.provider.startMessage());
         $('#btnPrevious').hide();
         $('#btnNext').show();
-        $('#btnNext').click(function() {
+        $('#btnNext').on('click', function() {
             setup.installSettings();
         });
     }
@@ -29,11 +29,11 @@ module.exports = class Setup {
         var servicesMsg = `<p>${setup.provider.installStorageServices()}</p>`;
         $('#setupContent').html(header + appSettingsMsg + profilesMsg + servicesMsg);
         $('#btnPrevious').show();
-        $('#btnPrevious').click(function() {
+        $('#btnPrevious').on('click', function() {
             setup.start()
         });
         $('#btnNext').show();
-        $('#btnNext').click(function() {
+        $('#btnNext').on('click', function() {
             setup.next();
         });
     }
@@ -42,41 +42,66 @@ module.exports = class Setup {
     next() {
         var setup = this;
         var question = this.provider.fields[this.currentQuestion];
-        var data = {};
-        data['question'] = question;
-        if ($('#' + question.id).length) {
-            // Current question is showing. Validate it.
-            if (typeof question.validator == 'function') {
-                if (question.validator()) {
-                    this.currentQuestion += 1;
-                    this.next();
-                    return
-                } else {
-                    // This re-renders the div with the error message.
-                    $('#setupContent').html(Templates.setupQuestion(data));
-                    return;
-                }
+        if (this.isShowing(question)) {
+            if (this.validateAnswer(question)) {
+                this.currentQuestion += 1;
+                question = this.provider.fields[this.currentQuestion];
             }
-        } else {
-            // Current question is not showing. Show it.
-            $('#setupContent').html(Templates.setupQuestion(data));
         }
-        $('[data-toggle="popover"]').popover();
-        $('#btnPrevious').show();
-        $('#btnPrevious').click(function() {
-            setup.previous()
-        });
-        $('#btnNext').show();
-        $('#btnNext').click(function() {
-            setup.next();
-        });
+        this.showQuestion(question);
+        this.setQuestionPreviousNextButtons();
     }
 
     // Shows the previous panel in the setup process.
     previous() {
-
-        $('[data-toggle="popover"]').popover();
         this.currentQuestion -= 1;
+        var question = this.provider.fields[this.currentQuestion];
+        this.showQuestion(question);
+        this.setQuestionPreviousNextButtons();
+    }
+
+    showQuestion(question) {
+        var data = {};
+        data['question'] = question;
+        $('#setupContent').html(Templates.setupQuestion(data));
+        $('[data-toggle="popover"]').popover();
+    }
+
+    validateAnswer(question) {
+        // Current question is showing. Validate it.
+        // Note that the validator is also responsible for doing
+        // something with the valid answer, like saving it as
+        // an AppSetting. That's up to the setup plugin.
+        if (this.hasValidator(question)) {
+            var input = this.getControl(question);
+            return question.validator(input.val())
+        }
+        return true; // no validator, so any answer is OK
+    }
+
+    isShowing(question) {
+        return $('#' + question.id).length > 0;
+    }
+
+    hasValidator(question) {
+        return (typeof question.validator == 'function');
+    }
+
+    getControl(question) {
+        return $('#' + question.id).first();
+    }
+
+    setQuestionPreviousNextButtons() {
+        $('#btnPrevious').show();
+        $('#btnPrevious').off('click');
+        $('#btnPrevious').on('click', function() {
+            setup.previous()
+        });
+        $('#btnNext').show();
+        $('#btnNext').off('click');
+        $('#btnNext').on('click', function() {
+            setup.next();
+        });
     }
 
     // Shows the end-of-setup page
