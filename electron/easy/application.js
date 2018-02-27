@@ -11,7 +11,6 @@ $(function() {
     const builtinProfiles = require('./easy/core/builtin_profiles');
     const builtinServices = require('./easy/core/builtin_services');
     const Job = require('./easy/core/job');
-    const Plugins = require('./easy/plugins/plugins');
 
     // Top nav menu
     $("#menuDashboard").on('click', function() { dashboardShow(null); });
@@ -112,9 +111,6 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
-        var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
-        setupList.choices = es.Choice.makeList(Plugins.listSetupProviders(), '', true);
-        data.setupList = setupList;
         $("#container").html(templates.dashboard(data));
         es.ActiveObject = null;
     }
@@ -440,7 +436,7 @@ $(function() {
     }
 
     // Initialize core APTrust settings.
-    var aptProvider = Plugins.getSetupProviderByName('APTrust');
+    var aptProvider = es.Plugins.getSetupProviderByName('APTrust');
     var aptSetup = new aptProvider.Setup();
     console.log(aptSetup.installAppSettings());
     console.log(aptSetup.installBagItProfiles());
@@ -449,7 +445,6 @@ $(function() {
 
     // This is for interactive testing in the console.
     window.es = es;
-    window.esPlugins = Plugins;
     window.templates = templates;
 
     $('.modal-content').resizable({
