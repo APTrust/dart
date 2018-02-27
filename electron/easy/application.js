@@ -112,7 +112,9 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
-        data.setupProviders = Plugins.listSetupProviders();
+        var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
+        setupList.choices = es.Choice.makeList(Plugins.listSetupProviders(), '', true);
+        data.setupList = setupList;
         $("#container").html(templates.dashboard(data));
         es.ActiveObject = null;
     }

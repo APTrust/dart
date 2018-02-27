@@ -31,7 +31,13 @@
 </div>
 {{else}}
 <h1>Welcome!</h1>
-<p>To get started with EasyStore, you'll need to define a few settings. <a href="#" id="gettingStarted">Start here.</a></p>
+<p>To get started with EasyStore, you'll need to define some basic settings. Choose the name of the repository you're working with from the list below, and we'll walk you through the setup process. If you're not working with any specific repository, choose <b>No Repository</b> to configure the basic options.</p>
+
+<form id="dashboardSetup">
+    {{> inputSelect field = setupList }}
+</form>
+
+<p>If you want to skip setup and learn more about EasyStore, <a href="#" id="gettingStarted">start here.</a></p>
 {{/if}}
 
 <script>
@@ -43,6 +49,9 @@
          // Should be moved to one UI class.
          $("#container").html(templates.help());
          es.ActiveObject = null;
+     });
+     $('#setupProvider').change(function(e) {
+         alert("Selected " + $('#setupProvider').val());
      });
  });
 
