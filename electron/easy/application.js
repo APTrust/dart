@@ -14,6 +14,7 @@ $(function() {
 
     // Top nav menu
     $("#menuDashboard").on('click', function() { dashboardShow(null); });
+    $("#menuSetupShow").on('click', function() { setupShow(null); });
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
@@ -112,6 +113,16 @@ $(function() {
         var data = {};
         data.jobs = es.Job.list(10, 0);
         $("#container").html(templates.dashboard(data));
+        es.ActiveObject = null;
+    }
+
+    // Setup
+    function setupShow() {
+        var data = {};
+        var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
+        setupList.choices = es.Choice.makeList(es.Plugins.listSetupProviders(), '', true);
+        data.setupList = setupList;
+        $("#container").html(templates.setup(data));
         es.ActiveObject = null;
     }
 

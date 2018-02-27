@@ -48,6 +48,8 @@
          es.ActiveObject = null;
      });
      $('#setupPage').click(function(e) {
+         // Refactor, since this also appears in application.js
+         // as function setupShow().
          // Make this part of ui/Setup?
          var data = {};
          var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');

@@ -17,6 +17,14 @@
 .row-spaced {
    margin-bottom: 5px;
 }
+.padded-for-text {
+    padding-left: 20px;
+    padding-right: 20px
+}
+hr.menu-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 /* Prevent anchor links from looking like clickable links. */
 .anchor, .anchor:hover {
    color: inherit;
