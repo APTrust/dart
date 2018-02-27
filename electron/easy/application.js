@@ -112,6 +112,7 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
+        data.setupProviders = Plugins.listSetupProviders();
         $("#container").html(templates.dashboard(data));
         es.ActiveObject = null;
     }
