@@ -1,0 +1,11 @@
+<div id="setupQuestion">
+
+    <p>{{ question.help }}</p>
+
+    {{#if question.choices }}
+      {{> inputSelect field = question }}
+    {{else}}
+      {{> inputText field = question }}
+    {{/if}}
+
+</div>
