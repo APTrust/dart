@@ -17,6 +17,7 @@ function listStorageProviders() {
         var provider = StorageProviders[moduleName];
         protocols.push(provider.protocol);
     }
+    protocols.sort();
     return protocols;
 }
 
@@ -28,6 +29,7 @@ function listPackageProviders() {
         var provider = PackageProviders[moduleName];
         formats.push(provider.format)
     }
+    formats.sort();
     return formats;
 }
 
@@ -38,6 +40,7 @@ function listSetupProviders() {
         var provider = SetupProviders[moduleName];
         providers.push(provider.name)
     }
+    providers.sort();
     return providers;
 }
 
