@@ -10,6 +10,12 @@ module.exports = class Menu {
         $("#container").html(es.Templates.jobFiles());
     };
 
+    static jobShow(id) {
+        var job = es.Job.find(id);
+        es.ActiveObject = job;
+        $("#container").html(es.Templates.jobFiles());
+        job.setFileListUI();
+    }
 
     static setupShow() {
         var data = {};

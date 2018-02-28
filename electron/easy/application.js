@@ -92,7 +92,7 @@ $(function() {
             bagItProfileShowForm(id);
             break;
          case 'Job':
-            jobShow(id);
+            es.UI.Menu.jobShow(id);
             break;
          case 'Ignore':
             break;
@@ -423,13 +423,6 @@ $(function() {
     // TODO: Delete this old vestige. Are we using it anywhere?
     // accessible from the outside.
     //window.jobList = jobList;
-
-    function jobShow(id) {
-        var job = es.Job.find(id);
-        es.ActiveObject = job;
-        $("#container").html(es.Templates.jobFiles());
-        job.setFileListUI();
-    }
 
     // Initialize core APTrust settings.
     var aptProvider = es.Plugins.getSetupProviderByName('APTrust');

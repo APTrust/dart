@@ -76,11 +76,18 @@
   </div>
   {{/if}}
 
-  {{#if hasManifest}}
-  <div class="text-center" style="margin-top:25px;">
-      <button type="button" id="btnViewManifest" class="btn btn-primary" onclick="viewManifests('{{ job.id }}')">View Manifests</button>
-  </div>
-  {{/if}}
+  <div class="row">
+      {{#if hasManifest}}
+      <div class="pull-left" style="margin-top:25px;">
+          <button type="button" id="btnViewManifest" class="btn btn-primary" onclick="viewManifests('{{ job.id }}')">View Manifests</button>
+      </div>
+      {{/if}}
+      <div class="pull-right" style="margin-top:25px;">
+      <button type="button" id="btnGoToJob" class="btn btn-primary" onclick="goToJob('{{ job.id }}')">Go To Job</button>
+      </div>
+      </div>
+
+
 
 </div>
 
