@@ -77,11 +77,11 @@ module.exports = class Setup {
 
     // Shows the setupComplete message.
     end() {
-        $('#setupContent').html(setup.provider.endMessage());
+        $('#setupContent').html(this.provider.endMessage());
         $('#btnNext').hide();
         var setupsCompleted = Util.getInternalVar('Setups Completed') || [];
-        if (!Util.listContains(setupsCompleted, setup.providerName)) {
-            setupsCompleted.push(setup.providerName);
+        if (!Util.listContains(setupsCompleted, this.providerName)) {
+            setupsCompleted.push(this.providerName);
         }
         Util.setInternalVar('Setups Completed', setupsCompleted);
     }
@@ -118,9 +118,10 @@ module.exports = class Setup {
     }
 
     setQuestionPreviousNextButtons() {
+        var setup = this;
         $('#btnPrevious').show();
         $('#btnPrevious').off('click');
-        if (setup.currentQuestion == 0) {
+        if (this.currentQuestion == 0) {
             $('#btnPrevious').on('click', function() {
                 setup.installSettings()
             });
@@ -132,7 +133,7 @@ module.exports = class Setup {
 
         $('#btnNext').show();
         $('#btnNext').off('click');
-        if (setup.currentQuestion == setup.provider.fields.length) {
+        if (this.currentQuestion == this.provider.fields.length) {
             $('#btnNext').on('click', function() {
                 setup.end();
             });

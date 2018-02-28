@@ -6,6 +6,7 @@ const AppSetting = require('../../core/app_setting');
 const BagItProfile = require('../../core/bagit_profile');
 const builtinProfiles = require('../../core/builtin_profiles');
 const builtinServices = require('../../core/builtin_services');
+const Choice = require('../../core/choice');
 const Field = require('../../core/field');
 const StorageService = require('../../core/storage_service');
 
@@ -20,6 +21,7 @@ const OrgNameHelp = "Enter the name of your organization. This name will be writ
 const DomainHelp = "Enter your institution's domain name. For example, 'unc.edu', 'virginia.edu'. If you are making deposits for only one part of a larger organization, enter your group's sub-domain. For example, 'med.virginia.edu', 'law.virginia.edu', etc.";
 const PathToBaggerHelp = "The EasyStore installation package includes a program called apt_create_bag, which packages your files into BagIt bags. Save that program to a safe place on your computer and enter the location here. For Windows users, the path should end with '.exe'; for Mac and Linux users, it should not. For example: 'c:\Users\josie\Documents\apt_create_bag.exe', '/User/josie/bin/apt_create_bag'.";
 const BaggingDirHelp = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\APTrustBags', '/User/josie/temp'.";
+const AccessHelp = "Set the default access policy for your APTrust bags. Consortia means other APTrust depositors can see your bag's metadata (title and description), but not its contents. Insitution means all APTrust users from your institution can see this object's metadata. Restricted means only your institutional administrator can see that this bag exists. Institution is usually the safe default. You can override this setting for any individual bag.";
 const AwsAccessKeyIdHelp = "Enter your AWS Access Key ID here, if you received one. This is the shorter of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
 const AwsSecretKeyHelp = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
 
@@ -131,6 +133,7 @@ class APTrust {
     _initFields() {
         this.fields.push(this._getOrgNameField());
         this.fields.push(this._getDomainField());
+        this.fields.push(this._getAccessField());
         this.fields.push(this._getPathToBaggerField());
         this.fields.push(this._getBaggingDirField());
         this.fields.push(this._getAwsAccessKeyIdField());
@@ -191,6 +194,39 @@ class APTrust {
             return false;
         }
         return domain;
+    }
+
+    _getAccessField() {
+        var access = this._getSetupField('access', 'Default Access Policy');
+        var accessFromProfile = 'Institution'; // sensible default
+        var aptrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId);
+        if (aptrustProfile) {
+            var tag = aptrustProfile.findTagByName("Access");
+            if (tag) {
+                accessFromProfile = tag.defaultValue;
+            }
+        }
+        var accessValues = ['Consortia', 'Institution', 'Restricted'];
+        access.choices = Choice.makeList(accessValues, accessFromProfile, false);
+        access.help = AccessHelp;
+        access.validator = function(value) {
+            access.value = value;
+            if (value != null && value != '') {
+                // If value is OK, copy it into the APTrust BagIt profile.
+                if (aptrustProfile) {
+                    var tag = aptrustProfile.findTagByName("Access");
+                    if (tag) {
+                        tag.defaultValue = value;
+                        aptrustProfile.save();
+                        access.error = '';
+                        return true;
+                    }
+                }
+            }
+            access.error = "Please select either Consortia, Institution, or Restricted.";
+            return false;
+        }
+        return access;
     }
 
     _getPathToBaggerField() {
