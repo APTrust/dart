@@ -11,8 +11,8 @@ const StorageService = require('../../core/storage_service');
 
 // Stuff we have to set for the plugin loader to be able to
 // discover and describe our plugin.
-const name = "No Repository";
-const description = "Provides setup questions for a vanilla installation with no backing repository.";
+const name = "Basic";
+const description = "Provides basic setup questions for an installation with no backing repository.";
 const version = "0.1";
 
 // Help messages for our setup questions.
