@@ -13,7 +13,7 @@ $(function() {
 
     // Top nav menu
     $("#menuDashboard").on('click', function() { dashboardShow(null); });
-    $("#menuSetupShow").on('click', function() { setupShow(null); });
+    $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
@@ -112,16 +112,6 @@ $(function() {
         var data = {};
         data.jobs = es.Job.list(10, 0);
         $("#container").html(es.Templates.dashboard(data));
-        es.ActiveObject = null;
-    }
-
-    // Setup
-    function setupShow() {
-        var data = {};
-        var setupList = new es.Field('setupProvider', 'setupProvider', 'Repository', '');
-        setupList.choices = es.Choice.makeList(es.Plugins.listSetupProviders(), '', true);
-        data.setupList = setupList;
-        $("#container").html(es.Templates.setup(data));
         es.ActiveObject = null;
     }
 
@@ -448,9 +438,9 @@ $(function() {
     // Initialize core APTrust settings.
     var aptProvider = es.Plugins.getSetupProviderByName('APTrust');
     var aptSetup = new aptProvider.Provider();
-    console.log(aptSetup.installAppSettings());
-    console.log(aptSetup.installBagItProfiles());
-    console.log(aptSetup.installStorageServices());
+    aptSetup.installAppSettings();
+    aptSetup.installBagItProfiles();
+    aptSetup.installStorageServices();
 
     $('.modal-content').resizable({
         //alsoResize: ".modal-dialog",
