@@ -1,3 +1,4 @@
+const Menu = require('../ui/menu');
 const Templates = require('../core/templates');
 
 // setup.js includes functions to display and manage the walk-through
@@ -14,7 +15,11 @@ module.exports = class Setup {
     start() {
         var setup = this;
         $('#setupContent').html(setup.provider.startMessage());
-        $('#btnPrevious').hide();
+        $('#btnPrevious').show();
+        $('#btnPrevious').on('click', function() {
+            setup.start();
+            Menu.setupShow();
+        });
         $('#btnNext').show();
         $('#btnNext').on('click', function() {
             setup.installSettings();
@@ -29,10 +34,12 @@ module.exports = class Setup {
         var servicesMsg = `<p>${setup.provider.installStorageServices()}</p>`;
         $('#setupContent').html(header + appSettingsMsg + profilesMsg + servicesMsg);
         $('#btnPrevious').show();
+        $('#btnPrevious').off('click');
         $('#btnPrevious').on('click', function() {
             setup.start()
         });
         $('#btnNext').show();
+        $('#btnNext').off('click');
         $('#btnNext').on('click', function() {
             setup.next();
         });
@@ -41,6 +48,7 @@ module.exports = class Setup {
     // Shows the next panel in the setup process.
     next() {
         var setup = this;
+        console.log('[Next] ' + this.currentQuestion);
         var question = this.provider.fields[this.currentQuestion];
         if (this.isShowing(question)) {
             if (this.validateAnswer(question)) {
@@ -59,6 +67,7 @@ module.exports = class Setup {
     // Shows the previous panel in the setup process.
     previous() {
         this.currentQuestion -= 1;
+        console.log('[Prev] ' + this.currentQuestion);
         var question = this.provider.fields[this.currentQuestion];
         this.showQuestion(question);
         this.setQuestionPreviousNextButtons();
