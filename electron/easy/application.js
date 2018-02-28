@@ -420,20 +420,9 @@ $(function() {
         es.ActiveObject = data.items;
     }
 
-    // TODO: Refactor into a UI manager class, because this needs to
+    // TODO: Delete this old vestige. Are we using it anywhere?
     // accessible from the outside.
     //window.jobList = jobList;
-
-
-    // MOVED TO ui.Menu.jobNew
-    //
-    // function jobNew() {
-    //     var job = new es.Job();
-    //     job.clearFiles();
-    //     job.resetFileOptions();
-    //     es.ActiveObject = job;
-    //     $("#container").html(es.Templates.jobFiles());
-    // };
 
     function jobShow(id) {
         var job = es.Job.find(id);
