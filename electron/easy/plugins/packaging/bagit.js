@@ -99,10 +99,10 @@ class BagIt {
             });
 
             bagger.on('exit', function (code, signal) {
-                var msg = `Bagger exited with code ${code} and signal ${signal}`;
+                var msg = `Bagger failed with code ${code} and signal ${signal}`;
                 var succeeded = false;
                 if (code == 0) {
-                    msg = `Bagger completed successfully with code ${code} and signal ${signal}`;
+                    msg = 'Bagger completed successfully';
                     succeeded = true;
                 }
                 packager.dumpManifests();
