@@ -1,5 +1,6 @@
 const Menu = require('../ui/menu');
 const Templates = require('../core/templates');
+const Util = require('../core/util');
 
 // setup.js includes functions to display and manage the walk-through
 // setup process defined in any of the setup plugins.
@@ -7,6 +8,7 @@ module.exports = class Setup {
     // Param provider is a setup plugin, from the easy/plugins/setup directory.
     constructor(provider) {
         this.provider = new provider.Provider();
+        this.providerName = provider.name;
         this.currentQuestion = 0;
     }
 
@@ -77,6 +79,11 @@ module.exports = class Setup {
     end() {
         $('#setupContent').html(setup.provider.endMessage());
         $('#btnNext').hide();
+        var setupsCompleted = Util.getInternalVar('Setups Completed') || [];
+        if (!Util.listContains(setupsCompleted, setup.providerName)) {
+            setupsCompleted.push(setup.providerName);
+        }
+        Util.setInternalVar('Setups Completed', setupsCompleted);
     }
 
     showQuestion(question) {
