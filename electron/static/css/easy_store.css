@@ -25,6 +25,9 @@ hr.menu-divider {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.tag-table th, .tag-table td {
+    width: 50%;
+}
 /* Prevent anchor links from looking like clickable links. */
 .anchor, .anchor:hover {
    color: inherit;
