@@ -18,7 +18,7 @@ $(function() {
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
-    $("#menuJobNew").click(jobNew);
+    $("#menuJobNew").click(es.UI.Menu.jobNew);
     $("#menuHelp").on('click', function() { helpShow(null); });
 
     // AppSetting Form
@@ -47,7 +47,7 @@ $(function() {
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Jobs
-    $(document).on("click", "#btnNewJob", jobNew);
+    $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
 
     document.ondragover = () => {
         return false;
@@ -111,6 +111,10 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
+        var setupsCompleted = es.Util.getInternalVar('Setups Completed');
+        if (setupsCompleted && setupsCompleted.length) {
+            data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
+        }
         $("#container").html(es.Templates.dashboard(data));
         es.ActiveObject = null;
     }
@@ -418,15 +422,18 @@ $(function() {
 
     // TODO: Refactor into a UI manager class, because this needs to
     // accessible from the outside.
-    window.jobList = jobList;
+    //window.jobList = jobList;
 
-    function jobNew() {
-        var job = new es.Job();
-        job.clearFiles();
-        job.resetFileOptions();
-        es.ActiveObject = job;
-        $("#container").html(es.Templates.jobFiles());
-    };
+
+    // MOVED TO ui.Menu.jobNew
+    //
+    // function jobNew() {
+    //     var job = new es.Job();
+    //     job.clearFiles();
+    //     job.resetFileOptions();
+    //     es.ActiveObject = job;
+    //     $("#container").html(es.Templates.jobFiles());
+    // };
 
     function jobShow(id) {
         var job = es.Job.find(id);
