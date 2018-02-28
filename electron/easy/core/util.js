@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const Store = require('electron-store');
+var db = new Store({name: 'internal'});
 
 module.exports = class Util {
     // Thanks https://gist.github.com/kaizhu256/4482069
@@ -109,6 +111,12 @@ module.exports = class Util {
             return false;
         }
         return null;
+    }
+    static getInternalVar(name) {
+        return db.get(name);
+    }
+    static setInternalVar(name, value) {
+        db.set(name, value);
     }
     // walkSync recursively lists all files in a directory and its
     // subdirectories and returns them in filelist. If you want to
