@@ -270,9 +270,11 @@ class APTrust {
             if (value && value.length >= 16 && value.length<= 128) {
                 if (prodService) {
                     prodService.loginName = value;
+                    prodService.save();
                 }
                 if (demoService) {
                     demoService.loginName = value;
+                    demoService.save();
                 }
                 awsAccessKeyId.error = "";
                 return true;
@@ -298,9 +300,11 @@ class APTrust {
             if (value && value.length >= 16 && value.length<= 128) {
                 if (prodService) {
                     prodService.loginPassword = value;
+                    prodService.save();
                 }
                 if (demoService) {
                     demoService.loginPassword = value;
+                    demoService.save();
                 }
                 awsSecretAccessKey.error = "";
                 return true;

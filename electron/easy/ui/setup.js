@@ -45,6 +45,10 @@ module.exports = class Setup {
         if (this.isShowing(question)) {
             if (this.validateAnswer(question)) {
                 this.currentQuestion += 1;
+                if (this.currentQuestion == this.provider.fields.length) {
+                    this.end();
+                    return;
+                }
                 question = this.provider.fields[this.currentQuestion];
             }
         }
@@ -112,7 +116,7 @@ module.exports = class Setup {
 
         $('#btnNext').show();
         $('#btnNext').off('click');
-        if (setup.currentQuestion == setup.provider.fields.length - 1) {
+        if (setup.currentQuestion == setup.provider.fields.length) {
             $('#btnNext').on('click', function() {
                 setup.end();
             });
