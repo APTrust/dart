@@ -56,8 +56,10 @@ module.exports = class AppSetting {
     }
     static findByName(name) {
         for (var key in db.store) {
-            var setting = db.store[key];
-            if (setting.name == name) {
+            var obj = db.store[key];
+            if (obj.name == name) {
+                var setting = new AppSetting();
+                Object.assign(setting, obj);
                 return setting;
             }
         }

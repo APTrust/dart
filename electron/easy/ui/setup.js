@@ -60,6 +60,12 @@ module.exports = class Setup {
         this.setQuestionPreviousNextButtons();
     }
 
+    // Shows the setupComplete message.
+    end() {
+        $('#setupContent').html(setup.provider.endMessage());
+        $('#btnNext').hide();
+    }
+
     showQuestion(question) {
         var data = {};
         data['question'] = question;
@@ -94,19 +100,27 @@ module.exports = class Setup {
     setQuestionPreviousNextButtons() {
         $('#btnPrevious').show();
         $('#btnPrevious').off('click');
-        $('#btnPrevious').on('click', function() {
-            setup.previous()
-        });
+        if (setup.currentQuestion == 0) {
+            $('#btnPrevious').on('click', function() {
+                setup.installSettings()
+            });
+        } else {
+            $('#btnPrevious').on('click', function() {
+                setup.previous()
+            });
+        }
+
         $('#btnNext').show();
         $('#btnNext').off('click');
-        $('#btnNext').on('click', function() {
-            setup.next();
-        });
-    }
-
-    // Shows the end-of-setup page
-    end() {
-
+        if (setup.currentQuestion == setup.provider.fields.length - 1) {
+            $('#btnNext').on('click', function() {
+                setup.end();
+            });
+        } else {
+            $('#btnNext').on('click', function() {
+                setup.next();
+            });
+        }
     }
 
 }

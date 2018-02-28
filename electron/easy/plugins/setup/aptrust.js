@@ -52,6 +52,10 @@ class APTrust {
         return `The APTrust setup process will install required APTrust settings, and will ask you to answer a series of ${this.fields.length} questions. If you are an APTrust member and you have questions or run into problems, contact us at <a href='mailto:help@aptrust.org'>help@aptrust.org</a> for assistance. Click <b>Next</b> to continue.`;
     }
 
+    endMessage() {
+        return `<p>APTrust setup is complete. See the <b>Help</b> link in the menu above for information on how to add or change the settings, or select <b>Job &gt; New</b> from the menu above to create a new job.</p>`;
+    }
+
     // Add app settings required by APTrust.
     installAppSettings() {
         var installed = [];
