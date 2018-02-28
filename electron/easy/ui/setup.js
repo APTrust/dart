@@ -50,7 +50,7 @@ module.exports = class Setup {
     // Shows the next panel in the setup process.
     next() {
         var setup = this;
-        console.log('[Next] ' + this.currentQuestion);
+        //console.log('[Next] ' + this.currentQuestion);
         var question = this.provider.fields[this.currentQuestion];
         if (this.isShowing(question)) {
             if (this.validateAnswer(question)) {
@@ -68,8 +68,9 @@ module.exports = class Setup {
 
     // Shows the previous panel in the setup process.
     previous() {
+        $('#btnNewJob').hide();
         this.currentQuestion -= 1;
-        console.log('[Prev] ' + this.currentQuestion);
+        //console.log('[Prev] ' + this.currentQuestion);
         var question = this.provider.fields[this.currentQuestion];
         this.showQuestion(question);
         this.setQuestionPreviousNextButtons();
@@ -78,12 +79,14 @@ module.exports = class Setup {
     // Shows the setupComplete message.
     end() {
         $('#setupContent').html(this.provider.endMessage());
-        $('#btnNext').hide();
         var setupsCompleted = Util.getInternalVar('Setups Completed') || [];
         if (!Util.listContains(setupsCompleted, this.providerName)) {
             setupsCompleted.push(this.providerName);
         }
         Util.setInternalVar('Setups Completed', setupsCompleted);
+        $('#btnNext').off('click');
+        $('#btnNext').hide();
+        $('#btnNewJob').show();
     }
 
     showQuestion(question) {

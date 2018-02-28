@@ -1,4 +1,4 @@
-<h1>Setup</h1>
+<h1 id="setupHeader">Setup</h1>
 
 <div class="row padded-for-text">
 
@@ -23,12 +23,16 @@
         <div class="pull-right">
             <button type="button" id="btnNext" class="btn btn-primary" style="display:none">Next &gt;&gt;</button>
         </div>
+        <div class="pull-right">
+            <button type="button" id="btnNewJob" class="btn btn-primary" style="display:none">Create a Job</button>
+        </div>
     </div>
 
 </div>
 
 <script>
  $(function() {
+     $('#setupHeader').text("Setup");
      $('#setupProvider').change(function(e) {
          var name = $('#setupProvider').val();
          var provider = es.Plugins.getSetupProviderByName(name);
@@ -38,8 +42,12 @@
              alert(message);
              return;
          }
+         $('#setupHeader').text(provider.name + " Setup");
          var setup = new es.UI.Setup(provider);
          setup.start();
+     });
+     $('#btnNewJob').click(function(e) {
+         es.UI.Menu.jobNew();
      });
  });
 
