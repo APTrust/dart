@@ -3,6 +3,7 @@ const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
 const { spawn } = require('child_process');
 const decoder = new TextDecoder("utf-8");
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const os = require('os');
 const path = require('path');
 const tar = require('tar-stream')
@@ -10,7 +11,7 @@ const AppSetting = require('../../core/app_setting');
 const Util = require('../../core/util');
 
 // We're reading output from a Golang program, which uses "\n"
-// as the newline character when printing to STDOUT on all 
+// as the newline character when printing to STDOUT on all
 // platforms, including Windows. See:
 // https://golang.org/src/fmt/print.go?s=7595:7644#L253
 const NEWLINE = "\n";
@@ -74,6 +75,11 @@ class BagIt {
         var packager = this;
         packager.job.packagedFile = "";
         try {
+            // Make sure the bagging directory exists
+            var baggingDir = AppSetting.findByName("Bagging Directory").value;
+            console.log("Creating" + baggingDir);
+            mkdirp.sync(baggingDir, { mode: 0o755 });
+
             // Start the bagger executable
             // TODO: Set up the spawn env to include the PATH in which apt_create_bag resides.
             // Maybe that goes in AppSettings?
