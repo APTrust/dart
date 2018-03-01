@@ -26,7 +26,7 @@ const AwsAccessKeyIdHelp = "Enter your AWS Access Key ID here, if you received o
 const AwsSecretKeyHelp = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
 
 // Regex patterns for validation.
-const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
+const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i;
 const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
 const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i;
 
@@ -273,7 +273,7 @@ class APTrust {
             var pattern = macLinuxFilePattern;
             var suffix = "apt_create_bag";
             var errMsg = "Enter an absolute path that begins with a forward slash and ends with /apt_create_bag";
-            if (process.platform == 'windows') {
+            if (process.platform == 'win32') {
                 pattern = windowsFilePattern;
                 suffix = "apt_create_bag.exe"
                 errMsg = "Enter an absolute path that ends with \apt_create_bag.exe";
@@ -304,7 +304,7 @@ class APTrust {
             baggingDir.value = value;
             var pattern = macLinuxFilePattern;
             var errMsg = "Enter an absolute path that begins with a forward slash.";
-            if (process.platform == 'windows') {
+            if (process.platform == 'win32') {
                 pattern = windowsFilePattern;
                 errMsg = "Enter an absolute path, like C:\Users\josie or \\server\share\folder";
             }

@@ -20,9 +20,9 @@ const PathToBaggerHelp = "The EasyStore installation package includes a program 
 const BaggingDirHelp = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\MyBags', '/User/josie/temp'.";
 
 // Regex patterns for validation.
-const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
+const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i;
 const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
-const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/;
+const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i;
 
 
 class NoRepository {
@@ -122,7 +122,7 @@ class NoRepository {
             var pattern = macLinuxFilePattern;
             var suffix = "apt_create_bag";
             var errMsg = "Enter an absolute path that begins with a forward slash and ends with /apt_create_bag";
-            if (process.platform == 'windows') {
+            if (process.platform == 'win32') {
                 pattern = windowsFilePattern;
                 suffix = "apt_create_bag.exe"
                 errMsg = "Enter an absolute path that ends with \apt_create_bag.exe";
@@ -153,7 +153,7 @@ class NoRepository {
             baggingDir.value = value;
             var pattern = macLinuxFilePattern;
             var errMsg = "Enter an absolute path that begins with a forward slash.";
-            if (process.platform == 'windows') {
+            if (process.platform == 'win32') {
                 pattern = windowsFilePattern;
                 errMsg = "Enter an absolute path, like C:\Users\josie or \\server\share\folder";
             }
