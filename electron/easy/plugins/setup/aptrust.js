@@ -28,7 +28,7 @@ const AwsSecretKeyHelp = "Enter your AWS Secret Access Key here, if you received
 // Regex patterns for validation.
 const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/;
 const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
-const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/;
+const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i;
 
 
 class APTrust {
@@ -84,6 +84,34 @@ class APTrust {
             setting.help = "What is the full path to the apt_create_bag executable?";
             setting.save();
             installed.push("Path to Bagger");
+        }
+        if (AppSetting.findByName("Pharos Demo API Login") == null) {
+            var setting = new AppSetting("Pharos Demo API Login", '');
+            setting.userCanDelete = false;
+            setting.help = "What email address do you use to log in to Pharos on APTrust's demo system?";
+            setting.save();
+            installed.push("Pharos Demo API Login");
+        }
+        if (AppSetting.findByName("Pharos Demo API Key") == null) {
+            var setting = new AppSetting("Pharos Demo API Key", '');
+            setting.userCanDelete = false;
+            setting.help = "What is your API key for APTrust's demo system? Hint: You have to request this from help@aptrust.org.";
+            setting.save();
+            installed.push("Pharos Demo API Key");
+        }
+        if (AppSetting.findByName("Pharos Production API Login") == null) {
+            var setting = new AppSetting("Pharos Production API Login", '');
+            setting.userCanDelete = false;
+            setting.help = "What email address do you use to log in to Pharos on APTrust's production system?";
+            setting.save();
+            installed.push("Pharos Production API Login");
+        }
+        if (AppSetting.findByName("Pharos Production API Key") == null) {
+            var setting = new AppSetting("Pharos Production API Key", '');
+            setting.userCanDelete = false;
+            setting.help = "What is your API key for APTrust's production system? Hint: You have to request this from help@aptrust.org.";
+            setting.save();
+            installed.push("Pharos Production API Key");
         }
         var message = "Required APTrust application variables are already installed.";
         if (installed.length > 0) {
@@ -156,6 +184,8 @@ class APTrust {
             orgName.value = value;
             if (value != null && value.length > 1) {
                 // If value is OK, copy it into the APTrust BagIt profile.
+                // Must re-read profile from DB, as it may have picked up other edits during setup.
+                var aptrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId);
                 if (aptrustProfile) {
                     var tag = aptrustProfile.findTagByName("Source-Organization");
                     if (tag) {
@@ -213,6 +243,8 @@ class APTrust {
             access.value = value;
             if (value != null && value != '') {
                 // If value is OK, copy it into the APTrust BagIt profile.
+                // Must re-read profile from DB, as it may have picked up other edits during setup.
+                var aptrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId);
                 if (aptrustProfile) {
                     var tag = aptrustProfile.findTagByName("Access");
                     if (tag) {
@@ -303,6 +335,10 @@ class APTrust {
         awsAccessKeyId.attrs['required'] = false;
         awsAccessKeyId.validator = function(value) {
             awsAccessKeyId.value = value;
+            // Must re-read service records from DB, since they may have picked
+            // up some new edits during the setup process.
+            var prodService = StorageService.find(builtinServices.APTrustProdId);
+            var demoService = StorageService.find(builtinServices.APTrustDemoId);
             if (value && value.length >= 16 && value.length<= 128) {
                 if (prodService) {
                     prodService.loginName = value;
@@ -333,6 +369,10 @@ class APTrust {
         awsSecretAccessKey.attrs['required'] = false;
         awsSecretAccessKey.validator = function(value) {
             awsSecretAccessKey.value = value;
+            // Must re-read service records from DB, since they may have picked
+            // up some new edits during the setup process.
+            var prodService = StorageService.find(builtinServices.APTrustProdId);
+            var demoService = StorageService.find(builtinServices.APTrustDemoId);
             if (value && value.length >= 16 && value.length<= 128) {
                 if (prodService) {
                     prodService.loginPassword = value;
