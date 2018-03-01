@@ -45,7 +45,7 @@ artifacts:
   - path: electron/dist/*.exe
     name: EasyStore-Windows
 
-  - path: ${env.GOPATH}/bin/**
+  - path: c:\gopath\bin\**
     name: Go-binaries
 
 test: off
