@@ -12,7 +12,7 @@ cache:
 
 branches:
   only:
-    - windows-build
+    - master
 
 clone_folder: c:\gopath\src\github.com\APTrust\easy-store
 
