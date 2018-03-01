@@ -1,52 +1,71 @@
-version: 1.0.0.{build}
+version: 0.1.0.{build}
 
 platform: x64
 
+init:
+  - git config --global core.autocrlf input
+
 cache:
-  - node_modules
-  - app\node_modules
+  - electron\node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
 branches:
   only:
-    - master
+    - windows-build
 
 clone_folder: c:\gopath\src\github.com\APTrust\easy-store
 
 environment:
   GOPATH: c:\gopath
+  access_token:
+    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
 
 install:
-  - ps: Install-Product node 6 x64
+  - ps: Install-Product node 8 x64
   - git reset --hard HEAD
   - npm install npm -g
-  - cd electron && npm install electron-builder@next # force install next version to test electron-builder
+  - npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
   - cd electron && npm install
   - echo %PATH%
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
   - go version
   - go env
-
+  - go get golang.org/x/crypto/md4
+  - go get github.com/satori/go.uuid
 
 build_script:
-  - npm run --prefix ./electron dist
-  - go build -o buildOutput\myapp -i .
+  #  Disable for now to get to electron builds.
+  #  - cd %APPVEYOR_BUILD_FOLDER%\apps\apt_create_bag\ && go build .
+  - npm run --prefix ./electron
+  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 artifacts:
-  - path: buildOutput/myapp
-    name: binary
+  - path: electron/dist/*.exe
+    name: EasyStore-Windows
+
+  - path: ${env.GOPATH}/bin/**
+    name: Go-binaries
 
 test: off
-#deploy:
-#  release: myapp-$(appveyor_build_version)
-#  description: 'This is a release of my awesome application.'
-#  provider: GitHub
-#  auth_token:
-#    secure: FW3tJ3fMncxvs58/ifSP7w+kBl9BlxvRMr9liHmnBs14ALRG8Vfyol+sNhj9u2JA
-#  artifact: binary # This is the name we specified in the artifacts section.
-#  draft: false
-#  prerelease: false
-#  on:
-#    branch: master
+deploy:
+  release: easy-store-$(appveyor_build_version)
+  description: 'This is a test release of the windows build from CI'
+  provider: GitHub
+  auth_token:
+    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
+    artifact: EasyStore-Windows # This is the name we specified in the artifacts section.
+  draft: true
+  prerelease: false
+  on:
+    branch:
+      - windows-build
+      - master
+
+notifications:
+  - provider: Slack
+    auth_token:
+      secure: wQc/CYuw0WsjVvpj92QtP6//CzBNp/eFYpvlxiH6lIdhCbrh+cgQ3vExTygXJFA3xPg0attMwE/dOWipSS+vsk0EGsf0iipIaf/133/1RgQ=
+    channel: '#ops'
