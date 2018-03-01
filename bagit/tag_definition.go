@@ -27,8 +27,9 @@ type TagDefinition struct {
 }
 
 func NewTagDefinition(tagFile, tagName string) *TagDefinition {
+	_uuid, _ := uuid.NewV4()
 	return &TagDefinition{
-		Id:           uuid.NewV4().String(),
+		Id:           _uuid.String(),
 		TagFile:      tagFile,
 		TagName:      tagName,
 		Required:     true,
