@@ -19,17 +19,17 @@
         "tape": "^4.8.0"
     },
     "scripts": {
-        "electron-toolkit": "electron ./node_modules/electron-toolkit"
+        "electron-toolkit": "electron ./node_modules/electron-toolkit",
+        "start": "electron ."
     },
     "description": "",
     "build": {
         "appId": "com.electron.EasyStore",
         "copyright": "Copyright © 2018 undefined",
         "productName": "EasyStore",
-        "electronVersion": "1.7.10",
+        "electronVersion": "1.7.11",
         "asar": true,
         "directories": {
-            "app": "/Users/apd4n/go/src/github.com/APTrust/easy-store/electron",
             "output": "dist"
         },
         "mac": {
