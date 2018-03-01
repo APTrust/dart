@@ -37,8 +37,7 @@ install:
   - go get github.com/satori/go.uuid
 
 build_script:
-  #  Disable for now to get to electron builds.
-  #  - cd %APPVEYOR_BUILD_FOLDER%\apps\apt_create_bag\ && go build .
+  - cd %APPVEYOR_BUILD_FOLDER%\apps\apt_create_bag\ && go build .
   - npm run --prefix ./electron
   - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
@@ -56,7 +55,7 @@ deploy:
   provider: GitHub
   auth_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-    artifact: EasyStore-Windows # This is the name we specified in the artifacts section.
+    artifact: EasyStore-Windows, Go-binaries # This is the name we specified in the artifacts section.
   draft: true
   prerelease: false
   on:
