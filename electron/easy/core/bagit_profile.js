@@ -1,5 +1,5 @@
 const path = require('path');
-const builtins = require('./builtin_profiles');
+const builtinProfiles = require('./builtin_profiles');
 const AppSetting = require('./app_setting');
 const BagItProfileInfo = require('./bagit_profile_info');
 const Choice = require('./choice');
@@ -290,7 +290,7 @@ module.exports = class BagItProfile {
             BagItProfile.nameLooksLegal(name)
         }
     }
-    tagsGroupedByFile() {
+    tagsGroupedByFile(sortByName = true) {
         // Returns a hash of required tags, with filename
         // as the key. Value is a list of required tags,
         // in alpha order by name.
@@ -301,10 +301,26 @@ module.exports = class BagItProfile {
             }
             tagsByFile[tag.tagFile].push(tag);
         }
-        for (var f of Object.keys(tagsByFile)) {
-            Util.sortByName(tagsByFile[f]);
+        if (sortByName) {
+            for (var f of Object.keys(tagsByFile)) {
+                Util.sortByName(tagsByFile[f]);
+            }
         }
         return tagsByFile;
+    }
+    // getTagFileContents(tagFile) returns a string that you can
+    // write to the tag file when creating a bag. Use requiredTagFileNames
+    // to get all tag file names.
+    getTagFileContents(tagFile) {
+        var tags = this.tagsGroupedByFile(false)[tagFile];
+        if (tags === undefined || !tags) {
+            throw `No such tag file: ${tagFile}`;
+        }
+        var lines = [];
+        for(var tagDef of tags) {
+            lines.push(tagDef.toFormattedString());
+        }
+        return lines.join("\n");
     }
     // returns true if filename is a custom file added for a
     // specific job (i.e. is not part of the core profile)
@@ -353,6 +369,7 @@ module.exports = class BagItProfile {
     }
     // Returns a hash, where key is tag file name and value is true/false,
     // indicating whether are required values in that file are present.
+    // Used in job.js to validate that tag files have all required values.
     tagFileCompletionStatus() {
         var status = {};
         for (var fileName of this.requiredTagFileNames()) {
@@ -363,6 +380,13 @@ module.exports = class BagItProfile {
     toBagItProfileJson() {
         // Return a string of JSON in BagItProfile format,
         // with all the bad keys they use.
+    }
+    // Returns true if this profile says the bag must be tarred.
+    mustBeTarred() {
+        return (this.acceptSerialization &&
+                this.acceptSerialization.length == 1 &&
+                this.acceptSerialization[0] == "application/tar" &&
+                this.serialization == "required");
     }
     static fromStandardJson(jsonString) {
         // Parse JSON from BagItProfile format, with the bad
@@ -524,7 +548,7 @@ module.exports = class BagItProfile {
         }
     }
     isDPNProfile() {
-        return (this.id == builtins.DPNProfileId || this.baseProfileId == builtins.DPNProfileId);
+        return (this.id == builtinProfiles.DPNProfileId || this.baseProfileId == builtinProfiles.DPNProfileId);
     }
     setDPNIdTags(uuid) {
         var dpnIdTag = this.findTagByName("DPN-Object-ID");
@@ -538,4 +562,30 @@ module.exports = class BagItProfile {
             firstVersionTag.userValue = uuid;
         }
     }
+
+    static createProfileFromBuiltIn(builtinId, tagAsCopy) {
+        var profile = null;
+        if (builtinId == builtinProfiles.APTrustProfileId) {
+            profile = BagItProfile.toFullObject(builtinProfiles.APTrustProfile);
+        } else if (builtinId == builtinProfiles.DPNProfileId) {
+            profile = BagItProfile.toFullObject(builtinProfiles.DPNProfile);
+        } else {
+            throw new Error("Unknown builtin profile id " + builtinId);
+        }
+        for(var t of profile.requiredTags) {
+            t.isBuiltIn = true;
+        }
+        if (tagAsCopy) {
+            profile.id = es.Util.uuid4();
+            profile.name = `Copy of ${profile.name}`;
+            profile.description = `Copy of ${profile.description}`;
+            profile.baseProfileId = builtinId;
+            profile.isBuiltIn = false;
+        } else {
+            profile.isBuiltIn = true;
+        }
+        profile.save();
+        return profile;
+    }
+
 };

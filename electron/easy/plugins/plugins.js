@@ -6,6 +6,7 @@ const fs = require('fs');
 
 const OperationResult = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
+const SetupProviders = requireDir("./setup");
 const StorageProviders = requireDir("./storage");
 
 // Returns a list of StorageProvider protocols.
@@ -16,6 +17,7 @@ function listStorageProviders() {
         var provider = StorageProviders[moduleName];
         protocols.push(provider.protocol);
     }
+    protocols.sort();
     return protocols;
 }
 
@@ -27,7 +29,31 @@ function listPackageProviders() {
         var provider = PackageProviders[moduleName];
         formats.push(provider.format)
     }
+    formats.sort();
     return formats;
+}
+
+// Returns a list of SetupProviders
+function listSetupProviders() {
+    var providers = [];
+    for(var moduleName in SetupProviders) {
+        var provider = SetupProviders[moduleName];
+        providers.push(provider.name)
+    }
+    providers.sort();
+    return providers;
+}
+
+// Returns the setup provider with the specified name
+function getSetupProviderByName(name) {
+    var providers = [];
+    for(var moduleName in SetupProviders) {
+        var provider = SetupProviders[moduleName];
+        if (provider.name == name) {
+            return provider;
+        }
+    }
+    return null;
 }
 
 // Returns the storage provider that supports the specified
@@ -362,8 +388,10 @@ function newStorageEmitter(job, provider) {
 }
 
 
+module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
 module.exports.listPackageProviders = listPackageProviders;
+module.exports.getSetupProviderByName = getSetupProviderByName;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;

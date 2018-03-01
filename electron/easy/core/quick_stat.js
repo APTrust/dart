@@ -4,6 +4,8 @@ const path = require('path');
 // This callback setup is awkward. It should be more straightforward,
 // simple, and clear.
 
+// TODO: Replace this with Util.walkSync
+
 module.exports = class QuickStat {
     constructor(shouldInclude, fileCallback, dirCallback) {
         this.shouldInclude = shouldInclude;

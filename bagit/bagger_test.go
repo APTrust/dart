@@ -471,7 +471,7 @@ func TestWriteBagToTarFile_APTrust(t *testing.T) {
 		relDestPaths[i] = relDestPath
 	}
 
-	assert.True(t, bagger.WriteBagToTarFile(true, true))
+	assert.True(t, bagger.WriteBagToTarFile(true, true))	
 	require.Empty(t, bagger.Errors())
 
 	// Not a pure unit test, since we're relying on another code module here,

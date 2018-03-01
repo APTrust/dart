@@ -1,3 +1,4 @@
+{{#if jobs}}
 <div class="row">
   <div class="col-sm-6">
       <h4>Recent Jobs</h4>
@@ -28,9 +29,38 @@
 
   </div>
 </div>
+{{else}}
+
+<h1>Welcome!</h1>
+
+  {{#if setupsCompleted}}
+    {{{ setupsCompleted }}}
+    <p>You man continue to the <a href="#" id="setupPage">setup page</a> to update your settings, or <a href="#" id="newJobLink">create a new job</a>.<p>
+  {{else}}
+    <p>It looks like you're just getting started with EasyStore. The <a href="#" id="setupPage">setup page will walk you through the setup process</a>.</p>
+  {{/if}}
+
+
+{{/if}}
 
 <script>
  $('[data-toggle="popover"]').popover();
+
+ $(function() {
+     $('#gettingStarted').click(function(e) {
+         // This is the same as helpShow in application.js.
+         // Should be moved to one UI class.
+         $("#container").html(es.Templates.help());
+         es.ActiveObject = null;
+     });
+     $('#setupPage').click(function(e) {
+         es.UI.Menu.setupShow();
+     });
+     $('#newJobLink').click(function(e) {
+         es.UI.Menu.jobNew();
+     });
+ });
+
 
  // TODO: refactor/move this to a module with common UI code.
  function showJobDetail(id) {
@@ -67,7 +97,7 @@
              }
          }
      }
-     $('#jobDetail').html(templates.jobSummaryPanel(data));
+     $('#jobDetail').html(es.Templates.jobSummaryPanel(data));
      es.ActiveObject = job;
  }
 
@@ -101,7 +131,11 @@
      var data = {};
      data.manifests = manifests;
      $('#modalTitle').text("Manifests");
-     $("#modalContent").html(templates.manifest(data));
+     $("#modalContent").html(es.Templates.manifest(data));
      $('#modal').modal();
+ }
+
+ function goToJob(id) {
+     es.UI.Menu.jobShow(id);
  }
 </script>

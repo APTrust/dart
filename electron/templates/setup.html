@@ -1,0 +1,54 @@
+<h1 id="setupHeader">Setup</h1>
+
+<div class="row padded-for-text">
+
+    <div id="setupContent">
+        <p>To get started with EasyStore, you'll need to define some basic settings. Choose the name of the repository you're working with from the list below, and we'll walk you through the setup process. If you're not working with any specific repository, choose <b>Basic</b> to configure the basic options.</p>
+
+        <p>{{{ setupsCompleted }}}</p>
+
+        <form id="dashboardSetup">
+            {{> inputSelect field = setupList }}
+        </form>
+
+        <p>If you want to skip setup and learn more about EasyStore, <a href="#" id="gettingStarted">start here.</a></p>
+    </div> <!-- end of setupContent -->
+
+
+
+    <div class="bottom-buttons">
+        <div class="pull-left">
+            <button type="button" id="btnPrevious" class="btn btn-primary" style="display:none">&lt;&lt; Previous</button>
+        </div>
+        <div class="pull-right">
+            <button type="button" id="btnNext" class="btn btn-primary" style="display:none">Next &gt;&gt;</button>
+        </div>
+        <div class="pull-right">
+            <button type="button" id="btnNewJob" class="btn btn-primary" style="display:none">Create a Job</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+ $(function() {
+     $('#setupHeader').text("Setup");
+     $('#setupProvider').change(function(e) {
+         var name = $('#setupProvider').val();
+         var provider = es.Plugins.getSetupProviderByName(name);
+         if (provider == null) {
+             var message = "Cannot find setup for " + name;
+             console.log(message);
+             alert(message);
+             return;
+         }
+         $('#setupHeader').text(provider.name + " Setup");
+         var setup = new es.UI.Setup(provider);
+         setup.start();
+     });
+     $('#btnNewJob').click(function(e) {
+         es.UI.Menu.jobNew();
+     });
+ });
+
+</script>

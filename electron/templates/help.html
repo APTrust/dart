@@ -1,0 +1,184 @@
+<h1>Table of Contents</h1>
+
+<p><a href="#About EasyStore">About EasyStore</a></p>
+<p><a href="#Getting Started">Getting Started</a></p>
+<p class="indent-1"><a href="#Customizing Your Application Settings">Customizing Your Application Settings</a></p>
+<p class="indent-1"><a href="#Customizing Your BagIt Profile">Customizing Your BagIt Profile</a></p>
+<p class="indent-1"><a href="#Adding a Storage Service">Adding a Storage Service</a></p>
+<p class="indent-1"><a href="#Running Your First Job">Running Your First Job</a></p>
+<p class="indent-1"><a href="#Viewing Job Manifests">Viewing Job Manifests</a></p>
+<p><a href="#Application Settings">Application Settings</a></p>
+<p><a href="#Storage Services">Storage Services</a></p>
+<p><a href="#BagIt Profiles">BagIt Profiles</a></p>
+<p><a href="#Creating a Custom BagIt Profile">Creating a Custom BagIt Profile</a></p>
+<p><a href="#Additional Resources for APTrust Members">Additional Resources for APTrust Members</a></p>
+<p><a href="#Additional Resources for DPN Members">Additional Resources for DPN Members</a></p>
+<p class="indent-1"><a href="#Customizing the Builtin DPN BagIt Profile">Customizing the Builtin DPN BagIt Profile</a></p>
+<p><a href="#Release Notes">Release Notes</a></p>
+
+
+<h2><a name="About EasyStore" class="anchor">About EasyStore</a></h2>
+
+<p>You're using EasyStore 0.1.0, which is an early release with limited functionality and limited real-world testing. It currently supports the following operations:</p>
+
+<ul>
+    <li>Creating APTrust and DPN bags</li>
+    <li>Uploading bags to Amazon's S3 storage service (where APTrust can pick them up for ingest)</li>
+    <li>Creating custom BagIt profiles (for advanced users)</li>
+</ul>
+
+<p>The product currently consists of two applications: EasyStore, which is the graphical component you're looking at now, and apt_create_bag which packages files into BagIt format. In the months to come, apt_create_bag will be wrapped into EasyStore. We plan on adding new Storage Service types (in addition to S3) and a few other features. We'll also improve documentation, testing, and quality control.</p>
+
+<h2><a name="Getting Started" class="anchor">Getting Started</a></h2>
+
+<p>To run your first job on EasyStore, you'll need to customize a few settings. If you have the required information, this usually takes less than five minutes.</p>
+
+<h3><a name="Customizing Your Application Settings" class="anchor">Customizing Your Application Settings</a></h3>
+
+<p>Application Settings define some basic information EasyStore needs to create bags. To change an application setting:</p>
+
+<ol>
+    <li>From the menu, choose <b>Settings &gt; Application Settings</b></li>
+    <li>Click on the name of the setting you want to change</li>
+    <li>Enter the new value in the <b>Value</b> field.</li>
+    <li>Click <b>Save</b>.</li>
+</ol>
+
+<p>The following built-in settings must be set correctly:</p>
+
+<ul>
+    <li><b>Bagging Directory</b> - Set this to the directory in which EasyStore should build its bags. When you create a bag of 1 GB of data, EasyStore will create a new directory or tar file in the Bagging Directory that requires just over 1 GB of space (for the original files and a few tag files). The Bagging Directory you set here will be used as the default for all new jobs. You can, however, change the bagging directory for any individual job whenever you please. There will be times when you need to do this, such as when you're bagging 1 TB of data and you know the Bagging Directory does not have that much space. In Application Settings, set Bagging Directory to the directory you'll want to use most of the time.</li>
+    <li><b>Institution Domain</b> - This is required for APTrust users, and will be ignored for most other users. Set this to your institution's domain name: for example, "virginia.edu" or "unc.edu". If your institution has multiple accounts with APTrust, use your organization's subdomain. For example, "library.unc.edu" or "med.virginia.edu". For APTrust depositors, your domain name becomes part of all of your bag names.</li>
+    <li><b>Path To Bagger</b> - This is required for early versions of EasyStore. The installation package you downloaded included two items: an EasyStore installer, and an application called apt_create_bag, which is responsible for packaging your data. You can save apt_create_bag anywhere on your computer, but you must enter the path to the program here. Examples: (Mac) "/Users/josie/apt_create_bag". (Windows) "C:\Users\josie\apt_create_bag.exe". Note that the path should end with ".exe" on Windows. Later versions of EasyStore will be able to build bags without apt_create_bag, so this setting will go away in a future release.</li>
+</ul>
+
+<h3><a name="Customizing Your BagIt Profile" class="anchor">Customizing Your BagIt Profile</a></h3>
+
+<p>A BagIt profile describes how to create a bag so that it meets an organization's specific set of criteria. These criteria generally include:</p>
+
+<ul>
+    <li>What type of payload manifest must be present (md5, sha256, etc.)</li>
+    <li>What type of tag manifest must be present</li>
+    <li>Which tag files must be present</li>
+    <li>Which tags must be present</li>
+    <li>Which values are allowed for each tag</li>
+    <li>Whether the bag should be serialized or compressed (tar format, zip format, etc)</li>
+    <li>And more...</li>
+</ul>
+
+<p>When you create a bag with EasyStore, you will select the files that go into the bag, and then you'll select the BagIt profile that describes how the bag will be packaged. While you must set some tags, such as the bag name and description, individually for each bag, a number of tags, such as your organization name and address, will be the same across all bags. When you customize your BagIt profile, you fill in default values for a number of tags so that you won't have to fill those in each time you create a new bag.</p>
+
+<p>Here's how to customize the built-in APTrust BagIt profile:</p>
+
+<ol>
+    <li>From the menu, choose <b>Settings &gt; BagIt Profiles</b></li>
+    <li>Click on the <b>APTrust</b> profile.</li>
+    <li>Under <b>Tags in bag-info.txt</b> click <b>Source-Organization</b>.</li>
+    <li>In the popup dialog, fill in the name of your organization in the <b>Default Value</b> field at the bottom.<br/>
+        <img src="static/img/help/SourceOrgDefault.png"></img>
+    </li>
+    <li>Click <b>Save</b>.</li>
+</ol>
+
+<p>That's the only field you'll need to customize for your APTrust profile. If you're customizing the DPN profile, see <a href="#Customizing the Builtin DPN BagIt Profile">Customizing the Builtin DPN BagIt Profile</a> below.</p>
+
+<h3><a name="Adding a Storage Service" class="anchor">Adding a Storage Service</a></h3>
+
+<p>A Storage Service is a place you'll upload a bags to. It may be an S3 bucket, or an FTP server, or some other type of service. When you add a Storage Service, you'r simply providing information about where the service is and how to connect to it. To add a Storage Service:</p>
+
+<ol>
+    <li>Choose <b>Settings &gt; Storage Services</b> from the main menu.</li>
+    <li>Click the <b>New</b> button.</li>
+    <li>Enter the following information:
+        <li><b>Name</b> - Choose a name that describes the service unambiguously. This name will appear on the Jobs page when you are choosing where to send a bag. The name should distinguish between test and production environments so you don't send items to the wrong place.</li>
+        <li><b>Description</b> - Enter a description of the service for your own reference. Because you have a lot going on, don't you? And you know you'll forget what this is later. So do yourself a favor now.</li>
+        <li><b>Protocol</b> - Choose the protocol for connecting to the server. S3 connects to Amazon's S3 service, or any other service that implements the S3 API. FTP connects to FTP servers.</li>
+        <li><b>Host</b> - Enter the name or IP address of the host to connect to. <u>Do not include any prefixes like "ftp://" or "https://".</u> If you're connecting to Amazon's S3 service, the host should be <u>s3.amazonaws.com</u>.</li>
+        <li><b>Port</b> - Enter the port number only of the service is running on a non-standard port. You will almost always want to leave this blank.</li>
+        <li><b>Bucket or Default Folder</b> - If you're connecting to an S3-compliant service, you <u>must</u> enter the name of the bucket here. This is the name of the bucket into which your uploads will be sent. If you're connecting to an FTP service, this setting is optional. When you do specify a folder for FTP uploads, the uploads will go into that folder on the FTP server. If you leave this blank, files will be uploaded into the root directory of the FTP server.</li>
+        <li><b>Login Name</b> - For FTP and other service types that use a login/password combination, your login name should go here. For S3-type services, the Access Key Id should go in this field. If you have S3 credentials, the Access Key Id is generally the shorter of two item.</li>
+        <li><b>Password or Secret Key</b> - For FTP and other service types that use a login/password combination, your login name should go here. For S3-type services, your Secret Key should go here. The Secret Key is the longer of the two S3 credentials.</li>
+    </li>
+    <li><b>Login Extra</b> - This field is not currently used, but it may be used in future for additional storage plugins.</li>
+</ol>
+
+<h3><a name="Running Your First Job" class="anchor">Running Your First Job</a></h3>
+
+<h3><a name="Viewing Job Manifests" class="anchor">Viewing Job Manifests</a></h3>
+
+<h2><a name="Application Settings" class="anchor">Application Settings</a></h2>
+
+<h2><a name="Storage Services" class="anchor">Storage Services</a></h2>
+
+<h2><a name="BagIt Profiles" class="anchor">BagIt Profiles</a></h2>
+
+<h2><a name="Creating a Custom BagIt Profile" class="anchor">Creating a Custom BagIt Profile</a></h2>
+
+<p>For advanced users and needs.</p>
+
+<h2><a name="Additional Resources for APTrust Members" class="anchor">Additional Resources for APTrust Members</a></h2>
+
+<p>APTrust members who have questions or need help can contact support at <a href="mailto:support@aptrust.org">support@aptrust.org</a></p>
+
+<p>The APTrust wiki includes a number of useful pages for members who want to know more about how the repository works. Useful pages include: </p>
+
+<ul>
+    <li><a class="external-link clickable" data-href="https://wiki.aptrust.org/Using_APTrust">Using APTrust</a> contains useful info about bagging, deposits, how to restore data, and more.</li>
+    <li><a class="external-link clickable" data-href="https://wiki.aptrust.org/Partner_Tools">Partner Tools</a> contains links to additional APTrust command-line tools that can be used in scripted and automated workflows.</li>
+    <li>The <a class="external-link clickable" data-href="https://wiki.aptrust.org/Member_API">Member API</a> page includes information about our REST API. Please note that you will need to request an API key from APTrust to get started.</li>
+</ul>
+
+<p>You can find us on GitHub:</p>
+
+<ul>
+    <li>Code: <a class="external-link clickable" data-href="https://github.com/APTrust/easy-store">https://github.com/APTrust/easy-store</a></li>
+    <li>Bugs and feature requests: <a class="external-link clickable" data-href="https://github.com/APTrust/easy-store/issues">https://github.com/APTrust/easy-store/issues</a></li>
+</ul>
+
+<h2><a name="Additional Resources for DPN Members" class="anchor">Additional Resources for DPN Members</a></h2>
+
+<p>Please note that while you can use EasyStore to create DPN bags, you cannot deposit data directly into DPN. Deposits must go through a DPN node such as APTrust, Hathi Trust, Chronopolis, or the Texas Digital Repository.</p>
+
+<p>For more information about DPN, go to <a class="external-link clickable" data-href="http://dpn.org/">http://dpn.org/</a>, or the DPN wiki at <a class="external-link clickable" data-href="https://wiki.duraspace.org/display/DPNC/">The DPN Wiki</a>, but note that some parts of the wiki are out of date.</p>
+
+<h3><a name="Customizing the Builtin DPN BagIt Profile" class="anchor">Customizing the Builtin DPN BagIt Profile</a></h3>
+
+<p>To customize the built-in DPN BagIt profile, follow the steps outlined above for customizing the APTrust profile, and set default values for each of the following:</p>
+
+<ul>
+    <li>Source-Organization</li>
+    <li>Organization-Address</li>
+    <li>Contact-Name</li>
+    <li>Contact-Phone</li>
+    <li>Contact-Email</li>
+    <li>Bag-Count (set the default to "1 of 1")</li>
+    <li>Ingest-Node-Name</li>
+    <li>Ingest-Node-Address</li>
+    <li>Ingest-Node-Contact-Name</li>
+    <li>Ingest-Node-Contact-Email</li>
+    <li>Version-Number (default should be 1)</li>
+    <li>Bag-Type (default should be "data")</li>
+</ul>
+
+
+<h2><a name="Release Notes" class="anchor">Release Notes</a></h2>
+
+<h3>Version 0.1.0 - Feb. 22, 2018</h3>
+
+<p>Initial release.</p>
+
+<ul>
+    <li>Windows only</li>
+    <li>Suports bagging in APTrust and DPN formats.</li>
+    <li>Supports uploads to any server running an S3-compliant API.</li>
+    <li>Supports defining custom BagIt formats and producing bags based on those formats.</li>
+</ul>
+
+<script>
+$(function() {
+     const {shell} = require('electron')
+     $('.external-link').click(function(e) {
+         shell.openExternal($(this).data('href'));
+     });
+});
+</script>

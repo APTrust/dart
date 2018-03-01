@@ -1,19 +1,25 @@
+
+// Temporary, for testing.
+const bagger = require('./easy/bagit/bagger');
+// End temp
+
 $(function() {
     const path = require("path");
     const os = require('os');
     const es = require('./easy/core/easy_store');
-    const templates = require('./easy/core/templates');
-    const builtins = require('./easy/core/builtin_profiles');
-    const Job = require('./easy/core/job');
-    const Plugins = require('./easy/plugins/plugins');
+    const builtinProfiles = require('./easy/core/builtin_profiles');
+    const builtinServices = require('./easy/core/builtin_services');
+
 
     // Top nav menu
     $("#menuDashboard").on('click', function() { dashboardShow(null); });
+    $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
-    $("#menuJobNew").click(jobNew);
+    $("#menuJobNew").click(es.UI.Menu.jobNew);
+    $("#menuHelp").on('click', function() { helpShow(null); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -41,7 +47,7 @@ $(function() {
     $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Jobs
-    $(document).on("click", "#btnNewJob", jobNew);
+    $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
 
     document.ondragover = () => {
         return false;
@@ -86,7 +92,7 @@ $(function() {
             bagItProfileShowForm(id);
             break;
          case 'Job':
-            jobShow(id);
+            es.UI.Menu.jobShow(id);
             break;
          case 'Ignore':
             break;
@@ -105,7 +111,17 @@ $(function() {
     function dashboardShow(message) {
         var data = {};
         data.jobs = es.Job.list(10, 0);
-        $("#container").html(templates.dashboard(data));
+        var setupsCompleted = es.Util.getInternalVar('Setups Completed');
+        if (setupsCompleted && setupsCompleted.length) {
+            data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
+        }
+        $("#container").html(es.Templates.dashboard(data));
+        es.ActiveObject = null;
+    }
+
+    // Help doc
+    function helpShow(message) {
+        $("#container").html(es.Templates.help());
         es.ActiveObject = null;
     }
 
@@ -121,7 +137,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.AppSetting.previousLink(limit, offset)
         data.nextLink = es.AppSetting.nextLink(limit, offset)
-        $("#container").html(templates.appSettingList(data));
+        $("#container").html(es.Templates.appSettingList(data));
         es.ActiveObject = data.items;
     }
 
@@ -135,14 +151,14 @@ $(function() {
         var showDeleteButton = false;
         if (!es.Util.isEmpty(id)) {
             setting = es.AppSetting.find(id);
-            if (!setting.isRequired()) {
+            if (setting.userCanDelete) {
                 showDeleteButton = true;
             }
         }
         var data = {};
         data['form'] = setting.toForm();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.appSettingForm(data));
+        $("#container").html(es.Templates.appSettingForm(data));
         es.ActiveObject = setting;
     }
 
@@ -157,8 +173,8 @@ $(function() {
             form.setErrors(result.errors);
             var data = {};
             data['form'] = form;
-            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && !setting.isRequired();
-            $("#container").html(templates.appSettingForm(data));
+            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
+            $("#container").html(es.Templates.appSettingForm(data));
         }
         es.ActiveObject = setting;
     }
@@ -178,7 +194,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.BagItProfile.previousLink(limit, offset)
         data.nextLink = es.BagItProfile.nextLink(limit, offset)
-        $("#container").html(templates.bagItProfileList(data));
+        $("#container").html(es.Templates.bagItProfileList(data));
         es.ActiveObject = data.items;
     }
 
@@ -194,15 +210,15 @@ $(function() {
             new es.Choice("", "Blank", true),
         ];
         form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
-        var sortedKeys = Object.keys(builtins.ProfilesAvailable).sort();
+        var sortedKeys = Object.keys(builtinProfiles.ProfilesAvailable).sort();
         for(var name of sortedKeys) {
-            var profileId = builtins.ProfilesAvailable[name];
+            var profileId = builtinProfiles.ProfilesAvailable[name];
             form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
         }
         var data = {};
         data.form = form;
         $('#modalTitle').text("Create New BagIt Profile");
-        $("#modalContent").html(templates.bagItProfileNew(data));
+        $("#modalContent").html(es.Templates.bagItProfileNew(data));
         $('#modal').modal();
     }
 
@@ -210,10 +226,8 @@ $(function() {
         var profileId = null;
         var builtinId = $('#baseProfile').val().trim();
         if (!es.Util.isEmpty(builtinId)) {
-            var profile = createProfileFromBuiltin(builtinId, true);
+            var profile = es.BagItProfile.createProfileFromBuiltIn(builtinId, true);
             profileId = profile.id;
-            profile.isBuiltIn = false; // This is a COPY of a built-in.
-            profile.save();
         }
         $('#modal').modal('hide');
         return bagItProfileShowForm(profileId);
@@ -230,7 +244,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.bagItProfileForm(data));
+        $("#container").html(es.Templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
 
@@ -245,7 +259,7 @@ $(function() {
         data['form'] = profile.toForm();
         data['form'].setErrors(result.errors);
         data['tags'] = profile.tagsGroupedByFile();
-        $("#container").html(templates.bagItProfileForm(data));
+        $("#container").html(es.Templates.bagItProfileForm(data));
         es.ActiveObject = profile;
     }
 
@@ -264,7 +278,7 @@ $(function() {
         data.success = message;
         data.previousLink = es.StorageService.previousLink(limit, offset)
         data.nextLink = es.StorageService.nextLink(limit, offset)
-        $("#container").html(templates.storageServiceList(data));
+        $("#container").html(es.Templates.storageServiceList(data));
         es.ActiveObject = data.items;
     }
 
@@ -282,7 +296,7 @@ $(function() {
         var data = {};
         data['form'] = service.toForm();
         data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(templates.storageServiceForm(data));
+        $("#container").html(es.Templates.storageServiceForm(data));
         es.ActiveObject = service;
     }
 
@@ -298,7 +312,7 @@ $(function() {
             var data = {};
             data['form'] = form;
             data['showDeleteButton'] = es.StorageService.find(service.id) != null;
-            $("#container").html(templates.storageServiceForm(data));
+            $("#container").html(es.Templates.storageServiceForm(data));
         }
         es.ActiveObject = service;
     }
@@ -325,7 +339,7 @@ $(function() {
         data['showDeleteButton'] = showDeleteButton;
         data['tagContext'] = "profile";
         $('#modalTitle').text(tag.tagName);
-        $("#modalContent").html(templates.tagDefinitionForm(data));
+        $("#modalContent").html(es.Templates.tagDefinitionForm(data));
         $('#modal').modal();
     }
 
@@ -353,7 +367,7 @@ $(function() {
             var data = {};
             data['form'] = form;
             data['tagContext'] = "profile";
-            $("#modalContent").html(templates.tagDefinitionForm(data));
+            $("#modalContent").html(es.Templates.tagDefinitionForm(data));
         }
     }
 
@@ -380,7 +394,7 @@ $(function() {
         data['form'] = form;
         data['tagContext'] = "profile";
         $('#modalTitle').text("New Tag File");
-        $("#modalContent").html(templates.newTagFileForm(data));
+        $("#modalContent").html(es.Templates.newTagFileForm(data));
         $('#modal').modal();
     }
 
@@ -394,27 +408,6 @@ $(function() {
         tagDefinitionShowForm(null, tagFileName);
     }
 
-    function createProfileFromBuiltin(builtinId, tagAsCopy) {
-        var profile = null;
-        if (builtinId == builtins.APTrustProfileId) {
-            profile = es.BagItProfile.toFullObject(builtins.APTrustProfile);
-        } else if (builtinId == builtins.DPNProfileId) {
-            profile = es.BagItProfile.toFullObject(builtins.DPNProfile);
-        } else {
-            throw new Error("Unknown builtin profile id " + builtinId);
-        }
-        for(var t of profile.requiredTags) {
-            t.isBuiltIn = true;
-        }
-        if (tagAsCopy) {
-            profile.id = es.Util.uuid4();
-            profile.name = `Copy of ${profile.name}`;
-            profile.description = `Copy of ${profile.description}`;
-            profile.baseProfileId = builtinId;
-        }
-        profile.save();
-        return profile;
-    }
 
     // Job Functions
     function jobList(message, limit = 50, offset = 0) {
@@ -423,58 +416,20 @@ $(function() {
         data.previousLink = es.Job.previousLink(limit, offset);
         data.nextLink = es.Job.nextLink(limit, offset);
         data.success = message;
-        $("#container").html(templates.jobList(data));
+        $("#container").html(es.Templates.jobList(data));
         es.ActiveObject = data.items;
     }
 
-    // TODO: Refactor into a UI manager class, because this needs to
+    // TODO: Delete this old vestige. Are we using it anywhere?
     // accessible from the outside.
-    window.jobList = jobList;
+    //window.jobList = jobList;
 
-    function jobNew() {
-        var job = new Job();
-        job.clearFiles();
-        job.resetFileOptions();
-        es.ActiveObject = job;
-        $("#container").html(templates.jobFiles());
-    };
-
-    function jobShow(id) {
-        var job = es.Job.find(id);
-        es.ActiveObject = job;
-        $("#container").html(templates.jobFiles());
-        job.setFileListUI();
-    }
-
-    // Initialize the BagItProfile DB if it's empty.
-    if (es.BagItProfile.storeIsEmpty()) {
-        console.log("Creating base profiles");
-        createProfileFromBuiltin(builtins.APTrustProfileId, false);
-        createProfileFromBuiltin(builtins.DPNProfileId, false);
-    }
-    if (es.AppSetting.findByName("Institution Domain") == null) {
-        console.log("Creating required app settings");
-        var setting = new es.AppSetting("Institution Domain", "example.org");
-        setting.save();
-    }
-    if (es.AppSetting.findByName("Bagging Directory") == null) {
-        console.log("Creating required app settings");
-        var dir = path.join(os.homedir(), "tmp", "easy-store");
-        var setting = new es.AppSetting("Bagging Directory", dir);
-        setting.save();
-    }
-    if (es.AppSetting.findByName("Path to Bagger") == null) {
-        console.log("Creating required app settings");
-        var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
-        var appPath = path.join(os.homedir(), appName);
-        var setting = new es.AppSetting("Path to Bagger", appPath);
-        setting.save();
-    }
-
-    // This is for interactive testing in the console.
-    window.es = es;
-    window.esPlugins = Plugins;
-    window.templates = templates;
+    // Initialize core APTrust settings.
+    var aptProvider = es.Plugins.getSetupProviderByName('APTrust');
+    var aptSetup = new aptProvider.Provider();
+    aptSetup.installAppSettings();
+    aptSetup.installBagItProfiles();
+    aptSetup.installStorageServices();
 
     $('.modal-content').resizable({
         //alsoResize: ".modal-dialog",
@@ -489,5 +444,9 @@ $(function() {
         });
     });
 
+    // Show the dashboard on startup.
     dashboardShow();
+
+    // This is for interactive testing in the console.
+    window.es = es;
 });

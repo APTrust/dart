@@ -7,13 +7,16 @@ const ValidationResult = require('./validation_result');
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});
 
-const requiredSettings = ["Institution Domain", "Bagging Directory", "Path to Bagger"];
-
 module.exports = class AppSetting {
     constructor(name, value) {
         this.id = Util.uuid4();
         this.name = name;
         this.value = value;
+
+        // Set this to false if your setup requires this setting
+        // to be present.
+        this.userCanDelete = true;
+        this.help = "";
     }
     objectType() {
         return 'AppSetting';
@@ -32,15 +35,11 @@ module.exports = class AppSetting {
         var form = new Form('appSettingForm');
         form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
         form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
-        if (this.isRequired()) {
+        if (!this.userCanDelete) {
             form.fields['name'].attrs['disabled'] = true;
-            if (this.name == "Institution Domain") {
-                form.fields['name'].help = "Set this to the value of your organization's internet domain. This is a required setting. You cannot delete it. You can only change its value."
-            } else if (this.name == "Bagging Directory") {
-                form.fields['name'].help = "Where should Easy Store create bags?"
-            } else if (this.name == "Path to Bagger") {
-                form.fields['name'].help = "What is the full path to the apt_create_bag executable?"
-            }
+        }
+        if (this.help) {
+            form.fields['name'].help = this.help;
         }
         form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
         return form
@@ -52,21 +51,15 @@ module.exports = class AppSetting {
         setting.id = $('#appSettingId').val().trim();
         return setting
     }
-    isRequired() {
-        for (var name of requiredSettings) {
-            if (this.name == name) {
-                return true;
-            }
-        }
-        return false;
-    }
     save() {
         return db.set(this.id, this);
     }
     static findByName(name) {
         for (var key in db.store) {
-            var setting = db.store[key];
-            if (setting.name == name) {
+            var obj = db.store[key];
+            if (obj.name == name) {
+                var setting = new AppSetting();
+                Object.assign(setting, obj);
                 return setting;
             }
         }

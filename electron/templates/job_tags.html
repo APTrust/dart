@@ -73,7 +73,7 @@
      data.form = job.toPackagingForm();
      data.domainName = es.AppSetting.findByName("Institution Domain").value;
      data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
-     $("#container").html(templates.jobPackaging(data));
+     $("#container").html(es.Templates.jobPackaging(data));
  });
 
  $("#btnJobStorage").click(function() {
@@ -111,7 +111,7 @@
          data.bagOrFiles = "files";
      }
      data.form = job.toStorageServiceForm();
-     $("#container").html(templates.jobStorage(data));
+     $("#container").html(es.Templates.jobStorage(data));
  }
 
  $("[data-btn-type=NewTagDefForJob]").click(function() {
@@ -137,7 +137,7 @@
      data['showDeleteButton'] = showDeleteButton;
      data['tagContext'] = "job";
      $('#modalTitle').text(tag.tagName);
-     $("#modalContent").html(templates.tagDefinitionForm(data));
+     $("#modalContent").html(es.Templates.tagDefinitionForm(data));
      $('#modal').modal();
  }
 
@@ -157,7 +157,7 @@
      var job = es.ActiveObject;
      var data = job.dataForTagEditor();
      data['tagContext'] = "job";
-     $("#container").html(templates.jobTags(data));
+     $("#container").html(es.Templates.jobTags(data));
  }
 
  function jobNewTagFileShowForm(err) {
@@ -177,7 +177,7 @@
      data['form'] = form;
      data['tagContext'] = "job";
      $('#modalTitle').text("New Tag File");
-     $("#modalContent").html(templates.newTagFileForm(data));
+     $("#modalContent").html(es.Templates.newTagFileForm(data));
      $('#modal').modal();
      $('#modal').on('shown.bs.modal', function () {
          $('#newTagFileName').focus();

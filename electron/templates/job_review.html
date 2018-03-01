@@ -114,7 +114,7 @@
      var job = es.ActiveObject;
      var data = {};
      data.form = job.toStorageServiceForm();
-     $("#container").html(templates.jobStorage(data));
+     $("#container").html(es.Templates.jobStorage(data));
  });
  $("#btnJobRun").click(function() {
      var job = es.ActiveObject;

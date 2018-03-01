@@ -7,7 +7,6 @@ import (
 	"github.com/APTrust/easy-store/util"
 	"github.com/APTrust/easy-store/util/fileutil"
 	"io"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -343,7 +342,8 @@ func (validator *Validator) ValidateTopLevelFiles() bool {
 				// have to be included in the tag manifests.
 				continue
 			}
-			if !strings.Contains(filename, string(os.PathSeparator)) {
+			// Changed string(os.PathSeparator) to "/" because BagIt uses forward slash
+			if !strings.Contains(filename, "/") {
 				validator.addError("Non-manifest file '%s' is not allowed "+
 					"in top-level directory when BagIt profile says "+
 					"AllowMiscTopLevelFiles is false.", filename)
@@ -390,7 +390,12 @@ func (validator *Validator) ValidateUntarDirName() bool {
 	if strings.HasSuffix(validator.Bag.Path, ".tar") {
 		bagName := filepath.Base(validator.Bag.Path)
 		bagName = bagName[0 : len(bagName)-4]
-		if len(validator.topLevelDirNames) != 1 || validator.topLevelDirNames[0] != bagName {
+		for _, dirName := range validator.topLevelDirNames {
+			if !strings.HasPrefix(dirName, bagName) {
+				ok = false
+			}
+		}
+		if validator.topLevelDirNames[0] != bagName {
 			ok = false
 		}
 	}

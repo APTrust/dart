@@ -8,6 +8,12 @@ module.exports = class Field {
         this.choices = [];
         this.cssClasses = [];
         this.attrs = {}
+
+        // validator is a validation function that should return
+        // true if the value is valid and false if not. It should
+        // set a meaningful error message if the value is invalid.
+        // This is implemented only for setup questions.
+        this.validator = null;
     }
     objectType() {
         return 'Field';

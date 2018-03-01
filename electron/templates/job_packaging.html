@@ -98,7 +98,7 @@
      job.bagName = $('#bagName').val();
      job.baggingDirectory = $('#baggingDirectory').val();
      job.save();
-     $("#container").html(templates.jobFiles());
+     $("#container").html(es.Templates.jobFiles());
      job.setFileListUI();
  });
 
@@ -122,7 +122,7 @@
          goToJobStorage();
      } else {
          // Show tag editor
-         $("#container").html(templates.jobTags(job.dataForTagEditor()));
+         $("#container").html(es.Templates.jobTags(job.dataForTagEditor()));
      }
  });
 
@@ -209,7 +209,7 @@
          data.bagOrFiles = "files";
      }
      data.form = job.toStorageServiceForm();
-     $("#container").html(templates.jobStorage(data));
+     $("#container").html(es.Templates.jobStorage(data));
  }
 
  showBagNameHint();

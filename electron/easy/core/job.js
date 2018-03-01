@@ -423,6 +423,24 @@ module.exports = class Job {
         }
     }
 
+    // filesToPackage returns a list of files that should go into
+    // a bag.
+    filesToPackage() {
+        var filesToPackage = [];
+        var shouldIncludeFile = function(filepath) {
+            return Job.shouldIncludeFile(filepath, job.options);
+        };
+        for (var f of this.files) {
+            var stats = fs.statSync(f);
+            if (stats.isDirectory()) {
+                Util.walkSync(f, filesToPackage, shouldIncludeFile);
+            } else if(stats.isFile() && shouldIncludeFile(f)) {
+                filesToPackage.push(f);
+            }
+        }
+        return filesToPackage;
+    }
+
     addFile(filepath) {
         $('#filesPanel').show()
         $('#fileWarningContainer').hide();
@@ -439,6 +457,7 @@ module.exports = class Job {
         var dirCallback = function() { updateStats(row, '.dirCount', 1) };
         var fileCallback = function(stats) { updateFileStats(stats, row) };
         var shouldIncludeCallback = function(filepath) { return Job.shouldIncludeFile(filepath, job.options); };
+        // TODO: Replace this monstrosity with Util.walkSync
         var quickStat = new QuickStat(shouldIncludeCallback, fileCallback, dirCallback);
         fs.stat(filepath, function(err, stats) {
             quickStat.statPath(err, stats, filepath);
@@ -522,6 +541,8 @@ module.exports = class Job {
         }
     }
 }
+
+// TODO: Move all of the below into a UI/view class
 
 function updateFileStats(stats, row) {
     updateStats(row, '.fileCount', 1)

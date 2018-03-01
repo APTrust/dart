@@ -3,7 +3,8 @@
   {{! jobTabs tabFiles = true }}
 
   <h2>Files</h2>
-  <p>Drop files into this window.</p>
+  <p>The first step in creating a job is to choose the files you want to package and send.</p>
+  <p>Drag and drop folders and files into this window.</p>
 
   <div class="panel panel-default" id="filesPanel" style="display:none;">
     <div class="panel-body">
@@ -94,6 +95,6 @@
     data.domainName = es.AppSetting.findByName("Institution Domain").value;
     data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
     //es.ViewCache['jobFiles'] = $("#container").html();
-    $("#container").html(templates.jobPackaging(data));
+    $("#container").html(es.Templates.jobPackaging(data));
   });
 </script>

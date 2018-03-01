@@ -6,6 +6,7 @@ import (
 	"github.com/APTrust/easy-store/util/platform"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -106,4 +107,22 @@ func NewFileSummaryFromTarHeader(header *tar.Header, trimPrefix string) (*FileSu
 		Uid:           header.Uid,
 		Gid:           header.Gid,
 	}, nil
+}
+
+// WindowsPath returns the file's RelPath with backslashes
+// instead of forward slashes.
+func (summary *FileSummary) WindowsPath() string {
+	return strings.Replace(summary.RelPath, "/", "\\", -1)
+}
+
+// FileSystemPath returns the file's relative path in the filesystem.
+// That's the same as RelPath, except on Windows, where the slashes
+// are replaced by backslashes. This lets us translate between 
+// manifest and tarfile paths on the one hand, which use forward 
+// slashes, and Windows paths on the other.
+func (summary *FileSummary) FileSystemPath() string {
+	if runtime.GOOS == "windows" {
+		return summary.WindowsPath()
+	}
+	return summary.RelPath
 }
