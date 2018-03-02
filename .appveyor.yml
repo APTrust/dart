@@ -31,7 +31,7 @@ install:
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
-  - set GOBIN=%APPVEYOR_BUILD_FOLDER%/electron/dist/gobin;%PATH%
+  - set GOBIN=%APPVEYOR_BUILD_FOLDER%/electron/dist/gobin;
   - go version
   - go env
   - go get golang.org/x/crypto/md4
