@@ -1,4 +1,4 @@
-module.exports = class JobOptions {
+class JobOptions {
     constructor() {
         this.skipDSStore = true;
         this.skipHiddenFiles = false;
@@ -8,3 +8,5 @@ module.exports = class JobOptions {
         return 'JobOptions';
     }
 }
+
+module.exports.JobOptions = JobOptions;

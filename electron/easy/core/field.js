@@ -1,4 +1,4 @@
-module.exports = class Field {
+class Field {
     constructor(id, name, label, value) {
         this.id = id;
         this.name = name;
@@ -33,3 +33,5 @@ module.exports = class Field {
         return selected;
     }
 }
+
+module.exports.Field = Field;

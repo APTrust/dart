@@ -1,10 +1,10 @@
-const Menu = require('../ui/menu');
+const { Menu } = require('../ui/menu');
 const Templates = require('../core/templates');
-const Util = require('../core/util');
+const { Util } = require('../core/util');
 
 // setup.js includes functions to display and manage the walk-through
 // setup process defined in any of the setup plugins.
-module.exports = class Setup {
+class Setup {
     // Param provider is a setup plugin, from the easy/plugins/setup directory.
     constructor(provider) {
         this.provider = new provider.Provider();
@@ -148,3 +148,5 @@ module.exports = class Setup {
     }
 
 }
+
+module.exports.Setup = Setup;

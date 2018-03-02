@@ -7,8 +7,8 @@ const mkdirp = require('mkdirp');
 const os = require('os');
 const path = require('path');
 const tar = require('tar-stream')
-const AppSetting = require('../../core/app_setting');
-const Util = require('../../core/util');
+const { AppSetting } = require('../../core/app_setting');
+const { Util } = require('../../core/util');
 
 // We're reading output from a Golang program, which uses "\n"
 // as the newline character when printing to STDOUT on all

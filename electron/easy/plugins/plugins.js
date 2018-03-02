@@ -4,7 +4,7 @@ const requireDir = require('require-dir');
 const path = require('path');
 const fs = require('fs');
 
-const OperationResult = require('../core/operation_result');
+const { OperationResult } = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
 const SetupProviders = requireDir("./setup");
 const StorageProviders = requireDir("./storage");

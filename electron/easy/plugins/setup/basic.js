@@ -2,12 +2,12 @@
 const os = require('os');
 const path = require('path');
 const process = require('process');
-const AppSetting = require('../../core/app_setting');
-const BagItProfile = require('../../core/bagit_profile');
+const { AppSetting } = require('../../core/app_setting');
+const { BagItProfile } = require('../../core/bagit_profile');
 const builtinProfiles = require('../../core/builtin_profiles');
 const builtinServices = require('../../core/builtin_services');
-const Field = require('../../core/field');
-const StorageService = require('../../core/storage_service');
+const { Field } = require('../../core/field');
+const { StorageService } = require('../../core/storage_service');
 
 // Stuff we have to set for the plugin loader to be able to
 // discover and describe our plugin.
@@ -25,7 +25,7 @@ const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking
 const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i;
 
 
-class NoRepository {
+class Basic {
 
     // Constructor is required for this type of plugin.
     constructor() {
@@ -182,7 +182,7 @@ class NoRepository {
 
 }
 
-module.exports.Provider = NoRepository;
+module.exports.Provider = Basic;
 module.exports.name = name;
 module.exports.description = description;
 module.exports.version = version;

@@ -1,19 +1,19 @@
 const path = require('path');
 const builtinProfiles = require('./builtin_profiles');
-const AppSetting = require('./app_setting');
-const BagItProfileInfo = require('./bagit_profile_info');
-const Choice = require('./choice');
+const { AppSetting } = require('./app_setting');
+const { BagItProfileInfo } = require('./bagit_profile_info');
+const { Choice } = require('./choice');
 const Const = require('./constants');
-const Field = require('./field');
-const Form = require('./form');
-const TagDefinition = require('./tag_definition');
-const Util = require('./util');
-const ValidationResult = require('./validation_result');
+const { Field } = require('./field');
+const { Form } = require('./form');
+const { TagDefinition } = require('./tag_definition');
+const { Util } = require('./util');
+const { ValidationResult } = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'bagit-profiles'});
 
-module.exports = class BagItProfile {
+class BagItProfile {
     constructor() {
         // name and description are not part of BagItProfile standard
         this.id = Util.uuid4();
@@ -589,3 +589,5 @@ module.exports = class BagItProfile {
     }
 
 };
+
+module.exports.BagItProfile = BagItProfile;

@@ -1,14 +1,12 @@
 
 // Temporary, for testing.
-const bagger = require('./easy/bagit/bagger');
+const { bagger } = require('./easy/bagit/bagger');
 // End temp
 
 $(function() {
     const path = require("path");
     const os = require('os');
-    const es = require('./easy/core/easy_store');
-    const builtinProfiles = require('./easy/core/builtin_profiles');
-    const builtinServices = require('./easy/core/builtin_services');
+    const es = require('./easy/easy_store');
 
 
     // Top nav menu
@@ -62,7 +60,7 @@ $(function() {
     };
 
     document.ondrop = (e) => {
-        var job = es.ActiveObject;
+        var job = es.State.ActiveObject;
         e.preventDefault();
         e.stopPropagation();
         if (document.getElementById('filesPanel') == null) {
@@ -75,7 +73,7 @@ $(function() {
     };
 
      $(document).on('click', '.deleteCell', function(){
-        var job = es.ActiveObject;
+        var job = es.State.ActiveObject;
         job.deleteFile(this);
      });
 
@@ -116,13 +114,13 @@ $(function() {
             data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
         }
         $("#container").html(es.Templates.dashboard(data));
-        es.ActiveObject = null;
+        es.State.ActiveObject = null;
     }
 
     // Help doc
     function helpShow(message) {
         $("#container").html(es.Templates.help());
-        es.ActiveObject = null;
+        es.State.ActiveObject = null;
     }
 
     // TODO: Refactor into a UI manager class, because this needs to
@@ -138,7 +136,7 @@ $(function() {
         data.previousLink = es.AppSetting.previousLink(limit, offset)
         data.nextLink = es.AppSetting.nextLink(limit, offset)
         $("#container").html(es.Templates.appSettingList(data));
-        es.ActiveObject = data.items;
+        es.State.ActiveObject = data.items;
     }
 
     // TODO: Refactor into a UI manager class, because this needs to
@@ -159,7 +157,7 @@ $(function() {
         data['form'] = setting.toForm();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(es.Templates.appSettingForm(data));
-        es.ActiveObject = setting;
+        es.State.ActiveObject = setting;
     }
 
     function appSettingSave() {
@@ -176,14 +174,14 @@ $(function() {
             data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
             $("#container").html(es.Templates.appSettingForm(data));
         }
-        es.ActiveObject = setting;
+        es.State.ActiveObject = setting;
     }
 
     function appSettingDelete() {
         if (!confirm("Delete this setting?")) {
             return;
         }
-        var setting = es.ActiveObject.delete();
+        var setting = es.State.ActiveObject.delete();
         appSettingShowList(`Deleted setting ${setting.name}`);
     }
 
@@ -195,7 +193,7 @@ $(function() {
         data.previousLink = es.BagItProfile.previousLink(limit, offset)
         data.nextLink = es.BagItProfile.nextLink(limit, offset)
         $("#container").html(es.Templates.bagItProfileList(data));
-        es.ActiveObject = data.items;
+        es.State.ActiveObject = data.items;
     }
 
     // TODO: Refactor into a UI manager class, because this needs to
@@ -210,9 +208,9 @@ $(function() {
             new es.Choice("", "Blank", true),
         ];
         form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
-        var sortedKeys = Object.keys(builtinProfiles.ProfilesAvailable).sort();
+        var sortedKeys = Object.keys(es.BuiltInProfiles.ProfilesAvailable).sort();
         for(var name of sortedKeys) {
-            var profileId = builtinProfiles.ProfilesAvailable[name];
+            var profileId = es.BuiltInProfiles.ProfilesAvailable[name];
             form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
         }
         var data = {};
@@ -245,7 +243,7 @@ $(function() {
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(es.Templates.bagItProfileForm(data));
-        es.ActiveObject = profile;
+        es.State.ActiveObject = profile;
     }
 
     function bagItProfileSave() {
@@ -260,14 +258,14 @@ $(function() {
         data['form'].setErrors(result.errors);
         data['tags'] = profile.tagsGroupedByFile();
         $("#container").html(es.Templates.bagItProfileForm(data));
-        es.ActiveObject = profile;
+        es.State.ActiveObject = profile;
     }
 
     function bagItProfileDelete() {
         if (!confirm("Delete this profile?")) {
             return;
         }
-        var profile = es.ActiveObject.delete();
+        var profile = es.State.ActiveObject.delete();
         bagItProfileShowList(`Deleted profile ${profile.name}`);
     }
 
@@ -279,7 +277,7 @@ $(function() {
         data.previousLink = es.StorageService.previousLink(limit, offset)
         data.nextLink = es.StorageService.nextLink(limit, offset)
         $("#container").html(es.Templates.storageServiceList(data));
-        es.ActiveObject = data.items;
+        es.State.ActiveObject = data.items;
     }
 
     // TODO: Refactor into a UI manager class, because this needs to
@@ -297,7 +295,7 @@ $(function() {
         data['form'] = service.toForm();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(es.Templates.storageServiceForm(data));
-        es.ActiveObject = service;
+        es.State.ActiveObject = service;
     }
 
     function storageServiceSave() {
@@ -314,21 +312,21 @@ $(function() {
             data['showDeleteButton'] = es.StorageService.find(service.id) != null;
             $("#container").html(es.Templates.storageServiceForm(data));
         }
-        es.ActiveObject = service;
+        es.State.ActiveObject = service;
     }
 
     function storageServiceDelete() {
         if (!confirm("Delete this storage service?")) {
             return;
         }
-        var service = es.ActiveObject.delete();
+        var service = es.State.ActiveObject.delete();
         storageServiceShowList(`Deleted storage service ${service.name}`);
     }
 
 
     // Tag Definition functions
     function tagDefinitionShowForm(id, tagFile) {
-        var tag = es.ActiveObject.findTagById(id);
+        var tag = es.State.ActiveObject.findTagById(id);
         var showDeleteButton = (tag != null && !tag.isBuiltIn);
         if (tag == null) {
             tag = new es.TagDefinition(tagFile, 'New-Tag');
@@ -345,22 +343,22 @@ $(function() {
 
     function tagDefinitionSave() {
         // Copy for values to existing tag, whic is part of the
-        // BagItProfile currently stored in es.ActiveObject.
+        // BagItProfile currently stored in es.State.ActiveObject.
         var tagFromForm = es.TagDefinition.fromForm();
         var result = tagFromForm.validate();
         if (result.isValid()) {
-            es.ActiveObject = Object.assign(es.ActiveObject, es.BagItProfile.fromForm());
-            var existingTag = es.ActiveObject.findTagById(tagFromForm.id);
+            es.State.ActiveObject = Object.assign(es.State.ActiveObject, es.BagItProfile.fromForm());
+            var existingTag = es.State.ActiveObject.findTagById(tagFromForm.id);
             if (existingTag == null) {
                 // This is a new tag, so add it to the profile's
                 // list of required tags.
                 existingTag = new es.TagDefinition('', '');
-                es.ActiveObject.requiredTags.push(existingTag);
+                es.State.ActiveObject.requiredTags.push(existingTag);
             }
             Object.assign(existingTag, tagFromForm);
-            es.ActiveObject.save();
+            es.State.ActiveObject.save();
             $('#modal').modal('hide');
-            bagItProfileShowForm(es.ActiveObject.id);
+            bagItProfileShowForm(es.State.ActiveObject.id);
         } else {
             var form = tagFromForm.toForm();
             form.setErrors(result.errors);
@@ -376,10 +374,10 @@ $(function() {
             return;
         }
         var tagId = es.TagDefinition.fromForm().id;
-        es.ActiveObject.requiredTags = es.ActiveObject.requiredTags.filter(item => item.id != tagId);
-        es.ActiveObject.save();
+        es.State.ActiveObject.requiredTags = es.State.ActiveObject.requiredTags.filter(item => item.id != tagId);
+        es.State.ActiveObject.save();
         $('#modal').modal('hide');
-        bagItProfileShowForm(es.ActiveObject.id);
+        bagItProfileShowForm(es.State.ActiveObject.id);
     }
 
     function newTagFileShowForm(err) {
@@ -417,12 +415,8 @@ $(function() {
         data.nextLink = es.Job.nextLink(limit, offset);
         data.success = message;
         $("#container").html(es.Templates.jobList(data));
-        es.ActiveObject = data.items;
+        es.State.ActiveObject = data.items;
     }
-
-    // TODO: Delete this old vestige. Are we using it anywhere?
-    // accessible from the outside.
-    //window.jobList = jobList;
 
     // Initialize core APTrust settings.
     var aptProvider = es.Plugins.getSetupProviderByName('APTrust');

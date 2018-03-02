@@ -1,4 +1,4 @@
-module.exports = class BagItProfileInfo {
+class BagItProfileInfo {
     constructor() {
         this.bagItProfileIdentifier = "";
         this.contactEmail = "";
@@ -11,3 +11,5 @@ module.exports = class BagItProfileInfo {
         return 'BagItProfileInfo';
     }
 }
+
+module.exports.BagItProfileInfo = BagItProfileInfo;

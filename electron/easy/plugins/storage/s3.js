@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const OperationResult = require('../../core/operation_result');
+const { OperationResult } = require('../../core/operation_result');
 const Minio = require('minio')
 
 const name = "APTrust S3 uploader";

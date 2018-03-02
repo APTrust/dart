@@ -1,5 +1,5 @@
 // builtin storage services
-const StorageService = require('./storage_service');
+const { StorageService } = require('./storage_service');
 
 const APTrustDemoId = "739b14fd-0b02-4bb8-9a64-8d8c74ab9e4c";
 const APTrustProdId = "40aa1fe2-8463-47ac-a582-4bf92db361ee";

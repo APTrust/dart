@@ -2,13 +2,12 @@
 const os = require('os');
 const path = require('path');
 const process = require('process');
-const AppSetting = require('../../core/app_setting');
-const BagItProfile = require('../../core/bagit_profile');
+const { AppSetting } = require('../../core/app_setting');
+const { BagItProfile } = require('../../core/bagit_profile');
 const builtinProfiles = require('../../core/builtin_profiles');
 const builtinServices = require('../../core/builtin_services');
-const Choice = require('../../core/choice');
-const Field = require('../../core/field');
-const StorageService = require('../../core/storage_service');
+const { Choice } = require('../../core/choice');
+const { Field } = require('../../core/field');
 
 // Stuff we have to set for the plugin loader to be able to
 // discover and describe our plugin.
@@ -140,6 +139,8 @@ class APTrust {
 
     // Install storage services required by APTrust
     installStorageServices() {
+        // StorageService won't load at the top level. Why??
+        var { StorageService } = require('../../core/storage_service');
         var installed = [];
         if (!StorageService.find(builtinServices.APTrustDemoId)) {
             builtinServices.APTrustDemoService.save();
@@ -324,6 +325,8 @@ class APTrust {
     }
 
     _getAwsAccessKeyIdField() {
+        // StorageService won't load at the top level. Why??
+        var { StorageService } = require('../../core/storage_service');
         var awsAccessKeyId = this._getSetupField('awsAccessKeyId', 'AWS Access Key ID');
         var prodService = StorageService.find(builtinServices.APTrustProdId);
         var demoService = StorageService.find(builtinServices.APTrustDemoId);
@@ -358,6 +361,8 @@ class APTrust {
     }
 
     _getAwsSecretAccessKeyField() {
+        // StorageService won't load at the top level. Why??
+        var { StorageService } = require('../../core/storage_service');
         var awsSecretAccessKey = this._getSetupField('awsSecretAccessKey', 'AWS Secret Access Key');
         var prodService = StorageService.find(builtinServices.APTrustProdId);
         var demoService = StorageService.find(builtinServices.APTrustDemoId);
@@ -398,7 +403,6 @@ class APTrust {
         field.attrs['required'] = true;
         return field;
     }
-
 }
 
 module.exports.Provider = APTrust;

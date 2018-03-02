@@ -1,20 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 const dateFormat = require('dateformat');
-const AppSetting = require('./app_setting');
-const BagItProfile = require('./bagit_profile');
-const BagItProfileInfo = require('./bagit_profile_info');
-const Choice = require('./choice');
+const { AppSetting } = require('./app_setting');
+const { BagItProfile } = require('./bagit_profile');
+const { BagItProfileInfo } = require('./bagit_profile_info');
+const { Choice } = require('./choice');
 const Const = require('./constants');
-const Field = require('./field');
-const Form = require('./form');
-const JobOptions = require('./job_options');
-const OperationResult = require('./operation_result');
+const { Field } = require('./field');
+const { Form } = require('./form');
+const { JobOptions } = require('./job_options');
+const { OperationResult } = require('./operation_result');
 const Plugins = require('../plugins/plugins');
-const QuickStat = require('./quick_stat');
-const StorageService = require('./storage_service');
-const Util = require('./util');
-const ValidationResult = require('./validation_result');
+const { QuickStat } = require('./quick_stat');
+const { StorageService } = require('./storage_service');
+const { Util } = require('./util');
+const { ValidationResult } = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'jobs'});
@@ -30,7 +30,7 @@ var gb = 1024 * mb;
 var tb = 1024 * gb;
 
 
-module.exports = class Job {
+class Job {
     constructor() {
         this.id = Util.uuid4();
         this.bagName = "";
@@ -642,3 +642,6 @@ function getFileIcon(filepath) {
 function getFolderIcon(filepath) {
     return '<span class="glyphicon glyphicon-folder-close" aria-hidden="true" style="margin-right:10px"></span>' + filepath;
 }
+
+
+module.exports.Job = Job;
