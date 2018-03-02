@@ -11,7 +11,7 @@ if (Util.isDevMode()) {
     log.transports.file.level = 'debug';
     log.transports.console.level = 'debug';
 } else {
-    log.transports.file.level = 'warn';
+    log.transports.file.level = 'info';
     log.transports.console.level = false;
 }
 
