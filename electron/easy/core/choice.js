@@ -1,7 +1,7 @@
 const path = require('path');
-const Util = require('./util');
+const { Util } = require('./util');
 
-module.exports = class Choice {
+class Choice {
     constructor(value, label, selected) {
         this.value = value;
         this.label = label;
@@ -32,3 +32,5 @@ module.exports = class Choice {
         return choices;
     }
 }
+
+module.exports.Choice = Choice;

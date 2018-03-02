@@ -1,14 +1,12 @@
 
 // Temporary, for testing.
-const bagger = require('./easy/bagit/bagger');
+const { bagger } = require('./easy/bagit/bagger');
 // End temp
 
 $(function() {
     const path = require("path");
     const os = require('os');
-    const es = require('./easy/core/easy_store');
-    const builtinProfiles = require('./easy/core/builtin_profiles');
-    const builtinServices = require('./easy/core/builtin_services');
+    const es = require('./easy/easy_store');
 
 
     // Top nav menu
@@ -210,9 +208,9 @@ $(function() {
             new es.Choice("", "Blank", true),
         ];
         form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
-        var sortedKeys = Object.keys(builtinProfiles.ProfilesAvailable).sort();
+        var sortedKeys = Object.keys(es.BuiltInProfiles.ProfilesAvailable).sort();
         for(var name of sortedKeys) {
-            var profileId = builtinProfiles.ProfilesAvailable[name];
+            var profileId = es.BuiltInProfiles.ProfilesAvailable[name];
             form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
         }
         var data = {};
@@ -419,10 +417,6 @@ $(function() {
         $("#container").html(es.Templates.jobList(data));
         es.ActiveObject = data.items;
     }
-
-    // TODO: Delete this old vestige. Are we using it anywhere?
-    // accessible from the outside.
-    //window.jobList = jobList;
 
     // Initialize core APTrust settings.
     var aptProvider = es.Plugins.getSetupProviderByName('APTrust');

@@ -1,6 +1,6 @@
 const dateFormat = require('dateformat');
 
-module.exports = class OperationResult {
+class OperationResult {
     constructor(operation, provider) {
         // operation should be either "Bagging" or "Storage"
         this.operation = operation;
@@ -54,3 +54,5 @@ module.exports = class OperationResult {
         return `${op} ${outcome} ${when}`
     }
 }
+
+module.exports.OperationResult = OperationResult;

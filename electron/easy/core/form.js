@@ -1,4 +1,4 @@
-module.exports = class Form {
+class Form {
     constructor(id) {
         this.id = id;
         this.fields = {};
@@ -14,3 +14,5 @@ module.exports = class Form {
         }
     }
 }
+
+module.exports.Form = Form;

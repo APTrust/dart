@@ -1,5 +1,5 @@
 const path = require('path');
-const OperationResult = require('../../core/operation_result');
+const { OperationResult } = require('../../core/operation_result');
 
 const name = "APTrust Tar Provider";
 const description = "Packages files into a single tar file."

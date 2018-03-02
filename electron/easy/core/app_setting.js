@@ -1,13 +1,13 @@
 const path = require('path');
-const Field = require('./field');
-const Form = require('./form');
-const Util = require('./util');
-const ValidationResult = require('./validation_result');
+const { Field } = require('./field');
+const { Form } = require('./form');
+const { Util } = require('./util');
+const { ValidationResult } = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'app-settings'});
 
-module.exports = class AppSetting {
+class AppSetting {
     constructor(name, value) {
         this.id = Util.uuid4();
         this.name = name;
@@ -109,3 +109,5 @@ module.exports = class AppSetting {
         return "";
     }
 }
+
+module.exports.AppSetting = AppSetting;

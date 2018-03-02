@@ -1,4 +1,4 @@
-const BagItFile = require('./bagit_file');
+const { BagItFile } = require('./bagit_file');
 const async = require('async');
 const constants = require('./constants');
 const crypto = require('crypto');

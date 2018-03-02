@@ -1,16 +1,16 @@
 const path = require('path');
-const Choice = require('./choice');
+const { Choice } = require('./choice');
 const Const = require('./constants');
-const Field = require('./field');
-const Form = require('./form');
+const { Field } = require('./field');
+const { Form } = require('./form');
 const Plugins = require('../plugins/plugins');
-const Util = require('./util');
-const ValidationResult = require('./validation_result');
+const { Util } = require('./util');
+const { ValidationResult } = require('./validation_result');
 
 const Store = require('electron-store');
 var db = new Store({name: 'storage-services'});
 
-module.exports = class StorageService {
+class StorageService {
     constructor(name) {
         this.id = Util.uuid4();
         this.name = name;
@@ -128,3 +128,5 @@ module.exports = class StorageService {
         return "";
     }
 }
+
+module.exports.StorageService = StorageService;

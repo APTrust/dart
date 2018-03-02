@@ -1,15 +1,15 @@
 const path = require('path');
-const Choice = require('./choice');
+const { Choice } = require('./choice');
 const Const = require('./constants');
-const Form = require('./form');
-const Field = require('./field');
-const Util = require('./util');
-const ValidationResult = require('./validation_result');
+const { Form } = require('./form');
+const { Field } = require('./field');
+const { Util } = require('./util');
+const { ValidationResult } = require('./validation_result');
 
 const tagsSetBySystem = ['Bagging-Date', 'Payload-Oxum', 'DPN-Object-ID',
                          'First-Version-Object-ID', 'Bag-Size'];
 
-module.exports = class TagDefinition {
+class TagDefinition {
     constructor(tagFile, tagName) {
         this.id = Util.uuid4();
         this.tagFile = tagFile;
@@ -146,3 +146,5 @@ module.exports = class TagDefinition {
         return `${this.tagName}: ${val}`;
     }
 }
+
+module.exports.TagDefinition = TagDefinition;

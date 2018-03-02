@@ -1,6 +1,6 @@
-const es = require('../core/easy_store')
+const es = require('../easy_store')
 
-module.exports = class Menu {
+class Menu {
 
     static jobNew() {
         var job = new es.Job();
@@ -31,3 +31,5 @@ module.exports = class Menu {
     }
 
 }
+
+module.exports.Menu = Menu;

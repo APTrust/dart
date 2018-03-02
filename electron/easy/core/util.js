@@ -3,7 +3,7 @@ const fs = require('fs');
 const Store = require('electron-store');
 var db = new Store({name: 'internal'});
 
-module.exports = class Util {
+class Util {
     // Thanks https://gist.github.com/kaizhu256/4482069
     static uuid4() {
         var uuid = '', ii;
@@ -147,3 +147,5 @@ module.exports = class Util {
         return filelist;
     };
 }
+
+module.exports.Util = Util;

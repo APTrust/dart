@@ -1,0 +1,43 @@
+const electron = require('electron');
+var remote = require('electron').remote;
+const app = remote.app;
+const path = require('path');
+const { AppSetting  } = require('./core/app_setting');
+const { BagItProfile } = require('./core/bagit_profile');
+const { BagItProfileInfo } = require('./core/bagit_profile_info');
+const { BuiltInProfiles } = require('./core/builtin_profiles');
+const { BuiltInServices } = require('./core/builtin_services');
+const { Choice } = require('./core/choice');
+const Const = require('./core/constants');
+const { Field } = require('./core/field');
+const { Form } = require('./core/form');
+const { Job } = require('./core/job');
+const Plugins = require('./plugins/plugins');
+const { StorageService } = require('./core/storage_service');
+const { TagDefinition } = require('./core/tag_definition');
+const Templates = require('./core/templates');
+const UI = require('./ui/ui');
+const { Util } = require('./core/util');
+const { ValidationResult } = require('./core/validation_result');
+
+// This will be set by application.js, based on current view.
+var ActiveObject = null;
+
+module.exports.ActiveObject = ActiveObject;
+module.exports.AppSetting = AppSetting;
+module.exports.BagItProfile = BagItProfile;
+module.exports.BagItProfileInfo = BagItProfileInfo;
+module.exports.BuiltInProfiles = BuiltInProfiles;
+module.exports.BuiltInServices = BuiltInServices;
+module.exports.Choice = Choice;
+module.exports.Const = Const;
+module.exports.Field = Field;
+module.exports.Form = Form;
+module.exports.Job = Job;
+module.exports.Plugins = Plugins;
+module.exports.StorageService = StorageService;
+module.exports.TagDefinition = TagDefinition;
+module.exports.Templates = Templates;
+module.exports.UI = UI;
+module.exports.Util = Util;
+module.exports.ValidationResult = ValidationResult;

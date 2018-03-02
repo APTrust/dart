@@ -1,4 +1,4 @@
-module.exports = class ValidationResult {
+class ValidationResult {
     constructor(errors) {
         this.errors = {};
     }
@@ -9,3 +9,5 @@ module.exports = class ValidationResult {
         return Object.keys(this.errors).length == 0;
     }
 }
+
+module.exports.ValidationResult = ValidationResult;

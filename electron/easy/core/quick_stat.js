@@ -6,7 +6,7 @@ const path = require('path');
 
 // TODO: Replace this with Util.walkSync
 
-module.exports = class QuickStat {
+class QuickStat {
     constructor(shouldInclude, fileCallback, dirCallback) {
         this.shouldInclude = shouldInclude;
         this.fileCallback = fileCallback;
@@ -48,3 +48,5 @@ module.exports = class QuickStat {
         });
     }
 }
+
+module.exports.QuickStat = QuickStat;

@@ -1,6 +1,6 @@
 const constants = require('./constants');
 
-module.exports = class BagItFile {
+class BagItFile {
 
     constructor(absSourcePath, relDestPath, stats) {
         this.absSourcePath = absSourcePath;
@@ -36,3 +36,6 @@ module.exports = class BagItFile {
         return constants.TAG_FILE;
     }
 }
+
+
+module.exports.BagItFile = BagItFile;
