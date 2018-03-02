@@ -149,6 +149,7 @@ class Bagger {
         for (var tagFileName of this.job.bagItProfile.requiredTagFileNames()) {
             var content = this.job.bagItProfile.getTagFileContents(tagFileName);
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
+            console.log(tmpFile.name);
             var bytes = fs.writeSync(tmpFile.fd, content,  0, 'utf8');
             if (bytes != content.length) {
                 throw `In tag file ${tagFileName} wrote only ${bytes} of ${content.length} bytes`;
@@ -182,6 +183,13 @@ class Bagger {
         // On done, close the tar archive. Clean up all temp files.
         // TODO: Move this to the end of all manifest writing.
         this.getTarPacker().finalize();
+
+        // TODO: This MUST be called, even if we exit early with an error.
+        for(var tmpFile of this.tmpFiles) {
+            if (fs.existsSync(tmpFile)) {
+                fs.unlinkSync(tmpFile);
+            }
+        }
     }
 
     // copyFile copies file at f.absSourcePath into relDestPath of the bag.
