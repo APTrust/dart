@@ -118,6 +118,10 @@ class Util {
     static setInternalVar(name, value) {
         db.set(name, value);
     }
+    static isDevMode() {
+        return (process.execPath.includes('node_modules/electron') ||
+                process.execPath.includes('node_modules\electron'));
+    }
     // walkSync recursively lists all files in a directory and its
     // subdirectories and returns them in filelist. If you want to
     // filter the list, include a callback filterFunction, which takes
