@@ -19,4 +19,9 @@ log.filename = function() {
     return log.transports.file.findLogPath();
 }
 
+// Use log.info("message")
+//     log.warn("message")
+//     log.error("message")
+//     log.debug("message")
+
 module.exports = log;
