@@ -15,15 +15,13 @@ const { Job } = require('./core/job');
 const Plugins = require('./plugins/plugins');
 const { StorageService } = require('./core/storage_service');
 const { TagDefinition } = require('./core/tag_definition');
+const State = require('./core/state');
 const Templates = require('./core/templates');
 const UI = require('./ui/ui');
 const { Util } = require('./core/util');
 const { ValidationResult } = require('./core/validation_result');
 
-// This will be set by application.js, based on current view.
-var ActiveObject = null;
 
-module.exports.ActiveObject = ActiveObject;
 module.exports.AppSetting = AppSetting;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
@@ -37,6 +35,7 @@ module.exports.Job = Job;
 module.exports.Plugins = Plugins;
 module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
+module.exports.State = State;
 module.exports.Templates = Templates;
 module.exports.UI = UI;
 module.exports.Util = Util;
