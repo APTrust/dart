@@ -107,6 +107,7 @@ class Bagger {
         }
         this.initOutputDir();
         for (var f of this.job.filesToPackage()) {
+            console.log(f)
             this.copyFile(f, 'data' + f.absPath);
         }
         if (this.writeAs == WRITE_AS_TAR) {
@@ -115,31 +116,9 @@ class Bagger {
                 bagger.tarTagFiles();
             }
         }
-        // write tag manifests
-        //    - use copyFile, so we get checksums
-        //    - loop through this.files & write out checksums
-        //      for anything that's a tag file
-        //    - call BagItFile.getManifestEntry(algorithm) to get the
-        //      manifest entry
-        // validate bag
-        // copy tag data to database
-        // copy manifest data to database
-
-        // TODO: Call this when all writing is done.
-        if (this.writeAs == WRITE_AS_TAR) {
-        //     this.getTarPacker().finalize();
-        }
     }
 
     tarTagFiles() {
-        // write tag files
-        //    - use job.bagItProfile.requiredTagFileNames()
-        //      to get list of tag files
-        //    - use job.bagItProfile.getTagFileContents('tag-file-name.txt')
-        //      to get the contents to write
-        //    - use copyFile, so we get checksums
-        //    - what about non-parsable custom tag files
-        //      and tag files in special directories?
         console.log("Writing tag files");
         var bagger = this;
         var oxumTag = bagger.job.bagItProfile.findTagByName('Payload-Oxum');
@@ -170,12 +149,6 @@ class Bagger {
     }
 
     tarManifests() {
-        // write manifests
-        //    - use copyFile, so we get checksums
-        //    - loop through this.files & write out checksums
-        //      for anything that's a payload file
-        //    - call BagItFile.getManifestEntry(algorithm) to get the
-        //      manifest entry
         console.log("Writing manifests");
         var bagger = this;
         var algorithms = Object.keys(this.files[0].checksums);
@@ -247,7 +220,6 @@ class Bagger {
 
     cleanup() {
         // On done, close the tar archive. Clean up all temp files.
-        // TODO: Move this to the end of all manifest writing.
         this.getTarPacker().finalize();
 
         // TODO: This MUST be called, even if we exit early with an error.
