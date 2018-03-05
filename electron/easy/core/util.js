@@ -112,9 +112,33 @@ class Util {
         }
         return null;
     }
+
+    // toHumanSize returns a human-readable size for the given
+    // number of bytes. The return value is trucated at two
+    // decimal places.
+    static toHumanSize(bytes) {
+        if (isNaN(bytes)) {
+            return 'Not a Number';
+        }
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        var hs = bytes;
+        for(var i=0; i < sizes.length; i++) {
+            hs = bytes / (1024 ** i);
+            if (hs < 1024) {
+                break;
+            }
+        }
+        return `${hs.toFixed(2)} ${sizes[i]}`;
+    }
+
+    // getInternalVar retrieves the app's internal variable with
+    // the specified name. Internal vars are not visible to users.
     static getInternalVar(name) {
         return db.get(name);
     }
+    // setInternalVar set the internal variable with
+    // the specified name to the specified value. Internal vars are
+    // not visible to users.
     static setInternalVar(name, value) {
         db.set(name, value);
     }
