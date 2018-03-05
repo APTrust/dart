@@ -13,6 +13,10 @@ const { Util } = require('../core/util');
 const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
 
+// TODO: Remove TarWriter to separate file.
+// TODO: Write validator.
+// TODO: Extract manifests (or just make an extra copy after copyFile)
+
 // writeIntoTarArchive is the function that the async queue
 // will manage. When writing to a tar archive, we must add
 // files one at a time.
