@@ -1,5 +1,5 @@
-const { BagItFile } = require('./bagit_file');
 const async = require('async');
+const { BagItFile } = require('./bagit_file');
 const constants = require('./constants');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -8,6 +8,7 @@ const path = require('path');
 const stream = require('stream');
 const tar = require('tar-stream');
 const tmp = require('tmp');
+const { Util } = require('../core/util');
 
 const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
@@ -122,8 +123,14 @@ class Bagger {
         console.log("Writing tag files");
         var bagger = this;
         var oxumTag = bagger.job.bagItProfile.findTagByName('Payload-Oxum');
+        // Payload-Oxum and Bag-Size:
+        // See https://tools.ietf.org/html/draft-kunze-bagit-14#section-2.1.3
         if (oxumTag) {
             oxumTag.userValue = bagger.payloadOxum();
+        }
+        var sizeTag = bagger.job.bagItProfile.findTagByName('Bag-Size');
+        if (sizeTag) {
+            sizeTag.userValue = Util.toHumanSize(bagger.payloadByteCount());
         }
         for (var tagFileName of this.job.bagItProfile.requiredTagFileNames()) {
             var content = this.job.bagItProfile.getTagFileContents(tagFileName);
