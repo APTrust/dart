@@ -1,6 +1,6 @@
 
 // Temporary, for testing.
-const { bagger } = require('./easy/bagit/bagger');
+const { Bagger } = require('./easy/bagit/bagger');
 // End temp
 
 $(function() {
