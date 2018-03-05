@@ -205,14 +205,44 @@ class Bagger {
         }
         // On done, create tag manifests
         this.manifestQueue.drain = function () {
-            console.log("Done writing payload manifests files");
+            console.log("Done writing payload manifests");
             bagger.tarTagManifests();
         }
     }
 
     tarTagManifests() {
         console.log("Tarring tag manifests");
-        this.cleanup();
+        var bagger = this;
+        var algorithms = Object.keys(this.files[0].checksums);
+        for (var alg of algorithms) {
+            // Manifest name: manifest-md5.txt, manifest-sha256.txt, etc.
+            var manifestName = `tagmanifest-${alg}.txt`;
+            var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
+            this.tmpFiles.push(tmpFile.name);
+            console.log(tmpFile.name);
+            for (var f of this.files) {
+                if (f.fileType != constants.TAG_FILE && f.fileType != constants.PAYLOAD_MANIFEST) {
+                    continue;
+                }
+                // Manifest entry: digest <space> path_of_file_in_bag
+                var entry = `${f.checksums[alg]} ${f.relDestPath}${os.EOL}`;
+                var bytes = fs.writeSync(tmpFile.fd, entry);
+                if (bytes != entry.length) {
+                    throw `In manifest ${manifestName} wrote only ${bytes} of ${entry.length} bytes`;
+                }
+            }
+            fs.closeSync(tmpFile.fd);
+            var source = {
+                absPath: tmpFile.name,
+                stats: fs.statSync(tmpFile.name)
+            }
+            this.copyFile(source, manifestName);
+        }
+        // On done, create tag manifests
+        this.tagManifestQueue.drain = function () {
+            console.log("Done writing tag manifests");
+            bagger.cleanup();
+        }
     }
 
     cleanup() {
