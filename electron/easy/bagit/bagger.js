@@ -298,7 +298,7 @@ class Bagger {
     _copyIntoTar(bagItFile) {
         var bagger = this;
         var header = {
-            name: bagItFile.relDestPath,
+            name: bagger.job.bagName + '/' + bagItFile.relDestPath,
             size: bagItFile.stats.size,
             mode: bagItFile.stats.mode,
             uid: bagItFile.stats.uid,
@@ -358,15 +358,6 @@ class Bagger {
         return `${this.payloadByteCount()}.${this.payloadFileCount()}`
     }
 
-    writeManifest(algorithm) {
-        // Write payload manifest with data from files.
-    }
-
-    writeTagFile(relDestPath) {
-        // Write tag file with data from profile.
-        // Tag file data has to go through the hashing algorithms,
-        // so we can put the checksums in the tag manifests.
-    }
 }
 
 module.exports.Bagger = Bagger;
