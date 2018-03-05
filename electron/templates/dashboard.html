@@ -51,7 +51,7 @@
          // This is the same as helpShow in application.js.
          // Should be moved to one UI class.
          $("#container").html(es.Templates.help());
-         es.ActiveObject = null;
+         es.State.ActiveObject = null;
      });
      $('#setupPage').click(function(e) {
          es.UI.Menu.setupShow();
@@ -98,7 +98,7 @@
          }
      }
      $('#jobDetail').html(es.Templates.jobSummaryPanel(data));
-     es.ActiveObject = job;
+     es.State.ActiveObject = job;
  }
 
  // TODO: Move to common UI module

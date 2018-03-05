@@ -27,7 +27,7 @@
  $('[data-toggle="popover"]').popover();
 
  $("#btnJobReview").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.setStorageServicesFromForm();
      job.save();
      var data = {};
@@ -43,7 +43,7 @@
  });
 
  $("#btnPrevious").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.setStorageServicesFromForm();
      job.save();
      var data = {};

@@ -111,13 +111,13 @@
 
 <script>
  $("#btnJobStorage").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var data = {};
      data.form = job.toStorageServiceForm();
      $("#container").html(es.Templates.jobStorage(data));
  });
  $("#btnJobRun").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.run();
  });
 </script>

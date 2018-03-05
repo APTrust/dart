@@ -65,7 +65,7 @@
 
  $("select[name=profile]").change(function() {
      hideBagNameHint();
-     var job = window.es.ActiveObject;
+     var job = window.es.State.ActiveObject;
      var bagNameOnForm = $('#bagName').val();
      var id = $("select[name=profile]").val();
      if (id == "") {
@@ -83,7 +83,7 @@
  });
 
  $(".suggest-name").click(function () {
-     var job = window.es.ActiveObject;
+     var job = window.es.State.ActiveObject;
      if (job.bagItProfile != null) {
          bagName = job.bagItProfile.suggestBagName();
      } else {
@@ -94,7 +94,7 @@
  });
 
  $("#btnJobFiles").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.bagName = $('#bagName').val();
      job.baggingDirectory = $('#baggingDirectory').val();
      job.save();
@@ -103,7 +103,7 @@
  });
 
  $("#btnJobTagsOrStorage").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.bagName = $('#bagName').val();
      job.packageFormat = $('#packageFormat').val();
      job.baggingDirectory = $('#baggingDirectory').val();
@@ -127,7 +127,7 @@
  });
 
  function validateProfilePresence() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var profile = $('#profile').val();
      var parent = $('#profile').closest("div.form-group");
      if (job.packageFormat == "BagIt" && job.bagItProfile == null) {
@@ -144,7 +144,7 @@
  }
 
  function validateBagName() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var name = $('#bagName').val();
      var parent = $('#bagName').closest("div.form-group");
      if (job.bagItProfile != null) {
@@ -169,7 +169,7 @@
  }
 
  function validateBaggingDirectory() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var isValid = true;
      var dir = $('#baggingDirectory').val();
      var parent = $('#baggingDirectory').closest("div.form-group");
@@ -185,7 +185,7 @@
  }
 
  function showBagNameHint() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      if (job.bagItProfile == null) {
          $('#nameHintGeneric').show();
      } else if (job.bagItProfile.hasRequiredTagFile("aptrust-info.txt")) {
@@ -202,7 +202,7 @@
  }
 
  function goToJobStorage() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var data = {};
      data.bagOrFiles = "bag";
      if (job.bagItProfile == null) {

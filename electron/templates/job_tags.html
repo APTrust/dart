@@ -66,7 +66,7 @@
  $('[data-toggle="popover"]').popover();
 
  $("#btnJobPackaging").click(function() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.setTagValuesFromForm();
      job.save();
      var data = {};
@@ -90,7 +90,7 @@
              parent.addClass("has-success");
          }
      }
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.setTagValuesFromForm();
      job.save();
      if (isValid) {
@@ -103,7 +103,7 @@
  });
 
  function goToJobStorage() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      job.save();
      var data = {};
      data.bagOrFiles = "bag";
@@ -125,7 +125,7 @@
 
  // Tag Definition functions
  function jobTagDefinitionShowForm(id, tagFile) {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var tag = job.bagItProfile.findTagById(id);
      var showDeleteButton = (tag != null && !tag.isBuiltIn);
      if (tag == null) {
@@ -145,23 +145,23 @@
      if (!confirm("Delete this tag?")) {
          return;
      }
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var tagId = es.TagDefinition.fromForm().id;
-     job.bagItProfile.requiredTags = es.ActiveObject.requiredTags.filter(item => item.id != tagId);
+     job.bagItProfile.requiredTags = es.State.ActiveObject.requiredTags.filter(item => item.id != tagId);
      job.save();
      $('#modal').modal('hide');
      showJobTagForm();
  }
 
  function showJobTagForm() {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var data = job.dataForTagEditor();
      data['tagContext'] = "job";
      $("#container").html(es.Templates.jobTags(data));
  }
 
  function jobNewTagFileShowForm(err) {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      // Save now, even if some tags are missing or invalid,
      // because we'll need to properly restore the underlying
      // form when we close this modal.
@@ -191,7 +191,7 @@
          err = "Tag file name must contain at least one character and end with .txt";
          return jobNewTagFileShowForm(err);
      }
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var tagDef = new es.TagDefinition(tagFileName, "");
      tagDef.addedForJob = true;
      job.bagItProfile.requiredTags.push(tagDef);
@@ -213,7 +213,7 @@
  }
 
  function addEmptyCustomField(parentElement, tagFileName) {
-     var job = es.ActiveObject;
+     var job = es.State.ActiveObject;
      var tagDef = new es.TagDefinition(tagFileName, "");
      tagDef.addedForJob = true;
      job.bagItProfile.requiredTags.push(tagDef);
@@ -230,13 +230,13 @@
      if(!hasEmptyCustomFields(parentElement)) {
          // Why does .first() return an array here?
          var tagId = $(event.target).data('tag-id');
-         var tagDef = es.ActiveObject.bagItProfile.findTagById(tagId);
+         var tagDef = es.State.ActiveObject.bagItProfile.findTagById(tagId);
          addEmptyCustomField(parentElement, tagDef.tagFile);
      }
  }
 
  function deleteCustomTag(tagId) {
-     var tags = es.ActiveObject.bagItProfile.requiredTags;
+     var tags = es.State.ActiveObject.bagItProfile.requiredTags;
      var index = -1;
      for(var i=0; i < tags.length; i++) {
          if (tags[i].id == tagId) {
@@ -246,7 +246,7 @@
          }
      }
      if (index > -1) {
-         es.ActiveObject.bagItProfile.requiredTags.splice(index, 1);
+         es.State.ActiveObject.bagItProfile.requiredTags.splice(index, 1);
          $(`div [data-custom-tag-id="${tagId}"]`).remove();
      }
  }
