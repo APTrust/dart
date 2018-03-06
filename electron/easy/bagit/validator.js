@@ -220,9 +220,14 @@ class Validator {
     }
 
     validateTopLevelDirs() {
+        var exceptions = ['data']; // data dir is always required
+        for (var f of this.profile.requiredTagFileNames()) {
+            var requiredTagDir = f.split('/', 1);
+            exceptions.push(requiredTagDir);
+        }
         if (!this.profile.allowMiscTopLevelDirectories) {
             for (var dir of this.topLevelDirs) {
-                if (dir != 'data') {
+                if (!Util.listContains(exceptions, dir)) {
                     this.errors.push(`Profile prohibits top-level directory ${dir}`);
                 }
             }
@@ -231,10 +236,12 @@ class Validator {
 
     validateTopLevelFiles() {
         if (!this.profile.allowMiscTopLevelFiles) {
-            var allowedTagFiles = this.profile.requiredTagFileNames();
-            var allowedManifests = [];
+            var exceptions = this.profile.requiredTagFileNames();
             for (var alg of this.profile.manifestsRequired) {
-                allowedManifests.push(`manifest-${alg}.txt`);
+                exceptions.push(`manifest-${alg}.txt`);
+            }
+            for (var alg of this.profile.tagManifestsRequired) {
+                exceptions.push(`tagmanifest-${alg}.txt`);
             }
             for (var name of this.topLevelFiles) {
                 if (name == 'fetch.txt') {
@@ -244,7 +251,7 @@ class Validator {
                     }
                     continue;
                 }
-                if (!Util.listContains(allowedManifests, name) && !Util.listContains(allowedTagFiles, name)) {
+                if (!Util.listContains(exceptions, name)) {
                     this.errors.push(`Profile prohibits top-level file ${name}`);
                 }
             }
@@ -275,6 +282,10 @@ class Validator {
         var requiredTags = this.profile.tagsGroupedByFile();
         for (var filename of Object.keys(requiredTags)) {
             var tagFile = this.files[filename];
+            if (!tagFile) {
+                this.errors.push(`Required tag file ${filename} is missing`);
+                continue;
+            }
             if (tagFile.keyValueCollection == null) {
                 this.errors.push(`Tag file ${filename} has no data`);
                 continue;

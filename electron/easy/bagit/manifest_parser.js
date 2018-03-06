@@ -28,10 +28,13 @@ class ManifestParser {
                     parser.lastFragment = line;
                     continue;
                 }
+                // First item on line is the fixity value.
+                // Second item is file name, which may contain spaces.
+                // Split with limit will give us truncated file name.
                 var parts = line.split(spaces);
                 if (i < lastIndex) {
-                    var key = parts[1].trim();   // file name
-                    var value = parts[0].trim(); // fixity value
+                    var value = parts.shift().trim();  // fixity value
+                    var key = parts.join(' ').trim();  // file name
                     parser.bagItFile.keyValueCollection.add(key, value);
                 }
             }

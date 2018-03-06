@@ -341,7 +341,7 @@ class BagItProfile {
                 fileNames.add(tag.tagFile);
             }
         }
-        return fileNames;
+        return Array.from(fileNames);
     }
     // Returns true if the specified tag file has values for all
     // required tags.
