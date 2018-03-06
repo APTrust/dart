@@ -34,28 +34,35 @@ class Validator {
         this.tagManifests = [];
         this.tagFiles = [];
 
+        // Some profiles prohibit top-level directories other
+        // than /data, and some prohibit top-level files that
+        // are not required manifests or required tag files.
+        this.topLevelDirs = [];
+        this.topLevelFiles = [];
+
         this.errors = [];
     }
 
-    validate() {
+    // Param callback has signature fuction(errors), where errors
+    // will be an array of strings, each of which describes a validation
+    // error message. If your callback gets an empty array, the bag
+    // was valida and there where no errors.
+    validate(callback) {
         // Make sure untarred name matches tarred name
         // Gather checksums on all files
         // Validate checksums
         // Validate no extra or missing files
         // Ensure required tag files
         // Ensure required tags with legal values
-        this.readBag();
-    }
-
-    readBag() {
         if (this.pathToBag.endsWith('.tar')) {
-            this._readFromTar();
+            this._readFromTar(callback);
         } else {
-            this._readFromDir();
+            this._readFromDir(callback);
         }
     }
 
-    _readFromTar() {
+    // callback is the function to call when validation is complete.
+    _readFromTar(callback) {
         var validator = this;
         var extract = tar.extract();
         var bagNamePrefix = this.bagName + '/';
@@ -94,9 +101,14 @@ class Validator {
 
         extract.on('finish', function() {
             // all entries read
-            console.log("Finished reading tar files.");
-            validator.validatePayloadManifests();
+            validator.validateManifests(validator.payloadManifests);
+            validator.validateManifests(validator.tagManifests);
             validator.validateNoExtraneousPayloadFiles();
+
+            // Call the validationComplete callback.
+            if (typeof callback == 'function') {
+                callback(validator.errors);
+            }
         })
 
         //pack.pipe(extract)
@@ -141,6 +153,20 @@ class Validator {
             default:
               this.tagFiles.push(bagItFile);
         }
+        // Keep a list of top-level directory and file names.
+        // tar files use forward slash, even on Windows
+        // parts[0] should match bag name.
+        var parts = bagItFile.relDestPath.split('/');
+        var name = parts[0];
+        if (parts.length > 1) {
+            if (!Util.listContains(this.topLevelDirs, name)) {
+                this.topLevelDirs.push(name);
+            }
+        } else {
+            if (!Util.listContains(this.topLevelFiles, name)) {
+                this.topLevelFiles.push(name);
+            }
+        }
     }
 
     _getCryptoHashes(bagItFile) {
@@ -157,8 +183,8 @@ class Validator {
         return hashes;
     }
 
-    validatePayloadManifests() {
-        for(var manifest of this.payloadManifests) {
+    validateManifests(manifests) {
+        for(var manifest of manifests) {
             var basename = path.basename(manifest.relDestPath, '.txt');
             var algorithm = basename.split('-')[1];
             for (var filename of manifest.keyValueCollection.keys()) {
@@ -188,7 +214,8 @@ class Validator {
         }
     }
 
-    _readFromDir() {
+    // callback is the function to call when validation is complete.
+    _readFromDir(callback) {
         throw "Reading bag from a directory is not yet implemented. It's tar only for now."
     }
 }
