@@ -3,6 +3,7 @@ var remote = require('electron').remote;
 const app = remote.app;
 const path = require('path');
 const { AppSetting  } = require('./core/app_setting');
+const BagIt = require('./bagit/bagit');
 const { BagItProfile } = require('./core/bagit_profile');
 const { BagItProfileInfo } = require('./core/bagit_profile_info');
 const { BuiltInProfiles } = require('./core/builtin_profiles');
@@ -24,6 +25,7 @@ const { ValidationResult } = require('./core/validation_result');
 
 
 module.exports.AppSetting = AppSetting;
+module.exports.BagIt = BagIt;
 module.exports.BagItProfile = BagItProfile;
 module.exports.BagItProfileInfo = BagItProfileInfo;
 module.exports.BuiltInProfiles = BuiltInProfiles;

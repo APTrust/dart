@@ -18,7 +18,12 @@ class Validator {
     constructor(pathToBag, profile) {
         this.pathToBag = pathToBag;
         this.profile = profile;
-        this.files = []; // BagItFile
+        this.bagName = path.basename(pathToBag, '.tar');
+
+        // files is a hash of BagItFiles, where the file's path
+        // within the bag (relPath) is the key, and the BagItFile
+        // object is the value.
+        this.files = {};
         this.errors = [];
     }
 
@@ -41,7 +46,8 @@ class Validator {
 
     _readFromTar() {
         var validator = this;
-        var extract = tar.extract()
+        var extract = tar.extract();
+        var bagNamePrefix = this.bagName + '/';
         extract.on('entry', function(header, stream, next) {
             // header is the tar header
             // stream is the content body (might be an empty stream)
@@ -53,7 +59,10 @@ class Validator {
                 gid: header.gid,
                 mtimeMs: header.mtime
             }
-            var bagItFile = new BagItFile(null, header.name, stats);
+            console.log(header);
+            var absSourcePath = header.name;
+            var relDestPath = header.name.replace(bagNamePrefix, '');
+            var bagItFile = new BagItFile(absSourcePath, relDestPath, stats);
             validator.readFile(bagItFile, stream);
 
             stream.on('end', function() {
@@ -65,23 +74,26 @@ class Validator {
 
         extract.on('finish', function() {
             // all entries read
+            console.log("Finished reading tar files.");
         })
 
-        pack.pipe(extract)
+        //pack.pipe(extract)
+        extract.end(fs.readFileSync(this.pathToBag));
     }
 
     readFile(bagItFile, stream) {
+        this.files[bagItFile.relDestPath] = bagItFile;
         var pipes = this._getCryptoHashes(bagItFile)
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
             // just need crypto hashes
         } else if (bagItFile.fileType == constants.PAYLOAD_MANIFEST) {
             var manifestParser = new ManifestParser(bagItFile);
-            pipes.push(manifestParser.readableStream);
+            pipes.push(manifestParser.stream);
         } else if (bagItFile.fileType == constants.TAG_MANIFEST) {
             var manifestParser = new ManifestParser(bagItFile);
-            pipes.push(manifestParser.readableStream);
+            pipes.push(manifestParser.stream);
         } else if (bagItFile.fileType == constants.TAG_FILE) {
-            pipes.push(this._getTagFileParser());
+            //pipes.push(this._getTagFileParser());
         } else {
             pipes = null;
             throw `Unkonwn file type: ${bagItFile.fileType}`
@@ -109,3 +121,5 @@ class Validator {
         throw "Reading bag from a directory is not yet implemented. It's tar only for now."
     }
 }
+
+module.exports.Validator = Validator;
