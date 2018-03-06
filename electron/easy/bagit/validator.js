@@ -237,6 +237,13 @@ class Validator {
                 allowedManifests.push(`manifest-${alg}.txt`);
             }
             for (var name of this.topLevelFiles) {
+                if (name == 'fetch.txt') {
+                    // This one has its own rule
+                    if (!this.profile.allowFetchTxt) {
+                        this.errors.push(`Bag contains fetch.txt file, which profile prohibits.`);
+                    }
+                    continue;
+                }
                 if (!Util.listContains(allowedManifests, name) && !Util.listContains(allowedTagFiles, name)) {
                     this.errors.push(`Profile prohibits top-level file ${name}`);
                 }
@@ -262,6 +269,8 @@ class Validator {
         }
     }
 
+    // Validate that all required tags are present and have legal values.
+    // Among other things, this verfies that the BagIt-Version is correct.
     validateTags() {
         var requiredTags = this.profile.tagsGroupedByFile();
         for (var filename of Object.keys(requiredTags)) {
