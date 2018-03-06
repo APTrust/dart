@@ -101,6 +101,8 @@ class Validator {
 
         extract.on('finish', function() {
             // all entries read
+            validator.validateTopLevelDirs();
+            validator.validateTopLevelFiles();
             validator.validateManifests(validator.payloadManifests);
             validator.validateManifests(validator.tagManifests);
             validator.validateNoExtraneousPayloadFiles();
@@ -212,6 +214,43 @@ class Validator {
                 }
             }
         }
+    }
+
+    validateTopLevelDirs() {
+        if (!this.profile.allowMiscTopLevelDirectories) {
+            for (var dir of this.topLevelDirs) {
+                if (dir != 'data') {
+                    this.errors.push(`Profile prohibits top-level directory ${dir}`);
+                }
+            }
+        }
+    }
+
+    validateTopLevelFiles() {
+        if (!this.profile.allowMiscTopLevelFiles) {
+            var allowedTagFiles = this.profile.requiredTagFileNames();
+            var allowedManifests = [];
+            for (var alg of this.profile.manifestsRequired) {
+                allowedManifests.push(`manifest-${alg}.txt`);
+            }
+            for (var name of this.topLevelFiles) {
+                if (!Util.listContains(allowedManifests, name) && !Util.listContains(allowedTagFiles, name)) {
+                    this.errors.push(`Profile prohibits top-level file ${name}`);
+                }
+            }
+        }
+    }
+
+    validateRequiredManifests() {
+
+    }
+
+    validateRequiredTagManifests() {
+
+    }
+
+    validateTags() {
+
     }
 
     // callback is the function to call when validation is complete.
