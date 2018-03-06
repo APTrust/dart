@@ -49,6 +49,7 @@ class Validator {
         var validator = this;
         var extract = tar.extract();
         var bagNamePrefix = this.bagName + '/';
+        var addedBagFolderNameError = false;
         extract.on('entry', function(header, stream, next) {
             // header is the tar header
             // stream is the content body (might be an empty stream)
@@ -60,17 +61,25 @@ class Validator {
                 gid: header.gid,
                 mtimeMs: header.mtime
             }
-            console.log(header);
-            var absSourcePath = header.name;
-            var relDestPath = header.name.replace(bagNamePrefix, '');
-            var bagItFile = new BagItFile(absSourcePath, relDestPath, stats);
-            validator.readFile(bagItFile, stream);
+            if (!addedBagFolderNameError && !header.name.startsWith(bagNamePrefix)) {
+                addedBagFolderNameError = true;
+                var actualFolder = header.name.split('/')[0];
+                this.errors.push(`Bag must untar to a folder called '${this.bagName}', not '${actualName}'`);
+            }
+
+            // If bag untars to the wrong directory, it's not valid, and there's
+            // no use parsing the rest of it. This might save us running checksums
+            // on many GB of data.
+            if (!addedBagFolderNameError) {
+                var absSourcePath = header.name;
+                var relDestPath = header.name.replace(bagNamePrefix, '');
+                var bagItFile = new BagItFile(absSourcePath, relDestPath, stats);
+                validator.readFile(bagItFile, stream);
+            }
 
             stream.on('end', function() {
                 next() // ready for next entry
             })
-
-            //stream.resume() // just auto drain the stream
         })
 
         extract.on('finish', function() {
@@ -86,7 +95,7 @@ class Validator {
         this.files[bagItFile.relDestPath] = bagItFile;
         var pipes = this._getCryptoHashes(bagItFile)
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
-            // just need crypto hashes
+            // No need for additional piping, just need crypto hashes.
         } else if (bagItFile.fileType == constants.PAYLOAD_MANIFEST) {
             var manifestParser = new ManifestParser(bagItFile);
             pipes.push(manifestParser.stream);

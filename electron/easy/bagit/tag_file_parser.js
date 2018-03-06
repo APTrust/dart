@@ -23,6 +23,7 @@ class TagFileParser {
             parser.content += data;
         });
         parser.stream.on('end', function() {
+            // Parse the accumulated data into key-value pairs.
             var tag = '';
             var value = '';
             for (var line of parser.content.split(newline)) {
@@ -45,7 +46,7 @@ class TagFileParser {
                     }
                     var parts = line.split(':');
                     tag = parts[0].trim();
-                    tag = parts[1].trim();
+                    value = parts[1].trim();
                 }
             }
             // Add the tag from the last line of the file, if there was one.
@@ -55,24 +56,5 @@ class TagFileParser {
         });
     }
 }
-
-// const NEW_TAG = 1;
-// const VALUE_CONTINUATION = 2;
-// class ParsedLine {
-//     constructor(line, lastFragment) {
-//         this.line = line.trim();
-//         this.lastFragment = lastFragment;
-//         this.type = this._getType();
-//         this.tagName = null;
-//         this.value = null;
-//     }
-//     getType() {
-//         if (line.match(tagStart) && line.includes(':')) {
-//             this.type = NEW_TAG;
-//         } else if (line.startsWith(spaces)) {
-//             this.type = VALUE_CONTINUATION;
-//         }
-//     }
-// }
 
 module.exports.TagFileParser = TagFileParser;
