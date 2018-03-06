@@ -23,8 +23,17 @@ class Validator {
 
         // files is a hash of BagItFiles, where the file's path
         // within the bag (relPath) is the key, and the BagItFile
-        // object is the value.
+        // object is the value. The hash makes it easy to get files
+        // by relative path within the archive (e.g. data/photos/img.jpg).
         this.files = {};
+
+        // These arrays contains the same BagItFile objects as the
+        // files hash above, but these are organized by type.
+        this.payloadFiles = [];
+        this.payloadManifests = [];
+        this.tagManifests = [];
+        this.tagFiles = [];
+
         this.errors = [];
     }
 
@@ -92,7 +101,7 @@ class Validator {
     }
 
     readFile(bagItFile, stream) {
-        this.files[bagItFile.relDestPath] = bagItFile;
+        this._addFile(bagItFile);
         var pipes = this._getCryptoHashes(bagItFile)
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
             // No need for additional piping, just need crypto hashes.
@@ -114,6 +123,23 @@ class Validator {
         }
     }
 
+    _addFile(bagItFile) {
+        this.files[bagItFile.relDestPath] = bagItFile;
+        switch (bagItFile.fileType) {
+            case constants.PAYLOAD_FILE:
+              this.payloadFiles.push(bagItFile);
+              break;
+            case constants.PAYLOAD_MANIFEST:
+              this.payloadManifests.push(bagItFile);
+              break;
+            case constants.TAG_MANIFEST:
+              this.tagManifests.push(bagItFile);
+              break;
+            default:
+              this.tagFiles.push(bagItFile);
+        }
+    }
+
     _getCryptoHashes(bagItFile) {
         var hashes = [];
         for (var algorithm of this.profile.manifestsRequired) {
@@ -126,6 +152,10 @@ class Validator {
             hashes.push(hash);
         }
         return hashes;
+    }
+
+    validatePayloadManifests() {
+
     }
 
     _readFromDir() {
