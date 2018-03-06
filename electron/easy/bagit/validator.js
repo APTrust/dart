@@ -103,6 +103,8 @@ class Validator {
             // all entries read
             validator.validateTopLevelDirs();
             validator.validateTopLevelFiles();
+            validator.validateRequiredManifests();
+            validator.validateRequiredTagManifests();
             validator.validateManifests(validator.payloadManifests);
             validator.validateManifests(validator.tagManifests);
             validator.validateNoExtraneousPayloadFiles();
@@ -242,11 +244,21 @@ class Validator {
     }
 
     validateRequiredManifests() {
-
+        for (var alg of this.profile.manifestsRequired) {
+            var name = `manifest-${alg}.txt`
+            if(!this.files[name]) {
+                this.errors.push(`Bag is missing required manifest ${name}`);
+            }
+        }
     }
 
     validateRequiredTagManifests() {
-
+        for (var alg of this.profile.tagManifestsRequired) {
+            var name = `tagmanifest-${alg}.txt`
+            if(!this.files[name]) {
+                this.errors.push(`Bag is missing required manifest ${name}`);
+            }
+        }
     }
 
     validateTags() {
