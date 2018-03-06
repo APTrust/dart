@@ -40,9 +40,9 @@ class KeyValueCollection {
         }
         return null;
     }
-    // length returns the number of keys in the collection.
-    length() {
-        return Object.keys(this.items).length;
+    // keys returns all keys in the collection
+    keys() {
+        return Object.keys(this.items);
     }
 }
 

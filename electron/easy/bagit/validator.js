@@ -44,6 +44,7 @@ class Validator {
         // Validate no extra or missing files
         // Ensure required tag files
         // Ensure required tags with legal values
+        this.readBag();
     }
 
     readBag() {
@@ -94,6 +95,8 @@ class Validator {
         extract.on('finish', function() {
             // all entries read
             console.log("Finished reading tar files.");
+            validator.validatePayloadManifests();
+            validator.validateNoExtraneousPayloadFiles();
         })
 
         //pack.pipe(extract)
@@ -155,7 +158,34 @@ class Validator {
     }
 
     validatePayloadManifests() {
+        for(var manifest of this.payloadManifests) {
+            var basename = path.basename(manifest.relDestPath, '.txt');
+            var algorithm = basename.split('-')[1];
+            for (var filename of manifest.keyValueCollection.keys()) {
+                //console.log("Manifest entry " + filename)
+                var bagItFile = this.files[filename];
+                if (!bagItFile) {
+                    this.errors.push(`File ${filename} in ${manifest.relDestPath} is missing from payload.`);
+                    continue;
+                }
+                var checksumInManifest = manifest.keyValueCollection.first(filename);
+                var calculatedChecksum = bagItFile.checksums[algorithm];
+                if (checksumInManifest != calculatedChecksum) {
+                    this.errors.push(`Checksum for '${filename}': expected ${checksumInManifest}, got ${calculatedChecksum}`);
+                }
+            }
+        }
+    }
 
+    validateNoExtraneousPayloadFiles() {
+        for(var manifest of this.payloadManifests) {
+            for (var f of this.payloadFiles) {
+                //console.log("Payload file " + f.relDestPath)
+                if (!manifest.keyValueCollection.first(f.relDestPath)) {
+                    this.errors.push(`Payload file ${f.relDestPath} not found in ${manifest.relDestPath}`);
+                }
+            }
+        }
     }
 
     _readFromDir() {
