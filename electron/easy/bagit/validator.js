@@ -7,6 +7,7 @@ const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');
 const stream = require('stream');
+const { TagFileParser } = require('./tag_file_parser');
 const tar = require('tar-stream');
 const { Util } = require('../core/util');
 
@@ -93,7 +94,8 @@ class Validator {
             var manifestParser = new ManifestParser(bagItFile);
             pipes.push(manifestParser.stream);
         } else if (bagItFile.fileType == constants.TAG_FILE) {
-            //pipes.push(this._getTagFileParser());
+            var tagFileParser = new TagFileParser(bagItFile);
+            pipes.push(tagFileParser.stream);
         } else {
             pipes = null;
             throw `Unkonwn file type: ${bagItFile.fileType}`
