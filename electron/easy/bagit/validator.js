@@ -108,6 +108,7 @@ class Validator {
             validator.validateManifests(validator.payloadManifests);
             validator.validateManifests(validator.tagManifests);
             validator.validateNoExtraneousPayloadFiles();
+            validator.validateTags();
 
             // Call the validationComplete callback.
             if (typeof callback == 'function') {
@@ -262,7 +263,37 @@ class Validator {
     }
 
     validateTags() {
-
+        var requiredTags = this.profile.tagsGroupedByFile();
+        for (var filename of Object.keys(requiredTags)) {
+            var tagFile = this.files[filename];
+            if (tagFile.keyValueCollection == null) {
+                this.errors.push(`Tag file ${filename} has no data`);
+                continue;
+            }
+            var tagsRequiredForThisFile = requiredTags[filename];
+            for (var tagDef of tagsRequiredForThisFile) {
+                //console.log(`Checking ${filename} -> ${tagDef.tagName}`);
+                var parsedTagValues = tagFile.keyValueCollection.all(tagDef.tagName);
+                //console.log(parsedTagValues);
+                if (parsedTagValues == null) {
+                    // Tag was not present at all.
+                    if (tagDef.required) {
+                        this.errors.push(`Required tag ${tagDef.tagName} is missing from ${filename}`);
+                    }
+                    continue;
+                }
+                for (var value of parsedTagValues) {
+                    if (value == '' && tagDef.emptyOk) {
+                        continue;
+                    }
+                    if (Array.isArray(tagDef.values) && tagDef.values.length > 0) {
+                        if (!Util.listContains(tagDef.values, value)) {
+                            this.errors.push(`Tag ${tagDef.tagName} in ${filename} contains illegal value ${value}. [Allowed: ${tagDef.values.join(', ')}]`);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // callback is the function to call when validation is complete.
