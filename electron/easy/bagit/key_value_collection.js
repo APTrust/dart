@@ -45,3 +45,5 @@ class KeyValueCollection {
         return Object.keys(this.items).length;
     }
 }
+
+module.exports.KeyValueCollection = KeyValueCollection;

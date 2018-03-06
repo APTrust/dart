@@ -3,6 +3,7 @@ const { BagItFile } = require('./bagit_file');
 const constants = require('./constants');
 const crypto = require('crypto');
 const fs = require('fs');
+const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');
 const stream = require('stream');
@@ -39,12 +40,21 @@ class Validator {
     }
 
     _readFromTar() {
+        var validator = this;
         var extract = tar.extract()
         extract.on('entry', function(header, stream, next) {
             // header is the tar header
             // stream is the content body (might be an empty stream)
             // call next when you are done with this entry
-            var
+            var stats = {
+                size: header.size,
+                mode: header.mode,
+                uid: header.uid,
+                gid: header.gid,
+                mtimeMs: header.mtime
+            }
+            var bagItFile = new BagItFile(null, header.name, stats);
+            validator.readFile(bagItFile, stream);
 
             stream.on('end', function() {
                 next() // ready for next entry
@@ -61,33 +71,38 @@ class Validator {
     }
 
     readFile(bagItFile, stream) {
+        var pipes = this._getCryptoHashes(bagItFile)
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
-            this._readPayloadFile(bagItFile, stream);
+            // just need crypto hashes
         } else if (bagItFile.fileType == constants.PAYLOAD_MANIFEST) {
-            this._readPayloadManifest(bagItFile, stream);
+            var manifestParser = new ManifestParser(bagItFile);
+            pipes.push(manifestParser.readableStream);
         } else if (bagItFile.fileType == constants.TAG_MANIFEST) {
-            this._readTagManifest(bagItFile, stream);
+            var manifestParser = new ManifestParser(bagItFile);
+            pipes.push(manifestParser.readableStream);
         } else if (bagItFile.fileType == constants.TAG_FILE) {
-            this._readTagFile(bagItFile, stream);
+            pipes.push(this._getTagFileParser());
         } else {
+            pipes = null;
             throw `Unkonwn file type: ${bagItFile.fileType}`
+        }
+        for (var p of pipes) {
+            stream.pipe(p);
         }
     }
 
-    _readPayloadFile(bagItFile, stream) {
-        // Stream it through and get the checksums
-    }
-
-    _readTagFile(bagItFile, stream) {
-        // Stream it through checksummer and tag parser
-    }
-
-    _readPayloadManifest(bagItFile, stream) {
-        // Stream it through checksummer and manifest parser
-    }
-
-    _readTagManifest(bagItFile, stream) {
-        // Stream it through checksummer and manifest parser
+    _getCryptoHashes(bagItFile) {
+        var hashes = [];
+        for (var algorithm of this.profile.manifestsRequired) {
+            var hash = crypto.createHash(algorithm);
+            hash.setEncoding('hex');
+            hash.on('finish', function() {
+                hash.end();
+                bagItFile.checksums[algorithm] = hash.read();
+            });
+            hashes.push(hash);
+        }
+        return hashes;
     }
 
     _readFromDir() {

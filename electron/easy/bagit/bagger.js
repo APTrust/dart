@@ -311,7 +311,6 @@ class Bagger {
         var hashes = [];
         var profile = this.job.bagItProfile;
         for (var algorithm of profile.manifestsRequired) {
-            console.log(`Adding ${algorithm} for ${bagItFile.relDestPath}`);
             var hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {
