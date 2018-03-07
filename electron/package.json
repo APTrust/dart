@@ -1,6 +1,6 @@
 {
     "name": "EasyStore",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "main": "main.js",
     "dependencies": {
         "archiver": "^2.1.1",
@@ -27,7 +27,7 @@
     "description": "",
     "build": {
         "appId": "com.electron.EasyStore",
-        "copyright": "Copyright © 2018 undefined",
+        "copyright": "Copyright © 2018 APTrust",
         "productName": "EasyStore",
         "electronVersion": "1.7.11",
         "asar": true,
