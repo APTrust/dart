@@ -134,7 +134,6 @@ class Bagger {
         }
         this.initOutputDir();
         for (var f of this.job.filesToPackage()) {
-            //console.log(f)
             this.copyFile(f, 'data' + f.absPath);
         }
         if (this.writeAs == WRITE_AS_TAR) {

@@ -436,7 +436,10 @@ class Job {
             if (stats.isDirectory()) {
                 Util.walkSync(f, filesToPackage, shouldIncludeFile);
             } else if(stats.isFile() && shouldIncludeFile(f)) {
-                filesToPackage.push(f);
+                filesToPackage.push({
+                    absPath: f,
+                    stats: stats
+                });
             }
         }
         return filesToPackage;
