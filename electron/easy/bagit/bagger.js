@@ -162,7 +162,7 @@ class Bagger {
             var content = this.job.bagItProfile.getTagFileContents(tagFileName);
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            console.log(tmpFile.name);
+            //console.log(tmpFile.name);
             var bytes = fs.writeSync(tmpFile.fd, content,  0, 'utf8');
             if (bytes != content.length) {
                 throw `In tag file ${tagFileName} wrote only ${bytes} of ${content.length} bytes`;
@@ -176,7 +176,7 @@ class Bagger {
         }
         // On done, create manifests
         this.tagFileQueue.drain = function () {
-            console.log("Done adding tag files");
+            //console.log("Done adding tag files");
             bagger.tarManifests();
         }
     }
@@ -225,7 +225,7 @@ class Bagger {
             var manifestName = `tagmanifest-${alg}.txt`;
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            console.log(tmpFile.name);
+            //console.log(tmpFile.name);
             for (var f of this.files) {
                 if (f.fileType != constants.TAG_FILE && f.fileType != constants.PAYLOAD_MANIFEST) {
                     continue;
@@ -258,7 +258,7 @@ class Bagger {
         // TODO: This MUST be called, even if we exit early with an error.
         for(var tmpFile of this.tmpFiles) {
             if (fs.existsSync(tmpFile)) {
-                console.log("Deleting " + tmpFile);
+                //console.log("Deleting " + tmpFile);
                 fs.unlinkSync(tmpFile);
             }
         }
@@ -284,7 +284,7 @@ class Bagger {
         this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
-        console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
+        //console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
         if (this.writeAs == WRITE_AS_DIR) {
             this._copyIntoDir(bagItFile);
         } else if (this.writeAs == WRITE_AS_TAR) {
@@ -300,7 +300,7 @@ class Bagger {
         var writer = fs.createWriteStream(absDestPath);
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         var hashes = this._getCryptoHashes(f);
-        console.log(`Setting up pipes for ${hashes.length} digests + file`);
+        //console.log(`Setting up pipes for ${hashes.length} digests + file`);
         for (var h of hashes) {
             reader.pipe(h)
         }

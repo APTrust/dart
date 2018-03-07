@@ -79,6 +79,7 @@ class BagIt {
             packager.emitter.on('packageComplete', function(succeeded, message) {
                 if (succeeded) {
                     packager.job.packagedFile = bagger.bagPath;
+                    validator.validate();
                 } else {
                     packager.emitter.emit('complete', false, message)
                 }
@@ -117,11 +118,13 @@ class BagIt {
         var match = manifest.relDestPath.match(/manifest-(\w+).txt$/);
         var filename = `${this.job.id}_${match[1]}_${new Date().getTime()}.txt`;
         var outputPath = path.join(this.getManifestDirName(), filename);
+        //console.log(outputPath);
         var outputFile = fs.createWriteStream(outputPath, { mode: 0o644 });
         outputFile.setDefaultEncoding('utf-8');
         for (var filename of manifest.keyValueCollection.sortedKeys()) {
             var checksum = manifest.keyValueCollection.first(filename);
-            outputfile.write(`${checksum} ${filename}\n`);
+            //console.log(`${checksum} ${filename}\n`);
+            outputFile.write(`${checksum} ${filename}\n`);
         }
         outputFile.end();
     }

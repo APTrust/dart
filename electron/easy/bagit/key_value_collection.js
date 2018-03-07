@@ -46,7 +46,7 @@ class KeyValueCollection {
     }
     // returns all the keys in sorted order
     sortedKeys() {
-        return Array.sort(this.keys());
+        return this.keys().sort();
     }
 }
 
