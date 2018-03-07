@@ -22,7 +22,7 @@ const WRITE_AS_TAR = 'tar';
 // will manage. When writing to a tar archive, we must add
 // files one at a time.
 function writeIntoTarArchive(data, done) {
-    console.log(data);
+    //console.log(data);
     var writer = data.tar.entry(data.header, done);
     for (var h of data.hashes) {
         data.reader.pipe(h)
@@ -44,6 +44,8 @@ class Bagger {
     //              - function (succeeded [bool], message [string])
     // fileAddStart - fires when we're adding a new file to the bag.
     //              - function (message [string])
+    // fileAddComplete - fires when we're done adding a new file to the bag.
+    //              - function (succeeded [bool], message [string])
     // error - fires when there are errors.
     //              - function (message [string])
     //
@@ -279,7 +281,7 @@ class Bagger {
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
-        this.emitter.emit('fileAddStart', `Adding ${f.absPath}`);
+        this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
         console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
@@ -319,6 +321,9 @@ class Bagger {
             mtime: bagItFile.stats.mtimeMs
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
+        reader.on('end', function() {
+            bagger.emitter.emit('fileAddEnd', true, `Added file ${header.name}`);
+        });
         var data = {
             reader: reader,
             header: header,
