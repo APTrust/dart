@@ -16,7 +16,6 @@ const description = "Provides basic setup questions for an installation with no 
 const version = "0.1";
 
 // Help messages for our setup questions.
-const PathToBaggerHelp = "The EasyStore installation package includes a program called apt_create_bag, which packages your files into BagIt bags. Save that program to a safe place on your computer and enter the location here. For Windows users, the path should end with '.exe'; for Mac and Linux users, it should not. For example: 'c:\Users\josie\Documents\apt_create_bag.exe', '/User/josie/bin/apt_create_bag'.";
 const BaggingDirHelp = "Where should the bagger assemble bags? This should be a directory name. Examples: 'c:\Users\josie\Documents\MyBags', '/User/josie/temp'.";
 
 // Regex patterns for validation.
@@ -106,40 +105,7 @@ class Basic {
     // _initFields sets up the questions the user will have to answer.
     // Questions will be presented in the order they are added.
     _initFields() {
-        this.fields.push(this._getPathToBaggerField());
         this.fields.push(this._getBaggingDirField());
-    }
-
-    _getPathToBaggerField() {
-        var pathToBagger = this._getSetupField('pathToBagger', 'Path to Bagger');
-        var setting = AppSetting.findByName("Path to Bagger");
-        if (setting) {
-            pathToBagger.value = setting.value;
-        }
-        pathToBagger.help = PathToBaggerHelp;
-        pathToBagger.validator = function(value) {
-            pathToBagger.value = value;
-            var pattern = macLinuxFilePattern;
-            var suffix = "apt_create_bag";
-            var errMsg = "Enter an absolute path that begins with a forward slash and ends with /apt_create_bag";
-            if (process.platform == 'win32') {
-                pattern = windowsFilePattern;
-                suffix = "apt_create_bag.exe"
-                errMsg = "Enter an absolute path that ends with \apt_create_bag.exe";
-            }
-            // If value is OK, save it into AppSettings.
-            if (value && value.match(pattern) && value.endsWith(suffix)) {
-                if (setting) {
-                    setting.value = value;
-                    setting.save();
-                }
-                pathToBagger.error = "";
-                return true;
-            }
-            pathToBagger.error = errMsg;
-            return false;
-        }
-        return pathToBagger;
     }
 
     _getBaggingDirField() {

@@ -49,7 +49,6 @@
 <ul>
     <li><b>Bagging Directory</b> - Set this to the directory in which EasyStore should build its bags. When you create a bag of 1 GB of data, EasyStore will create a new directory or tar file in the Bagging Directory that requires just over 1 GB of space (for the original files and a few tag files). The Bagging Directory you set here will be used as the default for all new jobs. You can, however, change the bagging directory for any individual job whenever you please. There will be times when you need to do this, such as when you're bagging 1 TB of data and you know the Bagging Directory does not have that much space. In Application Settings, set Bagging Directory to the directory you'll want to use most of the time.</li>
     <li><b>Institution Domain</b> - This is required for APTrust users, and will be ignored for most other users. Set this to your institution's domain name: for example, "virginia.edu" or "unc.edu". If your institution has multiple accounts with APTrust, use your organization's subdomain. For example, "library.unc.edu" or "med.virginia.edu". For APTrust depositors, your domain name becomes part of all of your bag names.</li>
-    <li><b>Path To Bagger</b> - This is required for early versions of EasyStore. The installation package you downloaded included two items: an EasyStore installer, and an application called apt_create_bag, which is responsible for packaging your data. You can save apt_create_bag anywhere on your computer, but you must enter the path to the program here. Examples: (Mac) "/Users/josie/apt_create_bag". (Windows) "C:\Users\josie\apt_create_bag.exe". Note that the path should end with ".exe" on Windows. Later versions of EasyStore will be able to build bags without apt_create_bag, so this setting will go away in a future release.</li>
 </ul>
 
 <h3><a name="Customizing Your BagIt Profile" class="anchor">Customizing Your BagIt Profile</a></h3>
@@ -162,6 +161,14 @@
 
 
 <h2><a name="Release Notes" class="anchor">Release Notes</a></h2>
+
+<h3>Version 0.1.2 - Mar. 8, 2018</h3>
+
+<p>Integrated bagger into EasyStore. It's no longer a separate application.</p>
+
+<h3>Version 0.1.1 - Mar. 1, 2018</h3>
+
+<p>Added walk-through setup.</p>
 
 <h3>Version 0.1.0 - Feb. 22, 2018</h3>
 

@@ -420,6 +420,12 @@ $(function() {
     aptSetup.installBagItProfiles();
     aptSetup.installStorageServices();
 
+    // Delete this legacy setting
+    var pathToBagger = es.AppSetting.findByName("Path to Bagger")
+    if (pathToBagger) {
+        pathToBagger.delete();
+    }
+
     $('.modal-content').resizable({
         //alsoResize: ".modal-dialog",
         minHeight: 300,
