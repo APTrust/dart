@@ -120,8 +120,13 @@ class Validator {
             validator.validateNoExtraneousPayloadFiles();
             validator.validateTags();
 
-            var succeeded = validator.errors.length == 0;
-            validator.emitter.emit('validateComplete', succeeded, validator.errors.join("\n"));
+            if (validator.errors.length == 0) {
+                console.log('OK')
+                validator.emitter.emit('validateComplete', true, `Bag ${validator.pathToBag} is valid`);
+            } else {
+                console.log('Boo hoo')
+                validator.emitter.emit('validateComplete', false, validator.errors.join("\n"));
+            }
         })
 
         //pack.pipe(extract)
