@@ -94,6 +94,8 @@ function getPackageProviderByMimeType(mimetype) {
     return null;
 }
 
+// TODO: Move all this into a separate UI class.
+
 function showStorageReset() {
     var div = $("#jobStorageStart");
     div.removeClass("alert-success");

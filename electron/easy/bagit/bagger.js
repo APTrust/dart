@@ -2,6 +2,7 @@ const async = require('async');
 const { BagItFile } = require('./bagit_file');
 const constants = require('./constants');
 const crypto = require('crypto');
+const EventEmitter = require('events');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
@@ -31,8 +32,26 @@ function writeIntoTarArchive(data, done) {
 
 class Bagger {
 
-    constructor(job) {
+    // Param job is an easy/core/job object that describes what
+    // files to bag, which BagItProfile to use, etc.
+    //
+    // Param emitter is an instance of EventEmitter that listens
+    // for the following events:
+    //
+    // packageStart - fires when we start packaging the bag.
+    //              - function (message [string])
+    // packageComplete - fires when bagging is complete.
+    //              - function (succeeded [bool], message [string])
+    // fileAddStart - fires when we're adding a new file to the bag.
+    //              - function (message [string])
+    // error - fires when there are errors.
+    //              - function (message [string])
+    //
+    // If you don't care to respond to these events, pass null for
+    // the emitter param.
+    constructor(job, emitter) {
         this.job = job;
+        this.emitter = emitter || new EventEmitter();
         this.writeAs = WRITE_AS_DIR;
         this.bagPath = path.join(job.baggingDirectory, job.bagName);
         if (job.bagItProfile.mustBeTarred()) {
@@ -105,26 +124,27 @@ class Bagger {
     // that implement the same interface.
     create() {
         var bagger = this;
-        this.preValidationResult = this.job.validate();
+        bagger.emitter.emit('packageStart', `Starting to build ${bagger.job.bagName}`);
+        bagger.preValidationResult = this.job.validate();
         if (!this.preValidationResult.isValid()) {
             this.errors.push("See job validation errors");
             return false;
         }
         this.initOutputDir();
         for (var f of this.job.filesToPackage()) {
-            console.log(f)
+            //console.log(f)
             this.copyFile(f, 'data' + f.absPath);
         }
         if (this.writeAs == WRITE_AS_TAR) {
             this.payloadQueue.drain = function () {
-                console.log("Done adding payload files");
+                //console.log("Done adding payload files");
                 bagger.tarTagFiles();
             }
         }
     }
 
     tarTagFiles() {
-        console.log("Writing tag files");
+        //console.log("Writing tag files");
         var bagger = this;
         var oxumTag = bagger.job.bagItProfile.findTagByName('Payload-Oxum');
         // Payload-Oxum and Bag-Size:
@@ -160,7 +180,7 @@ class Bagger {
     }
 
     tarManifests() {
-        console.log("Writing manifests");
+        //console.log("Writing manifests");
         var bagger = this;
         var algorithms = Object.keys(this.files[0].checksums);
         for (var alg of algorithms) {
@@ -168,7 +188,7 @@ class Bagger {
             var manifestName = `manifest-${alg}.txt`;
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            console.log(tmpFile.name);
+            //console.log(tmpFile.name);
             for (var f of this.files) {
                 if (f.fileType != constants.PAYLOAD_FILE) {
                     continue;
@@ -189,13 +209,13 @@ class Bagger {
         }
         // On done, create tag manifests
         this.manifestQueue.drain = function () {
-            console.log("Done writing payload manifests");
+            //console.log("Done writing payload manifests");
             bagger.tarTagManifests();
         }
     }
 
     tarTagManifests() {
-        console.log("Tarring tag manifests");
+        //console.log("Tarring tag manifests");
         var bagger = this;
         var algorithms = Object.keys(this.files[0].checksums);
         for (var alg of algorithms) {
@@ -224,7 +244,7 @@ class Bagger {
         }
         // On done, create tag manifests
         this.tagManifestQueue.drain = function () {
-            console.log("Done writing tag manifests");
+            //console.log("Done writing tag manifests");
             bagger.cleanup();
         }
     }
@@ -240,6 +260,15 @@ class Bagger {
                 fs.unlinkSync(tmpFile);
             }
         }
+
+        // Let the caller know we finished.
+        var succeeded = this.errors.length == 0;
+        this.emitter.emit('packageComplete', succeeded, 'Finished bagging files.');
+
+        // Let the caller know if there are errors.
+        if (!succeeded) {
+            this.emitter.emit('error', this.errors.join("\n"));
+        }
     }
 
     // copyFile copies file at f.absSourcePath into relDestPath of the bag.
@@ -250,6 +279,7 @@ class Bagger {
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
+        this.emitter.emit('fileAddStart', `Adding ${f.absPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
         console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);

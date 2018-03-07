@@ -2,6 +2,7 @@ const async = require('async');
 const { BagItFile } = require('./bagit_file');
 const constants = require('./constants');
 const crypto = require('crypto');
+const EventEmitter = require('events');
 const fs = require('fs');
 const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
@@ -14,11 +15,23 @@ const { Util } = require('../core/util');
 class Validator {
 
     // pathToBag is the absolute path the the bag (dir or tar file)
+    //
     // profile is the BagItProfile that describes what consititutes
     // a valid bag.
-    constructor(pathToBag, profile) {
+    //
+    // emitter is an instance of EventEmitter that listens for the
+    // following events:
+    //
+    // validateStart - fires when validation starts
+    //               - function(message [string])
+    // validateComplete - fires when validation completes
+    //               - function (succeeded [bool], message [string])
+    //
+    // You can pass a null emitter if you don't care to listen to events.
+    constructor(pathToBag, profile, emitter) {
         this.pathToBag = pathToBag;
         this.profile = profile;
+        this.emitter = emitter || new EventEmitter();
         this.bagName = path.basename(pathToBag, '.tar');
 
         // files is a hash of BagItFiles, where the file's path
@@ -43,26 +56,23 @@ class Validator {
         this.errors = [];
     }
 
-    // Param callback has signature fuction(errors), where errors
-    // will be an array of strings, each of which describes a validation
-    // error message. If your callback gets an empty array, the bag
-    // was valida and there where no errors.
-    validate(callback) {
+    // validate validates the bag
+    validate() {
         // Make sure untarred name matches tarred name
         // Gather checksums on all files
         // Validate checksums
         // Validate no extra or missing files
         // Ensure required tag files
         // Ensure required tags with legal values
+        this.emitter.emit('validateStart', `Validating ${this.pathToBag}`);
         if (this.pathToBag.endsWith('.tar')) {
-            this._readFromTar(callback);
+            this._readFromTar();
         } else {
-            this._readFromDir(callback);
+            this._readFromDir();
         }
     }
 
-    // callback is the function to call when validation is complete.
-    _readFromTar(callback) {
+    _readFromTar() {
         var validator = this;
         var extract = tar.extract();
         var bagNamePrefix = this.bagName + '/';
@@ -110,10 +120,8 @@ class Validator {
             validator.validateNoExtraneousPayloadFiles();
             validator.validateTags();
 
-            // Call the validationComplete callback.
-            if (typeof callback == 'function') {
-                callback(validator.errors);
-            }
+            var succeeded = validator.errors.length == 0;
+            validator.emitter.emit('validateComplete', succeeded, validator.errors.join("\n"));
         })
 
         //pack.pipe(extract)

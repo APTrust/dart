@@ -44,6 +44,10 @@ class KeyValueCollection {
     keys() {
         return Object.keys(this.items);
     }
+    // returns all the keys in sorted order
+    sortedKeys() {
+        return Array.sort(this.keys());
+    }
 }
 
 module.exports.KeyValueCollection = KeyValueCollection;

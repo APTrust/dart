@@ -426,6 +426,7 @@ class Job {
     // filesToPackage returns a list of files that should go into
     // a bag.
     filesToPackage() {
+        var job = this;
         var filesToPackage = [];
         var shouldIncludeFile = function(filepath) {
             return Job.shouldIncludeFile(filepath, job.options);
