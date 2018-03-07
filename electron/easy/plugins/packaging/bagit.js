@@ -64,6 +64,7 @@ class BagIt {
         try {
             var bagger = new Bagger(this.job, this.emitter);
             var validator = new Validator(bagger.bagPath, this.job.bagItProfile, this.emitter);
+            this.emitter.emit('start', 'Bagging files...');
             this.attachListeners(bagger, validator);
             bagger.create();
         } catch (ex) {
@@ -78,6 +79,8 @@ class BagIt {
             packager.emitter.on('packageComplete', function(succeeded, message) {
                 if (succeeded) {
                     packager.job.packagedFile = bagger.bagPath;
+                } else {
+                    packager.emitter.emit('complete', false, message)
                 }
             });
             packager.emitter.on('validateComplete', function(succeeded, message) {
@@ -85,6 +88,9 @@ class BagIt {
                     for(var manifest of validator.payloadManifests) {
                         packager.dumpManifest(manifest);
                     }
+                    packager.emitter.emit('complete', true, `Bag created at ${packager.job.packagedFile}`)
+                } else {
+                    packager.emitter.emit('complete', false, message)
                 }
             });
             packager.handlersAdded = true;
