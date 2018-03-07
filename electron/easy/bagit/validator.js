@@ -121,10 +121,8 @@ class Validator {
             validator.validateTags();
 
             if (validator.errors.length == 0) {
-                console.log('OK')
                 validator.emitter.emit('validateComplete', true, `Bag ${validator.pathToBag} is valid`);
             } else {
-                console.log('Boo hoo')
                 validator.emitter.emit('validateComplete', false, validator.errors.join("\n"));
             }
         })
