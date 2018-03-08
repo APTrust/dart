@@ -263,6 +263,15 @@ class Job {
                 tag.userValue = value;
             }
         }
+        // Special for APTrust: Copy APTrust description into Internal-Sender-Description
+        // if necessary. APTrust ingest code changed in 2.0 to read from the latter field.
+        var aptDescTag = this.bagItProfile.findTagByName('Description');
+        var bagItDescTag = this.bagItProfile.findTagByName('Internal-Sender-Description');
+        if (aptDescTag && !Util.isEmpty(aptDescTag.userValue)) {
+            if (bagItDescTag) {
+                bagItDescTag.userValue = aptDescTag.userValue;
+            }
+        }
     }
 
     toStorageServiceForm() {
