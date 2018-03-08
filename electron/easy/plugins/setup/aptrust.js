@@ -202,6 +202,8 @@ class APTrust {
     }
 
     _getDomainField() {
+        // StorageService won't load at the top level. Why??
+        var { StorageService } = require('../../core/storage_service');
         var domain = this._getSetupField('domain', 'Domain Name');
         var setting = AppSetting.findByName("Institution Domain");
         if (setting) {
@@ -215,6 +217,16 @@ class APTrust {
                 if (setting) {
                     setting.value = value;
                     setting.save();
+                    var prodService = StorageService.find(builtinServices.APTrustProdId);
+                    if (prodService) {
+                        prodService.bucket = 'aptrust.receiving.' + value;
+                        prodService.save();
+                    }
+                    var demoService = StorageService.find(builtinServices.APTrustDemoId);
+                    if (demoService) {
+                        demoService.bucket = 'aptrust.receiving.test.' + value;
+                        demoService.save();
+                    }
                 }
                 domain.error = "";
                 return true
