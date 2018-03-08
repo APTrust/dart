@@ -62,6 +62,7 @@ class BagIt {
     packageFiles() {
         this.job.packagedFile = "";
         try {
+            this.ensureBaggingDir();
             var bagger = new Bagger(this.job, this.emitter);
             var validator = new Validator(bagger.bagPath, this.job.bagItProfile, this.emitter);
             this.emitter.emit('start', 'Bagging files...');
@@ -98,6 +99,12 @@ class BagIt {
         }
     }
 
+    ensureBaggingDir() {
+        if (!fs.existsSync(this.job.baggingDirectory)) {
+            mkdirp.sync(this.job.baggingDirectory, 0o755);
+        }
+    }
+
     getManifestDirName() {
         var dir = app.getPath('userData');
         return path.join(dir, 'manifests');
@@ -105,7 +112,7 @@ class BagIt {
 
     ensureManifestDir() {
         var manifestDir = this.getManifestDirName();
-        if (!fs.existsSync(manifestDir)){
+        if (!fs.existsSync(manifestDir)) {
             fs.mkdirSync(manifestDir);
         }
     }
