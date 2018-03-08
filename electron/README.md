@@ -21,9 +21,29 @@ Electron allows full access to the file system, and provides access to file path
 
 Run these from the electron directory.
 
-## Starting the Electron app in developer mode
+## Starting the Electron app in developer mode (Mac and Linux)
 
 `run.rb`
+
+## Running and Building on Windows
+
+```
+git clone https://github.com/APTrust/easy-store.git
+cd easy-store/electron
+git branch windows
+git checkout windows
+rm node_modules/.bin/electron
+npm install electron
+npm install electron-toolkit
+
+
+# To run EasyStore in dev mode
+# Assuming you're in the easy-store/electron directory
+./node_modules/.bin/electron .
+
+# To make a manual build with the electron-toolkit
+npm run electron-toolkit
+```
 
 ## Building the app
 
