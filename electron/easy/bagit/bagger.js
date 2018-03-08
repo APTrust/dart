@@ -134,7 +134,11 @@ class Bagger {
         }
         this.initOutputDir();
         for (var f of this.job.filesToPackage()) {
-            this.copyFile(f, 'data' + f.absPath);
+			var relDestPath = 'data' + f.absPath;
+			if (os.platform == 'win32') {
+				relDestPath = 'data' + Util.windowsToRelPath(f.absPath);
+			}
+            this.copyFile(f, relDestPath);
         }
         if (this.writeAs == WRITE_AS_TAR) {
             this.payloadQueue.drain = function () {
@@ -317,7 +321,7 @@ class Bagger {
             mode: bagItFile.stats.mode,
             uid: bagItFile.stats.uid,
             gid: bagItFile.stats.gid,
-            mtime: bagItFile.stats.mtimeMs
+            mtime: bagItFile.stats.mtime
         };
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         reader.on('end', function() {

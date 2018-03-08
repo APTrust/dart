@@ -146,6 +146,18 @@ class Util {
         return (process.execPath.includes('node_modules/electron') ||
                 process.execPath.includes('node_modules\electron'));
     }
+
+	// converts an absolute Windows path to a relative path suitable
+	// for a BagIt file or tar file.
+	static windowsToRelPath(winPath) {
+		// Remove C:
+		winPath = winPath.replace(/^[A-Z]:/i, '');
+		// Remove \\share
+		winPath = winPath.replace(/^\\\\[^\\]+/, '');
+		// Backslash to forward slash
+		return winPath.replace(/\\/g, '/');
+	}
+
     // walkSync recursively lists all files in a directory and its
     // subdirectories and returns them in filelist. If you want to
     // filter the list, include a callback filterFunction, which takes
