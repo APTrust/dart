@@ -74,15 +74,6 @@ class APTrust {
             setting.save();
             installed.push("Bagging Directory");
         }
-        if (AppSetting.findByName("Path to Bagger") == null) {
-            var appName = os.platform == 'win32' ? "apt_create_bag.exe" : "apt_create_bag";
-            var appPath = path.join(os.homedir(), appName);
-            var setting = new AppSetting("Path to Bagger", appPath);
-            setting.userCanDelete = false;
-            setting.help = "What is the full path to the apt_create_bag executable?";
-            setting.save();
-            installed.push("Path to Bagger");
-        }
         if (AppSetting.findByName("Pharos Demo API Login") == null) {
             var setting = new AppSetting("Pharos Demo API Login", '');
             setting.userCanDelete = false;
