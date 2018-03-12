@@ -12,7 +12,8 @@ $(function() {
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
     $("#menuJobNew").click(es.UI.Menu.jobNew);
-    $("#menuHelp").on('click', function() { helpShow(null); });
+    $("#menuHelpDoc").on('click', function() { helpShow(null); });
+    $("#menuLog").on('click', function() { logShow(null); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -115,6 +116,12 @@ $(function() {
     // Help doc
     function helpShow(message) {
         $("#container").html(es.Templates.help());
+        es.State.ActiveObject = null;
+    }
+
+    // Logs
+    function logShow(message) {
+        $("#container").html(es.Templates.log());
         es.State.ActiveObject = null;
     }
 

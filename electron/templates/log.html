@@ -1,0 +1,37 @@
+<h1>Logs</h1>
+
+<div class="row padded-for-text">
+    <p>If you're seeing unexpected problems, click the <b>Export Log</b> button below
+        to copy the EasyStore log file to your desktop. Send the file, along with a description
+        of the problem to <a href="help@aptrust.org">help@aptrust.org</a>.</p>
+
+    <div class="pull-left">
+        <button type="button" class="btn btn-primary" id="btnViewLog">View Log</button>
+    </div>
+
+    <div class="pull-right">
+        <button type="button" class="btn btn-primary" id="btnExportLog">Export Log</button>
+    </div>
+</div>
+
+
+<div class="row padded-for-text" style="display:none; margin-top: 30px; height: 500px;" id="logViewer">
+    <textarea id="logData" class="form-control" style="height:600px;">{{ logContent }}</textarea>
+</div>
+
+<script>
+ $('#btnViewLog').click(function() {
+     console.log('ok');
+     $('#logViewer').show();
+     $('#logData').text();
+     es.log.contents(function(err, data) {
+         if (err) {
+             alert(err);
+         }
+         $('#logData').append(data);
+     });
+ });
+ $('#btnExportLog').click(function() {
+
+ });
+</script>

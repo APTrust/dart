@@ -11,7 +11,7 @@ const megabyte = 1048576;
 
 log.transports.file.format = "[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}";
 log.transports.console.format = "{text}";
-log.transports.file.maxSize = 4 * megabyte;
+log.transports.file.maxSize = 1 * megabyte;
 
 if (Util.isDevMode()) {
     log.transports.file.level = 'debug';
@@ -32,6 +32,10 @@ log.zip = function() {
     var outpath = path.join(app.getPath('desktop'), `EasyStoreLog_${timestamp}.txt.gz`);
     var outfile = fs.createWriteStream(outpath);
     infile.pipe(gzip).pipe(outfile);
+}
+
+log.contents = function(callback) {
+    fs.readFile(log.filename(), 'utf8', callback);
 }
 
 // Use log.info("message")
