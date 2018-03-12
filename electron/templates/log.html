@@ -32,6 +32,7 @@
      });
  });
  $('#btnExportLog').click(function() {
-
+     var fileName = es.log.zip();
+     alert(`Compressed log saved to desktop file ${fileName}`);
  });
 </script>

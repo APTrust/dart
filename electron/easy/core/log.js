@@ -25,13 +25,16 @@ log.filename = function() {
     return log.transports.file.findLogPath();
 }
 
+// This dumps a gzipped copy of the log to the user's desktop
+// and returns the name of the file.
 log.zip = function() {
     var gzip = zlib.createGzip();
     var infile = fs.createReadStream(log.filename());
     var timestamp = new Date().getTime();
-    var outpath = path.join(app.getPath('desktop'), `EasyStoreLog_${timestamp}.txt.gz`);
-    var outfile = fs.createWriteStream(outpath);
+    var fname = `EasyStoreLog_${timestamp}.txt.gz`
+    var outfile = fs.createWriteStream(path.join(app.getPath('desktop'), fname));
     infile.pipe(gzip).pipe(outfile);
+    return fname;
 }
 
 log.contents = function(callback) {
