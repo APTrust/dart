@@ -132,7 +132,10 @@ class Bagger {
         bagger.emitter.emit('packageStart', `Starting to build ${bagger.job.bagName}`);
         bagger.preValidationResult = this.job.validate();
         if (!this.preValidationResult.isValid()) {
-            this.errors.push("See job validation errors");
+            this.errors.push("Not running this job because the job definition is not valid.");
+            for (var err of this.preValidationResult.errors) {
+                this.errors.push(err);
+            }
             return false;
         }
         this.initOutputDir();
@@ -145,7 +148,7 @@ class Bagger {
         }
         if (this.writeAs == WRITE_AS_TAR) {
             this.payloadQueue.drain = function () {
-                //console.log("Done adding payload files");
+                log.info(`Done adding payload files`);
                 bagger.tarTagFiles();
             }
         }
@@ -182,7 +185,7 @@ class Bagger {
         }
         // On done, create manifests
         this.tagFileQueue.drain = function () {
-            //console.log("Done adding tag files");
+            log.info("Done adding tag files");
             bagger.tarManifests();
         }
     }
@@ -217,7 +220,7 @@ class Bagger {
         }
         // On done, create tag manifests
         this.manifestQueue.drain = function () {
-            //console.log("Done writing payload manifests");
+            log.info("Done writing payload manifests");
             bagger.tarTagManifests();
         }
     }
@@ -252,7 +255,7 @@ class Bagger {
         }
         // On done, create tag manifests
         this.tagManifestQueue.drain = function () {
-            //console.log("Done writing tag manifests");
+            log.info("Done writing tag manifests");
             bagger.cleanup();
         }
     }

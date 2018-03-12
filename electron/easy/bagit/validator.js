@@ -4,6 +4,7 @@ const constants = require('./constants');
 const crypto = require('crypto');
 const EventEmitter = require('events');
 const fs = require('fs');
+const log = require('../core/log');
 const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');

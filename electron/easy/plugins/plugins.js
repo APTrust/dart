@@ -3,7 +3,7 @@ const NEWLINE = require('os').EOL;
 const requireDir = require('require-dir');
 const path = require('path');
 const fs = require('fs');
-
+const log = require('../core/log');
 const { OperationResult } = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
 const SetupProviders = requireDir("./setup");
@@ -208,6 +208,7 @@ function newPackageEmitter(job, provider) {
     emitter.on('start', function(message) {
         showFilesReset();
         result.started = (new Date()).toJSON();
+        log.info(`Packaging bag ${job.bagName}`);
         $("#jobRun").show();
     });
 
@@ -218,8 +219,10 @@ function newPackageEmitter(job, provider) {
             $("#jobFilesStart").show();
             result.filename = job.packagedFile.trim();
             showFilesSucceeded();
+            log.info(`Finished packaging bag ${job.bagName}`);
         } else {
             showError("#jobError", message);
+            log.error(`Error packaging ${job.bagName}: ${message}`);
             showFilesFailed();
         }
         result.succeeded = succeeded;
@@ -231,8 +234,10 @@ function newPackageEmitter(job, provider) {
             var stats = fs.statSync(job.packagedFile)
             result.filesize = stats["size"];
         } catch(ex) {
-            console.log(`Cannot get file size for ${job.packagedFile}`);
-            console.log(ex);
+            var msg = `Cannot get file size for ${job.packagedFile}`;
+            log.error(msg);
+            log.error(ex);
+            showError("#jobError", ex)
         }
         job.save(); // save job with OperationResult
 
@@ -243,6 +248,7 @@ function newPackageEmitter(job, provider) {
     emitter.on('fileAddStart', function(message) {
         $("#jobRunFiles").show();
         $("#jobRunFiles .message").html(message);
+        log.debug(`fileAddStart ${message}`);
     });
 
     emitter.on('fileProgress', function(intPercentComplete) {
@@ -252,10 +258,12 @@ function newPackageEmitter(job, provider) {
     emitter.on('fileAddComplete', function(succeeded, message) {
         if (succeeded == true) {
             showSuccess("#jobRunFiles");
+            log.debug(`fileAddComplete ${message}`);
         } else {
             showFailure("#jobRunFiles");
             showFilesFailed();
             showError("#jobError", message);
+            log.error(`fileAddComplete ${message}`);
         }
         $("#jobRunFiles .message").html(message);
     });
@@ -263,14 +271,17 @@ function newPackageEmitter(job, provider) {
     emitter.on('packageStart', function(message) {
         $("#jobPackage").show()
         $("#jobPackage .message").html(message);
+        log.debug(`packageStart ${message}`);
     });
 
     emitter.on('packageComplete', function(succeeded, message) {
         if (succeeded == true) {
             showSuccess("#jobPackage");
+            log.debug(`packageComplete ${message}`);
         } else {
             showSuccess("#jobPackage");
             showError("#jobError", message);
+            log.error(`packageComplete ${message}`);
         }
         $("#jobPackage .message").html(message);
     });
@@ -278,31 +289,36 @@ function newPackageEmitter(job, provider) {
     emitter.on('validateStart', function(message) {
         $("#jobValidate").show();
         $("#jobValidate .message").html(message);
+        log.info(`validateStart ${message}`);
     });
 
     emitter.on('validateComplete', function(succeeded, message) {
         if (succeeded == true) {
             showSuccess("#jobValidate");
+            log.info(`validateComplete ${message}`);
         } else {
             showFailure("#jobValidate");
             showFilesFailed();
+            log.error(`validateComplete ${message}`);
         }
         $("#jobValidate .message").html(message);
     });
 
     emitter.on('warning', function(message) {
         // No UI for this yet
+        log.warn(message);
     });
 
     emitter.on('error', function(message) {
         result.error += message + NEWLINE;
         showError("#jobError", message);
+        log.error(`Error during packaging/validation: ${message}`);
     });
 
     return emitter;
 }
 
-// newPackageEmitter returns an event emitter that allows a storage
+// newStorageEmitter returns an event emitter that allows a storage
 // plugin to send events back to the UI. Param job is the job being
 // worked on. The emitter will update the job's operation result
 // with info about when the work started and ended, whether it was
@@ -330,6 +346,7 @@ function newStorageEmitter(job, provider) {
         showStorageReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
+        log.info(`Starting ${result.note}`);
     });
 
     emitter.on('complete', function(succeeded, message) {
@@ -337,9 +354,11 @@ function newStorageEmitter(job, provider) {
             $("#jobStorageComplete").show();
             $("#jobStorageComplete .message").append(message + "<br/>");
             showSuccess("#jobStorageStart");
+            log.info(`Completed ${result.note}`);
         } else {
             showFailure("#jobStorageStart");
             showError("#jobError", message);
+            log.info(`Error ${result.note}: ${message}`);
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
@@ -351,8 +370,9 @@ function newStorageEmitter(job, provider) {
             var stats = fs.statSync(job.packagedFile)
             result.filesize = stats["size"];
         } catch(ex) {
-            console.log(`Cannot get file size for ${job.packagedFile}`);
-            console.log(ex);
+            log.error(`Cannot get file size for ${job.packagedFile}`);
+            log.error(ex);
+            showError("#jobError", ex)
         }
         job.save(); // save job with OperationResult
     });
@@ -360,6 +380,7 @@ function newStorageEmitter(job, provider) {
     emitter.on('uploadStart', function(message) {
         $("#jobUploadFile .message").html(message + "<br/>");
         $("#jobUploadFile").show();
+        log.info(`Starting upload ${message}`);
     });
 
     emitter.on('uploadProgress', function(intPercentComplete) {
@@ -372,19 +393,23 @@ function newStorageEmitter(job, provider) {
         if (succeeded) {
             showSuccess("#jobUploadComplete");
             showUploadSucceeded();
+            log.info(`Upload complete. ${message}`);
         } else {
             showFailure("#jobUploadComplete");
             showUploadFailed();
+            log.error(`Error uploading: ${message}`);
         }
     });
 
     emitter.on('warning', function(message) {
         console.log('Storage warning ' + message);
+        log.warn(message);
     });
 
     emitter.on('error', function(message) {
         result.error += message + NEWLINE;
         showError("#jobError", message);
+        log.error(`Error during upload: ${message}`);
     });
     return emitter;
 }
