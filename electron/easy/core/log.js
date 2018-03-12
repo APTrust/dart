@@ -1,5 +1,11 @@
-const log = require('electron-log/main');
+const electron = require('electron');
+const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
+const fs = require('fs');
+const log = require('electron-log/main'); // requiring 'electron-log' leaves transport undefined
+const path = require('path');
 const { Util } = require('./util');
+const zlib = require('zlib');
+
 
 const megabyte = 1048576;
 
@@ -17,6 +23,15 @@ if (Util.isDevMode()) {
 
 log.filename = function() {
     return log.transports.file.findLogPath();
+}
+
+log.zip = function() {
+    var gzip = zlib.createGzip();
+    var infile = fs.createReadStream(log.filename());
+    var timestamp = new Date().getTime();
+    var outpath = path.join(app.getPath('desktop'), `EasyStoreLog_${timestamp}.txt.gz`);
+    var outfile = fs.createWriteStream(outpath);
+    infile.pipe(gzip).pipe(outfile);
 }
 
 // Use log.info("message")
