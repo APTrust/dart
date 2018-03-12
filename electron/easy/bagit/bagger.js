@@ -4,6 +4,7 @@ const constants = require('./constants');
 const crypto = require('crypto');
 const EventEmitter = require('events');
 const fs = require('fs');
+const log = require('../core/log');
 const os = require('os');
 const path = require('path');
 const stream = require('stream');
@@ -90,8 +91,10 @@ class Bagger {
     initOutputDir() {
         if (!this._outputDirInitialized) {
             if (path.extname(this.bagPath) == '' && !fs.existsSync(this.bagPath)) {
+                log.info(`Creating directory ${this.bagPath}`);
                 fs.mkdirSync(this.bagPath, 0o755);
             } else if (!fs.existsSync(path.dirname(this.bagPath))) {
+                log.info(`Creating directory ${path.dirname(this.bagPath)}`);
                 fs.mkdirSync(path.dirname(this.bagPath), 0o755);
             }
             this._outputDirInitialized = true;

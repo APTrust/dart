@@ -441,6 +441,7 @@ $(function() {
 
     // Show the dashboard on startup.
     dashboardShow();
+    es.log.info("EasyStore started");
 
     // This is for interactive testing in the console.
     window.es = es;

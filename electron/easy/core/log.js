@@ -9,7 +9,7 @@ log.transports.file.maxSize = 4 * megabyte;
 
 if (Util.isDevMode()) {
     log.transports.file.level = 'debug';
-    log.transports.console.level = 'debug';
+    log.transports.console.level = false;
 } else {
     log.transports.file.level = 'info';
     log.transports.console.level = false;
