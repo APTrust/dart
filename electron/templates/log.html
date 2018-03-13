@@ -1,0 +1,44 @@
+<h1>Logs</h1>
+
+<div class="row padded-for-text">
+    <p>If you're seeing unexpected problems while bagging or uploadind data:</p>
+    <ol>
+        <li>Click the <b>Export Log</b> button. A compressed version of the log will appear on your desktop.</li>
+        <li>Email the log, along with a description of the problem to <a href="help@aptrust.org">help@aptrust.org</a>,
+    </ol>
+
+</div>
+
+<div class="row padded-for-text" style="margin-top: 30px;">
+
+    <div class="pull-left">
+        <button type="button" class="btn btn-primary" id="btnViewLog">View Log</button>
+    </div>
+
+    <div class="pull-right">
+        <button type="button" class="btn btn-primary" id="btnExportLog">Export Log</button>
+    </div>
+</div>
+
+
+<div class="row padded-for-text" style="display:none; margin-top: 30px; height: 500px;" id="logViewer">
+    <pre id="logData" style="height:600px;width:100%;overvlow:auto;">{{ logContent }}</pre>
+</div>
+
+<script>
+ $('#btnViewLog').click(function() {
+     console.log('ok');
+     $('#logViewer').show();
+     $('#logData').text();
+     es.log.contents(function(err, data) {
+         if (err) {
+             alert(err);
+         }
+         $('#logData').append(data);
+     });
+ });
+ $('#btnExportLog').click(function() {
+     var fileName = es.log.zip();
+     alert(`Compressed log saved to desktop file ${fileName}`);
+ });
+</script>

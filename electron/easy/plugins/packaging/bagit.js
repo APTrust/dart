@@ -11,6 +11,7 @@ const tar = require('tar-stream')
 const { AppSetting } = require('../../core/app_setting');
 const { Bagger } = require('../../bagit/bagger');
 const constants = require('../../bagit/constants');
+const log = require('../../core/log');
 const { Validator } = require('../../bagit/validator');
 const { Util } = require('../../core/util');
 
@@ -61,15 +62,30 @@ class BagIt {
      */
     packageFiles() {
         this.job.packagedFile = "";
+        var bagger = null;
+        var validator = null;
         try {
             this.ensureBaggingDir();
-            var bagger = new Bagger(this.job, this.emitter);
-            var validator = new Validator(bagger.bagPath, this.job.bagItProfile, this.emitter);
+            bagger = new Bagger(this.job, this.emitter);
+            validator = new Validator(bagger.bagPath, this.job.bagItProfile, this.emitter);
             this.emitter.emit('start', 'Bagging files...');
             this.attachListeners(bagger, validator);
             bagger.create();
         } catch (ex) {
             this.emitter.emit('error', ex);
+            log.error(ex);
+            if (bagger != null && bagger.errors) {
+                log.error("Bagger errors follow");
+                for (var e of bagger.errors) {
+                    log.error(e);
+                }
+            }
+            if (validator != null && validator.errors) {
+                log.error("Validator errors follow");
+                for (var e of validator.errors) {
+                    log.error(e);
+                }
+            }
             console.error(ex);
         }
     }
@@ -80,18 +96,24 @@ class BagIt {
             packager.emitter.on('packageComplete', function(succeeded, message) {
                 if (succeeded) {
                     packager.job.packagedFile = bagger.bagPath;
+                    log.info("Packaging completed successfully.");
                     validator.validate();
                 } else {
+                    log.error("Packaging completed with error.");
+                    log.error(message);
                     packager.emitter.emit('complete', false, message)
                 }
             });
             packager.emitter.on('validateComplete', function(succeeded, message) {
                 if (succeeded) {
+                    log.info("Validation completed successfully.");
                     for(var manifest of validator.payloadManifests) {
                         packager.dumpManifest(manifest);
                     }
                     packager.emitter.emit('complete', true, `Bag created at ${packager.job.packagedFile}`)
                 } else {
+                    log.error("Validation completed with error.");
+                    log.error(message);
                     packager.emitter.emit('complete', false, message)
                 }
             });
@@ -101,6 +123,7 @@ class BagIt {
 
     ensureBaggingDir() {
         if (!fs.existsSync(this.job.baggingDirectory)) {
+            log.info(`Creating bagging directory ${this.job.baggingDirectory}`);
             mkdirp.sync(this.job.baggingDirectory, 0o755);
         }
     }
@@ -113,7 +136,8 @@ class BagIt {
     ensureManifestDir() {
         var manifestDir = this.getManifestDirName();
         if (!fs.existsSync(manifestDir)) {
-            fs.mkdirSync(manifestDir);
+            log.info(`Creating manifest directory ${manifestDir}`);
+            fs.mkdirSync(manifestDir, 0o755);
         }
     }
 
@@ -121,19 +145,25 @@ class BagIt {
     // manifest data. The manifest entries we write here may not
     // be in the same order as on the manifest in the bagger.
     dumpManifest(manifest) {
-        this.ensureManifestDir();
-        var match = manifest.relDestPath.match(/manifest-(\w+).txt$/);
-        var filename = `${this.job.id}_${match[1]}_${new Date().getTime()}.txt`;
-        var outputPath = path.join(this.getManifestDirName(), filename);
-        //console.log(outputPath);
-        var outputFile = fs.createWriteStream(outputPath, { mode: 0o644 });
-        outputFile.setDefaultEncoding('utf-8');
-        for (var filename of manifest.keyValueCollection.sortedKeys()) {
-            var checksum = manifest.keyValueCollection.first(filename);
-            //console.log(`${checksum} ${filename}\n`);
-            outputFile.write(`${checksum} ${filename}\n`);
+        var outputPath = null;
+        try {
+            this.ensureManifestDir();
+            var match = manifest.relDestPath.match(/manifest-(\w+).txt$/);
+            var filename = `${this.job.id}_${match[1]}_${new Date().getTime()}.txt`;
+            outputPath = path.join(this.getManifestDirName(), filename);
+            log.info(`Writing manifest to ${outputPath}`);
+            var outputFile = fs.createWriteStream(outputPath, { mode: 0o644 });
+            outputFile.setDefaultEncoding('utf-8');
+            for (var filename of manifest.keyValueCollection.sortedKeys()) {
+                var checksum = manifest.keyValueCollection.first(filename);
+                outputFile.write(`${checksum} ${filename}\n`);
+            }
+            outputFile.end();
+        } catch (ex) {
+            var message = `Error exporting manifest ${outputPath}: ${ex}`
+            log.error(message);
+            this.emitter.emit('error', message);
         }
-        outputFile.end();
     }
 
 }

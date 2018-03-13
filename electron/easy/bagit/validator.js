@@ -4,6 +4,7 @@ const constants = require('./constants');
 const crypto = require('crypto');
 const EventEmitter = require('events');
 const fs = require('fs');
+const log = require('../core/log');
 const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');
@@ -73,6 +74,7 @@ class Validator {
     }
 
     _readFromTar() {
+        log.debug(`Validator is reading from tar file at ${this.pathToBag}`);
         var validator = this;
         var extract = tar.extract();
         var bagNamePrefix = this.bagName + '/';
@@ -132,6 +134,7 @@ class Validator {
     }
 
     readFile(bagItFile, stream) {
+        log.debug(`Running checksums on ${bagItFile.relDestPath}`);
         this._addFile(bagItFile);
         var pipes = this._getCryptoHashes(bagItFile)
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
@@ -201,10 +204,10 @@ class Validator {
 
     validateManifests(manifests) {
         for(var manifest of manifests) {
+            log.debug(`Validating ${manifest.relDestPath}`);
             var basename = path.basename(manifest.relDestPath, '.txt');
             var algorithm = basename.split('-')[1];
             for (var filename of manifest.keyValueCollection.keys()) {
-                //console.log("Manifest entry " + filename)
                 var bagItFile = this.files[filename];
                 if (!bagItFile) {
                     this.errors.push(`File ${filename} in ${manifest.relDestPath} is missing from payload.`);
@@ -220,6 +223,7 @@ class Validator {
     }
 
     validateNoExtraneousPayloadFiles() {
+        log.debug("Checking for extraneous payload files");
         for(var manifest of this.payloadManifests) {
             for (var f of this.payloadFiles) {
                 //console.log("Payload file " + f.relDestPath)
@@ -231,6 +235,7 @@ class Validator {
     }
 
     validateTopLevelDirs() {
+        log.debug("Validating top-level directories");
         var exceptions = ['data']; // data dir is always required
         for (var f of this.profile.requiredTagFileNames()) {
             var requiredTagDir = f.split('/', 1);
@@ -246,6 +251,7 @@ class Validator {
     }
 
     validateTopLevelFiles() {
+        log.debug("Validating top-level files");
         if (!this.profile.allowMiscTopLevelFiles) {
             var exceptions = this.profile.requiredTagFileNames();
             for (var alg of this.profile.manifestsRequired) {
@@ -270,6 +276,7 @@ class Validator {
     }
 
     validateRequiredManifests() {
+        log.debug("Checking for presence of required manifests");
         for (var alg of this.profile.manifestsRequired) {
             var name = `manifest-${alg}.txt`
             if(!this.files[name]) {
@@ -279,6 +286,7 @@ class Validator {
     }
 
     validateRequiredTagManifests() {
+        log.debug("Checking for presence of required tag manifests");
         for (var alg of this.profile.tagManifestsRequired) {
             var name = `tagmanifest-${alg}.txt`
             if(!this.files[name]) {
@@ -292,6 +300,7 @@ class Validator {
     validateTags() {
         var requiredTags = this.profile.tagsGroupedByFile();
         for (var filename of Object.keys(requiredTags)) {
+            log.debug(`Checking required tags in ${filename}`);
             var tagFile = this.files[filename];
             if (!tagFile) {
                 this.errors.push(`Required tag file ${filename} is missing`);
@@ -329,6 +338,7 @@ class Validator {
 
     // callback is the function to call when validation is complete.
     _readFromDir(callback) {
+        log.debug(`Validator is trying to read from directory at ${this.pathToBag} - BUT THIS IS NOT YET IMPLEMENTED`);
         throw "Reading bag from a directory is not yet implemented. It's tar only for now."
     }
 }
