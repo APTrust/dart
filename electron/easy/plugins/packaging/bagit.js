@@ -137,7 +137,7 @@ class BagIt {
         var manifestDir = this.getManifestDirName();
         if (!fs.existsSync(manifestDir)) {
             log.info(`Creating manifest directory ${manifestDir}`);
-            fs.mkdirSync(manifestDir);
+            fs.mkdirSync(manifestDir, 0o755);
         }
     }
 
