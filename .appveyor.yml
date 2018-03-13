@@ -31,23 +31,14 @@ install:
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
-  - set GOBIN=%APPVEYOR_BUILD_FOLDER%/electron/dist/gobin;
-  - go version
-  - go env
-  - go get golang.org/x/crypto/md4
-  - go get github.com/satori/go.uuid
 
 build_script:
-  - cd %APPVEYOR_BUILD_FOLDER%\apps\apt_create_bag\ && go build .
   - npm run --prefix ./electron
   - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 artifacts:
   - path: electron/dist/*.exe
     name: EasyStore-Windows
-
-  - path: electron/dist/gobin/**
-    name: Go-binaries
 
 test: off
 deploy:
@@ -56,12 +47,11 @@ deploy:
   provider: GitHub
   auth_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-    artifact: EasyStore-Windows, Go-binaries # This is the name we specified in the artifacts section.
+    artifact: EasyStore-Windows
   draft: true
   prerelease: false
   on:
     branch:
-      - windows-build
       - master
 
 notifications:
