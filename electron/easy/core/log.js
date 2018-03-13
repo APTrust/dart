@@ -17,7 +17,10 @@ if (Util.isDevMode()) {
     log.transports.file.level = 'debug';
     log.transports.console.level = false;
 } else {
-    log.transports.file.level = 'info';
+    // For early distribution builds, set log level to debug.
+    // We'll set this back to 'info' when we're more stable.
+    // Log Level should be an app setting with options 'info' and 'debug'.
+    log.transports.file.level = 'debug';
     log.transports.console.level = false;
 }
 
