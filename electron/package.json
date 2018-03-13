@@ -1,7 +1,13 @@
 {
     "name": "EasyStore",
-    "version": "0.1.2",
+    "version": "0.1.3",
+    "description": "EasyStore packages files into BagIt format and uploads them to a server or digital repository of your choice.",
     "main": "main.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/APTrust/easy-store.git"
+    },
+    "license": "Apache 2.0",
     "dependencies": {
         "archiver": "^2.1.1",
         "asar": "^0.14.0",
