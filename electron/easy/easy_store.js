@@ -23,6 +23,14 @@ const UI = require('./ui/ui');
 const { Util } = require('./core/util');
 const { ValidationResult } = require('./core/validation_result');
 
+// Log unhandled errors.
+function unhandledErr(err) {
+    alert(err);
+    log.error(err);
+}
+process.on('uncaughtException', unhandledErr);
+process.on('unhandledRejection', unhandledErr);
+
 
 module.exports.AppSetting = AppSetting;
 module.exports.BagIt = BagIt;

@@ -63,19 +63,3 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-// Make sure there's just one easy-store, or else nedb keeps opening
-// new DB files.
-//var EasyStore = require('./static/js/easy-store.js')
-//global.EasyStore = require('./static/js/easy-store.js')
-
-
-/*
-Where to store persistent data:
-
-Mac OS: ~/Library/Application Support/<Your App Name (taken from the name property in package.json)>
-Windows: C:\Users\<you>\AppData\Local\<Your App Name>
-Linux: ~/.config/<Your App Name>
-
-https://codeburst.io/how-to-store-user-data-in-electron-3ba6bf66bc1e
-*/
