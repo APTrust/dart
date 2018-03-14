@@ -129,7 +129,9 @@ class Validator {
             }
         })
 
-        //pack.pipe(extract)
+        // PT #155978872
+        // fs.readFileSync can't read files over 2GB.
+        // Fix this with read or readSync or fs.createReadStream.
         extract.end(fs.readFileSync(this.pathToBag));
     }
 
