@@ -23,7 +23,7 @@ const WRITE_AS_TAR = 'tar';
 // will manage. When writing to a tar archive, we must add
 // files one at a time.
 function writeIntoTarArchive(data, done) {
-    //console.log(data);
+    //console.log(data.header);
     var writer = data.tar.entry(data.header, done);
     for (var h of data.hashes) {
         data.reader.pipe(h)
@@ -329,6 +329,11 @@ class Bagger {
             gid: bagItFile.stats.gid,
             mtime: bagItFile.stats.mtime
         };
+        // pax headers allow us to include files over 8GB in size
+        header.pax = {
+            size: bagItFile.stats.size
+        };
+
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         reader.on('end', function() {
             bagger.emitter.emit('fileAddEnd', true, `Added file ${header.name}`);
