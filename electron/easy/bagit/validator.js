@@ -90,6 +90,7 @@ class Validator {
                 gid: header.gid,
                 mtimeMs: header.mtime
             }
+
             if (!addedBagFolderNameError && !header.name.startsWith(bagNamePrefix)) {
                 addedBagFolderNameError = true;
                 var actualFolder = header.name.split('/')[0];
@@ -110,6 +111,10 @@ class Validator {
                 next() // ready for next entry
             })
         })
+
+        extract.on('error', function(err) {
+            validator.emitter.emit('error', err);
+        });
 
         extract.on('finish', function() {
             // all entries read
@@ -132,7 +137,8 @@ class Validator {
         // PT #155978872
         // fs.readFileSync can't read files over 2GB.
         // Fix this with read or readSync or fs.createReadStream.
-        extract.end(fs.readFileSync(this.pathToBag));
+        // extract.end(fs.readFile(this.pathToBag));
+        fs.createReadStream(this.pathToBag).pipe(extract)
     }
 
     readFile(bagItFile, stream) {
