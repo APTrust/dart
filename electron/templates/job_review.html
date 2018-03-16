@@ -60,37 +60,37 @@
       <h3>Running Job</h3>
 
       <div id="jobFilesStart" class="alert alert-info" role="alert">
-          <div id="jobRunFiles">
-              <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+          <div id="jobPackage">
+              <span class="fa fa-spinner fa-spin status" aria-hidden="true"></span>
+              <span class="message"></span>
+          </div>
+          <div id="jobRunFiles" style="display:none;">
+              <span class="fa fa-spinner fa-spin status" aria-hidden="true"></span>
               <span class="message">Adding files to bag...</span>
           </div>
-          <div id="jobPackage" style="display:none;">
-              <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+          <div id="jobPackageComplete" style="display:none;">
+              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
               <span class="message"></span>
           </div>
           <div id="jobValidate" style="display:none;">
-              <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
-              <span class="message"></span>
-          </div>
-          <div id="jobPackageComplete" style="display:none;">
-              <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+              <span class="fa fa-spinner fa-spin status" aria-hidden="true"></span>
               <span class="message"></span>
           </div>
       </div>
 
       <div id="jobStorageStart" class="alert alert-info" role="alert" style="display:none">
           <div id="jobUploadFile" style="display:none;">
-              <span class="glyphicon glyphicon-hand-right" aria-hidden="true"></span>
+              <span class="fa fa-spinner fa-spin status" aria-hidden="true"></span>
               <span class="message"></span>
           </div>
           <div id="jobStorageComplete" style="display:none;">
-              <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
               <span class="message"></span>
           </div>
       </div>
 
       <div id="jobError" class="alert alert-danger" role="alert" style="display:none;">
-          <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+          <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
           <span class="message"></span>
       </div>
 

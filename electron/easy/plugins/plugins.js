@@ -155,28 +155,34 @@ function showUploadFailed() {
 
 function showSuccess(divId, message) {
     var div = $(divId)
-    var icon = $(divId + " .glyphicon")
-    icon.removeClass("glyphicon-hand-right");
-    icon.addClass("glyphicon-thumbs-up");
+    var icon = $(divId + " .status")
+    icon.removeClass("fa fa-spinner fa-spin");
+    icon.removeClass("glyphicon glyphicon-hand-right");
+    icon.addClass("glyphicon glyphicon-ok");
     div.show();
 }
 
 function showFailure(divId, message) {
     var div = $(divId)
-    var icon = $(divId + " .glyphicon")
+    var icon = $(divId + " .status")
     var parent = div.parent();
-    icon.removeClass("glyphicon-hand-right");
-    icon.addClass("glyphicon-thumbs-down");
+    icon.removeClass("fa fa-spinner fa-spin");
+    icon.removeClass("glyphicon glyphicon-hand-right");
+    icon.addClass("glyphicon glyphicon-remove");
     div.show();
 }
 
 function resetThumbs(divId) {
     var div = $(divId)
-    var icon = $(divId + " .glyphicon")
-    icon.removeClass("glyphicon-thumbs-up");
-    icon.removeClass("glyphicon-thumbs-down");
-    icon.addClass("glyphicon-hand-right");
-    div.show();
+    var icon = $(divId + " .status")
+    icon.removeClass("glyphicon glyphicon-ok");
+    icon.removeClass("glyphicon glyphicon-remove");
+    icon.addClass("fa fa-spinner fa-spin");
+    if (divId == '#jobPackage') {
+        div.show();
+    } else {
+        div.hide();
+    }
 }
 
 function showError(divId, message) {
@@ -214,9 +220,7 @@ function newPackageEmitter(job, provider) {
 
     emitter.on('complete', function(succeeded, message) {
         if (succeeded == true) {
-            $("#jobPackageComplete").show();
-            $("#jobPackageComplete .message").append(message + "<br/>");
-            $("#jobFilesStart").show();
+            $("#jobPackage").hide();
             result.filename = job.packagedFile.trim();
             showFilesSucceeded();
             log.info(`Finished packaging bag ${job.bagName}`);
@@ -275,11 +279,13 @@ function newPackageEmitter(job, provider) {
     });
 
     emitter.on('packageComplete', function(succeeded, message) {
+        $("#jobRunFiles").hide();
+        $("#jobPackageComplete .message").html(message);
         if (succeeded == true) {
-            showSuccess("#jobPackage");
+            showSuccess("#jobPackageComplete");
             log.debug(`packageComplete ${message}`);
         } else {
-            showSuccess("#jobPackage");
+            showError("#jobPackageComplete");
             showError("#jobError", message);
             log.error(`packageComplete ${message}`);
         }
@@ -293,6 +299,7 @@ function newPackageEmitter(job, provider) {
     });
 
     emitter.on('validateComplete', function(succeeded, message) {
+        $("#jobPackage").hide();
         if (succeeded == true) {
             showSuccess("#jobValidate");
             log.info(`validateComplete ${message}`);
