@@ -311,6 +311,9 @@ function newPackageEmitter(job, provider) {
 
     emitter.on('error', function(message) {
         result.error += message + NEWLINE;
+        result.succeeded = false;
+        result.completed = (new Date()).toJSON();
+        job.save();
         showError("#jobError", message);
         log.error(`Error during packaging/validation: ${message}`);
     });
@@ -408,6 +411,9 @@ function newStorageEmitter(job, provider) {
 
     emitter.on('error', function(message) {
         result.error += message + NEWLINE;
+        result.succeeded = false;
+        result.completed = (new Date()).toJSON();
+        job.save();
         showError("#jobError", message);
         log.error(`Error during upload: ${message}`);
     });
