@@ -33,12 +33,16 @@ install:
   - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
 
 build_script:
-  - npm run --prefix ./electron
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
+  - npm run --prefix ./electron dist:mac
+  - npm run --prefix ./electron dist:win32
+  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder -mwl .
 
 artifacts:
   - path: electron/dist/*.exe
     name: EasyStore-Windows
+
+  - path: electron/dist/*.dmg
+    name: EasyStore-MacOS
 
 test: off
 deploy:
@@ -47,7 +51,9 @@ deploy:
   provider: GitHub
   auth_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-    artifact: EasyStore-Windows
+    artifact:
+      - EasyStore-Windows
+      - EasyStore-MacOS
   draft: true
   prerelease: false
   on:
