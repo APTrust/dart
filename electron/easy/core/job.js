@@ -11,7 +11,6 @@ const { Form } = require('./form');
 const { JobOptions } = require('./job_options');
 const { OperationResult } = require('./operation_result');
 const Plugins = require('../plugins/plugins');
-const { QuickStat } = require('./quick_stat');
 const { StorageService } = require('./storage_service');
 const { Util } = require('./util');
 const { ValidationResult } = require('./validation_result');
