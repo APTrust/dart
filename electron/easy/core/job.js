@@ -127,7 +127,7 @@ class Job {
         }
         var included = false;
         for (var f of this.files) {
-            if (filepath.startsWith(f)) {
+            if (filepath == f || filepath.startsWith(f + path.sep)) {
                 included = true;
                 break;
             }
@@ -409,28 +409,6 @@ class Job {
         return data;
     }
 
-    fileOptionsChanged() {
-        this.options.skipDSStore = $('#filesSkipDSStore').prop('checked');
-        this.options.skipHiddenFiles = $('#filesSkipHidden').prop('checked');
-        this.options.skipDotKeep = $('#filesSkipDotKeep').prop('checked');
-        var job = this;
-        $.each($("tr[data-object-type='File']"), function(index, row) {
-            var filepath = $(row).data('filepath');
-            job.deleteFile($(row).find('td').first());
-            job.addFile(filepath);
-        });
-    }
-
-    // We call this when we load an existing job, so the list of
-    // files, file sizes, etc. shows up in the UI.
-    setFileListUI() {
-        var files = this.files.slice();
-        this.files = [];
-        for(var filepath of files) {
-            this.addFile(filepath);
-        }
-    }
-
     // filesToPackage returns a list of files that should go into
     // a bag.
     filesToPackage() {
@@ -451,47 +429,6 @@ class Job {
             }
         }
         return filesToPackage;
-    }
-
-    addFile(filepath) {
-        $('#filesPanel').show()
-        $('#fileWarningContainer').hide();
-        if (this.hasFile(filepath)) {
-            $('#fileWarning').html(filepath + ' has already been added')
-            $('#fileWarningContainer').show();
-            return
-        }
-        var stat = fs.statSync(filepath)
-        var row = $(getTableRow(filepath, stat.isDirectory()))
-        row.insertBefore('#fileTotals')
-        var job = this;
-
-        var dirCallback = function() { updateStats(row, '.dirCount', 1) };
-        var fileCallback = function(stats) { updateFileStats(stats, row) };
-        var shouldIncludeCallback = function(filepath) { return Job.shouldIncludeFile(filepath, job.options); };
-        // TODO: Replace this monstrosity with Util.walkSync
-        var quickStat = new QuickStat(shouldIncludeCallback, fileCallback, dirCallback);
-        fs.stat(filepath, function(err, stats) {
-            quickStat.statPath(err, stats, filepath);
-        });
-
-        this.files.push(filepath)
-        $('#btnJobPackagingDiv').show();
-    }
-
-    deleteFile(cell) {
-        $('#fileWarningContainer').hide();
-        var row = $(cell).parent('tr')
-        var filepath = $(row).data('filepath')
-        var removeIndex = this.files.indexOf(filepath);
-        if (removeIndex > -1) {
-            this.files.splice(removeIndex, 1);
-        }
-        updateStatsForDeletion(row);
-        $(row).remove()
-        if (!this.hasFiles()) {
-            $('#btnJobPackagingDiv').hide();
-        }
     }
 
     static getStore() {
@@ -553,107 +490,5 @@ class Job {
         }
     }
 }
-
-// TODO: Move all of the below into a UI/view class
-
-function updateFileStats(stats, row) {
-    updateStats(row, '.fileCount', 1)
-    updateStats(row, '.fileSize', stats.size)
-}
-
-function updateStats(row, cssClass, amountToAdd) {
-    var cell = $(row).find(cssClass).first()
-    var prevValue = parseInt(cell.data('total'), 10) || 0
-    var newValue = prevValue + amountToAdd
-    cell.data('total', newValue)
-    if (cssClass.indexOf('Count') > 0) {
-        cell.text(newValue)
-    } else {
-        cell.text(formatFileSize(newValue))
-    }
-
-    var totalCell = getTotalCell(cssClass)
-    prevValue = parseInt(totalCell.data('total'), 10) || 0
-    newValue = prevValue + amountToAdd
-    totalCell.data('total', newValue)
-    if (cssClass.indexOf('Count') > 0) {
-        totalCell.text(newValue)
-    } else {
-        totalCell.text(formatFileSize(newValue))
-    }
-}
-
-function getTotalCell(cssClass) {
-    switch(cssClass) {
-    case '.dirCount':
-        return $('#totalDirCount')
-    case '.fileCount':
-        return $('#totalFileCount')
-    case '.fileSize':
-        return $('#totalFileSize')
-    }
-    return null
-}
-
-function updateStatsForDeletion(row) {
-    var dirCountCell = $(row).children('.dirCount').first()
-    var fileCountCell = $(row).children('.fileCount').first()
-    var sizeCell = $(row).children('.fileSize').first()
-    var fileCount = parseInt(fileCountCell.data('total'), 10) || 0
-    var size = parseInt(sizeCell.data('total'), 10) || 0
-    var dirCount = parseInt(dirCountCell.data('total'), 10) || 0
-    var totalDirCountCell = $('#totalDirCount')
-    var prevTotalDirCount = parseInt(totalDirCountCell.data('total'), 10) || 0
-    totalDirCountCell.data('total', (prevTotalDirCount - dirCount))
-    totalDirCountCell.text(prevTotalDirCount - dirCount)
-    var totalFileCountCell = $('#totalFileCount')
-    var prevTotalFileCount = parseInt(totalFileCountCell.data('total'), 10) || 0
-    totalFileCountCell.data('total', (prevTotalFileCount - fileCount))
-    totalFileCountCell.text(prevTotalFileCount - fileCount)
-    var totalSizeCell = $('#totalFileSize')
-    var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
-    totalSizeCell.data('total', (prevTotalSize - size))
-    totalSizeCell.text(formatFileSize(prevTotalSize - size))
-}
-
-function formatFileSize(size) {
-    if (size > tb) {
-        return (size / tb).toFixed(2) + " TB"
-    }
-    if (size > gb) {
-        return (size / gb).toFixed(2) + " GB"
-    }
-    if (size > mb) {
-        return (size / mb).toFixed(2) + " MB"
-    }
-    return (size / kb).toFixed(2) + " KB"
-}
-
-function getTableRow(filepath, isDir) {
-    var icon = getIconForPath(filepath, isDir)
-    return `<tr data-filepath="${filepath}" data-object-type="File">
-        <td>${icon}</td>
-        <td class="dirCount">0</td>
-        <td class="fileCount">0</td>
-        <td class="fileSize">0</td>
-        <td class="deleteCell"><span class="glyphicon glyphicon-remove clickable-row" aria-hidden="true"></td>
-        </tr>`
-}
-
-function getIconForPath(filepath, isDir) {
-    if (isDir) {
-        return getFolderIcon(filepath)
-    }
-    return getFileIcon(filepath)
-}
-
-function getFileIcon(filepath) {
-    return '<span class="glyphicon glyphicon-file" aria-hidden="true" style="margin-right:10px"></span>' + filepath;
-}
-
-function getFolderIcon(filepath) {
-    return '<span class="glyphicon glyphicon-folder-close" aria-hidden="true" style="margin-right:10px"></span>' + filepath;
-}
-
 
 module.exports.Job = Job;
