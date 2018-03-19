@@ -136,12 +136,14 @@ class Util {
     static getInternalVar(name) {
         return db.get(name);
     }
+
     // setInternalVar set the internal variable with
     // the specified name to the specified value. Internal vars are
     // not visible to users.
     static setInternalVar(name, value) {
         db.set(name, value);
     }
+
     static isDevMode() {
         return (process.execPath.includes('node_modules/electron') ||
                 process.execPath.includes('node_modules\electron'));
@@ -167,17 +169,26 @@ class Util {
     // The returned list is a list of hashes, and each hash has keys
     // absPath: the absolute path to the file
     // stats: a Node fs.Stats object with info about the file
+    // The returned list will not include links, only files.
     static walkSync(dir, filelist, filterFunction) {
         var files = fs.readdirSync(dir);
         filelist = filelist || [];
         filterFunction = filterFunction || function(file) { return true };
         files.forEach(function(file) {
             var absPath = path.join(dir, file);
+            if (!fs.existsSync(absPath)) {
+                console.log(`Does not exist: ${absPath}`);
+                return;  // Symlinks give ENOENT error
+            }
             var stats = fs.statSync(absPath);
             if (stats.isDirectory()) {
+                filelist.push({
+                    absPath: absPath,
+                    stats: stats
+                });
                 filelist = Util.walkSync(absPath, filelist, filterFunction);
             }
-            else if (filterFunction(absPath)) {
+            else if (stats.isFile() && filterFunction(absPath)) {
                 filelist.push({
                     absPath: absPath,
                     stats: stats
