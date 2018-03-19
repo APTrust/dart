@@ -24,11 +24,14 @@ const WRITE_AS_TAR = 'tar';
 // files one at a time.
 function writeIntoTarArchive(data, done) {
     //console.log(data.header);
+    data.startFn();
+    var reader = fs.createReadStream(data.absSourcePath);
+    reader.on('end', data.endFn);
     var writer = data.tar.entry(data.header, done);
     for (var h of data.hashes) {
-        data.reader.pipe(h)
+        reader.pipe(h)
     }
-    data.reader.pipe(writer);
+    reader.pipe(writer);
 }
 
 class Bagger {
@@ -290,7 +293,7 @@ class Bagger {
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
-        this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
+        // this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
         //console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
@@ -334,15 +337,20 @@ class Bagger {
             size: bagItFile.stats.size
         };
 
-        var reader = fs.createReadStream(bagItFile.absSourcePath);
-        reader.on('end', function() {
-            bagger.emitter.emit('fileAddEnd', true, `Added file ${header.name}`);
-        });
+        // var reader = fs.createReadStream(bagItFile.absSourcePath);
+        // reader.on('end', function() {
+        //     bagger.emitter.emit('fileAddEnd', true, `Added file ${header.name}`);
+        // });
+        var startFn = function() { bagger.emitter.emit('fileAddStart', `Adding file ${bagItFile.relDestPath}`); }
+        var endFn = function() { bagger.emitter.emit('fileAddEnd', true, `Added file ${bagItFile.relDestPath}`); }
         var data = {
-            reader: reader,
+            //reader: reader,
+            absSourcePath: bagItFile.absSourcePath,
             header: header,
             tar: this.getTarPacker(),
-            hashes: this._getCryptoHashes(bagItFile)
+            hashes: this._getCryptoHashes(bagItFile),
+            startFn: startFn,
+            endFn: endFn
         };
         // Write files one at a time.
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {
