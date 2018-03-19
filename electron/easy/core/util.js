@@ -177,15 +177,11 @@ class Util {
         files.forEach(function(file) {
             var absPath = path.join(dir, file);
             if (!fs.existsSync(absPath)) {
-                console.log(`Does not exist: ${absPath}`);
+                //console.log(`Does not exist: ${absPath}`);
                 return;  // Symlinks give ENOENT error
             }
             var stats = fs.statSync(absPath);
             if (stats.isDirectory()) {
-                filelist.push({
-                    absPath: absPath,
-                    stats: stats
-                });
                 filelist = Util.walkSync(absPath, filelist, filterFunction);
             }
             else if (stats.isFile() && filterFunction(absPath)) {

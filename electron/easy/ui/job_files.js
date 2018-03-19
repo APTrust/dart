@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { Job } = require('../core/job');
+const path = require('path');
 const { Util } = require('../core/util');
 
 // UI manager for the job_files.html template,
@@ -8,6 +9,16 @@ class JobFiles {
 
     constructor(job) {
         this.job = job;
+    }
+
+    // We call this when we load an existing job, so the list of
+    // files, file sizes, etc. shows up in the UI.
+    setFileListUI() {
+        var files = this.job.files.slice();
+        this.job.files = [];
+        for(var filepath of files) {
+            this.addFile(filepath);
+        }
     }
 
     fileOptionsChanged() {
@@ -40,10 +51,14 @@ class JobFiles {
         } else {
             var filterFunction = function(filepath) { return Job.shouldIncludeFile(filepath, ui.job.options); };
             var files = Util.walkSync(filepath, [], filterFunction);
+            var dirsAdded = {};
             for (var f of files) {
-                if (f.stats.isDirectory()) {
-                    ui.updateStats(row, '.dirCount', 1);
-                } else if (f.stats.isFile()) {
+                if (f.stats.isFile()) {
+                    var dirname = path.dirname(f.absPath);
+                    if (!dirsAdded[dirname]) {
+                        ui.updateStats(row, '.dirCount', 1);
+                        dirsAdded[dirname] = true;
+                    }
                     ui.updateFileStats(f.stats, row);
                 }
             }

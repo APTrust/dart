@@ -30,7 +30,6 @@ class Menu {
         var job = Job.find(id);
         State.ActiveObject = job;
         $("#container").html(Templates.jobFiles());
-        job.setFileListUI();
     }
 
     static setupShow() {
