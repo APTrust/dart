@@ -98,4 +98,23 @@
      data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
      $("#container").html(es.Templates.jobPackaging(data));
  });
+
+
+ document.ondrop = (e) => {
+     e.preventDefault();
+     e.stopPropagation();
+     if (document.getElementById('filesPanel') == null) {
+         return;
+     }
+     for (let f of e.dataTransfer.files) {
+         jobFiles.addFile(f.path);
+     }
+     return false;
+ };
+
+ $(document).on('click', '.deleteCell', function(){
+     jobFiles.deleteFile(this);
+ });
+
+
 </script>

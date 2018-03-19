@@ -55,25 +55,6 @@ $(function() {
         return false;
     };
 
-    document.ondrop = (e) => {
-        var job = es.State.ActiveObject;
-        e.preventDefault();
-        e.stopPropagation();
-        if (document.getElementById('filesPanel') == null) {
-            return;
-        }
-        for (let f of e.dataTransfer.files) {
-            job.addFile(f.path);
-        }
-        return false;
-    };
-
-     $(document).on('click', '.deleteCell', function(){
-        var job = es.State.ActiveObject;
-        job.deleteFile(this);
-     });
-
-
     // Clickable table rows for editing objects
     $(document).on("click", ".clickable-row", function() {
         var id = $(this).data("object-id");

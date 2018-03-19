@@ -35,14 +35,6 @@ class JobFiles {
         row.insertBefore('#fileTotals')
         var ui = this;
 
-        // var dirCallback = function() { ui.updateStats(row, '.dirCount', 1) };
-        // var fileCallback = function(stats) { ui.updateFileStats(stats, row) };
-        // var shouldIncludeCallback = function(filepath) { return Job.shouldIncludeFile(filepath, ui.job.options); };
-        // // TODO: Replace this monstrosity with Util.walkSync
-        // var quickStat = new QuickStat(shouldIncludeCallback, fileCallback, dirCallback);
-        // fs.stat(filepath, function(err, stats) {
-        //     quickStat.statPath(err, stats, filepath);
-        // });
         if (!stats.isDirectory()) {
             ui.updateFileStats(stats, row)
         } else {
