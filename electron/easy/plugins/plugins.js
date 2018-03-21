@@ -412,7 +412,8 @@ function newStorageEmitter(job, provider) {
     });
 
     emitter.on('warning', function(message) {
-        console.log('Storage warning ' + message);
+        $("#jobUploadFile .message").html(message + "<br/>");
+        $("#jobUploadFile").show();
         log.warn(message);
     });
 

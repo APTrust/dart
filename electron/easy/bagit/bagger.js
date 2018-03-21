@@ -16,19 +16,19 @@ const WRITE_AS_DIR = 'dir';
 const WRITE_AS_TAR = 'tar';
 
 // TODO: Remove TarWriter to separate file.
-// TODO: Write validator.
-// TODO: Extract manifests (or just make an extra copy after copyFile)
 
 // writeIntoTarArchive is the function that the async queue
 // will manage. When writing to a tar archive, we must add
 // files one at a time.
 function writeIntoTarArchive(data, done) {
-    //console.log(data.header);
+    data.startFn();
+    var reader = fs.createReadStream(data.absSourcePath);
+    reader.on('end', data.endFn);
     var writer = data.tar.entry(data.header, done);
     for (var h of data.hashes) {
-        data.reader.pipe(h)
+        reader.pipe(h)
     }
-    data.reader.pipe(writer);
+    reader.pipe(writer);
 }
 
 class Bagger {
@@ -155,7 +155,6 @@ class Bagger {
     }
 
     tarTagFiles() {
-        //console.log("Writing tag files");
         var bagger = this;
         var oxumTag = bagger.job.bagItProfile.findTagByName('Payload-Oxum');
         // Payload-Oxum and Bag-Size:
@@ -171,7 +170,6 @@ class Bagger {
             var content = this.job.bagItProfile.getTagFileContents(tagFileName);
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            //console.log(tmpFile.name);
             var bytes = fs.writeSync(tmpFile.fd, content,  0, 'utf8');
             if (bytes != content.length) {
                 throw `In tag file ${tagFileName} wrote only ${bytes} of ${content.length} bytes`;
@@ -199,7 +197,6 @@ class Bagger {
             var manifestName = `manifest-${alg}.txt`;
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            //console.log(tmpFile.name);
             for (var f of this.files) {
                 if (f.fileType != constants.PAYLOAD_FILE) {
                     continue;
@@ -226,7 +223,6 @@ class Bagger {
     }
 
     tarTagManifests() {
-        //console.log("Tarring tag manifests");
         var bagger = this;
         var algorithms = Object.keys(this.files[0].checksums);
         for (var alg of algorithms) {
@@ -234,7 +230,6 @@ class Bagger {
             var manifestName = `tagmanifest-${alg}.txt`;
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
-            //console.log(tmpFile.name);
             for (var f of this.files) {
                 if (f.fileType != constants.TAG_FILE && f.fileType != constants.PAYLOAD_MANIFEST) {
                     continue;
@@ -267,7 +262,6 @@ class Bagger {
         // TODO: This MUST be called, even if we exit early with an error.
         for(var tmpFile of this.tmpFiles) {
             if (fs.existsSync(tmpFile)) {
-                //console.log("Deleting " + tmpFile);
                 fs.unlinkSync(tmpFile);
             }
         }
@@ -290,10 +284,9 @@ class Bagger {
         // stat file and save srcPath, destPath, size, and checksums
         // as a BagItFile and push that into the files array.
         // Preserve owner, group, permissions and timestamps on copy.
-        this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
+        // this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
-        //console.log(`Copying ${bagItFile.absSourcePath} to ${bagItFile.relDestPath}`);
         if (this.writeAs == WRITE_AS_DIR) {
             this._copyIntoDir(bagItFile);
         } else if (this.writeAs == WRITE_AS_TAR) {
@@ -334,15 +327,15 @@ class Bagger {
             size: bagItFile.stats.size
         };
 
-        var reader = fs.createReadStream(bagItFile.absSourcePath);
-        reader.on('end', function() {
-            bagger.emitter.emit('fileAddEnd', true, `Added file ${header.name}`);
-        });
+        var startFn = function() { bagger.emitter.emit('fileAddStart', `Adding file ${bagItFile.relDestPath}`); }
+        var endFn = function() { bagger.emitter.emit('fileAddEnd', true, `Added file ${bagItFile.relDestPath}`); }
         var data = {
-            reader: reader,
+            absSourcePath: bagItFile.absSourcePath,
             header: header,
             tar: this.getTarPacker(),
-            hashes: this._getCryptoHashes(bagItFile)
+            hashes: this._getCryptoHashes(bagItFile),
+            startFn: startFn,
+            endFn: endFn
         };
         // Write files one at a time.
         if (bagItFile.fileType == constants.PAYLOAD_FILE) {

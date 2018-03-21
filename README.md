@@ -79,3 +79,40 @@ explicit BagIt profiles. The profiles are similar to those in the
 bagit-profiles project at https://github.com/ruebot/bagit-profiles. The major
 difference between these profiles and ruebot's is that these provide broader
 support for required tags in specific tag files other than bag-info.txt.
+
+# Current Status and Roadmap (Updated March 20, 2018)
+
+New APTrust depositors are already using early alpha versions to push materials into
+our production repositories. As of March, 2018, the following features are working:
+
+1. Creating bags that conform to the APTrust BagIt spec by simply dragging and dropping files.
+2. Uploading bags to APTrust's S3 receiving buckets.
+
+Immediate items on the roadmap, in order of importance:
+
+1. Code cleanup and refactoring. The existing code is messy and does not adequately
+separate concerns. Model classes should be separate from forms, and UI code should be
+separate from models and forms. Cleanup and refactoring will give us a stable codebase
+that others can contribute to.
+2. Integration with APTrust's REST API. At the moment, this requirement has higher
+priority than formal testing because users need to see the full outcome of the
+pack-ship-ingest process.
+3. Formal unit and integration tests. This depends on completion of #1 above.
+
+Additional tasks, in no particular order:
+
+* Add workflows, so a user can say, "These are the files, here's the essential bag
+metadata, now pack it and ship it in the usual way."
+* Formalize plugin interfaces, so other developers can contribute plugins.
+* Finish automated build, deployment, and auto-updating features, so the app can keep
+itself up to date without user intervention.
+* Separate the JavaScript and Go code into distinct repositories. The current
+builds don't use the Go code at all.
+
+And...
+
+Change the name from EasyStore to DART. Digital Artifact Routing Tool. It's more
+generic and doesn't have the unfortunate connotation of equating storage with
+preservation. DART is primarily intending for packing and shipping digital materials.
+It's not a full preservation solution. It just eases the process of creating and
+delivering the SIP so you can actually use your digital preservation solution.

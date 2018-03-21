@@ -25,6 +25,7 @@ const { ValidationResult } = require('./core/validation_result');
 
 // Log unhandled errors.
 function unhandledErr(err) {
+    console.log(err);
     alert(err);
     log.error(err);
 }

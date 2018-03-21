@@ -8,6 +8,8 @@ const description = "Uploads files to any service that supports the S3 API.";
 const version = "0.1";
 const protocol = "s3";
 
+const MAX_ATTEMPTS = 8;
+
 class S3 {
 
     /**
@@ -22,7 +24,7 @@ class S3 {
     constructor(storageService, emitter) {
         this.storageService = storageService;
         this.emitter = emitter;
-        // ... code ...
+        this.attemptNumber = 0;
     }
 
     /**
@@ -50,6 +52,7 @@ class S3 {
         var started = false;
         var fileCount = 0;
         var uploader = this;
+        this.attemptNumber += 1;
         try {
             // ... code ...
             // Can emit events: 'start', 'complete', 'uploadStart',
@@ -71,7 +74,16 @@ class S3 {
             uploader.emitter.emit('uploadStart', `Uploading ${filepath} to ${host} ${bucket}/${objectName}`)
             s3Client.fPutObject(bucket, objectName, filepath, function(err) {
                 if (err) {
-                    uploader.emitter.emit('complete', false, "Upload failed with error. " + err);
+                    if (uploader.attemptNumber < MAX_ATTEMPTS) {
+                        // ECONNRESET: Connection reset by peer is common on large uploads.
+                        // Minio client is smart enough to pick up where it left off.
+                        // Log a warning, wait 5 seconds, then try again.
+                        uploader.emitter.emit('warning', `Got error ${err}. Will attempt to resume upload in five seconds.`)
+                        setTimeout(uploader.upload, 5000);
+                    } else {
+                        // Too many attempts.
+                        uploader.emitter.emit('complete', false, "Upload failed after ${uploader.attemptNumber} attempts. Last error: ${err}");
+                    }
                     return;
                 }
                 // TODO: Allow GetObject in receiving buckets for our depositors!!
