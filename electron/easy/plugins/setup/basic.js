@@ -58,7 +58,7 @@ class Basic {
             var dir = path.join(os.homedir(), "tmp", "easy-store");
             var setting = new AppSetting("Bagging Directory", dir);
             setting.userCanDelete = false;
-            setting.help = "Where should Easy Store create bags?";
+            setting.help = "Where should DART create bags?";
             setting.save();
             installed.push("Bagging Directory");
         }

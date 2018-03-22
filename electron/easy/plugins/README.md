@@ -1,6 +1,6 @@
-# Easy Store Plugins
+# DART Plugins
 
-Easy Store supports plugins for custom packaging and storage modules.
+DART supports plugins for custom packaging and storage modules.
 Packaging plugins provide support for packaging files into BagIt and other
 custom formats. Example future formats may include zip, rar, parchive, etc.
 Storage plugins provide support for storing files either locally or (more
@@ -11,6 +11,8 @@ Future plugins may provide SFTP, rsync, or virtually any other protocol.
 
 Plugins must support a simple, consistent interface so that they are
 interchangeable at runtime. The interfaces are described below.
+
+`NOTE: The plugin interface is likely to change until we reach our first public release.`
 
 ## Packaging Plugin
 
