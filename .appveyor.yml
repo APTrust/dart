@@ -38,7 +38,7 @@ build_script:
 
 artifacts:
   - path: electron/dist/*.exe
-    name: EasyStore-Windows
+    name: DART-Windows
 
 test: off
 deploy:
@@ -48,7 +48,7 @@ deploy:
   auth_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
     artifact:
-      - EasyStore-Windows
+      - DART-Windows
   draft: true
   prerelease: false
   on:
