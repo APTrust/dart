@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/APTrust/easy-store/bagit"
-	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/dart/bagit"
+	"github.com/APTrust/dart/util/fileutil"
 	"io"
 	"os"
 	"path/filepath"
@@ -103,7 +103,7 @@ func addFile(bagger *bagit.Bagger, job *bagit.Job, sourcePath string) error {
 		cleanPath := sourcePath
 		if runtime.GOOS == "windows" {
 			cleanPath = strings.Replace(sourcePath, "\\", "/", -1)
-			cleanPath = strings.Replace(cleanPath, filepath.VolumeName(sourcePath), "", 1);
+			cleanPath = strings.Replace(cleanPath, filepath.VolumeName(sourcePath), "", 1)
 		}
 		relPath := "data" + cleanPath
 		fmt.Println("Adding", sourcePath, "at", relPath)

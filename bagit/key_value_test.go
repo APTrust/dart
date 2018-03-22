@@ -1,7 +1,7 @@
 package bagit_test
 
 import (
-	"github.com/APTrust/easy-store/bagit"
+	"github.com/APTrust/dart/bagit"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

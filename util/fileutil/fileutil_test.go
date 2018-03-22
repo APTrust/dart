@@ -1,10 +1,10 @@
 package fileutil_test
 
 import (
-	"github.com/APTrust/easy-store/constants"
-	"github.com/APTrust/easy-store/util"
-	"github.com/APTrust/easy-store/util/fileutil"
-	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/APTrust/dart/constants"
+	"github.com/APTrust/dart/util"
+	"github.com/APTrust/dart/util/fileutil"
+	"github.com/APTrust/dart/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -86,7 +86,7 @@ func TestRecursiveFileList(t *testing.T) {
 }
 
 func TestLooksSafeToDelete(t *testing.T) {
-    path1 := filepath.Join("mnt", "apt", "data", "some_dir")
+	path1 := filepath.Join("mnt", "apt", "data", "some_dir")
 	path2 := filepath.Join("usr", "local")
 	assert.True(t, fileutil.LooksSafeToDelete(path1, 15, 3))
 	assert.False(t, fileutil.LooksSafeToDelete(path2, 12, 3))

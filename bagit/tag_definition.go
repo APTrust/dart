@@ -1,8 +1,8 @@
 package bagit
 
 import (
-	"github.com/APTrust/easy-store/errtypes"
-	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/dart/errtypes"
+	"github.com/APTrust/dart/util"
 	"github.com/satori/go.uuid"
 	"strings"
 )

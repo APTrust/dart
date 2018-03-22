@@ -2,8 +2,8 @@ package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/constants"
-	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/dart/constants"
+	"github.com/APTrust/dart/util"
 	"sort"
 	"strings"
 )

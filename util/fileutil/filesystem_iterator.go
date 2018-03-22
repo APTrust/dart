@@ -2,7 +2,7 @@ package fileutil
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/util/platform"
+	"github.com/APTrust/dart/util/platform"
 	"io"
 	"os"
 	"path/filepath"
@@ -122,7 +122,7 @@ func (iter *FileSystemIterator) FindMatchingFiles(regex *regexp.Regexp) ([]strin
 func (iter *FileSystemIterator) GetTopLevelDirNames() []string {
 	// cleanRootPath removes "C:" or "\\host\share" from Windows paths
 	cleanRootPath := strings.Replace(iter.rootPath, filepath.VolumeName(iter.rootPath), "", 1)
-	pathParts := strings.Split(cleanRootPath, string(os.PathSeparator))	
+	pathParts := strings.Split(cleanRootPath, string(os.PathSeparator))
 	topLevelDirs := make([]string, 1)
 	topLevelDirs[0] = pathParts[len(pathParts)-1]
 	return topLevelDirs

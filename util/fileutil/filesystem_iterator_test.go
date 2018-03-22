@@ -1,8 +1,8 @@
 package fileutil_test
 
 import (
-	"github.com/APTrust/easy-store/util"
-	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/dart/util"
+	"github.com/APTrust/dart/util/fileutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"

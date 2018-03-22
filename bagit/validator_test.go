@@ -1,10 +1,10 @@
 package bagit_test
 
 import (
-	"github.com/APTrust/easy-store/bagit"
-	"github.com/APTrust/easy-store/constants"
-	"github.com/APTrust/easy-store/util"
-	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/APTrust/dart/bagit"
+	"github.com/APTrust/dart/constants"
+	"github.com/APTrust/dart/util"
+	"github.com/APTrust/dart/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"

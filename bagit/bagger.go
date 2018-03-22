@@ -2,8 +2,8 @@ package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/util"
-	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/dart/util"
+	"github.com/APTrust/dart/util/fileutil"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -411,7 +411,7 @@ func (bagger *Bagger) tarManifests(tarWriter *fileutil.TarWriter) bool {
 // copies it into the tar archive, and then deletes it. Returns true if
 // it succeeds.
 func (bagger *Bagger) writeTempFileIntoArchive(tarWriter *fileutil.TarWriter, file *File) bool {
-	tmpDir, err := ioutil.TempDir("", "easy-store")
+	tmpDir, err := ioutil.TempDir("", "dart")
 	if err != nil {
 		bagger.addError("Could not create temp file to write tags: %s", err.Error())
 		return false

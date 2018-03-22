@@ -2,10 +2,10 @@ package bagit_test
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/bagit"
-	"github.com/APTrust/easy-store/constants"
-	"github.com/APTrust/easy-store/util/fileutil"
-	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/APTrust/dart/bagit"
+	"github.com/APTrust/dart/constants"
+	"github.com/APTrust/dart/util/fileutil"
+	"github.com/APTrust/dart/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -471,7 +471,7 @@ func TestWriteBagToTarFile_APTrust(t *testing.T) {
 		relDestPaths[i] = relDestPath
 	}
 
-	assert.True(t, bagger.WriteBagToTarFile(true, true))	
+	assert.True(t, bagger.WriteBagToTarFile(true, true))
 	require.Empty(t, bagger.Errors())
 
 	// Not a pure unit test, since we're relying on another code module here,

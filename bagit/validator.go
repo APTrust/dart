@@ -2,10 +2,10 @@ package bagit
 
 import (
 	"fmt"
-	"github.com/APTrust/easy-store/constants"
-	"github.com/APTrust/easy-store/errtypes"
-	"github.com/APTrust/easy-store/util"
-	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/dart/constants"
+	"github.com/APTrust/dart/errtypes"
+	"github.com/APTrust/dart/util"
+	"github.com/APTrust/dart/util/fileutil"
 	"io"
 	"path/filepath"
 	"strings"

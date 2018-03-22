@@ -14,7 +14,7 @@ branches:
   only:
     - master
 
-clone_folder: c:\gopath\src\github.com\APTrust\easy-store
+clone_folder: c:\gopath\src\github.com\APTrust\dart
 
 environment:
   GOPATH: c:\gopath
@@ -42,7 +42,7 @@ artifacts:
 
 test: off
 deploy:
-  release: easy-store-$(appveyor_build_version)
+  release: dart-$(appveyor_build_version)
   description: 'This is a test release of the windows build from CI'
   provider: GitHub
   auth_token:

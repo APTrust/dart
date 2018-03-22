@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/dart/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"

@@ -5,7 +5,7 @@
     "main": "main.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/APTrust/easy-store.git"
+        "url": "https://github.com/APTrust/dart.git"
     },
     "license": "Apache-2.0",
     "dependencies": {

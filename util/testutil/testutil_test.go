@@ -1,8 +1,8 @@
 package testutil_test
 
 import (
-	"github.com/APTrust/easy-store/util/fileutil"
-	"github.com/APTrust/easy-store/util/testutil"
+	"github.com/APTrust/dart/util/fileutil"
+	"github.com/APTrust/dart/util/testutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"os"
@@ -14,31 +14,31 @@ import (
 func TestGetPathToTestData(t *testing.T) {
 	path, err := testutil.GetPathToTestData()
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, filepath.Join("easy-store", "testdata")))
+	assert.True(t, strings.HasSuffix(path, filepath.Join("dart", "testdata")))
 }
 
 func TestGetPathToTestBag(t *testing.T) {
 	path, err := testutil.GetPathToTestBag("example.edu.tagsample_good.tar")
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, filepath.Join("easy-store", "testdata", "bags", "example.edu.tagsample_good.tar")))
+	assert.True(t, strings.HasSuffix(path, filepath.Join("dart", "testdata", "bags", "example.edu.tagsample_good.tar")))
 }
 
 func TestGetPathToTestProfile(t *testing.T) {
 	path, err := testutil.GetPathToTestProfile("dpn_bagit_profile.json")
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, filepath.Join("easy-store", "testdata", "profiles", "dpn_bagit_profile.json")))
+	assert.True(t, strings.HasSuffix(path, filepath.Join("dart", "testdata", "profiles", "dpn_bagit_profile.json")))
 }
 
 func TestGetPathToTestFile(t *testing.T) {
 	path, err := testutil.GetPathToTestFile("sample.txt")
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, filepath.Join("easy-store", "testdata", "files", "sample.txt")))
+	assert.True(t, strings.HasSuffix(path, filepath.Join("dart", "testdata", "files", "sample.txt")))
 }
 
 func TestGetPathToTestFileDir(t *testing.T) {
 	path, err := testutil.GetPathToTestFileDir()
 	require.Nil(t, err)
-	assert.True(t, strings.HasSuffix(path, filepath.Join("easy-store", "testdata", "files")))
+	assert.True(t, strings.HasSuffix(path, filepath.Join("dart", "testdata", "files")))
 }
 
 func TestGetPathToJob(t *testing.T) {

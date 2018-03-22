@@ -3,7 +3,7 @@ package fileutil
 import (
 	"archive/tar"
 	"fmt"
-	"github.com/APTrust/easy-store/util/platform"
+	"github.com/APTrust/dart/util/platform"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -117,8 +117,8 @@ func (summary *FileSummary) WindowsPath() string {
 
 // FileSystemPath returns the file's relative path in the filesystem.
 // That's the same as RelPath, except on Windows, where the slashes
-// are replaced by backslashes. This lets us translate between 
-// manifest and tarfile paths on the one hand, which use forward 
+// are replaced by backslashes. This lets us translate between
+// manifest and tarfile paths on the one hand, which use forward
 // slashes, and Windows paths on the other.
 func (summary *FileSummary) FileSystemPath() string {
 	if runtime.GOOS == "windows" {

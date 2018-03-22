@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"github.com/APTrust/easy-store/util/fileutil"
+	"github.com/APTrust/dart/util/fileutil"
 	"io"
 	"os"
 	"path/filepath"

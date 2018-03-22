@@ -1,7 +1,7 @@
 package constants
 
 import (
-	"github.com/APTrust/easy-store/util"
+	"github.com/APTrust/dart/util"
 	"regexp"
 	"strings"
 )
