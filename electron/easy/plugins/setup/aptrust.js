@@ -67,7 +67,7 @@ class APTrust {
             installed.push("Institution Domain");
         }
         if (AppSetting.findByName("Bagging Directory") == null) {
-            var dir = path.join(os.homedir(), "tmp", "easy-store");
+            var dir = path.join(os.homedir(), "tmp", "dart");
             var setting = new AppSetting("Bagging Directory", dir);
             setting.userCanDelete = false;
             setting.help = "Where should DART create bags?";
