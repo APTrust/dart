@@ -134,7 +134,11 @@ class Util {
     // getInternalVar retrieves the app's internal variable with
     // the specified name. Internal vars are not visible to users.
     static getInternalVar(name) {
-        return db.get(name);
+        var val = db.get(name);
+        if (typeof val == 'undefined') {
+            val = null;
+        }
+        return val;
     }
 
     // setInternalVar set the internal variable with
