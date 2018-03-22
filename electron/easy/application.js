@@ -408,11 +408,9 @@ $(function() {
     function migrateEasyStoreFiles() {
         var migrationDate = es.Util.getInternalVar('EasyStore Migration Date');
         if (migrationDate) {
-            console.log(`Data was migrated ${migrationDate}`);
             es.log.info(`Data was migrated ${migrationDate}`);
             return;
         } else {
-            console.log('Migrating EasyStore data to DART');
             es.log.info('Migrating EasyStore data to DART');
         }
         var app = require('electron').remote.app;
