@@ -22,7 +22,7 @@
         "tmp": "0.0.33"
     },
     "devDependencies": {
-        "electron": "^1.7.11",
+        "electron": "^1.8.4",
         "electron-builder": "^19.54.0",
         "electron-toolkit": "^1.0.24",
         "tape": "^4.8.0"
@@ -35,7 +35,7 @@
         "appId": "com.electron.DART",
         "copyright": "Copyright © 2018 APTrust",
         "productName": "DART",
-        "electronVersion": "1.7.11",
+        "electronVersion": "1.8.4",
         "asar": true,
         "directories": {
             "output": "dist"
