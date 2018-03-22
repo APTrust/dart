@@ -8,16 +8,16 @@ matrix:
         - ELECTRON_CACHE=$HOME/.cache/electron
         - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
-    - os: linux
-      services: docker
-      language: generic
-
 cache:
-  yarn: true
   directories:
-  - node_modules
+  - electron/node_modules
   - $HOME/.cache/electron
   - $HOME/.cache/electron-builder
+
+environment:
+  GOPATH: c:\gopath
+  access_token:
+    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
 
 before_install:
   - |
@@ -30,18 +30,14 @@ before_script:
   - git lfs pull
 
 script:
-  - |
-    if [ "$TRAVIS_OS_NAME" == "linux" ]; then
-      docker run --rm \
-        --env-file <(env | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
-        -v ${PWD}:/project \
-        -v ~/.cache/electron:/root/.cache/electron \
-        -v ~/.cache/electron-builder:/root/.cache/electron-builder \
-        electronuserland/builder \
-        /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn release --linux --win"
-    else
-      yarn release
-    fi
+  - npm install npm -g
+  - npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
+  - cd electron && npm install
+  - echo %PATH%
+  - echo %GOPATH%
+  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - npm run --prefix ./electron
+  - cd electron && electron-builder .
 
 before_cache:
   - rm -rf $HOME/.cache/electron-builder/wine

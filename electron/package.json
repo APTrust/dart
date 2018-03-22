@@ -38,7 +38,6 @@
         "electronVersion": "1.7.11",
         "asar": true,
         "directories": {
-            "app": "/Users/apd4n/go/src/github.com/APTrust/easy-store/electron",
             "output": "dist"
         },
         "mac": {
