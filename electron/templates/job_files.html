@@ -86,10 +86,18 @@
  $('[data-toggle="popover"]').popover();
  $('#linkAdvanced').click(function() { $("#divAdvanced").toggle(); });
  $("input[name=filesOptionDSStore]").change(function() {
-     jobFiles.fileOptionsChanged();
+     $('#spinner').show();
+     setTimeout(function() {
+         jobFiles.fileOptionsChanged();
+         $('#spinner').hide();
+     }, 300);
  });
  $("input[name=filesOptionHidden]").change(function() {
-     jobFiles.fileOptionsChanged();
+     $('#spinner').show();
+     setTimeout(function() {
+         jobFiles.fileOptionsChanged();
+         $('#spinner').hide();
+     }, 300);
  });
  $("#btnJobPackaging").click(function () {
      var data = {};
@@ -116,5 +124,10 @@
      jobFiles.deleteFile(this);
  });
 
- jobFiles.setFileListUI();
+ $('#spinner').show();
+ setTimeout(function() {
+     jobFiles.setFileListUI();
+     $('#spinner').hide();
+ }, 300);
+
 </script>

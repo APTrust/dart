@@ -69,16 +69,16 @@ hr.menu-divider {
 
 .spinner {
    position: absolute;
-   left: 50%;
+   left: calc(50% - 30px);
    top: 50%;
    height:60px;
    width:60px;
    margin:0px auto;
    animation: rotation .6s infinite linear;
-   border-left:6px solid rgba(91,192,222,.15);
-   border-right:6px solid rgba(91,192,222,.15);
-   border-bottom:6px solid rgba(91,192,222,.15);
-   border-top:6px solid rgba(91,192,222,.8);
+   border-left:6px solid rgba(66,139,202,.15);
+   border-right:6px solid rgba(66,139,202,.15);
+   border-bottom:6px solid rgba(66,139,202,.15);
+   border-top:6px solid rgba(66,139,202,.8);
    border-radius:100%;
 }
 @keyframes rotation {
