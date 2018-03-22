@@ -34,7 +34,7 @@ log.zip = function() {
     var gzip = zlib.createGzip();
     var infile = fs.createReadStream(log.filename());
     var timestamp = new Date().getTime();
-    var fname = `EasyStoreLog_${timestamp}.txt.gz`
+    var fname = `DartLog_${timestamp}.txt.gz`
     var outfile = fs.createWriteStream(path.join(app.getPath('desktop'), fname));
     infile.pipe(gzip).pipe(outfile);
     return fname;

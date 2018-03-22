@@ -23,7 +23,7 @@ const NEWLINE = "\n";
 //const NEWLINE = require('os').EOL;
 
 const name = "APTrust BagIt Provider";
-const description = "EasyStore's builtin bagging libary."
+const description = "DART's builtin bagging libary."
 const version = "0.2";
 const format = "BagIt";
 const formatMimeType = "";

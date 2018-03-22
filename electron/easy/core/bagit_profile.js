@@ -394,7 +394,7 @@ class BagItProfile {
         var obj = JSON.parse(jsonString)
         return BagItProfile.fromStandardObject(obj)
     }
-    // Used in early versions of EasyStore, and may be used later
+    // Used in early versions of DART, and may be used later
     // to import other profiles. This function converts standard
     // BagIt Profiles to our format.
     static fromStandardObject(obj) {

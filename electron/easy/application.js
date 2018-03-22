@@ -429,7 +429,7 @@ $(function() {
 
     // Show the dashboard on startup.
     dashboardShow();
-    es.log.info("EasyStore started");
+    es.log.info("DART started");
 
     // This is for interactive testing in the console.
     window.es = es;
