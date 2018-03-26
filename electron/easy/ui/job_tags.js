@@ -39,7 +39,7 @@ class JobTags {
         $(document).on("click", "#btnNewTagFileCreateForJob", this.createNewTagFile());
 
         // Save a tag definition
-        $(document).on("click", "#btnTagDefinitionSave", this.tagDefinitionSave());
+        $(document).on("click", "#btnTagDefinitionSaveForJob", this.tagDefinitionSave());
 
         // Delete a tag definition
         $(document).on("click", "#btnTagDefinitionDelete", this.tagDefinitionDelete());
@@ -87,15 +87,12 @@ class JobTags {
             var tagFromForm = TagDefinition.fromForm();
             var result = tagFromForm.validate();
             if (result.isValid()) {
-                self.job = Object.assign(self.job, BagItProfile.fromForm());
-                var existingTag = self.job.findTagById(tagFromForm.id);
-                if (existingTag == null) {
-                    // This is a new tag, so add it to the profile's
-                    // list of required tags.
-                    existingTag = new TagDefinition('', '');
-                    self.job.requiredTags.push(existingTag);
+                var existingTag = self.job.bagItProfile.findTagById(tagFromForm.id);
+                if (existingTag != null) {
+                    existingTag = Object.assign(existingTag, tagFromForm);
+                } else {
+                    self.job.bagItProfile.requiredTags.push(tagFromForm);
                 }
-                Object.assign(existingTag, tagFromForm);
                 self.job.save();
                 $('#modal').modal('hide');
                 self.showBagItProfileForm(self.job.id);
@@ -104,7 +101,7 @@ class JobTags {
                 form.setErrors(result.errors);
                 var data = {};
                 data['form'] = form;
-                data['tagContext'] = "profile";
+                data['tagContext'] = "job";
                 $("#modalContent").html(Templates.tagDefinitionForm(data));
             }
         }
@@ -112,8 +109,8 @@ class JobTags {
 
     showBagItProfileForm() {
         var data = {};
-        data['form'] = this.job.profile.toForm();
-        data['tags'] = this.job.profile.tagsGroupedByFile();
+        data['form'] = this.job.bagItProfile.toForm();
+        data['tags'] = this.job.bagItProfile.tagsGroupedByFile();
         data['showDeleteButton'] = false;
         $("#container").html(Templates.bagItProfileForm(data));
     }
