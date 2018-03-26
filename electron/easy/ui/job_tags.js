@@ -44,6 +44,8 @@ class JobTags {
         // Delete a tag definition
         $(document).on("click", "#btnTagDefinitionDelete", this.tagDefinitionDelete());
 
+        // Delete a custom tag by clicking the little X
+        $(document).on("click", "a.deleteCustomTag", this.deleteCustomTag());
 
         // Make sure there's always at least one pair of text fields available
         // for user to enter custom tag name / tag value pairs.
@@ -262,9 +264,9 @@ class JobTags {
         var data = {};
         data.field = tagDef.toFieldForJobForm();
         // hack!
-        //var handlebars = require('handlebars')
-        //var customTagTemplate = handlebars.partials['customTag'];
-        $(parentElement).append(Templates.customTagTemplate(data));
+        var handlebars = require('handlebars')
+        var customTagTemplate = handlebars.partials['customTag'];
+        $(parentElement).append(customTagTemplate(data));
     }
 
     // This returns a function for adding new custom fields to a tag
@@ -286,18 +288,21 @@ class JobTags {
 
     // Are we still using this?
     deleteCustomTag(tagId) {
-        var tags = this.job.bagItProfile.requiredTags;
-        var index = -1;
-        for(var i=0; i < tags.length; i++) {
-            if (tags[i].id == tagId) {
-                index = i;
-                console.log("Item at " + i + "matches " + tagId);
-                break;
+        var self = this;
+        return function() {
+            var tagId = $(this).data('tag-id');
+            var tags = self.job.bagItProfile.requiredTags;
+            var index = -1;
+            for(var i=0; i < tags.length; i++) {
+                if (tags[i].id == tagId) {
+                    index = i;
+                    break;
+                }
             }
-        }
-        if (index > -1) {
-            this.job.bagItProfile.requiredTags.splice(index, 1);
-            $(`div [data-custom-tag-id="${tagId}"]`).remove();
+            if (index > -1) {
+                self.job.bagItProfile.requiredTags.splice(index, 1);
+                $(`div [data-custom-tag-id="${tagId}"]`).remove();
+            }
         }
     }
 
