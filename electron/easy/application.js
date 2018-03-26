@@ -36,10 +36,10 @@ $(function() {
     $(document).on("click", "[data-btn-type=NewTagDefForProfile]", function() {
         tagDefinitionShowForm(null, $(this).data('tag-file'));
     });
-    $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
-    $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
-    $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
-    $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
+    // $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
+    // $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
+    // $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
+    // $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Jobs
     $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
@@ -305,89 +305,6 @@ $(function() {
         }
         var service = es.State.ActiveObject.delete();
         storageServiceShowList(`Deleted storage service ${service.name}`);
-    }
-
-
-    // Tag Definition functions
-    function tagDefinitionShowForm(id, tagFile) {
-        var tag = es.State.ActiveObject.findTagById(id);
-        var showDeleteButton = (tag != null && !tag.isBuiltIn);
-        if (tag == null) {
-            tag = new es.TagDefinition(tagFile, 'New-Tag');
-            showDeleteButton = false;
-        }
-        var data = {};
-        data['form'] = tag.toForm();
-        data['showDeleteButton'] = showDeleteButton;
-        data['tagContext'] = "profile";
-        $('#modalTitle').text(tag.tagName);
-        $("#modalContent").html(es.Templates.tagDefinitionForm(data));
-        $('#modal').modal();
-    }
-
-    function tagDefinitionSave() {
-        // Copy for values to existing tag, whic is part of the
-        // BagItProfile currently stored in es.State.ActiveObject.
-        var tagFromForm = es.TagDefinition.fromForm();
-        var result = tagFromForm.validate();
-        if (result.isValid()) {
-            es.State.ActiveObject = Object.assign(es.State.ActiveObject, es.BagItProfile.fromForm());
-            var existingTag = es.State.ActiveObject.findTagById(tagFromForm.id);
-            if (existingTag == null) {
-                // This is a new tag, so add it to the profile's
-                // list of required tags.
-                existingTag = new es.TagDefinition('', '');
-                es.State.ActiveObject.requiredTags.push(existingTag);
-            }
-            Object.assign(existingTag, tagFromForm);
-            es.State.ActiveObject.save();
-            $('#modal').modal('hide');
-            bagItProfileShowForm(es.State.ActiveObject.id);
-        } else {
-            var form = tagFromForm.toForm();
-            form.setErrors(result.errors);
-            var data = {};
-            data['form'] = form;
-            data['tagContext'] = "profile";
-            $("#modalContent").html(es.Templates.tagDefinitionForm(data));
-        }
-    }
-
-    function tagDefinitionDelete() {
-        if (!confirm("Delete this tag?")) {
-            return;
-        }
-        var tagId = es.TagDefinition.fromForm().id;
-        es.State.ActiveObject.requiredTags = es.State.ActiveObject.requiredTags.filter(item => item.id != tagId);
-        es.State.ActiveObject.save();
-        $('#modal').modal('hide');
-        bagItProfileShowForm(es.State.ActiveObject.id);
-    }
-
-    function newTagFileShowForm(err) {
-        var form = new es.Form();
-        form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
-        if (err != null) {
-            var errs = {};
-            errs['newTagFileName'] = err;
-            form.setErrors(errs);
-        }
-        var data = {};
-        data['form'] = form;
-        data['tagContext'] = "profile";
-        $('#modalTitle').text("New Tag File");
-        $("#modalContent").html(es.Templates.newTagFileForm(data));
-        $('#modal').modal();
-    }
-
-    function newTagFileCreate() {
-        var tagFileName = $('#newTagFileName').val().trim();
-        var re = /^[A-Za-z0-9_\-\.]+\.txt$/;
-        if (!tagFileName.match(re)) {
-            err = "Tag file name must contain at least one character and end with .txt";
-            return newTagFileShowForm(err);
-        }
-        tagDefinitionShowForm(null, tagFileName);
     }
 
 
