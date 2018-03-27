@@ -20,36 +20,36 @@ class JobTags {
     initEvents() {
 
         // User clicks to add a new tag definition for this job.
-        $("[data-btn-type=NewTagDefForJob]").click(this.showNewTagDefForm());
+        $("[data-btn-type=NewTagDefForJob]").click(this.onNewTagDefClick());
 
         // User clicks to go to the job's storage step.
         // We have to validate the required tags before moving forward.
-        $("#btnJobStorage").click(this.goToJobStorage());
+        $("#btnJobStorage").click(this.onJobStorageClick());
 
         // User clicks to go back to the Packaging UI
-        $("#btnJobPackaging").click(this.goToJobPackaging());
+        $("#btnJobPackaging").click(this.onJobPackagingClick());
 
         // Delete a tag definition
-        $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.deleteTagDef());
+        $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.onDeleteTagDefClick());
 
         // Show form for adding a new tag file.
-        $(document).on("click", "#btnNewTagFileForJob", this.showNewTagFileForm(null));
+        $(document).on("click", "#btnNewTagFileForJob", this.onNewTagFileClick(null));
 
         // Create the new tag file that the user just defined.
-        $(document).on("click", "#btnNewTagFileCreateForJob", this.createNewTagFile());
+        $(document).on("click", "#btnNewTagFileCreateForJob", this.onCreateTagFileClick());
 
         // Save a tag definition
-        $(document).on("click", "#btnTagDefinitionSaveForJob", this.tagDefinitionSave());
+        $(document).on("click", "#btnTagDefinitionSaveForJob", this.onTagDefSave());
 
         // Delete a tag definition
-        $(document).on("click", "#btnTagDefinitionDelete", this.tagDefinitionDelete());
+        $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
 
         // Delete a custom tag by clicking the little X
-        $(document).on("click", "a.deleteCustomTag", this.deleteCustomTag());
+        $(document).on("click", "a.deleteCustomTag", this.onDeleteCustomTag());
 
         // Make sure there's always at least one pair of text fields available
         // for user to enter custom tag name / tag value pairs.
-        $("body").on("keyup", ".custom-tag-value", this.autoAddCustomFields());
+        $("body").on("keyup", ".custom-tag-value", this.onCustomTagKeyUp());
 
         // Highlight required fields.
         $('.form-control.required').each(function(index, element) {
@@ -63,6 +63,8 @@ class JobTags {
 
     // Tag Definition functions
     tagDefinitionShowForm(id, tagFile) {
+        this.job.setTagValuesFromForm();
+        this.job.save();
         var tag = this.job.findTagById(id);
         var showDeleteButton = (tag != null && !tag.isBuiltIn);
         if (tag == null) {
@@ -79,7 +81,7 @@ class JobTags {
     }
 
     // Returns a function to save a tag definition
-    tagDefinitionSave() {
+    onTagDefSave() {
         var self = this;
         return function() {
             // Copy for values to existing tag, whic is part of the
@@ -93,6 +95,7 @@ class JobTags {
                 } else {
                     self.job.bagItProfile.requiredTags.push(tagFromForm);
                 }
+                self.job.setTagValuesFromForm();
                 self.job.save();
                 $('#modal').modal('hide');
                 self.showJobTagEditor();
@@ -111,7 +114,7 @@ class JobTags {
         $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
     }
 
-    tagDefinitionDelete() {
+    onTagDefDelete() {
         var self = this;
         return function() {
             if (!confirm("Delete this tag?")) {
@@ -119,44 +122,19 @@ class JobTags {
             }
             var tagId = TagDefinition.fromForm().id;
             self.job.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
+            self.job.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
             self.showJobTagEditor();
         }
     }
 
-    // newTagFileShowForm(err) {
-    //     var form = new Form();
-    //     form.fields['newTagFileName'] = new Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
-    //     if (err != null) {
-    //         var errs = {};
-    //         errs['newTagFileName'] = err;
-    //         form.setErrors(errs);
-    //     }
-    //     var data = {};
-    //     data['form'] = form;
-    //     data['tagContext'] = "profile";
-    //     $('#modalTitle').text("New Tag File");
-    //     $("#modalContent").html(Templates.newTagFileForm(data));
-    //     $('#modal').modal();
-    // }
-
-    // newTagFileCreate() {
-    //     var tagFileName = $('#newTagFileName').val().trim();
-    //     var re = /^[A-Za-z0-9_\-\.]+\.txt$/;
-    //     if (!tagFileName.match(re)) {
-    //         err = "Tag file name must contain at least one character and end with .txt";
-    //         return this.newTagFileShowForm(err)();
-    //     }
-    //     this.tagDefinitionShowForm(null, tagFileName);
-    // }
-
-    // -------------------
-
     // Returns the function to be executed when user clicks New Tag Definition.
-    showNewTagDefForm() {
+    onNewTagDefClick() {
         var self = this;
         return function() {
+            self.job.setTagValuesFromForm();
+            self.job.save();
             var tagFile = $(this).data('tag-file');
             var tag = new TagDefinition(tagFile, 'New-Tag');
             var data = {};
@@ -170,7 +148,7 @@ class JobTags {
     }
 
     // Returns a function to delete a tag definition.
-    deleteTagDef() {
+    onDeleteTagDefClick() {
         var self = this;
         return function() {
             if (!confirm("Delete this tag?")) {
@@ -191,12 +169,13 @@ class JobTags {
     }
 
     // This returns the callback for #btnNewTagFileForJob
-    showNewTagFileForm(err) {
+    onNewTagFileClick(err) {
         var self = this;
         return function(err) {
             // Save now, even if some tags are missing or invalid,
             // because we'll need to properly restore the underlying
             // form when we close this modal.
+            self.job.setTagValuesFromForm();
             self.job.save();
             var form = new Form();
             form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
@@ -218,19 +197,20 @@ class JobTags {
     }
 
     // The returns the callback for #btnNewTagFileCreateForJob
-    createNewTagFile() {
+    onCreateTagFileClick() {
         var self = this;
         return function() {
             var tagFileName = $('#newTagFileName').val().trim();
             var re = /^[A-Za-z0-9_\-\.\/]+\.txt$/;
             if (!tagFileName.match(re)) {
                 err = "Tag file name must contain at least one character and end with .txt";
-                var showItAgainWithErrors = self.showNewTagFileForm(err);
+                var showItAgainWithErrors = self.onNewTagFileClick(err);
                 return showItAgainWithErrors();
             }
             var tagDef = new TagDefinition(tagFileName, "");
             tagDef.addedForJob = true;
             self.job.bagItProfile.requiredTags.push(tagDef);
+            self.job.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
             self.showJobTagForm();
@@ -266,7 +246,7 @@ class JobTags {
     // tag file, we want to be sure at least one new pair of text entry
     // fields are available for the user to enter the next name-value
     // pair.
-    autoAddCustomFields(event) {
+    onCustomTagKeyUp(event) {
         var self = this;
         return function(event) {
             var parentElement = $(event.target).closest('.panel-body')[0];
@@ -279,7 +259,7 @@ class JobTags {
     }
 
     // Are we still using this?
-    deleteCustomTag(tagId) {
+    onDeleteCustomTag(tagId) {
         var self = this;
         return function() {
             var tagId = $(this).data('tag-id');
@@ -301,7 +281,7 @@ class JobTags {
     // This returns a callback function for #btnJobStorage. The function
     // validates required tags before letting the user move on to
     // the job's storage step.
-    goToJobStorage() {
+    onJobStorageClick() {
         var self = this;
         return function() {
             var isValid = true;
@@ -340,12 +320,13 @@ class JobTags {
     // This returns a callback function for #btnJobPackaging.
     // We save the user's edits to the job definition before going
     // back to the Packaging UI.
-    goToJobPackaging() {
+    onJobPackagingClick() {
         var self = this;
         return function() {
             self.job.setTagValuesFromForm();
             self.job.save();
             var data = {};
+            data.jobId = job.id;
             data.form = self.job.toPackagingForm();
             data.domainName = AppSetting.findByName("Institution Domain").value;
             data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
