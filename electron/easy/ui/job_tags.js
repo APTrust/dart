@@ -95,7 +95,7 @@ class JobTags {
                 }
                 self.job.save();
                 $('#modal').modal('hide');
-                self.showBagItProfileForm(self.job.id);
+                self.showJobTagEditor();
             } else {
                 var form = tagFromForm.toForm();
                 form.setErrors(result.errors);
@@ -107,14 +107,9 @@ class JobTags {
         }
     }
 
-    showBagItProfileForm() {
-        var data = {};
-        data['form'] = this.job.bagItProfile.toForm();
-        data['tags'] = this.job.bagItProfile.tagsGroupedByFile();
-        data['showDeleteButton'] = false;
-        $("#container").html(Templates.bagItProfileForm(data));
+    showJobTagEditor() {
+        $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
     }
-
 
     tagDefinitionDelete() {
         var self = this;
@@ -126,7 +121,7 @@ class JobTags {
             self.job.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
             self.job.save();
             $('#modal').modal('hide');
-            self.showBagItProfileForm();
+            self.showJobTagEditor();
         }
     }
 
