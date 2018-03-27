@@ -346,7 +346,7 @@ class JobTags {
             self.job.setTagValuesFromForm();
             self.job.save();
             var data = {};
-            data.form = job.toPackagingForm();
+            data.form = self.job.toPackagingForm();
             data.domainName = AppSetting.findByName("Institution Domain").value;
             data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
             $("#container").html(Templates.jobPackaging(data));
