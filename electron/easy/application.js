@@ -8,7 +8,7 @@ $(function() {
     // Top nav menu
     $("#menuDashboard").on('click', function() { es.UI.Menu.dashboardShow(null); });
     $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
-    $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
+    $("#menuAppSettingList").on('click', function() { es.UI.Menu.appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
@@ -17,7 +17,7 @@ $(function() {
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
     // AppSetting Form
-    $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
+    $(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
     $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
     $(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
 
@@ -70,7 +70,7 @@ $(function() {
         var type = $(this).data("object-type");
         switch (type) {
          case 'AppSetting':
-            appSettingShowForm(id);
+            es.UI.Menu.appSettingShowForm(id);
             break;
          case 'BagItProfile':
             bagItProfileShowForm(id);
@@ -91,44 +91,44 @@ $(function() {
         }
     });
 
-    // App Setting functions
-    function appSettingShowList(message, limit = 50, offset = 0) {
-        var data = {};
-        data.items = es.AppSetting.list(limit, offset);
-        data.success = message;
-        data.previousLink = es.AppSetting.previousLink(limit, offset)
-        data.nextLink = es.AppSetting.nextLink(limit, offset)
-        $("#container").html(es.Templates.appSettingList(data));
-        es.State.ActiveObject = data.items;
-    }
+    // // App Setting functions
+    // function appSettingShowList(message, limit = 50, offset = 0) {
+    //     var data = {};
+    //     data.items = es.AppSetting.list(limit, offset);
+    //     data.success = message;
+    //     data.previousLink = es.AppSetting.previousLink(limit, offset)
+    //     data.nextLink = es.AppSetting.nextLink(limit, offset)
+    //     $("#container").html(es.Templates.appSettingList(data));
+    //     es.State.ActiveObject = data.items;
+    // }
 
-    // TODO: Refactor into a UI manager class, because this needs to
-    // accessible from the outside.
-    window.appSettingShowList = appSettingShowList;
+    // // TODO: Refactor into a UI manager class, because this needs to
+    // // accessible from the outside.
+    // window.appSettingShowList = appSettingShowList;
 
 
-    function appSettingShowForm(id) {
-        var setting = new es.AppSetting();
-        var showDeleteButton = false;
-        if (!es.Util.isEmpty(id)) {
-            setting = es.AppSetting.find(id);
-            if (setting.userCanDelete) {
-                showDeleteButton = true;
-            }
-        }
-        var data = {};
-        data['form'] = setting.toForm();
-        data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(es.Templates.appSettingForm(data));
-        es.State.ActiveObject = setting;
-    }
+    // function appSettingShowForm(id) {
+    //     var setting = new es.AppSetting();
+    //     var showDeleteButton = false;
+    //     if (!es.Util.isEmpty(id)) {
+    //         setting = es.AppSetting.find(id);
+    //         if (setting.userCanDelete) {
+    //             showDeleteButton = true;
+    //         }
+    //     }
+    //     var data = {};
+    //     data['form'] = setting.toForm();
+    //     data['showDeleteButton'] = showDeleteButton;
+    //     $("#container").html(es.Templates.appSettingForm(data));
+    //     es.State.ActiveObject = setting;
+    // }
 
     function appSettingSave() {
         var setting = es.AppSetting.fromForm();
         var result = setting.validate();
         if (result.isValid()) {
             setting.save();
-            return appSettingShowList(`Setting ${setting.name} has been saved`);
+            return es.UI.Menu.appSettingShowList(`Setting ${setting.name} has been saved`);
         } else {
             var form = setting.toForm();
             form.setErrors(result.errors);
@@ -145,7 +145,7 @@ $(function() {
             return;
         }
         var setting = es.State.ActiveObject.delete();
-        appSettingShowList(`Deleted setting ${setting.name}`);
+        es.UI.Menu.appSettingShowList(`Deleted setting ${setting.name}`);
     }
 
     // BagItProfile functions

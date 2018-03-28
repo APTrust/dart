@@ -18,6 +18,32 @@ const { ValidationResult } = require('../core/validation_result');
 
 class Menu {
 
+    static appSettingShowForm(id) {
+        var setting = new AppSetting();
+        var showDeleteButton = false;
+        if (!Util.isEmpty(id)) {
+            setting = AppSetting.find(id);
+            if (setting.userCanDelete) {
+                showDeleteButton = true;
+            }
+        }
+        var data = {};
+        data['form'] = setting.toForm();
+        data['showDeleteButton'] = showDeleteButton;
+        $("#container").html(Templates.appSettingForm(data));
+        State.ActiveObject = setting;
+    }
+
+    static appSettingShowList(message, limit = 50, offset = 0) {
+        var data = {};
+        data.items = AppSetting.list(limit, offset);
+        data.success = message;
+        data.previousLink = AppSetting.previousLink(limit, offset)
+        data.nextLink = AppSetting.nextLink(limit, offset)
+        $("#container").html(Templates.appSettingList(data));
+        State.ActiveObject = data.items;
+    }
+
     static dashboardShow() {
         var data = {};
         data.jobs = Job.list(10, 0);
