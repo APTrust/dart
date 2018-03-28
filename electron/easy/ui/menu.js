@@ -29,6 +29,11 @@ class Menu {
         State.ActiveObject = null;
     }
 
+    static helpShow() {
+        $("#container").html(Templates.help());
+        State.ActiveObject = null;
+    }
+
     static jobNew() {
         var job = new Job();
         job.clearFiles();
@@ -41,6 +46,11 @@ class Menu {
         var job = Job.find(id);
         State.ActiveObject = job;
         $("#container").html(Templates.jobFiles());
+    }
+
+    static logShow() {
+        $("#container").html(Templates.log());
+        State.ActiveObject = null;
     }
 
     static setupShow() {

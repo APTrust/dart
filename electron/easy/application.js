@@ -13,8 +13,8 @@ $(function() {
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { jobList(null); });
     $("#menuJobNew").click(es.UI.Menu.jobNew);
-    $("#menuHelpDoc").on('click', function() { helpShow(null); });
-    $("#menuLog").on('click', function() { logShow(null); });
+    $("#menuHelpDoc").on('click', function() { es.UI.Menu.helpShow(); });
+    $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { appSettingShowForm(null); });
@@ -90,18 +90,6 @@ $(function() {
             console.log(`Clickable row unknown type: ${type}?`);
         }
     });
-
-    // Help doc
-    function helpShow(message) {
-        $("#container").html(es.Templates.help());
-        es.State.ActiveObject = null;
-    }
-
-    // Logs
-    function logShow(message) {
-        $("#container").html(es.Templates.log());
-        es.State.ActiveObject = null;
-    }
 
     // App Setting functions
     function appSettingShowList(message, limit = 50, offset = 0) {
