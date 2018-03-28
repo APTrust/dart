@@ -330,7 +330,7 @@ class JobTags {
             self.setTagValuesFromForm();
             self.job.save();
             var data = {};
-            data.jobId = job.id;
+            data.jobId = self.job.id;
             data.form = self.job.toPackagingForm();
             data.domainName = AppSetting.findByName("Institution Domain").value;
             data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
