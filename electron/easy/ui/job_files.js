@@ -11,6 +11,58 @@ class JobFiles {
         this.job = job;
     }
 
+    initEvents() {
+        $('#linkAdvanced').click(function() { $("#divAdvanced").toggle(); });
+
+        $("input[name=filesOptionDSStore]").change(function() {
+            $('#spinner').show();
+            setTimeout(function() {
+                jobFiles.fileOptionsChanged();
+                $('#spinner').hide();
+            }, 300);
+        });
+
+        $("input[name=filesOptionHidden]").change(function() {
+            $('#spinner').show();
+            setTimeout(function() {
+                jobFiles.fileOptionsChanged();
+                $('#spinner').hide();
+            }, 300);
+        });
+
+        $("#btnJobPackaging").click(function () {
+            var data = {};
+            data.form = jobFiles.job.toPackagingForm();
+            data.domainName = es.AppSetting.findByName("Institution Domain").value;
+            data.showProfileList = data.form.fields.packageFormat.getSelected() == "BagIt";
+            $("#container").html(es.Templates.jobPackaging(data));
+        });
+
+
+        document.ondrop = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (document.getElementById('filesPanel') == null) {
+                return;
+            }
+            for (let f of e.dataTransfer.files) {
+                jobFiles.addFile(f.path);
+            }
+            return false;
+        };
+
+        $(document).on('click', '.deleteCell', function(){
+            jobFiles.deleteFile(this);
+        });
+
+        $('#spinner').show();
+        setTimeout(function() {
+            jobFiles.setFileListUI();
+            $('#spinner').hide();
+        }, 300);
+
+    }
+
     // We call this when we load an existing job, so the list of
     // files, file sizes, etc. shows up in the UI.
     setFileListUI() {
