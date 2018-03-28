@@ -15,7 +15,13 @@
      if (event.which === 13) {
          event.preventDefault();
          event.stopPropagation();
-         jobNewTagFileCreate();
+         var btn = $('#btnNewTagFileCreateForJob');
+         if (!btn.length) {
+             btn = $('#btnNewTagFileCreate');
+         }
+         if (btn.length) {
+             $(btn).click();
+         }
      }
  });
 </script>

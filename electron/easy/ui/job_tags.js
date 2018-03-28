@@ -171,41 +171,45 @@ class JobTags {
     // This returns the callback for #btnNewTagFileForJob
     onNewTagFileClick(err) {
         var self = this;
-        return function(err) {
+        return function() {
             // Save now, even if some tags are missing or invalid,
             // because we'll need to properly restore the underlying
             // form when we close this modal.
             self.setTagValuesFromForm();
             self.job.save();
-            var form = new Form();
-            form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
-            if (err != null) {
-                var errs = {};
-                errs['newTagFileName'] = err;
-                form.setErrors(errs);
-            }
-            var data = {};
-            data['form'] = form;
-            data['tagContext'] = "job";
-            $('#modalTitle').text("New Tag File");
-            $("#modalContent").html(Templates.newTagFileForm(data));
-            $('#modal').modal();
-            $('#modal').on('shown.bs.modal', function() {
-                $('#newTagFileName').focus();
-            })
+            self.showNewFileForm(null, null);
         }
+    }
+
+    showNewFileForm(filename, err) {
+        var form = new Form();
+        form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName",
+                                                     "New Tag File Name", filename);
+        form.fields['newTagFileName'].error = err;
+        var data = {};
+        data['form'] = form;
+        data['tagContext'] = "job";
+        $('#modalTitle').text("New Tag File");
+        $("#modalContent").html(Templates.newTagFileForm(data));
+        $('#modal').modal();
+        $('#modal').on('shown.bs.modal', function() {
+            $('#newTagFileName').focus();
+        })
     }
 
     // The returns the callback for #btnNewTagFileCreateForJob
     onCreateTagFileClick() {
         var self = this;
-        return function() {
+        return function(event) {
             var tagFileName = $('#newTagFileName').val().trim();
             var re = /^[A-Za-z0-9_\-\.\/]+\.txt$/;
             if (!tagFileName.match(re)) {
-                err = "Tag file name must contain at least one character and end with .txt";
-                var showItAgainWithErrors = self.onNewTagFileClick(err);
-                return showItAgainWithErrors();
+                var err = "Tag file name must contain at least one character and end with .txt";
+                return self.showNewFileForm(tagFileName, err);
+            }
+            if (tagFileName.startsWith('data/')) {
+                var err = "Tag file name cannot start with 'data/' because that would make it a payload file.";
+                return self.showNewFileForm(tagFileName, err);
             }
             var tagDef = new TagDefinition(tagFileName, "");
             tagDef.addedForJob = true;
