@@ -38,20 +38,42 @@ class JobFiles {
             $("#container").html(es.Templates.jobPackaging(data));
         });
 
-
-        document.ondrop = (e) => {
+        $('#dropZone').on('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            if (document.getElementById('filesPanel') == null) {
-                return;
-            }
-            for (let f of e.dataTransfer.files) {
+            // When drag event is attached to document, use
+            // e.dataTransfer.files instead of what's below.
+            for (let f of e.originalEvent.dataTransfer.files) {
                 jobFiles.addFile(f.path);
             }
+            $(e.currentTarget).removeClass('drop-zone-over');
             return false;
-        };
+        });
 
-        $(document).on('click', '.deleteCell', function(){
+        $('#dropZone').on('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(e.currentTarget).addClass('drop-zone-over');
+            return false;
+        });
+
+        $('#dropZone').on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(e.currentTarget).removeClass('drop-zone-over');
+            return false;
+        });
+
+        $('#dropZone').on('dragend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(e.currentTarget).removeClass('drop-zone-over');
+            return false;
+        });
+
+
+        //$(document).on('click', '.deleteCell', function(){
+        $('#divJobFiles').on('click', '.deleteCell', function(){
             jobFiles.deleteFile(this);
         });
 

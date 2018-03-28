@@ -85,3 +85,14 @@ hr.menu-divider {
    from {transform: rotate(0deg);}
    to {transform: rotate(359deg);}
 }
+
+.drop-zone {
+    border: 2px dashed #4285F4;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.drop-zone-over {
+    background-color: #e3f2fd;
+}

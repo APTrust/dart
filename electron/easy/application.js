@@ -44,6 +44,14 @@ $(function() {
     // Jobs
     $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
 
+    // Stop the default behavior of loading whatever file the user drags in.
+    // easy/ui/job_files.js overrides this for drag-and-drop files.
+    document.ondrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    };
+
     document.ondragover = () => {
         return false;
     };
