@@ -252,10 +252,14 @@ class JobTags {
         var self = this;
         return function(event) {
             var parentElement = $(event.target).closest('.panel-body')[0];
+            var tagFile = $(parentElement).data('file-name');
             if(!self.hasEmptyCustomFields(parentElement)) {
                 var tagId = $(event.target).data('tag-id');
-                var tagDef = self.job.bagItProfile.findTagById(tagId);
-                self.addEmptyCustomField(parentElement, tagDef.tagFile);
+                if (!tagFile) {
+                    var tagDef = self.job.bagItProfile.findTagById(tagId);
+                    tagFile = tagDef.tagFile;
+                }
+                self.addEmptyCustomField(parentElement, tagFile);
             }
         }
     }
