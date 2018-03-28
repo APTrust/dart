@@ -63,7 +63,7 @@ class JobTags {
 
     // Tag Definition functions
     tagDefinitionShowForm(id, tagFile) {
-        this.job.setTagValuesFromForm();
+        this.setTagValuesFromForm();
         this.job.save();
         var tag = this.job.findTagById(id);
         var showDeleteButton = (tag != null && !tag.isBuiltIn);
@@ -95,7 +95,7 @@ class JobTags {
                 } else {
                     self.job.bagItProfile.requiredTags.push(tagFromForm);
                 }
-                self.job.setTagValuesFromForm();
+                self.setTagValuesFromForm();
                 self.job.save();
                 $('#modal').modal('hide');
                 self.showJobTagEditor();
@@ -122,7 +122,7 @@ class JobTags {
             }
             var tagId = TagDefinition.fromForm().id;
             self.job.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
             self.showJobTagEditor();
@@ -133,7 +133,7 @@ class JobTags {
     onNewTagDefClick() {
         var self = this;
         return function() {
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             var tagFile = $(this).data('tag-file');
             var tag = new TagDefinition(tagFile, 'New-Tag');
@@ -175,7 +175,7 @@ class JobTags {
             // Save now, even if some tags are missing or invalid,
             // because we'll need to properly restore the underlying
             // form when we close this modal.
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             var form = new Form();
             form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName", "New Tag File Name", "");
@@ -210,7 +210,7 @@ class JobTags {
             var tagDef = new TagDefinition(tagFileName, "");
             tagDef.addedForJob = true;
             self.job.bagItProfile.requiredTags.push(tagDef);
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
             self.showJobTagForm();
@@ -297,7 +297,7 @@ class JobTags {
                     parent.addClass("has-success");
                 }
             }
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             if (isValid) {
                 // OK - go to the storage UI
@@ -323,7 +323,7 @@ class JobTags {
     onJobPackagingClick() {
         var self = this;
         return function() {
-            self.job.setTagValuesFromForm();
+            self.setTagValuesFromForm();
             self.job.save();
             var data = {};
             data.jobId = job.id;
@@ -333,6 +333,41 @@ class JobTags {
             $("#container").html(Templates.jobPackaging(data));
         }
     }
+
+    setTagValuesFromForm() {
+        if (this.job.bagItProfile == null) {
+            return;
+        }
+        // Regular tags from the job's bagit profile.
+        for (var input of $("#jobTagsForm .form-control")) {
+            var id = $(input).attr('id');
+            var tag = this.job.bagItProfile.findTagById(id);
+            if (tag != null) {
+                tag.userValue = $(input).val();
+            }
+        }
+        // Custom job-specific tags added by the user.
+        for (var input of $("#jobTagsForm .custom-tag-name")) {
+            var name = $(input).val();
+            var id = $(input).data('tag-id');
+            var value = $(`#${id}-value`).val();
+            var tag = this.job.bagItProfile.findTagById(id);
+            if (tag != null) {
+                tag.tagName = name;
+                tag.userValue = value;
+            }
+        }
+        // Special for APTrust: Copy APTrust description into Internal-Sender-Description
+        // if necessary. APTrust ingest code changed in 2.0 to read from the latter field.
+        var aptDescTag = this.job.bagItProfile.findTagByName('Description');
+        var bagItDescTag = this.job.bagItProfile.findTagByName('Internal-Sender-Description');
+        if (aptDescTag && !Util.isEmpty(aptDescTag.userValue)) {
+            if (bagItDescTag) {
+                bagItDescTag.userValue = aptDescTag.userValue;
+            }
+        }
+    }
+
 }
 
 

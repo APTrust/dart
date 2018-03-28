@@ -239,40 +239,6 @@ class Job {
         return form;
     }
 
-    setTagValuesFromForm() {
-        if (this.bagItProfile == null) {
-            return;
-        }
-        // Regular tags from the job's bagit profile.
-        for (var input of $("#jobTagsForm .form-control")) {
-            var id = $(input).attr('id');
-            var tag = this.bagItProfile.findTagById(id);
-            if (tag != null) {
-                tag.userValue = $(input).val();
-            }
-        }
-        // Custom job-specific tags added by the user.
-        for (var input of $("#jobTagsForm .custom-tag-name")) {
-            var name = $(input).val();
-            var id = $(input).data('tag-id');
-            var value = $(`#${id}-value`).val();
-            var tag = this.bagItProfile.findTagById(id);
-            if (tag != null) {
-                tag.tagName = name;
-                tag.userValue = value;
-            }
-        }
-        // Special for APTrust: Copy APTrust description into Internal-Sender-Description
-        // if necessary. APTrust ingest code changed in 2.0 to read from the latter field.
-        var aptDescTag = this.bagItProfile.findTagByName('Description');
-        var bagItDescTag = this.bagItProfile.findTagByName('Internal-Sender-Description');
-        if (aptDescTag && !Util.isEmpty(aptDescTag.userValue)) {
-            if (bagItDescTag) {
-                bagItDescTag.userValue = aptDescTag.userValue;
-            }
-        }
-    }
-
     toStorageServiceForm() {
         var availableServices = Util.sortByName(StorageService.getStore());
         var form = new Form();
