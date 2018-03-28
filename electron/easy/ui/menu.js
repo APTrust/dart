@@ -27,11 +27,11 @@ class Menu {
                 showDeleteButton = true;
             }
         }
+        State.ActiveObject = setting;
         var data = {};
         data['form'] = setting.toForm();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.appSettingForm(data));
-        State.ActiveObject = setting;
     }
 
     static appSettingShowList(message, limit = 50, offset = 0) {
@@ -40,8 +40,8 @@ class Menu {
         data.success = message;
         data.previousLink = AppSetting.previousLink(limit, offset)
         data.nextLink = AppSetting.nextLink(limit, offset)
-        $("#container").html(Templates.appSettingList(data));
         State.ActiveObject = data.items;
+        $("#container").html(Templates.appSettingList(data));
     }
 
     static dashboardShow() {

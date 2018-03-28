@@ -18,8 +18,8 @@ $(function() {
 
     // AppSetting Form
     $(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
-    $(document).on("click", "#btnApplicationSettingSave", appSettingSave);
-    $(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
+    //$(document).on("click", "#btnApplicationSettingSave", appSettingSave);
+    //$(document).on("click", "#btnApplicationSettingDelete", appSettingDelete);
 
     // BagItProfile Form
     $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
@@ -123,30 +123,30 @@ $(function() {
     //     es.State.ActiveObject = setting;
     // }
 
-    function appSettingSave() {
-        var setting = es.AppSetting.fromForm();
-        var result = setting.validate();
-        if (result.isValid()) {
-            setting.save();
-            return es.UI.Menu.appSettingShowList(`Setting ${setting.name} has been saved`);
-        } else {
-            var form = setting.toForm();
-            form.setErrors(result.errors);
-            var data = {};
-            data['form'] = form;
-            data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
-            $("#container").html(es.Templates.appSettingForm(data));
-        }
-        es.State.ActiveObject = setting;
-    }
+    // function appSettingSave() {
+    //     var setting = es.AppSetting.fromForm();
+    //     var result = setting.validate();
+    //     if (result.isValid()) {
+    //         setting.save();
+    //         return es.UI.Menu.appSettingShowList(`Setting ${setting.name} has been saved`);
+    //     } else {
+    //         var form = setting.toForm();
+    //         form.setErrors(result.errors);
+    //         var data = {};
+    //         data['form'] = form;
+    //         data['showDeleteButton'] = es.AppSetting.find(setting.id) != null && setting.userCanDelete;
+    //         $("#container").html(es.Templates.appSettingForm(data));
+    //     }
+    //     es.State.ActiveObject = setting;
+    // }
 
-    function appSettingDelete() {
-        if (!confirm("Delete this setting?")) {
-            return;
-        }
-        var setting = es.State.ActiveObject.delete();
-        es.UI.Menu.appSettingShowList(`Deleted setting ${setting.name}`);
-    }
+    // function appSettingDelete() {
+    //     if (!confirm("Delete this setting?")) {
+    //         return;
+    //     }
+    //     var setting = es.State.ActiveObject.delete();
+    //     es.UI.Menu.appSettingShowList(`Deleted setting ${setting.name}`);
+    // }
 
     // BagItProfile functions
     function bagItProfileShowList(message, limit = 50, offset = 0) {

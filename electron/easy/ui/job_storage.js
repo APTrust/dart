@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { Job } = require('../core/job');
 const path = require('path');
+const State = require('../core/state');
 const { StorageService } = require('../core/storage_service');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');

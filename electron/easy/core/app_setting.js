@@ -97,14 +97,14 @@ class AppSetting {
     static nextLink(limit = 50, offset = 0) {
         if (offset + limit < Object.keys(db.store).length) {
             var nextOffset = offset + limit
-            return `appSettingShowList('', ${limit}, ${nextOffset})`;
+            return `es.UI.Menu.appSettingShowList('', ${limit}, ${nextOffset})`;
         }
         return "";
     }
     static previousLink(limit = 50, offset = 0) {
         if (offset > 0) {
             var prevOffset = Math.max((offset - limit), 0);
-            return `appSettingShowList('', ${limit}, ${prevOffset})`;
+            return `es.UI.Menu.appSettingShowList('', ${limit}, ${prevOffset})`;
         }
         return "";
     }

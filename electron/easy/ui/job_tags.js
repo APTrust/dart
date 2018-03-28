@@ -84,8 +84,6 @@ class JobTags {
     onTagDefSave() {
         var self = this;
         return function() {
-            // Copy for values to existing tag, whic is part of the
-            // BagItProfile currently stored in es.State.ActiveObject.
             var tagFromForm = TagDefinition.fromForm();
             var result = tagFromForm.validate();
             if (result.isValid()) {
