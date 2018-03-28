@@ -6,7 +6,7 @@ $(function() {
 
 
     // Top nav menu
-    $("#menuDashboard").on('click', function() { dashboardShow(null); });
+    $("#menuDashboard").on('click', function() { es.UI.Menu.dashboardShow(null); });
     $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
     $("#menuAppSettingList").on('click', function() { appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
@@ -91,18 +91,6 @@ $(function() {
         }
     });
 
-    // Dashboard
-    function dashboardShow(message) {
-        var data = {};
-        data.jobs = es.Job.list(10, 0);
-        var setupsCompleted = es.Util.getInternalVar('Setups Completed');
-        if (setupsCompleted && setupsCompleted.length) {
-            data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
-        }
-        $("#container").html(es.Templates.dashboard(data));
-        es.State.ActiveObject = null;
-    }
-
     // Help doc
     function helpShow(message) {
         $("#container").html(es.Templates.help());
@@ -114,11 +102,6 @@ $(function() {
         $("#container").html(es.Templates.log());
         es.State.ActiveObject = null;
     }
-
-    // TODO: Refactor into a UI manager class, because this needs to
-    // accessible from the outside.
-    window.dashboardShow = dashboardShow;
-
 
     // App Setting functions
     function appSettingShowList(message, limit = 50, offset = 0) {
@@ -403,7 +386,7 @@ $(function() {
     });
 
     // Show the dashboard on startup.
-    dashboardShow();
+    es.UI.Menu.dashboardShow();
     es.log.info("DART started");
     migrateEasyStoreFiles();
 

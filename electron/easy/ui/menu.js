@@ -18,6 +18,17 @@ const { ValidationResult } = require('../core/validation_result');
 
 class Menu {
 
+    static dashboardShow() {
+        var data = {};
+        data.jobs = Job.list(10, 0);
+        var setupsCompleted = Util.getInternalVar('Setups Completed');
+        if (setupsCompleted && setupsCompleted.length) {
+            data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
+        }
+        $("#container").html(Templates.dashboard(data));
+        State.ActiveObject = null;
+    }
+
     static jobNew() {
         var job = new Job();
         job.clearFiles();
