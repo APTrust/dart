@@ -1,6 +1,7 @@
 const fs = require('fs');
 const { Job } = require('../core/job');
 const path = require('path');
+const { StorageService } = require('../core/storage_service');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');
 
@@ -15,7 +16,7 @@ class JobStorage {
     initEvents() {
         var self = this;
         $("#btnJobReview").click(function() {
-            self.job.setStorageServicesFromForm();
+            self.setStorageServicesFromForm();
             self.job.save();
             var data = {};
             data['job'] = self.job;
@@ -29,7 +30,7 @@ class JobStorage {
         });
 
         $("#btnPrevious").click(function() {
-            self.job.setStorageServicesFromForm();
+            self.setStorageServicesFromForm();
             self.job.save();
             var data = {};
             if (self.job.bagItProfile != null) {
@@ -42,6 +43,15 @@ class JobStorage {
             }
         });
     }
+
+    setStorageServicesFromForm() {
+        this.job.storageServices = [];
+        for (var input of $("input[name=storageServices]:checked")) {
+            var service = StorageService.find($(input).val());
+            this.job.storageServices.push(service);
+        }
+    }
+
 }
 
 module.exports.JobStorage = JobStorage;

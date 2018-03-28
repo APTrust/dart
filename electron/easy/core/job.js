@@ -248,14 +248,6 @@ class Job {
         return form;
     }
 
-    setStorageServicesFromForm() {
-        this.storageServices = [];
-        for (var input of $("input[name=storageServices]:checked")) {
-            var service = StorageService.find($(input).val());
-            this.storageServices.push(service);
-        }
-    }
-
     save() {
         if (this.created == null) {
             this.created = new Date().toJSON();
