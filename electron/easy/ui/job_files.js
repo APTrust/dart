@@ -71,8 +71,6 @@ class JobFiles {
             return false;
         });
 
-
-        //$(document).on('click', '.deleteCell', function(){
         $('#divJobFiles').on('click', '.deleteCell', function(){
             jobFiles.deleteFile(this);
         });
