@@ -44,6 +44,16 @@ class Menu {
         $("#container").html(Templates.appSettingList(data));
     }
 
+    static bagItProfileShowList(message, limit = 50, offset = 0) {
+        var data = {};
+        data.items = BagItProfile.list(limit, offset);
+        data.success = message;
+        data.previousLink = BagItProfile.previousLink(limit, offset)
+        data.nextLink = BagItProfile.nextLink(limit, offset)
+        $("#container").html(Templates.bagItProfileList(data));
+        State.ActiveObject = data.items;
+    }
+
     static dashboardShow() {
         var data = {};
         data.jobs = Job.list(10, 0);

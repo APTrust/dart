@@ -9,7 +9,7 @@ $(function() {
     $("#menuDashboard").on('click', function() { es.UI.Menu.dashboardShow(null); });
     $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
     $("#menuAppSettingList").on('click', function() { es.UI.Menu.appSettingShowList(null); });
-    $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
+    $("#menuBagItProfileList").click(function() { es.UI.Menu.bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { es.UI.Menu.jobList(null); });
     $("#menuJobNew").click(es.UI.Menu.jobNew);
@@ -88,21 +88,6 @@ $(function() {
             console.log(`Clickable row unknown type: ${type}?`);
         }
     });
-
-    // BagItProfile functions
-    function bagItProfileShowList(message, limit = 50, offset = 0) {
-        var data = {};
-        data.items = es.BagItProfile.list(limit, offset);
-        data.success = message;
-        data.previousLink = es.BagItProfile.previousLink(limit, offset)
-        data.nextLink = es.BagItProfile.nextLink(limit, offset)
-        $("#container").html(es.Templates.bagItProfileList(data));
-        es.State.ActiveObject = data.items;
-    }
-
-    // TODO: Refactor into a UI manager class, because this needs to
-    // accessible from the outside.
-    window.bagItProfileShowList = bagItProfileShowList;
 
 
     function bagItProfileChooseNew() {
