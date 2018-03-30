@@ -1,4 +1,5 @@
 const { AppSettingForm } = require('./app_setting_form');
+const { BagItProfileList } = require('./bagit_profile_list');
 const { JobFiles } = require('./job_files');
 const { JobPackaging } = require('./job_packaging');
 const { JobStorage } = require('./job_storage');
@@ -8,6 +9,7 @@ const { Setup } = require('./setup');
 
 
 module.exports.AppSettingForm = AppSettingForm;
+module.exports.BagItProfileList = BagItProfileList;
 module.exports.JobFiles = JobFiles;
 module.exports.JobPackaging = JobPackaging;
 module.exports.JobStorage = JobStorage;

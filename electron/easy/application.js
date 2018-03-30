@@ -20,10 +20,10 @@ $(function() {
     $(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
 
     // BagItProfile Form
-    $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
+    // $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
     $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
     $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
-    $(document).on("click", "#btnNewBagItProfileCreate", bagItProfilePrepare);
+    // $(document).on("click", "#btnNewBagItProfileCreate", bagItProfilePrepare);
 
     // StorageService Form
     $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
@@ -71,7 +71,7 @@ $(function() {
             es.UI.Menu.appSettingShowForm(id);
             break;
          case 'BagItProfile':
-            bagItProfileShowForm(id);
+            es.UI.Menu.bagItProfileShowForm(id);
             break;
          case 'Job':
             es.UI.Menu.jobShow(id);
@@ -90,57 +90,12 @@ $(function() {
     });
 
 
-    function bagItProfileChooseNew() {
-        var form = new es.Form();
-        form.fields['baseProfile'] = new es.Field("baseProfile", "baseProfile", "New Profile", "");
-        form.fields['baseProfile'].choices = [
-            new es.Choice("", "Blank", true),
-        ];
-        form.fields['baseProfile'].help = "Do you want to create a blank new profile from scratch, or a new profile that conforms to an existing standard?";
-        var sortedKeys = Object.keys(es.BuiltInProfiles.ProfilesAvailable).sort();
-        for(var name of sortedKeys) {
-            var profileId = es.BuiltInProfiles.ProfilesAvailable[name];
-            form.fields['baseProfile'].choices.push(new es.Choice(profileId, name, false));
-        }
-        var data = {};
-        data.form = form;
-        $('#modalTitle').text("Create New BagIt Profile");
-        $("#modalContent").html(es.Templates.bagItProfileNew(data));
-        $('#modal').modal();
-    }
-
-    function bagItProfilePrepare() {
-        var profileId = null;
-        var builtinId = $('#baseProfile').val().trim();
-        if (!es.Util.isEmpty(builtinId)) {
-            var profile = es.BagItProfile.createProfileFromBuiltIn(builtinId, true);
-            profileId = profile.id;
-        }
-        $('#modal').modal('hide');
-        return bagItProfileShowForm(profileId);
-    }
-
-    function bagItProfileShowForm(id) {
-        var profile = new es.BagItProfile();
-        var showDeleteButton = false;
-        if (!es.Util.isEmpty(id)) {
-            profile = es.BagItProfile.find(id);
-            showDeleteButton = !profile.isBuiltIn;
-        }
-        var data = {};
-        data['form'] = profile.toForm();
-        data['tags'] = profile.tagsGroupedByFile();
-        data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(es.Templates.bagItProfileForm(data));
-        es.State.ActiveObject = profile;
-    }
-
     function bagItProfileSave() {
         var profile = es.BagItProfile.fromForm();
         var result = profile.validate();
         if (result.isValid()) {
             profile.save();
-            return bagItProfileShowList(`Profile ${profile.name} saved.`);
+            return es.UI.Menu.bagItProfileShowList(`Profile ${profile.name} saved.`);
         }
         var data = {};
         data['form'] = profile.toForm();
@@ -155,7 +110,7 @@ $(function() {
             return;
         }
         var profile = es.State.ActiveObject.delete();
-        bagItProfileShowList(`Deleted profile ${profile.name}`);
+        es.UI.Menu.bagItProfileShowList(`Deleted profile ${profile.name}`);
     }
 
     // StorageService functions
