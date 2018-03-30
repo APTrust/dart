@@ -16,15 +16,6 @@ $(function() {
     $("#menuHelpDoc").on('click', function() { es.UI.Menu.helpShow(); });
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
-    // AppSetting Form
-    //$(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
-
-    // BagItProfile Form
-    // $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
-    // $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
-    // $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
-    // $(document).on("click", "#btnNewBagItProfileCreate", bagItProfilePrepare);
-
     // StorageService Form
     $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
     $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
