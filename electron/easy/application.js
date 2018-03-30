@@ -17,7 +17,7 @@ $(function() {
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
     // AppSetting Form
-    $(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
+    //$(document).on("click", "#btnNewAppSetting", function() { es.UI.Menu.appSettingShowForm(null); });
 
     // BagItProfile Form
     // $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
@@ -68,7 +68,7 @@ $(function() {
         var type = $(this).data("object-type");
         switch (type) {
          case 'AppSetting':
-            es.UI.Menu.appSettingShowForm(id);
+            es.UI.AppSettingList.showForm(id);
             break;
          case 'BagItProfile':
             es.UI.Menu.bagItProfileShowForm(id);
