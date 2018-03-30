@@ -35,12 +35,12 @@ class Menu {
             profile = BagItProfile.find(id);
             showDeleteButton = !profile.isBuiltIn;
         }
+        State.ActiveObject = profile;
         var data = {};
         data['form'] = profile.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.bagItProfileForm(data));
-        State.ActiveObject = profile;
     }
 
     static bagItProfileShowList(message, limit = 50, offset = 0) {

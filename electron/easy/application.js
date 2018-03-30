@@ -21,8 +21,8 @@ $(function() {
 
     // BagItProfile Form
     // $(document).on("click", "#btnNewBagItProfile", function() { bagItProfileChooseNew(); });
-    $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
-    $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
+    // $(document).on("click", "#btnBagItProfileSave", bagItProfileSave);
+    // $(document).on("click", "#btnBagItProfileDelete", bagItProfileDelete);
     // $(document).on("click", "#btnNewBagItProfileCreate", bagItProfilePrepare);
 
     // StorageService Form
@@ -88,30 +88,6 @@ $(function() {
             console.log(`Clickable row unknown type: ${type}?`);
         }
     });
-
-
-    function bagItProfileSave() {
-        var profile = es.BagItProfile.fromForm();
-        var result = profile.validate();
-        if (result.isValid()) {
-            profile.save();
-            return es.UI.Menu.bagItProfileShowList(`Profile ${profile.name} saved.`);
-        }
-        var data = {};
-        data['form'] = profile.toForm();
-        data['form'].setErrors(result.errors);
-        data['tags'] = profile.tagsGroupedByFile();
-        $("#container").html(es.Templates.bagItProfileForm(data));
-        es.State.ActiveObject = profile;
-    }
-
-    function bagItProfileDelete() {
-        if (!confirm("Delete this profile?")) {
-            return;
-        }
-        var profile = es.State.ActiveObject.delete();
-        es.UI.Menu.bagItProfileShowList(`Deleted profile ${profile.name}`);
-    }
 
     // StorageService functions
     function storageServiceShowList(message, limit = 50, offset = 0) {
