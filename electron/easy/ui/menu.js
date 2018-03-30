@@ -60,6 +60,16 @@ class Menu {
         State.ActiveObject = null;
     }
 
+    static jobList(message, limit = 50, offset = 0) {
+        var data = {};
+        data.items = Job.list(limit, offset);
+        data.previousLink = Job.previousLink(limit, offset);
+        data.nextLink = Job.nextLink(limit, offset);
+        data.success = message;
+        $("#container").html(Templates.jobList(data));
+        State.ActiveObject = data.items;
+    }
+
     static jobNew() {
         var job = new Job();
         job.clearFiles();

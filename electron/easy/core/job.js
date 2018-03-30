@@ -314,7 +314,7 @@ class Job {
     static nextLink(limit = 50, offset = 0) {
         if (offset + limit < Object.keys(db.store).length) {
             var nextOffset = offset + limit
-            return `jobList('', ${limit}, ${nextOffset})`;
+            return `es.UI.Menu.jobList('', ${limit}, ${nextOffset})`;
         }
         return "";
     }
@@ -322,7 +322,7 @@ class Job {
     static previousLink(limit = 50, offset = 0) {
         if (offset > 0) {
             var prevOffset = Math.max((offset - limit), 0);
-            return `jobList('', ${limit}, ${prevOffset})`;
+            return `es.UI.Menu.jobList('', ${limit}, ${prevOffset})`;
         }
         return "";
     }

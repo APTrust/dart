@@ -11,7 +11,7 @@ $(function() {
     $("#menuAppSettingList").on('click', function() { es.UI.Menu.appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
-    $("#menuJobList").click(function() { jobList(null); });
+    $("#menuJobList").click(function() { es.UI.Menu.jobList(null); });
     $("#menuJobNew").click(es.UI.Menu.jobNew);
     $("#menuHelpDoc").on('click', function() { es.UI.Menu.helpShow(); });
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
@@ -225,18 +225,6 @@ $(function() {
         }
         var service = es.State.ActiveObject.delete();
         storageServiceShowList(`Deleted storage service ${service.name}`);
-    }
-
-
-    // Job Functions
-    function jobList(message, limit = 50, offset = 0) {
-        var data = {};
-        data.items = es.Job.list(limit, offset);
-        data.previousLink = es.Job.previousLink(limit, offset);
-        data.nextLink = es.Job.nextLink(limit, offset);
-        data.success = message;
-        $("#container").html(es.Templates.jobList(data));
-        es.State.ActiveObject = data.items;
     }
 
 
