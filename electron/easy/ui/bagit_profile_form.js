@@ -32,6 +32,7 @@ class BagItProfileForm {
             data['form'] = self.profile.toForm();
             data['form'].setErrors(result.errors);
             data['tags'] = self.profile.tagsGroupedByFile();
+            data['errors'] = result.errors;
             $("#container").html(Templates.bagItProfileForm(data));
             State.ActiveObject = self.profile;
         }

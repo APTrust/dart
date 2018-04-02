@@ -53,6 +53,12 @@ class BagItProfileList {
             if (!Util.isEmpty(builtinId)) {
                 var profile = BagItProfile.createProfileFromBuiltIn(builtinId, true);
                 profileId = profile.id;
+            } else {
+                // New blank profile
+                var profile = new BagItProfile();
+                profile.initNewBlankProfile();
+                profile.save();
+                profileId = profile.id;
             }
             $('#modal').modal('hide');
             return Menu.bagItProfileShowForm(profileId);

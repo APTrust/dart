@@ -1,5 +1,11 @@
 <h1>BagIt Profile</h1>
 
+<ul class='text-danger'>
+{{#each errors as |err| }}
+  <li>{{ err }}</li>
+{{/each }}
+</ul>
+
 <form method="post" action="#" id="{{ id }}">
 
 <div class="row">
@@ -119,4 +125,7 @@
  $('[data-toggle="popover"]').popover();
  var bagItProfileForm = new es.UI.BagItProfileForm(es.State.ActiveObject);
  bagItProfileForm.initEvents();
+ {{#if errors }}
+   $(window).scrollTop(0);
+ {{/if}}
 </script>

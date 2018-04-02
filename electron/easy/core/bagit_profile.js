@@ -73,9 +73,9 @@ class BagItProfile {
         if (!this.hasRequiredTagFile("bagit.txt")) {
             result.errors["requiredTags"] = "Profile lacks requirements for bagit.txt tag file.";
         }
-        if (!this.hasRequiredTagFile("bag-info.txt")) {
-            result.errors["requiredTags"] = "Profile lacks requirements for bag-info.txt tag file.";
-        }
+        // if (!this.hasRequiredTagFile("bag-info.txt")) {
+        //     result.errors["requiredTags"] = "Profile lacks requirements for bag-info.txt tag file.";
+        // }
         return result;
     }
     toForm() {
@@ -239,6 +239,14 @@ class BagItProfile {
         for(var name of listOfNames) {
             var tag = this.findTagByName(name);
             if (tag != null) {
+                return tag;
+            }
+        }
+        return null;
+    }
+    findTagByFileAndName(filename, tagname) {
+        for (var tag of this.requiredTags) {
+            if (tag.tagFile == filename && tag.tagName == tagname) {
                 return tag;
             }
         }
@@ -586,6 +594,49 @@ class BagItProfile {
         }
         profile.save();
         return profile;
+    }
+
+    // This adds some standard items for a new blank BagIt profile.
+    initNewBlankProfile() {
+        this._addStandardBagInfoFile();
+        this.name = 'New BagIt Profile';
+        this.manifestsRequired.push('sha256');
+    }
+
+    // This adds a standard bag-info.txt file to the BagIt profile.
+    // We call this only when the user clicks to create a new blank profile.
+    _addStandardBagInfoFile() {
+        var tags = [
+            'Bag-Count',
+            'Bag-Group-Identifier',
+            'Bag-Size',
+            'Bagging-Date',
+            'Contact-Email',
+            'Contact-Name',
+            'Contact-Phone',
+            'External-Description',
+            'External-Identifier',
+            'Internal-Sender-Description',
+            'Internal-Sender-Identifier',
+            'Organization-Address',
+            'Payload-Oxum',
+            'Source-Organization']
+        var systemMustSet = [
+            'Bag-Size',
+            'Bagging-Date',
+            'Payload-Oxum'
+        ]
+        for(var tagName of tags) {
+            if(this.findTagByFileAndName('bag-info.txt', tagName) == null) {
+                var t = new TagDefinition('bag-info.txt', tagName);
+                t.required = false;
+                t.emptyOk = true;
+                if(Util.listContains(systemMustSet, tagName)) {
+                    t.systemMustSet = true;
+                }
+                this.requiredTags.push(t);
+            }
+        }
     }
 
 };
