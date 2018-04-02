@@ -18,14 +18,12 @@ class BagItProfileForm {
     initEvents() {
         $("#btnBagItProfileSave").on("click", this.onSaveClick());
         $("#btnBagItProfileDelete").on("click", this.onDeleteClick());
-        $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
-        $('.clickable-row[data-object-type="TagDefinition"]').on("click", this.onTagDefEditClick());
 
-        // Using document.on below because these elements do not exist
-        // when the view loads. They come and go as the tag editor modal
-        // appears and disappears.
-        $(document).on("click", "#btnTagDefinitionSave", this.onTagDefSave());
-        $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
+        // Add a new tag definition
+        $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
+
+        // Edit an existing tag definition
+        $('.clickable-row[data-object-type="TagDefinition"]').on("click", this.onTagDefEditClick());
     }
 
     onSaveClick() {
@@ -70,6 +68,8 @@ class BagItProfileForm {
             $('#modalTitle').text(tag.tagName);
             $("#modalContent").html(Templates.tagDefinitionForm(data));
             $('#modal').modal();
+            $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
+            $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
         }
     }
 
@@ -85,6 +85,8 @@ class BagItProfileForm {
             $('#modalTitle').text(tag.tagName);
             $("#modalContent").html(Templates.tagDefinitionForm(data));
             $('#modal').modal();
+            $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
+            $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
         }
     }
 
