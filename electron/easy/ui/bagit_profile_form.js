@@ -105,7 +105,7 @@ class BagItProfileForm {
                 }
                 self.profile.save();
                 $('#modal').modal('hide');
-                Menu.bagItProfileShowForm(self.id);
+                Menu.bagItProfileShowForm(self.profile.id);
             } else {
                 var form = tagFromForm.toForm();
                 form.setErrors(result.errors);
@@ -127,7 +127,7 @@ class BagItProfileForm {
             self.profile.requiredTags = self.profile.requiredTags.filter(item => item.id != tagId);
             self.profile.save();
             $('#modal').modal('hide');
-            Menu.bagItProfileShowForm(self.id);
+            Menu.bagItProfileShowForm(self.profile.id);
         }
     }
 
