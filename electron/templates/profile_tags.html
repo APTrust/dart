@@ -17,7 +17,13 @@
             {{#each this as |tag| }}
             <tr class="clickable-row" data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
               <td>{{ tag.tagName }}</td>
-              <td>{{ tag.defaultValue }}</td>
+              <td>
+                  {{#if tag.systemMustSet }}
+                  <span class='text-muted'>[Set automatically by bagger]</span>
+                  {{else}}
+                  {{ tag.defaultValue }}
+                  {{/if}}
+              </td>
             </tr>
             {{/each }}
             <tr>

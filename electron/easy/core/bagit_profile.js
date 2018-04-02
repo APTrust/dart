@@ -623,19 +623,11 @@ class BagItProfile {
             'Organization-Address',
             'Payload-Oxum',
             'Source-Organization']
-        var systemMustSet = [
-            'Bag-Size',
-            'Bagging-Date',
-            'Payload-Oxum'
-        ]
         for(var tagName of tags) {
             if(this.findTagByFileAndName('bag-info.txt', tagName) == null) {
                 var t = new TagDefinition('bag-info.txt', tagName);
                 t.required = false;
                 t.emptyOk = true;
-                if(Util.listContains(systemMustSet, tagName)) {
-                    t.systemMustSet = true;
-                }
                 this.requiredTags.push(t);
             }
         }
