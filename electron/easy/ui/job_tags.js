@@ -100,7 +100,7 @@ class JobTags {
                 self.setTagValuesFromForm();
                 self.job.save();
                 $('#modal').modal('hide');
-                $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
+                $("#container").html(Templates.jobTags(self.job.dataForTagEditor()));
             } else {
                 var form = tagFromForm.toForm();
                 form.setErrors(result.errors);
@@ -123,7 +123,7 @@ class JobTags {
             self.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
-            $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
+            $("#container").html(Templates.jobTags(self.job.dataForTagEditor()));
 
         }
     }
