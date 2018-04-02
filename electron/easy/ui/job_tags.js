@@ -33,6 +33,10 @@ class JobTags {
         // Delete a tag definition
         // $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.onDeleteTagDefClick());
 
+        // Using document.on below because these elements do not exist
+        // when the view loads. They come and go as the tag editor modal
+        // appears and disappears.
+
         // Show form for adding a new tag file.
         $(document).on("click", "#btnNewTagFileForJob", this.onNewTagFileClick(null));
 
@@ -96,7 +100,7 @@ class JobTags {
                 self.setTagValuesFromForm();
                 self.job.save();
                 $('#modal').modal('hide');
-                self.showJobTagEditor();
+                $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
             } else {
                 var form = tagFromForm.toForm();
                 form.setErrors(result.errors);
@@ -106,10 +110,6 @@ class JobTags {
                 $("#modalContent").html(Templates.tagDefinitionForm(data));
             }
         }
-    }
-
-    showJobTagEditor() {
-        $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
     }
 
     onTagDefDelete() {
@@ -123,7 +123,8 @@ class JobTags {
             self.setTagValuesFromForm();
             self.job.save();
             $('#modal').modal('hide');
-            self.showJobTagEditor();
+            $("#container").html(Templates.jobTags(this.job.dataForTagEditor()));
+
         }
     }
 

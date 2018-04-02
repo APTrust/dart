@@ -72,9 +72,9 @@ $(function() {
          case 'StorageService':
             storageServiceShowForm(id);
             break;
-         case 'TagDefinition':
-            tagDefinitionShowForm(id, null);
-            break;
+         // case 'TagDefinition':
+         //    tagDefinitionShowForm(id, null);
+         //    break;
          default:
             console.log(`Clickable row unknown type: ${type}?`);
         }
