@@ -29,8 +29,9 @@ class JobTags {
         // User clicks to go back to the Packaging UI
         $("#btnJobPackaging").click(this.onJobPackagingClick());
 
+        // REMOVED?
         // Delete a tag definition
-        $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.onDeleteTagDefClick());
+        // $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.onDeleteTagDefClick());
 
         // Show form for adding a new tag file.
         $(document).on("click", "#btnNewTagFileForJob", this.onNewTagFileClick(null));
@@ -39,7 +40,7 @@ class JobTags {
         $(document).on("click", "#btnNewTagFileCreateForJob", this.onCreateTagFileClick());
 
         // Save a tag definition
-        $(document).on("click", "#btnTagDefinitionSaveForJob", this.onTagDefSave());
+        $(document).on("click", "#btnTagDefinitionSave", this.onTagDefSave());
 
         // Delete a tag definition
         $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
@@ -61,7 +62,7 @@ class JobTags {
         });
     }
 
-    // Tag Definition functions
+    // Tag Definition form
     tagDefinitionShowForm(id, tagFile) {
         this.setTagValuesFromForm();
         this.job.save();
@@ -74,7 +75,6 @@ class JobTags {
         var data = {};
         data['form'] = tag.toForm();
         data['showDeleteButton'] = showDeleteButton;
-        data['tagContext'] = "profile";
         $('#modalTitle').text(tag.tagName);
         $("#modalContent").html(Templates.tagDefinitionForm(data));
         $('#modal').modal();
@@ -145,20 +145,21 @@ class JobTags {
         }
     }
 
+    // REMOVED?
     // Returns a function to delete a tag definition.
-    onDeleteTagDefClick() {
-        var self = this;
-        return function() {
-            if (!confirm("Delete this tag?")) {
-                return;
-            }
-            var tagId = TagDefinition.fromForm().id;
-            self.job.bagItProfile.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
-            self.job.save();
-            $('#modal').modal('hide');
-            self.showJobTagForm();
-        }
-    }
+    // onDeleteTagDefClick() {
+    //     var self = this;
+    //     return function() {
+    //         if (!confirm("Delete this tag?")) {
+    //             return;
+    //         }
+    //         var tagId = TagDefinition.fromForm().id;
+    //         self.job.bagItProfile.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
+    //         self.job.save();
+    //         $('#modal').modal('hide');
+    //         self.showJobTagForm();
+    //     }
+    // }
 
     showJobTagForm() {
         var data = this.job.dataForTagEditor();

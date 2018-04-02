@@ -6,6 +6,7 @@ const { Form } = require('../core/form');
 const { Menu } = require('./menu');
 const State = require('../core/state');
 const Templates = require('../core/templates');
+const { TagDefinition } = require('../core/tag_definition');
 const { Util } = require('../core/util');
 
 class BagItProfileForm {
@@ -17,6 +18,7 @@ class BagItProfileForm {
     initEvents() {
         $("#btnBagItProfileSave").on("click", this.onSaveClick());
         $("#btnBagItProfileDelete").on("click", this.onDeleteClick());
+        $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
     }
 
     onSaveClick() {
@@ -47,6 +49,20 @@ class BagItProfileForm {
             self.profile.delete();
             State.ActiveObject = null;
             Menu.bagItProfileShowList(`Deleted profile ${self.profile.name}`);
+        }
+    }
+
+    onNewTagFileClick() {
+        var self = this;
+        return function() {
+            var tagFile = $(this).data('tag-file')
+            var tag = new TagDefinition(tagFile, 'New-Tag');
+            var data = {};
+            data['form'] = tag.toForm();
+            data['showDeleteButton'] = false;
+            $('#modalTitle').text(tag.tagName);
+            $("#modalContent").html(Templates.tagDefinitionForm(data));
+            $('#modal').modal();
         }
     }
 

@@ -24,11 +24,11 @@
   <div class="bottom-buttons">
     {{#if showDeleteButton}}
     <div class="pull-left">
-      <button type="button" id="{{#if (eq tagContext 'job') }}btnTagDefinitionDeleteFromJob{{else}}btnTagDefinitionDelete{{/if}}" class="btn btn-danger">Delete</button>
+      <button type="button" id="btnTagDefinitionDelete" class="btn btn-danger">Delete</button>
     </div>
     {{/if}}
     <div class="pull-right">
-      <button type="button" id="{{#if (eq tagContext 'job') }}btnTagDefinitionSaveForJob{{else}}btnTagDefinitionSave{{/if}}" class="btn btn-primary">Save</button>
+      <button type="button" id="btnTagDefinitionSave" class="btn btn-primary">Save</button>
     </div>
   </div>
 </form>

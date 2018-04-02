@@ -22,9 +22,9 @@ $(function() {
     $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
 
     // TagDefinition Form
-    $(document).on("click", "[data-btn-type=NewTagDefForProfile]", function() {
-        tagDefinitionShowForm(null, $(this).data('tag-file'));
-    });
+    // $(document).on("click", "[data-btn-type=NewTagDefForProfile]", function() {
+    //     tagDefinitionShowForm(null, $(this).data('tag-file'));
+    // });
     // $(document).on("click", "#btnTagDefinitionSave", tagDefinitionSave);
     // $(document).on("click", "#btnTagDefinitionDelete", tagDefinitionDelete);
     // $(document).on("click", "#btnNewTagFile", function() { newTagFileShowForm(null); });
