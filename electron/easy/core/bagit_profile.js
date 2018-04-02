@@ -600,7 +600,9 @@ class BagItProfile {
     initNewBlankProfile() {
         this._addStandardBagInfoFile();
         this.name = 'New BagIt Profile';
+        this.description = 'New custom bagit profile';
         this.manifestsRequired.push('sha256');
+        this.acceptBagItVersion.push('0.97');
     }
 
     // This adds a standard bag-info.txt file to the BagIt profile.
