@@ -85,11 +85,16 @@
 </div>
 
 
+  {{> profileTags }}
+
+  {{> inputHidden field = form.fields.id }}
+  {{> inputHidden field = form.fields.baseProfileId }}
+
+
 <div class="row">
   <div class="col-md-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <p>The sections below describe required tag files and tags for this profile.</p>
         <div class="pull-right">
           <a class="btn btn-primary btn-xs" id="btnNewTagFile" role="button">Add Tag File</a>
         </div>
@@ -98,10 +103,6 @@
   </div>
 </div>
 
-  {{> profileTags }}
-
-  {{> inputHidden field = form.fields.id }}
-  {{> inputHidden field = form.fields.baseProfileId }}
 
 <div class="row">
   <div class="col-md-12">
