@@ -19,9 +19,7 @@ class BagItProfileForm {
         $("#btnBagItProfileSave").on("click", this.onSaveClick());
         $("#btnBagItProfileDelete").on("click", this.onDeleteClick());
         $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
-
         $('.clickable-row[data-object-type="TagDefinition"]').on("click", this.onTagDefEditClick());
-
 
         // Using document.on below because these elements do not exist
         // when the view loads. They come and go as the tag editor modal

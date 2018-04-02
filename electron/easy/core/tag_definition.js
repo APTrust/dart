@@ -69,7 +69,7 @@ class TagDefinition {
         form.fields['defaultValue'] = new Field('defaultValue', 'defaultValue', 'Default Value', this.defaultValue)
         form.fields['defaultValue'].help = "Optional default value for this field. If this tag has a list of allowed values, the default value must be one of the allowed values.";
         if (this.values != null && this.values.length > 0) {
-            var defaultVal = "";
+            var defaultVal = this.defaultValue;
             if (this.values.length == 1) {
                 defaultVal = this.values[0];
             }
