@@ -1,4 +1,5 @@
 const { AppSetting } = require('../core/app_setting');
+const { AppSettingForm } = require('./app_setting_form');
 const BuiltInProfiles = require('../core/builtin_profiles');
 const { Choice } = require('../core/choice');
 const { Field } = require('../core/field');
@@ -34,8 +35,9 @@ class AppSettingList {
             }
         }
         State.ActiveObject = setting;
+        var appSettingForm = new AppSettingForm(setting);
         var data = {};
-        data['form'] = setting.toForm();
+        data['form'] = appSettingForm.toForm();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.appSettingForm(data));
     }

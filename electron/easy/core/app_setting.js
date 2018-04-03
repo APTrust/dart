@@ -31,29 +31,6 @@ class AppSetting {
         }
         return result
     }
-    toForm() {
-        var form = new Form('appSettingForm');
-        form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
-        form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
-        form.fields['userCanDelete'] = new Field('userCanDelete', 'userCanDelete', 'User Can Delete', this.userCanDelete);
-        if (!this.userCanDelete) {
-            form.fields['name'].attrs['disabled'] = true;
-        }
-        if (this.help) {
-            form.fields['name'].help = this.help;
-        }
-        form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.value);
-        return form
-    }
-    static fromForm() {
-        var name = $('#appSettingName').val().trim();
-        var value = $('#appSettingValue').val().trim();
-        var userCanDelete = $('#userCanDelete').val().trim();
-        var setting = new AppSetting(name, value);
-        setting.id = $('#appSettingId').val().trim();
-        setting.userCanDelete = Util.boolValue(userCanDelete);
-        return setting
-    }
     save() {
         return db.set(this.id, this);
     }

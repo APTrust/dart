@@ -1,7 +1,11 @@
 const { AppSetting } = require('../core/app_setting');
+//const { Choice } = require('../core/choice');
+const { Field } = require('../core/field');
+const { Form } = require('../core/form');
 const { Menu } = require('./menu');
 const State = require('../core/state');
 const Templates = require('../core/templates');
+const { Util } = require('../core/util');
 
 class AppSettingForm {
 
@@ -17,13 +21,13 @@ class AppSettingForm {
     onSave() {
         var self = this;
         return function() {
-            self.setting = AppSetting.fromForm();
+            self.setting = self.fromForm();
             var result = self.setting.validate();
             if (result.isValid()) {
                 self.setting.save();
                 return Menu.appSettingShowList(`Setting ${self.setting.name} has been saved`);
             } else {
-                var form = setting.toForm();
+                var form = self.toForm();
                 form.setErrors(result.errors);
                 var data = {};
                 data['form'] = form;
@@ -45,6 +49,32 @@ class AppSettingForm {
             Menu.appSettingShowList(`Deleted setting ${self.setting.name}`);
         }
     }
+
+    toForm() {
+        var form = new Form('appSettingForm');
+        form.fields['id'] = new Field('appSettingId', 'id', 'id', this.setting.id);
+        form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.setting.name);
+        form.fields['userCanDelete'] = new Field('userCanDelete', 'userCanDelete', 'User Can Delete', this.setting.userCanDelete);
+        if (!this.setting.userCanDelete) {
+            form.fields['name'].attrs['disabled'] = true;
+        }
+        if (this.setting.help) {
+            form.fields['name'].help = this.help;
+        }
+        form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.setting.value);
+        return form
+    }
+
+    fromForm() {
+        var name = $('#appSettingName').val().trim();
+        var value = $('#appSettingValue').val().trim();
+        var userCanDelete = $('#userCanDelete').val().trim();
+        var setting = new AppSetting(name, value);
+        setting.id = $('#appSettingId').val().trim();
+        setting.userCanDelete = Util.boolValue(userCanDelete);
+        return setting
+    }
+
 
 }
 

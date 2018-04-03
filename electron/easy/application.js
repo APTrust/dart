@@ -67,8 +67,8 @@ $(function() {
          // case 'Job':
          //    es.UI.Menu.jobShow(id);
          //    break;
-         case 'Ignore':
-            break;
+         // case 'Ignore':
+         //    break;
          case 'StorageService':
             storageServiceShowForm(id);
             break;
