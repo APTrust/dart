@@ -61,9 +61,9 @@ $(function() {
          case 'AppSetting':
             es.UI.AppSettingList.showForm(id);
             break;
-         case 'BagItProfile':
-            es.UI.Menu.bagItProfileShowForm(id);
-            break;
+         // case 'BagItProfile':
+         //    es.UI.Menu.bagItProfileShowForm(id);
+         //    break;
          // case 'Job':
          //    es.UI.Menu.jobShow(id);
          //    break;

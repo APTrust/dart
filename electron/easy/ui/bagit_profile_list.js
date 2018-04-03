@@ -21,6 +21,8 @@ class BagItProfileList {
         // Callback for Create button. This button is in a modal popup
         // and is not present when the page loads. Hence $(document).on("click").
         $(document).on("click", "#btnNewBagItProfileCreate", this.onCreateClick());
+
+        $('.clickable-row[data-object-type="BagItProfile"]').on("click", this.onProfileClick);
     }
 
     onNewClick() {
@@ -65,6 +67,21 @@ class BagItProfileList {
         }
     }
 
+    onProfileClick() {
+        var profile = new BagItProfile();
+        var showDeleteButton = false;
+        var id = $(this).data('object-id');
+        if (!Util.isEmpty(id)) {
+            profile = BagItProfile.find(id);
+            showDeleteButton = !profile.isBuiltIn;
+        }
+        State.ActiveObject = profile;
+        var data = {};
+        data['form'] = profile.toForm();
+        data['tags'] = profile.tagsGroupedByFile();
+        data['showDeleteButton'] = showDeleteButton;
+        $("#container").html(Templates.bagItProfileForm(data));
+    }
 }
 
 module.exports.BagItProfileList = BagItProfileList;

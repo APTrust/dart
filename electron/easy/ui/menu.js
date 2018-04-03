@@ -28,21 +28,6 @@ class Menu {
         $("#container").html(Templates.appSettingList(data));
     }
 
-    static bagItProfileShowForm(id) {
-        var profile = new BagItProfile();
-        var showDeleteButton = false;
-        if (!Util.isEmpty(id)) {
-            profile = BagItProfile.find(id);
-            showDeleteButton = !profile.isBuiltIn;
-        }
-        State.ActiveObject = profile;
-        var data = {};
-        data['form'] = profile.toForm();
-        data['tags'] = profile.tagsGroupedByFile();
-        data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(Templates.bagItProfileForm(data));
-    }
-
     static bagItProfileShowList(message, limit = 50, offset = 0) {
         var data = {};
         data.items = BagItProfile.list(limit, offset);
