@@ -19,6 +19,9 @@ class BagItProfileForm {
         $("#btnBagItProfileSave").on("click", this.onSaveClick());
         $("#btnBagItProfileDelete").on("click", this.onDeleteClick());
 
+        // Add a new tag file
+        $('#btnNewTagFile').on('click', this.onNewTagFileClick());
+
         // Add a new tag definition
         $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
 
@@ -125,6 +128,53 @@ class BagItProfileForm {
             }
             var tagId = TagDefinition.fromForm().id;
             self.profile.requiredTags = self.profile.requiredTags.filter(item => item.id != tagId);
+            self.profile.save();
+            $('#modal').modal('hide');
+            Menu.bagItProfileShowForm(self.profile.id);
+        }
+    }
+
+    onNewTagFileClick(err) {
+        var self = this;
+        return function() {
+            self.profile.save();
+            self.showNewFileForm(null, null);
+        }
+    }
+
+    showNewFileForm(filename, err) {
+        var form = new Form();
+        form.fields['newTagFileName'] = new es.Field("newTagFileName", "newTagFileName",
+                                                     "New Tag File Name", filename);
+        form.fields['newTagFileName'].error = err;
+        var data = {};
+        data['form'] = form;
+        data['tagContext'] = "job";
+        $('#modalTitle').text("New Tag File");
+        $("#modalContent").html(Templates.newTagFileForm(data));
+        $('#modal').modal();
+        $('#btnTagFileCreate').on('click', this.onTagFileCreateClick());
+        $('#modal').on('shown.bs.modal', function() {
+            $('#newTagFileName').focus();
+        })
+    }
+
+    // The returns the callback for #btnTagFileCreate
+    onTagFileCreateClick() {
+        var self = this;
+        return function(event) {
+            var tagFileName = $('#newTagFileName').val().trim();
+            var re = /^[A-Za-z0-9_\-\.\/]+\.txt$/;
+            if (!tagFileName.match(re)) {
+                var err = "Tag file name must contain at least one character and end with .txt";
+                return self.showNewFileForm(tagFileName, err);
+            }
+            if (tagFileName.startsWith('data/')) {
+                var err = "Tag file name cannot start with 'data/' because that would make it a payload file.";
+                return self.showNewFileForm(tagFileName, err);
+            }
+            var tagDef = new TagDefinition(tagFileName, "");
+            self.profile.requiredTags.push(tagDef);
             self.profile.save();
             $('#modal').modal('hide');
             Menu.bagItProfileShowForm(self.profile.id);

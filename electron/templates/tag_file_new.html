@@ -4,7 +4,7 @@
 
   <div class="bottom-buttons">
     <div class="pull-right">
-      <button type="button" id="{{#if (eq tagContext 'job') }}btnNewTagFileCreateForJob{{else}}btnNewTagFileCreate{{/if}}" class="btn btn-primary">Save</button>
+      <button type="button" id="btnTagFileCreate" class="btn btn-primary">Save</button>
     </div>
   </div>
 </form>
@@ -15,10 +15,7 @@
      if (event.which === 13) {
          event.preventDefault();
          event.stopPropagation();
-         var btn = $('#btnNewTagFileCreateForJob');
-         if (!btn.length) {
-             btn = $('#btnNewTagFileCreate');
-         }
+         var btn = $('#btnTagFileCreate');
          if (btn.length) {
              $(btn).click();
          }

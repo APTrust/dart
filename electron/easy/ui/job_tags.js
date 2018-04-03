@@ -29,25 +29,16 @@ class JobTags {
         // User clicks to go back to the Packaging UI
         $("#btnJobPackaging").click(this.onJobPackagingClick());
 
-        // REMOVED?
-        // Delete a tag definition
-        // $(document).on("click", "#btnTagDefinitionDeleteFromJob", this.onDeleteTagDefClick());
-
-        // Using document.on below because these elements do not exist
-        // when the view loads. They come and go as the tag editor modal
-        // appears and disappears.
-
         // Show form for adding a new tag file.
-        $(document).on("click", "#btnNewTagFileForJob", this.onNewTagFileClick(null));
+        $("#btnNewTagFile").on("click", this.onNewTagFileClick(null));
 
         // Create the new tag file that the user just defined.
-        $(document).on("click", "#btnNewTagFileCreateForJob", this.onCreateTagFileClick());
+        // $(document).on("click", "#btnTagFileCreate", this.onTagFileCreateClick());
 
         // Save a tag definition
-        $(document).on("click", "#btnTagDefinitionSave", this.onTagDefSave());
-
+        // $(document).on("click", "#btnTagDefinitionSave", this.onTagDefSave());
         // Delete a tag definition
-        $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
+        // $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
 
         // Delete a custom tag by clicking the little X
         $(document).on("click", "a.deleteCustomTag", this.onDeleteCustomTag());
@@ -66,23 +57,25 @@ class JobTags {
         });
     }
 
-    // Tag Definition form
-    tagDefinitionShowForm(id, tagFile) {
-        this.setTagValuesFromForm();
-        this.job.save();
-        var tag = this.job.findTagById(id);
-        var showDeleteButton = (tag != null && !tag.isBuiltIn);
-        if (tag == null) {
-            tag = new TagDefinition(tagFile, 'New-Tag');
-            showDeleteButton = false;
-        }
-        var data = {};
-        data['form'] = tag.toForm();
-        data['showDeleteButton'] = showDeleteButton;
-        $('#modalTitle').text(tag.tagName);
-        $("#modalContent").html(Templates.tagDefinitionForm(data));
-        $('#modal').modal();
-    }
+    // // Tag Definition form
+    // tagDefinitionShowForm(id, tagFile) {
+    //     this.setTagValuesFromForm();
+    //     this.job.save();
+    //     var tag = this.job.findTagById(id);
+    //     var showDeleteButton = (tag != null && !tag.isBuiltIn);
+    //     if (tag == null) {
+    //         tag = new TagDefinition(tagFile, 'New-Tag');
+    //         showDeleteButton = false;
+    //     }
+    //     var data = {};
+    //     data['form'] = tag.toForm();
+    //     data['showDeleteButton'] = showDeleteButton;
+    //     $('#modalTitle').text(tag.tagName);
+    //     $("#modalContent").html(Templates.tagDefinitionForm(data));
+    //     $('#modal').modal();
+    //     $("#btnTagDefinitionSave").on("click", this.onTagDefSave());
+    //     $("#btnTagDefinitionDelete").on("click", this.onTagDefDelete());
+    // }
 
     // Returns a function to save a tag definition
     onTagDefSave() {
@@ -142,25 +135,11 @@ class JobTags {
             data['tagContext'] = "job";
             $('#modalTitle').text(tag.tagName);
             $("#modalContent").html(Templates.tagDefinitionForm(data));
+            $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
+            $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
             $('#modal').modal();
         }
     }
-
-    // REMOVED?
-    // Returns a function to delete a tag definition.
-    // onDeleteTagDefClick() {
-    //     var self = this;
-    //     return function() {
-    //         if (!confirm("Delete this tag?")) {
-    //             return;
-    //         }
-    //         var tagId = TagDefinition.fromForm().id;
-    //         self.job.bagItProfile.requiredTags = self.job.requiredTags.filter(item => item.id != tagId);
-    //         self.job.save();
-    //         $('#modal').modal('hide');
-    //         self.showJobTagForm();
-    //     }
-    // }
 
     showJobTagForm() {
         var data = this.job.dataForTagEditor();
@@ -168,7 +147,7 @@ class JobTags {
         $("#container").html(Templates.jobTags(data));
     }
 
-    // This returns the callback for #btnNewTagFileForJob
+    // This returns the callback for #btnNewTagFile
     onNewTagFileClick(err) {
         var self = this;
         return function() {
@@ -192,13 +171,14 @@ class JobTags {
         $('#modalTitle').text("New Tag File");
         $("#modalContent").html(Templates.newTagFileForm(data));
         $('#modal').modal();
+        $('#btnTagFileCreate').on('click', this.onTagFileCreateClick());
         $('#modal').on('shown.bs.modal', function() {
             $('#newTagFileName').focus();
         })
     }
 
-    // The returns the callback for #btnNewTagFileCreateForJob
-    onCreateTagFileClick() {
+    // The returns the callback for #btnTagFileCreate
+    onTagFileCreateClick() {
         var self = this;
         return function(event) {
             var tagFileName = $('#newTagFileName').val().trim();
