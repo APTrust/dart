@@ -12,7 +12,7 @@ $(function() {
     $("#menuBagItProfileList").click(function() { es.UI.Menu.bagItProfileShowList(null); });
     $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
     $("#menuJobList").click(function() { es.UI.Menu.jobList(null); });
-    $("#menuJobNew").click(es.UI.Menu.jobNew);
+    $("#menuJobNew").click(es.UI.JobList.onNewClick);
     $("#menuHelpDoc").on('click', function() { es.UI.Menu.helpShow(); });
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
@@ -31,7 +31,7 @@ $(function() {
     // $(document).on("click", "#btnNewTagFileCreate", newTagFileCreate);
 
     // Jobs
-    $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
+    // $(document).on("click", "#btnNewJob", es.UI.Menu.jobNew);
 
     // Stop the default behavior of loading whatever file the user drags in.
     // easy/ui/job_files.js overrides this for drag-and-drop files.
@@ -64,9 +64,9 @@ $(function() {
          case 'BagItProfile':
             es.UI.Menu.bagItProfileShowForm(id);
             break;
-         case 'Job':
-            es.UI.Menu.jobShow(id);
-            break;
+         // case 'Job':
+         //    es.UI.Menu.jobShow(id);
+         //    break;
          case 'Ignore':
             break;
          case 'StorageService':

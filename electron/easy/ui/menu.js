@@ -79,20 +79,6 @@ class Menu {
         State.ActiveObject = data.items;
     }
 
-    static jobNew() {
-        var job = new Job();
-        job.clearFiles();
-        job.resetFileOptions();
-        State.ActiveObject = job;
-        $("#container").html(Templates.jobFiles());
-    };
-
-    static jobShow(id) {
-        var job = Job.find(id);
-        State.ActiveObject = job;
-        $("#container").html(Templates.jobFiles());
-    }
-
     static logShow() {
         $("#container").html(Templates.log());
         State.ActiveObject = null;
