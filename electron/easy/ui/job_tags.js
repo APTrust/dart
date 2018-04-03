@@ -32,14 +32,6 @@ class JobTags {
         // Show form for adding a new tag file.
         $("#btnNewTagFile").on("click", this.onNewTagFileClick(null));
 
-        // Create the new tag file that the user just defined.
-        // $(document).on("click", "#btnTagFileCreate", this.onTagFileCreateClick());
-
-        // Save a tag definition
-        // $(document).on("click", "#btnTagDefinitionSave", this.onTagDefSave());
-        // Delete a tag definition
-        // $(document).on("click", "#btnTagDefinitionDelete", this.onTagDefDelete());
-
         // Delete a custom tag by clicking the little X
         $(document).on("click", "a.deleteCustomTag", this.onDeleteCustomTag());
 
@@ -56,26 +48,6 @@ class JobTags {
             }
         });
     }
-
-    // // Tag Definition form
-    // tagDefinitionShowForm(id, tagFile) {
-    //     this.setTagValuesFromForm();
-    //     this.job.save();
-    //     var tag = this.job.findTagById(id);
-    //     var showDeleteButton = (tag != null && !tag.isBuiltIn);
-    //     if (tag == null) {
-    //         tag = new TagDefinition(tagFile, 'New-Tag');
-    //         showDeleteButton = false;
-    //     }
-    //     var data = {};
-    //     data['form'] = tag.toForm();
-    //     data['showDeleteButton'] = showDeleteButton;
-    //     $('#modalTitle').text(tag.tagName);
-    //     $("#modalContent").html(Templates.tagDefinitionForm(data));
-    //     $('#modal').modal();
-    //     $("#btnTagDefinitionSave").on("click", this.onTagDefSave());
-    //     $("#btnTagDefinitionDelete").on("click", this.onTagDefDelete());
-    // }
 
     // Returns a function to save a tag definition
     onTagDefSave() {
