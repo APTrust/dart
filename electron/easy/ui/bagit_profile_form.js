@@ -1,4 +1,5 @@
 const { BagItProfile } = require('../core/bagit_profile');
+const { BagItProfileList } = require('./bagit_profile_list');
 const BuiltInProfiles = require('../core/builtin_profiles');
 const { Choice } = require('../core/choice');
 const { Field } = require('../core/field');
@@ -126,7 +127,7 @@ class BagItProfileForm {
                 }
                 self.profile.save();
                 $('#modal').modal('hide');
-                Menu.bagItProfileShowForm(self.profile.id);
+                BagItProfileList.showForm(self.profile.id);
             } else {
                 var form = tagFromForm.toForm();
                 form.setErrors(result.errors);
@@ -148,7 +149,7 @@ class BagItProfileForm {
             self.profile.requiredTags = self.profile.requiredTags.filter(item => item.id != tagId);
             self.profile.save();
             $('#modal').modal('hide');
-            Menu.bagItProfileShowForm(self.profile.id);
+            BagItProfileList.showForm(self.profile.id);
         }
     }
 
@@ -195,7 +196,7 @@ class BagItProfileForm {
             self.profile.requiredTags.push(tagDef);
             self.profile.save();
             $('#modal').modal('hide');
-            Menu.bagItProfileShowForm(self.profile.id);
+            BagItProfileList.showForm(self.profile.id);
         }
     }
 

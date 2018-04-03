@@ -3,7 +3,6 @@ const BuiltInProfiles = require('../core/builtin_profiles');
 const { Choice } = require('../core/choice');
 const { Field } = require('../core/field');
 const { Form } = require('../core/form');
-const { Menu } = require('./menu');
 const State = require('../core/state');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');
@@ -20,7 +19,7 @@ class BagItProfileList {
 
         // Callback for Create button. This button is in a modal popup
         // and is not present when the page loads. Hence $(document).on("click").
-        $(document).on("click", "#btnNewBagItProfileCreate", this.onCreateClick());
+        // $(document).on("click", "#btnNewBagItProfileCreate", this.onCreateClick());
 
         $('.clickable-row[data-object-type="BagItProfile"]').on("click", this.onProfileClick);
     }
@@ -44,6 +43,7 @@ class BagItProfileList {
             $('#modalTitle').text("Create New BagIt Profile");
             $("#modalContent").html(Templates.bagItProfileNew(data));
             $('#modal').modal();
+            $("#btnNewBagItProfileCreate").on("click", self.onCreateClick());
         }
     }
 
@@ -63,14 +63,18 @@ class BagItProfileList {
                 profileId = profile.id;
             }
             $('#modal').modal('hide');
-            return Menu.bagItProfileShowForm(profileId);
+            return BagItProfileList.ShowForm(profileId);
         }
     }
 
     onProfileClick() {
+        var id = $(this).data('object-id');
+        BagItProfileList.showForm(id)
+    }
+
+    static showForm(id) {
         var profile = new BagItProfile();
         var showDeleteButton = false;
-        var id = $(this).data('object-id');
         if (!Util.isEmpty(id)) {
             profile = BagItProfile.find(id);
             showDeleteButton = !profile.isBuiltIn;
@@ -82,6 +86,7 @@ class BagItProfileList {
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.bagItProfileForm(data));
     }
+
 }
 
 module.exports.BagItProfileList = BagItProfileList;
