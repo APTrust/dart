@@ -58,9 +58,9 @@ $(function() {
         var id = $(this).data("object-id");
         var type = $(this).data("object-type");
         switch (type) {
-         case 'AppSetting':
-            es.UI.AppSettingList.showForm(id);
-            break;
+         // case 'AppSetting':
+         //    es.UI.AppSettingList.showForm(id);
+         //    break;
          // case 'BagItProfile':
          //    es.UI.Menu.bagItProfileShowForm(id);
          //    break;

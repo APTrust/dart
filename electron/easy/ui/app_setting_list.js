@@ -16,6 +16,12 @@ class AppSettingList {
 
     initEvents() {
         $("#btnNewAppSetting").on("click", function() { AppSettingList.showForm(null) });
+        $('.clickable-row[data-object-type="AppSetting"]').on("click", this.onSettingClick);
+    }
+
+    onSettingClick() {
+        var id = $(this).data('object-id');
+        AppSettingList.showForm(id);
     }
 
     static showForm(id) {
