@@ -135,6 +135,11 @@ $(function() {
     }
 
 
+    // ------------------------------------------------------
+    // Begin code that should go into release update module.
+    // ------------------------------------------------------
+
+
     // Migrate config settings and data from EasyStore to DART.
     // We should be able to remove this after a few weeks.
     function migrateEasyStoreFiles() {
@@ -190,11 +195,27 @@ $(function() {
     aptSetup.installBagItProfiles();
     aptSetup.installStorageServices();
 
+    // Fix userCanDelete. This property was lost after editing
+    // an AppSetting.
+    var cantDelete = ['Bagging Directory', 'Institution Domain'];
+    for (var settingName of cantDelete) {
+        var setting = es.AppSetting.findByName(settingName);
+        if (setting) {
+            setting.userCanDelete = false;
+            setting.save();
+        }
+    }
+
     // Delete this legacy setting
     var pathToBagger = es.AppSetting.findByName("Path to Bagger")
     if (pathToBagger) {
         pathToBagger.delete();
     }
+
+
+    // ------------------------------------------------------
+    // End of code that should go into release update module.
+    // ------------------------------------------------------
 
     $('.modal-content').resizable({
         //alsoResize: ".modal-dialog",
