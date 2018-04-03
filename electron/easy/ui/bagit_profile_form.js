@@ -23,7 +23,7 @@ class BagItProfileForm {
         $('#btnNewTagFile').on('click', this.onNewTagFileClick());
 
         // Add a new tag definition
-        $("[data-btn-type=NewTagDefForProfile]").on("click", this.onNewTagFileClick());
+        $("[data-btn-type=NewTagDef]").on("click", this.onNewTagDefClick());
 
         // Edit an existing tag definition
         $('.clickable-row[data-object-type="TagDefinition"]').on("click", this.onTagDefEditClick());
@@ -73,6 +73,24 @@ class BagItProfileForm {
             $('#modal').modal();
             $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
             $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
+        }
+    }
+
+    onNewTagDefClick() {
+        var self = this;
+        return function() {
+            self.profile.save();
+            var tagFile = $(this).data('tag-file');
+            var tag = new TagDefinition(tagFile, 'New-Tag');
+            var data = {};
+            data['form'] = tag.toForm();
+            data['showDeleteButton'] = false;
+            data['tagContext'] = "job";
+            $('#modalTitle').text(tag.tagName);
+            $("#modalContent").html(Templates.tagDefinitionForm(data));
+            $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
+            $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
+            $('#modal').modal();
         }
     }
 
@@ -173,7 +191,7 @@ class BagItProfileForm {
                 var err = "Tag file name cannot start with 'data/' because that would make it a payload file.";
                 return self.showNewFileForm(tagFileName, err);
             }
-            var tagDef = new TagDefinition(tagFileName, "");
+            var tagDef = new TagDefinition(tagFileName, "New-Tag");
             self.profile.requiredTags.push(tagDef);
             self.profile.save();
             $('#modal').modal('hide');
