@@ -14,13 +14,7 @@ class BagItProfileList {
     }
 
     initEvents() {
-        // Callback for New button
         $("#btnNewBagItProfile").on("click", this.onNewClick());
-
-        // Callback for Create button. This button is in a modal popup
-        // and is not present when the page loads. Hence $(document).on("click").
-        // $(document).on("click", "#btnNewBagItProfileCreate", this.onCreateClick());
-
         $('.clickable-row[data-object-type="BagItProfile"]').on("click", this.onProfileClick);
     }
 
@@ -63,7 +57,7 @@ class BagItProfileList {
                 profileId = profile.id;
             }
             $('#modal').modal('hide');
-            return BagItProfileList.ShowForm(profileId);
+            return BagItProfileList.showForm(profileId);
         }
     }
 
@@ -73,6 +67,8 @@ class BagItProfileList {
     }
 
     static showForm(id) {
+        // Why won't this load at the top level?
+        var { BagItProfileForm } = require('./bagit_profile_form');
         var profile = new BagItProfile();
         var showDeleteButton = false;
         if (!Util.isEmpty(id)) {
@@ -81,7 +77,8 @@ class BagItProfileList {
         }
         State.ActiveObject = profile;
         var data = {};
-        data['form'] = profile.toForm();
+        var bagItProfileForm = new BagItProfileForm(profile);
+        data['form'] = bagItProfileForm.toForm();
         data['tags'] = profile.tagsGroupedByFile();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.bagItProfileForm(data));
