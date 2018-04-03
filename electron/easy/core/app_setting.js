@@ -35,6 +35,7 @@ class AppSetting {
         var form = new Form('appSettingForm');
         form.fields['id'] = new Field('appSettingId', 'id', 'id', this.id);
         form.fields['name'] = new Field('appSettingName', 'name', 'Name', this.name);
+        form.fields['userCanDelete'] = new Field('userCanDelete', 'userCanDelete', 'User Can Delete', this.userCanDelete);
         if (!this.userCanDelete) {
             form.fields['name'].attrs['disabled'] = true;
         }
@@ -47,8 +48,10 @@ class AppSetting {
     static fromForm() {
         var name = $('#appSettingName').val().trim();
         var value = $('#appSettingValue').val().trim();
+        var userCanDelete = $('#userCanDelete').val().trim();
         var setting = new AppSetting(name, value);
         setting.id = $('#appSettingId').val().trim();
+        setting.userCanDelete = Util.boolValue(userCanDelete);
         return setting
     }
     save() {
