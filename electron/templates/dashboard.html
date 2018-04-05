@@ -11,7 +11,7 @@
           </thead>
           <tbody>
               {{#each jobs}}
-              <tr class="clickable-row" id="{{ id }}" data-object-type="Ignore" onclick="showJobDetail('{{id}}')">
+              <tr class="clickable-row" data-object-id="{{ id }}" data-object-type="Job">
                   <td>{{ bagName }}</td>
                   <td>
                       {{#each operationResults as |result resultIndex|}}
@@ -44,98 +44,12 @@
 {{/if}}
 
 <script>
- $('[data-toggle="popover"]').popover();
-
+ // Since this is the first page loaded, we need to wait
+ // for document.onload. All other templates can assume
+ // jQuery and es are already present.
  $(function() {
-     $('#gettingStarted').click(function(e) {
-         // This is the same as helpShow in application.js.
-         // Should be moved to one UI class.
-         $("#container").html(es.Templates.help());
-         es.State.ActiveObject = null;
-     });
-     $('#setupPage').click(function(e) {
-         es.UI.Menu.setupShow();
-     });
-     $('#newJobLink').click(function(e) {
-         es.UI.Menu.jobNew();
-     });
+     $('[data-toggle="popover"]').popover();
+     var dashboard = new es.UI.Dashboard();
+     dashboard.initEvents();
  });
-
-
- // TODO: refactor/move this to a module with common UI code.
- function showJobDetail(id) {
-     var electron = require('electron');
-     var app = (process.type === 'renderer') ? electron.remote.app : electron.app;
-     var path = require('path');
-     var fs = require('fs');
-     var data = {};
-     var job = es.Job.find(id);
-     data.job = job;
-     if (job.bagItProfile != null) {
-         data.bagInternalIdentifier = job.bagItProfile.bagInternalIdentifier();
-         data.bagTitle = job.bagItProfile.bagTitle();
-         data.bagDescription =job.bagItProfile.bagDescription();
-     }
-     data.opResults = [];
-     for (var result of job.operationResults) {
-         data.opResults.push({
-             cssClass: result.succeeded ? 'text-success' : 'text-warning',
-             summary: result.summary(),
-             filename: path.basename(result.filename),
-             filesize: result.filesize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-             note: result.note,
-             warning: result.warning,
-             error: result.error
-         });
-         if (result.provider == "APTrust BagIt Provider") {
-             var manifestDir = path.join(app.getPath('userData'), 'manifests');
-             for (var filename of fs.readdirSync(manifestDir)) {
-                 if (filename.startsWith(job.id)) {
-                     data.hasManifest = true;
-                     break;
-                 }
-             }
-         }
-     }
-     $('#jobDetail').html(es.Templates.jobSummaryPanel(data));
-     es.State.ActiveObject = job;
- }
-
- // TODO: Move to common UI module
- // TODO: This will use too much memory and CPU fo large manifests containing >10k entries.
- function viewManifests(jobId) {
-     var electron = require('electron');
-     var app = (process.type === 'renderer') ? electron.remote.app : electron.app;
-     var path = require('path');
-     var fs = require('fs');
-     var dateFormat = require('dateformat');
-     var manifests = [];
-     var manifestDir = path.join(app.getPath('userData'), 'manifests');
-     for (var filename of fs.readdirSync(manifestDir)) {
-         if (filename.startsWith(jobId)) {
-             // Filename format is jobId_algorithm_timestamp.txt
-             var parts = filename.split('_');
-             var jobId = parts[0];
-             var algorithm = parts[1];
-             var timestamp = parts[2].split('.')[0];
-             var ts = new Date(parseInt(timestamp, 10));
-             var fullPath = path.join(manifestDir, filename);
-             manifests.push({
-                 jobId: jobId,
-                 algorithm: algorithm,
-                 timestamp: dateFormat(ts, 'shortDate') + " " + dateFormat(ts, 'shortTime'),
-                 contents: fs.readFileSync(fullPath, "utf8"),
-             });
-         }
-     }
-     var data = {};
-     data.manifests = manifests;
-     $('#modalTitle').text("Manifests");
-     $("#modalContent").html(es.Templates.manifest(data));
-     $('#modal').modal();
- }
-
- function goToJob(id) {
-     es.UI.Menu.jobShow(id);
- }
 </script>
