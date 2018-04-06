@@ -136,6 +136,8 @@ class BagItProfileForm {
                 data['form'] = form;
                 data['tagContext'] = "job";
                 $("#modalContent").html(Templates.tagDefinitionForm(data));
+                $("#btnTagDefinitionSave").on("click", self.onTagDefSave());
+                $("#btnTagDefinitionDelete").on("click", self.onTagDefDelete());
             }
         }
     }
