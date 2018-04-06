@@ -158,6 +158,9 @@ $(function() {
         if (fs.existsSync(easyStoreDir)) {
             for (var f of files) {
                 var sourceFile = path.join(easyStoreDir, f);
+                if (!fs.existsSync(sourceFile)) {
+                    continue;
+                }
                 var destFile = path.join(dartDir, f);
                 es.log.info(`Migrating ${sourceFile} -> ${destFile}`);
                 copyFileSync(sourceFile, destFile);
@@ -170,6 +173,9 @@ $(function() {
             }
             for (var m of manifests) {
                 var sourceFile = path.join(easyStoreManifestDir, m);
+                if (!fs.existsSync(sourceFile)) {
+                    continue;
+                }
                 var destFile = path.join(dartManifestDir, m);
                 es.log.info(`Migrating ${sourceFile} -> ${destFile}`);
                 copyFileSync(sourceFile, destFile);
