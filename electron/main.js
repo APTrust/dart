@@ -4,13 +4,7 @@ const url = require('url')
 
 // For development, include the context menu that provides
 // the Inspect Element feature.
-require('electron-context-menu')({
-    prepend: (params, browserWindow) => [{
-        label: 'Rainbow',
-        // Only show it when right-clicking images
-        visible: params.mediaType === 'image'
-        }]
-});
+require('electron-context-menu')();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
