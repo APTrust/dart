@@ -82,6 +82,16 @@ class Menu {
         State.ActiveObject = null;
     }
 
+    static storageServiceShowList(message, limit = 50, offset = 0) {
+        var data = {};
+        data.items = es.StorageService.list(limit, offset);
+        data.success = message;
+        data.previousLink = es.StorageService.previousLink(limit, offset)
+        data.nextLink = es.StorageService.nextLink(limit, offset)
+        $("#container").html(es.Templates.storageServiceList(data));
+        es.State.ActiveObject = data.items;
+    }
+
 }
 
 module.exports.Menu = Menu;

@@ -10,14 +10,14 @@ $(function() {
     $("#menuSetupShow").on('click', function() { es.UI.Menu.setupShow(null); });
     $("#menuAppSettingList").on('click', function() { es.UI.Menu.appSettingShowList(null); });
     $("#menuBagItProfileList").click(function() { es.UI.Menu.bagItProfileShowList(null); });
-    $("#menuStorageServiceList").click(function() { storageServiceShowList(null); });
+    $("#menuStorageServiceList").click(function() { es.UI.Menu.storageServiceShowList(null); });
     $("#menuJobList").click(function() { es.UI.Menu.jobList(null); });
     $("#menuJobNew").click(es.UI.JobList.onNewClick);
     $("#menuHelpDoc").on('click', function() { es.UI.Menu.helpShow(); });
     $("#menuLog").on('click', function() { es.UI.Menu.logShow(); });
 
     // StorageService Form
-    $(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
+    //$(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
     $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
     $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
 
@@ -53,68 +53,40 @@ $(function() {
         return false;
     };
 
-    // Clickable table rows for editing objects
-    $(document).on("click", ".clickable-row", function() {
-        var id = $(this).data("object-id");
-        var type = $(this).data("object-type");
-        switch (type) {
-         // case 'AppSetting':
-         //    es.UI.AppSettingList.showForm(id);
-         //    break;
-         // case 'BagItProfile':
-         //    es.UI.Menu.bagItProfileShowForm(id);
-         //    break;
-         // case 'Job':
-         //    es.UI.Menu.jobShow(id);
-         //    break;
-         // case 'Ignore':
-         //    break;
-         case 'StorageService':
-            storageServiceShowForm(id);
-            break;
-         // case 'TagDefinition':
-         //    tagDefinitionShowForm(id, null);
-         //    break;
-         default:
-            console.log(`Clickable row unknown type: ${type}?`);
-        }
-    });
+    // // Clickable table rows for editing objects
+    // $(document).on("click", ".clickable-row", function() {
+    //     var id = $(this).data("object-id");
+    //     var type = $(this).data("object-type");
+    //     switch (type) {
+    //      // case 'AppSetting':
+    //      //    es.UI.AppSettingList.showForm(id);
+    //      //    break;
+    //      // case 'BagItProfile':
+    //      //    es.UI.Menu.bagItProfileShowForm(id);
+    //      //    break;
+    //      // case 'Job':
+    //      //    es.UI.Menu.jobShow(id);
+    //      //    break;
+    //      // case 'Ignore':
+    //      //    break;
+    //      // case 'StorageService':
+    //      //    storageServiceShowForm(id);
+    //      //    break;
+    //      // case 'TagDefinition':
+    //      //    tagDefinitionShowForm(id, null);
+    //      //    break;
+    //      default:
+    //         console.log(`Clickable row unknown type: ${type}?`);
+    //     }
+    // });
 
-    // StorageService functions
-    function storageServiceShowList(message, limit = 50, offset = 0) {
-        var data = {};
-        data.items = es.StorageService.list(limit, offset);
-        data.success = message;
-        data.previousLink = es.StorageService.previousLink(limit, offset)
-        data.nextLink = es.StorageService.nextLink(limit, offset)
-        $("#container").html(es.Templates.storageServiceList(data));
-        es.State.ActiveObject = data.items;
-    }
-
-    // TODO: Refactor into a UI manager class, because this needs to
-    // accessible from the outside.
-    window.storageServiceShowList = storageServiceShowList;
-
-    function storageServiceShowForm(id) {
-        var service = new es.StorageService();
-        var showDeleteButton = false;
-        if (!es.Util.isEmpty(id)) {
-            service = es.StorageService.find(id);
-            showDeleteButton = true;
-        }
-        var data = {};
-        data['form'] = service.toForm();
-        data['showDeleteButton'] = showDeleteButton;
-        $("#container").html(es.Templates.storageServiceForm(data));
-        es.State.ActiveObject = service;
-    }
 
     function storageServiceSave() {
         var service = es.StorageService.fromForm();
         var result = service.validate();
         if (result.isValid()) {
             service.save();
-            return storageServiceShowList(`Storage service ${service.name} has been saved`);
+            return es.UI.Menu.storageServiceShowList(`Storage service ${service.name} has been saved`);
         } else {
             var form = service.toForm();
             form.setErrors(result.errors);
@@ -131,7 +103,7 @@ $(function() {
             return;
         }
         var service = es.State.ActiveObject.delete();
-        storageServiceShowList(`Deleted storage service ${service.name}`);
+        es.UI.Menu.storageServiceShowList(`Deleted storage service ${service.name}`);
     }
 
 
