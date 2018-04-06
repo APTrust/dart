@@ -1,5 +1,6 @@
 const State = require('../core/state');
 const { StorageService } = require('../core/storage_service');
+const { StorageServiceForm } = require('./storage_service_form');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');
 
@@ -22,8 +23,9 @@ class StorageServiceList {
             service = StorageService.find(id);
             showDeleteButton = true;
         }
+        var storageServiceForm = new StorageServiceForm(service);
         var data = {};
-        data['form'] = service.toForm();
+        data['form'] = storageServiceForm.toForm();
         data['showDeleteButton'] = showDeleteButton;
         $("#container").html(Templates.storageServiceForm(data));
         State.ActiveObject = service;
