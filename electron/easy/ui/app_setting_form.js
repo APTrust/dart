@@ -1,5 +1,4 @@
 const { AppSetting } = require('../core/app_setting');
-//const { Choice } = require('../core/choice');
 const { Field } = require('../core/field');
 const { Form } = require('../core/form');
 const { Menu } = require('./menu');

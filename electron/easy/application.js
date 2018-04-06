@@ -18,8 +18,8 @@ $(function() {
 
     // StorageService Form
     //$(document).on("click", "#btnNewStorageService", function() { storageServiceShowForm(null); });
-    $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
-    $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
+    // $(document).on("click", "#btnStorageServiceSave", storageServiceSave);
+    // $(document).on("click", "#btnStorageServiceDelete", storageServiceDelete);
 
     // TagDefinition Form
     // $(document).on("click", "[data-btn-type=NewTagDefForProfile]", function() {
@@ -81,30 +81,30 @@ $(function() {
     // });
 
 
-    function storageServiceSave() {
-        var service = es.StorageService.fromForm();
-        var result = service.validate();
-        if (result.isValid()) {
-            service.save();
-            return es.UI.Menu.storageServiceShowList(`Storage service ${service.name} has been saved`);
-        } else {
-            var form = service.toForm();
-            form.setErrors(result.errors);
-            var data = {};
-            data['form'] = form;
-            data['showDeleteButton'] = es.StorageService.find(service.id) != null;
-            $("#container").html(es.Templates.storageServiceForm(data));
-        }
-        es.State.ActiveObject = service;
-    }
+    // function storageServiceSave() {
+    //     var service = es.StorageService.fromForm();
+    //     var result = service.validate();
+    //     if (result.isValid()) {
+    //         service.save();
+    //         return es.UI.Menu.storageServiceShowList(`Storage service ${service.name} has been saved`);
+    //     } else {
+    //         var form = service.toForm();
+    //         form.setErrors(result.errors);
+    //         var data = {};
+    //         data['form'] = form;
+    //         data['showDeleteButton'] = es.StorageService.find(service.id) != null;
+    //         $("#container").html(es.Templates.storageServiceForm(data));
+    //     }
+    //     es.State.ActiveObject = service;
+    // }
 
-    function storageServiceDelete() {
-        if (!confirm("Delete this storage service?")) {
-            return;
-        }
-        var service = es.State.ActiveObject.delete();
-        es.UI.Menu.storageServiceShowList(`Deleted storage service ${service.name}`);
-    }
+    // function storageServiceDelete() {
+    //     if (!confirm("Delete this storage service?")) {
+    //         return;
+    //     }
+    //     var service = es.State.ActiveObject.delete();
+    //     es.UI.Menu.storageServiceShowList(`Deleted storage service ${service.name}`);
+    // }
 
 
     // ------------------------------------------------------

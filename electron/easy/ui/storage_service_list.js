@@ -1,5 +1,5 @@
-const { StorageService } = require('../core/storage_service');
 const State = require('../core/state');
+const { StorageService } = require('../core/storage_service');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');
 
@@ -28,16 +28,6 @@ class StorageServiceList {
         $("#container").html(Templates.storageServiceForm(data));
         State.ActiveObject = service;
     }
-
-    // static onNewClick() {
-    //     var service = new StorageService();
-    //     State.ActiveObject = service;
-    //     var data = {};
-    //     data['form'] = service.toForm();
-    //     data['showDeleteButton'] = false;
-    //     $("#container").html(Templates.storageServiceForm(data));
-    // }
-
 }
 
 module.exports.StorageServiceList = StorageServiceList;
