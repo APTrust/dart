@@ -8,6 +8,7 @@ const Const = require('../core/constants');
 const { Field } = require('../core/field');
 const { Form } = require('../core/form');
 const { Job } = require('../core/job');
+const { JobList } = require('./job_list');
 const Plugins = require('../plugins/plugins');
 const { StorageService } = require('../core/storage_service');
 const { TagDefinition } = require('../core/tag_definition');
@@ -17,6 +18,45 @@ const { Util } = require('../core/util');
 const { ValidationResult } = require('../core/validation_result');
 
 class Menu {
+
+    static initEvents() {
+        // Top nav menu
+        $("#menuDashboard").on('click', function() { Menu.dashboardShow(null); });
+        $("#menuSetupShow").on('click', function() { Menu.setupShow(null); });
+        $("#menuAppSettingList").on('click', function() { Menu.appSettingShowList(null); });
+        $("#menuBagItProfileList").click(function() { Menu.bagItProfileShowList(null); });
+        $("#menuStorageServiceList").click(function() { Menu.storageServiceShowList(null); });
+        $("#menuJobList").click(function() { Menu.jobList(null); });
+        $("#menuJobNew").click(JobList.onNewClick);
+        $("#menuHelpDoc").on('click', function() { Menu.helpShow(); });
+        $("#menuLog").on('click', function() { Menu.logShow(); });
+
+
+        // Stop the default behavior of loading and displaying
+        // whatever file the user drags in.
+        // easy/ui/job_files.js overrides this for drag-and-drop files.
+        document.ondrop = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        };
+        document.ondragover = () => { return false; };
+        document.ondragleave = () => { return false; };
+        document.ondragend = () => { return false; };
+
+        // Set up the modal dialog for pop-up forms
+        $('.modal-content').resizable({
+            minHeight: 300,
+            minWidth: 300
+        });
+        $('.modal-dialog').draggable();
+        $('#myModal').on('show.bs.modal', function() {
+            $(this).find('.modal-body').css({
+                'max-height': '100%'
+            });
+        });
+
+    }
 
     static appSettingShowList(message, limit = 50, offset = 0) {
         var data = {};
