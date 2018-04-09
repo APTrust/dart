@@ -171,8 +171,9 @@ class Bagger {
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });
             this.tmpFiles.push(tmpFile.name);
             var bytes = fs.writeSync(tmpFile.fd, content,  0, 'utf8');
-            if (bytes != content.length) {
-                throw `In tag file ${tagFileName} wrote only ${bytes} of ${content.length} bytes`;
+            var contentLength = Util.unicodeByteLength(content);
+            if (bytes != contentLength) {
+                throw `In ${tagFileName} wrote ${contentLength} bytes instead of expected ${bytes}`;
             }
             fs.closeSync(tmpFile.fd);
             var source = {
@@ -203,9 +204,10 @@ class Bagger {
                 }
                 // Manifest entry: digest <space> path_of_file_in_bag
                 var entry = `${f.checksums[alg]} ${f.relDestPath}${os.EOL}`;
+                var entryLength = Util.unicodeByteLength(entry);
                 var bytes = fs.writeSync(tmpFile.fd, entry);
-                if (bytes != entry.length) {
-                    throw `In manifest ${manifestName} wrote only ${bytes} of ${entry.length} bytes`;
+                if (bytes != entryLength) {
+                    throw `In ${manifestName} wrote ${entryLength} bytes instead of expected ${bytes}`;
                 }
             }
             fs.closeSync(tmpFile.fd);
@@ -237,8 +239,9 @@ class Bagger {
                 // Manifest entry: digest <space> path_of_file_in_bag
                 var entry = `${f.checksums[alg]} ${f.relDestPath}${os.EOL}`;
                 var bytes = fs.writeSync(tmpFile.fd, entry);
-                if (bytes != entry.length) {
-                    throw `In manifest ${manifestName} wrote only ${bytes} of ${entry.length} bytes`;
+                var entryLength = Util.unicodeByteLength(entry);
+                if (bytes != entryLength) {
+                    throw `In ${manifestName} wrote ${entryLength} bytes instead of expected ${bytes}`;
                 }
             }
             fs.closeSync(tmpFile.fd);
