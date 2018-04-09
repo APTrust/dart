@@ -360,9 +360,37 @@ function newStorageEmitter(job, provider) {
     });
 
     emitter.on('complete', function(succeeded, message) {
+        // TODO: Too much code in here. Refactor.
         if (succeeded == true) {
+            try {
+                // TODO: Make this work for unserialized bags,
+                // where we're working with a directory instead
+                // of a tar, gzip, or zip file.
+                result.filename = job.packagedFile;
+                var stats = fs.statSync(job.packagedFile)
+                result.filesize = stats["size"];
+            } catch(ex) {
+                log.error(`Cannot get file size for ${job.packagedFile}`);
+                log.error(ex);
+                showError("#jobError", ex)
+            }
             $("#jobStorageComplete").show();
-            $("#jobStorageComplete .message").append(message + "<br/>");
+            $("#jobStorageComplete .message").append(message + "<br/><br/>");
+            if (job.packagedFile != '' &&
+                job.packagedFile.startsWith(job.baggingDirectory) &&
+                job.packagedFile != job.baggingDirectory) {
+                if (fs.statSync(job.packagedFile).isFile()) {
+                    var msg = `Deleted ${job.packagedFile} after successful upload`;
+                    try {
+                        fs.unlinkSync(job.packagedFile);
+                    } catch (ex) {
+                        msg = `Could not delete packaged file ${job.packagedFile}: ${ex}`;
+                        msg += `<br/>Please delete the file manually.`
+                    }
+                    log.info(msg);
+                    $("#jobStorageComplete .message").append(msg + "<br/>");
+                }
+            }
             showSuccess("#jobStorageStart");
             log.info(`Completed ${result.note}`);
         } else {
@@ -372,18 +400,6 @@ function newStorageEmitter(job, provider) {
         }
         result.succeeded = succeeded;
         result.completed = (new Date()).toJSON();
-        try {
-            // TODO: Make this work for unserialized bags,
-            // where we're working with a directory instead
-            // of a tar, gzip, or zip file.
-            result.filename = job.packagedFile;
-            var stats = fs.statSync(job.packagedFile)
-            result.filesize = stats["size"];
-        } catch(ex) {
-            log.error(`Cannot get file size for ${job.packagedFile}`);
-            log.error(ex);
-            showError("#jobError", ex)
-        }
         job.save(); // save job with OperationResult
     });
 

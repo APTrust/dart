@@ -54,7 +54,6 @@ class S3 {
         var uploader = this;
         this.attemptNumber += 1;
         try {
-            // ... code ...
             // Can emit events: 'start', 'complete', 'uploadStart',
             // 'uploadProgress', 'uploadComplete', 'warning', 'error'
             var localStat = fs.lstatSync(filepath);
@@ -86,9 +85,8 @@ class S3 {
                     }
                     return;
                 }
-                // TODO: Allow GetObject in receiving buckets for our depositors!!
-                // Otherwise, this will return error about "valid credentials required."
-                // Logged in PT #153962363.
+                // Note PT #153962363: Buckets must allow GetObject or you'll
+                // get "valid credentials required" error.
                 s3Client.statObject(bucket, objectName, function(err, remoteStat){
                     if (err) {
                         uploader.emitter.emit('complete', false, "After upload, could not get object stats. " + err);

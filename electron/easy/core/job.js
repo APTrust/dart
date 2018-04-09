@@ -427,6 +427,7 @@ class Job {
             }
         }
     }
+
     uploadFiles() {
         // Send the bag to storage.
         // TODO: Correctly handle multiple uploads in the UI.
@@ -443,7 +444,6 @@ class Job {
             } else {
                 var storer = new StorerClass(service, emitter);
                 storer.upload(job.packagedFile);
-                //storer.list(service.bucket);
             }
         }
     }
