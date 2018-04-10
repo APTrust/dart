@@ -20,6 +20,8 @@ environment:
   GOPATH: c:\gopath
   access_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
+  appveyor_repo_tag: true
+
 
 install:
   - ps: Install-Product node 8 x64
