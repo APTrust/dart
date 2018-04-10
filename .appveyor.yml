@@ -48,9 +48,8 @@ deploy:
   description: 'This is a test release of the windows build from CI'
   provider: GitHub
   auth_token:
-    secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
-  artifact:
-     - DART-Windows
+     secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
+  artifact: DART-Windows
   draft: true
   prerelease: false
 
