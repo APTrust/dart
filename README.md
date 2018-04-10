@@ -1,5 +1,6 @@
 # APTrust DART
 [![Build Status](https://travis-ci.org/APTrust/dart.svg?branch=master)](https://travis-ci.org/APTrust/dart)
+[!Build Status](https://ci.appveyor.com/api/projects/status/waprqft4knhb5ktb/branch/master?svg=true)](https://ci.appveyor.com/project/cdahlhausen/dart/branch/master)
 
 DART is the Digital Artefact Routing Tool. It provides a simple way of packing
 and shipping BagIt files, easing the process of creating Submission Information
