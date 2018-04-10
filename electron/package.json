@@ -29,7 +29,7 @@
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
-        "start": "electron ."
+        "start": "electron .",
         "release": "build"
     },
     "build": {
