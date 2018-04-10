@@ -59,4 +59,4 @@ deploy:
   skip_cleanup: true
   on:
     repo: APTrust/dart
-    branch: 156094170-automate-build-release
+    branch: master
