@@ -16,6 +16,9 @@ cache:
   - $HOME/.cache/electron
   - $HOME/.cache/electron-builder
   - $HOME/.npm/_prebuilds
+notifications:
+  slack:
+    secure: H5vU3wRKiO5VCBNThkEfT5uhpZVa710PnaRzfSM1wfX95X5JvV7NmH8AwbGtpe90O5gpub2kEji7WIFtshRwVCFwcjvA11pWUH7Q2K5fs6mcSoIFTXXptNW2jnbC8a11yiMPu41BFVOphQQk/mDMIhP95RN0+Zr7x92zzn/LwRETW1OseJN05KpOE0CLTaOv8apJecpVzcw55sNuCD2Ztrlu9tut45rKBKCEGUta4YImWey5RgxKYgP+7I7K7ImueRCZuKWMbYtmVaYSF7/hf23xwD5jESVpq/xlf89B3JOpu3NQL6ZNQHfMvGZwjHkgTAnO/D/zWD+kUVTs1ulgbVbeJqxtT/mAqiWVCagX7QHOSirwJ7Se4jjAU4LpNAvtXGFuRKZNiNDtDm1beQGbwmrMoTN22FykQwkDm1bWwUQCuFEsSNi1yHS7pN+RNAyqIYOqdn9KjZT/TMxsWRfp/+z3rReh7GBZTsDzGaNG46gUUJDcYLcgO7jpAiu7wcM2md9Q0qmmZ8LP3cZzHyde3k4MYNL+ETZXrAzJOxN6liUW+TgdfyD5mK632OVImCRyxLv6NKvTCL/YhpRRymI0gYLhENy3BgM/yZPV62qfVxyAxUrtFF9hwcXd3Nzj56hFmBCuNXRnF2jnMETv9tzQZaGARcEbGMaHw/hLSXYBtpE=
 
 environment:
   - GOPATH: c:\gopath
