@@ -1,4 +1,4 @@
-version: 0.1.0.{build}
+version: 0.1.{build}
 
 platform: x64
 
@@ -49,12 +49,10 @@ deploy:
   provider: GitHub
   auth_token:
     secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-    artifact:
-      - DART-Windows
+  artifact:
+     - DART-Windows
   draft: true
   prerelease: false
-  on:
-    appveyor_repo_tag: true
 
 notifications:
   - provider: Slack
