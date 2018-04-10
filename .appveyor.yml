@@ -19,7 +19,7 @@ clone_folder: c:\gopath\src\github.com\APTrust\dart
 environment:
   GOPATH: c:\gopath
   access_token:
-    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
+    secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
   appveyor_repo_tag: true
 
 
@@ -48,7 +48,7 @@ deploy:
   description: 'This is a test release of the windows build from CI'
   provider: GitHub
   auth_token:
-    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
+    secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
   artifact:
      - DART-Windows
   draft: true
@@ -57,8 +57,8 @@ deploy:
 notifications:
   - provider: Slack
     auth_token:
-      secure: Bx629o5KYJ9NQ42qHQVU+JQhoTvgbVWbgr96XfA5cgzcc+Ks3plypX+8OKRHueZMNr5i4dgfpjle6doeIVfMsLT2NOKGPMnjW2CgzMUXDznEWfA3HEAECQ4A/Tj3pcVGVjAf+Dk7HyzScBcjEqIsjA==
-      channel: '#ops'
-      on_build_success: true
-      on_build_failure: true
-      on_build_status_changed: true
+      secure: "Bx629o5KYJ9NQ42qHQVU+JQhoTvgbVWbgr96XfA5cgzcc+Ks3plypX+8OKRHueZMNr5i4dgfpjle6doeIVfMsLT2NOKGPMnjW2CgzMUXDznEWfA3HEAECQ4A/Tj3pcVGVjAf+Dk7HyzScBcjEqIsjA=="
+    channel: '#ops'
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true
