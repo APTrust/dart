@@ -1,35 +1,62 @@
 os: osx
 osx_image: xcode9.2
+
 dist: trusty
 sudo: false
+
 language: node_js
-node_js: '9'
+node_js: "9"
 env:
-  global:
-  - secure: fOOw70DTKmwIPiLRAut+45oBpnZLUyr3IjYv9YND5DlMyzUDEe1kBZj/h6+hnk2cZOv66grxchAF679L+ZQO0QKr8VG92gj6loFACoclmkiCZxRYLsspaVWE5dY9nCOEsVzOuF8z86FcQA7/qD85IQ2XPgZ7Th29bB0q9oxkCayiLA3K0qKyhoQ7/kyKWE3AGAHnn/2VbijH5CIz4VT+SJm3mqJKcyOxeXwfOVEtBEGmNGAWFNOY+3JJNt65JkMh1MXa58n8g1k03Bm63u3NweBcJDQcRVZtojhq22Z5KIGahdmmtxFqUUWkzmuHf/qWvcmcabJcjo+fKwhJFk51jUGOCtNFCITcUFeOOnxpjRHH5PxDmfvXpgpXL8wQ8LGTFGjjYBrKThhaKLlEUFtQdz7zFtDSwfi3HJ08pYcqznKP/1DZ+5Kw7cAUEgK+wzpAob3SkBNsevK9u3qjVggYilbqa0MrkUG++SPYKmI056y5I+k+NcAsoT/BzeEaFWDoj0aeKjiNldwRDeo2iDI2j1ScQ2NFVCKY2w4vj3THp35tCqShS1nU3J6pyd2sr1A9Jv662V5iWdTsaTYOem7VKViLw76zqbjmArSYK1agnZ7RD0jCmR+uZhSZ3AWb6muW9EGEYj0hBaJcGRVgKKOrcM1oPmQ5GeJB7Dh4poUPjpI=
+  - ELECTRON_CACHE=$HOME/.cache/electron
+  - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
+
 cache:
   directories:
   - electron/node_modules
-  - "$HOME/.cache/electron"
-  - "$HOME/.cache/electron-builder"
-environment:
-- GOPATH: c:\gopath
-- access_token:
-    secure: pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-before_install:
-- |
-  if [ "$TRAVIS_OS_NAME" == "osx" ]; then
-    mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
-    export PATH="/tmp/git-lfs:$PATH"
-  fi
+  - $HOME/.cache/electron
+  - $HOME/.cache/electron-builder
+  - $HOME/.npm/_prebuilds
 
-  #  - curl -o- -L https://yarnpkg.com/install.sh | bash -s --
-- export PATH="$HOME/.yarn/bin:$PATH"
+environment:
+  - GOPATH: c:\gopath
+  - access_token:
+        secure:  pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
+  - GH_TOKEN: "UNOjiHOiOW9ptFp5AT9VoP24kIkXiKTcRWf+3ijpkhO6uIdYy7HRq+ieOTqrpijtvYtv6BVa4Lx4lh9GPqMCQIJQ3BNOToAQneVCkxzWbTxa+/EwsySxTNNnmRoui9sTyUphZWh0x/xlYrS/bkN++xO3jnkNU5CjnaYjvidOsX/hbG//hJpO0FKfIFuvdZk4X2hBRm8WJthOWtlbdLwjCb8StI24fYy0Bwd5ulh1kcBpk1UZ1toGap7Ph4FBXKfadMae5KjvE5ktkO4j8sI66GCqt2Tjp+SwOpZW/KFPge05e6dIOPTdWlwlviW+HVE34Ef/H+ljyj7PlsSHiyGCNLI4L9rf1C8Ayb9jtzWr23ZXJWMUH6ELlBlIV9DFqr6/MfSVhal0LV2LrZOlWK/h+Jzrh3LYaymVKHkh1tXJi/J4Fcr6RSnTJGFgbk/HBFL8US4AYTAbGExKJDBr/JqjR2oxXEFXQvePX9e/F8V4VMfMSX+MavBhHSAcfK7y+Gd1X56NVEGBgxhD6Z9uRaXaXjjEvNsgRZIcUiMf1lfVXdDw4l6WuG66/HxrYLNhUQC5ZKRlIcveqStGpLXbsIYoBFqrdPHmgWPHuCqeS1NZqb0Hy4BOvDaGUVw/Jci+i/S00bEWuuV83Xl84zWTElXFwm0E/4SdcH/2qtfpF99rWgY="
+before_install:
+  - |
+    if [ "$TRAVIS_OS_NAME" == "osx" ]; then
+      mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
+      export PATH="/tmp/git-lfs:$PATH"
+    fi
+
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s --
+  - export PATH="$HOME/.yarn/bin:$PATH"
+
+
 install:
-- yarn
+  - yarn
+
 before_script:
-- git lfs pull
+  - git lfs pull
+
 script:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder
-  -p always .; fi
-- ls -alr dist
+  # - npm install npm -g
+  #- npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
+  #- cd electron && npm install
+  #- echo %PATH%
+  #- echo %GOPATH%
+  #- set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  #- npm run --prefix ./electron
+  #- cd electron && electron-builder .
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never; fi
+
+deploy:
+  provider: releases
+  api_key:
+    secure: "UNOjiHOiOW9ptFp5AT9VoP24kIkXiKTcRWf+3ijpkhO6uIdYy7HRq+ieOTqrpijtvYtv6BVa4Lx4lh9GPqMCQIJQ3BNOToAQneVCkxzWbTxa+/EwsySxTNNnmRoui9sTyUphZWh0x/xlYrS/bkN++xO3jnkNU5CjnaYjvidOsX/hbG//hJpO0FKfIFuvdZk4X2hBRm8WJthOWtlbdLwjCb8StI24fYy0Bwd5ulh1kcBpk1UZ1toGap7Ph4FBXKfadMae5KjvE5ktkO4j8sI66GCqt2Tjp+SwOpZW/KFPge05e6dIOPTdWlwlviW+HVE34Ef/H+ljyj7PlsSHiyGCNLI4L9rf1C8Ayb9jtzWr23ZXJWMUH6ELlBlIV9DFqr6/MfSVhal0LV2LrZOlWK/h+Jzrh3LYaymVKHkh1tXJi/J4Fcr6RSnTJGFgbk/HBFL8US4AYTAbGExKJDBr/JqjR2oxXEFXQvePX9e/F8V4VMfMSX+MavBhHSAcfK7y+Gd1X56NVEGBgxhD6Z9uRaXaXjjEvNsgRZIcUiMf1lfVXdDw4l6WuG66/HxrYLNhUQC5ZKRlIcveqStGpLXbsIYoBFqrdPHmgWPHuCqeS1NZqb0Hy4BOvDaGUVw/Jci+i/S00bEWuuV83Xl84zWTElXFwm0E/4SdcH/2qtfpF99rWgY="
+  file: electron/dist/DART-0.1.5.dmg
+  skip_cleanup: true
+  on:
+    repo: APTrust/dart
+    branch: 156094170-automate-build-release
