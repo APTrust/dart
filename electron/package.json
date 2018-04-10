@@ -30,6 +30,7 @@
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
         "start": "electron ."
+        "release": "build"
     },
     "build": {
         "appId": "com.electron.DART",
