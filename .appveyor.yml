@@ -19,7 +19,7 @@ clone_folder: c:\gopath\src\github.com\APTrust\dart
 environment:
   GOPATH: c:\gopath
   access_token:
-    secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
+    secure: "IMzd8tEL6AOY7a/xeeGCUEYjqyR8lSoXhn9h1s0WHFHnzpi6QevW/v0Jr/jZQpZuYyUkTILUUdvqrsjc4CpB2vomJPVghnAo2VmSDXXo+Ac="
   appveyor_repo_tag: true
 
 
@@ -48,7 +48,7 @@ deploy:
   description: 'This is a test release of the windows build from CI'
   provider: GitHub
   auth_token:
-     secure: "pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM"
+    secure: "IMzd8tEL6AOY7a/xeeGCUEYjqyR8lSoXhn9h1s0WHFHnzpi6QevW/v0Jr/jZQpZuYyUkTILUUdvqrsjc4CpB2vomJPVghnAo2VmSDXXo+Ac="
   artifact: DART-Windows
   draft: true
   prerelease: false
