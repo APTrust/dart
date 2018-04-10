@@ -56,5 +56,9 @@ deploy:
 
 notifications:
   - provider: Slack
-    incoming_webhook:
-      secure: wQc/CYuw0WsjVvpj92QtP6//CzBNp/eFYpvlxiH6lIdhCbrh+cgQ3vExTygXJFA3xPg0attMwE/dOWipSS+vsk0EGsf0iipIaf/133/1RgQ=
+		auth_token:
+				secure: Bx629o5KYJ9NQ42qHQVU+JQhoTvgbVWbgr96XfA5cgzcc+Ks3plypX+8OKRHueZMNr5i4dgfpjle6doeIVfMsLT2NOKGPMnjW2CgzMUXDznEWfA3HEAECQ4A/Tj3pcVGVjAf+Dk7HyzScBcjEqIsjA==
+			channel: '#ops'
+			on_build_success: true
+			on_build_failure: true
+			on_build_status_changed: true
