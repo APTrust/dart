@@ -72,7 +72,14 @@ class BagIt {
             this.attachListeners(bagger, validator);
             bagger.create();
         } catch (ex) {
-            this.emitter.emit('error', ex);
+            var errStr = ex.toString();
+            var msg = errStr;
+            if (errStr.includes('ENOENT')) {
+                msg = `Cannot find one of the files to be bagged: ${errStr}`
+            } else if (errStr.includes('ENOSPC')) {
+                msg = `Ran out of disk space while writing bag. ${errStr}`
+            }
+            this.emitter.emit('error', msg);
             log.error(ex);
             if (bagger != null && bagger.errors) {
                 log.error("Bagger errors follow");
@@ -86,7 +93,7 @@ class BagIt {
                     log.error(e);
                 }
             }
-            console.error(ex);
+            console.error(msg);
         }
     }
 

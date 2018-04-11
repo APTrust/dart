@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { Job } = require('../core/job');
+const log = require('../core/log');
 const path = require('path');
 const { Util } = require('../core/util');
 
@@ -113,7 +114,17 @@ class JobFiles {
             $('#fileWarningContainer').show();
             return
         }
-        var stats = fs.statSync(filepath)
+        var stats = null;
+        try {
+            stats = fs.statSync(filepath)
+        } catch (ex) {
+            if (ex.toString().includes('ENOENT')) {
+                alert(`File ${filepath} no longer exists and will not be part of this bag.`);
+            }
+            log.error(`Cannot add file ${filepath}. Error follows.`)
+            log.error(ex)
+            return;
+        }
         var row = $(this.getTableRow(filepath, stats.isDirectory()))
         row.insertBefore('#fileTotals')
         var ui = this;
