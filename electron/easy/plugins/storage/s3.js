@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-const { OperationResult } = require('../../core/operation_result');
+const log = require('../../core/log');
 const Minio = require('minio')
+const { OperationResult } = require('../../core/operation_result');
 
 const name = "APTrust S3 uploader";
 const description = "Uploads files to any service that supports the S3 API.";
@@ -103,10 +104,13 @@ class S3 {
                 });
             })
         } catch (ex) {
-           // ... code ...
-            console.log(typeof ex);
-            console.log(ex);
-            uploader.emitter.emit('complete', false, ex);
+            log.error(typeof ex);
+            log.error(ex);
+            if (uploader && uploader.emitter) {
+                uploader.emitter.emit('complete', false, ex);
+            } else {
+                alert(`Upload failed: ${ex.toString()}`);
+            }
         }
     }
 
