@@ -78,7 +78,7 @@ class S3 {
                         // ECONNRESET: Connection reset by peer is common on large uploads.
                         // Minio client is smart enough to pick up where it left off.
                         // Log a warning, wait 5 seconds, then try again.
-                        uploader.emitter.emit('warning', `Got error ${err}. Will attempt to resume upload in five seconds.`)
+                        uploader.emitter.emit('warning', `Got error ${err} on attempt number ${uploader.attemptNumber}. Will try again in five seconds.`);
                         setTimeout(function() { uploader.upload(filepath) }, 5000);
                     } else {
                         // Too many attempts.
