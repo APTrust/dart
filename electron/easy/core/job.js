@@ -23,12 +23,6 @@ const macJunkFile = /._DS_Store$|.DS_Store$/i;
 const dotFile = /\/\.[^\/]+$|\\\.[^\\]+$/;
 const dotKeepFile = /\/\.keep$|\\\.keep$/i;
 
-var kb = 1024;
-var mb = 1024 * kb;
-var gb = 1024 * mb;
-var tb = 1024 * gb;
-
-
 class Job {
     constructor() {
         this.id = Util.uuid4();
@@ -43,6 +37,10 @@ class Job {
         this.packagedFile = "";
         this.created = null;
         this.updated = null;
+
+        // payloadSize is the total size, in bytes,
+        // of the files to be packaged.
+        this.payloadSize = 0;
 
         var setting = AppSetting.findByName("Bagging Directory");
         if (setting != null) {

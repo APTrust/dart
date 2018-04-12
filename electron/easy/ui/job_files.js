@@ -191,6 +191,9 @@ class JobFiles {
         } else {
             totalCell.text(Util.toHumanSize(newValue))
         }
+        if (cssClass == '.fileSize') {
+            this.job.payloadSize = newValue;
+        }
     }
 
     getTotalCell(cssClass) {
@@ -224,6 +227,7 @@ class JobFiles {
         var prevTotalSize = parseInt(totalSizeCell.data('total'), 10) || 0
         totalSizeCell.data('total', (prevTotalSize - size))
         totalSizeCell.text(Util.toHumanSize(prevTotalSize - size))
+        this.job.payloadSize = (prevTotalSize - size);
     }
 
     getTableRow(filepath, isDir) {
