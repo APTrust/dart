@@ -123,6 +123,7 @@ function showFilesReset() {
     $("#jobPackageComplete .message").html("");
     $("#jobError .message").html("");
     $("#jobError").hide();
+    div.show();
 }
 
 function showFilesSucceeded() {
