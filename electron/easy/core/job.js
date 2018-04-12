@@ -404,6 +404,15 @@ class Job {
         return result;
     }
 
+    packagedFileModtime() {
+        let modTime = null;
+        if (this.packagedFile && fs.existsSync(this.packagedFile)) {
+            let stat = fs.statSync(this.packagedFile);
+            modTime = stat.mtime;
+        }
+        return modTime;
+    }
+
     // Run this job
     run() {
         // Bag the files

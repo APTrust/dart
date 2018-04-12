@@ -109,6 +109,7 @@ class BagIt {
                     log.error("Packaging completed with error.");
                     log.error(message);
                     packager.emitter.emit('complete', false, message)
+                    packager.deleteBag();
                 }
             });
             packager.emitter.on('validateComplete', function(succeeded, message) {
@@ -122,9 +123,23 @@ class BagIt {
                     log.error("Validation completed with error.");
                     log.error(message);
                     packager.emitter.emit('complete', false, message)
+                    packager.deleteBag();
                 }
             });
             packager.handlersAdded = true;
+        }
+    }
+
+    // Delete the bag. We only do this if packaging or validation failed.
+    deleteBag() {
+        if (this.job.packagedFile && fs.existsSync(this.job.packagedFile)) {
+            try {
+                fs.unlink(this.job.packagedFile);
+                log.info(`Deleted ${this.job.packagedFile} after packaging and/or validation errors.`);
+            } catch (ex) {
+                log.error(`Failed to delete invalid bag at ${this.job.packagedFile}: ${ex.toString()}`);
+            }
+            this.job.packagedFile = '';
         }
     }
 
