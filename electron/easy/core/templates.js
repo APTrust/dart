@@ -32,6 +32,7 @@ var setupQuestion = handlebars.compile(readFile('setup_question.html'));
 var storageServiceForm = handlebars.compile(readFile('storage_service_form.html'));
 var storageServiceList = handlebars.compile(readFile('storage_service_list.html'));
 var tagDefinitionForm = handlebars.compile(readFile('tag_definition_form.html'));
+var uploadOrRebag = handlebars.compile(readFile('upload_or_rebag.html'));
 
 handlebars.registerPartial({
     customTag: readFile('custom_tag.html'),
@@ -80,3 +81,4 @@ module.exports.setupQuestion = setupQuestion;
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;
 module.exports.tagDefinitionForm = tagDefinitionForm;
+module.exports.uploadOrRebag = uploadOrRebag;

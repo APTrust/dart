@@ -1,7 +1,8 @@
 const path = require('path');
 const fs = require('fs');
-const { OperationResult } = require('../../core/operation_result');
+const log = require('../../core/log');
 const Minio = require('minio')
+const { OperationResult } = require('../../core/operation_result');
 
 const name = "APTrust S3 uploader";
 const description = "Uploads files to any service that supports the S3 API.";
@@ -77,11 +78,11 @@ class S3 {
                         // ECONNRESET: Connection reset by peer is common on large uploads.
                         // Minio client is smart enough to pick up where it left off.
                         // Log a warning, wait 5 seconds, then try again.
-                        uploader.emitter.emit('warning', `Got error ${err}. Will attempt to resume upload in five seconds.`)
-                        setTimeout(uploader.upload, 5000);
+                        uploader.emitter.emit('warning', `Got error ${err} on attempt number ${uploader.attemptNumber}. Will try again in five seconds.`);
+                        setTimeout(function() { uploader.upload(filepath) }, 5000);
                     } else {
                         // Too many attempts.
-                        uploader.emitter.emit('complete', false, "Upload failed after ${uploader.attemptNumber} attempts. Last error: ${err}");
+                        uploader.emitter.emit('complete', false, `Upload failed after ${uploader.attemptNumber} attempts. Last error: ${err}`);
                     }
                     return;
                 }
@@ -103,10 +104,13 @@ class S3 {
                 });
             })
         } catch (ex) {
-           // ... code ...
-            console.log(typeof ex);
-            console.log(ex);
-            uploader.emitter.emit('complete', false, ex);
+            log.error(typeof ex);
+            log.error(ex);
+            if (uploader && uploader.emitter) {
+                uploader.emitter.emit('complete', false, ex);
+            } else {
+                alert(`Upload failed: ${ex.toString()}`);
+            }
         }
     }
 

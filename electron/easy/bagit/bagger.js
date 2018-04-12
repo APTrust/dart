@@ -290,12 +290,16 @@ class Bagger {
         // this.emitter.emit('fileAddStart', `Adding ${relDestPath}`);
         var bagItFile = new BagItFile(f.absPath, relDestPath, f.stats);
         this.files.push(bagItFile);
-        if (this.writeAs == WRITE_AS_DIR) {
-            this._copyIntoDir(bagItFile);
-        } else if (this.writeAs == WRITE_AS_TAR) {
-            this._copyIntoTar(bagItFile);
-        } else {
-            throw `Unknown writeAs value: '${this.writeAs}'`
+        try {
+            if (this.writeAs == WRITE_AS_DIR) {
+                this._copyIntoDir(bagItFile);
+            } else if (this.writeAs == WRITE_AS_TAR) {
+                this._copyIntoTar(bagItFile);
+            } else {
+                throw `Unknown writeAs value: '${this.writeAs}'`
+            }
+        } catch (ex) {
+            this.errors.push(`Error writing ${relDestPath}: ${ex.toString()}`);
         }
     }
 
@@ -305,7 +309,6 @@ class Bagger {
         var writer = fs.createWriteStream(absDestPath);
         var reader = fs.createReadStream(bagItFile.absSourcePath);
         var hashes = this._getCryptoHashes(f);
-        //console.log(`Setting up pipes for ${hashes.length} digests + file`);
         for (var h of hashes) {
             reader.pipe(h)
         }
