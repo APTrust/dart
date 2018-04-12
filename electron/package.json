@@ -1,6 +1,6 @@
 {
     "name": "DART",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "Create BagIt files and send them to S3.",
     "main": "main.js",
     "repository": {
