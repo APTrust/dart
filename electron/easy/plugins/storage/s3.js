@@ -79,10 +79,10 @@ class S3 {
                         // Minio client is smart enough to pick up where it left off.
                         // Log a warning, wait 5 seconds, then try again.
                         uploader.emitter.emit('warning', `Got error ${err}. Will attempt to resume upload in five seconds.`)
-                        setTimeout(uploader.upload, 5000);
+                        setTimeout(function() { uploader.upload(filepath) }, 5000);
                     } else {
                         // Too many attempts.
-                        uploader.emitter.emit('complete', false, "Upload failed after ${uploader.attemptNumber} attempts. Last error: ${err}");
+                        uploader.emitter.emit('complete', false, `Upload failed after ${uploader.attemptNumber} attempts. Last error: ${err}`);
                     }
                     return;
                 }
