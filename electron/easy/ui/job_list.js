@@ -9,6 +9,9 @@ class JobList {
     }
 
     initEvents() {
+        $("#btnNewJob").off("click");
+        $('.clickable-row[data-object-type="Job"]').off("click");
+
         $("#btnNewJob").on("click", JobList.onNewClick);
         $('.clickable-row[data-object-type="Job"]').on("click", this.onJobClick());
     }

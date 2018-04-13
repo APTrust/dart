@@ -18,6 +18,13 @@ class BagItProfileForm {
     }
 
     initEvents() {
+        $("#btnBagItProfileSave").off("click");
+        $("#btnBagItProfileDelete").off("click");
+        $('#btnNewTagFile').off('click');
+        $("[data-btn-type=NewTagDef]").off("click");
+        $('.clickable-row[data-object-type="TagDefinition"]').off("click");
+
+
         $("#btnBagItProfileSave").on("click", this.onSaveClick());
         $("#btnBagItProfileDelete").on("click", this.onDeleteClick());
 

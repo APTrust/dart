@@ -11,6 +11,9 @@ class StorageServiceList {
     }
 
     initEvents() {
+        $("#btnNewStorageService").off("click");
+        $('.clickable-row[data-object-type="StorageService"]').off("click");
+
         $("#btnNewStorageService").on("click", this.onServiceClick);
         $('.clickable-row[data-object-type="StorageService"]').on("click", this.onServiceClick);
     }

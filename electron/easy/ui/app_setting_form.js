@@ -13,6 +13,9 @@ class AppSettingForm {
     }
 
     initEvents() {
+        $("#btnApplicationSettingSave").off("click");
+        $("#btnApplicationSettingDelete").off("click");
+
         $("#btnApplicationSettingSave").on("click", this.onSave());
         $("#btnApplicationSettingDelete").on("click", this.onDelete());
     }

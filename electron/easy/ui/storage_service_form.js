@@ -15,6 +15,9 @@ class StorageServiceForm {
     }
 
     initEvents() {
+        $("#btnStorageServiceSave").off("click");
+        $("#btnStorageServiceDelete").off("click");
+
         $("#btnStorageServiceSave").on("click", this.onSave());
         $("#btnStorageServiceDelete").on("click", this.onDelete());
     }

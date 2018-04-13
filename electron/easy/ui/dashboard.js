@@ -16,6 +16,8 @@ class Dashboard {
     }
 
     initEvents() {
+        $('.clickable-row[data-object-type="Job"]').off("click");
+
         $('.clickable-row[data-object-type="Job"]').on("click", this.showJobDetail);
 
         $('#gettingStarted').click(function(e) {

@@ -30,6 +30,7 @@ class JobTags {
         $("#btnJobPackaging").click(this.onJobPackagingClick());
 
         // Show form for adding a new tag file.
+        $("#btnNewTagFile").off("click");
         $("#btnNewTagFile").on("click", this.onNewTagFileClick(null));
 
         // Delete a custom tag by clicking the little X

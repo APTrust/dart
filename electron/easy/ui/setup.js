@@ -18,11 +18,13 @@ class Setup {
         var setup = this;
         $('#setupContent').html(setup.provider.startMessage());
         $('#btnPrevious').show();
+        $('#btnPrevious').off('click');
         $('#btnPrevious').on('click', function() {
             setup.start();
             Menu.setupShow();
         });
         $('#btnNext').show();
+        $('#btnNext').off('click');
         $('#btnNext').on('click', function() {
             setup.installSettings();
         });

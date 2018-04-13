@@ -14,6 +14,9 @@ class BagItProfileList {
     }
 
     initEvents() {
+        $("#btnNewBagItProfile").off("click");
+        $('.clickable-row[data-object-type="BagItProfile"]').off("click");
+
         $("#btnNewBagItProfile").on("click", this.onNewClick());
         $('.clickable-row[data-object-type="BagItProfile"]').on("click", this.onProfileClick);
     }
