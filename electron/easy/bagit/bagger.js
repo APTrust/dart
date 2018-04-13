@@ -130,11 +130,10 @@ class Bagger {
         // Assuming we need payload plus 1% for tag files and manifests.
         let spaceNeeded = this.job.payloadSize * 1.01;
         let du = diskusage.checkSync(this.job.baggingDirectory);
-        console.log(spaceNeeded);
-        console.log(du.available);
+        let required = Util.toHumanSize(spaceNeeded);
+        let available = Util.toHumanSize(du.available);
+        log.info(`Bag ${this.job.bagName} needs ${required} of space. Disk has ${available} available.`)
         if (du.available < spaceNeeded) {
-            let required = Util.toHumanSize(spaceNeeded);
-            let available = Util.toHumanSize(du.available);
             throw new Error(`Cannot build bag at ${this.job.baggingDirectory}. Need ${required} of space, but only ${available} is available.`);
         }
     }
