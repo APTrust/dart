@@ -2,7 +2,6 @@ const async = require('async');
 const { BagItFile } = require('./bagit_file');
 const constants = require('./constants');
 const crypto = require('crypto');
-const diskusage = require('diskusage');
 const EventEmitter = require('events');
 const fs = require('fs');
 const log = require('../core/log');
@@ -126,22 +125,9 @@ class Bagger {
         return this._tarOutputWriter;
     }
 
-    assertDiskSpace() {
-        // Assuming we need payload plus 1% for tag files and manifests.
-        let spaceNeeded = this.job.payloadSize * 1.01;
-        let du = diskusage.checkSync(this.job.baggingDirectory);
-        let required = Util.toHumanSize(spaceNeeded);
-        let available = Util.toHumanSize(du.available);
-        log.info(`Bag ${this.job.bagName} needs ${required} of space. Disk has ${available} available.`)
-        if (du.available < spaceNeeded) {
-            throw new Error(`Cannot build bag at ${this.job.baggingDirectory}. Need ${required} of space, but only ${available} is available.`);
-        }
-    }
-
     // TODO: Separate tar writer and dir writer into separate providers
     // that implement the same interface.
     create() {
-        this.assertDiskSpace(); // throws exception when there's not enough space
         var bagger = this;
         bagger.emitter.emit('packageStart', `Starting to build ${bagger.job.bagName}`);
         bagger.preValidationResult = this.job.validate();
