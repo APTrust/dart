@@ -1,24 +1,25 @@
 #!/usr/bin/env ruby
 
-def electron_cmd
-  path = path_to_node_electron()
-  if path != nil
-    return path
-  end
-  if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM)
-    # Windows
-    path = ""
-  elsif (/darwin/ =~ RUBY_PLATFORM)
-    # Mac
-    # Assuming you used the OSX installer
-    path = "/Applications/Electron.app/Contents/MacOS/Electron"
-  elsif (/linux/ =~ RUBY_PLATFORM)
-    # Linux
-    # Assuming global install through npm
-    path = `which electron`.chomp
-  end
-  return path
-end
+# def electron_cmd
+#   path = path_to_node_electron()
+#   if path != nil
+#     return path
+#   end
+#   if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM)
+#     # Windows
+#     path = ""
+#   elsif (/darwin/ =~ RUBY_PLATFORM)
+#     # Mac
+#     # Assuming you used the OSX installer
+#     # path = "/Applications/Electron.app/Contents/MacOS/Electron"
+#     path = File.join(File.dirname(__FILE__), 'node_modules', '.bin', 'electron')
+#   elsif (/linux/ =~ RUBY_PLATFORM)
+#     # Linux
+#     # Assuming global install through npm
+#     path = `which electron`.chomp
+#   end
+#   return path
+# end
 
 def easy_store_path
   if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM)
@@ -36,7 +37,7 @@ def path_to_node_electron
 end
 
 if __FILE__ == $0
-  cmd = "#{electron_cmd} #{easy_store_path}"
+  cmd = "#{path_to_node_electron} #{easy_store_path}"
   puts cmd
   pid = Process.spawn(cmd, { chdir: easy_store_path() })
   puts "Running with pid #{pid}. Control-C to exit."
