@@ -33,6 +33,7 @@ install:
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
+  - set GITREF=$(git log --format=%h -1)
 
 build_script:
   - npm run --prefix ./electron
@@ -44,7 +45,8 @@ artifacts:
 
 test: off
 deploy:
-  release: dart-$(appveyor_build_version)
+  #release: dart-$(appveyor_build_version)
+  release: dart-$(GITREF)
   description: 'This is a test release of the windows build from CI'
   provider: GitHub
   auth_token:
