@@ -1,3 +1,4 @@
+
 os: osx
 osx_image: xcode9.2
 
@@ -6,7 +7,7 @@ sudo: false
 
 language: node_js
 node_js: "9"
-env:
+environment:
   - ELECTRON_CACHE=$HOME/.cache/electron
   - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
 
@@ -16,21 +17,17 @@ cache:
   - $HOME/.cache/electron
   - $HOME/.cache/electron-builder
   - $HOME/.npm/_prebuilds
-notifications:
-  slack:
-    secure: "IWHP3fVK8/YJ9xmMQyz6zj0PnxI2pEkRgpZJUpSORHjGZFG5sGcmhb5DV2jtjY4YxQzQud7F7ZuFBzY+7yaTCnJC+tNAFzcmpgZBcxPiTfWIsWcbft1ITJtV/u+k25MVKW4YpZNpG51UInuncYLLpEZlflix322C97MtsgrZUpmWnmBEVemQ89UwaQ/SZpk6FXWPMzoGlaxr/ZF6JdsYuFHxm1/WurrpEuIRxj0TorQHqmsdgZPTK7Gg864RCKkE+55kFxTNRssZ0SmD7mWzEvHgosy+X/E8lch59qt5YFxT2tFNSzggGFATrY2VyVVl234pnlU1p2weDOdmhY8YB8PXFLkxipGmwNwaTQupzyHHj74WT9dL+1bNkbgAM+208gPa5VxaPKOgV59Z/PnuLpPIRZ8EFPJ5r/um84WjIlbQkrUkubUdlUbCc+e6bSBn5LaOJsDhonwumRk2XoKcCZLO92zZmIvlO84i/PiUvqRIG6SaLEIj081jVDYhm0o2WlnKTSKWxbCGq70L/3LSTtAjFBYELtLiYI0euYlgxskn89OtEHsPzIvVPQyfNvIie8WZ/rYKn+psoiPSVy89v8g2UZRejj0/z0jJf/MQ33s5+Z1TV3wE3QuYA6yNlViMRTUlvRLuaPwlq3A0meS7JZSsMIDjkbp9J9YlzGqw7Is="
+
 environment:
   - GOPATH: c:\gopath
   - access_token:
         secure:  pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
-  - GH_TOKEN: "UNOjiHOiOW9ptFp5AT9VoP24kIkXiKTcRWf+3ijpkhO6uIdYy7HRq+ieOTqrpijtvYtv6BVa4Lx4lh9GPqMCQIJQ3BNOToAQneVCkxzWbTxa+/EwsySxTNNnmRoui9sTyUphZWh0x/xlYrS/bkN++xO3jnkNU5CjnaYjvidOsX/hbG//hJpO0FKfIFuvdZk4X2hBRm8WJthOWtlbdLwjCb8StI24fYy0Bwd5ulh1kcBpk1UZ1toGap7Ph4FBXKfadMae5KjvE5ktkO4j8sI66GCqt2Tjp+SwOpZW/KFPge05e6dIOPTdWlwlviW+HVE34Ef/H+ljyj7PlsSHiyGCNLI4L9rf1C8Ayb9jtzWr23ZXJWMUH6ELlBlIV9DFqr6/MfSVhal0LV2LrZOlWK/h+Jzrh3LYaymVKHkh1tXJi/J4Fcr6RSnTJGFgbk/HBFL8US4AYTAbGExKJDBr/JqjR2oxXEFXQvePX9e/F8V4VMfMSX+MavBhHSAcfK7y+Gd1X56NVEGBgxhD6Z9uRaXaXjjEvNsgRZIcUiMf1lfVXdDw4l6WuG66/HxrYLNhUQC5ZKRlIcveqStGpLXbsIYoBFqrdPHmgWPHuCqeS1NZqb0Hy4BOvDaGUVw/Jci+i/S00bEWuuV83Xl84zWTElXFwm0E/4SdcH/2qtfpF99rWgY="
 before_install:
   - |
     if [ "$TRAVIS_OS_NAME" == "osx" ]; then
       mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
       export PATH="/tmp/git-lfs:$PATH"
     fi
-
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s --
   - export PATH="$HOME/.yarn/bin:$PATH"
 
@@ -42,23 +39,29 @@ before_script:
   - git lfs pull
 
 script:
-  # - npm install npm -g
-  #- npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
-  #- cd electron && npm install
-  #- echo %PATH%
-  #- echo %GOPATH%
-  #- set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
-  #- npm run --prefix ./electron
-  #- cd electron && electron-builder .
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never; fi
 
+before_deploy:
+  - DARTVER=$(grep version electron/package.json |sed "s/[^0-9.]//g")
+  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+  - cp electron/dist/DART-$DARTVER.dmg electron/dist/DART-$DARTVER.$(git log --format=%h -1).dmg
 deploy:
   provider: releases
   api_key:
-    secure: "1Y9VxRWclrTsR9KwJF03NZ2zBgxn0htlA89FTqFbvTJP/aQqSYN8MXQTWL7JWrF+lGlfWS7pKAeKukHcW3ZrcVYTuASeykQMBrDxjsVpBkqHyRwPa359nvoxnAAL/AX565mBWOJkMiSJVGn1UgTF3Jq1BIv6h5GvO4CBdxDI6ZbQsYW0HRW3HUCHErcHuYY5VLjFNnEoBROh/wPiWwZ0CoYf12qt0sxrslq8OTaCkmxhpVET7UbZBngXmf87SMRqaNwYBPAAzCp3QcWR21FgHPrnVDnIQy6dl4+cFe9OUy/kDIy7TBHbqJuqEg1aDAdgbhF79xt42ds1DJMUEU+hzDmLEK9wY6AU8C1upf8VfZ1PcndJhalyyMhuiILDULAi/1b76pxSyENGlVMgZWXXy//l1kt0Nbfo6dLfiFNRZizoUVhRAUf/yCone+VeWzpvrBBrWqIj0AhtWW/ZOEMxqnecgJim9nCQ405TwdlHa+Emw00KVg9M9nJH9c50W8jItdYQotAD2lXyV09i8ecVEVObjRRaHRvAnmnUpQ7pICrZUq/ix6zdIEAA5cDoWuy2yXHg7XfX606XipCYylHu5VP12aT7yI9POnS5SQ6+hdzREIgqIQeIBr8XTvFhr8sH7g+6c4qQ8JbovOQUTfInMrJEE9mdcw3eEFAi49to8Bw="
-  file: electron/dist/DART-0.1.5.dmg
+    secure: y0Xvq8GEOFeFTrSYQbX1tUQmX39zR9QGJFPskFt+WJf+wjOxAefiw2+K+Cn54kNtOS3fZd2qWvM4J9MtEBC5wccqI2wJEAOfMlBLr1ZJyt+4p/6lT0WzUvzFZMlvrI1MwUczBo21JHzA1Vuwy3pgZbCHDv283niY8sA0+IxMs39Zplf5gQJazYSSbq0cnqzLRXKFR2tBxXgDk0+zDt+FnnmEk181ez/BLJrStrZT1O5yF++q2ZxOX9UyAtJolylg4D12n8oCnIzRDO5ACQlRvompxg8561rGzYbSxdeDjM/kELi3qiyjm6pn8Kw7bSvOrHR3IXa4gqynIq2PVXfxC1jLp9Ss9puLieo2OdF2UDiVOSDq40PqIMOl+Yx0L8uqDtU/5ujAPrel6XoY1dJrxrhlrQdG4KdbgvQm/WaCvMWNTbFoWJ9hIMtETU6eou/A3bWeWb/2KGgBCyFxjWFeMGwcRFEEhrBGjcvMPz8yh/WhkAOIpjUczjuawEs/bNleg01YVZI8l5PgwfwlGC7Aa6Pc3IKXs6o4Xle8ZXbuja/VzODiNiGqC3+lHGTsWcjK0nkahXfewTQyOMLZztbVprc1eVYZnBk1mE4pcRt7LhBO5+r/IGmVuxhyQ+SlchDBo1AqeHftm8Mz8g5XlZzIYEVffxblweYyLuiEFtj/fks=
+  file_glob: true
+  file:
+    - electron/dist/*
   skip_cleanup: true
+  overwrite: true
   on:
-    repo: APTrust/dart
     branch: master
+
+notifications:
+  slack:
+    secure: IWHP3fVK8/YJ9xmMQyz6zj0PnxI2pEkRgpZJUpSORHjGZFG5sGcmhb5DV2jtjY4YxQzQud7F7ZuFBzY+7yaTCnJC+tNAFzcmpgZBcxPiTfWIsWcbft1ITJtV/u+k25MVKW4YpZNpG51UInuncYLLpEZlflix322C97MtsgrZUpmWnmBEVemQ89UwaQ/SZpk6FXWPMzoGlaxr/ZF6JdsYuFHxm1/WurrpEuIRxj0TorQHqmsdgZPTK7Gg864RCKkE+55kFxTNRssZ0SmD7mWzEvHgosy+X/E8lch59qt5YFxT2tFNSzggGFATrY2VyVVl234pnlU1p2weDOdmhY8YB8PXFLkxipGmwNwaTQupzyHHj74WT9dL+1bNkbgAM+208gPa5VxaPKOgV59Z/PnuLpPIRZ8EFPJ5r/um84WjIlbQkrUkubUdlUbCc+e6bSBn5LaOJsDhonwumRk2XoKcCZLO92zZmIvlO84i/PiUvqRIG6SaLEIj081jVDYhm0o2WlnKTSKWxbCGq70L/3LSTtAjFBYELtLiYI0euYlgxskn89OtEHsPzIvVPQyfNvIie8WZ/rYKn+psoiPSVy89v8g2UZRejj0/z0jJf/MQ33s5+Z1TV3wE3QuYA6yNlViMRTUlvRLuaPwlq3A0meS7JZSsMIDjkbp9J9YlzGqw7Is=
+    on_success: always
+  email:
+    on_failure: never
+    on_succes: never
