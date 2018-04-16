@@ -1,7 +1,7 @@
 {
     "name": "DART",
     "version": "0.1.7",
-    "description": "Create BagIt files and send them to S3.",
+    "description": "Package BagIt files and ship them to S3.",
     "main": "main.js",
     "repository": {
         "type": "git",
@@ -40,6 +40,7 @@
         "electronVersion": "1.8.4",
         "asar": true,
         "directories": {
+            "app": "/Users/apd4n/go/src/github.com/APTrust/dart/electron",
             "output": "dist"
         },
         "mac": {
