@@ -4,7 +4,7 @@ platform: x64
 
 init:
   - git config --global core.autocrlf input
-  - ps: Update-AppveyorBuild -Version "0.1.7.$env:appveyor_build_number-$($env:appveyor_repo_commit.substring(0,7))"
+  - ps: Update-AppveyorBuild -Version "0.1.7.$($env:appveyor_repo_commit.substring(0,7))"
 
 
 cache:
@@ -46,9 +46,8 @@ artifacts:
 
 test: off
 deploy:
-  #release: dart-$(appveyor_build_version)
-  release: dart-$(GITREF)
-  description: 'This is a test release of the windows build from CI'
+  release: dart-$(appveyor_build_version)
+  description: 'APTrust Digital Asset Routing Tool'
   provider: GitHub
   auth_token:
     secure: "aRmyb4MvUXixI0YxRrymu6tioWaonnxMq942M8IVd8TN9xp/8249Yvl5GxXy8mWs"
