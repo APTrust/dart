@@ -19,7 +19,6 @@ cache:
   - $HOME/.npm/_prebuilds
 
 environment:
-  - GOPATH: c:\gopath
   - access_token:
         secure:  pJmtCY7+qzctn9m6UejaJGlls3IMl8p2Tb3DjypHL+8DLmNNHK0jQZmZbb4sIJgM
 before_install:
