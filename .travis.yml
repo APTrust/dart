@@ -29,7 +29,12 @@ before_install:
     fi
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s --
   - export PATH="$HOME/.yarn/bin:$PATH"
+  - export DARTVER=$(grep version electron/package.json |sed "s/[^0-9.]//g")
+  - export GITHASH=$(git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)")
 
+env:
+  global:
+    - GCOMMIT=${TRAVIS_COMMIT::8}
 
 install:
   - yarn
@@ -42,20 +47,21 @@ script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never; fi
 
 before_deploy:
-  - DARTVER=$(grep version electron/package.json |sed "s/[^0-9.]//g")
-  - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
-  - cp electron/dist/DART-$DARTVER.dmg electron/dist/DART-$DARTVER.$(git log --format=%h -1).dmg
+  - echo $DARTVER
+  - echo $GITHASH
 deploy:
   provider: releases
   api_key:
     secure: y0Xvq8GEOFeFTrSYQbX1tUQmX39zR9QGJFPskFt+WJf+wjOxAefiw2+K+Cn54kNtOS3fZd2qWvM4J9MtEBC5wccqI2wJEAOfMlBLr1ZJyt+4p/6lT0WzUvzFZMlvrI1MwUczBo21JHzA1Vuwy3pgZbCHDv283niY8sA0+IxMs39Zplf5gQJazYSSbq0cnqzLRXKFR2tBxXgDk0+zDt+FnnmEk181ez/BLJrStrZT1O5yF++q2ZxOX9UyAtJolylg4D12n8oCnIzRDO5ACQlRvompxg8561rGzYbSxdeDjM/kELi3qiyjm6pn8Kw7bSvOrHR3IXa4gqynIq2PVXfxC1jLp9Ss9puLieo2OdF2UDiVOSDq40PqIMOl+Yx0L8uqDtU/5ujAPrel6XoY1dJrxrhlrQdG4KdbgvQm/WaCvMWNTbFoWJ9hIMtETU6eou/A3bWeWb/2KGgBCyFxjWFeMGwcRFEEhrBGjcvMPz8yh/WhkAOIpjUczjuawEs/bNleg01YVZI8l5PgwfwlGC7Aa6Pc3IKXs6o4Xle8ZXbuja/VzODiNiGqC3+lHGTsWcjK0nkahXfewTQyOMLZztbVprc1eVYZnBk1mE4pcRt7LhBO5+r/IGmVuxhyQ+SlchDBo1AqeHftm8Mz8g5XlZzIYEVffxblweYyLuiEFtj/fks=
+  on:
+    branch:
+      - master
+      - 156094170-automate-build-release
   file_glob: true
   file:
     - electron/dist/*
   skip_cleanup: true
   overwrite: true
-  on:
-    branch: master
 
 notifications:
   slack:
