@@ -4,6 +4,8 @@ platform: x64
 
 init:
   - git config --global core.autocrlf input
+  - ps: Update-AppveyorBuild -Version "0.1.7.$env:appveyor_build_number-$($env:appveyor_repo_commit.substring(0,7))"
+
 
 cache:
   - electron\node_modules
@@ -33,7 +35,6 @@ install:
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
-  - set GITREF=$(git log --format=%h -1)
 
 build_script:
   - npm run --prefix ./electron
