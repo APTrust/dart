@@ -262,6 +262,14 @@ class Bagger {
         // On done, close the tar archive. Clean up all temp files.
         this.getTarPacker().finalize();
 
+        if (this._tarOutputWriter != null) {
+            try {
+                this._tarOutputWriter.close();
+            } catch (ex) {
+                log.warn(`Could not close tar output writer: ${ex}`)
+            }
+        }
+
         // TODO: This MUST be called, even if we exit early with an error.
         for(var tmpFile of this.tmpFiles) {
             if (fs.existsSync(tmpFile)) {
