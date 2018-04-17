@@ -2,7 +2,6 @@
 os: osx
 osx_image: xcode9.2
 
-dist: trusty
 sudo: false
 
 language: node_js
@@ -29,12 +28,6 @@ before_install:
     fi
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s --
   - export PATH="$HOME/.yarn/bin:$PATH"
-  - export DARTVER=$(grep version electron/package.json |sed "s/[^0-9.]//g")
-  - export GITHASH=$(git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)")
-
-env:
-  global:
-    - GCOMMIT=${TRAVIS_COMMIT::8}
 
 install:
   - yarn
@@ -45,10 +38,11 @@ before_script:
 script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never; fi
+  - bash cibuild.sh
 
 before_deploy:
   - echo $DARTVER
-  - echo $GITHASH
+  - echo $GCOMMIT
 deploy:
   provider: releases
   api_key:
@@ -59,7 +53,7 @@ deploy:
       - 156094170-automate-build-release
   file_glob: true
   file:
-    - electron/dist/*
+    - electron/dist/*.dmg
   skip_cleanup: true
   overwrite: true
 
