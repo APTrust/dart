@@ -6,7 +6,6 @@ init:
   - git config --global core.autocrlf input
   - ps: Update-AppveyorBuild -Version "0.1.7.$($env:appveyor_repo_commit.substring(0,7))"
 
-
 cache:
   - electron\node_modules
   - '%APPDATA%\npm-cache'
