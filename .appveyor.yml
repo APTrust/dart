@@ -46,7 +46,7 @@ artifacts:
 
 test: off
 deploy:
-  release: dart-$(appveyor_build_version)
+  release: v$(appveyor_build_version)
   description: 'APTrust Digital Asset Routing Tool'
   provider: GitHub
   auth_token:
