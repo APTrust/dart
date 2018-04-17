@@ -23,7 +23,7 @@ environment:
   access_token:
     secure: "IMzd8tEL6AOY7a/xeeGCUEYjqyR8lSoXhn9h1s0WHFHnzpi6QevW/v0Jr/jZQpZuYyUkTILUUdvqrsjc4CpB2vomJPVghnAo2VmSDXXo+Ac="
   appveyor_repo_tag: true
-
+  artifactName: DART.Setup.0.1.7.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
   - ps: Install-Product node 8 x64
@@ -52,7 +52,7 @@ deploy:
   auth_token:
     secure: "aRmyb4MvUXixI0YxRrymu6tioWaonnxMq942M8IVd8TN9xp/8249Yvl5GxXy8mWs"
   artifact: DART-Windows
-  draft: true
+  draft: false
   prerelease: false
 
 notifications:
