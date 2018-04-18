@@ -1,33 +1,16 @@
 {{#if jobs}}
 <div class="row">
-  <div class="col-sm-6">
-      <h4>Recent Jobs</h4>
-      <table class="table table-hover">
-          <thead class="thead-inverse">
-              <tr>
-                  <th>Job</th>
-                  <th>Details</th>
-              </tr>
-          </thead>
-          <tbody>
-              {{#each jobs}}
-              <tr class="clickable-row" data-object-id="{{ id }}" data-object-type="Job">
-                  <td>{{ bagName }}</td>
-                  <td>
-                      {{#each operationResults as |result resultIndex|}}
-                        {{ resultSummary result }} <br/>
-                      {{else}}
-                        Job has not been run.
-                      {{/each}}
-                  </td>
-              </tr>
-              {{/each }}
-          </tbody>
-      </table>
-  </div>
-  <div class="col-sm-6" id="jobDetail">
-
-  </div>
+    <h4>Recent Jobs</h4>
+    {{#each jobs}}
+    <div class="dashboard-job" data-object-id="{{ id }}" data-object-type="Job">
+        <div class="dashboard-job-name">{{ bagName }}</div>
+        {{#each operationResults as |result resultIndex|}}
+          <div class="job-op-result">{{ resultSummary result }}</div>
+        {{else}}
+          Job has not been run.
+        {{/each}}
+    </div>
+    {{/each}}
 </div>
 {{else}}
 

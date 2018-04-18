@@ -16,10 +16,6 @@ class Dashboard {
     }
 
     initEvents() {
-        $('.clickable-row[data-object-type="Job"]').off("click");
-
-        $('.clickable-row[data-object-type="Job"]').on("click", this.showJobDetail);
-
         $('#gettingStarted').click(function(e) {
             $("#container").html(Templates.help());
             State.ActiveObject = null;
@@ -32,42 +28,42 @@ class Dashboard {
         });
     }
 
-    showJobDetail() {
-        var id = $(this).data('object-id');
-        var data = {};
-        var job = Job.find(id);
-        data.job = job;
-        if (job.bagItProfile != null) {
-            data.bagInternalIdentifier = job.bagItProfile.bagInternalIdentifier();
-            data.bagTitle = job.bagItProfile.bagTitle();
-            data.bagDescription =job.bagItProfile.bagDescription();
-        }
-        data.opResults = [];
-        for (var result of job.operationResults) {
-            data.opResults.push({
-                cssClass: result.succeeded ? 'text-success' : 'text-warning',
-                summary: result.summary(),
-                filename: path.basename(result.filename),
-                filesize: result.filesize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                note: result.note,
-                warning: result.warning,
-                error: result.error
-            });
-            if (result.provider == "APTrust BagIt Provider") {
-                var manifestDir = path.join(app.getPath('userData'), 'manifests');
-                for (var filename of fs.readdirSync(manifestDir)) {
-                    if (filename.startsWith(job.id)) {
-                        data.hasManifest = true;
-                        break;
-                    }
-                }
-            }
-        }
-        State.ActiveObject = job;
-        $('#jobDetail').html(Templates.jobSummaryPanel(data));
-        $('#btnViewManifest').on('click', Dashboard.viewManifests);
-        $('#btnGoToJob').on('click', Dashboard.loadJob);
-    }
+    // showJobDetail() {
+    //     var id = $(this).data('object-id');
+    //     var data = {};
+    //     var job = Job.find(id);
+    //     data.job = job;
+    //     if (job.bagItProfile != null) {
+    //         data.bagInternalIdentifier = job.bagItProfile.bagInternalIdentifier();
+    //         data.bagTitle = job.bagItProfile.bagTitle();
+    //         data.bagDescription =job.bagItProfile.bagDescription();
+    //     }
+    //     data.opResults = [];
+    //     for (var result of job.operationResults) {
+    //         data.opResults.push({
+    //             cssClass: result.succeeded ? 'text-success' : 'text-warning',
+    //             summary: result.summary(),
+    //             filename: path.basename(result.filename),
+    //             filesize: result.filesize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+    //             note: result.note,
+    //             warning: result.warning,
+    //             error: result.error
+    //         });
+    //         if (result.provider == "APTrust BagIt Provider") {
+    //             var manifestDir = path.join(app.getPath('userData'), 'manifests');
+    //             for (var filename of fs.readdirSync(manifestDir)) {
+    //                 if (filename.startsWith(job.id)) {
+    //                     data.hasManifest = true;
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     State.ActiveObject = job;
+    //     $('#jobDetail').html(Templates.jobSummaryPanel(data));
+    //     $('#btnViewManifest').on('click', Dashboard.viewManifests);
+    //     $('#btnGoToJob').on('click', Dashboard.loadJob);
+    // }
 
     // TODO: This should be async, because when we load a manifest with
     // thousands of entries, it looks like the UI freezes.

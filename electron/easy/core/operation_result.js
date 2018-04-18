@@ -1,4 +1,5 @@
 const dateFormat = require('dateformat');
+const { Util } = require('./util');
 
 class OperationResult {
     constructor(operation, provider) {
@@ -42,26 +43,49 @@ class OperationResult {
         this.succeeded = false;
         this.filename = "";
         this.filesize = 0;
+        this.fileMtime = null;
+        this.remoteUrl = '';
+        this.remoteChecksum = '';
         this.info = "";
         this.warning = "";
         this.error = "";
     }
     summary() {
-        var result = this;
-        var op = result.operation[0].toUpperCase() + result.operation.slice(1);
-        var outcome = '';
-        var when = '';
-        if (result.started) {
-            if (result.succeeded) {
-                outcome = 'succeeded';
+        if (this.operation == 'package') {
+            return this._packageSummary();
+        } else if (this.operation == 'storage') {
+            return this._storageSummary();
+        }
+        return '';
+    }
+    _packageSummary() {
+        let message = 'Packaging failed';
+        if (this.completed) {
+            let when = dateFormat(this.completed, 'shortDate') + " " + dateFormat(this.completed, 'shortTime');
+            let size = Util.toHumanSize(this.filesize);
+            if (this.succeeded) {
+                message = `Packaged ${size} ${when}`
             } else {
-                outcome = 'failed';
+                message += when;
             }
         }
-        if (result.completed) {
-            when = dateFormat(result.completed, 'shortDate') + " " + dateFormat(result.completed, 'shortTime');
+        return message;
+    }
+    _storageSummary() {
+        let message = 'Upload failed';
+        if (this.completed) {
+            let when = dateFormat(this.completed, 'shortDate') + " " + dateFormat(this.completed, 'shortTime');
+            let size = Util.toHumanSize(this.filesize);
+            if (this.succeeded) {
+                message = `Uploaded ${size} to ${this.remoteUrl} ${when}`
+                if (this.remoteChecksum) {
+                    message += ` (etag: ${this.remoteChecksum})`
+                }
+            } else {
+                message += when;
+            }
         }
-        return `${op} ${outcome} ${when}`
+        return message;
     }
 }
 
