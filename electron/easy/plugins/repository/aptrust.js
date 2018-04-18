@@ -1,3 +1,4 @@
+const { AppSetting } = require('../../core/app_setting');
 const log = require('../../core/log');
 const path = require('path');
 const request = require('request');
@@ -17,29 +18,12 @@ class APTrust {
     // info, including the etag or checksum returned by the
     // remote storage service after upload.
     //
-    // repoUrl is the base url of the repository.
-    // E.g. https://demo.aptrust.org or https://repo.aptrust.org
-    //
-    // authData is a hash of info required for authentication.
-    // For APTrust, that's apiAuthToken.
-    //
     // emitter comes from plugins.newRepoEmitter()
-    constructor(job, repoUrl, authData, emitter) {
-        this.repoUrl = repoUrl;
-        this.authData = authData;
+    constructor(job, emitter) {
+        this.job = job;
         this.emitter = emitter;
 
-        // All REST API URLs start with this
-        this.apiUrl = `${repoUrl}/api/${apiVersion}/`
-
-        // Default HTTP headers sent with every request to
-        // the repo's REST API.
-        this.defaultHeaders = {
-            'User-Agent': 'DART / Node.js request',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Token token=${authData.apiAuthToken}`
-        }
+        this.uploadResult = job.operationResults.find(r => r.provider = "APTrust S3 uploader") || null;
     }
 
     describe() {
@@ -55,19 +39,63 @@ class APTrust {
     // The dashboard calls this method to display info about the job.
     getObjectInfo() {
         this.emitter.emit('start');
-        let uploadResult = null;
-        if (this.job.operationResults && this.job.operationResults.length > 0) {
-            uploadResult = this.job.operationResults.filter(r => r.provider = "APTrust S3 uploader");
-        }
-        if (!uploadResult) {
+        if (this.uploadResult == null) {
             this.emitter.emit('complete', this.job.id, this._notYetUploaded());
         }
-        _getIntellectualObject();
+        if (!this._canConnect) {
+            this.emitter.emit('complete', this.job.id, '');
+        }
+        this._getIntellectualObject();
     }
 
     // -----------------------------------------------------------------
     // All methods below are private.
     // -----------------------------------------------------------------
+
+    _canConnect() {
+        let conn = this._connectionInfo();
+        return (conn.url && conn.user && conn.apiKey);
+    }
+
+    _connectionInfo() {
+        let conn = {
+            url: null,
+            user: null,
+            apiKey: null
+        };
+        let instDomain = this._getSetting("Institution Domain")
+        if (instDomain) {
+            let demoBucketName = `aptrust.receiving.test.${instDomain}`
+            if (this.uploadResult.remoteUrl == demoBucketName) {
+                conn.url = this._getSetting("APTrust Demo URL");
+                conn.user = this._getSetting("APTrust Demo User");
+                conn.apiKey = this._getSetting("APTrust Demo Key");
+            } else {
+                conn.url = this._getSetting("APTrust Production URL");
+                conn.user = this._getSetting("APTrust Production User");
+                conn.apiKey = this._getSetting("APTrust Production Key");
+            }
+        }
+        return conn;
+    }
+
+    _getHeaders(conn) {
+        return {
+            'User-Agent': 'DART / Node.js request',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-Pharos-API-User': conn.user,
+            'X-Pharos-API-Key': conn.apiKey
+        }
+    }
+
+    _getSetting(settingName) {
+        let setting = AppSetting.find(settingName);
+        if (setting) {
+            return setting.value;
+        }
+        return null;
+    }
 
     _notYetUploaded() {
         let html =  '<div class="text-info">This bag has not been uploaded to APTrust.</div>';
@@ -75,27 +103,28 @@ class APTrust {
     }
 
     _getIntellectualObject() {
+        let conn = this._connectionInfo();
         let identifier = path.basename(this.job.packagedFile);
         let encodedIdentifier = encodeURIComponent(identifier);
         let url = `${this.apiUrl}/objects/${encodedIdentifier}`;
         log.debug(`Requesting IntellectualObject: ${url}`);
         var options = {
-            url: url,
-            headers: this.defaultHeaders
+            url: conn.url,
+            headers: this._getHeaders(conn)
         };
         request(options, this._intelObjectCallback);
     }
 
     _getWorkItem() {
+        let conn = this._connectionInfo();
         let identifier = path.basename(this.job.packagedFile);
         let encodedIdentifier = encodeURIComponent(identifier);
-        let uploadResult = this.job.operationResults.filter(r => r.provider = "APTrust S3 uploader");
-        let etag = uploadResult.remoteChecksum;
+        let etag = this.uploadResult.remoteChecksum;
         let url = `${this.apiUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date&page=1&per_page=1`;
         log.debug(`Requesting WorkItem: ${url}`);
         var options = {
-            url: url,
-            headers: this.defaultHeaders
+            url: conn.url,
+            headers: this._getHeaders(conn)
         };
         request(options, this._workItemCallback);
     }
@@ -138,3 +167,8 @@ class APTrust {
         this.emitter.emit('complete', this.job.id, html);
     }
 }
+
+module.exports.Provider = APTrust;
+module.exports.name = name;
+module.exports.description = description;
+module.exports.version = version;

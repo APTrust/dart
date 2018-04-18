@@ -6,6 +6,7 @@ const fs = require('fs');
 const log = require('../core/log');
 const { OperationResult } = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
+const RepositoryProviders = requireDir("./repository");
 const SetupProviders = requireDir("./setup");
 const StorageProviders = requireDir("./storage");
 
@@ -38,6 +39,17 @@ function listSetupProviders() {
     var providers = [];
     for(var moduleName in SetupProviders) {
         var provider = SetupProviders[moduleName];
+        providers.push(provider.name)
+    }
+    providers.sort();
+    return providers;
+}
+
+// Returns a list of RepositoryProviders
+function listRepositoryProviders() {
+    var providers = [];
+    for(var moduleName in RepositoryProviders) {
+        var provider = RepositoryProviders[moduleName];
         providers.push(provider.name)
     }
     providers.sort();
@@ -93,6 +105,19 @@ function getPackageProviderByMimeType(mimetype) {
     }
     return null;
 }
+
+// Returns the repository provider with the specified name
+function getRepositoryProviderByName(name) {
+    var providers = [];
+    for(var moduleName in RepositoryProviders) {
+        var module = RepositoryProviders[moduleName];
+        if (module.name == name) {
+            return module.Provider;
+        }
+    }
+    return null;
+}
+
 
 // TODO: Move all this into a separate UI class.
 
@@ -462,7 +487,7 @@ function newRepoEmitter() {
     var emitter = new EventEmitter();
 
     emitter.on('start', function() {
-
+        // Tell UI fetch is starting...
     })
 
     // jobId is the identifier of the job we just
@@ -470,22 +495,23 @@ function newRepoEmitter() {
     //
     // html is the html to display in to the user.
     emitter.on('complete', function(jobId, html) {
-
+        // Display results in UI
     })
 
     emitter.on('error', function(jobId, error) {
-
+        // Display error in UI
     })
 }
 
-
+module.exports.listPackageProviders = listPackageProviders;
+module.exports.listRepositoryProviders = listRepositoryProviders;
 module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
-module.exports.listPackageProviders = listPackageProviders;
 module.exports.getSetupProviderByName = getSetupProviderByName;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;
+module.exports.getRepositoryProviderByName = getRepositoryProviderByName;
 module.exports.newPackageEmitter = newPackageEmitter;
 module.exports.newRepoEmitter = newRepoEmitter;
 module.exports.newStorageEmitter = newStorageEmitter;
