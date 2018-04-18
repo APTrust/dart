@@ -74,19 +74,20 @@ class Menu {
         data.success = message;
         data.previousLink = BagItProfile.previousLink(limit, offset)
         data.nextLink = BagItProfile.nextLink(limit, offset)
-        $("#container").html(Templates.bagItProfileList(data));
         State.ActiveObject = data.items;
+        $("#container").html(Templates.bagItProfileList(data));
     }
 
     static dashboardShow() {
+        var jobs = Job.list(10, 0);
         var data = {};
-        data.jobs = Job.list(10, 0);
+        data.jobs = jobs;
         var setupsCompleted = Util.getInternalVar('Setups Completed');
         if (setupsCompleted && setupsCompleted.length) {
             data.setupsCompleted = `You have already completed the setup process for: <b>${setupsCompleted.join(', ')}</b>`;
         }
+        State.ActiveObject = jobs;
         $("#container").html(Templates.dashboard(data));
-        State.ActiveObject = null;
     }
 
     static helpShow() {

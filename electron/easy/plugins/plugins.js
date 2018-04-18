@@ -501,6 +501,8 @@ function newRepoEmitter() {
     emitter.on('error', function(jobId, error) {
         // Display error in UI
     })
+
+    return emitter;
 }
 
 module.exports.listPackageProviders = listPackageProviders;

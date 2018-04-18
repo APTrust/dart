@@ -130,7 +130,7 @@ class APTrust {
     }
 
     _intelObjectCallback(error, response, body) {
-        if (response.statusCode == 404) {
+        if (!error && response.statusCode == 404) {
             // Not ingested yet. Check for pending WorkItem.
             this._getWorkItem();
         } else if (!error && response.statusCode == 200) {

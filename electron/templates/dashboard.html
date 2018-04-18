@@ -4,11 +4,14 @@
     {{#each jobs}}
     <div class="dashboard-job" data-object-id="{{ id }}" data-object-type="Job">
         <div class="dashboard-job-name">{{ bagName }}</div>
+
         {{#each operationResults as |result resultIndex|}}
           <div class="job-op-result">{{ resultSummary result }}</div>
         {{else}}
           Job has not been run.
         {{/each}}
+
+        <div class="job-remote-status" data-object-id="{{ id }}"></div>
     </div>
     {{/each}}
 </div>
@@ -32,7 +35,7 @@
  // jQuery and es are already present.
  $(function() {
      $('[data-toggle="popover"]').popover();
-     var dashboard = new es.UI.Dashboard();
+     var dashboard = new es.UI.Dashboard(es.State.ActiveObject);
      dashboard.initEvents();
  });
 </script>
