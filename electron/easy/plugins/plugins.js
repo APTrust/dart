@@ -368,6 +368,10 @@ function newStorageEmitter(job, provider) {
         result.remoteChecksum = remoteChecksum;
     });
 
+    emitter.on('remoteUrl', function (remoteUrl) {
+        result.remoteUrl = remoteUrl;
+    });
+
     emitter.on('complete', function(succeeded, message) {
         // TODO: Too much code in here. Refactor.
         if (succeeded == true) {

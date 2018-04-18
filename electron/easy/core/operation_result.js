@@ -18,6 +18,9 @@ class OperationResult {
         // this will be the e-tag. For FTP transfers and bagging
         // operations, this will remain null.
         this.remoteChecksum = null;
+        // remoteUrl is the location to which we sent a file.
+        // This is set only on storage operations.
+        this.remoteUrl = null;
         // attemptNumber is how many times we've attempted this operation
         this.attemptNumber = 0;
         // timestamp for started
