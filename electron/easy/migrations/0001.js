@@ -1,4 +1,5 @@
 const { AppSetting } = require('../core/app_setting');
+const fs = require('fs');
 const path = require('path');
 const log = require('../core/log');
 const Plugins = require('../plugins/plugins');
