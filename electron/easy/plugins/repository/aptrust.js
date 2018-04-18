@@ -67,13 +67,13 @@ class APTrust {
         if (instDomain) {
             let demoBucketName = `aptrust.receiving.test.${instDomain}`
             if (this.uploadResult.remoteUrl == demoBucketName) {
-                conn.url = this._getSetting("APTrust Demo URL");
-                conn.user = this._getSetting("APTrust Demo User");
-                conn.apiKey = this._getSetting("APTrust Demo Key");
+                conn.url = this._getSetting("Pharos Demo URL");
+                conn.user = this._getSetting("Pharos Demo API Login");
+                conn.apiKey = this._getSetting("Pharos Demo API Key");
             } else {
-                conn.url = this._getSetting("APTrust Production URL");
-                conn.user = this._getSetting("APTrust Production User");
-                conn.apiKey = this._getSetting("APTrust Production Key");
+                conn.url = this._getSetting("Pharos Production URL");
+                conn.user = this._getSetting("Pharos Production API Login");
+                conn.apiKey = this._getSetting("Pharos Production API Key");
             }
         }
         return conn;

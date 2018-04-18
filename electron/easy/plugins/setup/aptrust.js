@@ -23,11 +23,17 @@ const AccessHelp = "Set the default access policy for your APTrust bags. Consort
 const AwsAccessKeyIdHelp = "Enter your AWS Access Key ID here, if you received one. This is the shorter of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
 const AwsSecretKeyHelp = "Enter your AWS Secret Access Key here, if you received one. This is the longer of the two keys. If you did not receive an AWS access key, contact help@aptrust.org to get one.";
 
+const PharosLoginHelp = "Enter the email address you use to log in to Pharos (APTrust's web UI).";
+const PharosDemoAPIKeyHelp = "Enter your API key for the APTrust demo repository. You can get an API key by logging in to <a href=\"javascript:es.openExternal('https://demo.aptrust.org')\">https://demo.aptrust.org</a>. Click your login name in the upper right corner and select View Profile. Click the <b>Generate Secret API Key</b> button, then cut and paste the value here.";
+const PharosProdAPIKeyHelp = "Enter your API key for the APTrust production repository. You can get an API key by logging in to <a href=\"javascript:es.openExternal('https://repo.aptrust.org')\">https://repo.aptrust.org</a>. Click your login name in the upper right corner and select View Profile. Click the <b>Generate Secret API Key</b> button, then cut and paste the value here.";
+
 // Regex patterns for validation.
 const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i;
 const macLinuxFilePattern = /(\/\w+)+/;  // This is a little simplistic. Looking for an absolute path.
 const windowsFilePattern = /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i;
 
+// Thank you, StackOverflow, for this bit of nastiness.
+const emailPattern = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
 class APTrust {
 
@@ -102,6 +108,21 @@ class APTrust {
             setting.save();
             installed.push("Pharos Production API Key");
         }
+        if (AppSetting.findByName("Pharos Demo URL") == null) {
+            var setting = new AppSetting("Pharos Demo URL", 'https://demo.aptrust.org');
+            setting.userCanDelete = false;
+            setting.help = "The URL for the APTrust demo repository's REST API";
+            setting.save();
+            installed.push("Pharos Demo URL");
+        }
+        if (AppSetting.findByName("Pharos Production URL") == null) {
+            var setting = new AppSetting("Pharos Production URL", 'https://repo.aptrust.org');
+            setting.userCanDelete = false;
+            setting.help = "The URL for the APTrust production repository's REST API";
+            setting.save();
+            installed.push("Pharos Production URL");
+        }
+
         var message = "Required APTrust application variables are already installed.";
         if (installed.length > 0) {
             message = "Installed required APTrust application variables: " + installed.join(', ');
@@ -156,6 +177,9 @@ class APTrust {
         this.fields.push(this._getBaggingDirField());
         this.fields.push(this._getAwsAccessKeyIdField());
         this.fields.push(this._getAwsSecretAccessKeyField());
+        this.fields.push(this._getPharosLoginField());
+        this.fields.push(this._getPharosDemoAPIKeyField());
+        this.fields.push(this._getPharosProdAPIKeyField());
     }
 
     _getOrgNameField() {
@@ -322,9 +346,11 @@ class APTrust {
                 }
                 awsAccessKeyId.error = "";
                 return true;
+            } else if (value && value.trim().length > 0) {
+                awsAccessKeyId.error = "Value should be between 16 and 128 characters long.";
+                return false;
             }
-            awsAccessKeyId.error = "Value should be between 16 and 128 characters long.";
-            return false;
+            return true;
         }
         return awsAccessKeyId;
     }
@@ -358,12 +384,84 @@ class APTrust {
                 }
                 awsSecretAccessKey.error = "";
                 return true;
+            } else if (value && value.trim().length > 0) {
+                awsSecretAccessKey.error = "Value should be between 16 and 128 characters long.";
+                return false;
             }
-            awsSecretAccessKey.error = "Value should be between 16 and 128 characters long.";
-            return false;
+            return true;
         }
         return awsSecretAccessKey;
     }
+
+    _getPharosLoginField() {
+        var pharosLogin = this._getSetupField('pharosLogin', 'Pharos Login');
+        var setting = AppSetting.findByName("Pharos Production API Login");
+        if (setting) {
+            pharosLogin.value = setting.value;
+        }
+        pharosLogin.help = PharosLoginHelp;
+        pharosLogin.validator = function(value) {
+            pharosLogin.value = value;
+            var pattern = emailPattern;
+            var errMsg = "Your Pharos login should be your email address.";
+            if (value && value.match(pattern)) {
+                // If value is OK, save it into AppSettings.
+                if (setting) {
+                    setting.value = value;
+                    setting.save();
+                }
+                var demoSetting = AppSetting.findByName("Pharos Demo API Login");
+                if (demoSetting) {
+                    demoSetting.value = value;
+                    demoSetting.save();
+                }
+                pharosLogin.error = "";
+                return true;
+            } else if (value && value.trim().length > 0) {
+                pharosLogin.error = errMsg;
+                return false;
+            }
+            return true;
+        }
+        return pharosLogin;
+    }
+
+    _getPharosDemoAPIKeyField() {
+        var pharosDemoAPIKey = this._getSetupField('pharosDemoAPIKey', 'Pharos Demo API Key');
+        var setting = AppSetting.findByName("Pharos Demo API Key");
+        if (setting) {
+            pharosDemoAPIKey.value = setting.value;
+        }
+        pharosDemoAPIKey.help = PharosDemoAPIKeyHelp;
+        pharosDemoAPIKey.validator = function(value) {
+            pharosDemoAPIKey.value = value;
+            if (setting) {
+                setting.value = value;
+                setting.save();
+            }
+            return true;
+        }
+        return pharosDemoAPIKey;
+    }
+
+    _getPharosProdAPIKeyField() {
+        var pharosProdAPIKey = this._getSetupField('pharosProdAPIKey', 'Pharos Production API Key');
+        var setting = AppSetting.findByName("Pharos Prod API Key");
+        if (setting) {
+            pharosProdAPIKey.value = setting.value;
+        }
+        pharosProdAPIKey.help = PharosProdAPIKeyHelp;
+        pharosProdAPIKey.validator = function(value) {
+            pharosProdAPIKey.value = value;
+            if (setting) {
+                setting.value = value;
+                setting.save();
+            }
+            return true;
+        }
+        return pharosProdAPIKey;
+    }
+
 
     // _getSetupField is a utility function that returns a Field object for a
     // question on your setup form.

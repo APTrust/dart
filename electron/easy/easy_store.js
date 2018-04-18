@@ -33,6 +33,9 @@ function unhandledErr(err) {
 process.on('uncaughtException', unhandledErr);
 process.on('unhandledRejection', unhandledErr);
 
+function openExternal(url) {
+    electron.shell.openExternal(url);
+}
 
 module.exports.AppSetting = AppSetting;
 module.exports.BagIt = BagIt;
@@ -47,6 +50,7 @@ module.exports.Form = Form;
 module.exports.Job = Job;
 module.exports.log = log;
 module.exports.Migrations = Migrations;
+module.exports.openExternal = openExternal;
 module.exports.Plugins = Plugins;
 module.exports.StorageService = StorageService;
 module.exports.TagDefinition = TagDefinition;
