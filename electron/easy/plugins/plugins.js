@@ -445,6 +445,26 @@ function newStorageEmitter(job, provider) {
     return emitter;
 }
 
+function newRepoEmitter() {
+    var emitter = new EventEmitter();
+
+    emitter.on('start', function() {
+
+    })
+
+    // identifier is the identifier of the object we just
+    // looked up in the remote repository.
+    //
+    // html is the html to display in to the user.
+    emitter.on('complete', function(identifier, html) {
+
+    })
+
+    emitter.on('error', function(identifier, error) {
+
+    })
+}
+
 
 module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
@@ -454,4 +474,5 @@ module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;
 module.exports.newPackageEmitter = newPackageEmitter;
+module.exports.newRepoEmitter = newRepoEmitter;
 module.exports.newStorageEmitter = newStorageEmitter;
