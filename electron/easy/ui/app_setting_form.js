@@ -1,7 +1,9 @@
 const { AppSetting } = require('../core/app_setting');
+const { Choice } = require('../core/choice');
 const { Field } = require('../core/field');
 const { Form } = require('../core/form');
 const { Menu } = require('./menu');
+const Plugins = require('../plugins/plugins');
 const State = require('../core/state');
 const Templates = require('../core/templates');
 const { Util } = require('../core/util');
@@ -64,6 +66,11 @@ class AppSettingForm {
             form.fields['name'].help = this.help;
         }
         form.fields['value'] = new Field('appSettingValue', 'value', 'Value', this.setting.value);
+
+        if (this.setting.name == "Remote Repository") {
+            form.fields['value'].choices = Choice.makeList(Plugins.listRepositoryProviders(), this.setting.value, true);
+        }
+
         return form
     }
 

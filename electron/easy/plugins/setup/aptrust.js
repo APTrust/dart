@@ -122,6 +122,13 @@ class APTrust {
             setting.save();
             installed.push("Pharos Production URL");
         }
+        if (AppSetting.findByName("Remote Repository") == null) {
+            var setting = new AppSetting("Remote Repository", "APTrust");
+            setting.userCanDelete = false;
+            setting.help = "The remote repository that stores your materials. Leave blank if there is none.";
+            setting.save();
+            installed.push("Remote Repository");
+        }
 
         var message = "Required APTrust application variables are already installed.";
         if (installed.length > 0) {
