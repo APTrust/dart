@@ -110,7 +110,7 @@ hr.menu-divider {
    padding: 5px;
 }
 
-.job-op-result {
+.job-op-result, .show-manifests {
     padding-left: 5px;
     padding-right: 5px;
 }

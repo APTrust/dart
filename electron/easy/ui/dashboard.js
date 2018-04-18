@@ -30,7 +30,10 @@ class Dashboard {
         $('#newJobLink').click(function(e) {
             JobList.onNewClick();
         });
-        this.checkJobsInRemoteRepo();
+        $('a.show-manifests').click(Dashboard.showManifests);
+
+        // Not working yet.
+        //this.checkJobsInRemoteRepo();
     }
 
     checkJobsInRemoteRepo() {
@@ -57,7 +60,7 @@ class Dashboard {
 
     // TODO: This should be async, because when we load a manifest with
     // thousands of entries, it looks like the UI freezes.
-    static viewManifests() {
+    static showManifests() {
         var jobId = $(this).data('object-id');
         var manifests = [];
         var manifestDir = path.join(app.getPath('userData'), 'manifests');

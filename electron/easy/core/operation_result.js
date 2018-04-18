@@ -77,7 +77,8 @@ class OperationResult {
             let when = dateFormat(this.completed, 'shortDate') + " " + dateFormat(this.completed, 'shortTime');
             let size = Util.toHumanSize(this.filesize);
             if (this.succeeded) {
-                message = `Uploaded ${size} to ${this.remoteUrl} ${when}`
+                // message = `Uploaded ${size} to ${this.remoteUrl} ${when}`
+                message = `Uploaded ${size} ${when}`
                 if (this.remoteChecksum) {
                     message += ` (etag: ${this.remoteChecksum})`
                 }
