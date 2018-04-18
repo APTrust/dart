@@ -238,8 +238,9 @@ function newPackageEmitter(job, provider) {
             // of a tar, gzip, or zip file.
             var stats = fs.statSync(job.packagedFile)
             result.filesize = stats["size"];
+            result.fileMtime = stats["mtime"];
         } catch(ex) {
-            var msg = `Cannot get file size for ${job.packagedFile}`;
+            var msg = `Cannot get file size or mtime for ${job.packagedFile}`;
             log.error(msg);
             log.error(ex);
             showError("#jobError", ex)
@@ -360,6 +361,13 @@ function newStorageEmitter(job, provider) {
         log.info(`Starting ${result.note}`);
     });
 
+    // If the remote service to which we're uploading the file
+    // returns a checksum or etag, call this when get the
+    // checksum/etag.
+    emitter.on('remoteChecksum', function (remoteChecksum) {
+        result.remoteChecksum = remoteChecksum;
+    });
+
     emitter.on('complete', function(succeeded, message) {
         // TODO: Too much code in here. Refactor.
         if (succeeded == true) {
@@ -370,8 +378,9 @@ function newStorageEmitter(job, provider) {
                 result.filename = job.packagedFile;
                 var stats = fs.statSync(job.packagedFile)
                 result.filesize = stats["size"];
+                result.fileMtime = stats["mtime"];
             } catch(ex) {
-                log.error(`Cannot get file size for ${job.packagedFile}`);
+                log.error(`Cannot get file size or mtime for ${job.packagedFile}`);
                 log.error(ex);
                 showError("#jobError", ex)
             }

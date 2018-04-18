@@ -43,9 +43,9 @@ class APTrust {
         }
     }
 
-    // identifier is bag name, minus tar suffix.
-    // E.g. test.edu/test.edu.bag-of-goodies
-    getObjectInfo(identifier) {
+    // data is a hash of whatever data you need to query
+    // the remote repository.
+    getObjectInfo(data) {
         this.emitter.emit('start');
 
     }

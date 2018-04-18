@@ -98,6 +98,7 @@ class S3 {
                         uploader.emitter.emit('complete', false, msg);
                         return;
                     } else {
+                        uploader.emitter.emit('remoteChecksum', remoteStat.etag);
                         uploader.emitter.emit('uploadComplete', true, `Saved ${objectName} in ${bucket}.`);
                         uploader.emitter.emit('complete', true, `Object uploaded successfully. Size: ${remoteStat.size}, ETag: ${remoteStat.etag}`);
                     }

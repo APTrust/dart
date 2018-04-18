@@ -11,6 +11,13 @@ class OperationResult {
         this.filename = "";
         // filesize is the size of the file that was packaged or stored
         this.filesize = 0;
+        // fileMtime is the last-modified time of local bag (tar file).
+        this.fileMtime = null;
+        // remoteChecksum is the checksum returned by the remote
+        // storage service after upload, if applicable. For S3 storage,
+        // this will be the e-tag. For FTP transfers and bagging
+        // operations, this will remain null.
+        this.remoteChecksum = null;
         // attemptNumber is how many times we've attempted this operation
         this.attemptNumber = 0;
         // timestamp for started
