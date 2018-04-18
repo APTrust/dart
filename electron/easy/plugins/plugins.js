@@ -461,15 +461,15 @@ function newRepoEmitter() {
 
     })
 
-    // identifier is the identifier of the object we just
+    // jobId is the identifier of the job we just
     // looked up in the remote repository.
     //
     // html is the html to display in to the user.
-    emitter.on('complete', function(identifier, html) {
+    emitter.on('complete', function(jobId, html) {
 
     })
 
-    emitter.on('error', function(identifier, error) {
+    emitter.on('error', function(jobId, error) {
 
     })
 }
