@@ -453,7 +453,7 @@ class APTrust {
 
     _getPharosProdAPIKeyField() {
         var pharosProdAPIKey = this._getSetupField('pharosProdAPIKey', 'Pharos Production API Key');
-        var setting = AppSetting.findByName("Pharos Prod API Key");
+        var setting = AppSetting.findByName("Pharos Production API Key");
         if (setting) {
             pharosProdAPIKey.value = setting.value;
         }
