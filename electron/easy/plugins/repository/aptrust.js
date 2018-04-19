@@ -71,9 +71,9 @@ class APTrust {
             apiKey: null
         };
         let instDomain = this._getSetting("Institution Domain")
-        if (instDomain) {
+        if (instDomain && this.uploadResult.remoteUrl) {
             let demoBucketName = `aptrust.receiving.test.${instDomain}`
-            if (this.uploadResult.remoteUrl && this.uploadResult.remoteUrl.includes(demoBucketName)) {
+            if (this.uploadResult.remoteUrl.includes(demoBucketName)) {
                 conn.url = this._getSetting("Pharos Demo URL");
                 conn.user = this._getSetting("Pharos Demo API Login");
                 conn.apiKey = this._getSetting("Pharos Demo API Key");
@@ -111,25 +111,26 @@ class APTrust {
 
     _getIntellectualObject() {
         let repo = this;
-        let identifier = path.basename(this.job.packagedFile);
         let conn = this._connectionInfo();
-
-        // if (this._canConnect(conn) === false) {
-        //     console.log(`Cannot check Pharos for ${identifier}: not enough info`);
-        //     return;
-        // }
-
-        // if (identifier.includes('April')) {
-        //     console.log(this.uploadResult)
-        // }
-
         let baseUrl = `${conn.url}/api/${apiVersion}`
-        let encodedIdentifier = encodeURIComponent(identifier);
-        let objectUrl = `${baseUrl}/objects/${encodedIdentifier}`;
+        let identifier = path.basename(this.job.packagedFile);
+
+        if (!this._canConnect(conn)) {
+            this._displayCantGetInfo(identifier);
+            return;
+        }
+
+        // objects endpoint uses Obj Idenfier, like "test.edu/test.edu.bagname"
+        let objIdentifier = `${this._getSetting("Institution Domain")}/${identifier.replace(/\.tar$/, '')}`
+        let encodedObjIdentifier = encodeURIComponent(objIdentifier);
+        let objectUrl = `${baseUrl}/objects/${encodedObjIdentifier}`;
+
+        // items endpoint uses tar file name, like "test.edu.bagname.tar"
+        let encodedTarFileName = encodeURIComponent(identifier);
         let etag = this.uploadResult.remoteChecksum;
         let workItemUrl = null;
         if (etag) {
-            workItemUrl = `${baseUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date`;
+            workItemUrl = `${baseUrl}/items/?name=${encodedTarFileName}&etag=${etag}&sort=date`;
         }
         let options = {
             url: objectUrl,
@@ -163,7 +164,7 @@ class APTrust {
                 getWorkItem();
             } else if (!error && response.statusCode == 200) {
                 var data = JSON.parse(body);
-                repo._formatObjectRecord(data);
+                repo._formatObjectRecord(data, objectUrl);
             } else {
                 repo._formatError(error, response, body);
             }
@@ -190,13 +191,17 @@ class APTrust {
             cssClass = 'text-danger';
         }
         let truncatedNote = Util.truncateString(workItem.note, 80);
-        let link = `<a href="javascript:es.openExternal('${workItemUrl}')">View in Pharos</a>`;
+        let link = `<a href="javascript:es.openExternal('${workItemUrl}')">View WorkItem in Pharos</a>`;
         let html = `<div class="${cssClass}">${workItem.status}: ${truncatedNote}<br/>${link}</div>`;
         this.emitter.emit('complete', this.job.id, html);
     }
 
-    _formatObjectRecord(data) {
-        console.log(data);
+    _formatObjectRecord(data, objectUrl) {
+        let truncatedTitle = Util.truncateString(data.title, 80);
+        let date = new Date(data.updated_at).toDateString();
+        let link = `<a href="javascript:es.openExternal('${objectUrl}')">View Object in Pharos</a>`;
+        let html = `<div class="text-success">Ingested ${truncatedTitle} on ${date}<br/>${link}</div>`;
+        this.emitter.emit('complete', this.job.id, html);
     }
 
     _formatError(error, response, body) {

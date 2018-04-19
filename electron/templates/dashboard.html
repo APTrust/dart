@@ -1,6 +1,6 @@
 {{#if jobs}}
 <div class="row">
-    <h4>Recent Jobs</h4>
+    <h3 style="margin-left: 15px;">Recent Jobs</h3>
     {{#each jobs}}
     <div class="dashboard-job" data-object-id="{{ id }}" data-object-type="Job">
         <div class="dashboard-job-name">{{ bagName }}</div>
@@ -14,7 +14,7 @@
         <div class="job-remote-status" data-object-id="{{ id }}"></div>
 
         <div>
-            <a href="#" class="show-manifests" data-object-id="{{ id }}">Show Manifests</a>
+            <a href="#" class="show-manifests" data-object-id="{{ id }}">Show Local Manifests</a>
         </div>
     </div>
     {{/each}}
