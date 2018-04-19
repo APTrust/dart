@@ -110,7 +110,7 @@ hr.menu-divider {
    padding: 5px;
 }
 
-.job-op-result, .show-manifests {
+.job-op-result, .show-manifests, .job-remote-status {
     padding-left: 5px;
     padding-right: 5px;
 }

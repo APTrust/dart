@@ -2,6 +2,7 @@ const { AppSetting } = require('../../core/app_setting');
 const log = require('../../core/log');
 const path = require('path');
 const request = require('request');
+const { Util } = require('../../core/util');
 
 // Constants required for all repository plugins.
 const name = "APTrust";
@@ -140,7 +141,7 @@ class APTrust {
                 // No work item
             } else if (!error && response.statusCode == 200) {
                 var data = JSON.parse(body);
-                repo._formatWorkItemRecord(data);
+                repo._formatWorkItem(data, workItemUrl);
             } else {
                 repo._formatError(error, response, body);
             }
@@ -173,49 +174,25 @@ class APTrust {
         request(options, intelObjectCallback);
     }
 
-    // _getWorkItem() {
-    //     let conn = this._connectionInfo();
-    //     let identifier = path.basename(this.job.packagedFile);
-    //     let encodedIdentifier = encodeURIComponent(identifier);
-    //     let etag = this.uploadResult.remoteChecksum;
-    //     let url = `${this.apiUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date&page=1&per_page=1`;
-    //     log.debug(`Requesting WorkItem: ${url}`);
-    //     var options = {
-    //         url: conn.url,
-    //         headers: this._getHeaders(conn)
-    //     };
-    //     request(options, this._workItemCallback);
-    // }
-
-    // _intelObjectCallback(error, response, body) {
-    //     if (!error && response.statusCode == 404) {
-    //         // Not ingested yet. Check for pending WorkItem.
-    //         this._getWorkItem();
-    //     } else if (!error && response.statusCode == 200) {
-    //         var data = JSON.parse(body);
-    //         this._formatObjectRecord(data);
-    //     } else {
-    //         this._formatError(error, response, body);
-    //     }
-    // }
-
-    // _workItemCallback(error, response, body) {
-    //     if (response.statusCode == 404) {
-    //         // No work item
-    //     } else if (!error && response.statusCode == 200) {
-    //         var data = JSON.parse(body);
-    //         this._formatWorkItemRecord(data);
-    //     } else {
-    //         this._formatError(error, response, body);
-    //     }
-    // }
-
     _displayCantGetInfo(identifier) {
-        console.log(`Can't get WorkItem info for ${identifier}`);  //'
+        let msg = `Not enough info to look up ${identifier}`;
+        let html = `<div class="text-info">${msg}</div>`;
+        log.info(msg);
+        this.emitter.emit('complete', this.job.id, html);
     }
 
-    _formatWorkItem(data) {
-        console.log(data);
+    _formatWorkItem(data, workItemUrl) {
+        let workItem = data.results[0];
+        let cssClass = 'text-info';
+        if (workItem.status == 'Success') {
+            cssClass = 'text-success';
+        } else if (workItem.status == 'Failed') {
+            cssClass = 'text-danger';
+        }
+        let truncatedNote = Util.truncateString(workItem.note, 80);
+        let link = `<a href="javascript:es.openExternal('${workItemUrl}')">View in Pharos</a>`;
+        let html = `<div class="${cssClass}">${workItem.status}: ${truncatedNote}<br/>${link}</div>`;
+        this.emitter.emit('complete', this.job.id, html);
     }
 
     _formatObjectRecord(data) {

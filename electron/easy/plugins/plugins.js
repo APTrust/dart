@@ -495,7 +495,8 @@ function newRepoEmitter() {
     //
     // html is the html to display in to the user.
     emitter.on('complete', function(jobId, html) {
-        // Display results in UI
+        var selector = `div.job-remote-status[data-object-id="${jobId}"]`;
+        $(selector).html(html);
     })
 
     emitter.on('error', function(jobId, error) {
