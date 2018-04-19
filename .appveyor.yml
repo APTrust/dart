@@ -1,4 +1,4 @@
-version: 0.1.6.{build}
+#version: 0.1.6.{build}
 
 platform: x64
 
@@ -58,6 +58,6 @@ notifications:
   - provider: Slack
     incoming_webhook:
       secure: wQc/CYuw0WsjVvpj92QtP6//CzBNp/eFYpvlxiH6lIdhCbrh+cgQ3vExTygXJFA3xPg0attMwE/dOWipSS+vsk0EGsf0iipIaf/133/1RgQ=
-    on_build_success: true
+    on_build_success: false
     on_build_failure: true
     on_build_status_changed: true
