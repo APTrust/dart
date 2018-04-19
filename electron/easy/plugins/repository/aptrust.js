@@ -72,7 +72,7 @@ class APTrust {
         let instDomain = this._getSetting("Institution Domain")
         if (instDomain) {
             let demoBucketName = `aptrust.receiving.test.${instDomain}`
-            if (this.uploadResult.remoteUrl == demoBucketName) {
+            if (this.uploadResult.remoteUrl && this.uploadResult.remoteUrl.includes(demoBucketName)) {
                 conn.url = this._getSetting("Pharos Demo URL");
                 conn.user = this._getSetting("Pharos Demo API Login");
                 conn.apiKey = this._getSetting("Pharos Demo API Key");
@@ -96,7 +96,7 @@ class APTrust {
     }
 
     _getSetting(settingName) {
-        let setting = AppSetting.find(settingName);
+        let setting = AppSetting.findByName(settingName);
         if (setting) {
             return setting.value;
         }
@@ -117,9 +117,10 @@ class APTrust {
         //     console.log(`Cannot check Pharos for ${identifier}: not enough info`);
         //     return;
         // }
-        if (identifier.includes('April')) {
-            console.log(this.uploadResult)
-        }
+
+        // if (identifier.includes('April')) {
+        //     console.log(this.uploadResult)
+        // }
 
         let baseUrl = `${conn.url}/api/${apiVersion}`
         let encodedIdentifier = encodeURIComponent(identifier);
@@ -222,7 +223,16 @@ class APTrust {
     }
 
     _formatError(error, response, body) {
-        let message = `Error in request to APTrust: ${error}`;
+        let errMsg = error;
+        if (errMsg == null) {
+            try {
+                let data = JSON.parse(body);
+                errMsg = data.error;
+            } catch(err) {
+                log.error(`Cannot parse Pharos error message`);
+            }
+        }
+        let message = `Error in request to APTrust: ${errMsg}`;
         console.log(message);
         log.error(message);
         log.error(body);
