@@ -309,12 +309,16 @@ class Job {
         return db.store;
     }
 
-    static list(limit = 50, offset = 0, sortBy = 'updated', sortDir = 'desc') {
+    // TODO: Change args to an options hash.
+    static list(limit = 50, offset = 0, sortBy = 'updated', sortDir = 'desc', skipIngested = false) {
         var items = [];
         var allItems = Util.sort(Job.getStore(), sortBy, sortDir);
         var end = Math.min((offset + limit), allItems.length);
         for (var i = offset; i < end; i++) {
             var item = allItems[i];
+            if (skipIngested && item.ingestedAt != null) {
+                continue;
+            }
             items.push(Job.inflateFromJson(item));
         }
         return items;

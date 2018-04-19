@@ -71,7 +71,7 @@ class APTrust {
             apiKey: null
         };
         let instDomain = this._getSetting("Institution Domain")
-        if (instDomain && this.uploadResult.remoteUrl) {
+        if (instDomain && this.uploadResult && this.uploadResult.remoteUrl) {
             let demoBucketName = `aptrust.receiving.test.${instDomain}`
             if (this.uploadResult.remoteUrl.includes(demoBucketName)) {
                 conn.url = this._getSetting("Pharos Demo URL");
@@ -114,11 +114,15 @@ class APTrust {
         let conn = this._connectionInfo();
         let baseUrl = `${conn.url}/api/${apiVersion}`
         let identifier = path.basename(this.job.packagedFile);
-
+        if (this.uploadResult == null) {
+            this._notYetUploaded();
+            return;
+        }
         if (!this._canConnect(conn)) {
             this._displayCantGetInfo(identifier);
             return;
         }
+
 
         // objects endpoint uses Obj Idenfier, like "test.edu/test.edu.bagname"
         let objIdentifier = `${this._getSetting("Institution Domain")}/${identifier.replace(/\.tar$/, '')}`
@@ -183,6 +187,10 @@ class APTrust {
     }
 
     _formatWorkItem(data, workItemUrl) {
+        if (data.results.length == 0) {
+            let html = `<div>Item has not yet been queued for ingest.</div>`;
+            this.emitter.emit('complete', this.job.id, html);
+        }
         let workItem = data.results[0];
         let cssClass = 'text-info';
         if (workItem.status == 'Success') {
@@ -200,7 +208,7 @@ class APTrust {
         let truncatedTitle = Util.truncateString(data.title, 80);
         let date = new Date(data.updated_at).toDateString();
         let link = `<a href="javascript:es.openExternal('${objectUrl}')">View Object in Pharos</a>`;
-        let html = `<div class="text-success">Ingested ${truncatedTitle} on ${date}<br/>${link}</div>`;
+        let html = `<div class="text-success">Ingested <i>"${truncatedTitle}"</i> on ${date}<br/>${link}</div>`;
 
         // Since Pharos has an object record, we know this item
         // was ingested. So let's mark the timestamp on the job.

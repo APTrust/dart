@@ -15,6 +15,7 @@ const Templates = require('../core/templates');
 
 class Dashboard {
 
+    // TODO: Add paging to dashboard. Show 20 or so jobs per page.
     constructor(jobs) {
         this.jobs = jobs;
     }
@@ -32,7 +33,6 @@ class Dashboard {
         });
         $('a.show-manifests').click(Dashboard.showManifests);
 
-        // Not working yet.
         this.checkJobsInRemoteRepo();
     }
 

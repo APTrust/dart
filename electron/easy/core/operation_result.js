@@ -78,7 +78,7 @@ class OperationResult {
             let size = Util.toHumanSize(this.filesize);
             if (this.succeeded) {
                 // message = `Uploaded ${size} to ${this.remoteUrl} ${when}`
-                message = `Uploaded ${size} ${when}`
+                message = `Uploaded ${when}`
                 if (this.remoteChecksum) {
                     message += ` (etag: ${this.remoteChecksum})`
                 }
