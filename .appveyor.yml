@@ -21,7 +21,7 @@ environment:
   GOPATH: c:\gopath
   access_token:
     secure: "IMzd8tEL6AOY7a/xeeGCUEYjqyR8lSoXhn9h1s0WHFHnzpi6QevW/v0Jr/jZQpZuYyUkTILUUdvqrsjc4CpB2vomJPVghnAo2VmSDXXo+Ac="
-  appveyor_repo_tag: true
+#  appveyor_repo_tag: true
   artifactName: DART.Setup.0.1.7.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
