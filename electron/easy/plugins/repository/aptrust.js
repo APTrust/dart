@@ -201,6 +201,15 @@ class APTrust {
         let date = new Date(data.updated_at).toDateString();
         let link = `<a href="javascript:es.openExternal('${objectUrl}')">View Object in Pharos</a>`;
         let html = `<div class="text-success">Ingested ${truncatedTitle} on ${date}<br/>${link}</div>`;
+
+        // Since Pharos has an object record, we know this item
+        // was ingested. So let's mark the timestamp on the job.
+        if (this.job.ingestedAt == null) {
+            log.info(`Setting ingestedAt timestamp for ${this.job.bagName}`);
+            this.job.ingestedAt = data.updated_at;
+            this.job.save();
+        }
+
         this.emitter.emit('complete', this.job.id, html);
     }
 
