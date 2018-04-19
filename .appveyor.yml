@@ -4,7 +4,7 @@ platform: x64
 
 init:
   - git config --global core.autocrlf input
-  - ps: Update-AppveyorBuild -Version "0.1.7.$($env:appveyor_repo_commit.substring(0,7))"
+  - ps: Update-AppveyorBuild -Version "0.1.8.$($env:appveyor_repo_commit.substring(0,7))"
 
 cache:
   - electron\node_modules
@@ -21,9 +21,8 @@ environment:
   GOPATH: c:\gopath
   access_token:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
-#    secure: "IMzd8tEL6AOY7a/xeeGCUEYjqyR8lSoXhn9h1s0WHFHnzpi6QevW/v0Jr/jZQpZuYyUkTILUUdvqrsjc4CpB2vomJPVghnAo2VmSDXXo+Ac="
-#  appveyor_repo_tag: true
-  artifactName: DART.Setup.0.1.7.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
+  appveyor_repo_tag: false
+  artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
   - ps: Install-Product node 8 x64
@@ -52,6 +51,7 @@ deploy:
   auth_token:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
   artifact: DART-Windows
+  skip_tags: true
   draft: false
   prerelease: false
 
