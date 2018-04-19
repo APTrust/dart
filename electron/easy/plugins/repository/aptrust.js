@@ -52,9 +52,15 @@ class APTrust {
     // All methods below are private.
     // -----------------------------------------------------------------
 
-    _canConnect() {
-        let conn = this._connectionInfo();
-        return (conn.url && conn.user && conn.apiKey);
+    // Jobs run by early beta users do not have properties remoteChecksum
+    // or remoteUrl on the OperationResult object, so we can't deduce
+    // which repository they uploaded to. If we can't figure that out,
+    // don't try to run a query.
+    _canConnect(conn) {
+        if (conn.url && conn.user && conn.apiKey) {
+            return true;
+        }
+        return false;
     }
 
     _connectionInfo() {
@@ -103,67 +109,121 @@ class APTrust {
     }
 
     _getIntellectualObject() {
-        let conn = this._connectionInfo();
+        let repo = this;
         let identifier = path.basename(this.job.packagedFile);
-        let encodedIdentifier = encodeURIComponent(identifier);
-        let url = `${this.apiUrl}/objects/${encodedIdentifier}`;
-        log.debug(`Requesting IntellectualObject: ${url}`);
-        var options = {
-            url: conn.url,
-            headers: this._getHeaders(conn)
-        };
-        request(options, this._intelObjectCallback);
-    }
+        let conn = this._connectionInfo();
 
-    _getWorkItem() {
-        let conn = this._connectionInfo();
-        let identifier = path.basename(this.job.packagedFile);
+        if (this._canConnect(conn) === false) {
+            console.log(`Cannot check Pharos for ${identifier}: not enough info`);
+            return;
+        }
+
+        let baseUrl = `${conn.url}/api/${apiVersion}`
         let encodedIdentifier = encodeURIComponent(identifier);
+        let objectUrl = `${baseUrl}/objects/${encodedIdentifier}`;
         let etag = this.uploadResult.remoteChecksum;
-        let url = `${this.apiUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date&page=1&per_page=1`;
-        log.debug(`Requesting WorkItem: ${url}`);
-        var options = {
-            url: conn.url,
+        let workItemUrl = null;
+        if (etag) {
+            workItemUrl = `${baseUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date`;
+        }
+        let options = {
+            url: objectUrl,
             headers: this._getHeaders(conn)
         };
-        request(options, this._workItemCallback);
+
+        var workItemCallback = function (error, response, body) {
+            if (response.statusCode == 404) {
+                // No work item
+            } else if (!error && response.statusCode == 200) {
+                var data = JSON.parse(body);
+                repo._formatWorkItemRecord(data);
+            } else {
+                repo._formatError(error, response, body);
+            }
+        }
+
+        var getWorkItem = function() {
+            if (workItemUrl === null) {
+                repo._displayCantGetInfo(identifier);
+            } else {
+                options.url = workItemUrl;
+                log.debug(`Requesting WorkItem: ${options.url}`);
+                request(options, workItemCallback);
+            }
+        }
+
+        var intelObjectCallback = function(error, response, body) {
+            if (!error && response.statusCode == 404) {
+                // Not ingested yet. Check for pending WorkItem.
+                getWorkItem();
+            } else if (!error && response.statusCode == 200) {
+                var data = JSON.parse(body);
+                repo._formatObjectRecord(data);
+            } else {
+                repo._formatError(error, response, body);
+            }
+        }
+
+        // Try to get the intellectual object from Pharos.
+        log.debug(`Requesting IntellectualObject: ${options.url}`);
+        request(options, intelObjectCallback);
     }
 
-    _intelObjectCallback(error, response, body) {
-        if (!error && response.statusCode == 404) {
-            // Not ingested yet. Check for pending WorkItem.
-            this._getWorkItem();
-        } else if (!error && response.statusCode == 200) {
-            var data = JSON.parse(body);
-            this._formatObjectRecord(data);
-        } else {
-            this._formatError(error, response, body);
-        }
-    }
+    // _getWorkItem() {
+    //     let conn = this._connectionInfo();
+    //     let identifier = path.basename(this.job.packagedFile);
+    //     let encodedIdentifier = encodeURIComponent(identifier);
+    //     let etag = this.uploadResult.remoteChecksum;
+    //     let url = `${this.apiUrl}/items/?name=${encodedIdentifier}&etag=${etag}&sort=date&page=1&per_page=1`;
+    //     log.debug(`Requesting WorkItem: ${url}`);
+    //     var options = {
+    //         url: conn.url,
+    //         headers: this._getHeaders(conn)
+    //     };
+    //     request(options, this._workItemCallback);
+    // }
 
-    _workItemCallback(error, response, body) {
-        if (response.statusCode == 404) {
-            // No work item
-        } else if (!error && response.statusCode == 200) {
-            var data = JSON.parse(body);
-            this._formatWorkItemRecord(data);
-        } else {
-            this._formatError(error, response, body);
-        }
+    // _intelObjectCallback(error, response, body) {
+    //     if (!error && response.statusCode == 404) {
+    //         // Not ingested yet. Check for pending WorkItem.
+    //         this._getWorkItem();
+    //     } else if (!error && response.statusCode == 200) {
+    //         var data = JSON.parse(body);
+    //         this._formatObjectRecord(data);
+    //     } else {
+    //         this._formatError(error, response, body);
+    //     }
+    // }
+
+    // _workItemCallback(error, response, body) {
+    //     if (response.statusCode == 404) {
+    //         // No work item
+    //     } else if (!error && response.statusCode == 200) {
+    //         var data = JSON.parse(body);
+    //         this._formatWorkItemRecord(data);
+    //     } else {
+    //         this._formatError(error, response, body);
+    //     }
+    // }
+
+    _displayCantGetInfo(identifier) {
+        console.log(`Can't get WorkItem info for ${identifier}`);  //'
     }
 
     _formatWorkItem(data) {
-
+        console.log(data);
     }
 
     _formatObjectRecord(data) {
-
+        console.log(data);
     }
 
     _formatError(error, response, body) {
-        log.error(`Error in request to APTrust: ${error}`);
+        let message = `Error in request to APTrust: ${error}`;
+        console.log(message);
+        log.error(message);
         log.error(body);
-        let html = `<div class="text-warning">Could not get info from APTrust: ${error}</div>`
+        let html = `<div class="text-warning">${message}</div>`
         this.emitter.emit('complete', this.job.id, html);
     }
 }

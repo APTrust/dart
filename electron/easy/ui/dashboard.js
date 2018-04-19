@@ -33,7 +33,7 @@ class Dashboard {
         $('a.show-manifests').click(Dashboard.showManifests);
 
         // Not working yet.
-        //this.checkJobsInRemoteRepo();
+        this.checkJobsInRemoteRepo();
     }
 
     checkJobsInRemoteRepo() {
