@@ -109,11 +109,20 @@ class APTrust {
         this.emitter.emit('complete', this.job.id, html);
     }
 
+    _noWorkItemRecord() {
+        let html =  '<div class="text-info">APTrust does not yet have a WorkItem record for this bag.</div>';
+        this.emitter.emit('complete', this.job.id, html);
+    }
+
+    // Be sure to check WorkItem first, because the etag in the WorkItems
+    // table can distinguish between the this job's version of a bag and
+    // a prior job's version.
     _getIntellectualObject() {
         let repo = this;
         let conn = this._connectionInfo();
         let baseUrl = `${conn.url}/api/${apiVersion}`
         let identifier = path.basename(this.job.packagedFile);
+
         if (this.uploadResult == null) {
             this._notYetUploaded();
             return;
@@ -122,7 +131,6 @@ class APTrust {
             this._displayCantGetInfo(identifier);
             return;
         }
-
 
         // objects endpoint uses Obj Idenfier, like "test.edu/test.edu.bagname"
         let objIdentifier = `${this._getSetting("Institution Domain")}/${identifier.replace(/\.tar$/, '')}`
@@ -136,36 +144,19 @@ class APTrust {
         if (etag) {
             workItemUrl = `${baseUrl}/items/?name=${encodedTarFileName}&etag=${etag}&sort=date`;
         }
+        if (workItemUrl === null) {
+            repo._displayCantGetInfo(identifier);
+            return;
+        }
+
         let options = {
-            url: objectUrl,
+            url: workItemUrl,
             headers: this._getHeaders(conn)
         };
 
-        var workItemCallback = function (error, response, body) {
-            if (response.statusCode == 404) {
-                // No work item
-            } else if (!error && response.statusCode == 200) {
-                var data = JSON.parse(body);
-                repo._formatWorkItem(data, workItemUrl);
-            } else {
-                repo._formatError(error, response, body);
-            }
-        }
-
-        var getWorkItem = function() {
-            if (workItemUrl === null) {
-                repo._displayCantGetInfo(identifier);
-            } else {
-                options.url = workItemUrl;
-                log.debug(`Requesting WorkItem: ${options.url}`);
-                request(options, workItemCallback);
-            }
-        }
-
         var intelObjectCallback = function(error, response, body) {
             if (!error && response.statusCode == 404) {
-                // Not ingested yet. Check for pending WorkItem.
-                getWorkItem();
+                // Not ingested yet.
             } else if (!error && response.statusCode == 200) {
                 var data = JSON.parse(body);
                 repo._formatObjectRecord(data, objectUrl);
@@ -174,9 +165,34 @@ class APTrust {
             }
         }
 
-        // Try to get the intellectual object from Pharos.
-        log.debug(`Requesting IntellectualObject: ${options.url}`);
-        request(options, intelObjectCallback);
+        var getIntelObject = function() {
+            if (objectUrl === null) {
+                repo._displayCantGetInfo(identifier);
+            } else {
+                options.url = objectUrl;
+                log.debug(`Requesting Object: ${options.url}`);
+                request(options, intelObjectCallback);
+            }
+        }
+
+        var workItemCallback = function (error, response, body) {
+            if (response.statusCode == 404) {
+                repo._noWorkItemRecord();
+            } else if (!error && response.statusCode == 200) {
+                var data = JSON.parse(body);
+                if (data.results.length > 0 && data.results[0].object_identifier) {
+                    // Item was ingested. Get the Object record.
+                    getIntelObject();
+                } else {
+                    // Not ingested yet. Show the WorkItem.
+                    repo._formatWorkItem(data, workItemUrl);
+                }
+            }
+        }
+
+        // Try to get the WorkItem from Pharos.
+        log.debug(`Requesting WorkItem: ${options.url}`);
+        request(options, workItemCallback);
     }
 
     _displayCantGetInfo(identifier) {
@@ -190,6 +206,7 @@ class APTrust {
         if (data.results.length == 0) {
             let html = `<div>Item has not yet been queued for ingest.</div>`;
             this.emitter.emit('complete', this.job.id, html);
+            return;
         }
         let workItem = data.results[0];
         let cssClass = 'text-info';
@@ -199,7 +216,7 @@ class APTrust {
             cssClass = 'text-danger';
         }
         let truncatedNote = Util.truncateString(workItem.note, 80);
-        let link = `<a href="javascript:es.openExternal('${workItemUrl}')">View WorkItem in Pharos</a>`;
+        let link = `<a href="javascript:es.openExternal('${workItemUrl}')">View Work Item in Pharos</a>`;
         let html = `<div class="${cssClass}">${workItem.status}: ${truncatedNote}<br/>${link}</div>`;
         this.emitter.emit('complete', this.job.id, html);
     }
