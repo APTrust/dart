@@ -6,6 +6,7 @@ const fs = require('fs');
 const log = require('../core/log');
 const { OperationResult } = require('../core/operation_result');
 const PackageProviders = requireDir("./packaging");
+const RepositoryProviders = requireDir("./repository");
 const SetupProviders = requireDir("./setup");
 const StorageProviders = requireDir("./storage");
 
@@ -38,6 +39,17 @@ function listSetupProviders() {
     var providers = [];
     for(var moduleName in SetupProviders) {
         var provider = SetupProviders[moduleName];
+        providers.push(provider.name)
+    }
+    providers.sort();
+    return providers;
+}
+
+// Returns a list of RepositoryProviders
+function listRepositoryProviders() {
+    var providers = [];
+    for(var moduleName in RepositoryProviders) {
+        var provider = RepositoryProviders[moduleName];
         providers.push(provider.name)
     }
     providers.sort();
@@ -93,6 +105,19 @@ function getPackageProviderByMimeType(mimetype) {
     }
     return null;
 }
+
+// Returns the repository provider with the specified name
+function getRepositoryProviderByName(name) {
+    var providers = [];
+    for(var moduleName in RepositoryProviders) {
+        var module = RepositoryProviders[moduleName];
+        if (module.name == name) {
+            return module.Provider;
+        }
+    }
+    return null;
+}
+
 
 // TODO: Move all this into a separate UI class.
 
@@ -238,8 +263,9 @@ function newPackageEmitter(job, provider) {
             // of a tar, gzip, or zip file.
             var stats = fs.statSync(job.packagedFile)
             result.filesize = stats["size"];
+            result.fileMtime = stats["mtime"];
         } catch(ex) {
-            var msg = `Cannot get file size for ${job.packagedFile}`;
+            var msg = `Cannot get file size or mtime for ${job.packagedFile}`;
             log.error(msg);
             log.error(ex);
             showError("#jobError", ex)
@@ -360,6 +386,17 @@ function newStorageEmitter(job, provider) {
         log.info(`Starting ${result.note}`);
     });
 
+    // If the remote service to which we're uploading the file
+    // returns a checksum or etag, call this when get the
+    // checksum/etag.
+    emitter.on('remoteChecksum', function (remoteChecksum) {
+        result.remoteChecksum = remoteChecksum;
+    });
+
+    emitter.on('remoteUrl', function (remoteUrl) {
+        result.remoteUrl = remoteUrl;
+    });
+
     emitter.on('complete', function(succeeded, message) {
         // TODO: Too much code in here. Refactor.
         if (succeeded == true) {
@@ -370,8 +407,9 @@ function newStorageEmitter(job, provider) {
                 result.filename = job.packagedFile;
                 var stats = fs.statSync(job.packagedFile)
                 result.filesize = stats["size"];
+                result.fileMtime = stats["mtime"];
             } catch(ex) {
-                log.error(`Cannot get file size for ${job.packagedFile}`);
+                log.error(`Cannot get file size or mtime for ${job.packagedFile}`);
                 log.error(ex);
                 showError("#jobError", ex)
             }
@@ -445,13 +483,38 @@ function newStorageEmitter(job, provider) {
     return emitter;
 }
 
+function newRepoEmitter() {
+    var emitter = new EventEmitter();
 
+    emitter.on('start', function() {
+        // Tell UI fetch is starting...
+    })
+
+    // jobId is the identifier of the job we just
+    // looked up in the remote repository.
+    //
+    // html is the html to display in to the user.
+    emitter.on('complete', function(jobId, html) {
+        var selector = `div.job-remote-status[data-object-id="${jobId}"]`;
+        $(selector).html(html);
+    })
+
+    emitter.on('error', function(jobId, error) {
+        // Display error in UI
+    })
+
+    return emitter;
+}
+
+module.exports.listPackageProviders = listPackageProviders;
+module.exports.listRepositoryProviders = listRepositoryProviders;
 module.exports.listSetupProviders = listSetupProviders;
 module.exports.listStorageProviders = listStorageProviders;
-module.exports.listPackageProviders = listPackageProviders;
 module.exports.getSetupProviderByName = getSetupProviderByName;
 module.exports.getStorageProviderByProtocol = getStorageProviderByProtocol;
 module.exports.getPackageProviderByFormat = getPackageProviderByFormat;
 module.exports.getPackageProviderByMimeType = getPackageProviderByMimeType;
+module.exports.getRepositoryProviderByName = getRepositoryProviderByName;
 module.exports.newPackageEmitter = newPackageEmitter;
+module.exports.newRepoEmitter = newRepoEmitter;
 module.exports.newStorageEmitter = newStorageEmitter;

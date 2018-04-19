@@ -42,6 +42,17 @@ class Job {
         // of the files to be packaged.
         this.payloadSize = 0;
 
+        // The repository plugin should set this timestamp
+        // when it sees that the item has been ingested
+        // by the remote repository. See plugins/repository/aptrust.js
+        // for an example. Jobs with non-null ingestedAt timestamps
+        // will not be displayed in the jobs list, because they
+        // have been completed and don't need to be accidentally
+        // run again (several depositors have done this). In APTrust,
+        // re-ingesting a bag can mean overwriting a bag, and we
+        // don't want people to do that unless they clearly intend it.
+        this.ingestedAt = null;
+
         var setting = AppSetting.findByName("Bagging Directory");
         if (setting != null) {
             this.baggingDirectory = setting.value;
@@ -298,12 +309,16 @@ class Job {
         return db.store;
     }
 
-    static list(limit = 50, offset = 0, sortBy = 'updated', sortDir = 'desc') {
+    // TODO: Change args to an options hash.
+    static list(limit = 50, offset = 0, sortBy = 'updated', sortDir = 'desc', skipIngested = false) {
         var items = [];
         var allItems = Util.sort(Job.getStore(), sortBy, sortDir);
         var end = Math.min((offset + limit), allItems.length);
         for (var i = offset; i < end; i++) {
             var item = allItems[i];
+            if (skipIngested && item.ingestedAt != null) {
+                continue;
+            }
             items.push(Job.inflateFromJson(item));
         }
         return items;

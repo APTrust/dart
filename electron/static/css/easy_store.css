@@ -96,3 +96,21 @@ hr.menu-divider {
 .drop-zone-over {
     background-color: #e3f2fd;
 }
+
+.dashboard-job {
+    border: 1px solid #dedede;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+}
+
+.dashboard-job-name {
+   font-weight: bold;
+   font-size: 1.3em;
+   padding: 5px;
+}
+
+.job-op-result, .show-manifests, .job-remote-status {
+    padding-left: 5px;
+    padding-right: 5px;
+}

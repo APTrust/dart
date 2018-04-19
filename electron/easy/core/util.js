@@ -165,6 +165,13 @@ class Util {
                 process.execPath.includes('node_modules\electron'));
     }
 
+    static truncateString(str, len) {
+        if (Util.isEmpty(str) || str.length <= len) {
+            return str;
+        }
+        return str.slice(0, len - 1) + '...';
+    }
+
 	// converts an absolute Windows path to a relative path suitable
 	// for a BagIt file or tar file.
 	static windowsToRelPath(winPath) {

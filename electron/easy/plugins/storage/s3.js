@@ -98,6 +98,8 @@ class S3 {
                         uploader.emitter.emit('complete', false, msg);
                         return;
                     } else {
+                        uploader.emitter.emit('remoteChecksum', remoteStat.etag);
+                        uploader.emitter.emit('remoteUrl', uploader.getRemoteUrl(bucket, objectName));
                         uploader.emitter.emit('uploadComplete', true, `Saved ${objectName} in ${bucket}.`);
                         uploader.emitter.emit('complete', true, `Object uploaded successfully. Size: ${remoteStat.size}, ETag: ${remoteStat.etag}`);
                     }
@@ -119,6 +121,15 @@ class S3 {
         var stream = s3Client.listObjects(bucket, '', false);
         stream.on('data', function(obj) { console.log(obj) } )
         stream.on('error', function(err) { console.log("Error: " + err) } )
+    }
+
+    getRemoteUrl(bucket, objectName) {
+        let url = 'https://' + this.storageService.host.replace('/','');
+        if (this.storageService.port) {
+            url += `:${port}`;
+        }
+        url += `/${bucket}/${objectName}`;
+        return url;
     }
 
     getClient() {

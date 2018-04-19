@@ -1,33 +1,23 @@
 {{#if jobs}}
 <div class="row">
-  <div class="col-sm-6">
-      <h4>Recent Jobs</h4>
-      <table class="table table-hover">
-          <thead class="thead-inverse">
-              <tr>
-                  <th>Job</th>
-                  <th>Details</th>
-              </tr>
-          </thead>
-          <tbody>
-              {{#each jobs}}
-              <tr class="clickable-row" data-object-id="{{ id }}" data-object-type="Job">
-                  <td>{{ bagName }}</td>
-                  <td>
-                      {{#each operationResults as |result resultIndex|}}
-                        {{ resultSummary result }} <br/>
-                      {{else}}
-                        Job has not been run.
-                      {{/each}}
-                  </td>
-              </tr>
-              {{/each }}
-          </tbody>
-      </table>
-  </div>
-  <div class="col-sm-6" id="jobDetail">
+    <h3 style="margin-left: 15px;">Recent Jobs</h3>
+    {{#each jobs}}
+    <div class="dashboard-job" data-object-id="{{ id }}" data-object-type="Job">
+        <div class="dashboard-job-name">{{ bagName }}</div>
 
-  </div>
+        {{#each operationResults as |result resultIndex|}}
+          <div class="job-op-result">{{ resultSummary result }}</div>
+        {{else}}
+          Job has not been run.
+        {{/each}}
+
+        <div class="job-remote-status" data-object-id="{{ id }}"></div>
+
+        <div>
+            <a href="#" class="show-manifests" data-object-id="{{ id }}">Show Local Manifests</a>
+        </div>
+    </div>
+    {{/each}}
 </div>
 {{else}}
 
@@ -49,7 +39,7 @@
  // jQuery and es are already present.
  $(function() {
      $('[data-toggle="popover"]').popover();
-     var dashboard = new es.UI.Dashboard();
+     var dashboard = new es.UI.Dashboard(es.State.ActiveObject);
      dashboard.initEvents();
  });
 </script>

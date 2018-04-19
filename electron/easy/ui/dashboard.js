@@ -3,23 +3,24 @@ const app = (process.type === 'renderer') ? electron.remote.app : electron.app;
 const dateFormat = require('dateformat');
 const fs = require('fs');
 const path = require('path');
+
+const { AppSetting } = require('../core/app_setting');
 const { Job } = require('../core/job');
 const { JobList } = require('./job_list');
+const log = require('../core/log');
 const { Menu } = require('./menu');
+const Plugins = require('../plugins/plugins');
 const State = require('../core/state');
 const Templates = require('../core/templates');
 
 class Dashboard {
 
-    constructor() {
-
+    // TODO: Add paging to dashboard. Show 20 or so jobs per page.
+    constructor(jobs) {
+        this.jobs = jobs;
     }
 
     initEvents() {
-        $('.clickable-row[data-object-type="Job"]').off("click");
-
-        $('.clickable-row[data-object-type="Job"]').on("click", this.showJobDetail);
-
         $('#gettingStarted').click(function(e) {
             $("#container").html(Templates.help());
             State.ActiveObject = null;
@@ -30,48 +31,36 @@ class Dashboard {
         $('#newJobLink').click(function(e) {
             JobList.onNewClick();
         });
+        $('a.show-manifests').click(Dashboard.showManifests);
+
+        this.checkJobsInRemoteRepo();
     }
 
-    showJobDetail() {
-        var id = $(this).data('object-id');
-        var data = {};
-        var job = Job.find(id);
-        data.job = job;
-        if (job.bagItProfile != null) {
-            data.bagInternalIdentifier = job.bagItProfile.bagInternalIdentifier();
-            data.bagTitle = job.bagItProfile.bagTitle();
-            data.bagDescription =job.bagItProfile.bagDescription();
+    checkJobsInRemoteRepo() {
+        var repoPlugin = null;
+        var repoSetting = AppSetting.findByName("Remote Repository");
+        if (!repoSetting || !repoSetting.value) {
+            log.info("Dashboard: No remote repo in settings");
+            return;
         }
-        data.opResults = [];
-        for (var result of job.operationResults) {
-            data.opResults.push({
-                cssClass: result.succeeded ? 'text-success' : 'text-warning',
-                summary: result.summary(),
-                filename: path.basename(result.filename),
-                filesize: result.filesize.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-                note: result.note,
-                warning: result.warning,
-                error: result.error
-            });
-            if (result.provider == "APTrust BagIt Provider") {
-                var manifestDir = path.join(app.getPath('userData'), 'manifests');
-                for (var filename of fs.readdirSync(manifestDir)) {
-                    if (filename.startsWith(job.id)) {
-                        data.hasManifest = true;
-                        break;
-                    }
-                }
+        if (repoSetting) {
+            repoPlugin = Plugins.getRepositoryProviderByName(repoSetting.value);
+            if (repoPlugin == null) {
+                log.info(`Repository plugin ${repoPlugin.value} not found`);
+                return;
             }
         }
-        State.ActiveObject = job;
-        $('#jobDetail').html(Templates.jobSummaryPanel(data));
-        $('#btnViewManifest').on('click', Dashboard.viewManifests);
-        $('#btnGoToJob').on('click', Dashboard.loadJob);
+        for (var job of this.jobs) {
+            let emitter = Plugins.newRepoEmitter();
+            let provider = new repoPlugin(job, emitter);
+            provider.getObjectInfo();
+        }
     }
+
 
     // TODO: This should be async, because when we load a manifest with
     // thousands of entries, it looks like the UI freezes.
-    static viewManifests() {
+    static showManifests() {
         var jobId = $(this).data('object-id');
         var manifests = [];
         var manifestDir = path.join(app.getPath('userData'), 'manifests');
