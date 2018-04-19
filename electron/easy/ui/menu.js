@@ -79,7 +79,7 @@ class Menu {
     }
 
     static dashboardShow() {
-        var jobs = Job.list(10, 0);
+        var jobs = Job.list(20, 0);
         var data = {};
         data.jobs = jobs;
         var setupsCompleted = Util.getInternalVar('Setups Completed');

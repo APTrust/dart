@@ -23,7 +23,7 @@ class APTrust {
         this.job = job;
         this.emitter = emitter;
 
-        this.uploadResult = job.operationResults.find(r => r.provider = "APTrust S3 uploader") || null;
+        this.uploadResult = job.operationResults.find(r => r.provider === "APTrust S3 uploader") || null;
     }
 
     describe() {
@@ -113,9 +113,12 @@ class APTrust {
         let identifier = path.basename(this.job.packagedFile);
         let conn = this._connectionInfo();
 
-        if (this._canConnect(conn) === false) {
-            console.log(`Cannot check Pharos for ${identifier}: not enough info`);
-            return;
+        // if (this._canConnect(conn) === false) {
+        //     console.log(`Cannot check Pharos for ${identifier}: not enough info`);
+        //     return;
+        // }
+        if (identifier.includes('April')) {
+            console.log(this.uploadResult)
         }
 
         let baseUrl = `${conn.url}/api/${apiVersion}`
