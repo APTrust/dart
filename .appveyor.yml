@@ -1,11 +1,20 @@
-#version: 0.1.6.{build}
+version: "v0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
 
 platform: x64
 
 init:
   - git config --global core.autocrlf input
-  - ps: Update-AppveyorBuild -Version "0.1.8.$($env:appveyor_repo_commit.substring(0,7))"
-
+ # - ps: Update-AppveyorBuild -Version "v0.1.8.$($env:appveyor_repo_commit.substring(0,7))"
+  # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
+  - ps: >-
+      if ($env:APPVEYOR_REPO_TAG -eq "true")
+      {
+        Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
+      }
+      else
+      {
+        Update-AppveyorBuild -Version "v0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+      }
 cache:
   - electron\node_modules
   - '%APPDATA%\npm-cache'
@@ -21,7 +30,6 @@ environment:
   GOPATH: c:\gopath
   access_token:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
-  appveyor_repo_tag: false
   artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
