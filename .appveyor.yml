@@ -1,4 +1,4 @@
-version: "0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))-Windows"
+version: "0.1.8"
 
 platform: x64
 
