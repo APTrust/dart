@@ -38,7 +38,8 @@ install:
 
 build_script:
   - npm run --prefix ./electron
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version="$(env:APPVEYOR_BUILD_VERSION.TrimStart('v'))"
+  - set buildver=$(env:APPVEYOR_BUILD_VERSION.TrimStart('v'))
+  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version="$(env:buildver))"
 
 artifacts:
   - path: electron/dist/*.exe
