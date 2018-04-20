@@ -6,6 +6,7 @@ init:
   - git config --global core.autocrlf input
  # - ps: Update-AppveyorBuild -Version "v0.1.8.$($env:appveyor_repo_commit.substring(0,7))"
   # Set "build version number" to "short-commit-hash" or when tagged to "tag name" (Travis style)
+  - set BUILDVER=%APPVEYOR_BUILD_VERSION%
   - ps: Update-AppveyorBuild -Version "v0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
 
 cache:
@@ -39,7 +40,7 @@ install:
 build_script:
   - npm run --prefix ./electron
   - set buildver=$(env:APPVEYOR_BUILD_VERSION.TrimStart('v'))
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version="$(env:buildver))"
+  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version=%BUILDVER%
 
 artifacts:
   - path: electron/dist/*.exe
