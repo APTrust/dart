@@ -13,7 +13,7 @@ init:
       }
       else
       {
-        Update-AppveyorBuild -Version "v0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
+        Update-AppveyorBuild -Version "0.1.8.$($env:APPVEYOR_REPO_COMMIT.substring(0,7))"
       }
 cache:
   - electron\node_modules
