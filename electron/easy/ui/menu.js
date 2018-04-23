@@ -31,6 +31,7 @@ class Menu {
         $("#menuJobNew").click(JobList.onNewClick);
         $("#menuHelpDoc").on('click', function() { Menu.helpShow(); });
         $("#menuLog").on('click', function() { Menu.logShow(); });
+        $("#menuAbout").on('click', function() { Menu.aboutShow(); });
 
 
         // Stop the default behavior of loading and displaying
@@ -96,6 +97,19 @@ class Menu {
     static helpShow() {
         $("#container").html(Templates.help());
         State.ActiveObject = null;
+    }
+
+    static aboutShow() {
+        var app = require('electron').remote.app;
+        var data = {};
+        data.name = app.getName();
+        data.version = app.getVersion();
+        data.appPath = app.getAppPath();
+        data.userDataPath = app.getPath('userData');
+        $('#modalTitle').text("About DART");
+        $("#modalContent").html(Templates.about(data));
+        $('#modal').modal();
+        //$("#container").html(Templates.about(data));
     }
 
     static jobList(message, limit = 50, offset = 0) {

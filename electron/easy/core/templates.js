@@ -10,6 +10,7 @@ function readFile(filename) {
     return fs.readFileSync(pathTo(filename), 'utf8');
 }
 
+var about = handlebars.compile(readFile('about.html'));
 var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
 var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
 var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
@@ -59,6 +60,7 @@ handlebars.registerHelper('resultSummary', function(result) {
     return result.summary();
 });
 
+module.exports.about = about;
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
 module.exports.bagItProfileForm = bagItProfileForm;
