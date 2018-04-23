@@ -1,6 +1,7 @@
 <h1>Logs</h1>
 
 <div class="row padded-for-text">
+    <p>Your log file is located at {{ logfile }}.</p>
     <p>If you're seeing unexpected problems while bagging or uploadind data:</p>
     <ol>
         <li>Click the <b>Export Log</b> button. A compressed version of the log will appear on your desktop.</li>
@@ -19,7 +20,6 @@
         <button type="button" class="btn btn-primary" id="btnExportLog">Export Log</button>
     </div>
 </div>
-
 
 <div class="row padded-for-text" style="display:none; margin-top: 30px; height: 500px;" id="logViewer">
     <pre id="logData" style="height:600px;width:100%;overvlow:auto;">{{ logContent }}</pre>
