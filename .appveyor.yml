@@ -1,4 +1,4 @@
-version: "0.1.8{build}"
+version: "0.1.8.{build}"
 
 platform: x64
 
@@ -13,17 +13,13 @@ cache:
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
-branches:
-  only:
-    - master
-
 clone_folder: c:\gopath\src\github.com\APTrust\dart
 
 environment:
   GOPATH: c:\gopath
   access_token:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
-  artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
+#  artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
   - ps: Install-Product node 8 x64
@@ -38,7 +34,8 @@ install:
 
 build_script:
   - npm run --prefix ./electron
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
+    #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
+  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 artifacts:
   - path: electron/dist/*.exe
@@ -46,7 +43,7 @@ artifacts:
 
 test: off
 deploy:
-  release: v$(appveyor_build_version)
+  release: v%APPVEYOR_BUILD_VERSION%
   description: 'APTrust Digital Asset Routing Tool'
   provider: GitHub
   auth_token:
@@ -58,6 +55,8 @@ deploy:
   prerelease: false
   # Overwrite existing release, don't fail.
   force_update: true
+  on:
+    appveyor_repo_tag: true
 
 notifications:
   - provider: Slack
