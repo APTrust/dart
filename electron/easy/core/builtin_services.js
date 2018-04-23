@@ -6,8 +6,8 @@ const APTrustProdId = "40aa1fe2-8463-47ac-a582-4bf92db361ee";
 
 var aptDemo = new StorageService();
 aptDemo.id = APTrustDemoId;
-aptDemo.name = "APTrust Test Repository";
-aptDemo.description = "APTrust demo/test repository for testing your workflows.";
+aptDemo.name = "APTrust Demo Repository";
+aptDemo.description = "APTrust demo repository for testing your workflows.";
 aptDemo.protocol = "s3";
 aptDemo.host = "s3.amazonaws.com";
 
