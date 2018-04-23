@@ -238,6 +238,7 @@ function newPackageEmitter(job, provider) {
     result.note = `Packaged by ${provider}`;
 
     emitter.on('start', function(message) {
+        document.getElementById('btnJobRun').setAttribute('disabled', true);
         showFilesReset();
         result.started = (new Date()).toJSON();
         log.info(`Packaging bag ${job.bagName}`);
@@ -271,6 +272,7 @@ function newPackageEmitter(job, provider) {
             showError("#jobError", ex)
         }
         job.save(); // save job with OperationResult
+        document.getElementById('btnJobRun').removeAttribute('disabled');
 
         // Need to find a better place for this...
         job.uploadFiles();
@@ -349,6 +351,7 @@ function newPackageEmitter(job, provider) {
         result.completed = (new Date()).toJSON();
         job.save();
         showError("#jobError", message);
+        document.getElementById('btnJobRun').removeAttribute('disabled');
         log.error(`Error during packaging/validation: ${message}`);
     });
 
@@ -380,6 +383,7 @@ function newStorageEmitter(job, provider) {
     result.note = `Upload to ${serviceName}`;
 
     emitter.on('start', function(message) {
+        document.getElementById('btnJobRun').setAttribute('disabled', true);
         showStorageReset();
         result.started = (new Date()).toJSON();
         $("#jobRun").show();
@@ -435,6 +439,7 @@ function newStorageEmitter(job, provider) {
         } else {
             showFailure("#jobStorageStart");
             showError("#jobError", message);
+            document.getElementById('btnJobRun').removeAttribute('disabled');
             log.info(`Error ${result.note}: ${message}`);
         }
         result.succeeded = succeeded;

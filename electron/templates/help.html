@@ -19,7 +19,7 @@
 
 <h2><a name="About DART" class="anchor">About DART</a></h2>
 
-<p>You're using DART 0.1.0, which is an early release with limited functionality and limited real-world testing. It currently supports the following operations:</p>
+<p>You're using DART 0.1.9, which is an early release with limited functionality and limited real-world testing. It currently supports the following operations:</p>
 
 <ul>
     <li>Creating APTrust and DPN bags</li>
@@ -27,7 +27,16 @@
     <li>Creating custom BagIt profiles (for advanced users)</li>
 </ul>
 
-<p>The product currently consists of two applications: DART, which is the graphical component you're looking at now, and apt_create_bag which packages files into BagIt format. In the months to come, apt_create_bag will be wrapped into DART. We plan on adding new Storage Service types (in addition to S3) and a few other features. We'll also improve documentation, testing, and quality control.</p>
+<p>This early version of the application will let you try to do things that are <b>not implemented yet</b>, including:</p>
+
+<ul>
+    <li>Uploading bags to an FTP server (doesn't work yet)</li>
+    <li>Packaging bags into a directory instead of a tar file (doesn't work yet)</li>
+    <li>Uploading multiple files to S3 in a single job (doesn't work yet)</li>
+    <li>Uploading a single bag to more than one remote storage service (doesn't work yet)</li>
+</ul>
+
+<p>In the coming months, we plan to add new Storage Service types (in addition to S3) and a few other features. We'll also improve documentation, testing, and quality control.</p>
 
 <h2><a name="Getting Started" class="anchor">Getting Started</a></h2>
 
@@ -56,14 +65,16 @@
 <p>A BagIt profile describes how to create a bag so that it meets an organization's specific set of criteria. These criteria generally include:</p>
 
 <ul>
-    <li>What type of payload manifest must be present (md5, sha256, etc.)</li>
-    <li>What type of tag manifest must be present</li>
+    <li>What type(s) of payload manifest must be present (md5, sha256, etc.)</li>
+    <li>What type(s) of tag manifest must be present</li>
     <li>Which tag files must be present</li>
     <li>Which tags must be present</li>
     <li>Which values are allowed for each tag</li>
     <li>Whether the bag should be serialized or compressed (tar format, zip format, etc)</li>
     <li>And more...</li>
 </ul>
+
+<p><b>Note that in this early release, DART can only produce tarred bags.</b> If you create a BagIt profile that does not say the bag must be tarred, you'll likely get an error or wind up with a tarred bag when you run your job.</p>
 
 <p>When you create a bag with DART, you will select the files that go into the bag, and then you'll select the BagIt profile that describes how the bag will be packaged. While you must set some tags, such as the bag name and description, individually for each bag, a number of tags, such as your organization name and address, will be the same across all bags. When you customize your BagIt profile, you fill in default values for a number of tags so that you won't have to fill those in each time you create a new bag.</p>
 
@@ -171,6 +182,16 @@
 
 
 <h2><a name="Release Notes" class="anchor">Release Notes</a></h2>
+
+<h3>Version 0.1.9 - Apr. 23, 2018</h3>
+
+<ul>
+    <li>Fixed name of APTrust Demo Repository</li>
+    <li>The <b>Run Job</b> button is now disabled while a job is running, and remains disabled after a successful upload.</li>
+    <li>Added <b>About</b> to the Help menu.</li>
+    <li>Removed obsolete information from this help page.</li>
+</ul>
+
 
 <h3>Version 0.1.8 - Apr. 16, 2018</h3>
 

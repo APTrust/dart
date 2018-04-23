@@ -9,6 +9,7 @@ const { Field } = require('../core/field');
 const { Form } = require('../core/form');
 const { Job } = require('../core/job');
 const { JobList } = require('./job_list');
+const log = require('../core/log');
 const Plugins = require('../plugins/plugins');
 const { StorageService } = require('../core/storage_service');
 const { TagDefinition } = require('../core/tag_definition');
@@ -30,6 +31,7 @@ class Menu {
         $("#menuJobNew").click(JobList.onNewClick);
         $("#menuHelpDoc").on('click', function() { Menu.helpShow(); });
         $("#menuLog").on('click', function() { Menu.logShow(); });
+        $("#menuAbout").on('click', function() { Menu.aboutShow(); });
 
 
         // Stop the default behavior of loading and displaying
@@ -97,6 +99,19 @@ class Menu {
         State.ActiveObject = null;
     }
 
+    static aboutShow() {
+        var app = require('electron').remote.app;
+        var data = {};
+        data.name = app.getName();
+        data.version = app.getVersion();
+        data.appPath = app.getAppPath();
+        data.userDataPath = app.getPath('userData');
+        $('#modalTitle').text("About DART");
+        $("#modalContent").html(Templates.about(data));
+        $('#modal').modal();
+        //$("#container").html(Templates.about(data));
+    }
+
     static jobList(message, limit = 50, offset = 0) {
         var sortBy = 'updated';
         var sortDir = 'desc';
@@ -111,7 +126,9 @@ class Menu {
     }
 
     static logShow() {
-        $("#container").html(Templates.log());
+        var data = {};
+        data.logfile = log.filename();
+        $("#container").html(Templates.log(data));
         State.ActiveObject = null;
     }
 
