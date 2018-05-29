@@ -21,6 +21,10 @@ use cases, including sending digital artefacts from producers to preservationist
 within the organization. (For example, researchers can bag and send data to the
 library across campus.)
 
+# Installer
+
+See [the installer page](INSTALL.md) if you want to install DART without setting up the whole development environment.
+
 # Screenshots
 
 DART has a five-step process for packing and shipping bags.

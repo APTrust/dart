@@ -2,8 +2,8 @@
 
 You'll find the latest DART binaries here:
 
-* [Windows: v 0.1.9] (https://s3.amazonaws.com/aptrust.public.download/DART/DART-0.1.9-Windows.exe)
-* [Mac: v. 0.1.9 ] (https://s3.amazonaws.com/aptrust.public.download/DART/DART-0.1.9-Mac.dmg)
+* [Windows](https://s3.amazonaws.com/aptrust.public.download/DART/DART-0.1.9-Windows.exe)
+* [Mac](https://s3.amazonaws.com/aptrust.public.download/DART/DART-0.1.9-Mac.dmg)
 
 Mac Users: We're in the process of getting an Apple developer's certificate,
 but we're not there yet. For now, you'll see a message saying that this
