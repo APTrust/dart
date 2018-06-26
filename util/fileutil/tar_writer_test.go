@@ -15,7 +15,7 @@ import (
 	"testing"
 )
 
-var aptrustFile = pathToFile("aptrust_bagit_profile_2.1.json")
+var aptrustFile = pathToFile("aptrust_bagit_profile_2.2.json")
 var dpnFile = pathToFile("dpn_bagit_profile_2.1.json")
 var algorithms = []string{constants.MD5, constants.SHA256}
 
@@ -65,8 +65,8 @@ func TestAddToArchive(t *testing.T) {
 	}
 	checksums, err := w.AddToArchive(aptrustFile, "file1.json", algorithms)
 	assert.Nil(t, err)
-	assert.Equal(t, "4e16dcbdc46cb210a3151c24dd05ab1b", checksums[constants.MD5])
-	assert.Equal(t, "34bbd8b7b0fff774f9edb3665695f9f2260ff6ddfc410770a011472c964272f2", checksums[constants.SHA256])
+	assert.Equal(t, "eec5d6257c0eb008e8bdac8b0ef444dd", checksums[constants.MD5])
+	assert.Equal(t, "2c5d9cc51e9f0538fba0166102f0275c9dbfd410d70be2437f1edf058428e4e5", checksums[constants.SHA256])
 	checksums, err = w.AddToArchive(dpnFile, "data/subdir/file2.json", algorithms)
 	assert.Nil(t, err)
 	assert.Equal(t, "b6c64a7c423aeb4245ffaae36fa66fab", checksums[constants.MD5])

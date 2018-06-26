@@ -27,6 +27,7 @@ var APTrustDefaultTags = map[string][]bagit.KeyValuePair{
 	"aptrust-info.txt": []bagit.KeyValuePair{
 		bagit.NewKeyValuePair("Title", "Test Object"),
 		bagit.NewKeyValuePair("Access", "Institution"),
+		bagit.NewKeyValuePair("Storage-Option", "Standard"),
 	},
 }
 
@@ -65,7 +66,7 @@ func getBaggerPreReqs(t *testing.T) (tempDir string, aptrustProfile *bagit.BagIt
 	tempDir, err := ioutil.TempDir("", "bagger_test")
 	require.Nil(t, err)
 
-	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.1.json")
+	profilePath, err := testutil.GetPathToTestProfile("aptrust_bagit_profile_2.2.json")
 	require.Nil(t, err)
 	aptrustProfile, err = bagit.LoadBagItProfile(profilePath)
 	require.Nil(t, err)
@@ -243,7 +244,7 @@ func TestWriteBag_APTrust(t *testing.T) {
 	// Verify contents of tag files and the manifest.
 	expectedBagit := "BagIt-Version:  0.97\nTag-File-Character-Encoding:  UTF-8\n"
 	expectedBagInfo := "Source-Organization:  APTrust\nPayload-Oxum:  632046.6\nBag-Size:  617.23 KB\nBagging-Date:  " + time.Now().Format("2006-01-02") + "\n"
-	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\n"
+	expectedAPTrustInfo := "Title:  Test Object\nAccess:  Institution\nStorage-Option:  Standard\n"
 	expectedManifest := `6385e86c8489b28586d03320efd57dfe data/hemingway.jpg
 c3b41207c1374fa0bc2c2d323afc580d data/lighthouse.jpg
 a41052eecd987d8175164c48f486945c data/president.jpg

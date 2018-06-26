@@ -121,8 +121,8 @@ func TestFSIFindMatchingFiles(t *testing.T) {
 	reJsonFile := regexp.MustCompile(".*\\.json$")
 	fileNames, err := fsi.FindMatchingFiles(reJsonFile)
 	require.Nil(t, err)
-	require.Equal(t, 3, len(fileNames))
-	assert.True(t, util.StringListContains(fileNames, filepath.Join("profiles", "aptrust_bagit_profile_2.1.json")))
+	require.Equal(t, 4, len(fileNames))
+	assert.True(t, util.StringListContains(fileNames, filepath.Join("profiles", "aptrust_bagit_profile_2.2.json")))
 	assert.True(t, util.StringListContains(fileNames, filepath.Join("profiles", "dpn_bagit_profile_2.1.json")))
 	assert.True(t, util.StringListContains(fileNames, filepath.Join("jobs", "sample_job.json")))
 
