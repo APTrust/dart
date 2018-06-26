@@ -20,12 +20,12 @@ const APTrustProfile = {
     "allowMiscTopLevelFiles": true,
     "allowMiscDirectories": true,
     "bagItProfileInfo": {
-        "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.1",
+        "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
         "contactEmail": "support@aptrust.org",
         "contactName": "A. Diamond",
-        "externalDescription": "BagIt profile for ingesting content into APTrust.",
+        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated June 26, 2018 to include the Storage-Option tag.",
         "sourceOrganization": "aptrust.org",
-        "version": "2.1"
+        "version": "2.2"
     },
     "manifestsRequired": [
         "md5"
@@ -170,6 +170,23 @@ const APTrustProfile = {
             "userValue": "",
             "isBuiltIn": true,
             "help": "The description of the bag that you want to appear in the APTrust registry."
+        },
+        {
+            "id": "53075007-e6cf-4a18-9b34-caa605ed593f",
+            "tagFile": "aptrust-info.txt",
+            "tagName": "Storage-Option",
+            "required": true,
+            "emptyOk": false,
+            "values": [
+                "Standard",
+                "Glacier-OH",
+                "Glacier-OR",
+                "Glacier-VA"
+            ],
+            "defaultValue": "Standard",
+            "userValue": "",
+            "isBuiltIn": true,
+            "help": "How do you want this bag to be stored in APTrust? Standard = S3/Virginia + Glacier/Oregon. Glacier-OH = Glacier-only storage in Ohio. Glacier-OR = Glacier-only storage in Oregon. Glacier-VA = Glacier-only storage in Virginia. Standard storage includes regular 90-day fixity checks. Glacier-only storage is less expensive but excludes fixity checks. File in Glacier-only storage may take up to 24 hours longer to restore and excessive Glacier retrieval may incur additional fees."
         }
     ],
     "serialization": "required",
