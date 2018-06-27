@@ -81,18 +81,20 @@ function migrateEasyStoreFiles() {
         }
         var dartManifestDir = path.join(dartDir, 'manifests');
         var easyStoreManifestDir = path.join(easyStoreDir, 'manifests');
-        var manifests = fs.readdirSync(easyStoreManifestDir);
         if (!fs.existsSync(dartManifestDir)) {
             fs.mkdirSync(dartManifestDir, 0o755);
         }
-        for (var m of manifests) {
-            var sourceFile = path.join(easyStoreManifestDir, m);
-            if (!fs.existsSync(sourceFile)) {
-                continue;
+        if (fs.existsSync(easyStoreManifestDir)) {
+            var manifests = fs.readdirSync(easyStoreManifestDir);
+            for (var m of manifests) {
+                var sourceFile = path.join(easyStoreManifestDir, m);
+                if (!fs.existsSync(sourceFile)) {
+                    continue;
+                }
+                var destFile = path.join(dartManifestDir, m);
+                log.info(`Migrating ${sourceFile} -> ${destFile}`);
+                copyFileSync(sourceFile, destFile);
             }
-            var destFile = path.join(dartManifestDir, m);
-            log.info(`Migrating ${sourceFile} -> ${destFile}`);
-            copyFileSync(sourceFile, destFile);
         }
         Util.setInternalVar('EasyStore Migration Date', new Date().toJSON());
     }
