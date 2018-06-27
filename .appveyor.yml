@@ -42,6 +42,20 @@ artifacts:
     name: DART-Windows
 
 test: off
+
+deploy:
+  provider: S3
+  access_key_id:
+			secure: u4NH7eUlYuzO9hl5Hk/7P5K1qvo31iqZ19BW484x8BE=
+  secret_access_key:
+   		secure: FMvYL/QE+0kHdy9L7GxtayJwx3KwQB3AA2mcIBqGGeEM0lqLLv4tq2b4wH9y3nJ8
+  bucket: aptrust.public.download
+  region: us-east-1
+  set_public: true
+  folder: DART
+  artifact: DART-Windows
+  reduced_redundancy: true
+
 deploy:
   release: v%APPVEYOR_BUILD_VERSION%
   description: 'APTrust Digital Asset Routing Tool'
