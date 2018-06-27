@@ -41,14 +41,13 @@ script:
 before_deploy:
       - git config --local user.name "APTdeploy"
       - git config --local user.email "ops@aptrust.org"
-      - git tag "v$(grep version electron/package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
+      - git tag "v$(grep version electron/package.json |sed 's/[^0-9.]//g').$(git log --format=%h -1).$TRAVIS_BUILD_NUMBER"
 deploy:
   provider: releases
   api_key:
     secure: 1RQHlxSWvh7QFV1rAhPnd+0bNWDPOV6XVbBoFXA1Oa2nXKthjBkmc4OTo2CNFpC1k1Wn4zW8SAduzMr9jG9f2HG+imWsy6IkRh3wUMLcE9RgfYDmaFOfwhqbjtoS+dQhBis3kI5YmhLDOaCD7BDuVttVGil8ZMpcGY1xWVPgBQRFlE71IssNEyOfxYhl1/njoT4nEaL/s/C5P+p1fKc+HlbdLpdpfnYRDs90NpqZuJKM4JzNWIECWoZqZY94cPLe9Czog1ijZvJbCQ0yGXOE70yWQN5KE9yk40JVbBdOBcfgzgbyAFCl+xvVj6v4TRuqRDL6tsF8SahPNdSdme0lOl8hegxeWfzmCjanY/Qnuh1Jk+JYy0hmUiLZgm+KPAjW0+LgFhPSO7QpPUA13UAWf05JrnvRIAyC0jfw48kQjuxd85cT1jQ8v6aii+m1GxbIOTsifBdG87b5dASN8ykSQUDT6UhOBbXplR6fwD2qM6UZa9TqiFhmvce12Jojff8BeUq8ZsXDo776PII9djJxE9z3SOkSg+omXn0DoRkt5gghdix+t5q5lmezUMBaTp3k+ozb8CO1rDzKqSfzQ8KEGUms/UGZi+NBbMbcwgCFJODykNOnnS6Mk0n+ztsj63x7t59nQuavsG4E8RS1888bPC1dncBMGjZqA/wthw+NRcw=
   file_glob: true
-  file:
-    - electron/dist/*.dmg
+  file: electron/dist/*
   skip_cleanup: true
   overwrite: true
   on:
