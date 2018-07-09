@@ -23,7 +23,7 @@ const APTrustProfile = {
         "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
         "contactEmail": "support@aptrust.org",
         "contactName": "A. Diamond",
-        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated June 26, 2018 to include the Storage-Option tag.",
+        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated July 9, 2018 to include Storage-Option and Bag-Group-Identifier.",
         "sourceOrganization": "aptrust.org",
         "version": "2.2"
     },
@@ -94,6 +94,18 @@ const APTrustProfile = {
             "userValue": "",
             "isBuiltIn": true,
             "help": "The date this bag was created. The bagging software should set this automatically."
+        },
+        {
+            "id": "32e69005-4495-452f-8b3d-bef545fca583",
+            "tagFile": "bag-info.txt",
+            "tagName": "Bag-Group-Identifier",
+            "required": false,
+            "emptyOk": true,
+            "values": [],
+            "defaultValue": null,
+            "userValue": "",
+            "isBuiltIn": true,
+            "help": "Identifies the logical group or collection to which a bag belongs. Several bags may share the same Bag-Group-Identifier to indicate that they are part of the same logical grouping."
         },
         {
             "id": "917fc560-5bd1-4a5b-acb6-b7a4ce749252",
