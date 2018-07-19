@@ -166,6 +166,10 @@ class Bagger {
         if (sizeTag) {
             sizeTag.userValue = Util.toHumanSize(bagger.payloadByteCount());
         }
+        var softwareTag = bagger.job.bagItProfile.findTagByName('Bagging-Software');
+        if (softwareTag) {
+            softwareTag.userValue = Util.dartVersion();
+        }
         for (var tagFileName of this.job.bagItProfile.requiredTagFileNames()) {
             var content = this.job.bagItProfile.getTagFileContents(tagFileName);
             var tmpFile = tmp.fileSync({ mode: 0o644, postfix: '.txt' });

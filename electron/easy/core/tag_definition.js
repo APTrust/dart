@@ -6,7 +6,8 @@ const { Field } = require('./field');
 const { Util } = require('./util');
 const { ValidationResult } = require('./validation_result');
 
-const tagsSetBySystem = ['Bagging-Date', 'Payload-Oxum', 'DPN-Object-ID',
+const tagsSetBySystem = ['Bagging-Date', 'Bagging-Software',
+                         'Payload-Oxum', 'DPN-Object-ID',
                          'First-Version-Object-ID', 'Bag-Size'];
 
 class TagDefinition {

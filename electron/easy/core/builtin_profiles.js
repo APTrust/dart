@@ -96,6 +96,18 @@ const APTrustProfile = {
             "help": "The date this bag was created. The bagging software should set this automatically."
         },
         {
+            "id": "4d9e682c-4236-4adf-aaf2-c9d7666e3062",
+            "tagFile": "bag-info.txt",
+            "tagName": "Bagging-Software",
+            "required": false,
+            "emptyOk": true,
+            "values": [],
+            "defaultValue": null,
+            "userValue": "",
+            "isBuiltIn": true,
+            "help": "The name of the software that created this bag. The bagging software should set this automatically."
+        },
+        {
             "id": "32e69005-4495-452f-8b3d-bef545fca583",
             "tagFile": "bag-info.txt",
             "tagName": "Bag-Group-Identifier",
@@ -330,6 +342,18 @@ const DPNProfile = {
             "userValue": "",
             "isBuiltIn": true,
             "help": "The date this bag was created. The bagging software should set this automatically."
+        },
+        {
+            "id": "6f01e992-f31d-4f49-9cf0-a4e44aa75c2d",
+            "tagFile": "bag-info.txt",
+            "tagName": "Bagging-Software",
+            "required": false,
+            "emptyOk": true,
+            "values": [],
+            "defaultValue": null,
+            "userValue": "",
+            "isBuiltIn": true,
+            "help": "The name of the software that created this bag. The bagging software should set this automatically."
         },
         {
             "id": "a1cdc695-9bbd-4cd0-9510-80ac6de14c2f",
