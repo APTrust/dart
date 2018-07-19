@@ -103,13 +103,12 @@ class Menu {
         var app = require('electron').remote.app;
         var data = {};
         data.name = app.getName();
-        data.version = app.getVersion();
+        data.version = Util.dartVersion();
         data.appPath = app.getAppPath();
         data.userDataPath = app.getPath('userData');
         $('#modalTitle').text("About DART");
         $("#modalContent").html(Templates.about(data));
         $('#modal').modal();
-        //$("#container").html(Templates.about(data));
     }
 
     static jobList(message, limit = 50, offset = 0) {

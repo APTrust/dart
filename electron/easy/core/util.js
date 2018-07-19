@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const Store = require('electron-store');
 var db = new Store({name: 'internal'});
 
@@ -216,6 +217,14 @@ class Util {
         });
         return filelist;
     };
+    // This should would both in Electron and in headless Node.js
+    static getPackageInfo() {
+        return require('../../package.json')
+    }
+    static dartVersion() {
+        var pkg = Util.getPackageInfo();
+        return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} for ${os.platform()})`
+    }
 }
 
 module.exports.Util = Util;
