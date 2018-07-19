@@ -18,9 +18,12 @@ function run() {
 
     // Overwrite the previous (unpublished) APTrust 2.2 BagItProfile
     // with the new 2.2 version that includes Bag-Group-Identifier.
-    oldAPTrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId)
-    oldAPTrustProfile.delete()
-    BagItProfile.createProfileFromBuiltIn(builtinProfiles.APTrustProfileId);
+    // Overwrite the old APTrust 2.1 BagItProfile with the new 2.2 version.
+    var oldAPTrustProfile = BagItProfile.find(builtinProfiles.APTrustProfileId);
+    var newAPTrustProfile = BagItProfile.createProfileFromBuiltIn(builtinProfiles.APTrustProfileId, false);
+    newAPTrustProfile.copyDefaultTagValuesFrom(oldAPTrustProfile);
+    // Save will overwrite, because this new profile has the same UUID as the old.
+    newAPTrustProfile.save();
 
     var now = new Date().toISOString();
     log.info(`Finished ${migrationName} at ${now}`);
