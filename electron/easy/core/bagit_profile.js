@@ -431,6 +431,22 @@ class BagItProfile {
         }
     }
 
+    // Copy default tag values from other profile to this profile.
+    copyDefaultTagValuesFrom(otherProfile) {
+        var changed = false;
+        for(var t of otherProfile.requiredTags) {
+            var tag = this.findTagByName(t.tagName);
+            if (tag && t.tagFile == tag.tagFile && !Util.isEmpty(t.defaultValue)) {
+                tag.defaultValue = t.defaultValue;
+                //console.log(`Set default for ${tag.tagName} to ${tag.defaultValue}`)
+                changed = true;
+            }
+        }
+        if (changed) {
+            this.save();
+        }
+    }
+
     static createProfileFromBuiltIn(builtinId, tagAsCopy) {
         var profile = null;
         if (builtinId == builtinProfiles.APTrustProfileId) {
