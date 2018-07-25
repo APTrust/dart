@@ -1,11 +1,11 @@
 const Conf = require('conf');
 
 /**
- * PersistentObject is an object that can be saved to and retrieved
+ * JsonStore allows us to save, update, retrieve, and delete objects
  * from a plain-text JSON file.
  *
- * This class uses the simple conf library from
- * https://github.com/sindresorhus/conf to store and retrieve data.
+ * This class extends the simple conf library from
+ * https://github.com/sindresorhus/conf and exposes its methods.
  *
  * To get system standard user data directories for the dataDir param,
  * see https://github.com/sindresorhus/env-paths
@@ -13,11 +13,11 @@ const Conf = require('conf');
  * @param {string} dataDir  Path to the directory in which to store data.
  * @param {string} name     The name of the file to store data in. This will get a .json extension.
  */
-class PersistentObject {
+class JsonStore extends Conf {
     constructor(dataDir, name) {
         var opts = {cwd: dataDir, configName: name};
-        this.db = new Conf(opts);
+        super(opts);
     }
 }
 
-module.exports.PersistentObject = PersistentObject;
+module.exports.JsonStore = JsonStore;
