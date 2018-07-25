@@ -1,6 +1,6 @@
 {
     "name": "DART",
-    "version": "1.0",
+    "version": "1.0.0",
     "description": "DART is the Digital Archivist's Routing Tool for packaging and shipping digital matierials.",
     "main": "main.js",
     "repository": {
@@ -12,11 +12,13 @@
         "archiver": "^2.1.1",
         "asar": "^0.14.3",
         "dateformat": "^3.0.3",
+        "documentation": "^8.0.2",
         "electron-context-menu": "^0.9.1",
         "electron-log": "^2.2.14",
         "electron-store": "^1.3.0",
         "handlebars": "^4.0.11",
         "minio": "^3.2.3",
+        "popper.js": "^1.14.3",
         "require-dir": "^0.3.2",
         "tar-stream": "git+https://github.com/APTrust/tar-stream.git",
         "tmp": "0.0.33"
@@ -26,6 +28,7 @@
         "electron-builder": "^19.56.2",
         "electron-rebuild": "^1.7.3",
         "electron-toolkit": "^1.0.24",
+        "jest": "^23.4.1",
         "tape": "^4.9.0"
     },
     "scripts": {
