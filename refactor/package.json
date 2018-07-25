@@ -34,7 +34,8 @@
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
         "start": "electron .",
-        "release": "build"
+        "release": "build",
+        "test": "jest"
     },
     "build": {
         "appId": "com.electron.DART",
