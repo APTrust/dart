@@ -12,6 +12,7 @@
         "archiver": "^2.1.1",
         "asar": "^0.14.3",
         "dateformat": "^3.0.3",
+        "documentation": "^8.0.2",
         "electron-context-menu": "^0.9.1",
         "electron-log": "^2.2.14",
         "electron-store": "^1.3.0",
