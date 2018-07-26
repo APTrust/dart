@@ -20,7 +20,7 @@ const userConfig = {
     datadir: dartPaths.data,
     logdir: dartPaths.log,
     tempdir: dartPaths.temp
-}
+};
 
 /**
  * testConfig contains config settings for running automated tests.
@@ -35,11 +35,11 @@ const testConfig = {
     datadir: path.join(homedir, '.dart-test', 'data'),
     logdir: path.join(homedir, '.dart-test', 'log'),
     tempdir: path.join(homedir, '.dart-test', 'tmp')
-}
+};
 
 const Config = {
     'user': userConfig,
     'test': testConfig
-}
+};
 
 module.exports.Config = Config;

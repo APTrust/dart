@@ -1,4 +1,5 @@
-const { Config } = require('./config')
+const { Config } = require('./config');
+const { JsonStore } = require('./json_store');
 
 
 /**
@@ -6,19 +7,28 @@ const { Config } = require('./config')
  * information and services to all components of the application.
  */
 class GlobalContext {
-    constructor() {
+    constructor(configName) {
         // When you run `npm test`, this env var is set by jest.
-        this.isTestEnv = process.NODE_ENV === 'test';
+        this.isTestEnv = process.env.NODE_ENV === 'test';
         this.config = this.isTestEnv ? Config.test : Config.user;
         this.dataStores = {};
     }
-    function db(name) {
-        // Return the JsonStore with the specified name (class name),
-        // creating it first if necessary. Track all stores in this.dataStores.
+    /**
+      * Returns the JsonStore with the specified name (class name),
+      * creating it first if necessary.
+      *
+      * @param {string} name - The name of the datastore. This can be a class name,
+      * so each object type has it's own JSON data file.
+     */
+    db(name) {
+        if (this.dataStores[name] == null) {
+            this.dataStores[name] = new JsonStore(this.config.dataDir, name);
+        }
+        return this.dataStores[name];
     }
 }
 
-const Context = GlobalContext();
+const Context = new GlobalContext();
 Object.freeze(Context);
 
-export default Context;
+module.exports.Context = Context;
