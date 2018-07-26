@@ -7,7 +7,7 @@ const { JsonStore } = require('./json_store');
  * information and services to all components of the application.
  */
 class GlobalContext {
-    constructor(configName) {
+    constructor() {
         // When you run `npm test`, this env var is set by jest.
         this.isTestEnv = process.env.NODE_ENV === 'test';
         this.config = this.isTestEnv ? Config.test : Config.user;
