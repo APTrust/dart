@@ -16,10 +16,10 @@ const homedir = os.homedir();
  * @property {string} tempdir - Path to directory where the current application stores temp files.
  */
 const userConfig = {
-    homedir: homedir,
-    datadir: dartPaths.data,
-    logdir: dartPaths.log,
-    tempdir: dartPaths.temp
+    homeDir: homedir,
+    dataDir: dartPaths.data,
+    logDir: dartPaths.log,
+    tempDir: dartPaths.temp
 };
 
 /**
@@ -31,10 +31,10 @@ const userConfig = {
  * @property {string} tempdir - Path to directory where the current application stores temp files.
  */
 const testConfig = {
-    homedir: homedir,
-    datadir: path.join(homedir, '.dart-test', 'data'),
-    logdir: path.join(homedir, '.dart-test', 'log'),
-    tempdir: path.join(homedir, '.dart-test', 'tmp')
+    homeDir: homedir,
+    dataDir: path.join(homedir, '.dart-test', 'data'),
+    logDir: path.join(homedir, '.dart-test', 'log'),
+    tempDir: path.join(homedir, '.dart-test', 'tmp')
 };
 
 const Config = {
