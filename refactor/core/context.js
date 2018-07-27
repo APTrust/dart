@@ -1,3 +1,4 @@
+const os = require('os');
 const { Config } = require('./config');
 const { JsonStore } = require('./json_store');
 
@@ -36,7 +37,6 @@ class GlobalContext {
                 process.execPath.includes('node_modules\electron'));
     }
 
-
     /**
      * Returns a JavaScript object built from parsing this application's
      * package.json file.
@@ -46,13 +46,14 @@ class GlobalContext {
     getPackageInfo() {
         var obj = null;
         try {
-            obj = require('../../package.json')
+            obj = require('../package.json')
         } catch (ex) {
             // TODO: Write to application log.
             console.error(ex)
         }
         return obj;
     }
+
     /**
      * Returns the version of DART.
      *

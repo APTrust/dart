@@ -21,3 +21,19 @@ test('Context.db creates and returns data stores', () => {
     try { fs.unlinkSync(test1.path) }
     catch (ex) { }
 });
+
+test("Context knows when it's in Electron dev mode", () => {
+    expect(Context.isElectronDevMode()).toEqual(false);
+});
+
+test("Context can get package info", () => {
+    var pkgInfo = Context.getPackageInfo();
+    expect(pkgInfo).not.toBeNull();
+    expect(pkgInfo.name).toEqual('DART');
+});
+
+test("Context can get DART version info", () => {
+    var version = Context.dartVersion();
+    expect(version).not.toEqual("Cannot read version from package.json file.");
+    expect(version).toMatch(/^DART/);
+});
