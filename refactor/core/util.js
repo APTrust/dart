@@ -52,7 +52,7 @@ class Util {
     }
 
     /**
-      * Returns true if str matches the regex for a version 4 uuid.
+      * Returns true if str matches the regex for hex-formatted uuid.
       *
       * @param {string} str - The string to measure.
       * @returns {boolean}
@@ -110,7 +110,7 @@ class Util {
             console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
             return [];
         }
-        return arr.map(item => item.trim()).filter(item => item != "");
+        return arr.map(item => item? item.trim() : "").filter(item => item != "");
     }
 
     /**
@@ -202,14 +202,14 @@ class Util {
     }
 
     /**
-	  * Converts an absolute Windows path to a relative path suitable
+	  * Converts an absolute Windows path to a path with forward slashes suitable
 	  * for a BagIt file or tar file.
       *
       * @param {string} winPath - An absolute Windows path.
-      * @returns {string} - A relative path suitable for use in a BagIt manifest and BagIt payload directory.
+      * @returns {string} - Path with drive and share removed, and slashes leaning the right way.
       *
     */
-	static windowsToRelPath(winPath) {
+	static normalizeWindowsPath(winPath) {
 		// Remove C:
 		winPath = winPath.replace(/^[A-Z]:/i, '');
 		// Remove \\share
