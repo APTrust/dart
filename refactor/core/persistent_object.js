@@ -155,15 +155,19 @@ class PersistentObject {
      * or null if no item matches.
      *
      * @example
-     * // Get the first object where obj.name === 'Homer'
+     * // Get the first object where obj.name == 'Homer'
      * let obj = persistentObject.findMatching('name', 'Homer');
      *
      * @example
-     * // Get the newest object where obj.name === 'Homer'
+     * // Get the newest object where obj.name == 'Homer'
      * let obj = persistentObject.findMatching('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'desc'});
      *
      * @example
-     * // Get the oldest object where obj.name === 'Homer'
+     * // Get the second newest object where obj.name == 'Homer'
+     * let obj = persistentObject.first('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
+     *
+     * @example
+     * // Get the oldest object where obj.name == 'Homer'
      * let obj = persistentObject.findMatching('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'asc'});
      *
      * @param {Conf} db - The conf datastore in which to search.
@@ -232,17 +236,24 @@ class PersistentObject {
 
     /**
      * first returns the first item matching that passes the filterFunction.
+     * You can combine orderBy, sortDirection, and offset to get the second, third, etc.
+     * match for the given criteria, but note that this function only returns a
+     * single item at most (or null if there are no matches).
      *
      * @example
      * // Define a filter function
      * function nameAndAge(obj) {
      *    return obj.name === 'Homer' && obj.age > 30;
      * }
+     *
      * // Get the first matching object
      * let obj = persistentObject.first(nameAndAge);
      *
      * // Get the newest matching object
      * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'desc'});
+     *
+     * // Get the second newest matching object
+     * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
      *
      * // Get the oldest matching object
      * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'asc'});
@@ -252,11 +263,11 @@ class PersistentObject {
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
      * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {number} opts.offset - Skip this many items before choosing a result.
      *
      * @returns {Object}
      */
     static first(db, filterFunction, opts) {
-        opts.offset = 0;
         opts.limit = 1;
         let matches = PersistentObject.list(db, filterFunction, opts);
         return matches[0] || null;

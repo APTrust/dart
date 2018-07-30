@@ -1,7 +1,5 @@
 const fs = require('fs');
-//const os = require('os');
 const path = require('path');
-//const { Config } = require('./config');
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
@@ -230,6 +228,37 @@ test('list()', () => {
 });
 
 test('first()', () => {
+    let list = makeObjects('test5', 10);
+    expect(list.length).toEqual(10);
+    let db = Context.db('test5');
+
+    // Define a filter function
+    let fn = function(obj) {
+        return obj.name.startsWith('Object') && (obj.age > 60 && obj.age < 85);
+    };
+    let opts = {
+        'orderBy': 'age',
+        'sortDirection': 'desc'
+    };
+
+    let match = PersistentObject.first(db, fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.age).toEqual(80);
+
+    // Same query, different sort
+    opts.sortDirection = 'asc';
+    match = PersistentObject.first(db, fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.age).toEqual(65);
+
+    // Change offset, still sorting asc.
+    // The query should ignore the limit, since
+    // first should return no more than one item.
+    opts.offset = 2;
+    opts.limit = 2;
+    match = PersistentObject.first(db, fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.age).toEqual(75);
 
 });
 
