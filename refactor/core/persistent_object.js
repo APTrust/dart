@@ -59,6 +59,14 @@ class PersistentObject {
         return this.db.get(id);
     }
 
+    /**
+     * mergeDefaultOpts sets missing option values to their default values.
+     * This function is meant for internal use.
+     *
+     * @param {Object} opts - A potentially null hash of options.
+     *
+     * @returns {Object}
+     */
     static mergeDefaultOpts(opts) {
         opts ||= {};
         opts.limit ||= 0;
@@ -67,6 +75,18 @@ class PersistentObject {
         return opts;
     }
 
+    /**
+     * sort sorts all of the items in the Conf datastore (JSON text file)
+     * on the specified property in either 'asc' (ascending) or 'desc' (descending)
+     * order. This does not affect the order of the records in the file, but
+     * it returns a sorted list of objects.
+     *
+     * @param {Conf} db - The datastore containing the objects to sort.
+     * @param {string} property - The property to sort on.
+     * @param {string} direction - Sort direction: 'asc' or 'desc'
+     *
+     * @returns {Object[]}
+     */
     static sort(db, property, direction) {
         var list = [];
         for (var key in db) {
