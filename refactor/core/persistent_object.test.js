@@ -83,7 +83,35 @@ test('mergeDefaultOptions()', () => {
 });
 
 test('sort()', () => {
+    let list = makeObjects('test1', 10);
+    expect(list.length).toEqual(10);
+    let db = Context.db('test1');
 
+    let nameAsc = PersistentObject.sort(db, 'name', 'asc');
+    expect(nameAsc.length).toEqual(10);
+    expect(nameAsc[0].name).toEqual('Object 1');
+    expect(nameAsc[9].name).toEqual('Object 9');
+
+    let nameDesc = PersistentObject.sort(db, 'name', 'desc');
+    expect(nameDesc.length).toEqual(10);
+    expect(nameDesc[0].name).toEqual('Object 9');
+    expect(nameDesc[9].name).toEqual('Object 1');
+
+    let ageAsc = PersistentObject.sort(db, 'age', 'asc');
+    expect(ageAsc.length).toEqual(10);
+    expect(ageAsc[0].age).toEqual(50);
+    expect(ageAsc[9].age).toEqual(95);
+
+    let ageDesc = PersistentObject.sort(db, 'age', 'desc');
+    expect(ageDesc.length).toEqual(10);
+    expect(ageDesc[0].age).toEqual(95);
+    expect(ageDesc[9].age).toEqual(50);
+
+    let unsorted1 = PersistentObject.sort(db, null, 'desc');
+    expect(unsorted1).toEqual(list);
+
+    let unsorted2 = PersistentObject.sort(db, '');
+    expect(unsorted2).toEqual(list);
 });
 
 test('findMatching()', () => {
@@ -102,10 +130,10 @@ test('first()', () => {
 
 });
 
-function makeObjects(howMany) {
+function makeObjects(type, howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {
-        let obj = new PersistentObject('test1');
+        let obj = new PersistentObject(type);
         obj.name = `Object ${i + 1}`;
         obj.age = 100 - ((i + 1) * 5);
         obj.save();
@@ -114,13 +142,13 @@ function makeObjects(howMany) {
     return list;
 }
 
-function deleteJsonFiles() {
-    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
-        for (var f of fs.readdirSync(Context.config.dataDir)) {
-            console.log(f);
-            if (f.endsWith('.json')) {
-                //fs.unlinkSync(f);
-            }
-        }
-    }
-}
+// function deleteJsonFiles() {
+//     if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
+//         for (var f of fs.readdirSync(Context.config.dataDir)) {
+//             console.log(f);
+//             if (f.endsWith('.json')) {
+//                 //fs.unlinkSync(f);
+//             }
+//         }
+//     }
+// }

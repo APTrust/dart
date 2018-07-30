@@ -96,8 +96,8 @@ class PersistentObject {
      */
     static sort(db, property, direction) {
         var list = [];
-        for (var key in db) {
-            list.push(db[key]);
+        for (var key in db.store) {
+            list.push(db.store[key]);
         }
         // Sort descending, ascending, or not at all if no sort property.
         if (property && direction == 'desc') {
