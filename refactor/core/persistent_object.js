@@ -59,6 +59,36 @@ class PersistentObject {
         return this.db.get(id);
     }
 
+    static mergeDefaultOpts(opts) {
+        opts ||= {};
+        opts.limit ||= 0;
+        opts.offset ||= 0;
+        opts.sortDirection ||= 'asc';
+        return opts;
+    }
+
+    static sort(db, property, direction) {
+        var list = [];
+        for (var key in db) {
+            list.push(db[key]);
+        }
+        // Sort descending, ascending, or not at all if no sort property.
+        if (property && direction == 'desc') {
+            list.sort(function(a, b) {
+                if (a[property] < b[property]) { return 1; }
+                if (a[property] > b[property]) { return -1; }
+                return 0;
+            });
+        } else if (property) {
+            list.sort(function(a, b) {
+                if (a[property] < b[property]) { return -1; }
+                if (a[property] > b[property]) { return 1; }
+                return 0;
+            });
+        }
+        return list;
+    }
+
     /**
      * findMatching returns an array of items matching the specified criteria.
      *
@@ -72,6 +102,7 @@ class PersistentObject {
      * let opts = {limit: 10, offset: 0, orderBy: 'createdAt', sortDir: 'desc'};
      * let results = persistentObject.findMatching('name', 'Homer', opts);
      *
+     * @param {Conf} db - The conf datastore in which to search.
      * @param {string} property - The name of the property to match.
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
@@ -82,8 +113,12 @@ class PersistentObject {
      *
      * @returns {Object[]}
      */
-    findMatching(property, value, opts = null) {
-
+    static findMatching(db, property, value, opts) {
+        // if (!this.hasOwnProperty(property)) {
+        //     throw new Error(`Object ${this.type} has no property ${property}`);
+        // }
+        let filterFunction = (obj) => { return obj[property] == value; };
+        return PersistentObject.list(db, filterFunction, opts);
     }
 
     /**
@@ -102,6 +137,7 @@ class PersistentObject {
      * // Get the oldest object where obj.name === 'Homer'
      * let obj = persistentObject.findMatching('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'asc'});
      *
+     * @param {Conf} db - The conf datastore in which to search.
      * @param {string} property - The name of the property to match.
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
@@ -110,8 +146,11 @@ class PersistentObject {
      *
      * @returns {Object}
      */
-    firstMatching(property, value) {
-
+    static firstMatching(db, property, value, opts) {
+        let filterFunction = (obj) => { return obj[property] == value; };
+        opts.offset = 0;
+        opts.limit = 1;
+        return PersistentObject.list(db, filterFunction, opts);
     }
 
     /**
@@ -129,6 +168,7 @@ class PersistentObject {
      * let opts = {limit: 10, offset: 0, orderBy: 'createdAt', sortDir: 'desc'};
      * let results = persistentObject.findMatching(nameAndAge, opts);
      *
+     * @param {Conf} db - The conf datastore in which to search.
      * @param {filterFunction} filterFunction - The name of the property to match.
      * @param {Object} opts - Optional additional params.
      * @param {number} opts.limit - Limit to this many results.
@@ -138,8 +178,26 @@ class PersistentObject {
      *
      * @returns {Object[]}
      */
-    list(filterFunction = null, opts = null) {
-
+    static list(db, filterFunction, opts) {
+        opts = PersistentObject.mergeDefaultOpts;
+        let sortedList = PersisntentObject.sort(db, opts.orderBy, opts.sortDirection);
+        if (filterFunction == null) {
+            return sortedList;
+        }
+        let matches = [];  // List of matched objects to return
+        let matched = 0;   // Count of objects matched so far. We may skip some, due to opts.offset.
+        for (let obj of sortedList) {
+            if (filterFunction(obj)) {
+                matched++;
+                if (matched > opts.offset && (opts.limit < 1 || matches.length < limit)) {
+                    matches.push(obj);
+                }
+                if (limit > 0 && matches.length == limit) {
+                    break;
+                }
+            }
+        }
+        return matches;
     }
 
     /**
@@ -159,6 +217,7 @@ class PersistentObject {
      * // Get the oldest matching object
      * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'asc'});
      *
+     * @param {Conf} db - The conf datastore in which to search.
      * @param {filterFunction} filterFunction - The name of the property to match.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
@@ -166,8 +225,11 @@ class PersistentObject {
      *
      * @returns {Object}
      */
-    first(filterFunction = null, opts = null) {
-
+    static first(db, filterFunction, opts) {
+        let filterFunction = (obj) => { return obj[property] == value; };
+        opts.offset = 0;
+        opts.limit = 1;
+        return PersistentObject.list(db, filterFunction, opts);
     }
 }
 
