@@ -191,7 +191,42 @@ test('firstMatching()', () => {
 });
 
 test('list()', () => {
+    let list = makeObjects('test4', 10);
+    expect(list.length).toEqual(10);
+    let db = Context.db('test4');
 
+    // Define a filter function
+    let fn = function(obj) {
+        return obj.name.startsWith('Object') && (obj.age > 60 && obj.age < 85);
+    };
+    let opts = {
+        'orderBy': 'age',
+        'sortDirection': 'desc'
+    };
+
+    let matches = PersistentObject.list(db, fn, opts);
+    expect(matches.length).toEqual(4);
+    expect(matches[0].age).toEqual(80);
+    expect(matches[1].age).toEqual(75);
+    expect(matches[2].age).toEqual(70);
+    expect(matches[3].age).toEqual(65);
+
+    // Same query, different sort
+    opts.sortDirection = 'asc';
+    matches = PersistentObject.list(db, fn, opts);
+    expect(matches.length).toEqual(4);
+    expect(matches[0].age).toEqual(65);
+    expect(matches[1].age).toEqual(70);
+    expect(matches[2].age).toEqual(75);
+    expect(matches[3].age).toEqual(80);
+
+    // Limit the results, still sorting asc
+    opts.offset = 2;
+    opts.limit = 2;
+    matches = PersistentObject.list(db, fn, opts);
+    expect(matches.length).toEqual(2);
+    expect(matches[0].age).toEqual(75);
+    expect(matches[1].age).toEqual(80);
 });
 
 test('first()', () => {

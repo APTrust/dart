@@ -258,7 +258,8 @@ class PersistentObject {
     static first(db, filterFunction, opts) {
         opts.offset = 0;
         opts.limit = 1;
-        return PersistentObject.list(db, filterFunction, opts);
+        let matches = PersistentObject.list(db, filterFunction, opts);
+        return matches[0] || null;
     }
 }
 
