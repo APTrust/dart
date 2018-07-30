@@ -47,13 +47,13 @@ class PersistentObject {
      * @returns {Object}
      */
     delete() {
-        Context.db(this.type).db.delete(this.id);
+        Context.db(this.type).delete(this.id);
         return this;
     }
 
     /**
      * find finds the object with the specified id in the datastore
-     * and returns it. Returns null if the object is not in the datastore.
+     * and returns it. Returns undefined if the object is not in the datastore.
      *
      * @param {Conf} db - The datastore containing the objects to search.
      * @param {string} id - The id (UUID) of the object you want to find.
