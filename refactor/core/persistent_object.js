@@ -32,11 +32,13 @@ class PersistentObject {
     }
 
     /**
-     * Save this object to persistent storage.
+     * Save this object to persistent storage. Returns the object after saving.
      *
+     * @returns {PersistentObject}
      */
     save() {
         Context.db(this.type).set(this.id, this);
+        return this;
     }
 
 
@@ -95,7 +97,7 @@ class PersistentObject {
      * @returns {Object[]}
      */
     static sort(db, property, direction) {
-        var list = [];
+        let list = [];
         for (var key in db.store) {
             list.push(db.store[key]);
         }
@@ -144,7 +146,7 @@ class PersistentObject {
         // if (!this.hasOwnProperty(property)) {
         //     throw new Error(`Object ${this.type} has no property ${property}`);
         // }
-        let filterFunction = (obj) => { return obj[property] == value; };
+        let filterFunction = (obj) => { return obj[property] == value };
         return PersistentObject.list(db, filterFunction, opts);
     }
 
@@ -174,7 +176,7 @@ class PersistentObject {
      * @returns {Object}
      */
     static firstMatching(db, property, value, opts) {
-        let filterFunction = (obj) => { return obj[property] == value; };
+        let filterFunction = (obj) => { return obj[property] == value };
         opts.offset = 0;
         opts.limit = 1;
         return PersistentObject.list(db, filterFunction, opts);
@@ -206,8 +208,8 @@ class PersistentObject {
      * @returns {Object[]}
      */
     static list(db, filterFunction, opts) {
-        opts = PersistentObject.mergeDefaultOpts;
-        let sortedList = PersisntentObject.sort(db, opts.orderBy, opts.sortDirection);
+        opts = PersistentObject.mergeDefaultOpts(opts);
+        let sortedList = PersistentObject.sort(db, opts.orderBy, opts.sortDirection);
         if (filterFunction == null) {
             return sortedList;
         }
@@ -216,10 +218,10 @@ class PersistentObject {
         for (let obj of sortedList) {
             if (filterFunction(obj)) {
                 matched++;
-                if (matched > opts.offset && (opts.limit < 1 || matches.length < limit)) {
+                if (matched > opts.offset && (opts.limit < 1 || matches.length < opts.limit)) {
                     matches.push(obj);
                 }
-                if (limit > 0 && matches.length == limit) {
+                if (opts.limit > 0 && matches.length == opts.limit) {
                     break;
                 }
             }

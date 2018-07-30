@@ -7,7 +7,7 @@ const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
 
 beforeEach(() => {
-    //deleteJsonFiles();
+    deleteJsonFiles();
 });
 
 test('Constructor throws error if type is missing or empty', () => {
@@ -21,8 +21,6 @@ test('Constructor sets expected properties', () => {
     let obj = new PersistentObject('test1');
     expect(obj.type).toEqual('test1');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
-    //expect(po.db).not.toBeNull();
-    //expect(po.db.path.includes(path.join('.dart-test', 'data'))).toEqual(true);
 });
 
 test('validate() throws error because it must be implemented in derived class', () => {
@@ -34,6 +32,8 @@ test('Basic operations: save(), find(), delete()', () => {
     // Make sure we can save an object withouth error.
     let obj = new PersistentObject('test1');
     expect(() => { obj.save() }).not.toThrow(Error);
+    let saved = obj.save();
+    expect(saved).toEqual(obj);
 
     // Make sure the Context created the db to store the object.
     let db = Context.db(obj.type);
@@ -115,7 +115,33 @@ test('sort()', () => {
 });
 
 test('findMatching()', () => {
+    let list = makeObjects('test2', 10);
+    expect(list.length).toEqual(10);
+    let db = Context.db('test2');
 
+    let matches = PersistentObject.findMatching(db, 'name', 'Object 1');
+    expect(matches.length).toEqual(1);
+    expect(matches[0].name).toEqual('Object 1');
+
+    // In this case, all records will match name == 'Agent 99'.
+    // Make sure we get just four records (limit = 4, that they
+    // are in the correct order, and that we skip the first two (offset = 2).
+    let newList = list.map(obj => { obj.name = 'Agent 99'; obj.save(); });
+    let opts = {
+        'limit': 4,
+        'offset': 2,
+        'orderBy': 'age',
+        'sortDirection': 'desc'
+    };
+    matches = PersistentObject.findMatching(db, 'name', 'Agent 99', opts);
+    expect(matches.length).toEqual(4);
+    for(var m of matches) {
+        expect(m.name).toEqual('Agent 99');
+    }
+    expect(matches[0].age).toEqual(85);
+    expect(matches[1].age).toEqual(80);
+    expect(matches[2].age).toEqual(75);
+    expect(matches[3].age).toEqual(70);
 });
 
 test('firstMatching()', () => {
@@ -142,13 +168,13 @@ function makeObjects(type, howMany) {
     return list;
 }
 
-// function deleteJsonFiles() {
-//     if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
-//         for (var f of fs.readdirSync(Context.config.dataDir)) {
-//             console.log(f);
-//             if (f.endsWith('.json')) {
-//                 //fs.unlinkSync(f);
-//             }
-//         }
-//     }
-// }
+function deleteJsonFiles() {
+    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
+        for (var f of fs.readdirSync(Context.config.dataDir)) {
+            if (f.endsWith('.json')) {
+                let jsonFile = path.join(Context.config.dataDir, f);
+                fs.unlinkSync(jsonFile);
+            }
+        }
+    }
+}
