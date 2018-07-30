@@ -51,9 +51,56 @@ test('Basic operations: save(), find(), delete()', () => {
     let deletedObject = obj.delete();
     expect(deletedObject.id).toEqual(obj.id);
     let refoundObject = PersistentObject.find(db, obj.id);
-    console.log(refoundObject);
     expect(refoundObject).toBeUndefined();
 })
+
+test('mergeDefaultOptions()', () => {
+    var opts1 = PersistentObject.mergeDefaultOpts();
+    expect(opts1).not.toBeNull();
+    expect(opts1.limit).toEqual(0);
+    expect(opts1.offset).toEqual(0);
+    expect(opts1.orderBy).toBeNull();
+    expect(opts1.sortDirection).toEqual('asc');
+
+    var opts2 = PersistentObject.mergeDefaultOpts({});
+    expect(opts2).not.toBeNull();
+    expect(opts2.limit).toEqual(0);
+    expect(opts2.offset).toEqual(0);
+    expect(opts2.orderBy).toBeNull();
+    expect(opts2.sortDirection).toEqual('asc');
+
+    var opts3 = PersistentObject.mergeDefaultOpts({
+        'limit': 20,
+        'offset': 50,
+        'orderBy': 'name',
+        'sortDirection': 'desc'
+    });
+    expect(opts3).not.toBeNull();
+    expect(opts3.limit).toEqual(20);
+    expect(opts3.offset).toEqual(50);
+    expect(opts3.orderBy).toEqual('name');
+    expect(opts3.sortDirection).toEqual('desc');
+});
+
+test('sort()', () => {
+
+});
+
+test('findMatching()', () => {
+
+});
+
+test('firstMatching()', () => {
+
+});
+
+test('list()', () => {
+
+});
+
+test('first()', () => {
+
+});
 
 function makeObjects(howMany) {
     let list = [];

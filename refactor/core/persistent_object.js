@@ -73,11 +73,13 @@ class PersistentObject {
      * @returns {Object}
      */
     static mergeDefaultOpts(opts) {
-        opts = opts || {};
-        opts.limit = opts.limit || 0;
-        opts.offset = opts.offset || 0;
-        opts.sortDirection = opts.direction || 'asc';
-        return opts;
+        // Don't overwrite opts. Caller may want to reuse it.
+        var mergedOpts = Object.assign({}, opts);
+        mergedOpts.limit = mergedOpts.limit || 0;
+        mergedOpts.offset = mergedOpts.offset || 0;
+        mergedOpts.orderBy = mergedOpts.orderBy || null;
+        mergedOpts.sortDirection = mergedOpts.sortDirection || 'asc';
+        return mergedOpts;
     }
 
     /**
