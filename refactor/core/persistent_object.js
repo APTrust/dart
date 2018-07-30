@@ -18,7 +18,6 @@ class PersistentObject {
         }
         this.id = Util.uuid4();
         this.type = type;
-        this.db = Context.db(type);
     }
 
     /**
@@ -37,7 +36,7 @@ class PersistentObject {
      *
      */
     save() {
-        this.db.set(this.id, this);
+        Context.db(this.type).set(this.id, this);
     }
 
 
@@ -48,7 +47,7 @@ class PersistentObject {
      * @returns {Object}
      */
     delete() {
-        this.db.delete(this.id);
+        Context.db(this.type).db.delete(this.id);
         return this;
     }
 

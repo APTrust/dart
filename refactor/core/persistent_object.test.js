@@ -18,11 +18,16 @@ test('Constructor throws error if type is missing or empty', () => {
 });
 
 test('Constructor sets expected properties', () => {
-    let po = new PersistentObject('test1');
-    expect(po.type).toEqual('test1');
-    expect(Util.looksLikeUUID(po.id)).toEqual(true);
-    expect(po.db).not.toBeNull();
-    expect(po.db.path.includes(path.join('.dart-test', 'data'))).toEqual(true);
+    let obj = new PersistentObject('test1');
+    expect(obj.type).toEqual('test1');
+    expect(Util.looksLikeUUID(obj.id)).toEqual(true);
+    //expect(po.db).not.toBeNull();
+    //expect(po.db.path.includes(path.join('.dart-test', 'data'))).toEqual(true);
+});
+
+test('validate() throws error because it must be implemented in derived class', () => {
+    let obj = new PersistentObject('test1');
+    expect(() => { obj.validate() }).toThrow(Error);
 });
 
 function deleteJsonFiles() {
