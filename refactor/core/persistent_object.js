@@ -177,9 +177,10 @@ class PersistentObject {
      */
     static firstMatching(db, property, value, opts) {
         let filterFunction = (obj) => { return obj[property] == value };
-        opts.offset = 0;
-        opts.limit = 1;
-        return PersistentObject.list(db, filterFunction, opts);
+        let mergedOpts = PersistentObject.mergeDefaultOpts(opts);
+        mergedOpts.limit = 1;
+        let matches = PersistentObject.list(db, filterFunction, mergedOpts);
+        return matches[0] || null;
     }
 
     /**

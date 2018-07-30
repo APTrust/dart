@@ -142,10 +142,52 @@ test('findMatching()', () => {
     expect(matches[1].age).toEqual(80);
     expect(matches[2].age).toEqual(75);
     expect(matches[3].age).toEqual(70);
+
+    // No matches
+    matches = PersistentObject.findMatching(db, 'name', 'Schwartzenegger', opts);
+    expect(matches.length).toEqual(0);
+
+    // Match on field that doesn't exist.
+    matches = PersistentObject.findMatching(db, 'noProperty', 'Object 1', opts);
+    expect(matches.length).toEqual(0);
 });
 
 test('firstMatching()', () => {
+    let list = makeObjects('test3', 10);
+    expect(list.length).toEqual(10);
+    let db = Context.db('test3');
 
+    let match = PersistentObject.firstMatching(db, 'name', 'Object 1');
+    expect(match).not.toBeNull();
+    expect(match.name).toEqual('Object 1');
+
+    // We should find only one match, even if we give weird options.
+    // That match should be the correct one, given offset and limit.
+    let newList = list.map(obj => { obj.name = 'Agent 99'; obj.save(); });
+    match = PersistentObject.firstMatching(db, 'name', 'Agent 99');
+    expect(match.name).toEqual('Agent 99');
+    expect(match.age).toEqual(95);
+
+    // firstMatching should ignore limit and always return at most
+    // one object. It should respect the other options. Hence, we
+    // get the third record, where age = 85.
+    let opts = {
+        'limit': 4,
+        'offset': 2,
+        'orderBy': 'age',
+        'sortDirection': 'desc'
+    };
+    match = PersistentObject.firstMatching(db, 'name', 'Agent 99', opts);
+    expect(match.name).toEqual('Agent 99');
+    expect(match.age).toEqual(85);
+
+    // No match for this one
+    match = PersistentObject.firstMatching(db, 'name', 'Object 1');
+    expect(match).toBeNull();
+
+    // Property doesn't exist
+    match = PersistentObject.firstMatching(db, 'noProperty', 'Object 1');
+    expect(match).toBeNull();
 });
 
 test('list()', () => {
