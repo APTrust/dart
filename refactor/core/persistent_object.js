@@ -9,10 +9,13 @@ const { ValidationResult } = require('./validation_result');
  * which we can save, retrieve, update, and delete individual objects.)
  *
  * @param {string} type - The class name of the object. This should be
- * set by derived classes in the constructor.
+ * set by derived classes in the constructor. It cannot be null or empty.
  */
 class PersistentObject {
     constructor(type) {
+        if (Util.isEmpty(type)) {
+            throw new Error("Param 'type' is required.");
+        }
         this.id = Util.uuid4();
         this.type = type;
         this.db = Context.db(type);
@@ -53,10 +56,13 @@ class PersistentObject {
      * find finds the object with the specified id in the datastore
      * and returns it. Returns null if the object is not in the datastore.
      *
+     * @param {Conf} db - The datastore containing the objects to search.
+     * @param {string} id - The id (UUID) of the object you want to find.
+     *
      * @returns {Object}
      */
-    find(id) {
-        return this.db.get(id);
+    static find(db, id) {
+        return db.get(id);
     }
 
     /**
@@ -68,10 +74,10 @@ class PersistentObject {
      * @returns {Object}
      */
     static mergeDefaultOpts(opts) {
-        opts ||= {};
-        opts.limit ||= 0;
-        opts.offset ||= 0;
-        opts.sortDirection ||= 'asc';
+        opts = opts || {};
+        opts.limit = opts.limit || 0;
+        opts.offset = opts.offset || 0;
+        opts.sortDirection = opts.direction || 'asc';
         return opts;
     }
 
@@ -246,7 +252,6 @@ class PersistentObject {
      * @returns {Object}
      */
     static first(db, filterFunction, opts) {
-        let filterFunction = (obj) => { return obj[property] == value; };
         opts.offset = 0;
         opts.limit = 1;
         return PersistentObject.list(db, filterFunction, opts);
