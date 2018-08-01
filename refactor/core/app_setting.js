@@ -41,18 +41,6 @@ class AppSetting extends PersistentObject {
     }
 
     /**
-     * mergeDefaultOpts sets missing option values to their default values.
-     * This function is meant for internal use.
-     *
-     * @param {Object} opts - A potentially null hash of options.
-     *
-     * @returns {Object}
-     */
-    static mergeDefaultOpts(opts) {
-        return PersistentObject.mergeDefaultOpts(opts);
-    }
-
-    /**
      * sort sorts all of the items in the Conf datastore (JSON text file)
      * on the specified property in either 'asc' (ascending) or 'desc' (descending)
      * order. This does not affect the order of the records in the file, but
