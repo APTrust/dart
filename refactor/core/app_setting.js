@@ -150,5 +150,6 @@ class AppSetting extends PersistentObject {
     static first(filterFunction, opts) {
         return PersistentObject.first(Context.db('AppSetting'), filterFunction, opts);
     }
-
 }
+
+module.exports.AppSetting = AppSetting;

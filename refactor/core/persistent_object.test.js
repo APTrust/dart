@@ -286,7 +286,7 @@ function makeObjects(type, howMany) {
 function deleteJsonFiles() {
     if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
         for (var f of fs.readdirSync(Context.config.dataDir)) {
-            if (f.endsWith('.json')) {
+            if (f.startsWith('test') && f.endsWith('.json')) {
                 let jsonFile = path.join(Context.config.dataDir, f);
                 fs.unlinkSync(jsonFile);
             }
