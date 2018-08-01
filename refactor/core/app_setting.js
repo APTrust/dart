@@ -47,33 +47,13 @@ class AppSetting extends PersistentObject {
      * order. This does not affect the order of the records in the file, but
      * it returns a sorted list of objects.
      *
-     * @param {Conf} db - The datastore containing the objects to sort.
      * @param {string} property - The property to sort on.
      * @param {string} direction - Sort direction: 'asc' or 'desc'
      *
      * @returns {Object[]}
      */
-    static sort(db, property, direction) {
-        var db = Context.db('AppSetting');
-        let list = [];
-        for (var key in db.store) {
-            list.push(db.store[key]);
-        }
-        // Sort descending, ascending, or not at all if no sort property.
-        if (property && direction == 'desc') {
-            list.sort(function(a, b) {
-                if (a[property] < b[property]) { return 1; }
-                if (a[property] > b[property]) { return -1; }
-                return 0;
-            });
-        } else if (property) {
-            list.sort(function(a, b) {
-                if (a[property] < b[property]) { return -1; }
-                if (a[property] > b[property]) { return 1; }
-                return 0;
-            });
-        }
-        return list;
+    static sort(property, direction) {
+        return PersistentObject.sort(Context.db('AppSetting'), property, direction);
     }
 
     /**

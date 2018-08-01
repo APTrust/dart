@@ -18,6 +18,66 @@ test('Constructor sets expected properties', () => {
 });
 
 
+test('validate()', () => {
+    let obj = new AppSetting('', '');
+    let result1 = obj.validate();
+    expect(result1.isValid()).toEqual(false);
+    expect(result1.errors['name']).toEqual('Name cannot be empty');
+
+    let originalId = obj.id;
+    obj.id = null; // never do this!
+    let result2 = obj.validate();
+    expect(result2.isValid()).toEqual(false);
+    expect(result2.errors['name']).toEqual('Name cannot be empty');
+    expect(result2.errors['id']).toEqual('Id cannot be empty');
+
+    obj.name = 'Something';
+    obj.id = originalId;
+    let result3 = obj.validate();
+    expect(result3.isValid()).toEqual(true);
+});
+
+// test('find()', () => {
+
+// });
+
+// test('validate()', () => {
+
+// });
+
+// test('sort()', () => {
+
+// });
+
+// test('findMatching()', () => {
+
+// });
+
+// test('firstMatching()', () => {
+
+// });
+
+// test('list()', () => {
+
+// });
+
+// test('first()', () => {
+
+// });
+
+function makeObjects(howMany) {
+    let list = [];
+    for(let i=0; i < howMany; i++) {
+        let name = `Name ${i + 1}`;
+        let value = `Value ${i + 1}`;
+        let obj = new AppSetting(name, value);
+        obj.save();
+        list.push(obj);
+    }
+    return list;
+}
+
+
 function deleteJsonFiles() {
     if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
         for (var f of fs.readdirSync(Context.config.dataDir)) {
