@@ -71,7 +71,7 @@ class AppSetting extends PersistentObject {
      *
      * @returns {Object[]}
      */
-    static findMatching(db, property, value, opts) {
+    static findMatching(property, value, opts) {
         return PersistentObject.findMatching(Context.db('AppSetting'), property, value, opts);
     }
 
@@ -89,7 +89,7 @@ class AppSetting extends PersistentObject {
      *
      * @returns {Object}
      */
-    static firstMatching(db, property, value, opts) {
+    static firstMatching(property, value, opts) {
         return PersistentObject.firstMatching(Context.db('AppSetting'), property, value, opts);
     }
 
@@ -107,7 +107,7 @@ class AppSetting extends PersistentObject {
      *
      * @returns {Object[]}
      */
-    static list(db, filterFunction, opts) {
+    static list(filterFunction, opts) {
         return PersistentObject.list(Context.db('AppSetting'), filterFunction, opts);
     }
 

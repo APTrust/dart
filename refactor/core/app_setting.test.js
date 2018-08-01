@@ -37,33 +37,66 @@ test('validate()', () => {
     expect(result3.isValid()).toEqual(true);
 });
 
-// test('find()', () => {
+test('find()', () => {
+    let objs = makeObjects(3);
+    let obj = objs[1];
+    expect(AppSetting.find(obj.id)).toEqual(obj);
+});
 
-// });
+test('sort()', () => {
+    let objs = makeObjects(3);
+    let sortedAsc = AppSetting.sort("name", "asc");
+    expect(sortedAsc[0].name).toEqual("Name 1");
+    expect(sortedAsc[2].name).toEqual("Name 3");
+    let sortedDesc = AppSetting.sort("name", "desc");
+    expect(sortedDesc[0].name).toEqual("Name 3");
+    expect(sortedDesc[2].name).toEqual("Name 1");
+});
 
-// test('validate()', () => {
+test('findMatching()', () => {
+    let objs = makeObjects(3);
+    let matches = AppSetting.findMatching("value", "Value 3");
+    expect(matches.length).toEqual(1);
+    expect(matches[0].value).toEqual("Value 3");
+});
 
-// });
+test('firstMatching()', () => {
+    let objs = makeObjects(3);
+    let match = AppSetting.firstMatching("value", "Value 3");
+    expect(match).not.toBeNull();
+    expect(match.value).toEqual("Value 3");
+});
 
-// test('sort()', () => {
+test('list()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.value != null;
+    }
+    let opts = {
+        limit: 2,
+        offset: 1,
+        orderBy: "value",
+        sortDirection: "asc"
+    }
+    let matches = AppSetting.list(fn, opts);
+    expect(matches.length).toEqual(2);
+    expect(matches[0].value).toEqual("Value 2");
+    expect(matches[1].value).toEqual("Value 3");
+});
 
-// });
-
-// test('findMatching()', () => {
-
-// });
-
-// test('firstMatching()', () => {
-
-// });
-
-// test('list()', () => {
-
-// });
-
-// test('first()', () => {
-
-// });
+test('first()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.value != null;
+    }
+    let opts = {
+        orderBy: "value",
+        sortDirection: "desc"
+    }
+    let match = AppSetting.first(fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.value).toEqual("Value 3");
+});
 
 function makeObjects(howMany) {
     let list = [];
