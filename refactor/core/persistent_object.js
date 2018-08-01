@@ -18,6 +18,7 @@ class PersistentObject {
         }
         this.id = Util.uuid4();
         this.type = type;
+        this.userCanDelete = true;
     }
 
     /**
@@ -49,6 +50,9 @@ class PersistentObject {
      * @returns {Object}
      */
     delete() {
+        if (!this.userCanDelete) {
+            throw new Error("User cannot delete this object.");
+        }
         Context.db(this.type).delete(this.id);
         return this;
     }

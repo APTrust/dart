@@ -52,6 +52,15 @@ test('Basic operations: save(), find(), delete()', () => {
     expect(refoundObject).toBeUndefined();
 })
 
+test('userCanDelete == false should prevent deletion', () => {
+    // Make sure we can save an object withouth error.
+    let obj = new PersistentObject('test1');
+    obj.userCanDelete = false;
+    expect(() => { obj.save() }).not.toThrow(Error);
+    obj.save();
+    expect(() => { obj.delete() }).toThrow(Error);
+})
+
 test('mergeDefaultOptions()', () => {
     var opts1 = PersistentObject.mergeDefaultOpts();
     expect(opts1).not.toBeNull();
