@@ -6,20 +6,22 @@
  * names and the values are error messages.
  */
 class ValidationResult {
+    /**
+     *  Hash of error messages. Key is the name of the property
+     * that is invalid, error is the message describing why it's
+     * invalid.
+     *
+     * @name ValidationResult#errors
+     * @type {Object.<string, string>}
+    */
     constructor() {
-        /**
-           Hash of error messages. Key is the name of the property
-           that is invalid, error is the message describing why it's
-           invalid.
-
-           @name ValidationResult#errors
-           @type {Object.<string, string>}
-        */
         this.errors = {};
     }
     /**
      * isValid returns true if the ValidationResult contains
      * no errors.
+     *
+     * @returns {boolean}
      */
     isValid() {
         return Object.keys(this.errors).length == 0;

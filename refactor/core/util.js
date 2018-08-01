@@ -1,3 +1,4 @@
+/** @module Util */
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -231,7 +232,7 @@ class Util {
      * The returned list will not include links, only files.
      *
      * @param {string} dir - Path to directory.
-     * @param {function} filterFunction - A function to filter out items that should not go into filelist.
+     * @param {filterFunction} filterFunction - A function to filter out items that should not go into filelist.
      * @returns {string[]} A list of file paths under dir that pass the filter.
     */
     static walkSync(dir, filterFunction) {

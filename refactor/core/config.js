@@ -14,6 +14,9 @@ const homedir = os.homedir();
  * @property {string} datadir - Path to directory where the current application stores its data.
  * @property {string} logdir  - Path to directory where the current application stores its logs.
  * @property {string} tempdir - Path to directory where the current application stores temp files.
+ *
+ * @memberof Config
+ * @static
  */
 const userConfig = {
     homeDir: homedir,
@@ -29,6 +32,9 @@ const userConfig = {
  * @property {string} datadir - Path to directory where the current application stores its data.
  * @property {string} logdir  - Path to directory where the current application stores its logs.
  * @property {string} tempdir - Path to directory where the current application stores temp files.
+ *
+ * @memberof Config
+ * @static
  */
 const testConfig = {
     homeDir: homedir,
@@ -37,6 +43,13 @@ const testConfig = {
     tempDir: path.join(homedir, '.dart-test', 'tmp')
 };
 
+/**
+ * Config contains config settings for user and test environments.
+ * The GlobalContext object determines which configuration to use at
+ * runtime. It will always select the 'user' config, except when
+ * process.env.NODE_ENV=test.
+ *
+ */
 const Config = {
     'user': userConfig,
     'test': testConfig
