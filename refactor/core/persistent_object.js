@@ -37,8 +37,34 @@ class PersistentObject {
         if (Util.isEmpty(type)) {
             throw new Error("Param 'type' is required.");
         }
+        /**
+          * id is this object's unique identifier, and the best handle
+          * to use when retrieving it from storage. This is a version 4
+          * UUID in hex string format. It is set by the constructor when
+          * you create a new PersistentObject. You should not change it.
+          *
+          * @type {string}
+          */
         this.id = Util.uuid4();
+        /**
+          * type is the object's classname. This should be set by the
+          * constructor in all derived classes.
+          *
+          * @type {string}
+          */
         this.type = type;
+        /**
+          * userCanDelete indicates whether or not the user can delete
+          * this object from storage. The defaults to false, but you may
+          * want to set it to true for select items that are required for
+          * your plugin to work. For example, your plugin depends on the
+          * presence of a pre-installed BagIt profile or an AppSetting
+          * called 'Account Number' (or whatever), you can set this property
+          * to false and the user will not be able to delete the property.
+          *
+          * @type {string}
+          * @default false
+          */
         this.userCanDelete = true;
     }
 

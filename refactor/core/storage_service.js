@@ -19,15 +19,72 @@ class StorageService extends PersistentObject {
      */
     constructor(name) {
         super('StorageService');
-        this.id = Util.uuid4();
+        /**
+          * name is the name of this storage service. It should be meaningful
+          * to the user.
+          *
+          * @type {string}
+          */
         this.name = name;
+        /**
+          * A description of this storage service. It should be meaningful
+          * to the user.
+          *
+          * @type {string}
+          */
         this.description = "";
+        /**
+          * The protocol to use when connecting to the remote service.
+          * For example, 's3', 'sftp', etc. There should be a valid plugin
+          * capable of communicating via that protocol.
+          *
+          * @type {string}
+          */
         this.protocol = "";
+        /**
+          * The hostname or IP address of the remote server.
+          *
+          * @type {string}
+          */
         this.host = "";
-        this.port = "";
+        /**
+          * The port number to connect to on the remote server. This should
+          * be a whole number. You can leave this blank if you're connecting
+          * to the service's default port.
+          *
+          * @type {number}
+          */
+        this.port = 0;
+        /**
+          * Bucket is the name of the s3 bucket to connect to, or the directory
+          * to cd into on the remote server.
+          *
+          * @type {string}
+          */
         this.bucket = "";
+        /**
+          * loginName is the name to use when logging in to the remote server.
+          * For s3 connections, it's the Access Key Id.
+          *
+          * @type {string}
+          */
         this.loginName = "";
+        /**
+          * password is the password required to connect to the remote server.
+          * For S3, it's the secret key (aka AWS Secret Access Key).
+          *
+          * @type {string}
+          */
         this.loginPassword = "";
+        /**
+          * loginExtra is any additional information required by plugins to
+          * connect to remote services. What the plugin does with this bit of info
+          * is its own business. For example, a plugin that requires the path to
+          * a local private key file can ask the user to enter the path to that
+          * file here.
+          *
+          * @type {string}
+          */
         this.loginExtra = "";
     }
 
