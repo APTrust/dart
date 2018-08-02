@@ -1,7 +1,12 @@
-/** @module Util */
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+/**
+ * Util contains a number of static utility functions used throughout
+ * the DART application. It has no constructor. Simply call Util.<method>(<args>)
+ * to use any of its methods.
+ *
+ */
 
 class Util {
 
