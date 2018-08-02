@@ -1,0 +1,134 @@
+const fs = require('fs');
+const path = require('path');
+const { Context } = require('./context');
+const { StorageService } = require('./storage_service');
+const { Util } = require('./util');
+
+beforeEach(() => {
+    deleteJsonFiles();
+});
+
+test('Constructor sets expected properties', () => {
+    let obj = new StorageService('name1');
+    expect(obj.type).toEqual('StorageService');
+    expect(Util.looksLikeUUID(obj.id)).toEqual(true);
+    expect(obj.name).toEqual('name1');
+});
+
+
+test('validate()', () => {
+    let obj = new StorageService('');
+    let originalId = obj.id;
+    obj.id = null;
+    obj.port = 'Port of Spain';
+    let result1 = obj.validate();
+    expect(result1.isValid()).toEqual(false);
+    expect(result1.errors['name']).toEqual('Name cannot be empty');
+    expect(result1.errors['id']).toEqual('Id cannot be empty');
+    expect(result1.errors['protocol']).toEqual('Protocol cannot be empty');
+    expect(result1.errors['host']).toEqual('Host cannot be empty');
+    expect(result1.errors['port']).toEqual('Port must be a whole number, or leave blank to use the default port.');
+
+    obj.id = originalId;
+    obj.name = 'Something';
+    obj.protocol = 's3';
+    obj.host = 's3.amazonaws.com';
+    obj.port = null;
+    expect(obj.validate().isValid()).toEqual(true);
+    obj.port = 443;  // port can be empty or a valid integer
+    expect(obj.validate().isValid()).toEqual(true);
+});
+
+test('find()', () => {
+    let objs = makeObjects(3);
+    let obj = objs[1];
+    expect(StorageService.find(obj.id)).toEqual(obj);
+});
+
+test('sort()', () => {
+    let objs = makeObjects(3);
+    let sortedAsc = StorageService.sort("name", "asc");
+    expect(sortedAsc[0].name).toEqual("Name 1");
+    expect(sortedAsc[2].name).toEqual("Name 3");
+    let sortedDesc = StorageService.sort("name", "desc");
+    expect(sortedDesc[0].name).toEqual("Name 3");
+    expect(sortedDesc[2].name).toEqual("Name 1");
+});
+
+test('findMatching()', () => {
+    let objs = makeObjects(3);
+    let matches = StorageService.findMatching("host", "Host 3");
+    expect(matches.length).toEqual(1);
+    expect(matches[0].host).toEqual("Host 3");
+    matches = StorageService.findMatching("protocol", "s3");
+    expect(matches.length).toEqual(2);
+    matches = StorageService.findMatching("protocol", "sneakernet");
+    expect(matches.length).toEqual(0);
+});
+
+test('firstMatching()', () => {
+    let objs = makeObjects(3);
+    let match = StorageService.firstMatching("protocol", "sftp");
+    expect(match).not.toBeNull();
+    expect(match.protocol).toEqual("sftp");
+});
+
+test('list()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.host != null;
+    }
+    let opts = {
+        limit: 2,
+        offset: 1,
+        orderBy: "host",
+        sortDirection: "asc"
+    }
+    let matches = StorageService.list(fn, opts);
+    expect(matches.length).toEqual(2);
+    expect(matches[0].host).toEqual("Host 2");
+    expect(matches[1].host).toEqual("Host 3");
+});
+
+test('first()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.host != null;
+    }
+    let opts = {
+        orderBy: "host",
+        sortDirection: "desc"
+    }
+    let match = StorageService.first(fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.host).toEqual("Host 3");
+});
+
+function makeObjects(howMany) {
+    let list = [];
+    for(let i=0; i < howMany; i++) {
+        let name = `Name ${i + 1}`;
+        let obj = new StorageService(name);
+        obj.host = `Host ${i + 1}`;
+        if (i % 2 == 0) {
+            obj.protocol = 's3';
+        } else {
+            obj.protocol = 'sftp';
+        }
+        obj.save();
+        list.push(obj);
+    }
+    return list;
+}
+
+
+function deleteJsonFiles() {
+    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
+        for (var f of fs.readdirSync(Context.config.dataDir)) {
+            if (f.endsWith('StorageService.json')) {
+                let jsonFile = path.join(Context.config.dataDir, f);
+                fs.unlinkSync(jsonFile);
+            }
+        }
+    }
+}
