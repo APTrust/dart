@@ -1,13 +1,40 @@
-/** @module AppSetting */
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
 const { ValidationResult } = require('./validation_result');
 
+/**
+ * AppSetting is a simple, storable name-value pair that users
+ * can edit through the DART UI. For example, the AppSetting called
+ * "Organization Name" stores the name of the user's organization.
+ *
+ * AppSetting names and values should be strings. Also note that
+ * AppSetting inherits the property userCanDelete from PersistentObject.
+ * That value is true by default, but you may want to set it to false
+ * for settings you don't want users to delete.
+ */
 class AppSetting extends PersistentObject {
+    /**
+     * Creates a new AppSetting
+     *
+     * @param {string} name - The name of the setting. This should be unique, to prevent conflicts.
+     * @param {string} value - The value of the setting.
+     */
     constructor(name, value) {
         super('AppSetting');
+        /**
+          * Name is the name of the setting.
+          * Setting names should be unique, to prevent confusion.
+          *
+          * @type {string}
+          */
         this.name = name;
+        /**
+          * Value is the value of the setting.
+          * It should be a string, so users can edit it in the DART UI.
+          *
+          * @type {string}
+          */
         this.value = value;
     }
 

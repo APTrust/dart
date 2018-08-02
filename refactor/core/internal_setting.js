@@ -15,13 +15,19 @@ const { ValidationResult } = require('./validation_result');
  * array that lists which data migrations have already run.
  */
 class InternalSetting extends PersistentObject {
+    /**
+     * Creates a new InternalSetting
+     *
+     * @param {string} name - The name of the setting. This should be unique, to prevent confusion.
+     * @param {Object} value - The value of the setting. Any object type is OK.
+     */
     constructor(name, value) {
         super('InternalSetting');
         /**
           * Name is the name of the setting.
           * Setting names should be unique, to prevent confusion.
           *
-          * @type string
+          * @type {string}
           */
         this.name = name;
         /**
@@ -33,7 +39,7 @@ class InternalSetting extends PersistentObject {
           * It's up to the developer to manage the values of
           * InternalSetting objects.
           *
-          * @type Object
+          * @type {Object}
           */
         this.value = value;
     }

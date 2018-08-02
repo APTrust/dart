@@ -10,10 +10,16 @@ const Conf = require('conf');
  * To get system standard user data directories for the dataDir param,
  * see https://github.com/sindresorhus/env-paths
  *
- * @param {string} dataDir  Path to the directory in which to store data.
- * @param {string} name     The name of the file to store data in. This will get a .json extension.
  */
 class JsonStore extends Conf {
+    /**
+     * Creates a new JsonStore
+     *
+     * @param {string} dataDir  Path to the directory in which to store data.
+     * @param {string} name     The name of the file to store data in. This should
+     * match the class name of the type of object you're storing. The file name
+     * will have a .json extension appended automatically.
+     */
     constructor(dataDir, name) {
         var opts = {cwd: dataDir, configName: name};
         super(opts);

@@ -1,10 +1,22 @@
-/** @module StorageService */
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
 const { ValidationResult } = require('./validation_result');
 
+/**
+ * StorageService describes any remote service (s3, ftp, etc.) to which
+ * we can upload data. This object contains the information required to
+ * connect to the remote service (hostname, login name, password, etc.).
+ */
 class StorageService extends PersistentObject {
+    /**
+     * Creates a new StorageService.
+     *
+     * @param {string} name - The name of the remote storage service. This
+     * can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
+     * 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
+     *
+     */
     constructor(name) {
         super('StorageService');
         this.id = Util.uuid4();

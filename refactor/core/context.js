@@ -7,10 +7,34 @@ const { JsonStore } = require('./json_store');
  * information and services to all components of the application.
  */
 class GlobalContext {
+    /**
+     * Constructs a new GlobalContext. Don't call this yourself, as it's
+     * called when the module loads. You'll want to access pre-instantiated
+     * Context object that this module exports.
+     */
     constructor() {
-        // When you run `npm test`, this env var is set by jest.
+        /**
+          * isTestEnv indicates whether we're currently running as part of
+          * a test suite. It will be true when process.env.NODE_ENV === 'test',
+          * which Jest sets by default when you run `npm test`.
+          *
+          * @type {boolean}
+          */
         this.isTestEnv = process.env.NODE_ENV === 'test';
+        /**
+          * config is the current configuration, either user or test, based
+          * on whether isTestEnv is true.
+          *
+          * @type {Config}
+          */
         this.config = this.isTestEnv ? Config.test : Config.user;
+        /**
+          * dataStores is a hash of the application data storage files.
+          * The key is the object name (type of object stored in the file),
+          * and the value is the queryable JsonStore object holding the data.
+          *
+          * @type {Object.<string, JsonStore>}
+          */
         this.dataStores = {};
     }
     /**

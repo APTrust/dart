@@ -8,10 +8,31 @@ const { ValidationResult } = require('./validation_result');
  * to be able to persist to a JsonStore (a plain-text JSON file in
  * which we can save, retrieve, update, and delete individual objects.)
  *
- * @param {string} type - The class name of the object. This should be
- * set by derived classes in the constructor. It cannot be null or empty.
+ * For example, if you pass 'AppSetting' as the type param, the object
+ * you create will be stored in the AppSetting.json file in the application's
+ * data directory. (See the link to JsonStore below.)
+ *
+ * If the underlying data store for your class does not yet exist, it will
+ * be created the first time you call save(), find(), or any other
+ * function that accesses the underlying datastore.
+ *
+ * @see {@link JsonStore} for more about the JsonStore object.
+ * @see {@link Context#dataStores} for info about how DART keeps track of
+ * different datastores.
+ *
  */
 class PersistentObject {
+    /**
+     * Creates a new PersistentObject.
+     *
+     * @param {string} type - The class name of the object you are creating.
+     * The underlying JsonStore will save this object (and all others of its
+     * class) in a file whose name matches the type paramater you pass in here.
+     *
+     * This constructor is meant to be called by the constructors in subclasses,
+     * which pass their class name as the type param.
+     *
+     */
     constructor(type) {
         if (Util.isEmpty(type)) {
             throw new Error("Param 'type' is required.");
