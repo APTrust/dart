@@ -1,12 +1,28 @@
-const { Context } = require('./context');
-const { PersistentObject } = require('./persistent_object');
-const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
+const { Context } = require('../core/context');
+const { PersistentObject } = require('../core/persistent_object');
+const { Util } = require('../core/util');
+const { ValidationResult } = require('../core/validation_result');
 
+/**
+ * BagItProfile describes what constitutes a valid bag.
+ * These profiles are based on the BagIt profiles described
+ * in https://github.com/bagit-profiles/bagit-profiles, with
+ * some changes and additions.
+ *
+ * @see {@link https://github.com/bagit-profiles/bagit-profiles|Standard BagIt Profiles}
+ *
+ * @param {string} name - The name this profile.
+ * @default 'New BagIt Profile'
+ * @param {string} description - A helpful description of the profile for people
+ * who will be using it.
+ * @default 'New custom BagIt profile'
+ */
 class BagItProfile extends PersistentObject {
+
     constructor(name, description) {
+        super('BagItProfile');
         this.name = name || 'New BagIt Profile';
-        this.description = description || 'New custom bagit profile';
+        this.description = description || 'New custom BagIt profile';
         this.acceptBagItVersion = ['0.97'];
         this.acceptSerialization = ['tar'];
         this.allowFetchTxt = false;

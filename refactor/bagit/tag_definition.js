@@ -1,5 +1,5 @@
-const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
+const { Util } = require('../core/util');
+const { ValidationResult } = require('../core/validation_result');
 
 const tagsSetBySystem = ['Bagging-Date', 'Bagging-Software',
                          'Payload-Oxum', 'DPN-Object-ID',
