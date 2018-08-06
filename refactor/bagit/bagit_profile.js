@@ -4,16 +4,16 @@ const { Util } = require('./util');
 const { ValidationResult } = require('./validation_result');
 
 class BagItProfile extends PersistentObject {
-    constructor() {
-        this.name = "";
-        this.description = "";
-        this.acceptBagItVersion = [];
-        this.acceptSerialization = [];
+    constructor(name, description) {
+        this.name = name || 'New BagIt Profile';
+        this.description = description || 'New custom bagit profile';
+        this.acceptBagItVersion = ['0.97'];
+        this.acceptSerialization = ['tar'];
         this.allowFetchTxt = false;
         this.allowMiscTopLevelFiles = false;
         this.allowMiscDirectories = false;
         this.bagItProfileInfo = new BagItProfileInfo();
-        this.manifestsRequired = [];
+        this.manifestsRequired = ['sha256'];
         this.tagManifestsRequired = [];
         this.requiredTags = [];
         this.serialization = "optional";
@@ -25,22 +25,56 @@ class BagItProfile extends PersistentObject {
         this.baseProfileId = "";
         this.isBuiltIn = false;
 
+        this._addStandardBagItFile();
+        this._addStandardBagInfoFile();
+    }
+
+    _addStandardBagItFile() {
         // BagIt spec says these two tags in bagit.txt file
         // are always required.
-        var v = new TagDefinition('bagit.txt', 'BagIt-Version');
-        v.required = true;
-        v.emptyOk = false;
-        v.values = Const.BagItVersions;
-        v.defaultValue = "0.97";
-        v.help = "Which version of the BagIt specification describes this bag's format?";
-        var e = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
-        e.required = true;
-        e.emptyOk = false;
-        e.defaultValue = "UTF-8";
-        e.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
-        this.requiredTags.push(v);
-        this.requiredTags.push(e);
+        var version = new TagDefinition('bagit.txt', 'BagIt-Version');
+        version.required = true;
+        version.emptyOk = false;
+        version.values = Const.BagItVersions;
+        version.defaultValue = "0.97";
+        version.help = "Which version of the BagIt specification describes this bag's format?";
+        var encoding = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
+        encoding.required = true;
+        encoding.emptyOk = false;
+        encoding.defaultValue = "UTF-8";
+        encoding.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
+        this.requiredTags.push(version);
+        this.requiredTags.push(encoding);
     }
+
+    // This adds a standard bag-info.txt file to the BagIt profile.
+    // We call this only when the user clicks to create a new blank profile.
+    _addStandardBagInfoFile() {
+        var tags = [
+            'Bag-Count',
+            'Bag-Group-Identifier',
+            'Bag-Size',
+            'Bagging-Date',
+            'Contact-Email',
+            'Contact-Name',
+            'Contact-Phone',
+            'External-Description',
+            'External-Identifier',
+            'Internal-Sender-Description',
+            'Internal-Sender-Identifier',
+            'Organization-Address',
+            'Payload-Oxum',
+            'Source-Organization']
+        for(var tagName of tags) {
+            if(this.findTagByFileAndName('bag-info.txt', tagName) == null) {
+                var t = new TagDefinition('bag-info.txt', tagName);
+                t.required = false;
+                t.emptyOk = true;
+                this.requiredTags.push(t);
+            }
+        }
+    }
+
 
     validate() {
         var result = new ValidationResult();
@@ -300,43 +334,6 @@ class BagItProfile extends PersistentObject {
         }
         if (changed) {
             this.save();
-        }
-    }
-
-    // This adds some standard items for a new blank BagIt profile.
-    initNewBlankProfile() {
-        this._addStandardBagInfoFile();
-        this.name = 'New BagIt Profile';
-        this.description = 'New custom bagit profile';
-        this.manifestsRequired.push('sha256');
-        this.acceptBagItVersion.push('0.97');
-    }
-
-    // This adds a standard bag-info.txt file to the BagIt profile.
-    // We call this only when the user clicks to create a new blank profile.
-    _addStandardBagInfoFile() {
-        var tags = [
-            'Bag-Count',
-            'Bag-Group-Identifier',
-            'Bag-Size',
-            'Bagging-Date',
-            'Contact-Email',
-            'Contact-Name',
-            'Contact-Phone',
-            'External-Description',
-            'External-Identifier',
-            'Internal-Sender-Description',
-            'Internal-Sender-Identifier',
-            'Organization-Address',
-            'Payload-Oxum',
-            'Source-Organization']
-        for(var tagName of tags) {
-            if(this.findTagByFileAndName('bag-info.txt', tagName) == null) {
-                var t = new TagDefinition('bag-info.txt', tagName);
-                t.required = false;
-                t.emptyOk = true;
-                this.requiredTags.push(t);
-            }
         }
     }
 
