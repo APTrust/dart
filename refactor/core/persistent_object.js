@@ -194,9 +194,6 @@ class PersistentObject {
      * @returns {Object[]}
      */
     static findMatching(db, property, value, opts) {
-        // if (!this.hasOwnProperty(property)) {
-        //     throw new Error(`Object ${this.type} has no property ${property}`);
-        // }
         let filterFunction = (obj) => { return obj[property] == value };
         return PersistentObject.list(db, filterFunction, opts);
     }
