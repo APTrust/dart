@@ -21,24 +21,125 @@ class BagItProfile extends PersistentObject {
 
     constructor(name, description) {
         super('BagItProfile');
+        /**
+          * Name is the name of this profile.
+          * Names should be unique, to prevent confusion.
+          *
+          * @type {string}
+          */
         this.name = name || 'New BagIt Profile';
+        /**
+          * The description of this profile should be meaningful to the user.
+          *
+          * @type {string}
+          */
         this.description = description || 'New custom BagIt profile';
+        /**
+          * A list of BagIt versions that are valid for bags that
+          * conform to this profile. For example, '0.97'.
+          *
+          * @type {string[]}
+          * @default ['0.97']
+          */
         this.acceptBagItVersion = ['0.97'];
+        /**
+          * A list of BagIt sserialization formats that are valid
+          * for bags that conform to this profile. These may include
+          * 'tar', 'zip', 'rar', etc.
+          *
+          * @type {string[]}
+          * @default ['tar']
+          */
         this.acceptSerialization = ['tar'];
+        /**
+          * This describes whether bags conforming to this profile
+          * may have a fetch.txt file.
+          *
+          * @type {boolean}
+          * @default false
+          */
         this.allowFetchTxt = false;
+        /**
+          * Describes whether bags conforming to this profile
+          * may include files in the top-level folder other
+          * than manifests, tag manifests, and the required tag
+          * files listed in the {@link requiredTags} list.
+          *
+          * @type {boolean}
+          * @default false
+          */
         this.allowMiscTopLevelFiles = false;
+        /**
+          * Describes whether bags conforming to this profile
+          * may include directories other than the payload
+          * directory (aka 'data' directory) in the top-level
+          * folder. These other directories are sometimes used
+          * to hold custom tag files.
+          *
+          * @type {boolean}
+          * @default false
+          */
         this.allowMiscDirectories = false;
+        /**
+          * This contains metadata about the BagIt profile
+          * itself, such as who publishes and maintains it.
+          *
+          * @type {BagItProfileInfo}
+          */
         this.bagItProfileInfo = new BagItProfileInfo();
+        /**
+          * A list of algorithms of required manifests.
+          * For example, 'sha256' indicates that bags conforming
+          * to this profile must have a manifest-sha256.txt file.
+          *
+          * @type {string[]}
+          * @default ['sha256']
+          */
         this.manifestsRequired = ['sha256'];
+        /**
+          * A list of algorithms of required tag manifests.
+          * For example, 'sha256' indicates that bags conforming
+          * to this profile must have a tagmanifest-sha256.txt file.
+          * Leave this empty if no tag manifests are required.
+          *
+          * @type {string[]}
+          * @default []
+          */
         this.tagManifestsRequired = [];
+        /**
+          * A list of tags that you expect to be present or expect
+          * to parse when creating or validating bags that conform to
+          * this profile.
+          *
+          * @type {TagDefinition[]}
+          */
         this.requiredTags = [];
+        /**
+          * Describes whether bags conforming to this profile may or
+          * may not be serialized. Allowed values are 'required',
+          * 'optional', and 'forbidden'.
+          *
+          * @type {string}
+          * @default 'optional'
+          */
         this.serialization = "optional";
-
-        // baseProfileId allows us to track whether this profile
-        // is based on a built-in. If so, we don't allow the user
-        // to modify certain elements of the profile. This will
-        // be blank for many profiles.
-        this.baseProfileId = "";
+        /**
+          * baseProfileId allows us to track whether this profile
+          * is based on a built-in. If so, we don't allow the user
+          * to modify certain elements of the profile. This will
+          * be blank for many profiles.
+          *
+          * @type {string}
+          * @default null
+          */
+        this.baseProfileId = null;
+        /**
+          * Describes whether this profile is built into the application.
+          * Builtin profiles cannot be deleted by users.
+          *
+          * @type {boolean}
+          * @default false
+          */
         this.isBuiltIn = false;
 
         this._addStandardBagItFile();
@@ -92,6 +193,13 @@ class BagItProfile extends PersistentObject {
     }
 
 
+    /**
+     * This returns a ValidationResult that describes what if anything
+     * is not valid about this profile. Note that this method validates
+     * the profile itself. It does not validate a bag.
+     *
+     * @returns {ValidationResult} - The result of the validation check.
+     */
     validate() {
         var result = new ValidationResult();
         if (Util.isEmpty(this.id)) {
@@ -115,15 +223,51 @@ class BagItProfile extends PersistentObject {
         return result;
     }
 
-
-    findMatching(property, value) {
+    /**
+     * findMatchingTags returns an array of TagDefinition objects
+     * matching the specified criteria.
+     *
+     * @see also {@link findMatchingTag}
+     *
+     * @param {string} property - The name of the TagDefinition
+     * property to match. For example, 'name' or 'defaultValue'.
+     * @param {string} value - The value of the property to match.
+     *
+     * @returns {TagDefinition[]}
+     */
+    findMatchingTags(property, value) {
         return this.requiredTags.filter(tag => tag[property] === value);
     }
 
-    firstMatching(property, value) {
+    /**
+     * findMatchingTag returns the first TagDefinition object that
+     * matches the specified criteria.
+     *
+     * @see also {@link findMatchingTags}
+     *
+     * @param {string} property - The name of the TagDefinition
+     * property to match. For example, 'name' or 'defaultValue'.
+     * @param {string} value - The value of the property to match.
+     *
+     * @returns {TagDefinition}
+     */
+    firstMatchingTag(property, value) {
         return this.requiredTags.find(tag => tag[property] === value);
     }
 
+    /**
+     * getTagsFromFile returns all tags with the specified tagname
+     * from the specified file. This usually returns zero or one results,
+     * but because the {@link https://tools.ietf.org/html/draft-kunze-bagit-14|BagIt spec}
+     * says a tag can appear multiple times in a file, this may return a list.
+     *
+     * @see also {@link findMatchingTags}
+     *
+     * @param {string} filename - The name of the tagfile.
+     * @param {string} tagname - The name of the tag.
+     *
+     * @returns {TagDefinition[]}
+     */
     getTagsFromFile(filename, tagname) {
         return this.requiredTags.filter(tag => tag.tagFile === filename && tag.tagName === tagname);
     }
