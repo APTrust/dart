@@ -10,6 +10,8 @@ const { ValidationResult } = require('../core/validation_result');
  * some changes and additions.
  *
  * @see {@link https://github.com/bagit-profiles/bagit-profiles|Standard BagIt Profiles}
+ * @see {@link BagItProfileInfo}
+ * @see {@link TagDefinition}
  *
  * @param {string} name - The name this profile.
  * @default 'New BagIt Profile'
