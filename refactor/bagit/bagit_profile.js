@@ -272,10 +272,24 @@ class BagItProfile extends PersistentObject {
         return this.requiredTags.filter(tag => tag.tagFile === filename && tag.tagName === tagname);
     }
 
+    /**
+     * This returns true if the requiredTags list includes a tagfile
+     * with the specified filename.
+     *
+     * @param {string} filename - The name of the tagfile.
+     *
+     * @returns {boolean}
+     */
     hasRequiredTagFile(filename) {
         return typeof this.requiredTags.find(tag => tag.tagFile === filename) != undefined;
     }
 
+    /**
+     * This returns a suggested unique bag name that is valid for
+     * the current profile.
+     *
+     * @returns {string}
+     */
     suggestBagName() {
         var suggestion = "";
         if (this.hasRequiredTagFile("aptrust-info.txt")) {
@@ -288,14 +302,34 @@ class BagItProfile extends PersistentObject {
         }
         return suggestion;
     }
+    /**
+     * This returns a generic unique bag name suggestion.
+     *
+     * @returns {string}
+     */
     static suggestGenericBagName() {
         return `bag-${Date.now()}`;
     }
+    /**
+     * This returns true if the name contains no illegal
+     * characters.
+     *
+     * @param {string} name - The name you want to validate (typically
+     * a bag name or file basename, excluding path information).
+     *
+     * @returns {boolean}
+     */
     static nameLooksLegal(name) {
         var illegal = /[<>:"\/\|\?\*\\\s\t\n]/g;
         return !Util.isEmpty(name) && name.match(illegal) == null;
     }
-
+    /**
+     * This returns true if the name is legal for this profile.
+     *
+     * @param {string} name - The bag name you want to validate.
+     *
+     * @returns {boolean}
+     */
     isValidBagName(name) {
         if (Util.isEmpty(name)) {
             return false;
@@ -312,11 +346,14 @@ class BagItProfile extends PersistentObject {
             BagItProfile.nameLooksLegal(name)
         }
     }
-
+    /**
+      * Returns a hash of required tags, with filename
+      * as the key. Value is a list of required tags,
+      * in alpha order by name.
+      *
+      * @returns {Object<string, TagDefinition>}
+      */
     tagsGroupedByFile() {
-        // Returns a hash of required tags, with filename
-        // as the key. Value is a list of required tags,
-        // in alpha order by name.
         var tagsByFile = {};
         for (var tag of this.requiredTags) {
             if(tagsByFile[tag.tagFile] == null) {
@@ -329,9 +366,22 @@ class BagItProfile extends PersistentObject {
         }
         return tagsByFile;
     }
-    // getTagFileContents(tagFile) returns a string that you can
-    // write to the tag file when creating a bag. Use requiredTagFileNames
-    // to get all tag file names.
+
+    /**
+      * getTagFileContents returns a string that you can
+      * write to the tag file when creating a bag. Use requiredTagFileNames
+      * to get all tag file names.
+      *
+      * @example
+      * var contents = profile.getTagFileContentsByName(filename)
+      * // returns
+      * // Tag-Name: Value
+      * // Other-Tag: Other value
+      *
+      * @param {string} name - The bag name you want to validate.
+      *
+      * @returns {string}
+      */
     getTagFileContents(tagFile) {
         var tags = this.tagsGroupedByFile(false)[tagFile];
         if (tags === undefined || !tags) {
@@ -343,9 +393,15 @@ class BagItProfile extends PersistentObject {
         }
         return lines.join("\n");
     }
-    // returns true if filename is a custom file added for a
-    // specific job (i.e. is not part of the core profile)
-    // All tags in a custom tag file have addedForJob = true.
+    /**
+      * Returns true if filename is a custom file added for a
+      * specific job (i.e. is not part of the core profile).
+      * All tags in a custom tag file have addedForJob = true.
+      *
+      * @param {string} name - The bag name you want to validate.
+      *
+      * @returns {boolean}
+      */
     isCustomTagFile(filename) {
         for (var tag of this.requiredTags) {
             if (tag.tagFile == filename && tag.addedForJob == true) {
@@ -354,7 +410,11 @@ class BagItProfile extends PersistentObject {
         }
         return false;
     }
-    // Returns the names of all required tag files.
+    /**
+      * Returns the names of all required tag files.
+      *
+      * @returns {string[]}
+      */
     requiredTagFileNames() {
         var fileNames = new Set();
         for (var tag of this.requiredTags) {
@@ -364,8 +424,15 @@ class BagItProfile extends PersistentObject {
         }
         return Array.from(fileNames);
     }
-    // Returns true if the specified tag file has values for all
-    // required tags.
+    // ---------------------------------------------------------
+    // TODO: Move to validator.
+    // ---------------------------------------------------------
+    /**
+      * Returns true if the specified tag file has values for all
+      * required tags.
+      *
+      * @returns {boolean}
+      */
     fileHasAllRequiredValues(tagFileName) {
         for (var tag of this.requiredTags) {
             if(tag.tagFile == tagFileName) {
@@ -388,9 +455,16 @@ class BagItProfile extends PersistentObject {
         }
         return true;
     }
-    // Returns a hash, where key is tag file name and value is true/false,
-    // indicating whether are required values in that file are present.
-    // Used in job.js to validate that tag files have all required values.
+    // ---------------------------------------------------------
+    // TODO: Move to validator.
+    // ---------------------------------------------------------
+    /**
+      * Returns a hash, where key is tag file name and value is true/false,
+      * indicating whether are required values in that file are present.
+      * Used in job.js to validate that tag files have all required values.
+      *
+      * @returns {Object<string, boolean>}
+      */
     tagFileCompletionStatus() {
         var status = {};
         for (var fileName of this.requiredTagFileNames()) {
@@ -398,7 +472,11 @@ class BagItProfile extends PersistentObject {
         }
         return status;
     }
-    // Returns true if this profile says the bag must be tarred.
+    /**
+      * Returns true if this profile says the bag must be tarred.
+      *
+      * @returns {boolean}
+      */
     mustBeTarred() {
         return (this.acceptSerialization &&
                 this.acceptSerialization.length == 1 &&
