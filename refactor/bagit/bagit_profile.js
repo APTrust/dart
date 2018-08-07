@@ -483,8 +483,12 @@ class BagItProfile extends PersistentObject {
                 this.acceptSerialization[0] == "application/tar" &&
                 this.serialization == "required");
     }
-    // Convert the stored representation, which is basically a hash,
-    // to a full-fledged BagItProfile object.
+    /**
+      * This converts the stored representation, which is basically
+      * a JSON hash, to a full-fledged BagItProfile object.
+      *
+      * @returns {BagItProfile}
+      */
     static toFullObject(obj) {
         var profile = null;
         if (obj != null) {
@@ -499,8 +503,13 @@ class BagItProfile extends PersistentObject {
         }
         return profile;
     }
-
-    // Best guess at bag title.
+    /**
+      * Returns the best guess at bag title by checking
+      * tags called 'Title' or that include 'Title' in the
+      * tag files.
+      *
+      * @returns {string}
+      */
     bagTitle() {
         var exactTitle = "";
         var maybeTitle = "";
@@ -514,8 +523,13 @@ class BagItProfile extends PersistentObject {
         }
         return exactTitle || maybeTitle;
     }
-
-    // Best guess at bag description.
+    /**
+      * Returns the best guess at bag description by checking
+      * tags called 'Internal-Sender-Description' and 'Description'
+      * in the tag files.
+      *
+      * @returns {string}
+      */
     bagDescription() {
         var exactDesc = "";
         var maybeDesc = "";
@@ -529,14 +543,40 @@ class BagItProfile extends PersistentObject {
         }
         return exactDesc || maybeDesc;
     }
-
-
+    /**
+      * Returns the bag's Internal-Sender-Identifier as specified
+      * in the tag files.
+      *
+      * @returns {string}
+      */
     bagInternalIdentifier() {
         for(var tag of this.requiredTags) {
             var tagName = tag.tagName.toLowerCase();
             if (tagName == "internal-sender-identifier") {
                 return tag.userValue;
             }
+        }
+    }
+    //
+    /**
+      * Copy default tag values from other profile to this profile,
+      * and saves those changes to the data store.
+      *
+      * @param {BagItProfile} otherProfile - The BagItProfile whose
+      * TagDefinition default values you want to copy.
+      *
+      */
+    copyDefaultTagValuesFrom(otherProfile) {
+        var changed = false;
+        for(var t of otherProfile.requiredTags) {
+            var tag = this.findTagByName(t.tagName);
+            if (tag && t.tagFile == tag.tagFile && !Util.isEmpty(t.defaultValue)) {
+                tag.defaultValue = t.defaultValue;
+                changed = true;
+            }
+        }
+        if (changed) {
+            this.save();
         }
     }
 
@@ -558,23 +598,6 @@ class BagItProfile extends PersistentObject {
             firstVersionTag.userValue = uuid;
         }
     }
-
-    // Copy default tag values from other profile to this profile.
-    copyDefaultTagValuesFrom(otherProfile) {
-        var changed = false;
-        for(var t of otherProfile.requiredTags) {
-            var tag = this.findTagByName(t.tagName);
-            if (tag && t.tagFile == tag.tagFile && !Util.isEmpty(t.defaultValue)) {
-                tag.defaultValue = t.defaultValue;
-                //console.log(`Set default for ${tag.tagName} to ${tag.defaultValue}`)
-                changed = true;
-            }
-        }
-        if (changed) {
-            this.save();
-        }
-    }
-
 };
 
 module.exports.BagItProfile = BagItProfile;
