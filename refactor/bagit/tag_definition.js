@@ -206,7 +206,7 @@ class TagDefinition {
       * @returns {string}
       */
     toFormattedString() {
-        var val = (this.userValue || this.defaultValue || "").replace(/(\r\n)|\n|\r/, ' ');
+        var val = (this.getValue() || "").replace(/(\r\n)|\n|\r/g, ' ').replace(/ +/g, ' ').trim();
         return `${this.tagName}: ${val}`;
     }
 }

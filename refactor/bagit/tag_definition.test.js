@@ -86,3 +86,41 @@ test('systemMustSet() identifies which tags the system must set', () => {
         expect(tagDef.systemMustSet(tagName)).toEqual(false);
     }
 });
+
+test('getValue() returns defaultValue when no userValue is present', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    tagDef.defaultValue = 'xyz';
+    expect(tagDef.getValue()).toEqual('xyz');
+});
+
+test('getValue() returns userValue when present', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    tagDef.defaultValue = 'xyz';
+    tagDef.userValue = 'abc';
+    expect(tagDef.getValue()).toEqual('abc');
+});
+
+test('looksLikeDescriptionTag() returns true if tag name includes description', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Internal-Sender-Description');
+    expect(tagDef.looksLikeDescriptionTag()).toEqual(true);
+});
+
+test('looksLikeDescriptionTag() returns false if tag name does not include description', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Duhskripshin');
+    expect(tagDef.looksLikeDescriptionTag()).toEqual(false);
+});
+
+test('toFormattedString() returns correct format and value', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    tagDef.defaultValue = 'School of Hard Knocks';
+    expect(tagDef.toFormattedString()).toEqual('Source-Organization: School of Hard Knocks');
+
+    tagDef.userValue = 'Faber College';
+    expect(tagDef.toFormattedString()).toEqual('Source-Organization: Faber College');
+});
+
+test('toFormattedString() replaces returns and trims leading and trailing spaces', () => {
+    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    tagDef.userValue = '  Faber \r\n   College \n  ';
+    expect(tagDef.toFormattedString()).toEqual('Source-Organization: Faber College');
+});
