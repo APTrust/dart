@@ -140,14 +140,17 @@ class TagDefinition {
      */
     validate() {
         var result = new ValidationResult();
+        if (Util.isEmpty(this.tagFile)) {
+            result.errors['tagFile'] = "You must specify a tag file.";
+        }
+        if (Util.isEmpty(this.tagName)) {
+            result.errors['tagName'] = "You must specify a tag name.";
+        }
         if (this.values.length > 0 && !Util.listContains(this.values, this.defaultValue)) {
             result.errors['defaultValue'] = "The default value must be one of the allowed values.";
         }
         return result
     }
-    // ---------------------------------------------------------
-    // TODO: Return a ValidationResult instead, for consistency.
-    // ---------------------------------------------------------
     /**
      * This returns a list of errors describing what's wrong with
      * the tag's value. For example, if a tag value is empty when empty
@@ -158,10 +161,10 @@ class TagDefinition {
      */
     validateForJob() {
         var errors = [];
-        var tagIsEmpty = (this.userValue == null || this.userValue == "");
-        if (this.tagRequired && !this.emptyOk) {
+        var value = this.getValue();
+        if (this.required && !this.emptyOk && Util.isEmpty(value)) {
             errors.push(`Tag ${this.tagName} in file ${this.tagFile} cannot be empty.`);
-        } else if (this.values.length > 0 && !Util.listContains(this.values, this.userValue)) {
+        } else if (this.values.length > 0 && !Util.listContains(this.values, value)) {
             errors.push(`Tag ${this.tagName} in file ${this.tagFile} has a value that is not on the list of allowed values.`);
         }
         return errors;
