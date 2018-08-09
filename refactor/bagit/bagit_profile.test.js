@@ -76,3 +76,88 @@ test('firstMatchingTag()', () => {
     tag = profile.firstMatchingTag('fakeProperty', 'fakeValue');
     expect(tag).toBeUndefined();
 });
+
+
+test('getTagsFromFile()', () => {
+    let profile = new BagItProfile();
+    let tags = profile.getTagsFromFile('bagit.txt', 'BagIt-Version');
+    expect(tags.length).toEqual(1);
+    expect(tags[0].tagFile).toEqual('bagit.txt');
+    expect(tags[0].tagName).toEqual('BagIt-Version');
+
+    tags = profile.getTagsFromFile('bag-info.txt', 'Contact-Name');
+    expect(tags.length).toEqual(1);
+    expect(tags[0].tagFile).toEqual('bag-info.txt');
+    expect(tags[0].tagName).toEqual('Contact-Name');
+
+    // Yes, the spec says a tag can appear more than once in a tag file.
+    profile.tags.push(new TagDefinition('bag-info.txt', 'Contact-Name'));
+    tags = profile.getTagsFromFile('bag-info.txt', 'Contact-Name');
+    expect(tags.length).toEqual(2);
+
+    tags = profile.getTagsFromFile('bag-info.txt', 'No-Such-Tag');
+    expect(tags.length).toEqual(0);
+});
+
+test('hasTagFile()', () => {
+    let profile = new BagItProfile();
+    expect(profile.hasTagFile('bagit.txt')).toEqual(true);
+    expect(profile.hasTagFile('bag-info.txt')).toEqual(true);
+    expect(profile.hasTagFile('no-file.txt')).toEqual(false);
+});
+
+// test('suggestBagName()', () => {
+
+// });
+
+// test('suggestGenericBagName()', () => {
+
+// });
+
+// test('nameLooksLegal()', () => {
+
+// });
+
+// test('isValidBagName()', () => {
+
+// });
+
+// test('tagsGroupedByFile()', () => {
+
+// });
+
+// test('getTagFileContents()', () => {
+
+// });
+
+// test('isCustomTagFile()', () => {
+
+// });
+
+// test('tagFileNames()', () => {
+
+// });
+
+// test('mustBeTarred()', () => {
+
+// });
+
+// test('fromJson()', () => {
+
+// });
+
+// test('bagTitle()', () => {
+
+// });
+
+// test('bagDescription()', () => {
+
+// });
+
+// test('bagInternalIdentifier()', () => {
+
+// });
+
+// test('copyDefaultTagValuesFrom()', () => {
+
+// });

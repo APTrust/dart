@@ -423,7 +423,7 @@ class BagItProfile extends PersistentObject {
       *
       * @returns {string[]}
       */
-    requiredTagFileNames() {
+    tagFileNames() {
         var fileNames = new Set();
         for (var tag of this.tags) {
             if (!fileNames.has(tag.tagFile)) {
@@ -497,7 +497,7 @@ class BagItProfile extends PersistentObject {
       *
       * @returns {BagItProfile}
       */
-    static toFullObject(obj) {
+    static fromJson(obj) {
         var profile = null;
         if (obj != null) {
             profile = new BagItProfile();
