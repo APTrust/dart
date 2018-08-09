@@ -208,22 +208,22 @@ class BagItProfile extends PersistentObject {
     validate() {
         var result = new ValidationResult();
         if (Util.isEmpty(this.id)) {
-            result.errors["id"] = "Id cannot be empty";
+            result.errors["id"] = "Id cannot be empty.";
         }
         if (Util.isEmpty(this.name)) {
-            result.errors["name"] = "Name cannot be empty";
+            result.errors["name"] = "Name cannot be empty.";
         }
-        if (Util.isEmptyArray(this.acceptBagItVersion)) {
+        if (Util.isEmptyStringArray(this.acceptBagItVersion)) {
             result.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
         }
-        if (Util.isEmptyArray(this.manifestsRequired)) {
+        if (Util.isEmptyStringArray(this.manifestsRequired)) {
             result.errors["manifestsRequired"] = "Profile must require at least one manifest.";
         }
-        if (!this.hasRequiredTagFile("bagit.txt")) {
+        if (!this.hasTagFile("bagit.txt")) {
             result.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
         }
-        if (!this.hasRequiredTagFile("bag-info.txt")) {
-            result.errors["tags"] = "Profile lacks requirements for bag-info.txt tag file.";
+        if (!this.hasTagFile("bag-info.txt")) {
+            result.errors["tags"] += "\nProfile lacks requirements for bag-info.txt tag file.";
         }
         if (!Util.listContains(Constants.REQUIREMENT_OPTIONS, this.serialization)) {
             result.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
@@ -288,8 +288,8 @@ class BagItProfile extends PersistentObject {
      *
      * @returns {boolean}
      */
-    hasRequiredTagFile(filename) {
-        return typeof this.tags.find(tag => tag.tagFile === filename) != undefined;
+    hasTagFile(filename) {
+        return typeof this.tags.find(tag => tag.tagFile === filename) != 'undefined';
     }
 
     /**
@@ -300,10 +300,10 @@ class BagItProfile extends PersistentObject {
      */
     suggestBagName() {
         var suggestion = "";
-        if (this.hasRequiredTagFile("aptrust-info.txt")) {
+        if (this.hasTagFile("aptrust-info.txt")) {
             var setting = AppSetting.findByName("Institution Domain")
             suggestion = `${setting.value}.bag-${Date.now()}`
-        } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+        } else if (this.hasTagFile("dpn-tags/dpn-info.txt")) {
             suggestion = Util.uuid4();
         } else {
             suggestion = BagItProfile.suggestGenericBagName();
@@ -342,13 +342,13 @@ class BagItProfile extends PersistentObject {
         if (Util.isEmpty(name)) {
             return false;
         }
-        if (this.hasRequiredTagFile("aptrust-info.txt")) {
+        if (this.hasTagFile("aptrust-info.txt")) {
             var setting = AppSetting.findByName("Institution Domain")
             var requiredPrefix = `${setting.value}.`;
             return (name.startsWith(requiredPrefix) &&
                     name.length > requiredPrefix.length &&
                     BagItProfile.nameLooksLegal(name));
-        } else if (this.hasRequiredTagFile("dpn-tags/dpn-info.txt")) {
+        } else if (this.hasTagFile("dpn-tags/dpn-info.txt")) {
             return Util.looksLikeUUID(name);
         } else {
             BagItProfile.nameLooksLegal(name)
