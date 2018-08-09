@@ -1,4 +1,5 @@
 const { BagItProfile } = require('./bagit_profile');
+const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
 
 test('Constructor sets initial properties', () => {
@@ -40,4 +41,38 @@ test('validate() catches invalid properties', () => {
     expect(result.errors['manifestsRequired']).toEqual("Profile must require at least one manifest.");
     expect(result.errors['tags']).toEqual("Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.");
     expect(result.errors['serialization']).toEqual("Serialization must be one of: required, optional, forbidden.");
+});
+
+test('findMatchingTags()', () => {
+    let profile = new BagItProfile();
+    profile.tags.push(new TagDefinition('custom-tag-file.txt', 'Contact-Name'));
+    let tags = profile.findMatchingTags('tagName', 'Contact-Name');
+    expect(tags.length).toEqual(2);
+    expect(tags[0].tagFile).toEqual('bag-info.txt'); // was set in BagItProfile constructor
+    expect(tags[1].tagFile).toEqual('custom-tag-file.txt');
+
+    tags = profile.findMatchingTags('tagFile', 'bag-info.txt');
+    expect(tags.length).toEqual(14);
+
+    tags = profile.findMatchingTags('defaultValue', '');
+    expect(tags.length).toEqual(15);  // BagIt-Version and Tag-File-Character-Encoding have values
+
+    tags = profile.findMatchingTags('fakeProperty', 'fakeValue');
+    expect(tags.length).toEqual(0);
+});
+
+test('firstMatchingTag()', () => {
+    let profile = new BagItProfile();
+    profile.tags.push(new TagDefinition('custom-tag-file.txt', 'Contact-Name'));
+    let tag = profile.firstMatchingTag('tagName', 'Contact-Name');
+    expect(tag.tagFile).toEqual('bag-info.txt');
+
+    tag = profile.firstMatchingTag('tagFile', 'bagit.txt');
+    expect(tag.tagName).toEqual('BagIt-Version');
+
+    tag = profile.firstMatchingTag('defaultValue', '');
+    expect(tag.tagName).toEqual('Bag-Count');
+
+    tag = profile.firstMatchingTag('fakeProperty', 'fakeValue');
+    expect(tag).toBeUndefined();
 });
