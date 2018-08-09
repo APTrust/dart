@@ -1,5 +1,8 @@
+const { BagItProfileInfo } = require('./bagit_profile_info');
+const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const { PersistentObject } = require('../core/persistent_object');
+const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
 const { ValidationResult } = require('../core/validation_result');
 
@@ -65,7 +68,7 @@ class BagItProfile extends PersistentObject {
           * Describes whether bags conforming to this profile
           * may include files in the top-level folder other
           * than manifests, tag manifests, and the required tag
-          * files listed in the {@link requiredTags} list.
+          * files listed in the {@link tags} list.
           *
           * @type {boolean}
           * @default false
@@ -115,7 +118,7 @@ class BagItProfile extends PersistentObject {
           *
           * @type {TagDefinition[]}
           */
-        this.requiredTags = [];
+        this.tags = [];
         /**
           * Describes whether bags conforming to this profile may or
           * may not be serialized. Allowed values are 'required',
@@ -154,7 +157,7 @@ class BagItProfile extends PersistentObject {
         var version = new TagDefinition('bagit.txt', 'BagIt-Version');
         version.required = true;
         version.emptyOk = false;
-        version.values = Const.BagItVersions;
+        version.values = Constants.BAGIT_VERSIONS;
         version.defaultValue = "0.97";
         version.help = "Which version of the BagIt specification describes this bag's format?";
         var encoding = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
@@ -162,8 +165,8 @@ class BagItProfile extends PersistentObject {
         encoding.emptyOk = false;
         encoding.defaultValue = "UTF-8";
         encoding.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
-        this.requiredTags.push(version);
-        this.requiredTags.push(encoding);
+        this.tags.push(version);
+        this.tags.push(encoding);
     }
 
     // This adds a standard bag-info.txt file to the BagIt profile.
@@ -185,11 +188,11 @@ class BagItProfile extends PersistentObject {
             'Payload-Oxum',
             'Source-Organization']
         for(var tagName of tags) {
-            if(this.findTagByFileAndName('bag-info.txt', tagName) == null) {
+            if(this.getTagsFromFile('bag-info.txt', tagName).length == 0) {
                 var t = new TagDefinition('bag-info.txt', tagName);
                 t.required = false;
                 t.emptyOk = true;
-                this.requiredTags.push(t);
+                this.tags.push(t);
             }
         }
     }
@@ -217,10 +220,13 @@ class BagItProfile extends PersistentObject {
             result.errors["manifestsRequired"] = "Profile must require at least one manifest.";
         }
         if (!this.hasRequiredTagFile("bagit.txt")) {
-            result.errors["requiredTags"] = "Profile lacks requirements for bagit.txt tag file.";
+            result.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
         }
         if (!this.hasRequiredTagFile("bag-info.txt")) {
-            result.errors["requiredTags"] = "Profile lacks requirements for bag-info.txt tag file.";
+            result.errors["tags"] = "Profile lacks requirements for bag-info.txt tag file.";
+        }
+        if (!Util.listContains(Constants.REQUIREMENT_OPTIONS, this.serialization)) {
+            result.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
         }
         return result;
     }
@@ -238,7 +244,7 @@ class BagItProfile extends PersistentObject {
      * @returns {TagDefinition[]}
      */
     findMatchingTags(property, value) {
-        return this.requiredTags.filter(tag => tag[property] === value);
+        return this.tags.filter(tag => tag[property] === value);
     }
 
     /**
@@ -254,7 +260,7 @@ class BagItProfile extends PersistentObject {
      * @returns {TagDefinition}
      */
     firstMatchingTag(property, value) {
-        return this.requiredTags.find(tag => tag[property] === value);
+        return this.tags.find(tag => tag[property] === value);
     }
 
     /**
@@ -271,11 +277,11 @@ class BagItProfile extends PersistentObject {
      * @returns {TagDefinition[]}
      */
     getTagsFromFile(filename, tagname) {
-        return this.requiredTags.filter(tag => tag.tagFile === filename && tag.tagName === tagname);
+        return this.tags.filter(tag => tag.tagFile === filename && tag.tagName === tagname);
     }
 
     /**
-     * This returns true if the requiredTags list includes a tagfile
+     * This returns true if the tags list includes a tagfile
      * with the specified filename.
      *
      * @param {string} filename - The name of the tagfile.
@@ -283,7 +289,7 @@ class BagItProfile extends PersistentObject {
      * @returns {boolean}
      */
     hasRequiredTagFile(filename) {
-        return typeof this.requiredTags.find(tag => tag.tagFile === filename) != undefined;
+        return typeof this.tags.find(tag => tag.tagFile === filename) != undefined;
     }
 
     /**
@@ -357,7 +363,7 @@ class BagItProfile extends PersistentObject {
       */
     tagsGroupedByFile() {
         var tagsByFile = {};
-        for (var tag of this.requiredTags) {
+        for (var tag of this.tags) {
             if(tagsByFile[tag.tagFile] == null) {
                 tagsByFile[tag.tagFile] = [];
             }
@@ -405,7 +411,7 @@ class BagItProfile extends PersistentObject {
       * @returns {boolean}
       */
     isCustomTagFile(filename) {
-        for (var tag of this.requiredTags) {
+        for (var tag of this.tags) {
             if (tag.tagFile == filename && tag.addedForJob == true) {
                 return true;
             }
@@ -419,7 +425,7 @@ class BagItProfile extends PersistentObject {
       */
     requiredTagFileNames() {
         var fileNames = new Set();
-        for (var tag of this.requiredTags) {
+        for (var tag of this.tags) {
             if (!fileNames.has(tag.tagFile)) {
                 fileNames.add(tag.tagFile);
             }
@@ -436,7 +442,7 @@ class BagItProfile extends PersistentObject {
       * @returns {boolean}
       */
     fileHasAllRequiredValues(tagFileName) {
-        for (var tag of this.requiredTags) {
+        for (var tag of this.tags) {
             if(tag.tagFile == tagFileName) {
                 if (tag.addedForJob) {
                     // This is a custom tag file that the user
@@ -496,11 +502,11 @@ class BagItProfile extends PersistentObject {
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
-            obj.requiredTags.forEach(function(item, index, array) {
+            obj.tags.forEach(function(item, index, array) {
                 // Convert the JSON data to a full TagDefinition object.
                 var tagDef = new TagDefinition();
                 Object.assign(tagDef, item);
-                profile.requiredTags[index] = tagDef;
+                profile.tags[index] = tagDef;
             });
         }
         return profile;
@@ -515,7 +521,7 @@ class BagItProfile extends PersistentObject {
     bagTitle() {
         var exactTitle = "";
         var maybeTitle = "";
-        for(var tag of this.requiredTags) {
+        for(var tag of this.tags) {
             var tagName = tag.tagName.toLowerCase();
             if (tagName == "title") {
                 exactTitle = tag.userValue;
@@ -535,7 +541,7 @@ class BagItProfile extends PersistentObject {
     bagDescription() {
         var exactDesc = "";
         var maybeDesc = "";
-        for(var tag of this.requiredTags) {
+        for(var tag of this.tags) {
             var tagName = tag.tagName.toLowerCase();
             if (tagName == "internal-sender-description") {
                 exactDesc = tag.userValue;
@@ -552,7 +558,7 @@ class BagItProfile extends PersistentObject {
       * @returns {string}
       */
     bagInternalIdentifier() {
-        for(var tag of this.requiredTags) {
+        for(var tag of this.tags) {
             var tagName = tag.tagName.toLowerCase();
             if (tagName == "internal-sender-identifier") {
                 return tag.userValue;
@@ -570,7 +576,7 @@ class BagItProfile extends PersistentObject {
       */
     copyDefaultTagValuesFrom(otherProfile) {
         var changed = false;
-        for(var t of otherProfile.requiredTags) {
+        for(var t of otherProfile.tags) {
             var tag = this.findTagByName(t.tagName);
             if (tag && t.tagFile == tag.tagFile && !Util.isEmpty(t.defaultValue)) {
                 tag.defaultValue = t.defaultValue;

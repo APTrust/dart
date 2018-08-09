@@ -18,7 +18,7 @@ test('Constructor sets initial properties', () => {
     expect(profile.bagItProfileInfo).not.toBeNull();
     expect(profile.manifestsRequired).toEqual(['sha256']);
     expect(profile.tagManifestsRequired).toEqual([]);
-    expect(profile.requiredTags.length).toEqual(16);
+    expect(profile.tags.length).toEqual(16);
     expect(profile.serialization).toEqual('optional');
     expect(profile.baseProfileId).toEqual(null);
     expect(profile.isBuiltIn).toEqual(false);
