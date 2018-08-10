@@ -128,13 +128,23 @@ test('suggestBagName()', () => {
     expect(genericProfile.suggestBagName()).toMatch(/^bag-\d+$/);
 });
 
-// test('suggestGenericBagName()', () => {
+test('suggestGenericBagName()', () => {
+    expect(BagItProfile.suggestGenericBagName()).toMatch(/^bag-\d+$/);
+});
 
-// });
-
-// test('nameLooksLegal()', () => {
-
-// });
+test('nameLooksLegal() accepts valid file names and rejects invalid ones', () => {
+    expect(BagItProfile.nameLooksLegal("legal-name")).toEqual(true);
+    expect(BagItProfile.nameLooksLegal("Legal_Name")).toEqual(true);
+    expect(BagItProfile.nameLooksLegal("Illeg*l_name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illeg?l_name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illeg\\l_name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illeg/l_name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illegal name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illegal:name")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illegal\rname")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illegal\nname")).toEqual(false);
+    expect(BagItProfile.nameLooksLegal("Illegal\tname")).toEqual(false);
+});
 
 // test('isValidBagName()', () => {
 

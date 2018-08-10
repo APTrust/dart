@@ -320,16 +320,16 @@ class BagItProfile extends PersistentObject {
         return `bag-${Date.now()}`;
     }
     /**
-     * This returns true if the name contains no illegal
-     * characters.
+     * This returns true if the bag name contains no illegal
+     * characters. Illegal characters include <, >, :, ", /, \, ?, *,
+     * space, tab, carriage return and newline.
      *
-     * @param {string} name - The name you want to validate (typically
-     * a bag name or file basename, excluding path information).
+     * @param {string} name - The bag name you want to validate.
      *
      * @returns {boolean}
      */
     static nameLooksLegal(name) {
-        var illegal = /[<>:"\/\|\?\*\\\s\t\n]/g;
+        var illegal = /[<>:"\/\|\?\*\\\s\t\n\r]/g;
         return !Util.isEmpty(name) && name.match(illegal) == null;
     }
     /**
