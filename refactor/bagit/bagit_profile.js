@@ -360,7 +360,7 @@ class BagItProfile extends PersistentObject {
       * as the key. Value is a list of required tags,
       * in alpha order by name.
       *
-      * @returns {Object<string, TagDefinition>}
+      * @returns {Object<string, TagDefinition[]>}
       */
     tagsGroupedByFile() {
         var tagsByFile = {};
@@ -371,7 +371,8 @@ class BagItProfile extends PersistentObject {
             tagsByFile[tag.tagFile].push(tag);
         }
         for (var f of Object.keys(tagsByFile)) {
-            Util.sortByName(tagsByFile[f]);
+            let sortFunction = Util.getSortFunction('name', 'asc');
+            tagsByFile[f].sort(sortFunction);
         }
         return tagsByFile;
     }

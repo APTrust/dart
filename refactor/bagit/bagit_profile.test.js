@@ -170,9 +170,12 @@ test('isValidBagName() asserts profile-specific naming rules', () => {
     expect(genericProfile.isValidBagName("**Bag?Of:Glass**")).toEqual(false);
 });
 
-// test('tagsGroupedByFile()', () => {
-
-// });
+test('tagsGroupedByFile()', () => {
+    let profile = new BagItProfile();
+    let files = profile.tagsGroupedByFile();
+    expect(files['bagit.txt'].length).toEqual(2);
+    expect(files['bag-info.txt'].length).toEqual(14);
+});
 
 // test('getTagFileContents()', () => {
 
