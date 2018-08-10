@@ -1,13 +1,11 @@
 const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('./bagit_profile');
-const { Context } = require('../core/context');
-const fs = require('fs');
-const path = require('path');
 const { TagDefinition } = require('./tag_definition');
+const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
 
 beforeEach(() => {
-    deleteJsonFiles();
+    TestUtil.deleteJsonFile('BagItProfile');
 });
 
 test('Constructor sets initial properties', () => {
@@ -211,14 +209,3 @@ test('isValidBagName() asserts profile-specific naming rules', () => {
 // test('copyDefaultTagValuesFrom()', () => {
 
 // });
-
-function deleteJsonFiles() {
-    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
-        for (var f of fs.readdirSync(Context.config.dataDir)) {
-            if (f.startsWith('test') && f.endsWith('.json')) {
-                let jsonFile = path.join(Context.config.dataDir, f);
-                fs.unlinkSync(jsonFile);
-            }
-        }
-    }
-}

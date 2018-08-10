@@ -2,10 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const { Context } = require('./context');
 const { InternalSetting } = require('./internal_setting');
+const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
 beforeEach(() => {
-    deleteJsonFiles();
+    TestUtil.deleteJsonFile('InternalSetting');
 });
 
 test('Constructor sets expected properties', () => {
@@ -108,16 +109,4 @@ function makeObjects(howMany) {
         list.push(obj);
     }
     return list;
-}
-
-
-function deleteJsonFiles() {
-    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
-        for (var f of fs.readdirSync(Context.config.dataDir)) {
-            if (f.endsWith('InternalSetting.json')) {
-                let jsonFile = path.join(Context.config.dataDir, f);
-                fs.unlinkSync(jsonFile);
-            }
-        }
-    }
 }

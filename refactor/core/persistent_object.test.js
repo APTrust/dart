@@ -2,10 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
+const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
 beforeEach(() => {
-    deleteJsonFiles();
+    TestUtil.deleteJsonFile('test1');
+    TestUtil.deleteJsonFile('test2');
+    TestUtil.deleteJsonFile('test3');
+    TestUtil.deleteJsonFile('test4');
+    TestUtil.deleteJsonFile('test5');
 });
 
 test('Constructor throws error if type is missing or empty', () => {
@@ -263,12 +268,14 @@ test('first()', () => {
     // Change offset, still sorting asc.
     // The query should ignore the limit, since
     // first should return no more than one item.
+    // We should skip over the first two items,
+    // ages 65 & 70.
     opts.offset = 2;
     opts.limit = 2;
+    opts.sortDirection = 'asc';
     match = PersistentObject.first(db, fn, opts);
     expect(match).not.toBeNull();
     expect(match.age).toEqual(75);
-
 });
 
 function makeObjects(type, howMany) {
@@ -281,15 +288,4 @@ function makeObjects(type, howMany) {
         list.push(obj);
     }
     return list;
-}
-
-function deleteJsonFiles() {
-    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
-        for (var f of fs.readdirSync(Context.config.dataDir)) {
-            if (f.startsWith('test') && f.endsWith('.json')) {
-                let jsonFile = path.join(Context.config.dataDir, f);
-                fs.unlinkSync(jsonFile);
-            }
-        }
-    }
 }

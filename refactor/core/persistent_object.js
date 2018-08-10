@@ -316,7 +316,6 @@ class PersistentObject {
      * @returns {Object}
      */
     static first(db, filterFunction, opts) {
-        opts.limit = 1;
         let matches = PersistentObject.list(db, filterFunction, opts);
         return matches[0] || null;
     }
