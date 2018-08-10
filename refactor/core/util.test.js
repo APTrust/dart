@@ -1,6 +1,3 @@
-//const fs = require('fs');
-//const os = require('os');
-//const path = require('path');
 const { Util } = require('./util');
 
 test('Util.uuid4()', () => {

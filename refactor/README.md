@@ -16,6 +16,8 @@ Jest runs tests in parallel by default, but this can cause problems when differe
 tests are saving different AppSetting values as part of their setup process.
 The --runInBand flag tells Jest to run tests sequentially.
 
+See the [Jest CLI reference](https://jestjs.io/docs/en/cli.html)
+
 ```
 cd refactor
 npm test --runInBand
