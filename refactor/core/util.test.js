@@ -52,6 +52,41 @@ test('Util.listContains()', () => {
     expect(Util.listContains(list, false)).toEqual(true);
 });
 
+test('Util.getSortFunction()', () => {
+    let objList = [
+        { name: 'one', value: 1 },
+        { name: 'six', value: 6 },
+        { name: 'four', value: 4 }
+    ];
+    let nameAsc = Util.getSortFunction('name', 'asc');
+    expect(typeof nameAsc).toEqual('function');
+    objList.sort(nameAsc);
+    expect(objList[0].name).toEqual('four')
+    expect(objList[1].name).toEqual('one')
+    expect(objList[2].name).toEqual('six')
+
+    let nameDesc = Util.getSortFunction('name', 'desc');
+    expect(typeof nameDesc).toEqual('function');
+    objList.sort(nameDesc);
+    expect(objList[0].name).toEqual('six')
+    expect(objList[1].name).toEqual('one')
+    expect(objList[2].name).toEqual('four')
+
+    let valueAsc = Util.getSortFunction('value', 'asc');
+    expect(typeof valueAsc).toEqual('function');
+    objList.sort(valueAsc);
+    expect(objList[0].value).toEqual(1)
+    expect(objList[1].value).toEqual(4)
+    expect(objList[2].value).toEqual(6)
+
+    let valueDesc = Util.getSortFunction('value', 'desc');
+    expect(typeof valueDesc).toEqual('function');
+    objList.sort(valueDesc);
+    expect(objList[0].value).toEqual(6)
+    expect(objList[1].value).toEqual(4)
+    expect(objList[2].value).toEqual(1)
+});
+
 test('Util.boolEqual()', () => {
     expect(Util.boolEqual(true, true)).toEqual(true);
     expect(Util.boolEqual(true, "True")).toEqual(true);
