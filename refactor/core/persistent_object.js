@@ -152,19 +152,9 @@ class PersistentObject {
         for (var key in db.store) {
             list.push(db.store[key]);
         }
-        // Sort descending, ascending, or not at all if no sort property.
-        if (property && direction == 'desc') {
-            list.sort(function(a, b) {
-                if (a[property] < b[property]) { return 1; }
-                if (a[property] > b[property]) { return -1; }
-                return 0;
-            });
-        } else if (property) {
-            list.sort(function(a, b) {
-                if (a[property] < b[property]) { return -1; }
-                if (a[property] > b[property]) { return 1; }
-                return 0;
-            });
+        if (property) {
+            let sortFunction = Util.getSortFunction(property, direction);
+            list.sort(sortFunction);
         }
         return list;
     }
