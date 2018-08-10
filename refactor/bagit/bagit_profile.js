@@ -1,3 +1,4 @@
+const { AppSetting } = require('../core/app_setting');
 const { BagItProfileInfo } = require('./bagit_profile_info');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
@@ -301,7 +302,7 @@ class BagItProfile extends PersistentObject {
     suggestBagName() {
         var suggestion = "";
         if (this.hasTagFile("aptrust-info.txt")) {
-            var setting = AppSetting.findByName("Institution Domain")
+            var setting = AppSetting.firstMatching("name", "Institution Domain")
             suggestion = `${setting.value}.bag-${Date.now()}`
         } else if (this.hasTagFile("dpn-tags/dpn-info.txt")) {
             suggestion = Util.uuid4();

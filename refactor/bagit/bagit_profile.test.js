@@ -1,3 +1,4 @@
+const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('./bagit_profile');
 const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
@@ -106,9 +107,26 @@ test('hasTagFile()', () => {
     expect(profile.hasTagFile('no-file.txt')).toEqual(false);
 });
 
-// test('suggestBagName()', () => {
+test('suggestBagName()', () => {
+    let inst = new AppSetting('Institution Domain', 'aptrust.org');
+    inst.save();
 
-// });
+    // Make something that looks like an APTrust profile,
+    // just because it has an aptrust-info.txt tag file.
+    let aptrustProfile = new BagItProfile();
+    aptrustProfile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
+    expect(aptrustProfile.suggestBagName()).toMatch(/^aptrust.org.bag-\d+$/);
+
+    // Make something that looks like a DPN profile,
+    // just because it has an dpn-tags/dpn-info.txt tag file.
+    let dpnProfile = new BagItProfile();
+    dpnProfile.tags.push(new TagDefinition('dpn-tags/dpn-info.txt', 'Member-Id'));
+    let bagName = dpnProfile.suggestBagName();
+    expect(Util.looksLikeUUID(bagName)).toEqual(true);
+
+    let genericProfile = new BagItProfile();
+    expect(genericProfile.suggestBagName()).toMatch(/^bag-\d+$/);
+});
 
 // test('suggestGenericBagName()', () => {
 
