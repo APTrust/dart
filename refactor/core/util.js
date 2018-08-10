@@ -113,7 +113,7 @@ class Util {
       */
     static filterEmptyStrings(arr) {
         if(arr == null || !Array.isArray(arr)) {
-            console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
+            //console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
             return [];
         }
         return arr.map(item => item? item.trim() : "").filter(item => item != "");
@@ -136,6 +136,32 @@ class Util {
             }
         }
         return false;
+    }
+
+    /**
+      * Returns a function suitable for sorting a list of objects
+      * in ascending or desdending order.
+      *
+      * @param {string} property - The name of the object property to sort on.
+      * @param {string} direction - 'desc' or 'asc' for descending or ascending.
+      * @returns {function} A function with params (a, b) where a and b are items to be compared.
+      */
+    static getSortFunction(property, direction) {
+        if (direction == 'desc') {
+            return function(a, b) {
+                // descending sort
+                if (a[property] < b[property]) { return 1; }
+                if (a[property] > b[property]) { return -1; }
+                return 0;
+            };
+        } else {
+            return function(a, b) {
+                // ascending sort
+                if (a[property] < b[property]) { return -1; }
+                if (a[property] > b[property]) { return 1; }
+                return 0;
+            }
+        }
     }
 
     /**
