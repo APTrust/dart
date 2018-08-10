@@ -1,7 +1,14 @@
 const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('./bagit_profile');
+const { Context } = require('../core/context');
+const fs = require('fs');
+const path = require('path');
 const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
+
+beforeEach(() => {
+    deleteJsonFiles();
+});
 
 test('Constructor sets initial properties', () => {
     let profile = new BagItProfile();
@@ -146,9 +153,24 @@ test('nameLooksLegal() accepts valid file names and rejects invalid ones', () =>
     expect(BagItProfile.nameLooksLegal("Illegal\tname")).toEqual(false);
 });
 
-// test('isValidBagName()', () => {
+test('isValidBagName() asserts profile-specific naming rules', () => {
+    let inst = new AppSetting('Institution Domain', 'aptrust.org');
+    inst.save();
 
-// });
+    let aptrustProfile = new BagItProfile();
+    aptrustProfile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
+    expect(aptrustProfile.isValidBagName("aptrust.org.historical-photos-1951")).toEqual(true);
+    expect(aptrustProfile.isValidBagName("historical-photos-1951")).toEqual(false);
+
+    let dpnProfile = new BagItProfile();
+    dpnProfile.tags.push(new TagDefinition('dpn-tags/dpn-info.txt', 'Member-Id'));
+    expect(dpnProfile.isValidBagName(Util.uuid4())).toEqual(true);
+    expect(dpnProfile.isValidBagName("BagOfGlass")).toEqual(false);
+
+    let genericProfile = new BagItProfile();
+    expect(genericProfile.isValidBagName("BagOfGlass")).toEqual(true);
+    expect(genericProfile.isValidBagName("**Bag?Of:Glass**")).toEqual(false);
+});
 
 // test('tagsGroupedByFile()', () => {
 
@@ -189,3 +211,14 @@ test('nameLooksLegal() accepts valid file names and rejects invalid ones', () =>
 // test('copyDefaultTagValuesFrom()', () => {
 
 // });
+
+function deleteJsonFiles() {
+    if (Context.isTestEnv && Context.config.dataDir.includes(path.join('.dart-test', 'data'))) {
+        for (var f of fs.readdirSync(Context.config.dataDir)) {
+            if (f.startsWith('test') && f.endsWith('.json')) {
+                let jsonFile = path.join(Context.config.dataDir, f);
+                fs.unlinkSync(jsonFile);
+            }
+        }
+    }
+}

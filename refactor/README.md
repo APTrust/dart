@@ -12,9 +12,13 @@ developers can contribute to DART.
 
 ## Testing
 
+Jest runs tests in parallel by default, but this can cause problems when different
+tests are saving different AppSetting values as part of their setup process.
+The --runInBand flag tells Jest to run tests sequentially.
+
 ```
 cd refactor
-npm test
+npm test --runInBand
 ```
 
 ## Building the Docs

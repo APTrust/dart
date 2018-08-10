@@ -344,7 +344,7 @@ class BagItProfile extends PersistentObject {
             return false;
         }
         if (this.hasTagFile("aptrust-info.txt")) {
-            var setting = AppSetting.findByName("Institution Domain")
+            var setting = AppSetting.firstMatching("name", "Institution Domain")
             var requiredPrefix = `${setting.value}.`;
             return (name.startsWith(requiredPrefix) &&
                     name.length > requiredPrefix.length &&
@@ -352,7 +352,7 @@ class BagItProfile extends PersistentObject {
         } else if (this.hasTagFile("dpn-tags/dpn-info.txt")) {
             return Util.looksLikeUUID(name);
         } else {
-            BagItProfile.nameLooksLegal(name)
+            return BagItProfile.nameLooksLegal(name)
         }
     }
     /**
