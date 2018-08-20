@@ -421,7 +421,7 @@ class BagItProfile extends PersistentObject {
         return false;
     }
     /**
-      * Returns the names of all required tag files.
+      * Returns the names of all tag files, in alpha order.
       *
       * @returns {string[]}
       */
@@ -432,7 +432,7 @@ class BagItProfile extends PersistentObject {
                 fileNames.add(tag.tagFile);
             }
         }
-        return Array.from(fileNames);
+        return Array.from(fileNames).sort();
     }
     // ---------------------------------------------------------
     // TODO: Move to validator.

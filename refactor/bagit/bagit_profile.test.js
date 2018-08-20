@@ -225,9 +225,14 @@ test('isCustomTagFile()', () => {
     expect(profile.isCustomTagFile('file-does-not-exist.txt')).toEqual(false);
 });
 
-// test('tagFileNames()', () => {
+test('tagFileNames()', () => {
+    let profile = new BagItProfile();
+    expect(profile.tagFileNames()).toEqual(['bag-info.txt', 'bagit.txt']);
 
-// });
+    profile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
+    profile.tags.push(new TagDefinition('custom-tags.txt', 'Sample-Tag'));
+    expect(profile.tagFileNames()).toEqual(['aptrust-info.txt', 'bag-info.txt', 'bagit.txt', 'custom-tags.txt']);
+});
 
 // test('mustBeTarred()', () => {
 
