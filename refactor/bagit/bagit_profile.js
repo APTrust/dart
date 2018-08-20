@@ -406,15 +406,15 @@ class BagItProfile extends PersistentObject {
     /**
       * Returns true if filename is a custom file added for a
       * specific job (i.e. is not part of the core profile).
-      * All tags in a custom tag file have addedForJob = true.
+      * All tags in a custom tag file have isUserAddedTag = true.
       *
-      * @param {string} name - The bag name you want to validate.
+      * @param {string} filename - The name of the tag file to check.
       *
       * @returns {boolean}
       */
     isCustomTagFile(filename) {
         for (var tag of this.tags) {
-            if (tag.tagFile == filename && tag.addedForJob == true) {
+            if (tag.tagFile == filename && tag.isUserAddedFile == true) {
                 return true;
             }
         }

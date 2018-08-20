@@ -200,9 +200,30 @@ test('getTagFileContents()', () => {
     expect(profile.getTagFileContents('bag-info.txt')).toEqual(bagInfoContents);
 });
 
-// test('isCustomTagFile()', () => {
+test('isCustomTagFile()', () => {
+    let profile = new BagItProfile();
 
-// });
+    // These are not custom. They're built in to all profiles.
+    expect(profile.isCustomTagFile('bagit.txt')).toEqual(false);
+    expect(profile.isCustomTagFile('bag-info.txt')).toEqual(false);
+
+    // This won't be custom, because we're not flagging it as custom.
+    let aptrustTag = new TagDefinition('aptrust-info.txt', 'Access');
+    aptrustTag.userValue = 'Institution';
+    profile.tags.push(aptrustTag);
+    expect(profile.isCustomTagFile('aptrust-info.txt')).toEqual(false);
+
+    // This will be custom, because we're flagging it as such.
+    let customTag = new TagDefinition('custom-tags.txt', 'Sample-Tag');
+    customTag.isUserAddedFile = true;
+    customTag.isUserAddedTag = true;
+    customTag.userValue = 'electra';
+    profile.tags.push(customTag);
+    expect(profile.isCustomTagFile('custom-tags.txt')).toEqual(true);
+
+    // Check on a tag file that doesn't even exist.
+    expect(profile.isCustomTagFile('file-does-not-exist.txt')).toEqual(false);
+});
 
 // test('tagFileNames()', () => {
 
