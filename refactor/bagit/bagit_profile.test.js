@@ -279,7 +279,7 @@ test('bagTitle()', () => {
 
 test('bagDescription()', () => {
     let profile = new BagItProfile();
-    expect(profile.bagTitle()).toEqual('');
+    expect(profile.bagDescription()).toEqual('');
 
     let titleTag1 = new TagDefinition('bag-info.txt', 'Description');
     titleTag1.userValue = 'First Description';
@@ -292,10 +292,49 @@ test('bagDescription()', () => {
     expect(profile.bagDescription()).toEqual('Second Description');
 });
 
-// test('bagInternalIdentifier()', () => {
+test('bagInternalIdentifier()', () => {
+    let profile = new BagItProfile();
+    expect(profile.bagInternalIdentifier()).toEqual("");
+    profile.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier')[0].userValue = 'NMOT';
+    expect(profile.bagInternalIdentifier()).toEqual('NMOT');
+});
 
-// });
+test('copyDefaultTagValuesFrom()', () => {
+    // Set up a profile with specific default tag values.
+    let profile1 = new BagItProfile();
+    profile1.getTagsFromFile('bag-info.txt', 'External-Description')[0].defaultValue = 'Bag of Stuff';
+    profile1.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].defaultValue = '1';
+    profile1.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].defaultValue = '10887';
+    profile1.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].defaultValue = '2018-08-20';
+    profile1.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].defaultValue = 'bagger@aptrust.org';
+    profile1.getTagsFromFile('bag-info.txt', 'Contact-Name')[0].defaultValue = 'Bagger Vance';
+    profile1.getTagsFromFile('bag-info.txt', 'Contact-Phone')[0].defaultValue = '434-555-1212';
+    profile1.getTagsFromFile('bag-info.txt', 'Bag-Group-Identifier')[0].defaultValue = 'Stuff Collection';
+    profile1.getTagsFromFile('bag-info.txt', 'External-Identifier')[0].defaultValue = 'MYLB/NDA';
+    profile1.getTagsFromFile('bag-info.txt', 'Internal-Sender-Description')[0].defaultValue = 'Bag of miscellaneous junk';
+    profile1.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier')[0].defaultValue = 'NMOT';
+    profile1.getTagsFromFile('bag-info.txt', 'Organization-Address')[0].defaultValue = '1234 Main St., Charlottesville, VA 22903';
+    profile1.getTagsFromFile('bag-info.txt', 'Payload-Oxum')[0].defaultValue = '10232.4';
+    profile1.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].defaultValue = 'Academic Preservation Trust';
 
-// test('copyDefaultTagValuesFrom()', () => {
+    // Create a new profile, and copy the default tag values from profile1.
+    let profile2 = new BagItProfile();
+    profile2.copyDefaultTagValuesFrom(profile1);
 
-// });
+    // Make sure the defaults were copied.
+    expect(profile2.getTagsFromFile('bag-info.txt', 'External-Description')[0].defaultValue).toEqual('Bag of Stuff');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].defaultValue).toEqual('1');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].defaultValue).toEqual('10887');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].defaultValue).toEqual('2018-08-20');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].defaultValue).toEqual('bagger@aptrust.org');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Contact-Name')[0].defaultValue).toEqual('Bagger Vance');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Contact-Phone')[0].defaultValue).toEqual('434-555-1212');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Bag-Group-Identifier')[0].defaultValue).toEqual('Stuff Collection');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'External-Identifier')[0].defaultValue).toEqual('MYLB/NDA');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Internal-Sender-Description')[0].defaultValue).toEqual('Bag of miscellaneous junk');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier')[0].defaultValue).toEqual('NMOT');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Organization-Address')[0].defaultValue).toEqual('1234 Main St., Charlottesville, VA 22903');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Payload-Oxum')[0].defaultValue).toEqual('10232.4');
+    expect(profile2.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].defaultValue).toEqual('Academic Preservation Trust');
+
+});

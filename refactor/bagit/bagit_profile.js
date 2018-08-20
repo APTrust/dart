@@ -566,22 +566,29 @@ class BagItProfile extends PersistentObject {
     }
     /**
       * Returns the bag's Internal-Sender-Identifier as specified
-      * in the tag files.
+      * in the tag files, or an empty string if there is none.
+      * It's common for this tag to appear in a tag file with no
+      * value, which also leads to an empty string return value.
+      *
+      * Also note that this returns the value of the first
+      * Internal-Sender-Identfier tag in the bag-info.txt file.
       *
       * @returns {string}
       */
     bagInternalIdentifier() {
-        for(var tag of this.tags) {
-            var tagName = tag.tagName.toLowerCase();
-            if (tagName == "internal-sender-identifier") {
-                return tag.userValue;
-            }
-        }
+        let tags = this.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier');
+        return tags.length > 0 ? tags[0].userValue : '';
     }
     //
     /**
       * Copy default tag values from other profile to this profile,
       * and saves those changes to the data store.
+      *
+      * If multiple tags with the same name appear in the same
+      * tag file, this copies only the first value. While the BagIt
+      * spec permits multiple instances of a tag within a file, we're
+      * assuming (naively?) that a BagItProfile will specify only one
+      * default value for a tag in a given file.
       *
       * @param {BagItProfile} otherProfile - The BagItProfile whose
       * TagDefinition default values you want to copy.
@@ -590,9 +597,9 @@ class BagItProfile extends PersistentObject {
     copyDefaultTagValuesFrom(otherProfile) {
         var changed = false;
         for(var t of otherProfile.tags) {
-            var tag = this.findTagByName(t.tagName);
-            if (tag && t.tagFile == tag.tagFile && !Util.isEmpty(t.defaultValue)) {
-                tag.defaultValue = t.defaultValue;
+            var tags = this.getTagsFromFile(t.tagFile, t.tagName);
+            if (tags[0] && t.tagFile == tags[0].tagFile && !Util.isEmpty(t.defaultValue)) {
+                tags[0].defaultValue = t.defaultValue;
                 changed = true;
             }
         }
