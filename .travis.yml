@@ -34,6 +34,7 @@ before_script:
   - git lfs pull
 
 script:
+  - if [[ "$TRAVIS_BRANCH" == "refactor" ]]; then cd refactor && npm test; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn ; fi
   - buildver="$(grep version electron/package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never --em.version=$buildver; fi
