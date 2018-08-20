@@ -177,9 +177,28 @@ test('tagsGroupedByFile()', () => {
     expect(files['bag-info.txt'].length).toEqual(14);
 });
 
-// test('getTagFileContents()', () => {
-
-// });
+test('getTagFileContents()', () => {
+    let profile = new BagItProfile();
+    let files = profile.tagsGroupedByFile();
+    profile.getTagsFromFile('bag-info.txt', 'External-Description')[0].userValue = 'Bag of Stuff';
+    profile.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].userValue = '1';
+    profile.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].userValue = '10887';
+    profile.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].userValue = '2018-08-20';
+    profile.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].userValue = 'bagger@aptrust.org';
+    profile.getTagsFromFile('bag-info.txt', 'Contact-Name')[0].userValue = 'Bagger Vance';
+    profile.getTagsFromFile('bag-info.txt', 'Contact-Phone')[0].userValue = '434-555-1212';
+    profile.getTagsFromFile('bag-info.txt', 'Bag-Group-Identifier')[0].userValue = 'Stuff Collection';
+    profile.getTagsFromFile('bag-info.txt', 'External-Identifier')[0].userValue = 'MYLB/NDA';
+    profile.getTagsFromFile('bag-info.txt', 'Internal-Sender-Description')[0].userValue = 'Bag of miscellaneous junk';
+    profile.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier')[0].userValue = 'NMOT';
+    profile.getTagsFromFile('bag-info.txt', 'Organization-Address')[0].userValue = '1234 Main St., Charlottesville, VA 22903';
+    profile.getTagsFromFile('bag-info.txt', 'Payload-Oxum')[0].userValue = '10232.4';
+    profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].userValue = 'Academic Preservation Trust';
+    let bagItContents = "BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8";
+    let bagInfoContents = "External-Description: Bag of Stuff\nBag-Count: 1\nBag-Size: 10887\nBagging-Date: 2018-08-20\nContact-Email: bagger@aptrust.org\nContact-Name: Bagger Vance\nContact-Phone: 434-555-1212\nBag-Group-Identifier: Stuff Collection\nExternal-Identifier: MYLB/NDA\nInternal-Sender-Description: Bag of miscellaneous junk\nInternal-Sender-Identifier: NMOT\nOrganization-Address: 1234 Main St., Charlottesville, VA 22903\nPayload-Oxum: 10232.4\nSource-Organization: Academic Preservation Trust";
+    expect(profile.getTagFileContents('bagit.txt')).toEqual(bagItContents);
+    expect(profile.getTagFileContents('bag-info.txt')).toEqual(bagInfoContents);
+});
 
 // test('isCustomTagFile()', () => {
 
