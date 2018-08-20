@@ -3,6 +3,8 @@ const { BagItProfile } = require('./bagit_profile');
 const { TagDefinition } = require('./tag_definition');
 const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
+const fs = require('fs');
+const path = require('path');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('BagItProfile');
@@ -243,9 +245,22 @@ test('mustBeTarred()', () => {
     expect(profile.mustBeTarred()).toEqual(true);
 });
 
-// test('fromJson()', () => {
+test('fromJson()', () => {
+    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'aptrust_bagit_profile_2.2.json');
+    let jsonString = fs.readFileSync(jsonFile);
+    let profile = BagItProfile.fromJson(jsonString);
+    expect(profile).not.toBeNull();
 
-// });
+    // This doesn't test everything, but we spot check a few properties.
+    expect(profile.id).toEqual('043f1c22-c9ff-4112-86f8-8f8f1e6a2dca');
+    expect(profile.name).toEqual('APTrust');
+    expect(profile.description).toEqual('APTrust 2.0 default BagIt profile.');
+    expect(profile.acceptBagItVersion).toEqual(['0.97']);
+    expect(profile.acceptSerialization).toEqual(['application/tar']);
+    expect(profile.tags.length).toEqual(14);
+    expect(profile.allowMiscDirectories).toEqual(true);
+    expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
+});
 
 // test('bagTitle()', () => {
 

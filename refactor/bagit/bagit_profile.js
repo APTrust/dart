@@ -117,6 +117,10 @@ class BagItProfile extends PersistentObject {
           * to parse when creating or validating bags that conform to
           * this profile.
           *
+          * Note that this property was called requiredTags in prior
+          * versions of DART, and in the BagItProfile JSON from those
+          * versions.
+          *
           * @type {TagDefinition[]}
           */
         this.tags = [];
@@ -441,6 +445,8 @@ class BagItProfile extends PersistentObject {
       * Returns true if the specified tag file has values for all
       * required tags.
       *
+      * @param {string} tagFileName - The name of the tag file to check.
+      *
       * @returns {boolean}
       */
     fileHasAllRequiredValues(tagFileName) {
@@ -497,10 +503,15 @@ class BagItProfile extends PersistentObject {
       * This converts the stored representation, which is basically
       * a JSON hash, to a full-fledged BagItProfile object.
       *
+      * @param {string} jsonString - String of JSON to covert to BagItProfile.
+      *
+      * @throws {SyntaxError} - Throws SyntaxError if jsonString cannot be parsed.
+      *
       * @returns {BagItProfile}
       */
-    static fromJson(obj) {
+    static fromJson(jsonString) {
         var profile = null;
+        var obj = JSON.parse(jsonString);
         if (obj != null) {
             profile = new BagItProfile();
             Object.assign(profile, obj);
