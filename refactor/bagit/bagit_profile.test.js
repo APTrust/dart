@@ -262,13 +262,35 @@ test('fromJson()', () => {
     expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
 });
 
-// test('bagTitle()', () => {
+test('bagTitle()', () => {
+    let profile = new BagItProfile();
+    expect(profile.bagTitle()).toEqual('');
 
-// });
+    let titleTag1 = new TagDefinition('bag-info.txt', 'Internal-Title');
+    titleTag1.userValue = 'First Title';
+    profile.tags.push(titleTag1);
+    expect(profile.bagTitle()).toEqual('First Title');
 
-// test('bagDescription()', () => {
+    let titleTag2 = new TagDefinition('bag-info.txt', 'Title');
+    titleTag2.userValue = 'Second Title';
+    profile.tags.push(titleTag2);
+    expect(profile.bagTitle()).toEqual('Second Title');
+});
 
-// });
+test('bagDescription()', () => {
+    let profile = new BagItProfile();
+    expect(profile.bagTitle()).toEqual('');
+
+    let titleTag1 = new TagDefinition('bag-info.txt', 'Description');
+    titleTag1.userValue = 'First Description';
+    profile.tags.push(titleTag1);
+    expect(profile.bagDescription()).toEqual('First Description');
+
+    let titleTag2 = new TagDefinition('bag-info.txt', 'Internal-Sender-Description');
+    titleTag2.userValue = 'Second Description';
+    profile.tags.push(titleTag2);
+    expect(profile.bagDescription()).toEqual('Second Description');
+});
 
 // test('bagInternalIdentifier()', () => {
 
