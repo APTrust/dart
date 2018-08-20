@@ -234,9 +234,14 @@ test('tagFileNames()', () => {
     expect(profile.tagFileNames()).toEqual(['aptrust-info.txt', 'bag-info.txt', 'bagit.txt', 'custom-tags.txt']);
 });
 
-// test('mustBeTarred()', () => {
-
-// });
+test('mustBeTarred()', () => {
+    let profile = new BagItProfile();
+    expect(profile.mustBeTarred()).toEqual(false);
+    profile.acceptSerialization = ['application/tar'];
+    expect(profile.mustBeTarred()).toEqual(false);
+    profile.serialization = 'required';
+    expect(profile.mustBeTarred()).toEqual(true);
+});
 
 // test('fromJson()', () => {
 
