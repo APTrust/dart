@@ -122,15 +122,25 @@ class TagDefinition {
           */
         this.isBuiltIn = false;
         /**
-          * addedForJob is a special flag for tags belonging
-          * to custom tag files that were added for a specific
-          * job. The UI handles these files differently from those
-          * that are part of a core BagItProfile. Custom tag files
-          * are added by users.
+          * isUserAddedFile is a special flag indicating the user
+          * added this custom tag file, which is not part of the
+          * standard BagIt profile. The DART UI handles these files
+          * differently from those that are part of a core BagItProfile.
           *
           * @type {boolean}
           */
-        this.addedForJob = false;
+        this.isUserAddedFile = false;
+        /**
+          * isUserAddedTag describes whether this tag was added by
+          * the user (and hence is not part of the standard BagIt profile
+          * upon which the bag is built). Users may add custom tags to
+          * standard tag files (such as bag-info.txt) or to their own
+          * custom tag files. All tags in custom tag files will have
+          * isUserAddedTag = true.
+          *
+          * @type {boolean}
+          */
+        this.isUserAddedTag = false;
     }
     /**
      * This returns a ValidationResult that describes what if anything

@@ -12,7 +12,8 @@ test('Constructor sets initial properties', () => {
     expect(tagDef.userValue).toEqual('');
     expect(tagDef.help).toEqual('');
     expect(tagDef.isBuiltIn).toEqual(false);
-    expect(tagDef.addedForJob).toEqual(false);
+    expect(tagDef.isUserAddedFile).toEqual(false);
+    expect(tagDef.isUserAddedTag).toEqual(false);
 });
 
 test('validate()', () => {
