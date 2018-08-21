@@ -31,6 +31,7 @@ install:
   - yarn
 
 before_script:
+<<<<<<< HEAD
   - git lfs pull
 
 script:
@@ -43,6 +44,30 @@ before_deploy:
       - git config --local user.name "APTdeploy"
       - git config --local user.email "ops@aptrust.org"
       - git tag "v$(grep version electron/package.json |sed 's/[^0-9.]//g').$(git log --format=%h -1).$TRAVIS_BUILD_NUMBER"
+=======
+- git lfs pull
+script:
+- if [[ "$TRAVIS_BRANCH" == "refactor" ]]; then cd refactor && npm test && cd ..;
+  fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn; fi
+- buildver="$(grep version electron/package.json |sed "s/[^0-9.]//g").$(git log --format=%h
+  -1)"
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder
+  -p never --em.version=$buildver; fi
+addons:
+  artifacts:
+    working_dir: dist
+    paths:
+    - $(git ls-files -o dist/{*.dmg,*.exe,*.deb} | tr "\n" ":")
+    target_paths:
+    - "/app/build-${TRAVIS_BUILD_NUMBER}_commit-${TRAVIS_COMMIT:0:7}$([ ! -z ${TRAVIS_TAG}
+      ] && echo _tag-${TRAVIS_TAG})"
+    - DART/DART-$buildver.dmg
+    bucket: aptrust.public.download
+    key: AKIAIN34AYPE5DX5EJUQ
+    secret:
+      secure: eOwbN81+m8xAntNpef0zDMrsz6ZzEry9ZRvnxjvL9izpo9IlIAPwlPtDrLMlAv9Nf1g1WJvAUt25NelSRoApLsBbSZohdyMyy0AlC+KiyXv6sHVMhzmZQ2WFPg/atQkg+WwxQsizRur2VWaqR0Ke2K0cFmlo0HZm+w3iEJt8Y8lGewsAe9AcHLoxd8hFtABnijfeHq0fUzzLSgpdme9UTDGgO3HSj7I4B01+Rfq00W5u3RPZVqqff8bErQKC+8ZAYC1HAgM3FnK/m+vzwNkOl6m9t5xiUiNXGCaCb3/zRR8ZH/snFup8xKJwikNfLlxGkEpkfH+mlcNzER3e3xRF3m2eZO410spoLa/9PkI5GRfv2ZX+tm8mNpqZjU5v1BHmsirdspzJ2uVTH456yM2RfS46M202OuX7W1i7HMmliRNRNgvvsYnNqgSxiPI2283xJxSmfn0UysuMe4he+zVM5SIqu6Bhx0zrrSw9oLP4vTCYjnzlNMFqDcxlsjLOfi1aCM8fxnEBCSupHbEMTIqSNfL7lMqhBiGbHp0CUVWuj37Z7BAjZLmvtndV25Ju3AnOOMybzk+6KpKZhGwdYQWnN48Z28r3kqKyZESdx44Z+LA8SxRuiOBqvL/R0qCcZfqATxvmW+aPkFj9cjASro92WWVR8niNg2v7aLXXH1GJIEQ=
+>>>>>>> af68983d... sudo make me a Travis Slacker
 deploy:
   provider: releases
   api_key:
@@ -56,8 +81,4 @@ deploy:
 
 notifications:
   slack:
-    secure: IWHP3fVK8/YJ9xmMQyz6zj0PnxI2pEkRgpZJUpSORHjGZFG5sGcmhb5DV2jtjY4YxQzQud7F7ZuFBzY+7yaTCnJC+tNAFzcmpgZBcxPiTfWIsWcbft1ITJtV/u+k25MVKW4YpZNpG51UInuncYLLpEZlflix322C97MtsgrZUpmWnmBEVemQ89UwaQ/SZpk6FXWPMzoGlaxr/ZF6JdsYuFHxm1/WurrpEuIRxj0TorQHqmsdgZPTK7Gg864RCKkE+55kFxTNRssZ0SmD7mWzEvHgosy+X/E8lch59qt5YFxT2tFNSzggGFATrY2VyVVl234pnlU1p2weDOdmhY8YB8PXFLkxipGmwNwaTQupzyHHj74WT9dL+1bNkbgAM+208gPa5VxaPKOgV59Z/PnuLpPIRZ8EFPJ5r/um84WjIlbQkrUkubUdlUbCc+e6bSBn5LaOJsDhonwumRk2XoKcCZLO92zZmIvlO84i/PiUvqRIG6SaLEIj081jVDYhm0o2WlnKTSKWxbCGq70L/3LSTtAjFBYELtLiYI0euYlgxskn89OtEHsPzIvVPQyfNvIie8WZ/rYKn+psoiPSVy89v8g2UZRejj0/z0jJf/MQ33s5+Z1TV3wE3QuYA6yNlViMRTUlvRLuaPwlq3A0meS7JZSsMIDjkbp9J9YlzGqw7Is=
-    on_success: always
-  email:
-    on_failure: never
-    on_success: never
+    secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
