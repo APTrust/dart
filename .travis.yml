@@ -18,8 +18,9 @@ install:
 - yarn
 before_script:
 - git lfs pull
+
 script:
-- if [[ "$TRAVIS_BRANCH" == "refactor" ]]; then cd refactor && npm test; fi
+- if [[ "$TRAVIS_BRANCH" == "refactor" ]]; then cd refactor && npm test && cd ..; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cd electron && yarn; fi
 - buildver="$(grep version electron/package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cd electron && yarn && electron-builder -p never --em.version=$buildver; fi
@@ -51,3 +52,9 @@ deploy:
   skip_cleanup: true
   on:
     repo: APTrust/dart
+notifications:
+  slack:
+    secure: bHR1GFAbEpceIi8bdtSU+SY8JsHnDt3uM4x4rzqHow84iyJnkZHpIjGzby0y2dU3bZyY56zPKDCnUotiBJSs4cIdt/1TZh5Yfz83pzQyg0GCEdOfhm3meOsXD/YGcMlYjmqhVH1h2/eHO76JxC9yU8HMKzYYYHZle1oifK3SCk1X/BiVX/k3M6jJ5bdM45j2dOZ5tnmMSj+mrLHbr9e0wc3i3eB1lPxmfsiLj1HMuEZeqPfpf9O+DSMfuRxSA153TKew49fJOkEhqSmFA3LHCDEWSb0Idov/FO9cvasDuG4dCvBhHRALvl66Mv3UzOqksOibo35l2uyWFOt2GSYURnjwbNKoYQTRGot8+cX+G5QkTrfAlIioii4Zla4L3spJOLV3vRebEqbsC+HZdNn9CnEEdRtG9+D0Nt/7YHBk4SjZ4wSbk5Etq6eDnRhS1Q/NEg1vZvaZ+kBZf4PTbBlO78Bm9x/jEasKWteRbAYADANrKi42EJkokcXWFD10VBD0QG15vVjwtz0y4F2GJRPclmLf7Y29NcPbECONilBfDDLZUCrxQTS3OpdYSQUDAyojXO1384bgagSJvNFSCiarxVyzQZ/15WOVy5n/ohmuHXivKIOUMcyP9urjT4VDP6iXM6dwQ86hVx7eit0PAaoQWwsZMH3rlJ/AYeXaQ3uSRdw=
+branches:
+  only:
+    - /.*/
