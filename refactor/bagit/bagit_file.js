@@ -1,4 +1,4 @@
-const constants = require('../core/constants');
+const { Constants } = require('../core/constants');
 
 /**
  * BagItFile contains metadata about a file that the bagger
@@ -131,8 +131,8 @@ class BagItFile {
      */
     getManifestEntry(algorithm) {
         var checksum = this.checksums[algorithm];
-        if (checksum === undefined || !checksum) {
-            throw `No ${algorithm} digest for ${this.absSourcePath}`;
+        if (checksum === undefined || checksum == null) {
+            throw new Error(`No ${algorithm} digest for ${this.absSourcePath}`);
         }
         return `${checksum} ${this.relDestPath}`;
     }
@@ -149,13 +149,13 @@ class BagItFile {
       */
     static getFileType(relDestPath) {
         if (relDestPath.startsWith('data/')) {
-            return constants.PAYLOAD_FILE;
+            return Constants.PAYLOAD_FILE;
         } else if (relDestPath.startsWith('manifest-')) {
-            return constants.PAYLOAD_MANIFEST;
+            return Constants.PAYLOAD_MANIFEST;
         } else if (relDestPath.startsWith('tagmanifest-')) {
-            return constants.TAG_MANIFEST;
+            return Constants.TAG_MANIFEST;
         }
-        return constants.TAG_FILE;
+        return Constants.TAG_FILE;
     }
 }
 
