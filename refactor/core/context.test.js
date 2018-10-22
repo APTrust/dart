@@ -37,3 +37,14 @@ test("Context can get DART version info", () => {
     expect(version).not.toEqual("Cannot read version from package.json file.");
     expect(version).toMatch(/^DART/);
 });
+
+test("We should be able to write to the log", () => {
+    expect(Context.logger).not.toBeNull();
+    expect(Context.logger).toBeDefined();
+    expect(function() { Context.logger.silly("Test silly message") }).not.toThrow();
+    expect(function() { Context.logger.debug("Test debug message") }).not.toThrow();
+    expect(function() { Context.logger.verbose("Test verbose message") }).not.toThrow();
+    expect(function() { Context.logger.info("Test info message") }).not.toThrow();
+    expect(function() { Context.logger.warn("Test warning message") }).not.toThrow();
+    expect(function() { Context.logger.error("Test error message") }).not.toThrow();
+});

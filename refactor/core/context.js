@@ -1,6 +1,7 @@
 const os = require('os');
 const { Config } = require('./config');
 const { JsonStore } = require('./json_store');
+const logger = require('../util/logger.js');
 
 /**
  * GlobalContext is a single, globally available object that provides
@@ -36,6 +37,14 @@ class GlobalContext {
           * @type {Object.<string, JsonStore>}
           */
         this.dataStores = {};
+
+        /**
+         * logger is an instance of the WinstonJS logger, the system-wide logging
+         * facility. See https://github.com/winstonjs/winston.
+         *
+         * @type {Object}
+         */
+        this.logger = logger;
     }
     /**
       * Returns the JsonStore with the specified name (class name),
@@ -90,7 +99,6 @@ class GlobalContext {
         }
         return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} for ${os.platform()})`
     }
-
 }
 
 const Context = new GlobalContext();
