@@ -81,8 +81,7 @@ class GlobalContext {
         try {
             obj = require('../package.json')
         } catch (ex) {
-            // TODO: Write to application log.
-            console.error(ex)
+            this.logger.error(ex)
         }
         return obj;
     }

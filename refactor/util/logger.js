@@ -11,7 +11,7 @@ var options = {
         level: 'debug',
         filename: path.join(Config.test.logDir, "dart.log"),
         handleExceptions: true,
-        json: true,
+        json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
         colorize: false,
@@ -22,7 +22,7 @@ var options = {
         level: 'info',
         filename: path.join(Config.user.logDir, "dart.log"),
         handleExceptions: true,
-        json: true,
+        json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
         colorize: false,
