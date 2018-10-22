@@ -1,0 +1,3 @@
+6ac9b643dd21ea74e991c3c5172761fb aptrust-info.txt
+6a33fdf2cd59a9d9e46cbbe8556870a9 bag-info.txt
+aa7e85cb326f0330c96730dd76be7c88 PremisEvents.json
