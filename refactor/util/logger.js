@@ -28,6 +28,7 @@ var options = {
         colorize: false,
     },
     // Log straight to console, with pretty colors.
+    // This is the system console, not the electron console.
     console: {
         level: 'debug',
         handleExceptions: true,
@@ -39,10 +40,15 @@ var options = {
 // The transports array tells us where to write our logs.
 // For the user environment, we log to the user log file.
 var transports = [ new winston.transports.File(options.userLogFile) ];
+// For Jest tests, use the test log
 if (process.env.NODE_ENV=='test') {
     transports = [ new winston.transports.File(options.testLogFile) ];
-    // Can also add to the transports array:
-    // new winston.transports.Console(options.console)
+}
+// If we're running with "npm start" using the local node Electron,
+// we're in dev mode. Log to the console so we can see what's
+// happening.
+if (process.execPath.includes(path.join('node_modules', 'electron'))) {
+    transports.push(new winston.transports.Console(options.console));
 }
 
 // instantiate a new Winston Logger with the settings defined above
