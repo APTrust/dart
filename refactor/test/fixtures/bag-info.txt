@@ -1,0 +1,10 @@
+Source-Organization: test.edu
+Bagging-Date: 2018-10-17T20:45:08Z
+Bag-Count: 1 of 1
+Bag-Group-Identifier: Photos of Trees
+Internal-Sender-Description: Photographs from May-June 2018 of trees around Charlottesville.
+Internal-Sender-Identifier: PH-Arbor-2018.1
+Multiline-Tag: The value for this tag spans multiple lines, which is allowed
+    under section 2.2.2 of the BagIt specification, as described at this url
+    https://tools.ietf.org/html/draft-kunze-bagit-17#section-2.2.2
+Final-Tag:  This tag has no point.
