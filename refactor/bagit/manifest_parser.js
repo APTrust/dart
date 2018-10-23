@@ -34,7 +34,7 @@ class ManifestParser {
                 // First item on line is the fixity value.
                 // Second item is file name, which may contain multiple spaces.
                 if (i < lastIndex) {
-                    var fixityValue = line.split(spaces, 1);
+                    var fixityValue = line.split(spaces, 1)[0];
                     var filename = line.replace(fixityValue, '').trim();
                     Context.logger.debug(`"${filename}" = "${fixityValue}"`);
                     parser.bagItFile.keyValueCollection.add(filename, fixityValue);
