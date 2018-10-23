@@ -44,8 +44,7 @@ class ManifestParser {
 
         // Handle end of stream
         parser.stream.on('end', function() {
-            // Anything to do here?
-            // Handle remaining lastFragment?
+            Context.logger.debug(`Finished parsing manifest ${parser.bagItFile.absPath}`);
         });
     }
 }

@@ -22,8 +22,6 @@ test('ManifestParser', done => {
     // before the reading/parsing of the file completes.
     function testParseResults() {
         expect(bagItFile.keyValueCollection).not.toBeNull();
-        // console.log(JSON.stringify(bagItFile));
-        // TODO: Test exact keys and values...
         expect(bagItFile.keyValueCollection.keys().length).toEqual(4);
         expect(bagItFile.keyValueCollection.first("data/ORIGINAL/1"))
             .toEqual("cece49c4f50bc7b20e2ab311bd477832e352cc3700264ef9ffc0280ee91d10e2");
