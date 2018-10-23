@@ -6,12 +6,57 @@ const leadingSpaces = /^\s+/;
 const newline = "\n";
 const tagStart = /^\w+/;
 
+/**
+ * TagFileParser parses text-based tag files that conform to the BagIt
+ * spec. Since tag files tend to be small (a few kilobytes) and may
+ * contain multi-line tags, this parser reads the entire file into
+ * memory before parsing tags and values. That is, it accumulates data
+ * in the stream.data event and parses it in the stream.end event.
+ *
+ * This class has no methods. It simply responds to events on stream
+ * you pipe into it. After parsing the stream, it stores the data it
+ * has parsed in bagItFile.keyValueCollection.
+ *
+ * You can attach your own callback to the TagFileParser.stream end
+ * event, if you want to do something with the BagItFile or (more likely)
+ * its keyValueCollection when parsing completes.
+ *
+ * @param {BagItFile} bagItFile - A BagItFile object. If the object
+ * does not already have a keyValueCollection, the parser will create
+ * one.
+ *
+ * @see {@link https://tools.ietf.org/html/draft-kunze-bagit-17|BagIt Spec}
+ *
+ * @example
+ *
+ * // Set up a BagItFile
+ * let pathToTagFile = "/path/to/bag-info.txt";
+ * let stats = fs.statSync(pathToTagFile);
+ * let bagItFile = new BagItFile(pathToTagFile, "bag-info.txt", stats);
+ *
+ * // Open the BagItFile for reading
+ * let stream = fs.createReadStream(pathToTagFile);
+ *
+ * // Create a new TagFileParser to parse the BagItFile
+ * let tagFileParser = new TagFileParser(bagItFile);
+ *
+ * // Optional: Hook up your callback to do something with
+ * // bagItFile when the parsing is done.
+ * tagFileParser.stream.on('end', YOUR_CALLBACK_HERE);
+ *
+ * // Required: Pipe your file reader into the parser.
+ * stream.pipe(tagFileParser.stream);
+ *
+ */
 class TagFileParser {
     constructor(bagItFile) {
         var parser = this;
         if (bagItFile.keyValueCollection == null) {
             bagItFile.keyValueCollection = new KeyValueCollection();
         }
+        //
+        // TODO: Document the following four properties.
+        //
         this.bagItFile = bagItFile;
         this.stream = new PassThrough();
         this.stream.setEncoding('utf8');

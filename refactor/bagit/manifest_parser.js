@@ -5,12 +5,18 @@ const { PassThrough } = require('stream');
 const spaces = /\s+/;
 const newline = "\n";
 
+//
+// TODO: JsDoc
+//
 class ManifestParser {
     constructor(bagItFile) {
         var parser = this;
         if (bagItFile.keyValueCollection == null) {
             bagItFile.keyValueCollection = new KeyValueCollection();
         }
+        //
+        // TODO: Document the following four properties.
+        //
         this.bagItFile = bagItFile;
         this.stream = new PassThrough();
         this.stream.setEncoding('utf8');
