@@ -93,9 +93,13 @@ class TagFileParser {
                     // Unfortunately, JavaScript's split isn't as well
                     // thought out as Golang's split, so we have to do
                     // this Java style. :(
+                    //
+                    // TODO: try/catch
+                    //
                     var index = line.indexOf(":");
                     tag = line.slice(0, index).trim();
                     value = line.slice(index + 1).trim();
+                    Context.logger.debug(`"${tag}" = "${value}"`);
                 }
             }
             // Add the tag from the last line of the file, if there was one.
