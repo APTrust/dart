@@ -34,6 +34,8 @@ test('ManifestParser', done => {
         done();
     }
 
-    stream.on('end', testParseResults);
+    // We can attach to either stream end or manifestParser.stream end.
+    // The latter is more reliable.
+    manifestParser.stream.on('end', testParseResults);
     stream.pipe(manifestParser.stream);
 });

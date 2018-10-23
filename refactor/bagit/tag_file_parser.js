@@ -45,9 +45,12 @@ class TagFileParser {
                     if (tag) {
                         parser.bagItFile.keyValueCollection.add(tag, value);
                     }
-                    var parts = line.split(':');
-                    tag = parts[0].trim();
-                    value = parts[1].trim();
+                    // Unfortunately, JavaScript's split isn't as well
+                    // thought out as Golang's split, so we have to do
+                    // this Java style. :(
+                    var index = line.indexOf(":");
+                    tag = line.slice(0, index).trim();
+                    value = line.slice(index + 1).trim();
                 }
             }
             // Add the tag from the last line of the file, if there was one.
