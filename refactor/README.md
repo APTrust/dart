@@ -29,3 +29,6 @@ npm test --runInBand
 cd refactor
 documentation build core/* bagit/* -f html -o docs --sort-order alpha
 ```
+
+After running that, check the index.html file in the docs directory, which the
+command will create if it doesn't already exist.
