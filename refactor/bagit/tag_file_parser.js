@@ -13,7 +13,7 @@ const tagStart = /^\w+/;
  * memory before parsing tags and values. That is, it accumulates data
  * in the stream.data event and parses it in the stream.end event.
  *
- * This class has no methods. It simply responds to events on stream
+ * This class has no methods. It simply responds to events on the stream
  * you pipe into it. After parsing the stream, it stores the data it
  * has parsed in bagItFile.keyValueCollection.
  *
@@ -25,7 +25,10 @@ const tagStart = /^\w+/;
  * does not already have a keyValueCollection, the parser will create
  * one.
  *
- * @see {@link https://tools.ietf.org/html/draft-kunze-bagit-17|BagIt Spec}
+ * For more on the BagIt spec, see
+ * {@link https://tools.ietf.org/html/draft-kunze-bagit-17|BagIt Spec}
+ *
+ * For info about how to read the parsed data from the file, see {@link KeyValueCollection}
  *
  * @example
  *
