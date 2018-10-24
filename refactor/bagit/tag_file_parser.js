@@ -45,22 +45,45 @@ const tagStart = /^\w+/;
  * tagFileParser.stream.on('end', YOUR_CALLBACK_HERE);
  *
  * // Required: Pipe your file reader into the parser.
- * stream.pipe(tagFileParser.stream);
+ * stream.pipe(tagFileParser.stream).on('error', function(e){handleError(e)});
  *
  */
 class TagFileParser {
     constructor(bagItFile) {
+        /**
+          * bagItFile is the file that will be parsed.
+          * When parsing is complete, bagItFile.keyValueCollection
+          * will be populated with tag names and values.
+          *
+          * @type {BagItFile}
+          */
+        this.bagItFile = bagItFile;
+        /**
+          * stream is a PassThrough stream that allows
+          * for data to be piped from a ReadStream into
+          * the parser. You can attach your own 'data' and
+          * 'end' events to this stream, but the parser
+          * already does the parsing work for you.
+          *
+          * @type {stream.PassThrough}
+          */
+        this.stream = new PassThrough();
+        this.stream.setEncoding('utf8');
+
+        /**
+          * content is a string that accumulates the contents
+          * of the tag file. This is considered private but
+          * is ok to access as a read-only property.
+          *
+          * @type {string}
+          */
+        this.content = '';
+
         var parser = this;
         if (bagItFile.keyValueCollection == null) {
             bagItFile.keyValueCollection = new KeyValueCollection();
         }
-        //
-        // TODO: Document the following four properties.
-        //
-        this.bagItFile = bagItFile;
-        this.stream = new PassThrough();
-        this.stream.setEncoding('utf8');
-        this.content = '';
+
         parser.stream.on('data', function(data) {
             // Probably OK to read tag files into string, because
             // they're usually just a few KB, and the bagit spec's
@@ -68,6 +91,7 @@ class TagFileParser {
             // to parse.
             parser.content += data;
         });
+
         parser.stream.on('end', function() {
             // Parse the accumulated data into key-value pairs.
             var tag = '';
@@ -93,9 +117,6 @@ class TagFileParser {
                     // Unfortunately, JavaScript's split isn't as well
                     // thought out as Golang's split, so we have to do
                     // this Java style. :(
-                    //
-                    // TODO: try/catch
-                    //
                     var index = line.indexOf(":");
                     tag = line.slice(0, index).trim();
                     value = line.slice(index + 1).trim();
