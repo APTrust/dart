@@ -10,8 +10,8 @@
  * The tar reader emits these lightweight FileStat objects when reading
  * from a serialized file, and other future readers may do the same.
  *
- * @param {Object} opts - A hash of values.
- * @param {number} [opts.size = 0] - The size, in bytes, of the file.
+ * @param {Object} [opts] - A optional hash of values.
+ * @param {number} [opts.size = -1] - The size, in bytes, of the file.
  * @param {number} [opts.mode = 0o400] - The file mode.
  * @param {number} [opts.uid = 0] - The numeric id of the file owner.
  * @param {number} [opts.gid = 0] - The numeric id of the file group.
@@ -25,14 +25,14 @@
  */
 class FileStat {
 
-    constructor(opts) {
+    constructor(opts = {}) {
         /**
           * The size of the file, in bytes.
           *
           * @type {number}
           * @default 0
           */
-        this.size = opts.size || 0;
+        this.size = opts.size || -1;
         /**
           * The file mode.
           *
@@ -100,3 +100,5 @@ class FileStat {
         return this.isTypeDir;
     }
 }
+
+module.exports.FileStat = FileStat;
