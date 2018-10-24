@@ -27,7 +27,8 @@ const { Constants } = require('../core/constants');
  *
  * @param {object} stats - A subset of stats gathered from Node's
  * fs.Stat() function. The BagItFile object keeps only a handful of
- * properties from fs.Stat();
+ * properties from fs.Stat(). This param can be a Node.js fs.Stats
+ * object or a {@link FileStat} object.
  *
  */
 class BagItFile {
