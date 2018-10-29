@@ -28,8 +28,12 @@ class TarIterator extends EventEmitter {
                 isTypeDir: header.type == 'directory'
             });
 
+            // relPath is the relative path of the file within
+            // the tar file.
+            var relPath = header.name;
+
             // Send the stream and the file stats to whoever is listening.
-            tarIterator.emit('entry', fileStat, stream);
+            tarIterator.emit('entry', relPath, fileStat, stream);
 
             // When we reach the end of the read stream, tell the
             // tar-stream library to move on to the next entry.
