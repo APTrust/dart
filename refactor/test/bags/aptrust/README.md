@@ -6,10 +6,28 @@ This folder contains test bags for unit tests.
 
 The following bags are valid:
 
-a9f7cbab-b531-4eb7-b532-770f592629ba.tar
+* example.edu.sample_ds_store_and_empty.tar
+* example.edu.sample_glacier_oh.tar
+* example.edu.sample_glacier_or.tar
+* example.edu.sample_glacier_va.tar
+* example.edu.sample_good.tar
+* example.edu.tagsample_good.tar
 
 ## Invalid Bags
 
-The following bags are invalid (on purpose) for testing purposes:
+The following bags are invalid (on purpose) so we can test various validation failure
+scenarios. The name of the bag usually includes information about why it's not valid.
 
-020c8edd-d043-4204-a6b8-26b6fb8bda5d.tar (bad tag manifest, missing payload file)
+* example.edu.sample_bad_access.tar
+* example.edu.sample_bad_checksums.tar
+* example.edu.sample_bad_file_names.tar
+* example.edu.sample_missing_data_file.tar
+* example.edu.sample_no_aptrust_info.tar
+* example.edu.sample_no_bag_info.tar
+* example.edu.sample_no_bagit.tar
+* example.edu.sample_no_data_dir.tar
+* example.edu.sample_no_md5_manifest.tar
+* example.edu.sample_no_title.tar
+* example.edu.sample_wrong_folder_name.tar
+* example.edu.tagsample_bad.tar
+
