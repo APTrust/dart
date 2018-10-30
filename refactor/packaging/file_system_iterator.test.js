@@ -39,3 +39,36 @@ test('FileSystemIterator.read() emits expected events', done => {
 
     fsIterator.read();
 });
+
+test('FileSystemIterator.read() returns expected stats', done => {
+    var dir = path.join(__dirname, "..", "test")
+    var fsIterator = new FileSystemIterator(dir);
+    var foundTestFile = false;
+
+    // Count the number of stream events.
+    fsIterator.on('entry', function(relPath, fileStat, stream) {
+        if (relPath === "bags/aptrust/example.edu.tagsample_good.tar") {
+            foundTestFile = true;
+            expect(fileStat.size).toEqual(40960);
+            expect(fileStat.mtimeMs).not.toEqual(0);
+            expect(fileStat.isFile()).toEqual(true);
+
+            // Make sure we can actually read the contents...
+            var fileContent = '';
+            stream.on('data', function(chunk) {
+                fileContent += chunk;
+            });
+            stream.on('end', function() {
+                expect(fileContent.length).toEqual(fileStat.size);
+            });
+        }
+        stream.pipe(new PassThrough());
+    });
+
+    fsIterator.on('finish', function(fileCount) {
+        expect(foundTestFile).toEqual(true);
+        done();
+    });
+
+    fsIterator.read();
+});
