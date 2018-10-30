@@ -133,7 +133,8 @@ test('TarIterator.read() returns correct stats', done => {
 
     // Let jest know when we're done.
     tarIterator.on('finish', function(fileCount) {
-        expect(tarIterator.fileCount).toEqual(10);
+        expect(tarIterator.fileCount).toEqual(8);
+        expect(tarIterator.dirCount).toEqual(2);
         done();
     });
 
@@ -159,7 +160,8 @@ test('TarIterator.list() returns correct stats', done => {
 
     // Let jest know when we're done.
     tarIterator.on('finish', function(fileCount) {
-        expect(tarIterator.fileCount).toEqual(10);
+        expect(tarIterator.fileCount).toEqual(8);
+        expect(tarIterator.dirCount).toEqual(2);
         done();
     });
 

@@ -31,6 +31,8 @@ test('FileSystemIterator.read() emits expected events', done => {
         finishCount = fileCount;
         expect(streamCount).toEqual(FILES_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsIterator.fileCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsIterator.dirCount).toEqual(0);
         done();
     });
 

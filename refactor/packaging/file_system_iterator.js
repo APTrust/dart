@@ -15,6 +15,7 @@ class FileSystemIterator extends EventEmitter {
         var fsIterator = this;
         var stream = readdirp({ root: fsIterator.pathToDirectory });
         fsIterator.fileCount = 0;
+        fsIterator.dirCount = 0;
         stream.on('warn', function(warning) {
             fsIterator.emit('warn', warning);
         });
@@ -54,6 +55,9 @@ class FileSystemIterator extends EventEmitter {
                 });
                 fsIterator.emit('entry', entry.path, entry.stat, readable);
             } else {
+                if (entry.stat.isDirectory()) {
+                    fsIterator.dirCount += 1;
+                }
                 fsIterator.emit('entry', entry.path, entry.stat, new DummyReader);
             }
         });
@@ -62,6 +66,8 @@ class FileSystemIterator extends EventEmitter {
     list() {
         var fsIterator = this;
         var stream = readdirp({ root: fsIterator.pathToDirectory });
+        fsIterator.fileCount = 0;
+        fsIterator.DirCount = 0;
         stream.on('warn', function(warning) {
             fsIterator.emit('warn', warning);
         });
@@ -80,7 +86,11 @@ class FileSystemIterator extends EventEmitter {
             // TarIterator emits. Caller can get full path
             // by prepending FileSystemIterator.pathToDirectory
             // to entry.path, which is relative.
-            fsIterator.fileCount += 1;
+            if (entry.stat.isFile()) {
+                fsIterator.fileCount += 1;
+            } else if (entry.stat.isDirectory()) {
+                fsIterator.dirCount += 1;
+            }
             fsIterator.emit('entry', entry.path, entry.stat);
         });
     }

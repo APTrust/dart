@@ -10,12 +10,14 @@ class TarIterator extends EventEmitter {
         super();
         this.pathToTarFile = pathToTarFile;
         this.fileCount = 0;
+        this.dirCount = 0;
     }
 
     read() {
         var tarIterator = this;
         var extract = tar.extract();
         tarIterator.fileCount = 0;
+        tarIterator.dirCount = 0;
         extract.on('entry', function(header, stream, next) {
 
             var fileStat = tarIterator._headerToFileStat(header);
@@ -30,7 +32,11 @@ class TarIterator extends EventEmitter {
             // When we reach the end of the read stream, tell the
             // tar-stream library to move on to the next entry.
             stream.on('end', function() {
-                tarIterator.fileCount += 1;
+                if (header.type === "file") {
+                    tarIterator.fileCount += 1;
+                } else if (header.type === "directory") {
+                    tarIterator.dirCount += 1;
+                }
                 next() // ready for next entry
             });
         });
@@ -43,7 +49,7 @@ class TarIterator extends EventEmitter {
         // Tell the listener when we're done reading the entire
         // tar file.
         extract.on('finish', function() {
-            tarIterator.emit('finish', tarIterator.fileCount);
+            tarIterator.emit('finish', tarIterator.fileCount + tarIterator.dirCount);
         });
 
         // Open the tar file and start reading.
@@ -54,12 +60,17 @@ class TarIterator extends EventEmitter {
         var tarIterator = this;
         var extract = tar.extract();
         tarIterator.fileCount = 0;
+        tarIterator.dirCount = 0;
         extract.on('entry', function(header, stream, next) {
             var fileStat = tarIterator._headerToFileStat(header);
             var relPath = header.name;
             tarIterator.emit('entry', relPath, fileStat);
             stream.on('end', function() {
-                tarIterator.fileCount += 1;
+                if (header.type === "file") {
+                    tarIterator.fileCount += 1;
+                } if (header.type === "directory") {
+                    tarIterator.dirCount += 1;
+                }
                 next();
             });
             stream.pipe(new PassThrough());
@@ -73,7 +84,7 @@ class TarIterator extends EventEmitter {
         // Tell the listener when we're done reading the entire
         // tar file.
         extract.on('finish', function() {
-            tarIterator.emit('finish', tarIterator.fileCount);
+            tarIterator.emit('finish', tarIterator.fileCount + tarIterator.dirCount);
         });
 
         // Open the tar file and start reading.
