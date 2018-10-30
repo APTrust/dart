@@ -2,7 +2,7 @@ const path = require('path');
 const { PassThrough } = require('stream');
 const { TarIterator } = require('./tar_iterator');
 
-test('TarIterator emits expected events', done => {
+test('TarIterator.read() emits expected events', done => {
     var streamCount = 0;
     var finishCount = 0;
     var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
@@ -114,7 +114,7 @@ var expectedStats = {
     }
 }
 
-test('TarIterator returns correct stats', done => {
+test('TarIterator.read() returns correct stats', done => {
     var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
     var tarIterator = new TarIterator(pathToTarFile);
 
@@ -133,8 +133,35 @@ test('TarIterator returns correct stats', done => {
 
     // Let jest know when we're done.
     tarIterator.on('finish', function(fileCount) {
+        expect(tarIterator.fileCount).toEqual(10);
         done();
     });
 
     tarIterator.read();
+});
+
+test('TarIterator.list() returns correct stats', done => {
+    var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
+    var tarIterator = new TarIterator(pathToTarFile);
+
+    // Count the number of stream events.
+    // Note that list does not return the stream, only stats.
+    tarIterator.on('entry', function(relPath, fileStat) {
+        var expected = expectedStats[relPath];
+        expect(expected).not.toBeNull();
+        expect(expected.size).toEqual(fileStat.size);
+        expect(expected.mode).toEqual(fileStat.mode);
+        expect(expected.uid).toEqual(fileStat.uid);
+        expect(expected.gid).toEqual(fileStat.gid);
+        expect(expected.mtimeMs).toEqual(fileStat.mtimeMs.toISOString());
+        expect(expected.type).toEqual(fileStat.type);
+    });
+
+    // Let jest know when we're done.
+    tarIterator.on('finish', function(fileCount) {
+        expect(tarIterator.fileCount).toEqual(10);
+        done();
+    });
+
+    tarIterator.list();
 });
