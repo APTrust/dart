@@ -67,7 +67,7 @@ class FileSystemIterator extends EventEmitter {
         var fsIterator = this;
         var stream = readdirp({ root: fsIterator.pathToDirectory, entryType: "all" });
         fsIterator.fileCount = 0;
-        fsIterator.DirCount = 0;
+        fsIterator.dirCount = 0;
         stream.on('warn', function(warning) {
             fsIterator.emit('warn', warning);
         });

@@ -54,12 +54,13 @@ test('FileSystemIterator.read() returns expected stats', done => {
             expect(fileStat.isFile()).toEqual(true);
 
             // Make sure we can actually read the contents...
-            var fileContent = '';
+            var fileContents = [];
             stream.on('data', function(chunk) {
-                fileContent += chunk;
+                fileContents.push(chunk);
             });
             stream.on('end', function() {
-                expect(fileContent.length).toEqual(fileStat.size);
+                var binaryData = Buffer.concat(fileContents);
+                expect(binaryData.length).toEqual(fileStat.size);
             });
         }
         stream.pipe(new PassThrough());
@@ -71,4 +72,29 @@ test('FileSystemIterator.read() returns expected stats', done => {
     });
 
     fsIterator.read();
+});
+
+test('FileSystemIterator.list() emits expected events with correct stats', done => {
+    var streamCount = 0;
+    var finishCount = 0;
+    var dir = path.join(__dirname, "..", "test")
+    var fsIterator = new FileSystemIterator(dir);
+
+    // Note there's no stream here, because we're just listing.
+    fsIterator.on('entry', function(relPath, fileStat) {
+        expect(relPath).not.toBeNull();
+        expect(fileStat).not.toBeNull();
+        streamCount++;
+    });
+
+    fsIterator.on('finish', function(fileCount) {
+        finishCount = fileCount;
+        expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
+        expect(finishCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsIterator.fileCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsIterator.dirCount).toEqual(DIRS_IN_TEST_DIR);
+        done();
+    });
+
+    fsIterator.list();
 });
