@@ -1,6 +1,7 @@
 const fs = require('fs');
+const { DummyReader } = require('../util/file/dummy_reader');
 const EventEmitter = require('events');
-const { PassThrough, Readable } = require('stream');
+const { PassThrough } = require('stream');
 const readdirp = require('readdirp');
 
 class FileSystemIterator extends EventEmitter {
@@ -93,16 +94,6 @@ class FileSystemIterator extends EventEmitter {
             }
             fsIterator.emit('entry', entry.path, entry.stat);
         });
-    }
-}
-
-class DummyReader extends Readable {
-    constructor() {
-        super();
-    }
-    _read() {
-        this.emit('end');
-        return null;
     }
 }
 
