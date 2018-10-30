@@ -16,16 +16,14 @@ class TarIterator extends EventEmitter {
         var extract = tar.extract();
         extract.on('entry', function(header, stream, next) {
             // Note that header.type can be any of the following:
-            // file | link | symlink | directory | block-device
-            // character-device | fifo | contiguous-file
+            //
             var fileStat = new FileStat({
                 size: header.size,
                 mode: header.mode,
                 uid: header.uid,
                 gid: header.gid,
                 mtimeMs: header.mtime,
-                isTypeFile: header.type == 'file',
-                isTypeDir: header.type == 'directory'
+                type: header.type
             });
 
             // relPath is the relative path of the file within

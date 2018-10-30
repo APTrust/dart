@@ -7,8 +7,7 @@ function getOpts() {
         uid: 123,
         gid: 456,
         mtimeMs: new Date(Date.UTC(2018, 10, 24, 22, 0, 0)),
-        isTypeFile: true,
-        isTypeDir: false,
+        type: 'file',
         throwAway: 'This value should be ignored'
     }
 }
@@ -20,8 +19,7 @@ test('Constructor sets expected defaults', () => {
     expect(obj.uid).toEqual(0);
     expect(obj.gid).toEqual(0);
     expect(obj.mtimeMs).toEqual(new Date(Date.UTC(0, 0, 0, 0, 0, 0)));
-    expect(obj.isTypeFile).toEqual(false);
-    expect(obj.isTypeDir).toEqual(false);
+    expect(obj.type).toEqual("unknown");
 });
 
 test('Constructor sets expected properties', () => {
@@ -32,14 +30,7 @@ test('Constructor sets expected properties', () => {
     expect(obj.uid).toEqual(opts.uid);
     expect(obj.gid).toEqual(opts.gid);
     expect(obj.mtimeMs).toEqual(opts.mtimeMs);
-    expect(obj.isTypeFile).toEqual(opts.isTypeFile);
-    expect(obj.isTypeDir).toEqual(opts.isTypeDir);
-
-    opts.IsTypeFile = false;
-    opts.IsTypeDir = true;
-    let obj2 = new FileStat(opts)
-    expect(obj2.isTypeFile).toEqual(opts.isTypeFile);
-    expect(obj2.isTypeDir).toEqual(opts.isTypeDir);
+    expect(obj.type).toEqual(opts.type);
 });
 
 test('Constructor ignores unexpected properties', () => {
@@ -51,13 +42,11 @@ test('Constructor ignores unexpected properties', () => {
 test('IsFile and IsDirectory return correct values', () => {
     let obj = new FileStat()
 
-    obj.isTypeFile = false;
-    obj.isTypeDir = false;
-    expect(obj.isFile()).toEqual(false);
+    obj.type = "file";
+    expect(obj.isFile()).toEqual(true);
     expect(obj.isDirectory()).toEqual(false);
 
-    obj.isTypeFile = true;
-    obj.isTypeDir = true;
-    expect(obj.isFile()).toEqual(true);
+    obj.type = "directory";
+    expect(obj.isFile()).toEqual(false);
     expect(obj.isDirectory()).toEqual(true);
 });

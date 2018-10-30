@@ -38,8 +38,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:54:13.000Z",
-        "isTypeFile":false,
-        "isTypeDir":true
+        "type":"directory"
     },
     "example.edu.sample_good/aptrust-info.txt":{
         "size":49,
@@ -47,8 +46,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/bag-info.txt":{
         "size":223,
@@ -56,8 +54,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:54:13.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/bagit.txt":{
         "size":55,
@@ -65,8 +62,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/data/":{
         "size":-1,
@@ -74,8 +70,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-11-25T16:28:25.000Z",
-        "isTypeFile":false,
-        "isTypeDir":true
+        "type":"directory"
     },
     "example.edu.sample_good/manifest-md5.txt":{
         "size":230,
@@ -83,8 +78,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/data/datastream-DC":{
         "size":2388,
@@ -92,8 +86,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/data/datastream-descMetadata":{
         "size":6191,
@@ -101,8 +94,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/data/datastream-MARC":{
         "size":4663,
@@ -110,8 +102,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     },
     "example.edu.sample_good/data/datastream-RELS-EXT":{
         "size":579,
@@ -119,8 +110,7 @@ var expectedStats = {
         "uid":502,
         "gid":20,
         "mtimeMs":"2014-12-12T20:51:53.000Z",
-        "isTypeFile":true,
-        "isTypeDir":false
+        "type":"file"
     }
 }
 
@@ -137,8 +127,7 @@ test('TarIterator returns correct stats', done => {
         expect(expected.uid).toEqual(fileStat.uid);
         expect(expected.gid).toEqual(fileStat.gid);
         expect(expected.mtimeMs).toEqual(fileStat.mtimeMs.toISOString());
-        expect(expected.isTypeFile).toEqual(fileStat.isTypeFile);
-        expect(expected.isTypeDir).toEqual(fileStat.isTypeDir);
+        expect(expected.type).toEqual(fileStat.type);
         stream.pipe(new PassThrough());
     });
 

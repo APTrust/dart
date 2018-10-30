@@ -63,19 +63,15 @@ class FileStat {
           */
         this.mtimeMs = opts.mtimeMs || new Date(Date.UTC(0, 0, 0, 0, 0, 0));
         /**
-          * Indicates whether this item is a file.
+          * Indicates the type of file or object this is.
+          * Valid values include: file, link, symlink, directory
+          * block-device, character-device, fifo, contiguous-file,
+          * and unknown.
           *
-          * @type {boolean}
-          * @default false
+          * @type {string}
+          * @default "unknown"
           */
-        this.isTypeFile = opts.isTypeFile || false;
-        /**
-          * Indicates whether this item is a directory.
-          *
-          * @type {boolean}
-          * @default false
-          */
-        this.isTypeDir = opts.isTypeDir || false;
+        this.type = opts.type || "unknown";
     }
 
     /**
@@ -86,7 +82,7 @@ class FileStat {
      * @returns {boolean}
      */
     isFile() {
-        return this.isTypeFile;
+        return this.type === "file";
     }
 
     /**
@@ -97,7 +93,7 @@ class FileStat {
      * @returns {boolean}
      */
     isDirectory() {
-        return this.isTypeDir;
+        return this.type === "directory";
     }
 }
 
