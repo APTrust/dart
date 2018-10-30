@@ -7,6 +7,7 @@ const { FileSystemIterator } = require('./file_system_iterator');
 // of test fixtures, bags and profiles changes, this number will
 // have to change too.
 const FILES_IN_TEST_DIR = 29;
+const DIRS_IN_TEST_DIR = 5;
 
 test('FileSystemIterator.read() emits expected events', done => {
     var streamCount = 0;
@@ -29,10 +30,10 @@ test('FileSystemIterator.read() emits expected events', done => {
     // 2) that we got a stream event for every file (if finishCount equals streamCount below)
     fsIterator.on('finish', function(fileCount) {
         finishCount = fileCount;
-        expect(streamCount).toEqual(FILES_IN_TEST_DIR);
+        expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
         expect(fsIterator.fileCount).toEqual(FILES_IN_TEST_DIR);
-        expect(fsIterator.dirCount).toEqual(0);
+        expect(fsIterator.dirCount).toEqual(DIRS_IN_TEST_DIR);
         done();
     });
 

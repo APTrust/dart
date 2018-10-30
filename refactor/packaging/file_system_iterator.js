@@ -13,7 +13,7 @@ class FileSystemIterator extends EventEmitter {
 
     read() {
         var fsIterator = this;
-        var stream = readdirp({ root: fsIterator.pathToDirectory });
+        var stream = readdirp({ root: fsIterator.pathToDirectory, entryType: "all" });
         fsIterator.fileCount = 0;
         fsIterator.dirCount = 0;
         stream.on('warn', function(warning) {
@@ -65,7 +65,7 @@ class FileSystemIterator extends EventEmitter {
 
     list() {
         var fsIterator = this;
-        var stream = readdirp({ root: fsIterator.pathToDirectory });
+        var stream = readdirp({ root: fsIterator.pathToDirectory, entryType: "all" });
         fsIterator.fileCount = 0;
         fsIterator.DirCount = 0;
         stream.on('warn', function(warning) {
