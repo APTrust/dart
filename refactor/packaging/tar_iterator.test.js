@@ -9,12 +9,12 @@ test('TarIterator.read() emits expected events', done => {
     var tarIterator = new TarIterator(pathToTarFile);
 
     // Count the number of stream events.
-    tarIterator.on('entry', function(relPath, fileStat, stream) {
-        expect(relPath).not.toBeNull();
-        expect(fileStat).not.toBeNull();
-        expect(stream).not.toBeNull();
+    tarIterator.on('entry', function(entry) {
+        expect(entry.relPath).not.toBeNull();
+        expect(entry.fileStat).not.toBeNull();
+        expect(entry.stream).not.toBeNull();
         streamCount++;
-        stream.pipe(new PassThrough());
+        entry.stream.pipe(new PassThrough());
     });
 
     // Set finishCount to the number of files the
@@ -119,16 +119,16 @@ test('TarIterator.read() returns correct stats', done => {
     var tarIterator = new TarIterator(pathToTarFile);
 
     // Count the number of stream events.
-    tarIterator.on('entry', function(relPath, fileStat, stream) {
-        var expected = expectedStats[relPath];
+    tarIterator.on('entry', function(entry) {
+        var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
-        expect(expected.size).toEqual(fileStat.size);
-        expect(expected.mode).toEqual(fileStat.mode);
-        expect(expected.uid).toEqual(fileStat.uid);
-        expect(expected.gid).toEqual(fileStat.gid);
-        expect(expected.mtimeMs).toEqual(fileStat.mtimeMs.toISOString());
-        expect(expected.type).toEqual(fileStat.type);
-        stream.pipe(new PassThrough());
+        expect(expected.size).toEqual(entry.fileStat.size);
+        expect(expected.mode).toEqual(entry.fileStat.mode);
+        expect(expected.uid).toEqual(entry.fileStat.uid);
+        expect(expected.gid).toEqual(entry.fileStat.gid);
+        expect(expected.mtimeMs).toEqual(entry.fileStat.mtimeMs.toISOString());
+        expect(expected.type).toEqual(entry.fileStat.type);
+        entry.stream.pipe(new PassThrough());
     });
 
     // Let jest know when we're done.
@@ -147,15 +147,15 @@ test('TarIterator.list() returns correct stats', done => {
 
     // Count the number of stream events.
     // Note that list does not return the stream, only stats.
-    tarIterator.on('entry', function(relPath, fileStat) {
-        var expected = expectedStats[relPath];
+    tarIterator.on('entry', function(entry) {
+        var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
-        expect(expected.size).toEqual(fileStat.size);
-        expect(expected.mode).toEqual(fileStat.mode);
-        expect(expected.uid).toEqual(fileStat.uid);
-        expect(expected.gid).toEqual(fileStat.gid);
-        expect(expected.mtimeMs).toEqual(fileStat.mtimeMs.toISOString());
-        expect(expected.type).toEqual(fileStat.type);
+        expect(expected.size).toEqual(entry.fileStat.size);
+        expect(expected.mode).toEqual(entry.fileStat.mode);
+        expect(expected.uid).toEqual(entry.fileStat.uid);
+        expect(expected.gid).toEqual(entry.fileStat.gid);
+        expect(expected.mtimeMs).toEqual(entry.fileStat.mtimeMs.toISOString());
+        expect(expected.type).toEqual(entry.fileStat.type);
     });
 
     // Let jest know when we're done.
