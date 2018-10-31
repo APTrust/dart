@@ -27,7 +27,7 @@ npm test --runInBand
 
 ```
 cd refactor
-documentation build core/* bagit/* util/* util/file/* -f html -o docs --sort-order alpha
+./doc.sh
 ```
 
 After running that, check the index.html file in the docs directory, which the
