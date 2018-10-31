@@ -85,9 +85,6 @@ class TarIterator extends EventEmitter {
              * Note that you MUST read the stream to the end before TarIterator.read()
              * will move to the next tar entry.
              *
-             * @type {string} relPath - The relative path (within the tarball)
-             * of the entry (which may be a file, directory, etc.)
-             *
              * @type {object}
              *
              * @property {string} relPath - The relative path (within the tar file)
@@ -159,9 +156,6 @@ class TarIterator extends EventEmitter {
          * @description The entry event of the list() method returns info about
          * the tar entry, but no reader to read the contents of the entry.
          *
-         * @type {string} relPath - The relative path (within the tarball)
-         * of the entry (which may be a file, directory, etc.)
-         *
          * @type {object}
          *
          * @property {string} relPath - The relative path (within the tar file)
@@ -187,10 +181,12 @@ class TarIterator extends EventEmitter {
         });
 
 
+        // Same as the error event documented above.
         extract.on('error', function(err) {
             tarIterator.emit('error', err);
         });
 
+        // Same as the finish event documented above.
         extract.on('finish', function() {
             tarIterator.emit('finish', tarIterator.fileCount + tarIterator.dirCount);
         });
