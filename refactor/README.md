@@ -27,7 +27,7 @@ npm test --runInBand
 
 ```
 cd refactor
-./doc.sh
+./jsdoc.sh
 ```
 
 After running that, check the index.html file in the docs directory, which the
