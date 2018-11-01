@@ -13,6 +13,14 @@ beforeEach(() => {
     TestUtil.deleteJsonFile('test5');
 });
 
+afterAll(() => {
+    TestUtil.deleteJsonFile('test1');
+    TestUtil.deleteJsonFile('test2');
+    TestUtil.deleteJsonFile('test3');
+    TestUtil.deleteJsonFile('test4');
+    TestUtil.deleteJsonFile('test5');
+});
+
 test('Constructor throws error if type is missing or empty', () => {
     expect(() => { new PersistentObject() }).toThrow(Error);
     expect(() => { new PersistentObject(null) }).toThrow(Error);

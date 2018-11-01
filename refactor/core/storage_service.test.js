@@ -9,6 +9,10 @@ beforeEach(() => {
     TestUtil.deleteJsonFile('StorageService');
 });
 
+afterAll(() => {
+    TestUtil.deleteJsonFile('StorageService');
+});
+
 test('Constructor sets expected properties', () => {
     let obj = new StorageService('name1');
     expect(obj.type).toEqual('StorageService');
