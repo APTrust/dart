@@ -135,6 +135,11 @@ class Validator extends EventEmitter {
          * @type {Array<string>}
          */
         this.errors = [];
+
+        // -----------------------------------------------------------------
+        // TODO: Attach log listeners for this object's events,
+        // so debug logger can print info about what's happening.
+        // -----------------------------------------------------------------
     }
 
     /**
@@ -156,18 +161,39 @@ class Validator extends EventEmitter {
         } else {
             this.reader = new FileSystemIterator(this.pathToBag);
         }
-        // TODO: Attach events for entry, finish, and error.
+        // -----------------------------------------------------------------
+        // TODO: Attach listeners for entry, finish, and error.
+        // -----------------------------------------------------------------
     }
 
     _readEntry(entry) {
-        // 1. Construct a BagItFile for the entry.
-        // 2. Pass the contents of the entry through the hash digests
-        // 3. Parse the contents as a manifest, if it is one
-        // 4. Parse the contents as a tag file, if it is one
-        // 5. Add the BagItFile to Validator.files, and to payloadFiles,
-        //    payloadManifests, tagFiles, or tagManifests, as appropriate.
+        //
+        // emit task for the specified file
+        //
+        // task.relPath
+        // task.operation
+        //
+        // call _addBagItFile
+        // call _readFile
+        //
+        // debug logger can listen and log events
+        //
         // Remember that the iterator won't advance unless we read the
         // file contents (or at least pass them through the hash functions).
+    }
+
+    _addBagItFile(entry) {
+        // Construct BagItFile from entry and add to Validator.files
+        // and to payloadFiles, payloadManifests, tagFiles, or tagManifests,
+        // based on the value of BagItFile.getFileType().
+    }
+
+    _readFile(bagItFile) {
+        // 1. Pass the contents of the entry through the hash digests
+        // 2. Parse the contents as a manifest, if it is one
+        // 3. Parse the contents as a tag file, if it is one
+        //
+        // Can do that all in one pass using pipes.
     }
 }
 
