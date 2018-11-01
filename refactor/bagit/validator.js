@@ -13,6 +13,8 @@ const { Util } = require('../core/util');
  * Validator validates BagIt packages (tarred or in directory format)
  * according to a BagIt profile.
  *
+ * See the validate() method for a list of events.
+ *
  */
 class Validator extends EventEmitter {
 
@@ -145,6 +147,7 @@ class Validator extends EventEmitter {
      * * ensuring that required tag files and manifests are present and valid
      * * ensuring that required tags are present and, where applicable, have legal values
      *
+     * This method emits events "start", "task", "end", and "error".
      */
     validate() {
         this.emitter.emit('validateStart', `Validating ${this.pathToBag}`);
@@ -156,6 +159,16 @@ class Validator extends EventEmitter {
         // TODO: Attach events for entry, finish, and error.
     }
 
+    _readEntry(entry) {
+        // 1. Construct a BagItFile for the entry.
+        // 2. Pass the contents of the entry through the hash digests
+        // 3. Parse the contents as a manifest, if it is one
+        // 4. Parse the contents as a tag file, if it is one
+        // 5. Add the BagItFile to Validator.files, and to payloadFiles,
+        //    payloadManifests, tagFiles, or tagManifests, as appropriate.
+        // Remember that the iterator won't advance unless we read the
+        // file contents (or at least pass them through the hash functions).
+    }
 }
 
 module.exports.Validator = Validator;

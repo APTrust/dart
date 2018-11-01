@@ -21,7 +21,7 @@ test('Constructor sets initial properties', () => {
     expect(validator.topLevelDirs.length).toEqual(0);
     expect(validator.topLevelFiles).not.toBeNull();
     expect(validator.topLevelFiles.length).toEqual(0);
+    expect(validator.reader).toBeNull();
     expect(validator.errors).not.toBeNull();
     expect(validator.errors.length).toEqual(0);
-    expect(validator.reader).toBeNull();
 });
