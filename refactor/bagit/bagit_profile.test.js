@@ -10,6 +10,10 @@ beforeEach(() => {
     TestUtil.deleteJsonFile('BagItProfile');
 });
 
+afterAll(() => {
+    TestUtil.deleteJsonFile('BagItProfile');
+});
+
 test('Constructor sets initial properties', () => {
     let profile = new BagItProfile();
     expect(profile.name).toEqual('New BagIt Profile');
