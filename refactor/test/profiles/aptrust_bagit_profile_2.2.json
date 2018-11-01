@@ -3,7 +3,7 @@
     "name": "APTrust",
     "description": "APTrust 2.0 default BagIt profile.",
     "acceptBagItVersion": [
-        "0.97"
+        "0.97", "1.0"
     ],
     "acceptSerialization": [
         "application/tar"
