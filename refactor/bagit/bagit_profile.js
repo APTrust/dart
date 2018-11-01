@@ -2,6 +2,7 @@ const { AppSetting } = require('../core/app_setting');
 const { BagItProfileInfo } = require('./bagit_profile_info');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const fs = require('fs');
 const { PersistentObject } = require('../core/persistent_object');
 const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
@@ -47,7 +48,7 @@ class BagItProfile extends PersistentObject {
           * @type {string[]}
           * @default ['0.97']
           */
-        this.acceptBagItVersion = ['0.97'];
+        this.acceptBagItVersion = ['0.97', '1.0'];
         /**
           * A list of BagIt sserialization formats that are valid
           * for bags that conform to this profile. These may include
@@ -503,6 +504,8 @@ class BagItProfile extends PersistentObject {
       * This converts the stored representation, which is basically
       * a JSON hash, to a full-fledged BagItProfile object.
       *
+      * See also {@link BagItProfile.load}
+      *
       * @param {string} jsonString - String of JSON to covert to BagItProfile.
       *
       * @throws {SyntaxError} - Throws SyntaxError if jsonString cannot be parsed.
@@ -523,6 +526,25 @@ class BagItProfile extends PersistentObject {
             });
         }
         return profile;
+    }
+    /**
+     * This loads a BagItProfile from a JSON file and returns
+     * the BagItProfile object. After you've loaded the profile,
+     * you can call the validate() method to make sure it's valid.
+     *
+     * This is a synchronous operation, and will throw errors if
+     * file does not exist, is not readable, JSON is invalid, etc.
+     *
+     * See also {@link BagItProfile.fromJson}
+     *
+     * @param {string} pathToJsonFile - The path to the JSON file that
+     * contains the profile you want to load.
+     *
+     * @returns {BagItProfile}
+     */
+    static load(pathToJsonFile) {
+        let json = fs.readFileSync(pathToJsonFile);
+        return BagItProfile.fromJson(json);
     }
     /**
       * Returns the best guess at bag title by checking
@@ -579,7 +601,6 @@ class BagItProfile extends PersistentObject {
         let tags = this.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier');
         return tags.length > 0 ? tags[0].userValue : '';
     }
-    //
     /**
       * Copy default tag values from other profile to this profile,
       * and saves those changes to the data store.

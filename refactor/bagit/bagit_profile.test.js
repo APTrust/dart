@@ -19,7 +19,7 @@ test('Constructor sets initial properties', () => {
     expect(profile.name).toEqual('Test Profile');
     expect(profile.description).toEqual('Profile for testing');
 
-    expect(profile.acceptBagItVersion).toEqual(['0.97']);
+    expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['tar']);
     expect(profile.allowFetchTxt).toEqual(false);
     expect(profile.allowMiscTopLevelFiles).toEqual(false);
@@ -255,7 +255,23 @@ test('fromJson()', () => {
     expect(profile.id).toEqual('043f1c22-c9ff-4112-86f8-8f8f1e6a2dca');
     expect(profile.name).toEqual('APTrust');
     expect(profile.description).toEqual('APTrust 2.0 default BagIt profile.');
-    expect(profile.acceptBagItVersion).toEqual(['0.97']);
+    expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
+    expect(profile.acceptSerialization).toEqual(['application/tar']);
+    expect(profile.tags.length).toEqual(14);
+    expect(profile.allowMiscDirectories).toEqual(true);
+    expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
+});
+
+test('load()', () => {
+    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'aptrust_bagit_profile_2.2.json');
+    let profile = BagItProfile.load(jsonFile);
+    expect(profile).not.toBeNull();
+
+    // Check some basics.
+    expect(profile.id).toEqual('043f1c22-c9ff-4112-86f8-8f8f1e6a2dca');
+    expect(profile.name).toEqual('APTrust');
+    expect(profile.description).toEqual('APTrust 2.0 default BagIt profile.');
+    expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
     expect(profile.allowMiscDirectories).toEqual(true);
