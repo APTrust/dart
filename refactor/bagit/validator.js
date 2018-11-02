@@ -1,5 +1,5 @@
 const { BagItFile } = require('./bagit_file');
-const constants = require('../core/constants');
+const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const crypto = require('crypto');
 const EventEmitter = require('events');
@@ -68,38 +68,6 @@ class Validator extends EventEmitter {
         */
         this.files = {};
         /**
-         * payloadFiles is an array of BagItFile objects representing
-         * all of the payload files in the bag. This is a subset of the
-         * same BagItFile objects in the Validator.files property.
-         *
-         * @type {Array<BagItFile>}
-         */
-        this.payloadFiles = [];
-        /**
-         * payloadManifests is an array of BagItFile objects representing
-         * all of the payload manifests in the bag. This is a subset of the
-         * same BagItFile objects in the Validator.files property.
-         *
-         * @type {Array<BagItFile>}
-         */
-        this.payloadManifests = [];
-        /**
-         * tagManifests is an array of BagItFile objects representing
-         * all of the tag manifests in the bag. This is a subset of the
-         * same BagItFile objects in the Validator.files property.
-         *
-         * @type {Array<BagItFile>}
-         */
-        this.tagManifests = [];
-        /**
-         * tagFiles is an array of BagItFile objects representing
-         * all of the tag files in the bag. This is a subset of the
-         * same BagItFile objects in the Validator.files property.
-         *
-         * @type {Array<BagItFile>}
-         */
-        this.tagFiles = [];
-        /**
          * topLevelDirs is a list of strings representing the relative
          * paths of all of the directories found at the top level of the
          * bag. The "data" directory should always be in this list, if a
@@ -154,6 +122,22 @@ class Validator extends EventEmitter {
      */
     readingFromTar() {
         return this.pathToBag.endsWith('.tar');
+    }
+
+    payloadFiles() {
+        return this.files.values.filter(f => f.isPayloadFile());
+    }
+
+    payloadManifests() {
+        return this.files.values.filter(f => f.isPayloadManifest());
+    }
+
+    tagFiles() {
+        return this.files.values.filter(f => f.isTagFile());
+    }
+
+    tagManifests() {
+        return this.files.values.filter(f => f.isTagManifest());
     }
 
     /**
@@ -268,10 +252,10 @@ class Validator extends EventEmitter {
         // For manifests, tag manifests, and tag files, we need to parse
         // file contents as well.
         var fileType = BagItFile.getFileType(bagItFile.relDestPath);
-        if (fileType == constants.PAYLOAD_MANIFEST || fileType == constants.TAG_MANIFEST) {
+        if (fileType == Constants.PAYLOAD_MANIFEST || fileType == Constants.TAG_MANIFEST) {
             var manifestParser = new ManifestParser(bagItFile);
             pipes.push(manifestParser.stream);
-        } else if (fileType == constants.TAG_FILE && bagItFile.relPath.endsWith(".txt")) {
+        } else if (fileType == Constants.TAG_FILE && bagItFile.relDestPath.endsWith(".txt")) {
             var tagFileParser = new TagFileParser(bagItFile);
             pipes.push(tagFileParser.stream);
         }

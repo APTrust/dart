@@ -139,6 +139,42 @@ class BagItFile {
     }
 
     /**
+      * Returns true if this is a payload file.
+      *
+      * @returns {boolean}
+      */
+    isPayloadFile() {
+        return BagItFile.getFileType(this.relDestPath) == Constants.PAYLOAD_FILE;
+    }
+
+    /**
+      * Returns true if this is a payload manifest.
+      *
+      * @returns {boolean}
+      */
+    isPayloadManifest() {
+        return BagItFile.getFileType(this.relDestPath) == Constants.PAYLOAD_MANIFEST;
+    }
+
+    /**
+      * Returns true if this is a tag file.
+      *
+      * @returns {boolean}
+      */
+    isTagFile() {
+        return BagItFile.getFileType(this.relDestPath) == Constants.TAG_FILE;
+    }
+
+    /**
+      * Returns true if this is a tag manifest.
+      *
+      * @returns {boolean}
+      */
+    isTagManifest() {
+        return BagItFile.getFileType(this.relDestPath) == Constants.TAG_MANIFEST;
+    }
+
+    /**
       * getFileType returns the type of BagIt file based on relDestPath.
       * File types are defined in Constants.FILE_TYPES and include
       * 'manifest', 'tagmanifest', 'payload', and 'tagfile'.
