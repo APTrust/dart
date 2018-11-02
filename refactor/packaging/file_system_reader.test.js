@@ -1,6 +1,6 @@
 const path = require('path');
 const { PassThrough } = require('stream');
-const { FileSystemIterator } = require('./file_system_iterator');
+const { FileSystemReader } = require('./file_system_reader');
 
 // Apologies to all maintainers.
 // These tests run against the test directory, so as the number
@@ -9,14 +9,14 @@ const { FileSystemIterator } = require('./file_system_iterator');
 const FILES_IN_TEST_DIR = 29;
 const DIRS_IN_TEST_DIR = 5;
 
-test('FileSystemIterator.read() emits expected events', done => {
+test('FileSystemReader.read() emits expected events', done => {
     var streamCount = 0;
     var finishCount = 0;
     var dir = path.join(__dirname, "..", "test")
-    var fsIterator = new FileSystemIterator(dir);
+    var fsReader = new FileSystemReader(dir);
 
     // Count the number of stream events.
-    fsIterator.on('entry', function(entry) {
+    fsReader.on('entry', function(entry) {
         expect(entry.relPath).not.toBeNull();
         expect(entry.fileStat).not.toBeNull();
         expect(entry.stream).not.toBeNull();
@@ -25,28 +25,28 @@ test('FileSystemIterator.read() emits expected events', done => {
     });
 
     // Set finishCount to the number of files the
-    // tarIterator thinks it read. This tells us
+    // tarReader thinks it read. This tells us
     // 1) that the finish event fired (because finishCount is non-zero) and
     // 2) that we got a stream event for every file (if finishCount equals streamCount below)
-    fsIterator.on('finish', function(fileCount) {
+    fsReader.on('finish', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
-        expect(fsIterator.fileCount).toEqual(FILES_IN_TEST_DIR);
-        expect(fsIterator.dirCount).toEqual(DIRS_IN_TEST_DIR);
+        expect(fsReader.fileCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsReader.dirCount).toEqual(DIRS_IN_TEST_DIR);
         done();
     });
 
-    fsIterator.read();
+    fsReader.read();
 });
 
-test('FileSystemIterator.read() returns expected stats', done => {
+test('FileSystemReader.read() returns expected stats', done => {
     var dir = path.join(__dirname, "..", "test")
-    var fsIterator = new FileSystemIterator(dir);
+    var fsReader = new FileSystemReader(dir);
     var foundTestFile = false;
 
     // Count the number of stream events.
-    fsIterator.on('entry', function(entry) {
+    fsReader.on('entry', function(entry) {
         if (entry.relPath === "bags/aptrust/example.edu.tagsample_good.tar") {
             foundTestFile = true;
             expect(entry.fileStat.size).toEqual(40960);
@@ -66,35 +66,35 @@ test('FileSystemIterator.read() returns expected stats', done => {
         entry.stream.pipe(new PassThrough());
     });
 
-    fsIterator.on('finish', function(fileCount) {
+    fsReader.on('finish', function(fileCount) {
         expect(foundTestFile).toEqual(true);
         done();
     });
 
-    fsIterator.read();
+    fsReader.read();
 });
 
-test('FileSystemIterator.list() emits expected events with correct stats', done => {
+test('FileSystemReader.list() emits expected events with correct stats', done => {
     var streamCount = 0;
     var finishCount = 0;
     var dir = path.join(__dirname, "..", "test")
-    var fsIterator = new FileSystemIterator(dir);
+    var fsReader = new FileSystemReader(dir);
 
     // Note there's no stream here, because we're just listing.
-    fsIterator.on('entry', function(entry) {
+    fsReader.on('entry', function(entry) {
         expect(entry.relPath).not.toBeNull();
         expect(entry.fileStat).not.toBeNull();
         streamCount++;
     });
 
-    fsIterator.on('finish', function(fileCount) {
+    fsReader.on('finish', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
-        expect(fsIterator.fileCount).toEqual(FILES_IN_TEST_DIR);
-        expect(fsIterator.dirCount).toEqual(DIRS_IN_TEST_DIR);
+        expect(fsReader.fileCount).toEqual(FILES_IN_TEST_DIR);
+        expect(fsReader.dirCount).toEqual(DIRS_IN_TEST_DIR);
         done();
     });
 
-    fsIterator.list();
+    fsReader.list();
 });

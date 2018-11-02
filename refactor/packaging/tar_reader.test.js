@@ -1,15 +1,15 @@
 const path = require('path');
 const { PassThrough } = require('stream');
-const { TarIterator } = require('./tar_iterator');
+const { TarReader } = require('./tar_reader');
 
-test('TarIterator.read() emits expected events', done => {
+test('TarReader.read() emits expected events', done => {
     var streamCount = 0;
     var finishCount = 0;
     var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
-    var tarIterator = new TarIterator(pathToTarFile);
+    var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.
-    tarIterator.on('entry', function(entry) {
+    tarReader.on('entry', function(entry) {
         expect(entry.relPath).not.toBeNull();
         expect(entry.fileStat).not.toBeNull();
         expect(entry.stream).not.toBeNull();
@@ -18,17 +18,17 @@ test('TarIterator.read() emits expected events', done => {
     });
 
     // Set finishCount to the number of files the
-    // tarIterator thinks it read. This tells us
+    // tarReader thinks it read. This tells us
     // 1) that the finish event fired (because finishCount is non-zero) and
     // 2) that we got a stream event for every file (if finishCount equals streamCount below)
-    tarIterator.on('finish', function(fileCount) {
+    tarReader.on('finish', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(10);
         expect(finishCount).toEqual(10);
         done();
     });
 
-    tarIterator.read();
+    tarReader.read();
 });
 
 var expectedStats = {
@@ -114,12 +114,12 @@ var expectedStats = {
     }
 }
 
-test('TarIterator.read() returns correct stats', done => {
+test('TarReader.read() returns correct stats', done => {
     var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
-    var tarIterator = new TarIterator(pathToTarFile);
+    var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.
-    tarIterator.on('entry', function(entry) {
+    tarReader.on('entry', function(entry) {
         var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
         expect(expected.size).toEqual(entry.fileStat.size);
@@ -132,22 +132,22 @@ test('TarIterator.read() returns correct stats', done => {
     });
 
     // Let jest know when we're done.
-    tarIterator.on('finish', function(fileCount) {
-        expect(tarIterator.fileCount).toEqual(8);
-        expect(tarIterator.dirCount).toEqual(2);
+    tarReader.on('finish', function(fileCount) {
+        expect(tarReader.fileCount).toEqual(8);
+        expect(tarReader.dirCount).toEqual(2);
         done();
     });
 
-    tarIterator.read();
+    tarReader.read();
 });
 
-test('TarIterator.list() returns correct stats', done => {
+test('TarReader.list() returns correct stats', done => {
     var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
-    var tarIterator = new TarIterator(pathToTarFile);
+    var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.
     // Note that list does not return the stream, only stats.
-    tarIterator.on('entry', function(entry) {
+    tarReader.on('entry', function(entry) {
         var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
         expect(expected.size).toEqual(entry.fileStat.size);
@@ -159,11 +159,11 @@ test('TarIterator.list() returns correct stats', done => {
     });
 
     // Let jest know when we're done.
-    tarIterator.on('finish', function(fileCount) {
-        expect(tarIterator.fileCount).toEqual(8);
-        expect(tarIterator.dirCount).toEqual(2);
+    tarReader.on('finish', function(fileCount) {
+        expect(tarReader.fileCount).toEqual(8);
+        expect(tarReader.dirCount).toEqual(2);
         done();
     });
 
-    tarIterator.list();
+    tarReader.list();
 });

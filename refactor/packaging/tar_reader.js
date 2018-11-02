@@ -5,11 +5,11 @@ const { PassThrough } = require('stream');
 const tar = require('tar-stream');
 
 /**
-  * TarIterator provides methods for listing and reading the contents
+  * TarReader provides methods for listing and reading the contents
   * of tar files. This is used by the bag validator to validate tarred
   * bags without having to untar them first.
   *
-  * Both TarIterator and {@link FileSystemIterator} implement a common
+  * Both TarReader and {@link FileSystemReader} implement a common
   * interface and emit a common set of events to provide the bag
   * validator with a uniform interface for reading bags packaged in
   * different formats.
@@ -17,10 +17,10 @@ const tar = require('tar-stream');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-class TarIterator extends EventEmitter {
+class TarReader extends EventEmitter {
 
     /**
-      * Creates a new TarIterator.
+      * Creates a new TarReader.
       *
       * @param {string} pathToTarFile - This should be the absolute
       * path to the tar file you want to read.
@@ -64,25 +64,25 @@ class TarIterator extends EventEmitter {
       *
       */
     read() {
-        var tarIterator = this;
+        var tarReader = this;
         var extract = tar.extract();
-        tarIterator.fileCount = 0;
-        tarIterator.dirCount = 0;
+        tarReader.fileCount = 0;
+        tarReader.dirCount = 0;
         extract.on('entry', function(header, stream, next) {
 
-            var fileStat = tarIterator._headerToFileStat(header);
+            var fileStat = tarReader._headerToFileStat(header);
 
             // relPath is the relative path of the file within
             // the tar file.
             var relPath = header.name;
 
             /**
-             * @event TarIterator#entry
+             * @event TarReader#entry
              *
              * @description The entry event of the read() method includes both info
              * about the tar file (from the header) and a {@link ReadStream} object
              * that allows you to read the contents of the entry, if it's a file.
-             * Note that you MUST read the stream to the end before TarIterator.read()
+             * Note that you MUST read the stream to the end before TarReader.read()
              * will move to the next tar entry.
              *
              * @type {object}
@@ -96,43 +96,43 @@ class TarIterator extends EventEmitter {
              * @property {FileStat} fileStat - An object containing a subset info similar
              * to the fs.Stats object, describing the file's size and other attributes.
              */
-            tarIterator.emit('entry', { relPath: relPath, fileStat: fileStat, stream: stream });
+            tarReader.emit('entry', { relPath: relPath, fileStat: fileStat, stream: stream });
 
             // When we reach the end of the read stream, tell the
             // tar-stream library to move on to the next entry.
             stream.on('end', function() {
                 if (header.type === "file") {
-                    tarIterator.fileCount += 1;
+                    tarReader.fileCount += 1;
                 } else if (header.type === "directory") {
-                    tarIterator.dirCount += 1;
+                    tarReader.dirCount += 1;
                 }
                 next() // ready for next entry
             });
         });
 
         /**
-         * @event TarIterator#error
+         * @event TarReader#error
          *
          * @description Indicates something went wrong while reading the tarfile.
          *
          * @type {Error}
          */
         extract.on('error', function(err) {
-            tarIterator.emit('error', err);
+            tarReader.emit('error', err);
         });
 
         /**
-         * @event TarIterator#finish
+         * @event TarReader#finish
          *
          * @description This indicates that the iterator has passed
          * the last entry in the tar file and there's nothing left to read.
          */
         extract.on('finish', function() {
-            tarIterator.emit('finish', tarIterator.fileCount + tarIterator.dirCount);
+            tarReader.emit('finish', tarReader.fileCount + tarReader.dirCount);
         });
 
         // Open the tar file and start reading.
-        fs.createReadStream(tarIterator.pathToTarFile).pipe(extract)
+        fs.createReadStream(tarReader.pathToTarFile).pipe(extract)
     }
 
     /**
@@ -144,14 +144,14 @@ class TarIterator extends EventEmitter {
       *
       */
     list() {
-        var tarIterator = this;
+        var tarReader = this;
         var extract = tar.extract();
-        tarIterator.fileCount = 0;
-        tarIterator.dirCount = 0;
+        tarReader.fileCount = 0;
+        tarReader.dirCount = 0;
 
 
         /**
-         * @event TarIterator#entry
+         * @event TarReader#entry
          *
          * @description The entry event of the list() method returns info about
          * the tar entry, but no reader to read the contents of the entry.
@@ -166,14 +166,14 @@ class TarIterator extends EventEmitter {
          *
          */
         extract.on('entry', function(header, stream, next) {
-            var fileStat = tarIterator._headerToFileStat(header);
+            var fileStat = tarReader._headerToFileStat(header);
             var relPath = header.name;
-            tarIterator.emit('entry', { relPath: relPath, fileStat: fileStat });
+            tarReader.emit('entry', { relPath: relPath, fileStat: fileStat });
             stream.on('end', function() {
                 if (header.type === "file") {
-                    tarIterator.fileCount += 1;
+                    tarReader.fileCount += 1;
                 } if (header.type === "directory") {
-                    tarIterator.dirCount += 1;
+                    tarReader.dirCount += 1;
                 }
                 next();
             });
@@ -183,16 +183,16 @@ class TarIterator extends EventEmitter {
 
         // Same as the error event documented above.
         extract.on('error', function(err) {
-            tarIterator.emit('error', err);
+            tarReader.emit('error', err);
         });
 
         // Same as the finish event documented above.
         extract.on('finish', function() {
-            tarIterator.emit('finish', tarIterator.fileCount + tarIterator.dirCount);
+            tarReader.emit('finish', tarReader.fileCount + tarReader.dirCount);
         });
 
         // Open the tar file and start reading.
-        fs.createReadStream(tarIterator.pathToTarFile).pipe(extract)
+        fs.createReadStream(tarReader.pathToTarFile).pipe(extract)
     }
 
     _headerToFileStat(header) {
@@ -207,4 +207,4 @@ class TarIterator extends EventEmitter {
     }
 }
 
-module.exports.TarIterator = TarIterator;
+module.exports.TarReader = TarReader;
