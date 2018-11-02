@@ -1,4 +1,5 @@
 const { BagItFile } = require('./bagit_file');
+const constants = require('../core/constants');
 const { Context } = require('../core/context');
 const crypto = require('crypto');
 const EventEmitter = require('events');
@@ -168,7 +169,7 @@ class Validator extends EventEmitter {
      * This method emits events "start", "task", "end", and "error".
      */
     validate() {
-        this.emitter.emit('validateStart', `Validating ${this.pathToBag}`);
+        this.emit('validateStart', `Validating ${this.pathToBag}`);
         if (this.readingFromTar()) {
             this.reader = new TarReader(this.pathToBag);
         } else {
@@ -176,28 +177,42 @@ class Validator extends EventEmitter {
         }
         // Attach listeners to our reader.
         var validator = this;
-        reader.on('entry', function (entry) { validator._readEntry(entry) });
-        reader.on('error', function(err) { validator.emit('error', err) });
-        reader.on('finish', function() { validator.emit('task', new TaskDescription(validator.pathToBag, 'read')) });
+        this.reader.on('entry', function (entry) { validator._readEntry(entry) });
+        this.reader.on('error', function(err) { validator.emit('error', err) });
+
+        // Finish event needs to set a flag on this validator
+        // indicating we've reached the last file. Only then
+        // can we proceed with all validation routines and
+        // call the end event.
+        this.reader.on('finish', function() { validator.emit('task', new TaskDescription(validator.pathToBag, 'read')) });
+
+        // TODO:
+        //
+        // Validate contents, checksums, tags, etc. before emitting end event.
+        //
+
+        // This is a placeholder event for testing.
+        // We don't really want to emit the end event until we're done
+        // with all files and all validation.
+        this.reader.on('finish', function() { validator.emit('end') });
+
+        // Read the contents of the bag.
+        this.reader.read();
     }
 
+    /**
+     * _readEntry reads a single entry from a TarReader or FileSystemReader.
+     * An entry represents one file within the bag (any type of file: payload,
+     * manifest, tag manifest, or tag file). This method add's the file's metadata
+     * to the Validator.files hash, computes the file's checksums, and parses the
+     * file's contents if necessary.
+     *
+     * @param {object} entry - An entry returned by a TarReader or FileSystemReader.
+     *
+     */
     _readEntry(entry) {
         var bagItFile = this._addBagItFile(entry);
-        this._readFile(bagItFile);
-        //
-        // emit task for the specified file
-        //
-        // task.relPath
-        // task.operation
-        // task.message
-        //
-        // call _addBagItFile
-        // call _readFile
-        //
-        // debug logger can listen and log events
-        //
-        // Remember that the iterator won't advance unless we read the
-        // file contents (or at least pass them through the hash functions).
+        this._readFile(bagItFile, entry.stream);
     }
 
     /**
@@ -224,17 +239,82 @@ class Validator extends EventEmitter {
         }
         var bagItFile = new BagItFile(absPath, entry.relPath, entry.fileStat);
         this.files[entry.relPath] = bagItFile;
-        Context.logger.info(`Validator added ${entry.relPath} as ${bagItFile.getFileType()}`);
+        var fileType = BagItFile.getFileType(entry.relPath);
+        Context.logger.info(`Validator added ${entry.relPath} as ${fileType}`);
         return bagItFile;
     }
 
-    _readFile(bagItFile) {
-        Context.logger.info(`Validator running checksums for ${entry.relPath}}`);
-        // 1. Pass the contents of the entry through the hash digests
-        // 2. Parse the contents as a manifest, if it is one
-        // 3. Parse the contents as a tag file, if it is one
-        //
-        // Can do that all in one pass using pipes.
+    /**
+     * _readFile pushes the file's bits through whatever checksum algorithms
+     * the {@link BagItProfile} says we're supposed to validate. It also parses
+     * the contents of the file, if it happens to be a manifest, tag manifest,
+     * or text-based tag file.
+     *
+     * Note that the read() method of TarReader and FileSystemReader will not
+     * advance until we've read the entire stream (or until it closes or errors out).
+     *
+     * @param {BagItFile} bagItFile - A file inside the directory or tarball.
+     *
+     * @param {ReadStream} stream - A stream from which we can read the file's
+     * contents.
+     */
+    _readFile(bagItFile, stream) {
+        this.emit('task', new TaskDescription(bagItFile.relDestPath, 'checksum'));
+
+        // Get pipes for all of the hash digests we'll need to calculate.
+        // We need to calculate checksums on everything in the bag.
+        var pipes = this._getCryptoHashes(bagItFile)
+
+        // For manifests, tag manifests, and tag files, we need to parse
+        // file contents as well.
+        var fileType = BagItFile.getFileType(bagItFile.relDestPath);
+        if (fileType == constants.PAYLOAD_MANIFEST || fileType == constants.TAG_MANIFEST) {
+            var manifestParser = new ManifestParser(bagItFile);
+            pipes.push(manifestParser.stream);
+        } else if (fileType == constants.TAG_FILE && bagItFile.relPath.endsWith(".txt")) {
+            var tagFileParser = new TagFileParser(bagItFile);
+            pipes.push(tagFileParser.stream);
+        }
+
+        // Now we can do a single read of the file, piping it through
+        // streams for checksum calculations and parsing. This is much
+        // more efficient than doing a seperate read for each, especially
+        // in bags that use multiple digest algorithms.
+        for (var p of pipes) {
+            stream.pipe(p);
+        }
+
+        Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
+    }
+
+    /**
+     * _getCryptoHashes returns a list of prepared cryptographic hashes that
+     * are ready to have bits streamed through them. Each hash includes a
+     * pre-wired 'finish' event that assigns the computed checksum to the
+     * BagItFile's checksums hash. For example, a sha256 hash, once the bits
+     * have been pushed through it, will set the following in it's finish event:
+     *
+     * @example
+     * bagItFile.checksums['sha256'] = "[computed hex value]";
+     *
+     * @param {BagItFile} bagItFile - A file inside the directory or tarball.
+     * This is the file whose checksums will be computed.
+     *
+     * @returns {Array<crypto.Hash>}
+     *
+     */
+    _getCryptoHashes(bagItFile) {
+        var hashes = [];
+        for (var algorithm of this.profile.manifestsRequired) {
+            var hash = crypto.createHash(algorithm);
+            hash.setEncoding('hex');
+            hash.on('finish', function() {
+                hash.end();
+                bagItFile.checksums[algorithm] = hash.read();
+            });
+            hashes.push(hash);
+        }
+        return hashes;
     }
 }
 
