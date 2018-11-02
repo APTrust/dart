@@ -124,20 +124,40 @@ class Validator extends EventEmitter {
         return this.pathToBag.endsWith('.tar');
     }
 
+    /**
+     * Returns an array of BagItFile objects that represent payload files.
+     *
+     * @returns {Array<BagItFile>}
+     */
     payloadFiles() {
-        return this.files.values.filter(f => f.isPayloadFile());
+        return Object.entries(this.files).filter(f => f[1].isPayloadFile());
     }
 
+    /**
+     * Returns an array of BagItFile objects that represent payload manifests.
+     *
+     * @returns {Array<BagItFile>}
+     */
     payloadManifests() {
-        return this.files.values.filter(f => f.isPayloadManifest());
+        return Object.entries(this.files).filter(f => f[1].isPayloadManifest());
     }
 
+    /**
+     * Returns an array of BagItFile objects that represent tag files.
+     *
+     * @returns {Array<BagItFile>}
+     */
     tagFiles() {
-        return this.files.values.filter(f => f.isTagFile());
+        return Object.entries(this.files).filter(f => f[1].isTagFile());
     }
 
+    /**
+     * Returns an array of BagItFile objects that represent tag manifests.
+     *
+     * @returns {Array<BagItFile>}
+     */
     tagManifests() {
-        return this.files.values.filter(f => f.isTagManifest());
+        return Object.entries(this.files).filter(f => f[1].isTagManifest());
     }
 
     /**
@@ -195,8 +215,14 @@ class Validator extends EventEmitter {
      *
      */
     _readEntry(entry) {
-        var bagItFile = this._addBagItFile(entry);
-        this._readFile(bagItFile, entry.stream);
+        if (entry.fileStat.isFile()) {
+            var bagItFile = this._addBagItFile(entry);
+            this._readFile(bagItFile, entry.stream);
+        } else {
+            // Skip directories, symlinks, etc.
+            entry.stream.pipe(new stream.PassThrough());
+            Context.logger.info(`Validator: ${entry.relPath} as is not a regular file`);
+        }
     }
 
     /**
@@ -217,15 +243,40 @@ class Validator extends EventEmitter {
      */
     _addBagItFile(entry) {
         this.emit('task', new TaskDescription(entry.relPath, 'add'));
+        var relPath = this._cleanEntryRelPath(entry.relPath);
         var absPath = '';
         if (!this.readingFromTar()) {
-            absPath = path.join(this.pathToBag, entry.relPath);
+            absPath = path.join(this.pathToBag, relPath);
         }
-        var bagItFile = new BagItFile(absPath, entry.relPath, entry.fileStat);
+        var bagItFile = new BagItFile(absPath, relPath, entry.fileStat);
         this.files[entry.relPath] = bagItFile;
-        var fileType = BagItFile.getFileType(entry.relPath);
+        var fileType = BagItFile.getFileType(relPath);
         Context.logger.info(`Validator added ${entry.relPath} as ${fileType}`);
         return bagItFile;
+    }
+
+    /**
+     * _cleanEntryRelPath removes trailing slashes from relPath. When the
+     * validator is reading from a tar file, this also removes the leading
+     * bag name from the path. Since tarred bags must untar to a directory
+     * whose name matches the bag, relative paths within tar files will
+     * always be prefixed with the bag name. To get a true relative path,
+     * we have to change "bagname/data/file.txt" to "data/file.txt".
+     *
+     * @param {string} relPath - The relative path, as we got it from the
+     * TarReader or FileSystemReader.
+     *
+     * @returns {string} A clean version of the relative path.
+     *
+     */
+    _cleanEntryRelPath(relPath) {
+        var cleanPath = relPath;
+        if (this.readingFromTar()) {
+            var tarFileName = path.basename(this.pathToBag, '.tar');
+            var re = new RegExp("^" + tarFileName + "/");
+            cleanPath = relPath.replace(re, '');
+        }
+        return cleanPath.replace(/\/$/, '');
     }
 
     /**
@@ -251,11 +302,10 @@ class Validator extends EventEmitter {
 
         // For manifests, tag manifests, and tag files, we need to parse
         // file contents as well.
-        var fileType = BagItFile.getFileType(bagItFile.relDestPath);
-        if (fileType == Constants.PAYLOAD_MANIFEST || fileType == Constants.TAG_MANIFEST) {
+        if (bagItFile.isPayloadManifest() || bagItFile.isTagManifest()) {
             var manifestParser = new ManifestParser(bagItFile);
             pipes.push(manifestParser.stream);
-        } else if (fileType == Constants.TAG_FILE && bagItFile.relDestPath.endsWith(".txt")) {
+        } else if (bagItFile.isTagFile() && bagItFile.relDestPath.endsWith(".txt")) {
             var tagFileParser = new TagFileParser(bagItFile);
             pipes.push(tagFileParser.stream);
         }
