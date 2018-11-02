@@ -1,12 +1,16 @@
 const { BagItFile } = require('./bagit_file');
+const { Context } = require('../core/context');
 const crypto = require('crypto');
 const EventEmitter = require('events');
+const { FileSystemReader } = require('../packaging/file_system_reader');
 const fs = require('fs');
 const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');
 const stream = require('stream');
 const { TagFileParser } = require('./tag_file_parser');
+const { TarReader } = require('../packaging/tar_reader');
+const { TaskDescription } = require('./task_description');
 const { Util } = require('../core/util');
 
 /**
@@ -143,6 +147,15 @@ class Validator extends EventEmitter {
     }
 
     /**
+     * readingFromTar returns true if the bag being validated is in tar format.
+     *
+     * @returns {boolean}
+     */
+    readingFromTar() {
+        return this.pathToBag.endsWith('.tar');
+    }
+
+    /**
      * validate runs all validation operations on the bag specified in the
      * validator's pathToBag property. This includes:
      *
@@ -156,22 +169,27 @@ class Validator extends EventEmitter {
      */
     validate() {
         this.emitter.emit('validateStart', `Validating ${this.pathToBag}`);
-        if (this.pathToBag.endsWith('.tar')) {
-            this.reader = new TarIterator(this.pathToBag);
+        if (this.readingFromTar()) {
+            this.reader = new TarReader(this.pathToBag);
         } else {
-            this.reader = new FileSystemIterator(this.pathToBag);
+            this.reader = new FileSystemReader(this.pathToBag);
         }
-        // -----------------------------------------------------------------
-        // TODO: Attach listeners for entry, finish, and error.
-        // -----------------------------------------------------------------
+        // Attach listeners to our reader.
+        var validator = this;
+        reader.on('entry', function (entry) { validator._readEntry(entry) });
+        reader.on('error', function(err) { validator.emit('error', err) });
+        reader.on('finish', function() { validator.emit('task', new TaskDescription(validator.pathToBag, 'read')) });
     }
 
     _readEntry(entry) {
+        var bagItFile = this._addBagItFile(entry);
+        this._readFile(bagItFile);
         //
         // emit task for the specified file
         //
         // task.relPath
         // task.operation
+        // task.message
         //
         // call _addBagItFile
         // call _readFile
@@ -182,13 +200,36 @@ class Validator extends EventEmitter {
         // file contents (or at least pass them through the hash functions).
     }
 
+    /**
+     * _addBagItFile adds a BagItFile to the Validator.files hash, based on
+     * the entry it receives from the reader. At this point, the newly created
+     * BagItFile will have its path and stats info, but no parsed data or
+     * checksums.
+     *
+     * @param {object} entry - An entry returned by a TarReader or FileSystemReader.
+     *
+     * @param {string} entry.relPath - The relative path of the file inside the bag.
+     *
+     * @param {FileStat|fs.Stat} entry.fileStat - An object containing stats info
+     * about the file.
+     *
+     * @returns {BagItFile} The BagItFile created from the entry object.
+     *
+     */
     _addBagItFile(entry) {
-        // Construct BagItFile from entry and add to Validator.files
-        // and to payloadFiles, payloadManifests, tagFiles, or tagManifests,
-        // based on the value of BagItFile.getFileType().
+        this.emit('task', new TaskDescription(entry.relPath, 'add'));
+        var absPath = '';
+        if (!this.readingFromTar()) {
+            absPath = path.join(this.pathToBag, entry.relPath);
+        }
+        var bagItFile = new BagItFile(absPath, entry.relPath, entry.fileStat);
+        this.files[entry.relPath] = bagItFile;
+        Context.logger.info(`Validator added ${entry.relPath} as ${bagItFile.getFileType()}`);
+        return bagItFile;
     }
 
     _readFile(bagItFile) {
+        Context.logger.info(`Validator running checksums for ${entry.relPath}}`);
         // 1. Pass the contents of the entry through the hash digests
         // 2. Parse the contents as a manifest, if it is one
         // 3. Parse the contents as a tag file, if it is one
