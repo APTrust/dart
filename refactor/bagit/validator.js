@@ -130,7 +130,7 @@ class Validator extends EventEmitter {
      * @returns {Array<BagItFile>}
      */
     payloadFiles() {
-        return Object.entries(this.files).filter(f => f[1].isPayloadFile());
+        return Object.values(this.files).filter(f => f.isPayloadFile());
     }
 
     /**
@@ -139,7 +139,7 @@ class Validator extends EventEmitter {
      * @returns {Array<BagItFile>}
      */
     payloadManifests() {
-        return Object.entries(this.files).filter(f => f[1].isPayloadManifest());
+        return Object.values(this.files).filter(f => f.isPayloadManifest());
     }
 
     /**
@@ -148,7 +148,7 @@ class Validator extends EventEmitter {
      * @returns {Array<BagItFile>}
      */
     tagFiles() {
-        return Object.entries(this.files).filter(f => f[1].isTagFile());
+        return Object.values(this.files).filter(f => f.isTagFile());
     }
 
     /**
@@ -157,7 +157,7 @@ class Validator extends EventEmitter {
      * @returns {Array<BagItFile>}
      */
     tagManifests() {
-        return Object.entries(this.files).filter(f => f[1].isTagManifest());
+        return Object.values(this.files).filter(f => f.isTagManifest());
     }
 
     /**
@@ -198,9 +198,10 @@ class Validator extends EventEmitter {
     _validateFormatAndContents() {
         this._validateTopLevelDirs();
         this._validateTopLevelFiles();
-        this._validateRequiredManifests();
-        this._validateRequiredTagManifests();
-        this._validateManifests(); // payload and tag
+        this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
+        this._validateRequiredManifests(Constants.TAG_MANIFEST);
+        this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
+        this._validateManifestEntries(Constants.TAG_MANIFEST);
         this._validateNoExtraneousPayloadFiles();
         this._validateTags();
         this.emit('end')
@@ -395,17 +396,42 @@ class Validator extends EventEmitter {
         }
     }
 
-    _validateRequiredManifests() {
-
-    }
-
-    _validateRequiredTagManifests() {
-
+    // Param manifestType should be either Constants.PAYLOAD_MANIFEST or
+    // Constants.TAG_MANIFEST.
+    _validateRequiredManifests(manifestType) {
+        Context.logger.info(`Validator: Validating ${manifestType}s`);
+        for (var alg of this.profile.manifestsRequired) {
+            var name = `${manifestType}-${alg}.txt`
+            if(!this.files[name]) {
+                this.errors.push(`Bag is missing required manifest ${name}`);
+            }
+        }
     }
 
     // payload and tag
-    _validateManifests() {
-
+    _validateManifestEntries(manifestType) {
+        var manifests = this.payloadManifests();
+        if (manifestType === Constants.TAG_MANIFEST) {
+            manifests = this.tagManifests();
+        }
+        Context.logger.info(`Validator: Validating ${manifests.length} ${manifestType}s`);
+        for(var manifest of Object.values(manifests)) {
+            Context.logger.info(`Validator: Validating ${manifest.relDestPath}`);
+            var basename = path.basename(manifest.relDestPath, '.txt');
+            var algorithm = basename.split('-')[1];
+            for (var filename of manifest.keyValueCollection.keys()) {
+                var bagItFile = this.files[filename];
+                if (!bagItFile) {
+                    this.errors.push(`File ${filename} in ${manifest.relDestPath} is missing from payload.`);
+                    continue;
+                }
+                var checksumInManifest = manifest.keyValueCollection.first(filename);
+                var calculatedChecksum = bagItFile.checksums[algorithm];
+                if (checksumInManifest != calculatedChecksum) {
+                    this.errors.push(`Checksum for '${filename}': expected ${checksumInManifest}, got ${calculatedChecksum}`);
+                }
+            }
+        }
     }
 
     _validateNoExtraneousPayloadFiles() {
