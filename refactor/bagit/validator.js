@@ -184,24 +184,26 @@ class Validator extends EventEmitter {
         this.reader.on('entry', function (entry) { validator._readEntry(entry) });
         this.reader.on('error', function(err) { validator.emit('error', err) });
 
-        // Finish event needs to set a flag on this validator
-        // indicating we've reached the last file. Only then
-        // can we proceed with all validation routines and
-        // call the end event.
-        this.reader.on('finish', function() { validator.emit('task', new TaskDescription(validator.pathToBag, 'read')) });
-
-        // TODO:
-        //
-        // Validate contents, checksums, tags, etc. before emitting end event.
-        //
-
-        // This is a placeholder event for testing.
-        // We don't really want to emit the end event until we're done
-        // with all files and all validation.
-        this.reader.on('finish', function() { validator.emit('end') });
+        // Once reading is done, validate all the info we've gathered.
+        this.reader.on('finish', function() {
+            // Is this really what we want to emit here?
+            validator.emit('task', new TaskDescription(validator.pathToBag, 'read'))
+            validator._validateFormatAndContents();
+        });
 
         // Read the contents of the bag.
         this.reader.read();
+    }
+
+    _validateFormatAndContents() {
+        // this._validateTopLevelDirs();
+        // this._validateTopLevelFiles();
+        // this._validateRequiredManifests();
+        // this._validateRequiredTagManifests();
+        // this._validateManifests(); // payload and tag
+        // this._validateNoExtraneousPayloadFiles();
+        // this._validateTags();
+        this.emit('end')
     }
 
     /**
