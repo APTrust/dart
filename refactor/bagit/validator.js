@@ -196,13 +196,13 @@ class Validator extends EventEmitter {
     }
 
     _validateFormatAndContents() {
-        // this._validateTopLevelDirs();
-        // this._validateTopLevelFiles();
-        // this._validateRequiredManifests();
-        // this._validateRequiredTagManifests();
-        // this._validateManifests(); // payload and tag
-        // this._validateNoExtraneousPayloadFiles();
-        // this._validateTags();
+        this._validateTopLevelDirs();
+        this._validateTopLevelFiles();
+        this._validateRequiredManifests();
+        this._validateRequiredTagManifests();
+        this._validateManifests(); // payload and tag
+        this._validateNoExtraneousPayloadFiles();
+        this._validateTags();
         this.emit('end')
     }
 
@@ -352,6 +352,70 @@ class Validator extends EventEmitter {
         }
         return hashes;
     }
+
+
+    _validateTopLevelDirs() {
+        Context.logger.info(`Validator: Validating top-level directories in ${this.pathToBag}`);
+        var exceptions = ['data']; // data dir is always required
+        for (var f of this.profile.tagFileNames()) {
+            var requiredTagDir = f.split('/', 1);
+            exceptions.push(requiredTagDir);
+        }
+        if (!this.profile.allowMiscTopLevelDirectories) {
+            for (var dir of this.topLevelDirs) {
+                if (!Util.listContains(exceptions, dir)) {
+                    this.errors.push(`Profile prohibits top-level directory ${dir}`);
+                }
+            }
+        }
+    }
+
+    _validateTopLevelFiles() {
+        Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
+        if (!this.profile.allowMiscTopLevelFiles) {
+            var exceptions = this.profile.tagFileNames();
+            for (var alg of this.profile.manifestsRequired) {
+                exceptions.push(`manifest-${alg}.txt`);
+            }
+            for (var alg of this.profile.tagManifestsRequired) {
+                exceptions.push(`tagmanifest-${alg}.txt`);
+            }
+            for (var name of this.topLevelFiles) {
+                if (name == 'fetch.txt') {
+                    // This one has its own rule
+                    if (!this.profile.allowFetchTxt) {
+                        this.errors.push(`Bag contains fetch.txt file, which profile prohibits.`);
+                    }
+                    continue;
+                }
+                if (!Util.listContains(exceptions, name)) {
+                    this.errors.push(`Profile prohibits top-level file ${name}`);
+                }
+            }
+        }
+    }
+
+    _validateRequiredManifests() {
+
+    }
+
+    _validateRequiredTagManifests() {
+
+    }
+
+    // payload and tag
+    _validateManifests() {
+
+    }
+
+    _validateNoExtraneousPayloadFiles() {
+
+    }
+
+    _validateTags() {
+
+    }
+
 }
 
 module.exports.Validator = Validator;
