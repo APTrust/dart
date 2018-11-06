@@ -195,6 +195,16 @@ class Validator extends EventEmitter {
         this.reader.read();
     }
 
+    /**
+     * _validateFormatAndContents is called internally by the public validate()
+     * method. While validate() reads the contents of the bag, parses manifests
+     * and tag files, this method compares the info in the bag to what the
+     * {@link BagItProfile} says is valid.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
     _validateFormatAndContents() {
         this._validateTopLevelDirs();
         this._validateTopLevelFiles();
@@ -355,6 +365,17 @@ class Validator extends EventEmitter {
     }
 
 
+    /**
+     * _validateTopLevelDirs checks to see if any directories other than
+     * the required "data" directory exist at the top level of the bag
+     * structure. Some {@link BagItProfile}s allow for this, others do not.
+     * If an illegal top-level directory appears in the bag, this method
+     * will make a note of it in the Validator.errors array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
     _validateTopLevelDirs() {
         Context.logger.info(`Validator: Validating top-level directories in ${this.pathToBag}`);
         var exceptions = ['data']; // data dir is always required
@@ -371,6 +392,20 @@ class Validator extends EventEmitter {
         }
     }
 
+    /**
+     * _validateTopLevelFiles looks for illegal files in the top-level directory
+     * of the bag. Most bags require certain top-level tag files (bagit.txt,
+     * bag-info.txt, etc.) and manifests (manifest-sha256.txt,
+     * tagmanifest-sha256.txt, etc), but some {@link BagItProfile}s allow
+     * miscellaneous files to exist in that space and others do not.
+     *
+     * If this method finds illegal top-level files, it will make a note of each
+     * one in the Validator.errors array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
     _validateTopLevelFiles() {
         Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
         if (!this.profile.allowMiscTopLevelFiles) {
@@ -396,8 +431,19 @@ class Validator extends EventEmitter {
         }
     }
 
-    // Param manifestType should be either Constants.PAYLOAD_MANIFEST or
-    // Constants.TAG_MANIFEST.
+    /**
+     * _validateRequiredManifests checks to see if the manifests required by
+     * the {@link BagItProfile} are actually present in the bag. If they're not,
+     * it records the error in the Validator.errors array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     * @param {string} manifestType - The type of manifest to look for.
+     * This should be either {@link Constants.PAYLOAD_MANIFEST} or
+     * {Constants.TAG_MANIFEST}.
+     *
+     */
     _validateRequiredManifests(manifestType) {
         Context.logger.info(`Validator: Validating ${manifestType}s`);
         for (var alg of this.profile.manifestsRequired) {
@@ -408,7 +454,20 @@ class Validator extends EventEmitter {
         }
     }
 
-    // payload and tag
+    /**
+     * _validateManifestEntries checks to see that the checksum entries in a
+     * payload manifest or tag manifest match the actual computed digests of
+     * the files in the bag. It records mismatches in the Validator.errors
+     * array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     * @param {string} manifestType - The type of manifest to look for.
+     * This should be either {@link Constants.PAYLOAD_MANIFEST} or
+     * {Constants.TAG_MANIFEST}.
+     *
+     */
     _validateManifestEntries(manifestType) {
         var manifests = this.payloadManifests();
         if (manifestType === Constants.TAG_MANIFEST) {
@@ -434,6 +493,15 @@ class Validator extends EventEmitter {
         }
     }
 
+    /**
+     * _validateNoExtraneousPayloadFiles checks for files in the data directory
+     * that are not listed in the payload manifest(s). It records offending
+     * files in the Validator.errors array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
     _validateNoExtraneousPayloadFiles() {
         Context.logger.info(`Validator: Looking for extraneous payload files in ${this.pathToBag}`);
         for(var manifest of this.payloadManifests()) {
@@ -446,6 +514,16 @@ class Validator extends EventEmitter {
         }
     }
 
+    /**
+     * _validateTags ensures that all required tag files are present, that
+     * all required tags are present, and that all tags have valid values
+     * if valid values were defined in the {@link BagItProfile}. This method
+     * records all the problems it finds in the Validator.errors array.
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
     _validateTags() {
         Context.logger.info(`Validator: Validating tags in ${this.pathToBag}`);
         var requiredTags = this.profile.tagsGroupedByFile();
