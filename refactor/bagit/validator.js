@@ -435,11 +435,53 @@ class Validator extends EventEmitter {
     }
 
     _validateNoExtraneousPayloadFiles() {
-
+        Context.logger.info(`Validator: Looking for extraneous payload files in ${this.pathToBag}`);
+        for(var manifest of this.payloadManifests()) {
+            for (var f of this.payloadFiles()) {
+                //console.log("Payload file " + f.relDestPath)
+                if (!manifest.keyValueCollection.first(f.relDestPath)) {
+                    this.errors.push(`Payload file ${f.relDestPath} not found in ${manifest.relDestPath}`);
+                }
+            }
+        }
     }
 
     _validateTags() {
-
+        Context.logger.info(`Validator: Validating tags in ${this.pathToBag}`);
+        var requiredTags = this.profile.tagsGroupedByFile();
+        for (var filename of Object.keys(requiredTags)) {
+            Context.logger.info(`Validator: Validating tags in ${filename}`);
+            var tagFile = this.files[filename];
+            if (!tagFile) {
+                this.errors.push(`Required tag file ${filename} is missing`);
+                continue;
+            }
+            if (tagFile.keyValueCollection == null) {
+                this.errors.push(`Tag file ${filename} has no data`);
+                continue;
+            }
+            var tagsRequiredForThisFile = requiredTags[filename];
+            for (var tagDef of tagsRequiredForThisFile) {
+                var parsedTagValues = tagFile.keyValueCollection.all(tagDef.tagName);
+                if (parsedTagValues == null) {
+                    // Tag was not present at all.
+                    if (tagDef.required) {
+                        this.errors.push(`Required tag ${tagDef.tagName} is missing from ${filename}`);
+                    }
+                    continue;
+                }
+                for (var value of parsedTagValues) {
+                    if (value == '' && tagDef.emptyOk) {
+                        continue;
+                    }
+                    if (Array.isArray(tagDef.values) && tagDef.values.length > 0) {
+                        if (!Util.listContains(tagDef.values, value)) {
+                            this.errors.push(`Tag ${tagDef.tagName} in ${filename} contains illegal value ${value}. [Allowed: ${tagDef.values.join(', ')}]`);
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }
