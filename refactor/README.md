@@ -20,7 +20,7 @@ See the [Jest CLI reference](https://jestjs.io/docs/en/cli.html)
 
 ```
 cd refactor
-npm test --runInBand
+npm test -- --runInBand
 ```
 
 ## Building the Docs
