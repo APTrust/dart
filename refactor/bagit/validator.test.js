@@ -40,6 +40,36 @@ test('Constructor sets initial properties', () => {
     expect(validator.readingFromTar()).toEqual(true);
 });
 
+test('file type methods return correct items', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    let taskCount = 0;
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.payloadFiles().length).toEqual(4);
+        expect(validator.payloadManifests().length).toEqual(2);
+        expect(validator.tagFiles().length).toEqual(8);
+        expect(validator.tagManifests().length).toEqual(2);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('_cleanEntryRelPath()', () => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    let relPayloadPath = "example.edu.tagsample_good/data/sample.txt";
+    let relManifestPath = "example.edu.tagsample_good/manifest-sha256.txt";
+    expect(validator._cleanEntryRelPath(relPayloadPath)).toEqual("data/sample.txt");
+    expect(validator._cleanEntryRelPath(relManifestPath)).toEqual("manifest-sha256.txt");
+});
+
+
+// --------- FROM HERE DOWN, TEST ACTUAL BAGS ----------- //
+
 function getValidator(profileName, bagDir, bagName) {
     let testDir = path.join(__dirname, "..", "test");
     let profilePath = path.join(testDir, "profiles", profileName);
@@ -47,6 +77,17 @@ function getValidator(profileName, bagDir, bagName) {
     let profile = BagItProfile.load(profilePath);
     return new Validator(bagPath, profile);
 }
+
+test('Validator does not throw if bag does not exist', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "BagDoesNotExist.tar");
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors.length).toEqual(1);
+        expect(validator.errors[0]).toMatch(/^File does not exist at/);
+        expect(validator.errors[0]).toMatch(/BagDoesNotExist.tar$/);
+        done();
+    });
+    expect(function() { validator.validate() }).not.toThrow();
+});
 
 test('Validator accepts valid APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good.tar");
@@ -84,31 +125,4 @@ test('Validator accepts valid DPN bag', done => {
     });
 
     validator.validate();
-});
-
-test('file type methods return correct items', done => {
-    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
-    let taskCount = 0;
-    validator.on('error', function(err) {
-        // Force failure & stop test.
-        expect(err).toBeNull();
-        done();
-    });
-    validator.on('end', function(taskDesc) {
-        expect(validator.payloadFiles().length).toEqual(4);
-        expect(validator.payloadManifests().length).toEqual(2);
-        expect(validator.tagFiles().length).toEqual(8);
-        expect(validator.tagManifests().length).toEqual(2);
-        done();
-    });
-
-    validator.validate();
-});
-
-test('_cleanEntryRelPath()', () => {
-    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
-    let relPayloadPath = "example.edu.tagsample_good/data/sample.txt";
-    let relManifestPath = "example.edu.tagsample_good/manifest-sha256.txt";
-    expect(validator._cleanEntryRelPath(relPayloadPath)).toEqual("data/sample.txt");
-    expect(validator._cleanEntryRelPath(relManifestPath)).toEqual("manifest-sha256.txt");
 });

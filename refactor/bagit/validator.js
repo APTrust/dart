@@ -174,6 +174,11 @@ class Validator extends EventEmitter {
      */
     validate() {
         this.emit('validateStart', `Validating ${this.pathToBag}`);
+        if (!fs.existsSync(this.pathToBag)) {
+            this.errors.push(`File does not exist at ${this.pathToBag}`);
+            this.emit('end');
+            return;
+        }
         if (this.readingFromTar()) {
             this.reader = new TarReader(this.pathToBag);
         } else {
