@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:fedora-model="info:fedora/fedora-system:def/model#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:rel="info:fedora/fedora-system:def/relations-external#" xmlns:uva="http://fedora.lib.virginia.edu/relationships#">
+  <rdf:Description rdf:about="info:fedora/uva-lib:2278801">
+    <uva:hasExemplar rdf:resource="info:fedora/uva-lib:2341723"/>
+    <fedora-model:hasModel rdf:resource="info:fedora/fedora-system:FedoraObject-3.0"/>
+  </rdf:Description>
+</rdf:RDF>

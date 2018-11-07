@@ -1,5 +1,6 @@
 const { BagItProfile } = require('./bagit_profile');
 const path = require('path');
+const tmp = require('tmp');
 const { Validator } = require('./validator');
 
 // We expect the validator to find the following errors when testing
@@ -121,6 +122,26 @@ test('Validator accepts valid DPN bag', done => {
     });
     validator.on('end', function(taskDesc) {
         expect(taskCount).toEqual(21);
+        done();
+    });
+
+    validator.validate();
+});
+
+// This test uses the FileSystemReader instead of the TarReader.
+test('Validator accepts valid untarred APTrust bag', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    let taskCount = 0;
+    validator.on('task', function(taskDesc) {
+        taskCount++;
+    });
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(taskCount).toEqual(17);
         done();
     });
 

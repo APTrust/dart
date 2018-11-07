@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<mods:mods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mods="http://www.loc.gov/mods/v3" version="3.4" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-4.xsd">
+   <mods:titleInfo xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <mods:title>Strabo De situ orbis</mods:title>
+   </mods:titleInfo>
+   <mods:name xmlns:xs="http://www.w3.org/2001/XMLSchema" type="personal" usage="primary">
+      <mods:namePart>Strabo.</mods:namePart>
+   </mods:name>
+   <mods:name xmlns:xs="http://www.w3.org/2001/XMLSchema" type="personal">
+      <mods:namePart>Mancinelli, Antonio</mods:namePart>
+      <mods:namePart type="date">1452-approximately 1505</mods:namePart>
+      <mods:role>
+         <mods:roleTerm type="text">ed</mods:roleTerm>
+      </mods:role>
+   </mods:name>
+   <mods:name xmlns:xs="http://www.w3.org/2001/XMLSchema" type="personal">
+      <mods:namePart>Guarino</mods:namePart>
+      <mods:namePart type="termsOfAddress">Veronese</mods:namePart>
+      <mods:namePart type="date">1374-1460</mods:namePart>
+      <mods:role>
+         <mods:roleTerm type="text">tr</mods:roleTerm>
+      </mods:role>
+   </mods:name>
+   <mods:name xmlns:xs="http://www.w3.org/2001/XMLSchema" type="personal">
+      <mods:namePart>Tifernas, Gregorio</mods:namePart>
+      <mods:namePart type="date">15th cent</mods:namePart>
+      <mods:role>
+         <mods:roleTerm type="text">tr</mods:roleTerm>
+      </mods:role>
+   </mods:name>
+   <mods:name xmlns:xs="http://www.w3.org/2001/XMLSchema" type="personal">
+      <mods:namePart>Bussi, Giovanni Andrea</mods:namePart>
+      <mods:namePart type="date">1417-1475</mods:namePart>
+   </mods:name>
+   <mods:typeOfResource xmlns:xs="http://www.w3.org/2001/XMLSchema">text</mods:typeOfResource>
+   <mods:originInfo xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <mods:place>
+         <mods:placeTerm type="code" authority="marccountry">it</mods:placeTerm>
+      </mods:place>
+      <mods:place>
+         <mods:placeTerm type="text">Venetiis</mods:placeTerm>
+      </mods:place>
+      <mods:dateIssued>1510]</mods:dateIssued>
+      <mods:dateIssued encoding="marc">1510</mods:dateIssued>
+      <mods:issuance>monographic</mods:issuance>
+      <mods:frequency/>
+   </mods:originInfo>
+   <mods:language>
+      <mods:languageTerm authority="iso639-2b" type="code">lat</mods:languageTerm>
+   </mods:language>
+   <mods:physicalDescription>
+      <mods:digitalOrigin>reformatted digital</mods:digitalOrigin>
+      <mods:form authority="marcform">print</mods:form>
+      <mods:extent>[16] p. l., CL numb. l. 30 cm.</mods:extent>
+   </mods:physicalDescription>
+   <mods:note xmlns:xs="http://www.w3.org/2001/XMLSchema" type="description">Colophon: Strabonis Amasini Scriptores illustris geographiæ opus finit. Venetiis a Philippo pincio Mantuano impressum. Anno Dn&#771;i. MCCCCCX. die XIII. iulii ...</mods:note>
+   <mods:note xmlns:xs="http://www.w3.org/2001/XMLSchema" type="description">Signatures: [1]-[2]³, a-f&#8310;, s-z&#8310;, &amp;&#8310; (signature [2]: 1st 4 leaves signed v-viii, last 4 leaves unsigned)</mods:note>
+   <mods:note xmlns:xs="http://www.w3.org/2001/XMLSchema" type="description">First 10 books translated by Guarinus Veronensis, the remainder by Gregorius Tifernas. Edited by Antonio Mancinelli.</mods:note>
+   <mods:note xmlns:xs="http://www.w3.org/2001/XMLSchema" type="description">"Ad Paulum sucundu&#772; Ponti. maximu&#772;: Ioannis Andreæ Alerienis Episcopi epistola: In qua ineuhitur in Georgiu&#772; Trabezontiu&#772;": leaf ii-iii.</mods:note>
+   <mods:subject xmlns:xs="http://www.w3.org/2001/XMLSchema" authority="lcsh">
+      <mods:name type="personal">
+         <mods:namePart type="termsOfAddress">of Trebizond</mods:namePart>
+         <mods:namePart>George</mods:namePart>
+         <mods:namePart type="date">1396-1486</mods:namePart>
+      </mods:name>
+      <mods:titleInfo>
+         <mods:title/>
+      </mods:titleInfo>
+   </mods:subject>
+   <mods:subject xmlns:xs="http://www.w3.org/2001/XMLSchema" authority="lcsh">
+      <mods:name type="personal">
+         <mods:namePart type="termsOfAddress">II, Pope</mods:namePart>
+         <mods:namePart>Paul</mods:namePart>
+         <mods:namePart type="date">1417-1471</mods:namePart>
+      </mods:name>
+      <mods:titleInfo>
+         <mods:title/>
+      </mods:titleInfo>
+   </mods:subject>
+   <mods:subject xmlns:xs="http://www.w3.org/2001/XMLSchema" authority="lcsh">
+      <mods:topic>Geography, Ancient</mods:topic>
+   </mods:subject>
+   <mods:classification authority="lcc">G87 .S88 1510</mods:classification>
+   <mods:location>
+      <mods:holdingSimple>
+         <mods:copyInformation>
+            <mods:subLocation>SPEC-COLL</mods:subLocation>
+            <mods:shelfLocator>MCGR-VAULT</mods:shelfLocator>
+            <mods:note type="call_number">A 1510 .S73</mods:note>
+            <mods:note type="call_number_sort">ALPHANUM</mods:note>
+            <mods:note type="barcode">X004981013</mods:note>
+         </mods:copyInformation>
+      </mods:holdingSimple>
+   </mods:location>
+   <mods:identifier type="local" displayLabel="Digitization Services Tracksys Unit ID">29661</mods:identifier>
+   <mods:identifier type="local" displayLabel="Digitization Services Tracksys Bibl ID">16379</mods:identifier>
+   <mods:identifier type="pid" displayLabel="UVA Library Fedora Repository PID">uva-lib:2278801</mods:identifier>
+   <mods:identifier type="uri" displayLabel="Accessible index record displayed in VIRGO">uva-lib:2278801</mods:identifier>
+   <mods:identifier type="lccn">48039461 //r</mods:identifier>
+   <mods:identifier type="oclc">11511211</mods:identifier>
+   <mods:recordInfo xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <mods:recordContentSource authority="marcorg">DLC</mods:recordContentSource>
+      <mods:recordCreationDate encoding="marc">841219</mods:recordCreationDate>
+      <mods:recordIdentifier source="SIRSI">u64553</mods:recordIdentifier>
+      <mods:recordOrigin>Converted from MARCXML to MODS version 3.4 using MARC21slim2MODS3-4.xsl (Revision 1.70). UVA (Revision 1.711) 20140122</mods:recordOrigin>
+   </mods:recordInfo>
+</mods:mods>
