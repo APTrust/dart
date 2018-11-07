@@ -37,15 +37,15 @@ var expectedStats = {
         "mode":493,
         "uid":502,
         "gid":20,
-        "mtimeMs":"2014-12-12T20:54:13.000Z",
+        "mtimeMs":"2018-11-07T21:02:25.000Z",
         "type":"directory"
     },
     "example.edu.sample_good/aptrust-info.txt":{
-        "size":49,
+        "size":74,
         "mode":420,
         "uid":502,
         "gid":20,
-        "mtimeMs":"2014-12-12T20:51:53.000Z",
+        "mtimeMs":"2018-11-07T21:02:21.000Z",
         "type":"file"
     },
     "example.edu.sample_good/bag-info.txt":{
@@ -122,12 +122,12 @@ test('TarReader.read() returns correct stats', done => {
     tarReader.on('entry', function(entry) {
         var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
-        expect(expected.size).toEqual(entry.fileStat.size);
-        expect(expected.mode).toEqual(entry.fileStat.mode);
-        expect(expected.uid).toEqual(entry.fileStat.uid);
-        expect(expected.gid).toEqual(entry.fileStat.gid);
-        expect(expected.mtimeMs).toEqual(entry.fileStat.mtimeMs.toISOString());
-        expect(expected.type).toEqual(entry.fileStat.type);
+        expect(entry.fileStat.size).toEqual(expected.size);
+        expect(entry.fileStat.mode).toEqual(expected.mode);
+        expect(entry.fileStat.uid).toEqual(expected.uid);
+        expect(entry.fileStat.gid).toEqual(expected.gid);
+        expect(entry.fileStat.mtimeMs.toISOString()).toEqual(expected.mtimeMs);
+        expect(entry.fileStat.type).toEqual(expected.type);
         entry.stream.pipe(new PassThrough());
     });
 
@@ -150,12 +150,12 @@ test('TarReader.list() returns correct stats', done => {
     tarReader.on('entry', function(entry) {
         var expected = expectedStats[entry.relPath];
         expect(expected).not.toBeNull();
-        expect(expected.size).toEqual(entry.fileStat.size);
-        expect(expected.mode).toEqual(entry.fileStat.mode);
-        expect(expected.uid).toEqual(entry.fileStat.uid);
-        expect(expected.gid).toEqual(entry.fileStat.gid);
-        expect(expected.mtimeMs).toEqual(entry.fileStat.mtimeMs.toISOString());
-        expect(expected.type).toEqual(entry.fileStat.type);
+        expect(entry.fileStat.size).toEqual(expected.size);
+        expect(entry.fileStat.mode).toEqual(expected.mode);
+        expect(entry.fileStat.uid).toEqual(expected.uid);
+        expect(entry.fileStat.gid).toEqual(expected.gid);
+        expect(entry.fileStat.mtimeMs.toISOString()).toEqual(expected.mtimeMs);
+        expect(entry.fileStat.type).toEqual(expected.type);
     });
 
     // Let jest know when we're done.
