@@ -75,5 +75,9 @@ test('file type methods return correct items', done => {
 });
 
 test('_cleanEntryRelPath()', () => {
-    // TODO: Write me.
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "example.edu.tagsample_good.tar");
+    let relPayloadPath = "example.edu.tagsample_good/data/sample.txt";
+    let relManifestPath = "example.edu.tagsample_good/manifest-sha256.txt";
+    expect(validator._cleanEntryRelPath(relPayloadPath)).toEqual("data/sample.txt");
+    expect(validator._cleanEntryRelPath(relManifestPath)).toEqual("manifest-sha256.txt");
 });
