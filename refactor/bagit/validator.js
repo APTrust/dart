@@ -262,9 +262,9 @@ class Validator extends EventEmitter {
             absPath = path.join(this.pathToBag, relPath);
         }
         var bagItFile = new BagItFile(absPath, relPath, entry.fileStat);
-        this.files[entry.relPath] = bagItFile;
+        this.files[relPath] = bagItFile;
         var fileType = BagItFile.getFileType(relPath);
-        Context.logger.info(`Validator added ${entry.relPath} as ${fileType}`);
+        Context.logger.info(`Validator added ${relPath} as ${fileType}`);
         return bagItFile;
     }
 
@@ -446,9 +446,13 @@ class Validator extends EventEmitter {
      */
     _validateRequiredManifests(manifestType) {
         Context.logger.info(`Validator: Validating ${manifestType}s`);
-        for (var alg of this.profile.manifestsRequired) {
+        var manifestList = this.profile.manifestsRequired;
+        if (manifestType === Constants.TAG_MANIFEST) {
+            manifestList = this.profile.tagManifestsRequired;
+        }
+        for (var alg of manifestList) {
             var name = `${manifestType}-${alg}.txt`
-            if(!this.files[name]) {
+            if(this.files[name] === undefined) {
                 this.errors.push(`Bag is missing required manifest ${name}`);
             }
         }
@@ -480,7 +484,7 @@ class Validator extends EventEmitter {
             var algorithm = basename.split('-')[1];
             for (var filename of manifest.keyValueCollection.keys()) {
                 var bagItFile = this.files[filename];
-                if (!bagItFile) {
+                if (bagItFile === undefined) {
                     this.errors.push(`File ${filename} in ${manifest.relDestPath} is missing from payload.`);
                     continue;
                 }
@@ -530,7 +534,7 @@ class Validator extends EventEmitter {
         for (var filename of Object.keys(requiredTags)) {
             Context.logger.info(`Validator: Validating tags in ${filename}`);
             var tagFile = this.files[filename];
-            if (!tagFile) {
+            if (tagFile === undefined) {
                 this.errors.push(`Required tag file ${filename} is missing`);
                 continue;
             }
