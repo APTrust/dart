@@ -490,13 +490,27 @@ class Validator extends EventEmitter {
             for (var filename of manifest.keyValueCollection.keys()) {
                 var bagItFile = this.files[filename];
                 if (bagItFile === undefined) {
-                    this.errors.push(`File ${filename} in ${manifest.relDestPath} is missing from payload.`);
+                    this.errors.push(`File '${filename}' in ${manifest.relDestPath} is missing from bag.`);
                     continue;
                 }
                 var checksumInManifest = manifest.keyValueCollection.first(filename);
                 var calculatedChecksum = bagItFile.checksums[algorithm];
+                // -----------------------------------------------------------
+                // DEBUG
+                // -----------------------------------------------------------
+                //
+                // This is a problem. APTrust bags MAY have more than the required
+                // manifests. If we find a sha256 manifest, we should try to
+                // validate the checksums in it.
+                // if (calculatedChecksum === undefined) {
+                //     console.log(filename);
+                //     console.log(bagItFile);
+                // }
+                // -----------------------------------------------------------
+                // END DEBUG
+                // -----------------------------------------------------------
                 if (checksumInManifest != calculatedChecksum) {
-                    this.errors.push(`Checksum for '${filename}': expected ${checksumInManifest}, got ${calculatedChecksum}`);
+                    this.errors.push(`Bad ${algorithm} digest for '${filename}': manifest says ${checksumInManifest}, file digest is '${calculatedChecksum}'.`);
                 }
             }
         }
@@ -561,9 +575,13 @@ class Validator extends EventEmitter {
                     if (value == '' && tagDef.emptyOk) {
                         continue;
                     }
+                    if (value == '' && !tagDef.emptyOk) {
+                        this.errors.push(`Value for tag '${tagDef.tagName}' in ${filename} is missing.`);
+                        continue;
+                    }
                     if (Array.isArray(tagDef.values) && tagDef.values.length > 0) {
                         if (!Util.listContains(tagDef.values, value)) {
-                            this.errors.push(`Tag ${tagDef.tagName} in ${filename} contains illegal value ${value}. [Allowed: ${tagDef.values.join(', ')}]`);
+                            this.errors.push(`Tag '${tagDef.tagName}' in ${filename} contains illegal value '${value}'. [Allowed: ${tagDef.values.join(', ')}]`);
                         }
                     }
                 }
