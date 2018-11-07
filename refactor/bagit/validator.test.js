@@ -1,6 +1,5 @@
 const { BagItProfile } = require('./bagit_profile');
 const path = require('path');
-const tmp = require('tmp');
 const { Validator } = require('./validator');
 
 // We expect the validator to find the following errors when testing
