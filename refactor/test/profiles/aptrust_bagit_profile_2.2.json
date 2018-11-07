@@ -30,7 +30,7 @@
             "required": true,
             "emptyOk": false,
             "values": [
-                "0.97"
+                "0.97", "1.0"
             ],
             "defaultValue": "0.97",
             "userValue": "",
