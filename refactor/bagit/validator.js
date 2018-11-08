@@ -399,8 +399,9 @@ class Validator extends EventEmitter {
         // more efficient than doing a seperate read for each, especially
         // in bags that use multiple digest algorithms.
         for (var p of pipes) {
-            stream.pipe(p);
+           stream.pipe(p);
         }
+
         Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
 
@@ -421,20 +422,20 @@ class Validator extends EventEmitter {
      *
      */
     _getCryptoHashes(bagItFile) {
-        var hashes = [];
-        // A little Rubyism.
+        let hashes = [];
         // Put together all of the algorithms we'll need for checksums,
         // filtering out empty strings and duplicates.
-        var m = this.profile.manifestsRequired;
-        var t = this.profile.tagManifestsRequired;
-        var f = this.manifestAlgorithmsFoundInBag;
-        var algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
-        for (var algorithm of algorithms) {
-            var hash = crypto.createHash(algorithm);
+        let m = this.profile.manifestsRequired;
+        let t = this.profile.tagManifestsRequired;
+        let f = this.manifestAlgorithmsFoundInBag;
+        let algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
+        for (let algorithm of algorithms) {
+            let thisAlg = algorithm;
+            let hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {
                 hash.end();
-                bagItFile.checksums[algorithm] = hash.read();
+                bagItFile.checksums[thisAlg] = hash.read();
             });
             hashes.push(hash);
         }
@@ -567,22 +568,8 @@ class Validator extends EventEmitter {
                 }
                 var checksumInManifest = manifest.keyValueCollection.first(filename);
                 var calculatedChecksum = bagItFile.checksums[algorithm];
-                // -----------------------------------------------------------
-                // DEBUG
-                // -----------------------------------------------------------
-                //
-                // This is a problem. APTrust bags MAY have more than the required
-                // manifests. If we find a sha256 manifest, we should try to
-                // validate the checksums in it.
-                // if (calculatedChecksum === undefined) {
-                //     console.log(filename);
-                //     console.log(bagItFile);
-                // }
-                // -----------------------------------------------------------
-                // END DEBUG
-                // -----------------------------------------------------------
                 if (checksumInManifest != calculatedChecksum) {
-                    this.errors.push(`Bad ${algorithm} digest for '${filename}': manifest says ${checksumInManifest}, file digest is '${calculatedChecksum}'.`);
+                    this.errors.push(`Bad ${algorithm} digest for '${filename}': manifest says '${checksumInManifest}', file digest is '${calculatedChecksum}'.`);
                 }
             }
         }
@@ -601,7 +588,6 @@ class Validator extends EventEmitter {
         Context.logger.info(`Validator: Looking for extraneous payload files in ${this.pathToBag}`);
         for(var manifest of this.payloadManifests()) {
             for (var f of this.payloadFiles()) {
-                //console.log("Payload file " + f.relDestPath)
                 if (!manifest.keyValueCollection.first(f.relDestPath)) {
                     this.errors.push(`Payload file ${f.relDestPath} not found in ${manifest.relDestPath}`);
                 }
