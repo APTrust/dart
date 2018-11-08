@@ -66,7 +66,22 @@ const Constants =  {
        *
        * @type {string[]}
        */
-    YES_NO: ["Yes", "No"]
+    YES_NO: ["Yes", "No"],
+    /**
+       * This regular expression matches the name of payload
+       * manifest files, and includes a capture to extract the
+       * checksum algorithm.
+       *
+       * @type {RegExp}
+       */
+    RE_MANIFEST: new RegExp('^manifest-(\\w+)\\.txt$'),
+    /**
+       * This list of valid options for yes/no questions is used
+       * primarily in the UI.
+       *
+       * @type {RegExp}
+       */
+    RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$/')
 };
 
 Object.freeze(Constants);

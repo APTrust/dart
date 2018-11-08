@@ -90,16 +90,23 @@ class Validator extends EventEmitter {
          */
         this.topLevelFiles = [];
         /**
-         * reader will be an object capable of reading the either the tarred
-         * bag (a {@link TarIterator}) or an untarred bag
-         * {@link FileSystemIterator}. Classes for reading various formats
-         * must implement the same read() interface and emit the same events
-         * as either {@link TarIterator} or {@link FileSystemIterator}, both
-         * of which are in the packaging directory of the DART project.
+         * This is a list of manifest algorithms found during an initial
+         * scan of the bag. While some BagItProfiles specify that a manifest
+         * with algorithm X must be present, the profile does preclude other
+         * manifests with different algorithms also being present. It's
+         * common among APTrust bags, for example, to find both md5 and sha256
+         * manifests. The validator does an initial scan of the bag to find
+         * extra manifests so it knows which checksums to run on payload and
+         * tag files.
          *
-         * @type {object}
+         * If an initial scan reveals manifest-md5.txt and manifest-sha256.txt,
+         * the manifestAlgorithmsFoundInBag will contain ["md5", "sha256"].
+         *
+         * See also {@link _scanBag}.
+         *
+         * @type {Array<string>}
          */
-        this.reader = null;
+        this.manifestAlgorithmsFoundInBag = [];
         /**
          * errors is a list of error messages describing problems encountered
          * while trying to validate the bag or specific violations of the
@@ -179,25 +186,84 @@ class Validator extends EventEmitter {
             this.emit('end');
             return;
         }
+        // Scan the bag for manifests. When that completes, it will
+        // call _readBag() to read the contents.
+        this._scanBag();
+    }
+
+    /**
+     * This method does an initial scan of the bag to see what manifests
+     * are present. While some BagItProfiles specify that a manifest
+     * with algorithm X must be present, the profile does preclude other
+     * manifests with different algorithms also being present. It's
+     * common among APTrust bags, for example, to find both md5 and sha256
+     * manifests. The validator does an initial scan of the bag to find
+     * extra manifests so it knows which checksums to run on payload and
+     * tag files.
+     *
+     * If an initial scan reveals manifest-md5.txt and manifest-sha256.txt,
+     * the manifestAlgorithmsFoundInBag will contain ["md5", "sha256"].
+     *
+     * The most common reason for finding multiple manifests in a bag
+     * comes from institutions that internally require one checksumming
+     * algorithm, and who have to produce bags whose spec requires a
+     * different algorithm.
+     *
+     * The validator will later validate ALL checksums, even those found
+     * in manifests that are not part of the {@link BagItProfile}.
+     *
+     */
+    _scanBag() {
+        var validator = this;
+        var reader = null;
         if (this.readingFromTar()) {
-            this.reader = new TarReader(this.pathToBag);
+            reader = new TarReader(this.pathToBag);
         } else {
-            this.reader = new FileSystemReader(this.pathToBag);
+            reader = new FileSystemReader(this.pathToBag);
         }
+        reader.on('error', function(err) { validator.emit('error', err) });
+        reader.on('entry', function (entry) {
+            var relPath = validator._cleanEntryRelPath(entry.relPath);
+            if (relPath.match(Constants.RE_MANIFEST) || relPath.match(Constants.RE_TAG_MANIFEST)) {
+                var algorithm = relPath.split('-')[1].split('.')[0];
+                if (!validator.manifestAlgorithmsFoundInBag.includes(algorithm)) {
+                    validator.manifestAlgorithmsFoundInBag.push(algorithm);
+                }
+            }
+        });
+        reader.on('finish', function() { validator._readBag() });
+
+        // List the contents of the bag.
+        reader.list();
+    }
+
+    /**
+     * This method reads the contents of the bag. The actual work is done
+     * in the callbacks. When reading is complete, this calls
+     * _validateFormatAndContents()
+     *
+     */
+    _readBag() {
         // Attach listeners to our reader.
         var validator = this;
-        this.reader.on('entry', function (entry) { validator._readEntry(entry) });
-        this.reader.on('error', function(err) { validator.emit('error', err) });
+        var reader = null;
+        if (this.readingFromTar()) {
+            reader = new TarReader(this.pathToBag);
+        } else {
+            reader = new FileSystemReader(this.pathToBag);
+        }
+        reader.on('entry', function (entry) { validator._readEntry(entry) });
+        reader.on('error', function(err) { validator.emit('error', err) });
 
         // Once reading is done, validate all the info we've gathered.
-        this.reader.on('finish', function() {
+        reader.on('finish', function() {
             // Is this really what we want to emit here?
             validator.emit('task', new TaskDescription(validator.pathToBag, 'read'))
             validator._validateFormatAndContents();
         });
 
         // Read the contents of the bag.
-        this.reader.read();
+        reader.read();
     }
 
     /**
@@ -335,7 +401,6 @@ class Validator extends EventEmitter {
         for (var p of pipes) {
             stream.pipe(p);
         }
-
         Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
 
@@ -357,7 +422,14 @@ class Validator extends EventEmitter {
      */
     _getCryptoHashes(bagItFile) {
         var hashes = [];
-        for (var algorithm of this.profile.manifestsRequired) {
+        // A little Rubyism.
+        // Put together all of the algorithms we'll need for checksums,
+        // filtering out empty strings and duplicates.
+        var m = this.profile.manifestsRequired;
+        var t = this.profile.tagManifestsRequired;
+        var f = this.manifestAlgorithmsFoundInBag;
+        var algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
+        for (var algorithm of algorithms) {
             var hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {

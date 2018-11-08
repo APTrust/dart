@@ -14,6 +14,7 @@ var err_6 = "Bad md5 digest for 'custom_tags/tracked_tag_file.txt': manifest say
 var err_7 = "Bad sha256 digest for 'custom_tags/tracked_tag_file.txt': manifest says '0000000000000000000000000000000000000000000000000000000000000000', file digest is '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'.";
 var err_8 = "Tag 'Storage-Option' has illegal value 'cardboard-box'.";
 
+//process.on('warning', e => console.warn(e.stack));
 
 test('Constructor sets initial properties', () => {
     let profile = new BagItProfile();
@@ -34,7 +35,6 @@ test('Constructor sets initial properties', () => {
     expect(validator.topLevelDirs.length).toEqual(0);
     expect(validator.topLevelFiles).not.toBeNull();
     expect(validator.topLevelFiles.length).toEqual(0);
-    expect(validator.reader).toBeNull();
     expect(validator.errors).not.toBeNull();
     expect(validator.errors.length).toEqual(0);
     expect(validator.readingFromTar()).toEqual(true);
