@@ -59,6 +59,17 @@ class Validator extends EventEmitter {
          */
         this.bagName = path.basename(pathToBag, '.tar');
         /**
+         * bagRoot is the name of the top-level folder to which a tarred
+         * bag untars. The folder name should match the bag name.
+         *
+         * E.g. "bag123.tar" should untar to bagRoot "bag123"
+         *
+         * For non-tarred bags, this property will be null.
+         *
+         * @type {string}
+         */
+        this.bagRoot = null;
+        /**
          * files is a hash of BagItFiles, where the file's path
          * within the bag (relPath) is the key, and the BagItFile
          * object is the value. The hash makes it easy to get files
@@ -277,6 +288,7 @@ class Validator extends EventEmitter {
      *
      */
     _validateFormatAndContents() {
+        this._validateUntarDirectory();
         this._validateTopLevelDirs();
         this._validateTopLevelFiles();
         this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
@@ -302,8 +314,16 @@ class Validator extends EventEmitter {
         if (entry.fileStat.isFile()) {
             var bagItFile = this._addBagItFile(entry);
             this._readFile(bagItFile, entry.stream);
+        } else if (entry.fileStat.isDirectory()) {
+            var relPath = this._cleanEntryRelPath(entry.relPath);
+            if (relPath == '') {
+                this.bagRoot = entry.relPath.replace('/', '');
+            } else {
+                this.topLevelDirs.push(relPath);
+            }
+            entry.stream.pipe(new stream.PassThrough());
         } else {
-            // Skip directories, symlinks, etc.
+            // Skip symlinks, block devices, etc.
             entry.stream.pipe(new stream.PassThrough());
             Context.logger.info(`Validator: ${entry.relPath} as is not a regular file`);
         }
@@ -418,6 +438,9 @@ class Validator extends EventEmitter {
      * @param {BagItFile} bagItFile - A file inside the directory or tarball.
      * This is the file whose checksums will be computed.
      *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
      * @returns {Array<crypto.Hash>}
      *
      */
@@ -440,6 +463,27 @@ class Validator extends EventEmitter {
             hashes.push(hash);
         }
         return hashes;
+    }
+
+    /**
+     * _validateUntarDirectory is for tarred bags only. It checks to see
+     * whether the tar file extracts to a directory whose name matches
+     * the bag name, minus the ".tar" extension. If it doesn't untar there,
+     * this method adds an error to the validation results.
+     *
+     * E.g. "myBag.tar" should untar to a directory called "myBag"
+     *
+     * This method is considered private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
+    _validateUntarDirectory() {
+        if (this.readingFromTar()) {
+            var tarFileName = path.basename(this.pathToBag, '.tar');
+            if (this.bagRoot != tarFileName) {
+                this.errors.push(`Bag should untar to directory '${tarFileName}', not '${this.bagRoot}'`);
+            }
+        }
     }
 
 
