@@ -288,8 +288,20 @@ class Validator extends EventEmitter {
      *
      */
     _validateFormatAndContents() {
+        // ------------------------------------------
+        // TODO: Validate BagItProfile
+        // TODO: Validate bag serialization
+        // TODO: Validate Payload-Oxum
+        // ------------------------------------------
+        if (!this._validateProfile()) {
+            this.emit('end')
+            return;
+        }
         var okToProceed = this._validateUntarDirectory();
         if (okToProceed) {
+            // ------------------------------------------
+            // TODO: Validate fetch.txt
+            // ------------------------------------------
             this._validateTopLevelDirs();
             this._validateTopLevelFiles();
             this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
@@ -300,6 +312,31 @@ class Validator extends EventEmitter {
             this._validateTags();
         }
         this.emit('end')
+    }
+
+    /**
+     * _validateProfile validates the BagItProfile that will be used to
+     * validate the bag. If the profile itself is not valid, we can't proceed.
+     *
+     * Errors in the BagItProfile will be copied into the validator.errors
+     * list.
+     *
+     * @returns {boolean} entry - True if profile is valid, false if not.
+     *
+     */
+    _validateProfile() {
+        if (this.profile == null) {
+            this.errors.push("Cannot validate bag because BagItProfile is missing.");
+            return false;
+        }
+        var result = this.profile.validate();
+        if (!result.isValid()) {
+            for (let err of Object.values(result.errors)) {
+                this.errors.push(`BagItProfile: ${err}`);
+            }
+            return false;
+        }
+        return true;
     }
 
     /**

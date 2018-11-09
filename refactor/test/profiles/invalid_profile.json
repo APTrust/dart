@@ -1,0 +1,25 @@
+{
+    "id": "449e8e40-a7ea-475e-92d5-841c8518ded6",
+    "name": "Invalid Profile",
+    "description": "This profile is not valid. It's used to test the profile validator.",
+    "acceptBagItVersion": [],
+    "acceptSerialization": [],
+    "allowFetchTxt": false,
+    "allowMiscTopLevelFiles": false,
+    "allowMiscDirectories": false,
+    "tarDirMustMatchName": false,
+    "bagItProfileInfo": {
+        "bagItProfileIdentifier": "https://example.com/invalid_profile.json",
+        "contactEmail": "support@example.com",
+        "contactName": "Duke Nukem",
+        "externalDescription": "Invalid profile for testing",
+        "sourceOrganization": "example.com",
+        "version": "0.0"
+    },
+    "manifestsRequired": [],
+    "tags": [],
+    "serialization": "capn-crunch",
+    "tagManifestsRequired": [],
+    "baseProfileId": "",
+    "isBuiltIn": false
+}

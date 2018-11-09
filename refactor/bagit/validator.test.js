@@ -53,6 +53,26 @@ test('_cleanEntryRelPath()', () => {
     expect(validator._cleanEntryRelPath(relManifestPath)).toEqual("manifest-sha256.txt");
 });
 
+test('_validateProfile()', () => {
+    var validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    expect(validator._validateProfile()).toEqual(true);
+    expect(validator.errors).toEqual([]);
+
+    let expected = ["BagItProfile: Profile must accept at least one BagIt version.",
+                    "BagItProfile: Profile must require at least one manifest.",
+                    "BagItProfile: Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.",
+                    "BagItProfile: Serialization must be one of: required, optional, forbidden."];
+    let validator2 = getValidator("invalid_profile.json", "aptrust", "example.edu.tagsample_good.tar");
+    expect(validator2._validateProfile()).toEqual(false);
+    expect(validator2.errors).toEqual(expected);
+});
+
+
+// ------------------------------------------
+// TODO: Test invalid bag file format.
+// TODO: Test invalid BagItProfile.
+// ------------------------------------------
+
 
 // --------- FROM HERE DOWN, TEST ACTUAL BAGS ----------- //
 
@@ -75,7 +95,7 @@ test('Validator does not throw if bag does not exist', done => {
     expect(function() { validator.validate() }).not.toThrow();
 });
 
-// User TarReader
+// Uses TarReader
 test('Validator accepts valid tarred APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good.tar");
     let taskCount = 0;
