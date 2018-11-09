@@ -288,15 +288,17 @@ class Validator extends EventEmitter {
      *
      */
     _validateFormatAndContents() {
-        this._validateUntarDirectory();
-        this._validateTopLevelDirs();
-        this._validateTopLevelFiles();
-        this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
-        this._validateRequiredManifests(Constants.TAG_MANIFEST);
-        this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
-        this._validateManifestEntries(Constants.TAG_MANIFEST);
-        this._validateNoExtraneousPayloadFiles();
-        this._validateTags();
+        var okToProceed = this._validateUntarDirectory();
+        if (okToProceed) {
+            this._validateTopLevelDirs();
+            this._validateTopLevelFiles();
+            this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
+            this._validateRequiredManifests(Constants.TAG_MANIFEST);
+            this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
+            this._validateManifestEntries(Constants.TAG_MANIFEST);
+            this._validateNoExtraneousPayloadFiles();
+            this._validateTags();
+        }
         this.emit('end')
     }
 
@@ -316,8 +318,10 @@ class Validator extends EventEmitter {
             this._readFile(bagItFile, entry.stream);
         } else if (entry.fileStat.isDirectory()) {
             var relPath = this._cleanEntryRelPath(entry.relPath);
-            if (relPath == '') {
-                this.bagRoot = entry.relPath.replace('/', '');
+            if (this.bagRoot == null && relPath == '') {
+                this.bagRoot = entry.relPath.replace(/\/$/, ''); // right relpath for untarring
+            } else if (this.bagRoot == null && relPath == entry.relPath.replace(/\/$/, '')) {
+                this.bagRoot = relPath; // wrong relpath for untarring
             } else {
                 this.topLevelDirs.push(relPath);
             }
@@ -484,14 +488,21 @@ class Validator extends EventEmitter {
      * This method is considered private, and it internal operations are
      * subject to change without notice.
      *
+     * @returns {boolean} - If true, it's ok to proceed with the rest
+     * of the validation. If false, validation stops, because no files
+     * will be in their expected places.
+     *
      */
     _validateUntarDirectory() {
-        if (this.readingFromTar() && this.tarDirMustMatchName) {
+        var okToProceed = true;
+        if (this.readingFromTar() && this.profile.tarDirMustMatchName) {
             var tarFileName = path.basename(this.pathToBag, '.tar');
             if (this.bagRoot != tarFileName) {
                 this.errors.push(`Bag should untar to directory '${tarFileName}', not '${this.bagRoot}'`);
+                okToProceed = false;
             }
         }
+        return okToProceed;
     }
 
 

@@ -16,7 +16,7 @@
         "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
         "contactEmail": "support@aptrust.org",
         "contactName": "A. Diamond",
-        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated July 9, 2018 to include Storage-Option and Bag-Group-Identifier.",
+        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
         "sourceOrganization": "aptrust.org",
         "version": "2.2"
     },

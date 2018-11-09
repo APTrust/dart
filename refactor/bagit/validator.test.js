@@ -2,19 +2,6 @@ const { BagItProfile } = require('./bagit_profile');
 const path = require('path');
 const { Validator } = require('./validator');
 
-// We expect the validator to find the following errors when testing
-// some of our invalid bags.
-var err_0 = "File 'data/file-not-in-bag' in manifest-sha256.txt is missing from bag.";
-var err_1 = "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-md5.txt is missing from bag.";
-var err_2 = "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-sha256.txt is missing from bag.";
-var err_3 = "Value for tag 'Title' in aptrust-info.txt is missing.";
-var err_4 = "Tag 'Access' in aptrust-info.txt contains illegal value 'acksess'. [Allowed: Consortia, Institution, Restricted]";
-var err_5 = "Bad sha256 digest for 'data/datastream-descMetadata': manifest says 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!', file digest is 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'.";
-var err_6 = "Bad md5 digest for 'custom_tags/tracked_tag_file.txt': manifest says '00000000000000000000000000000000', file digest is 'dafbffffc3ed28ef18363394935a2651'.";
-var err_7 = "Bad sha256 digest for 'custom_tags/tracked_tag_file.txt': manifest says '0000000000000000000000000000000000000000000000000000000000000000', file digest is '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'.";
-var err_8 = "Tag 'Storage-Option' in aptrust-info.txt contains illegal value 'Cardboard-Box'. [Allowed: Standard, Glacier-OH, Glacier-OR, Glacier-VA]";
-
-
 test('Constructor sets initial properties', () => {
     let profile = new BagItProfile();
     let validator = new Validator("/path/to/bag.tar", profile);
@@ -149,37 +136,119 @@ test('Validator accepts valid DPN bag', done => {
 
 test('Validator identifies errors in bad APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_bad.tar");
+    let expected = [
+        "Bad sha256 digest for 'data/datastream-descMetadata': manifest says 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!', file digest is 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'.",
+        "File 'data/file-not-in-bag' in manifest-sha256.txt is missing from bag.",
+        "Bad md5 digest for 'custom_tags/tracked_tag_file.txt': manifest says '00000000000000000000000000000000', file digest is 'dafbffffc3ed28ef18363394935a2651'.",
+        "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-md5.txt is missing from bag.",
+        "Bad sha256 digest for 'custom_tags/tracked_tag_file.txt': manifest says '0000000000000000000000000000000000000000000000000000000000000000', file digest is '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'.",
+        "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-sha256.txt is missing from bag.",
+        "Value for tag 'Title' in aptrust-info.txt is missing.",
+        "Tag 'Access' in aptrust-info.txt contains illegal value 'acksess'. [Allowed: Consortia, Institution, Restricted]",
+        "Tag 'Storage-Option' in aptrust-info.txt contains illegal value 'Cardboard-Box'. [Allowed: Standard, Glacier-OH, Glacier-OR, Glacier-VA]"
+    ];
     validator.on('error', function(err) {
         // Force failure & stop test.
         expect(err).toBeNull();
         done();
     });
     validator.on('end', function(taskDesc) {
-        expect(validator.errors.length).toEqual(9);
-        expect(validator.errors).toContain(err_1);
-        expect(validator.errors).toContain(err_2);
-        expect(validator.errors).toContain(err_3);
-        expect(validator.errors).toContain(err_4);
-        expect(validator.errors).toContain(err_5);
-        expect(validator.errors).toContain(err_6);
-        expect(validator.errors).toContain(err_7);
-        expect(validator.errors).toContain(err_8);
+        expect(validator.errors).toEqual(expected);
         done();
     });
 
     validator.validate();
 });
 
-test('Validator identifies bad file names', done => {
-    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_bad_file_names.tar");
+test('Validator identifies missing payload file', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_missing_data_file.tar");
+    let expected = ["File 'data/datastream-DC' in manifest-md5.txt is missing from bag.",
+                    "Required tag Access is missing from aptrust-info.txt",
+                    "Required tag Storage-Option is missing from aptrust-info.txt"];
+
     validator.on('error', function(err) {
         // Force failure & stop test.
         expect(err).toBeNull();
         done();
     });
     validator.on('end', function(taskDesc) {
-        console.log(validator.errors);
-        //expect(validator.errors).toContain(err_8);
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator identifies missing tag file', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_no_bag_info.tar");
+    let expected = ["Required tag file bag-info.txt is missing",
+                    "Required tag Access is missing from aptrust-info.txt",
+                    "Required tag Storage-Option is missing from aptrust-info.txt"];
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator identifies missing data dir', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_no_data_dir.tar");
+    let expected = [
+        "File 'data/datastream-DC' in manifest-md5.txt is missing from bag.",
+        "File 'data/datastream-descMetadata' in manifest-md5.txt is missing from bag.",
+        "File 'data/datastream-MARC' in manifest-md5.txt is missing from bag.",
+        "File 'data/datastream-RELS-EXT' in manifest-md5.txt is missing from bag.",
+        "Required tag Storage-Option is missing from aptrust-info.txt"];
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator identifies missing manifest', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_no_md5_manifest.tar");
+    let expected = ["Bag is missing required manifest manifest-md5.txt",
+                    "Required tag Storage-Option is missing from aptrust-info.txt"];
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator identifies wrong folder name', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_wrong_folder_name.tar");
+    let expected = ["Bag should untar to directory 'example.edu.sample_wrong_folder_name', not 'wrong_folder_name'"];
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
         done();
     });
 

@@ -6,7 +6,7 @@ const { FileSystemReader } = require('./file_system_reader');
 // These tests run against the test directory, so as the number
 // of test fixtures, bags and profiles changes, this number will
 // have to change too.
-const FILES_IN_TEST_DIR = 39;
+const FILES_IN_TEST_DIR = 29;
 const DIRS_IN_TEST_DIR = 7;
 
 test('FileSystemReader.read() emits expected events', done => {
