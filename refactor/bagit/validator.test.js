@@ -68,12 +68,6 @@ test('_validateProfile()', () => {
 });
 
 
-// ------------------------------------------
-// TODO: Test invalid bag file format.
-// TODO: Test invalid BagItProfile.
-// ------------------------------------------
-
-
 // --------- FROM HERE DOWN, TEST ACTUAL BAGS ----------- //
 
 function getValidator(profileName, bagDir, bagName) {
@@ -96,7 +90,7 @@ test('Validator does not throw if bag does not exist', done => {
 });
 
 // Uses TarReader
-test('Validator accepts valid tarred APTrust bag', done => {
+test('Validator emits expected events for tarred APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good.tar");
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
@@ -131,8 +125,15 @@ test('Validator accepts valid APTrust bag with additional tags', done => {
 });
 
 // This test uses the FileSystemReader instead of the TarReader.
-test('Validator accepts valid untarred APTrust bag', done => {
+test('Validator emits expected events for untarred APTrust bag', done => {
+
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+
+    // APTrust profile requires tarred bags.
+    // Tell the validator to ignore the bag forma
+    // and focus instead on the contents.
+    validator.disableSerializationCheck = true;
+
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
         taskCount++;
@@ -302,6 +303,42 @@ test('Validator identifies wrong folder name', done => {
     });
     validator.on('end', function(taskDesc) {
         expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator rejects unserialized bag if profile says it must be serialized', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    let expected = ["Profile says bag must be serialized, but it is a directory."];
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator ignores serialization rules when disableSerializationCheck is true', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    validator.disableSerializationCheck = true;
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+
+    validator.on('end', function(taskDesc) {
+        //console.log(validator.files);
+        expect(validator.errors).toEqual([]);
         done();
     });
 

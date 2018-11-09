@@ -126,7 +126,19 @@ class Validator extends EventEmitter {
          * @type {Array<string>}
          */
         this.errors = [];
-
+        /**
+         * When set to true, this flag tells the validator not to validate
+         * the bag serialization format. You'll want to disable this in cases
+         * where you're trying to validate an unserialized (i.e. not tarred
+         * or zipped or otherwise packaged) bag from a directory against a
+         * profile that says the bag must be tarreed, zipped, etc. Because
+         * sometimes you build a bag and you want to validate it before you
+         * zip it or after you untar it.
+         *
+         * @type {boolean}
+         * @default false
+         */
+        this.disableSerializationCheck = false;
         // -----------------------------------------------------------------
         // TODO: Attach log listeners for this object's events,
         // so debug logger can print info about what's happening.
@@ -195,6 +207,14 @@ class Validator extends EventEmitter {
         if (!fs.existsSync(this.pathToBag)) {
             this.errors.push(`File does not exist at ${this.pathToBag}`);
             this.emit('end');
+            return;
+        }
+        if (!this._validateProfile()) {
+            this.emit('end')
+            return;
+        }
+        if (!this._validateSerialization()) {
+            this.emit('end')
             return;
         }
         // Scan the bag for manifests. When that completes, it will
@@ -289,13 +309,8 @@ class Validator extends EventEmitter {
      */
     _validateFormatAndContents() {
         // ------------------------------------------
-        // TODO: Validate bag serialization
         // TODO: Validate Payload-Oxum
         // ------------------------------------------
-        if (!this._validateProfile()) {
-            this.emit('end')
-            return;
-        }
         var okToProceed = this._validateUntarDirectory();
         if (okToProceed) {
             // ------------------------------------------
@@ -331,9 +346,9 @@ class Validator extends EventEmitter {
      */
     _validateSerialization() {
         var validFormat = true;
-        var checkSerializationFormat = true;
         if (!this.disableSerializationCheck) {
-            var bagIsDirectory = fs.statSync(this.bagPath).isDirectory();
+            var checkSerializationFormat = true;
+            var bagIsDirectory = fs.statSync(this.pathToBag).isDirectory();
             if (this.profile.serialization == 'required') {
                 if (bagIsDirectory) {
                     this.errors.push("Profile says bag must be serialized, but it is a directory.");
@@ -348,11 +363,13 @@ class Validator extends EventEmitter {
             }
             if (!bagIsDirectory && checkSerializationFormat) {
                 if (!this._validateSerializationFormat()) {
-                    var ext = path.extname(this.bagPath);
+                    var ext = path.extname(this.pathToBag);
                     this.errors.push(`Bag has extension '${ext}', but profile says it must be serialized as of one of the following types: ${this.profile.acceptSerialization.join(', ')}.`);
                     validFormat = false;
                 }
             }
+        } else {
+            Context.logger.info(`Validator: Skipping validation of serialization format because disableSerializationCheck is true.`);
         }
         return validFormat;
     }
@@ -366,9 +383,9 @@ class Validator extends EventEmitter {
      */
     _validateSerializationFormat() {
         var matchesValidExtension = false;
-        for (var mimetype in this.profile.acceptSerialization) {
+        for (var mimetype of this.profile.acceptSerialization) {
             var extensionRegex = Constants.SERIALIZATION_FORMATS[mimetype];
-            if (extensionRegex && this.bagPath.match(extensionRegex)) {
+            if (extensionRegex !== undefined && this.pathToBag.match(extensionRegex)) {
                 matchesValidExtension = true;
             }
         }
@@ -496,10 +513,11 @@ class Validator extends EventEmitter {
      *
      * @param {BagItFile} bagItFile - A file inside the directory or tarball.
      *
-     * @param {ReadStream} stream - A stream from which we can read the file's
-     * contents.
+     * @param {ReadStream} readStream - A stream from which we can read
+     * the file's contents.
      */
-    _readFile(bagItFile, stream) {
+    _readFile(bagItFile, readStream) {
+        var validator = this;
         this.emit('task', new TaskDescription(bagItFile.relDestPath, 'checksum'));
 
         // Get pipes for all of the hash digests we'll need to calculate.
@@ -520,9 +538,17 @@ class Validator extends EventEmitter {
         // streams for checksum calculations and parsing. This is much
         // more efficient than doing a seperate read for each, especially
         // in bags that use multiple digest algorithms.
+        //
+        // First create the pipe chain...
+        var passThrough = new stream.PassThrough();
         for (var p of pipes) {
-           stream.pipe(p);
+            passThrough.pipe(p);
         }
+
+        // Now push all the data through the chain.
+        readStream.pipe(passThrough).on('error', function(err) {
+            validator.errors.push(`Read error in ${bagItFile.relDestPath}: ${err.toString()}`)
+        });
 
         Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
@@ -547,6 +573,7 @@ class Validator extends EventEmitter {
      *
      */
     _getCryptoHashes(bagItFile) {
+        let validator = this;
         let hashes = [];
         // Put together all of the algorithms we'll need for checksums,
         // filtering out empty strings and duplicates.
@@ -556,9 +583,19 @@ class Validator extends EventEmitter {
         let algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
         for (let algorithm of algorithms) {
             let thisAlg = algorithm;
+            // DEBUG
+            if (validator.pathToBag.endsWith('example.edu.sample_good')) {
+                console.log("Created hash for " + bagItFile.relDestPath);
+            }
+            // DEBUG
             let hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {
+                // DEBUG
+                if (validator.pathToBag.endsWith('example.edu.sample_good')) {
+                    console.log("Finished hash for " + bagItFile.relDestPath);
+                }
+                // DEBUG
                 hash.end();
                 bagItFile.checksums[thisAlg] = hash.read();
             });
