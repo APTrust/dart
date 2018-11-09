@@ -505,7 +505,7 @@ class Validator extends EventEmitter {
             var requiredTagDir = f.split('/', 1);
             exceptions.push(requiredTagDir);
         }
-        if (!this.profile.allowMiscTopLevelDirectories) {
+        if (!this.profile.allowMiscDirectories) {
             for (var dir of this.topLevelDirs) {
                 if (!Util.listContains(exceptions, dir)) {
                     this.errors.push(`Profile prohibits top-level directory ${dir}`);

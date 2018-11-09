@@ -88,8 +88,29 @@ test('Validator does not throw if bag does not exist', done => {
     expect(function() { validator.validate() }).not.toThrow();
 });
 
-test('Validator accepts valid APTrust bag', done => {
+// User TarReader
+test('Validator accepts valid tarred APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good.tar");
+    let taskCount = 0;
+    validator.on('task', function(taskDesc) {
+        taskCount++;
+    });
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        expect(taskCount).toEqual(17);
+        done();
+    });
+
+    validator.validate();
+});
+
+// This test uses the FileSystemReader instead of the TarReader.
+test('Validator accepts valid untarred APTrust bag', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
         taskCount++;
@@ -126,26 +147,6 @@ test('Validator accepts valid DPN bag', done => {
     validator.validate();
 });
 
-// This test uses the FileSystemReader instead of the TarReader.
-test('Validator accepts valid untarred APTrust bag', done => {
-    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
-    let taskCount = 0;
-    validator.on('task', function(taskDesc) {
-        taskCount++;
-    });
-    validator.on('error', function(err) {
-        // Force failure & stop test.
-        expect(err).toBeNull();
-        done();
-    });
-    validator.on('end', function(taskDesc) {
-        expect(taskCount).toEqual(17);
-        done();
-    });
-
-    validator.validate();
-});
-
 test('Validator identifies errors in bad APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_bad.tar");
     validator.on('error', function(err) {
@@ -154,6 +155,7 @@ test('Validator identifies errors in bad APTrust bag', done => {
         done();
     });
     validator.on('end', function(taskDesc) {
+        expect(validator.errors.length).toEqual(9);
         expect(validator.errors).toContain(err_1);
         expect(validator.errors).toContain(err_2);
         expect(validator.errors).toContain(err_3);
