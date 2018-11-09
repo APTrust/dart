@@ -289,7 +289,6 @@ class Validator extends EventEmitter {
      */
     _validateFormatAndContents() {
         // ------------------------------------------
-        // TODO: Validate BagItProfile
         // TODO: Validate bag serialization
         // TODO: Validate Payload-Oxum
         // ------------------------------------------
@@ -312,6 +311,68 @@ class Validator extends EventEmitter {
             this._validateTags();
         }
         this.emit('end')
+    }
+
+    /**
+     * _validateSerialization checks to see whether or not the bag is
+     * in a format that adheres to the profile's serialization rules.
+     *
+     * For example, if the profile's serialization attribute is "required"
+     * and acceptSerialization is "application/tar", then this bag MUST
+     * be a tar file.
+     *
+     * You can disable this check by setting
+     * Validator.disableSerializationCheck to true. You would want to do
+     * that in cases where you've built a bag and want to validate it
+     * before you tar or zip it.
+     *
+     * @returns {boolean} entry - True if profile is valid, false if not.
+     *
+     */
+    _validateSerialization() {
+        var validFormat = true;
+        var checkSerializationFormat = true;
+        if (!this.disableSerializationCheck) {
+            var bagIsDirectory = fs.statSync(this.bagPath).isDirectory();
+            if (this.profile.serialization == 'required') {
+                if (bagIsDirectory) {
+                    this.errors.push("Profile says bag must be serialized, but it is a directory.");
+                    validFormat = false;
+                }
+            } else if (this.profile.serialization == 'forbidden') {
+                if (!bagIsDirectory) {
+                    this.errors.push("Profile says bag must not be serialized, but bag is not a directory.");
+                    validFormat = false;
+                    checkSerializationFormat = false;
+                }
+            }
+            if (!bagIsDirectory && checkSerializationFormat) {
+                if (!this._validateSerializationFormat()) {
+                    var ext = path.extname(this.bagPath);
+                    this.errors.push(`Bag has extension '${ext}', but profile says it must be serialized as of one of the following types: ${this.profile.acceptSerialization.join(', ')}.`);
+                    validFormat = false;
+                }
+            }
+        }
+        return validFormat;
+    }
+
+    /**
+     * _validateSerializationFormat checks to see if the bag is in an allowed
+     * serialized format. This is called only if necessary.
+     *
+     * @returns {boolean} entry - True if format is valid, false if not.
+     *
+     */
+    _validateSerializationFormat() {
+        var matchesValidExtension = false;
+        for (var mimetype in this.profile.acceptSerialization) {
+            var extensionRegex = Constants.SERIALIZATION_FORMATS[mimetype];
+            if (extensionRegex && this.bagPath.match(extensionRegex)) {
+                matchesValidExtension = true;
+            }
+        }
+        return matchesValidExtension;
     }
 
     /**

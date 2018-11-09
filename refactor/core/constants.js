@@ -81,7 +81,20 @@ const Constants =  {
        *
        * @type {RegExp}
        */
-    RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$/')
+    RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$/'),
+    /**
+       * This maps serialization formats found in BagItProfiles
+       * to file extensions.
+       *
+       * @type {Object<string, RegExp>}
+       */
+    SERIALIZATION_FORMATS: {
+        "application/tar": new RegExp("\.tar$"),
+        "application/zip": new RegExp("\.zip$"),
+        "application/gzip": new RegExp("\.gzip$"),
+        "application/x-rar": new RegExp("\.rar$"),
+        "application/tar+gzip": new RegExp("\.tgz$|\.tar\.gz$")
+    }
 };
 
 Object.freeze(Constants);
