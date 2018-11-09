@@ -152,6 +152,19 @@ class BagItProfile extends PersistentObject {
           * @default false
           */
         this.isBuiltIn = false;
+        /**
+          * Describes whether a tarred bag MUST untar to a directory
+          * whose name matches the tar file name.
+          *
+          * E.g. Must bag "photos123.tar" untar to a directory called
+          * "photos123". The APTrust and DPN specs, as well as some
+          * others, require this, though the official BagIt spec does
+          * not.
+          *
+          * @type {boolean}
+          * @default false
+          */
+        this.tarDirMustMatchName = false;
 
         this._addStandardBagItFile();
         this._addStandardBagInfoFile();

@@ -473,12 +473,20 @@ class Validator extends EventEmitter {
      *
      * E.g. "myBag.tar" should untar to a directory called "myBag"
      *
+     * This rule only apples for BagItProfiles where tarDirMustMatchName
+     * is true.
+     *
+     * The official BagIt 1.0 spec at
+     * https://tools.ietf.org/html/draft-kunze-bagit-17#section-2 says:
+     *
+     * `The base directory can have any name.`
+     *
      * This method is considered private, and it internal operations are
      * subject to change without notice.
      *
      */
     _validateUntarDirectory() {
-        if (this.readingFromTar()) {
+        if (this.readingFromTar() && this.tarDirMustMatchName) {
             var tarFileName = path.basename(this.pathToBag, '.tar');
             if (this.bagRoot != tarFileName) {
                 this.errors.push(`Bag should untar to directory '${tarFileName}', not '${this.bagRoot}'`);

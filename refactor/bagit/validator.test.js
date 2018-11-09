@@ -169,3 +169,19 @@ test('Validator identifies errors in bad APTrust bag', done => {
 
     validator.validate();
 });
+
+test('Validator identifies bad file names', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_bad_file_names.tar");
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function(taskDesc) {
+        console.log(validator.errors);
+        //expect(validator.errors).toContain(err_8);
+        done();
+    });
+
+    validator.validate();
+});

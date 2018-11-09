@@ -35,6 +35,7 @@ test('Constructor sets initial properties', () => {
     expect(profile.serialization).toEqual('optional');
     expect(profile.baseProfileId).toEqual(null);
     expect(profile.isBuiltIn).toEqual(false);
+    expect(profile.tarDirMustMatchName).toEqual(false);
 });
 
 test('validate() catches invalid properties', () => {

@@ -11,6 +11,7 @@
     "allowFetchTxt": false,
     "allowMiscTopLevelFiles": false,
     "allowMiscDirectories": true,
+    "tarDirMustMatchName": true,
     "bagItProfileInfo": {
         "bagItProfileIdentifier": "https://wiki.aptrust.org/DPN_BagIt_Profile-2.1",
         "contactEmail": "support@dpn.org",
