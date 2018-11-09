@@ -95,6 +95,21 @@ test('Validator accepts valid tarred APTrust bag', done => {
     validator.validate();
 });
 
+test('Validator accepts valid APTrust bag with additional tags', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function() {
+        expect(validator.errors.length).toEqual(0);
+        done();
+    });
+
+    validator.validate();
+});
+
 // This test uses the FileSystemReader instead of the TarReader.
 test('Validator accepts valid untarred APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
@@ -134,6 +149,7 @@ test('Validator accepts valid DPN bag', done => {
     validator.validate();
 });
 
+// This particular bag lets us test bad digests, missing files, and bad tag values.
 test('Validator identifies errors in bad APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_bad.tar");
     let expected = [
