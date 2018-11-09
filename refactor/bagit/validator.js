@@ -540,15 +540,16 @@ class Validator extends EventEmitter {
         // in bags that use multiple digest algorithms.
         //
         // First create the pipe chain...
-        var passThrough = new stream.PassThrough();
+        readStream.pause();
         for (var p of pipes) {
-            passThrough.pipe(p);
+            readStream.pipe(p);
         }
 
         // Now push all the data through the chain.
-        readStream.pipe(passThrough).on('error', function(err) {
+        readStream.on('error', function(err) {
             validator.errors.push(`Read error in ${bagItFile.relDestPath}: ${err.toString()}`)
         });
+        readStream.resume();
 
         Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
@@ -592,6 +593,8 @@ class Validator extends EventEmitter {
             hash.setEncoding('hex');
             hash.on('finish', function() {
                 // DEBUG
+                // WHEN READING FROM DIRECTORY, THIS IS **NOT** BEING
+                // FIRED FOR THE LAST 1-2 FILES IN THE DIR.
                 if (validator.pathToBag.endsWith('example.edu.sample_good')) {
                     console.log("Finished hash for " + bagItFile.relDestPath);
                 }
