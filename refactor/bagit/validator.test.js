@@ -149,6 +149,23 @@ test('Validator accepts valid DPN bag', done => {
     validator.validate();
 });
 
+test('Validator rejects bad DPN bag', done => {
+    let validator = getValidator("dpn_bagit_profile_2.1.json", "dpn", "020c8edd-d043-4204-a6b8-26b6fb8bda5d.tar");
+    let expected = ["File 'data/Users/diamond/go/src/golang.org/x/net/html/atom/gen.go' in manifest-sha256.txt is missing from bag.", "Bad sha256 digest for 'dpn-tags/dpn-info.txt': manifest says '935e01c6f9ecf565c67c32760a9cec966d2f24bf2654533394d44924e19ecda2', file digest is 'cfab0747e203bc0d419d331b6fca48b66c8a5f045738fbf4608d2424ff28823e'."];
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function() {
+        expect(validator.errors).toEqual(expected);
+        done();
+    });
+
+    validator.validate();
+});
+
+
 // This particular bag lets us test bad digests, missing files, and bad tag values.
 test('Validator identifies errors in bad APTrust bag', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_bad.tar");
