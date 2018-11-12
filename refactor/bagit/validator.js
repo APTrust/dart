@@ -534,23 +534,20 @@ class Validator extends EventEmitter {
             pipes.push(tagFileParser.stream);
         }
 
+        // Push read errors up to where the user can see them.
+        readStream.on('error', function(err) {
+            validator.errors.push(`Read error in ${bagItFile.relDestPath}: ${err.toString()}`)
+        });
+
         // Now we can do a single read of the file, piping it through
         // streams for checksum calculations and parsing. This is much
         // more efficient than doing a seperate read for each, especially
         // in bags that use multiple digest algorithms.
-        //
-        // First create the pipe chain...
         readStream.pause();
         for (var p of pipes) {
             readStream.pipe(p);
         }
-
-        // Now push all the data through the chain.
-        readStream.on('error', function(err) {
-            validator.errors.push(`Read error in ${bagItFile.relDestPath}: ${err.toString()}`)
-        });
         readStream.resume();
-
         Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
 
@@ -584,21 +581,9 @@ class Validator extends EventEmitter {
         let algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
         for (let algorithm of algorithms) {
             let thisAlg = algorithm;
-            // DEBUG
-            if (validator.pathToBag.endsWith('example.edu.sample_good')) {
-                console.log("Created hash for " + bagItFile.relDestPath);
-            }
-            // DEBUG
             let hash = crypto.createHash(algorithm);
             hash.setEncoding('hex');
             hash.on('finish', function() {
-                // DEBUG
-                // WHEN READING FROM DIRECTORY, THIS IS **NOT** BEING
-                // FIRED FOR THE LAST 1-2 FILES IN THE DIR.
-                if (validator.pathToBag.endsWith('example.edu.sample_good')) {
-                    console.log("Finished hash for " + bagItFile.relDestPath);
-                }
-                // DEBUG
                 hash.end();
                 bagItFile.checksums[thisAlg] = hash.read();
             });

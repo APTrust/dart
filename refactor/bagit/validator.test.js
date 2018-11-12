@@ -337,7 +337,6 @@ test('Validator ignores serialization rules when disableSerializationCheck is tr
     });
 
     validator.on('end', function(taskDesc) {
-        console.log(validator.files);
         expect(validator.errors).toEqual([]);
         done();
     });
