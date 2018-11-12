@@ -119,6 +119,10 @@ class FileSystemReader extends EventEmitter {
             // but how to mix stream events and promises so the
             // FileSystemReader's end event is guaranteed to fire after
             // all the end event listeners attached to the last file reader?
+            //
+            // The design itself is the problem here. In making FSReader
+            // act like TarReader, we're setting ourselves up for a race
+            // condition. 😞
             setTimeout(() => { fsReader.emit('finish', fsReader.fileCount) }, 250)
         });
 
@@ -135,8 +139,8 @@ class FileSystemReader extends EventEmitter {
          * about a file in the directory and a {@link ReadStream} object
          * that allows you to read the contents of the entry, if it's a file.
          *
-         * Note that you MUST read the stream to the end before FileSystemReader.read()
-         * will move to the next tar entry.
+         * Note that you MUST read the stream to the end or call the stream's close()
+         * method before FileSystemReader.read() will move to the next tar entry.
          *
          * @type {object}
          *
