@@ -406,7 +406,8 @@ class BagItProfile extends PersistentObject {
       * // Tag-Name: Value
       * // Other-Tag: Other value
       *
-      * @param {string} name - The bag name you want to validate.
+      * @param {string} name - The name of the tag file (relative path
+      * within the bag)
       *
       * @returns {string}
       */

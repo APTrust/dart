@@ -17,6 +17,7 @@ class DummyReader extends Readable {
      */
     _read() {
         this.emit('end');
+        this.emit('close');
         return null;
     }
 }

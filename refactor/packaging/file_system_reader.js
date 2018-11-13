@@ -122,7 +122,7 @@ class FileSystemReader extends EventEmitter {
             //
             // The design itself is the problem here. In making FSReader
             // act like TarReader, we're setting ourselves up for a race
-            // condition. 😞
+            // condition.
             setTimeout(() => { fsReader.emit('finish', fsReader.fileCount) }, 250)
         });
 
@@ -169,23 +169,32 @@ class FileSystemReader extends EventEmitter {
             // One other reason for pausing on read is that it prevents
             // us from having too many open file handles when we're working
             // with a directory that contains thousands of files.
+
+            // TODO: We have to use pause/resume to avoid too many
+            // open file handles, but pause/resume is flaky here.
+            // It hangs on some versions of OSX but not on others.
+
+            // Consider: https://www.npmjs.com/package/readdir-enhanced
+
+
+            var readable = null;
+            //stream.pause();
             if (entry.stat.isFile()) {
-                stream.pause();
                 fsReader.fileCount += 1;
-                var readable = fs.createReadStream(entry.fullPath);
-                readable.on('error', function() {
-                    stream.resume();
-                });
-                readable.on('close', function() {
-                    stream.resume();
-                });
-                fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stat, stream: readable });
+                readable = fs.createReadStream(entry.fullPath);
             } else {
+                readable = new DummyReader();
                 if (entry.stat.isDirectory()) {
                     fsReader.dirCount += 1;
                 }
-                fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stat, stream: new DummyReader() });
             }
+            // readable.on('error', function() {
+            //     stream.resume();
+            // });
+            // readable.on('close', function() {
+            //     stream.resume();
+            // });
+            fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stat, stream: readable });
         });
     }
 

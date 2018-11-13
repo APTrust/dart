@@ -6,13 +6,13 @@ const { FileSystemReader } = require('./file_system_reader');
 // These tests run against the test directory, so as the number
 // of test fixtures, bags and profiles changes, this number will
 // have to change too.
-const FILES_IN_TEST_DIR = 29;
-const DIRS_IN_TEST_DIR = 7;
+const FILES_IN_TEST_DIR = 8;
+const DIRS_IN_TEST_DIR = 1;
 
 test('FileSystemReader.read() emits expected events', done => {
     var streamCount = 0;
     var finishCount = 0;
-    var dir = path.join(__dirname, "..", "test")
+    var dir = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good")
     var fsReader = new FileSystemReader(dir);
 
     // Count the number of stream events.
@@ -77,7 +77,7 @@ test('FileSystemReader.read() returns expected stats', done => {
 test('FileSystemReader.list() emits expected events with correct stats', done => {
     var streamCount = 0;
     var finishCount = 0;
-    var dir = path.join(__dirname, "..", "test")
+    var dir = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good")
     var fsReader = new FileSystemReader(dir);
 
     // Note there's no stream here, because we're just listing.
