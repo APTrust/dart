@@ -124,43 +124,41 @@ class FileSystemReader extends EventEmitter {
 }
 
 function entryFunc(data, done) {
-        // Don't open the stream until we're ready to read,
-        // else we'll have too many open filehandles.
-        if (data.entry.fileStat.isDirectory()) {
-            data.fsReader.dirCount++;
-            if (data.op === 'read') {
-                console.log(`Added dir ${data.entry.fullPath}`);
-                data.entry.stream = new DummyReader();
-            } else { // this is a list operation
-                done();
-            }
-        } else if (data.entry.fileStat.isFile()) {
-            data.fsReader.fileCount++;
-            if (data.op === 'read') {
-                console.log(`Added file ${data.entry.fullPath}`);
-                data.entry.stream = fs.createReadStream(data.entry.fullPath);
-            } else { // this is a list operation
-                done();
-            }
-        } else {
-            console.log(`Don't know ${data.entry.fullPath} is`);
+    // Don't open the stream until we're ready to read,
+    // else we'll have too many open filehandles.
+    if (data.entry.fileStat.isDirectory()) {
+        data.fsReader.dirCount++;
+        if (data.op === 'read') {
+            console.log(`Added dir ${data.entry.fullPath}`);
+            data.entry.stream = new DummyReader();
+        } else { // this is a list operation
             done();
         }
-        if (data.entry.stream) {
-            data.entry.stream.on('error', function(err) {
-                console.log(`Error reading ${data.entry.fullPath}: ${err.toString()}`);
-                data.fsReader.emit('error', err);
-                done();
-            });
-            data.entry.stream.on('close', function() {
-                console.log(`Read ${data.entry.fullPath}`);
-                console.log(data.fsReader._queue.length());
-                done();
-            });
+    } else if (data.entry.fileStat.isFile()) {
+        data.fsReader.fileCount++;
+        if (data.op === 'read') {
+            console.log(`Added file ${data.entry.fullPath}`);
+            data.entry.stream = fs.createReadStream(data.entry.fullPath);
+        } else { // this is a list operation
+            done();
         }
-        data.fsReader.emit('entry', data.entry);
+    } else {
+        console.log(`Don't know ${data.entry.fullPath} is`);
+        done();
     }
-
-
+    if (data.entry.stream) {
+        data.entry.stream.on('error', function(err) {
+            console.log(`Error reading ${data.entry.fullPath}: ${err.toString()}`);
+            data.fsReader.emit('error', err);
+            done();
+        });
+        data.entry.stream.on('close', function() {
+            console.log(`Read ${data.entry.fullPath}`);
+            console.log(data.fsReader._queue.length());
+            done();
+        });
+    }
+    data.fsReader.emit('entry', data.entry);
+}
 
 module.exports.FileSystemReader = FileSystemReader;

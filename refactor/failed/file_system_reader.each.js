@@ -116,14 +116,13 @@ class FileSystemReader extends EventEmitter {
                     fsReader.fileCount++;
                 }
                 if (entry.stream) {
-                    data.entry.stream.on('error', function(err) {
-                        console.log(`Error reading ${data.entry.fullPath}: ${err.toString()}`);
+                    entry.stream.on('error', function(err) {
+                        console.log(`Error reading ${entry.fullPath}: ${err.toString()}`);
                         data.fsReader.emit('error', err);
                         callback();
                     });
-                    data.entry.stream.on('close', function() {
-                        console.log(`Read ${data.entry.fullPath}`);
-                        console.log(data.fsReader._queue.length());
+                    entry.stream.on('close', function() {
+                        console.log(`Read ${entry.fullPath}`);
                         callback();
                     });
                 }

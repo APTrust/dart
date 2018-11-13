@@ -67,7 +67,7 @@ class FileSystemReader extends EventEmitter {
     read() {
         var fsReader = this;
         this._queue = async.queue(fsReader._entryFunc, 1);
-        this._queue.drain = function() { fsReader.emit('finish') };
+        this._queue.drain = function() { fsReader.emit('finish', this.fileCount) };
         fsReader._readdir(fsReader.pathToDirectory, 'read');
     }
 
@@ -81,7 +81,7 @@ class FileSystemReader extends EventEmitter {
     list() {
         var fsReader = this;
         this._queue = async.queue(fsReader._entryFunc, 1);
-        this._queue.drain = function() { fsReader.emit('finish') };
+        this._queue.drain = function() { fsReader.emit('finish', this.fileCount) };
         fsReader._readdir(fsReader.pathToDirectory, 'list');
     }
 
@@ -105,8 +105,10 @@ class FileSystemReader extends EventEmitter {
                 if (entry != null) {
                     entry.op = op;
                     if (entry.stats.isDirectory()) {
+                        fsReader.fileCount++;
                         fsReader._readdir(entry.fullPath);
                     } else if (entry.stats.isFile()) {
+                        fsReader.dirCount++;
                         fsReader._fileQueue.push(entry, fsReader._onErr);
                     }
                 }
@@ -115,6 +117,7 @@ class FileSystemReader extends EventEmitter {
     }
 
     _entryFunc(entry, done) {
+        let fsReader = this;
         if (entry == null) {
             done();
             return;
@@ -125,6 +128,7 @@ class FileSystemReader extends EventEmitter {
             entry.stream = new DummyReader();
         } else if (entry.stats.isFile()) {
             if (entry.op === 'read') {
+                console.log(`Added ${entry.fullPath}`);
                 entry.stream = fs.createReadStream(entry.fullPath);
                 entry.stream.on('error', fsReader._onErr);
             } else {
@@ -132,7 +136,10 @@ class FileSystemReader extends EventEmitter {
             }
             fsReader._fileQueue.push(entry, fsReader._onErr);
         }
-        entry.stream.on('close', done);
+        entry.stream.on('close', function() {
+            console.log(`Read ${entry.fullPath}`);
+            done();
+        });
         this.emit('entry', entry);
     }
 
