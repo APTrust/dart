@@ -21,7 +21,7 @@ test('TarReader.read() emits expected events', done => {
     // tarReader thinks it read. This tells us
     // 1) that the finish event fired (because finishCount is non-zero) and
     // 2) that we got a stream event for every file (if finishCount equals streamCount below)
-    tarReader.on('finish', function(fileCount) {
+    tarReader.on('end', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(10);
         expect(finishCount).toEqual(10);
@@ -132,7 +132,7 @@ test('TarReader.read() returns correct stats', done => {
     });
 
     // Let jest know when we're done.
-    tarReader.on('finish', function(fileCount) {
+    tarReader.on('end', function(fileCount) {
         expect(tarReader.fileCount).toEqual(8);
         expect(tarReader.dirCount).toEqual(2);
         done();
@@ -159,7 +159,7 @@ test('TarReader.list() returns correct stats', done => {
     });
 
     // Let jest know when we're done.
-    tarReader.on('finish', function(fileCount) {
+    tarReader.on('end', function(fileCount) {
         expect(tarReader.fileCount).toEqual(8);
         expect(tarReader.dirCount).toEqual(2);
         done();

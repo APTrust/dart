@@ -267,7 +267,7 @@ class Validator extends EventEmitter {
                 }
             }
         });
-        reader.on('finish', function() { validator._readBag() });
+        reader.on('end', function() { validator._readBag() });
 
         // List the contents of the bag.
         reader.list();
@@ -292,14 +292,14 @@ class Validator extends EventEmitter {
         reader.on('error', function(err) { validator.emit('error', err) });
 
         // Once reading is done, validate all the info we've gathered.
-        reader.on('finish', function() {
+        reader.on('end', function() {
             // Is this really what we want to emit here?
             validator.emit('task', new TaskDescription(validator.pathToBag, 'read'))
-            // FileSystemReader emits finish event while streamreader is
+            // FileSystemReader emits end event while streamreader is
             // still piping file contents to our hashing algorithms. We want
             // those hash pipes to complete before validating checksums in
             // _validateFormatAndContents(), so we don't wind up with
-            // undefined checksums. The lag time between finish event and the
+            // undefined checksums. The lag time between end event and the
             // completion of checksums is usually ~5ms. Not sure of a better
             // way to do this, given that we have an unknown number of pipes
             // on each file. Don't want to go full async with promises, because
@@ -573,9 +573,9 @@ class Validator extends EventEmitter {
     /**
      * _getCryptoHashes returns a list of prepared cryptographic hashes that
      * are ready to have bits streamed through them. Each hash includes a
-     * pre-wired 'finish' event that assigns the computed checksum to the
+     * pre-wired 'end' event that assigns the computed checksum to the
      * BagItFile's checksums hash. For example, a sha256 hash, once the bits
-     * have been pushed through it, will set the following in it's finish event:
+     * have been pushed through it, will set the following in it's event event:
      *
      * @example
      * bagItFile.checksums['sha256'] = "[computed hex value]";

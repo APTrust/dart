@@ -28,7 +28,7 @@ test('FileSystemReader.read() emits expected events', done => {
     // tarReader thinks it read. This tells us
     // 1) that the finish event fired (because finishCount is non-zero) and
     // 2) that we got a stream event for every file (if finishCount equals streamCount below)
-    fsReader.on('finish', function(fileCount) {
+    fsReader.on('end', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
@@ -66,7 +66,7 @@ test('FileSystemReader.read() returns expected stats', done => {
         entry.stream.pipe(new PassThrough());
     });
 
-    fsReader.on('finish', function(fileCount) {
+    fsReader.on('end', function(fileCount) {
         expect(foundTestFile).toEqual(true);
         done();
     });
@@ -87,7 +87,7 @@ test('FileSystemReader.list() emits expected events with correct stats', done =>
         streamCount++;
     });
 
-    fsReader.on('finish', function(fileCount) {
+    fsReader.on('end', function(fileCount) {
         finishCount = fileCount;
         expect(streamCount).toEqual(FILES_IN_TEST_DIR + DIRS_IN_TEST_DIR);
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);

@@ -52,7 +52,7 @@ class TarReader extends EventEmitter {
 
     /**
       * The read() method reads the contents of the tar file.
-      * It emits the events "entry", "error" and "finish".
+      * It emits the events "entry", "error" and "end".
       *
       * The read() method returns the same information as the
       * list() method, plus a readable stream from which you can
@@ -122,13 +122,13 @@ class TarReader extends EventEmitter {
         });
 
         /**
-         * @event TarReader#finish
+         * @event TarReader#end
          *
          * @description This indicates that the iterator has passed
          * the last entry in the tar file and there's nothing left to read.
          */
         extract.on('finish', function() {
-            tarReader.emit('finish', tarReader.fileCount + tarReader.dirCount);
+            tarReader.emit('end', tarReader.fileCount + tarReader.dirCount);
         });
 
         // Open the tar file and start reading.
@@ -140,7 +140,7 @@ class TarReader extends EventEmitter {
       * files and directories inside a tar file. Unlike read(), it does
       * not return a readable stream for any of the files it encounters.
       *
-      * list() emits the events "entry", "error" and "finish".
+      * list() emits the events "entry", "error" and "end".
       *
       */
     list() {
@@ -186,9 +186,9 @@ class TarReader extends EventEmitter {
             tarReader.emit('error', err);
         });
 
-        // Same as the finish event documented above.
+        // Same as the end event documented above.
         extract.on('finish', function() {
-            tarReader.emit('finish', tarReader.fileCount + tarReader.dirCount);
+            tarReader.emit('end', tarReader.fileCount + tarReader.dirCount);
         });
 
         // Open the tar file and start reading.

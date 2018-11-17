@@ -54,7 +54,7 @@ class FileSystemReader extends EventEmitter {
       * The read() method recursively lists the contents of a directory
       * and returns an open reader for each file it encounters.
       *
-      * It emits the events "entry", "error" and "finish".
+      * It emits the events "entry", "error" and "end".
       *
       * Note that read() will not advance to the next entry
       * until you've read the entire stream returned by
@@ -86,16 +86,14 @@ class FileSystemReader extends EventEmitter {
         });
 
         /**
-         * @event FileSystemReader#finish
+         * @event FileSystemReader#end
          *
          * @description This indicates that the iterator has passed
          * the last entry in the recursive directory tree and there's
          * nothing left to read.
          */
         stream.on('end', function() {
-            // The 'finish' event mimics TarFileReader, so our readers
-            // are interchangable, from the validator's perspective.
-            fsReader.emit('finish', fsReader.fileCount)
+            fsReader.emit('end', fsReader.fileCount)
         });
 
         // Undocumented because it doesn't conform to the TarReader
@@ -175,7 +173,7 @@ class FileSystemReader extends EventEmitter {
       * and returns a relative path and an fs.Stat object for each file
       * it encounters.
       *
-      * It emits the events "entry", "error" and "finish".
+      * It emits the events "entry", "error" and "end".
       */
     list() {
         var fsReader = this;
@@ -196,8 +194,7 @@ class FileSystemReader extends EventEmitter {
 
         // Same as the finish event documented above.
         stream.on('end', function() {
-            // finish mimics TarFileReader
-            fsReader.emit('finish', fsReader.fileCount);
+            fsReader.emit('end', fsReader.fileCount);
         });
 
         // Undocumented because it doesn't conform to the TarReader
