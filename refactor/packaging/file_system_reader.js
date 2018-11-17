@@ -95,35 +95,7 @@ class FileSystemReader extends EventEmitter {
         stream.on('end', function() {
             // The 'finish' event mimics TarFileReader, so our readers
             // are interchangable, from the validator's perspective.
-            //
-            // HACK: There MUST be a better way around this. The issue
-            // here is that the validator is reading the files we send
-            // back through the 'entry' event, and it's passing those
-            // files through digest algorithms like md5 and sha256.
-            //
-            // This FileSystemReader pauses while the validator reads
-            // the contents of a file, then resumes as soon as the
-            // validator hits the file's 'close' event.
-            //
-            // The digest algorithms are also attached to the file's
-            // 'end' event, but the FileSystemReader's 'end' event
-            // fires before the last digest algorithm gets the file 'end'
-            // event. This happens even when we attach FileSystemReader
-            // resume() as the last listener to file#end.
-            //
-            // The result of FileSystemReader closing before the 'end'
-            // event of the last file in the directory is the last file
-            // has no checksum.
-            //
-            // Ideally, we call this without the kludgy setTimeout,
-            // but how to mix stream events and promises so the
-            // FileSystemReader's end event is guaranteed to fire after
-            // all the end event listeners attached to the last file reader?
-            //
-            // The design itself is the problem here. In making FSReader
-            // act like TarReader, we're setting ourselves up for a race
-            // condition.
-            setTimeout(() => { fsReader.emit('finish', fsReader.fileCount) }, 250)
+            fsReader.emit('finish', fsReader.fileCount)
         });
 
         // Undocumented because it doesn't conform to the TarReader

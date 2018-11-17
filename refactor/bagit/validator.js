@@ -139,10 +139,15 @@ class Validator extends EventEmitter {
          * @default false
          */
         this.disableSerializationCheck = false;
-        // -----------------------------------------------------------------
-        // TODO: Attach log listeners for this object's events,
-        // so debug logger can print info about what's happening.
-        // -----------------------------------------------------------------
+        /**
+         * This is a private internal variable that keeps track of the number
+         * of checksum digests currently being calculated. This is part of a
+         * lovely hack.
+         *
+         * @type {number}
+         * @default 0
+         */
+        this._hashesInProgress = 0;
     }
 
     /**
@@ -290,7 +295,21 @@ class Validator extends EventEmitter {
         reader.on('finish', function() {
             // Is this really what we want to emit here?
             validator.emit('task', new TaskDescription(validator.pathToBag, 'read'))
-            validator._validateFormatAndContents();
+            // FileSystemReader emits finish event while streamreader is
+            // still piping file contents to our hashing algorithms. We want
+            // those hash pipes to complete before validating checksums in
+            // _validateFormatAndContents(), so we don't wind up with
+            // undefined checksums. The lag time between finish event and the
+            // completion of checksums is usually ~5ms. Not sure of a better
+            // way to do this, given that we have an unknown number of pipes
+            // on each file. Don't want to go full async with promises, because
+            // we don't want 10,000 open file handles. So... this.
+            let hashInterval = setInterval(() => {
+                if (validator._hashesInProgress === 0) {
+                    validator._validateFormatAndContents();
+                    clearInterval(hashInterval);
+                }
+            }, 50);
         });
 
         // Read the contents of the bag.
@@ -586,10 +605,16 @@ class Validator extends EventEmitter {
             hash.on('finish', function() {
                 hash.end();
                 bagItFile.checksums[thisAlg] = hash.read();
+                validator._hashCompleted();
             });
             hashes.push(hash);
+            validator._hashesInProgress++;
         }
         return hashes;
+    }
+
+    _hashCompleted() {
+        this._hashesInProgress--;
     }
 
     /**
