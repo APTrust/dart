@@ -24,6 +24,7 @@
         "tmp": "0.0.33"
     },
     "devDependencies": {
+        "babel-plugin-transform-async-generator-functions": "^6.24.1",
         "electron": "^1.8.8",
         "electron-builder": "^19.56.2",
         "electron-rebuild": "^1.7.3",
