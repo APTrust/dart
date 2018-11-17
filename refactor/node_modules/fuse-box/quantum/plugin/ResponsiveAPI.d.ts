@@ -1,0 +1,34 @@
+import { QuantumCore } from "./QuantumCore";
+import { RequireStatement } from "../core/nodes/RequireStatement";
+export declare class ResponsiveAPI {
+    core: QuantumCore;
+    private computedStatements;
+    private hashes;
+    private isServerFunction;
+    private isBrowserFunction;
+    private customMappings;
+    private lazyLoading;
+    private customStatementResolve;
+    private serverRequire;
+    private bundleMapping;
+    private ajaxRequired;
+    private codeSplitting;
+    private jsonLoader;
+    private loadRemoteScript;
+    private cssLoader;
+    constructor(core: QuantumCore);
+    addComputedRequireStatetements(): void;
+    addLazyLoading(): void;
+    useCodeSplitting(): void;
+    addJSONLoader(): void;
+    addCSSLoader(): void;
+    addRemoteLoading(): void;
+    hashesUsed(): boolean;
+    addMapping(fuseBoxPath: string, id: any): void;
+    setBundleMapping(data: any): void;
+    addIsServerFunction(): void;
+    addIsBrowserFunction(): void;
+    useServerRequire(): void;
+    considerStatement(statement: RequireStatement): void;
+    render(): any;
+}

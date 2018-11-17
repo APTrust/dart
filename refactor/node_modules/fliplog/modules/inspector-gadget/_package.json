@@ -1,0 +1,30 @@
+{
+  "name": "inspector-gadget",
+  "description": "preconfigured nodejs util for inspecting, and customizing inspecting",
+  "version": "2.0.0",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "inspector.js",
+    "inspector-gadget.js"
+  ],
+  "keywords": [
+    "flip",
+    "inspect",
+    "helpers",
+    "utils",
+    "debugging",
+    "nodejs",
+    "fliphub",
+    "flipbox"
+  ],
+  "author": "James <aretecode@gmail.com>",
+  "homepage": "https://github.com/fliphub/fliphub#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fliphub/fliphub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fliphub/fliphub/issues"
+  }
+}
