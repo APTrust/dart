@@ -49,7 +49,7 @@ test('FileSystemReader.read() returns expected stats', done => {
     fsReader.on('entry', function(entry) {
         if (entry.relPath === "bags/aptrust/example.edu.tagsample_good.tar") {
             foundTestFile = true;
-            expect(entry.fileStat.size).toEqual(40960);
+            expect(entry.fileStat.size).toEqual(32768);
             expect(entry.fileStat.mtimeMs).not.toEqual(0);
             expect(entry.fileStat.isFile()).toEqual(true);
 

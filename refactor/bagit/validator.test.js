@@ -117,6 +117,7 @@ test('Validator accepts valid APTrust bag with additional tags', done => {
         done();
     });
     validator.on('end', function() {
+        expect(validator.errors).toEqual([]);
         expect(validator.errors.length).toEqual(0);
         done();
     });
@@ -338,6 +339,26 @@ test('Validator ignores serialization rules when disableSerializationCheck is tr
 
     validator.on('end', function(taskDesc) {
         expect(validator.errors).toEqual([]);
+        done();
+    });
+
+    validator.validate();
+});
+
+test('Validator finds bad Payload-Oxum', done => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_bad_oxum.tar");
+    let expected = [
+        "Payload-Oxum says there should be 24 files in the payload, but validator found 4.",
+        "Payload-Oxum says there should be 99999 bytes in the payload, but validator found 13821."]
+
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+
+    validator.on('end', function(taskDesc) {
+        expect(validator.errors).toEqual(expected);
         done();
     });
 

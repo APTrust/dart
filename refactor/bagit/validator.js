@@ -306,8 +306,8 @@ class Validator extends EventEmitter {
             // we don't want 10,000 open file handles. So... this.
             let hashInterval = setInterval(() => {
                 if (validator._hashesInProgress === 0) {
-                    validator._validateFormatAndContents();
                     clearInterval(hashInterval);
+                    validator._validateFormatAndContents();
                 }
             }, 50);
         });
@@ -322,14 +322,11 @@ class Validator extends EventEmitter {
      * and tag files, this method compares the info in the bag to what the
      * {@link BagItProfile} says is valid.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      */
     _validateFormatAndContents() {
-        // ------------------------------------------
-        // TODO: Validate Payload-Oxum
-        // ------------------------------------------
         var okToProceed = this._validateUntarDirectory();
         if (okToProceed) {
             // ------------------------------------------
@@ -342,6 +339,7 @@ class Validator extends EventEmitter {
             this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
             this._validateManifestEntries(Constants.TAG_MANIFEST);
             this._validateNoExtraneousPayloadFiles();
+            this._validatePayloadOxum();
             this._validateTags();
         }
         this.emit('end')
@@ -583,7 +581,7 @@ class Validator extends EventEmitter {
      * @param {BagItFile} bagItFile - A file inside the directory or tarball.
      * This is the file whose checksums will be computed.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      * @returns {Array<crypto.Hash>}
@@ -633,7 +631,7 @@ class Validator extends EventEmitter {
      *
      * `The base directory can have any name.`
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      * @returns {boolean} - If true, it's ok to proceed with the rest
@@ -661,7 +659,7 @@ class Validator extends EventEmitter {
      * If an illegal top-level directory appears in the bag, this method
      * will make a note of it in the Validator.errors array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      */
@@ -691,7 +689,7 @@ class Validator extends EventEmitter {
      * If this method finds illegal top-level files, it will make a note of each
      * one in the Validator.errors array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      */
@@ -725,7 +723,7 @@ class Validator extends EventEmitter {
      * the {@link BagItProfile} are actually present in the bag. If they're not,
      * it records the error in the Validator.errors array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      * @param {string} manifestType - The type of manifest to look for.
@@ -753,7 +751,7 @@ class Validator extends EventEmitter {
      * the files in the bag. It records mismatches in the Validator.errors
      * array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      * @param {string} manifestType - The type of manifest to look for.
@@ -791,7 +789,7 @@ class Validator extends EventEmitter {
      * that are not listed in the payload manifest(s). It records offending
      * files in the Validator.errors array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      */
@@ -812,7 +810,7 @@ class Validator extends EventEmitter {
      * if valid values were defined in the {@link BagItProfile}. This method
      * records all the problems it finds in the Validator.errors array.
      *
-     * This method is considered private, and it internal operations are
+     * This method is private, and it internal operations are
      * subject to change without notice.
      *
      */
@@ -855,6 +853,47 @@ class Validator extends EventEmitter {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * _validatePayloadOxum
+     *
+     * Validates the Payload-Oxum tag, if present, by comparing the number
+     * of files and bytes in the bag's payload directory matches what's in
+     * the tag.
+     *
+     * This method is private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
+    _validatePayloadOxum() {
+        Context.logger.info(`Validator: Validating Payload-Oxum in ${this.pathToBag}`);
+        let found = false;
+        let bagInfo = this.files["bag-info.txt"];
+        if (bagInfo && bagInfo.keyValueCollection) {
+            let oxum = bagInfo.keyValueCollection.first("Payload-Oxum");
+            if (oxum) {
+                found = true;
+                let parts = oxum.split('.');
+                let oxumBytes = parseInt(parts[0], 10);
+                let oxumFiles = parseInt(parts[1], 10);
+                let byteCount = 0;
+                let fileCount = 0;
+                for (let f of this.payloadFiles()) {
+                    fileCount += 1;
+                    byteCount += f.size;
+                }
+                if (oxumFiles != fileCount) {
+                    this.errors.push(`Payload-Oxum says there should be ${oxumFiles} files in the payload, but validator found ${fileCount}.`);
+                }
+                if (oxumBytes != byteCount) {
+                    this.errors.push(`Payload-Oxum says there should be ${oxumBytes} bytes in the payload, but validator found ${byteCount}.`);
+                }
+            }
+        }
+        if (found === false) {
+            Context.logger.info(`Validator: No Payload-Oxum in ${this.pathToBag}`);
         }
     }
 
