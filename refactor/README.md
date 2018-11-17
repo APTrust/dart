@@ -32,3 +32,33 @@ cd refactor
 
 After running that, check the index.html file in the docs directory, which the
 command will create if it doesn't already exist.
+
+## Building Apps with Nexe
+
+The [nexe npm package](https://www.npmjs.com/package/nexe) builds Node.js
+scripts into standalone executables. DART executables are in the apps
+directory. You can compile them like this:
+
+```
+cd apps
+../node_modules/.bin/nexe validator.js
+```
+
+If you happen to get a message like this:
+
+```
+Error: mac-x64-11.0.0 not available, create it using the --build flag
+```
+
+Then alter the nexe build command like so...
+
+```
+../node_modules/.bin/nexe validator.js --build mac-x64-11.0.0
+```
+
+...and go out and get some coffee, because nexe is going to download and
+compile the entire Node.js runtime on your machine.
+
+Once you have a local build, you can run the command above (with the build
+flag) and nexe will know to use that local build. It will not recompile
+nodejs unless you delete that build.
