@@ -11,6 +11,7 @@
     "dependencies": {
         "archiver": "^2.1.1",
         "asar": "^0.14.3",
+        "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
         "documentation": "^8.0.2",
         "electron-context-menu": "^0.9.1",
@@ -22,7 +23,8 @@
         "popper.js": "^1.14.3",
         "require-dir": "^0.3.2",
         "tar-stream": "git+https://github.com/APTrust/tar-stream.git",
-        "tmp": "0.0.33"
+        "tmp": "0.0.33",
+        "winston": "^3.1.0"
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
