@@ -9,10 +9,16 @@ const EXIT_RUNTIME_ERROR = 3;
 
 const VALID_COMMANDS = ["validate-bag", "validate-profile", "run-job"]
 
-async function main() {
-    let exitCode = EXIT_SUCCESS;
+function main() {
     let opts = parseArgs();
-    let validator = await validate(opts);
+    if (opts.command == "validate-bag") {
+        validateBag(opts);
+    }
+}
+
+async function validateBag(opts) {
+    let exitCode = EXIT_SUCCESS;
+    let validator = await _validateBag(opts);
     if (validator.errors.length == 0) {
         console.log("Bag is valid")
     } else {
@@ -25,7 +31,7 @@ async function main() {
     return exitCode;
 }
 
-function validate(opts) {
+function _validateBag(opts) {
     return new Promise(function(resolve, reject) {
         let profile = BagItProfile.load(opts.profile);
         let validator = new Validator(opts.bag, profile);
