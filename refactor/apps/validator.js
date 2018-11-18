@@ -2,34 +2,36 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const minimist = require('minimist')
 const { Validator } = require('../bagit/validator');
 
-function main() {
-    (async () => {
-        await validate();
-    })().catch(e => {
-        exitWithError(3, ex.stack);
-    });
+async function main() {
+    let exitCode = 0;
+    let opts = parseArgs();
+    let validator = await validate(opts);
+    if (validator.errors.length == 0) {
+        console.log("Bag is valid")
+    } else {
+        console.log("Bag has the following errors:");
+        for (let e of validator.errors) {
+            console.log(e);
+            exitCode = 1;
+        }
+    }
+    return exitCode;
 }
 
 // TODO: Promise/resolve... else this doesn't work!
 
-function validate() {
-    let opts = parseArgs();
-    let validator;
-    let profile = BagItProfile.load(opts.profile);
-    validator = new Validator(opts.bag, profile);
-    validator.on('error', function(err) {
-        exitWithError(3, err);
+function validate(opts) {
+    return new Promise(function(resolve, reject) {
+        let profile = BagItProfile.load(opts.profile);
+        let validator = new Validator(opts.bag, profile);
+        validator.on('error', function(err) {
+            exitWithError(3, err);
+        });
+        validator.on('end', function() {
+            resolve(validator);
+        });
+        validator.validate();
     });
-    validator.on('end', function() {
-        if (validator.errors.length == 0) {
-            console.log("Bag is valid");
-        } else {
-            for (let e of validation.errors) {
-                console.log(e);
-            }
-        }
-    });
-    validator.validate();
 }
 
 function parseArgs() {
