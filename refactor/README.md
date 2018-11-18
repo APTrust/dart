@@ -38,11 +38,11 @@ command will create if it doesn't already exist.
 The [nexe npm package](https://www.npmjs.com/package/nexe) builds Node.js
 scripts into standalone executables. DART executables are in the apps
 directory. You can compile them with the command below. Be sure to run this from
-the refactor directory, or the executable will be broken due to bad internal
-paths.
+the top-level directory, or the executable will be broken due to bad internal
+paths. (Top level dir is currently refactor.)
 
 ```
-./node_modules/.bin/nexe -i apps/dart-cli.js -o apps/bin/dart-cli --build mac-x64-11.0.0 --debugBundle=apps/bin/bundle.js
+./build-cli.sh
 ```
 
 The flag `--build mac-x64-11.0.0` tells nexe to package the app with version
