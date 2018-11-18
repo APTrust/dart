@@ -3,24 +3,33 @@ const minimist = require('minimist')
 const { Validator } = require('../bagit/validator');
 
 function main() {
+    (async () => {
+        await validate();
+    })().catch(e => {
+        exitWithError(3, ex.stack);
+    });
+}
+
+// TODO: Promise/resolve... else this doesn't work!
+
+function validate() {
     let opts = parseArgs();
-    console.log(opts);
-    try {
-        let profile = BagItProfile.load(opts.profile);
-        let validator = new Validator(opts.bag, profile);
-        validator.validate();
+    let validator;
+    let profile = BagItProfile.load(opts.profile);
+    validator = new Validator(opts.bag, profile);
+    validator.on('error', function(err) {
+        exitWithError(3, err);
+    });
+    validator.on('end', function() {
         if (validator.errors.length == 0) {
             console.log("Bag is valid");
-            process.exit(0);
         } else {
             for (let e of validation.errors) {
-
+                console.log(e);
             }
-            process.exit(1);
         }
-    } catch (ex) {
-        exitWithError(3, ex.stack);
-    }
+    });
+    validator.validate();
 }
 
 function parseArgs() {
