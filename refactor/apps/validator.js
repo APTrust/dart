@@ -1,9 +1,26 @@
+const { BagItProfile } = require('../bagit/bagit_profile');
 const minimist = require('minimist')
-const { Validator } = require('./validator');
+const { Validator } = require('../bagit/validator');
 
 function main() {
-    console.log(parseArgs());
-    console.log(new Date());
+    let opts = parseArgs();
+    console.log(opts);
+    try {
+        let profile = BagItProfile.load(opts.profile);
+        let validator = new Validator(opts.bag, profile);
+        validator.validate();
+        if (validator.errors.length == 0) {
+            console.log("Bag is valid");
+            process.exit(0);
+        } else {
+            for (let e of validation.errors) {
+
+            }
+            process.exit(1);
+        }
+    } catch (ex) {
+        exitWithError(3, ex.stack);
+    }
 }
 
 function parseArgs() {
@@ -16,14 +33,29 @@ function parseArgs() {
         printUsage();
         process.exit(0);
     }
-    // if (!opts.p) {
-    //     exitWithError(1, "Missing required option -p <path to BagIt profile>");
-    // }
+    if (opts.version) {
+        printVersion();
+        process.exit(0);
+    }
+    if (!opts.profile) {
+         exitWithError(1, "Missing required option -p <path to BagIt profile>");
+    }
+    if (opts._.length == 0 || opts._[0] == "") {
+        exitWithError(2, "Missing argument path/to/bag.tar");
+    } else {
+        opts.bag = opts._[0];
+    }
     return opts;
+}
+
+function printVersion() {
+    console.log("dart-validator version 1.0");
+    console.log(`Node ${process.platform} ${process.arch} ${process.version}`);
 }
 
 function printUsage() {
     console.log(`
+
 dart-validate - DART Bag Validator
 
   Validate BagIt packages according to a BagIt profile.
@@ -46,12 +78,15 @@ directory or a tar file.
 
 EXIT CODES:
 
-  0   Process completed normally. If the --help flag was specified, the program
-      printed a help message and exited. Otherwise, it completed the bag
-      validation procesws. (Bag may or may not be valid. Check output.)
-  1   Missing or invalid command line options. Validation not attempted.
-  2   Validation was attempted but failed due to an unexpected error such as a
+  0   Process completed normally. If the --help or --version flag was specified,
+      the program printed a message and exited. Otherwise, validation completed
+      successfully.
+  1   Validation completed but the bag was not valid. See stdout for a list of
+      validation errors.
+  2   Missing or invalid command line options. Validation not attempted.
+  3   Validation was attempted but failed due to an unexpected error such as a
       missing or unreadable profile or bag.
+
 `);
 }
 
