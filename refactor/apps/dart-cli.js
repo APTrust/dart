@@ -1,4 +1,5 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
+var dateFormat = require('dateformat');
 const minimist = require('minimist')
 const { Validator } = require('../bagit/validator');
 
@@ -19,7 +20,7 @@ async function main() {
         } else {
             console.log("Bag has the following errors:");
             for (let e of validator.errors) {
-                console.log(`    e`);
+                console.log(`    ${e}`);
                 process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
             }
         }
@@ -38,6 +39,12 @@ function validateBag(opts) {
         validator.on('end', function() {
             resolve(validator);
         });
+        if (opts.debug) {
+            validator.on('task', function(taskDesc) {
+                let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
+                console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path}`);
+            });
+        }
         validator.validate();
     });
 }
