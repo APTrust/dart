@@ -1,4 +1,8 @@
 const Conf = require('conf');
+const fs = require('fs');
+const makeDir = require('make-dir');
+const path = require('path');
+const writeFileAtomic = require('write-file-atomic');
 
 /**
  * JsonStore allows us to save, update, retrieve, and delete objects
@@ -23,6 +27,14 @@ class JsonStore extends Conf {
     constructor(dataDir, name) {
         var opts = {cwd: dataDir, configName: name};
         super(opts);
+
+        // Make sure underlying data file exists. This was the behavior of
+        // earlier versions of the conf library, and some of our tests
+        // want to know the files are there.
+        if (!fs.existsSync(this.path)) {
+            makeDir.sync(path.dirname(this.path));
+            writeFileAtomic.sync(this.path, '[]');
+        }
     }
 }
 

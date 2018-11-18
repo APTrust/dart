@@ -12,4 +12,6 @@ test('JsonStore creates data store file and returns object', () => {
     var js = new JsonStore(tmpDir, fileName)
     expect(js).not.toBeNull();
     expect(fs.existsSync(dataFile)).toBe(true);
+    try { fs.unlinkSync(dataFile) }
+    catch (ex) { }
 });
