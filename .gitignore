@@ -6,4 +6,4 @@ docs/
 apps/easy_store_setup/easy_store_setup
 apps/apt_create_bag/apt_create_bag
 tsconfig.json
-apps/bin/*
+refactor/apps/bin/*
