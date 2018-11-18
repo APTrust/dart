@@ -19,10 +19,12 @@ async function main() {
         } else {
             console.log("Bag has the following errors:");
             for (let e of validator.errors) {
-                console.log(e);
+                console.log(`    e`);
                 process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
             }
         }
+    } else if (opts.command == "validate-profile") {
+        validateProfile(opts);
     }
 }
 
@@ -40,8 +42,24 @@ function validateBag(opts) {
     });
 }
 
+function validateProfile(opts) {
+    let profile = BagItProfile.load(opts.profile);
+    let result = profile.validate();
+    if (result.isValid()) {
+        console.log("BagItProfile is valid.");
+    } else {
+        console.log("BagItProfile has the following errors:");
+        for (let [key, value] of Object.entries(result.errors)) {
+            console.log(`    ${key}: ${value}`);
+        }
+        process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
+    }
+}
+
+// TODO: Move this to seperate file.
 function parseArgs() {
     let opts = minimist(process.argv.slice(2), {
+        string: ['bag', 'profile', 'job'],
         boolean: ['d', 'debug', 'h', 'help'],
         default: { d: false, debug: false, h: false, help: false},
         alias: { d: ['debug'], p: ['profile'], v: ['version'], h: ['help'], c: ['command']}
@@ -75,7 +93,14 @@ function parseArgs() {
         }
         exitWithError(EXIT_INVALID_PARAMS, `Missing final argument ${missingParam}\n${sample}`);
     } else {
-        opts.bag = opts._[0];
+        if (opts.c == "validate-bag") {
+            opts.bag = opts._[0];
+        } else if (opts.c == "validate-profile") {
+            opts.profile = opts._[0];
+        } else if (opts.c == "run-job") {
+            opts.job = opts._[0];
+        }
+
     }
     return opts;
 }
