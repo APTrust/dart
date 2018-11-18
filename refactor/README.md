@@ -37,28 +37,15 @@ command will create if it doesn't already exist.
 
 The [nexe npm package](https://www.npmjs.com/package/nexe) builds Node.js
 scripts into standalone executables. DART executables are in the apps
-directory. You can compile them like this:
+directory. You can compile them with the command below. Be sure to run this from
+the refactor directory, or the executable will be broken due to bad internal
+paths.
 
 ```
-cd apps
-../node_modules/.bin/nexe validator.js
+./node_modules/.bin/nexe -i apps/validator.js -o apps/bin/dart-validate --build mac-x64-11.0.0 --debugBundle=apps/bin/bundle.js
 ```
 
-If you happen to get a message like this:
+The first time you build, nexe will compile node from scratch on your machine,
+which will take 40-60 minutes.
 
-```
-Error: mac-x64-11.0.0 not available, create it using the --build flag
-```
-
-Then alter the nexe build command like so...
-
-```
-../node_modules/.bin/nexe validator.js --build mac-x64-11.0.0
-```
-
-...and go out and get some coffee, because nexe is going to download and
-compile the entire Node.js runtime on your machine.
-
-Once you have a local build, you can run the command above (with the build
-flag) and nexe will know to use that local build. It will not recompile
-nodejs unless you delete that build.
+Subsequent compiles will take just a few seconds.
