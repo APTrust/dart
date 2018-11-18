@@ -6,37 +6,32 @@ const EXIT_SUCCESS = 0;
 const EXIT_COMPLETED_WITH_ERRORS = 1;
 const EXIT_INVALID_PARAMS = 2;
 const EXIT_RUNTIME_ERROR = 3;
-
 const VALID_COMMANDS = ["validate-bag", "validate-profile", "run-job"]
 
-function main() {
+
+async function main() {
+    process.exitCode = EXIT_SUCCESS;
     let opts = parseArgs();
     if (opts.command == "validate-bag") {
-        validateBag(opts);
-    }
-}
-
-async function validateBag(opts) {
-    let exitCode = EXIT_SUCCESS;
-    let validator = await _validateBag(opts);
-    if (validator.errors.length == 0) {
-        console.log("Bag is valid")
-    } else {
-        console.log("Bag has the following errors:");
-        for (let e of validator.errors) {
-            console.log(e);
-            exitCode = EXIT_COMPLETED_WITH_ERRORS;
+        let validator = await validateBag(opts);
+        if (validator.errors.length == 0) {
+            console.log("Bag is valid")
+        } else {
+            console.log("Bag has the following errors:");
+            for (let e of validator.errors) {
+                console.log(e);
+                process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
+            }
         }
     }
-    return exitCode;
 }
 
-function _validateBag(opts) {
+function validateBag(opts) {
     return new Promise(function(resolve, reject) {
         let profile = BagItProfile.load(opts.profile);
         let validator = new Validator(opts.bag, profile);
         validator.on('error', function(err) {
-            exitWithError(EXIT_RUNTIME_ERROR, err);
+            resolve(validator);
         });
         validator.on('end', function() {
             resolve(validator);
