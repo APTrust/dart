@@ -42,10 +42,27 @@ the refactor directory, or the executable will be broken due to bad internal
 paths.
 
 ```
-./node_modules/.bin/nexe -i apps/validator.js -o apps/bin/dart-validate --build mac-x64-11.0.0 --debugBundle=apps/bin/bundle.js
+./node_modules/.bin/nexe -i apps/dart-cli.js -o apps/bin/dart-cli --build mac-x64-11.0.0 --debugBundle=apps/bin/bundle.js
 ```
+
+The flag `--build mac-x64-11.0.0` tells nexe to package the app with version
+11.0.0 of Node.js for 64-bit MacOS.
 
 The first time you build, nexe will compile node from scratch on your machine,
 which will take 40-60 minutes.
 
 Subsequent compiles will take just a few seconds.
+
+The file bundle.js will contain all of the JavaScript required to run the app.
+The script is also bundled into the compiled dart-cli, but having it in
+bundle.js as well allows us to examine what code nexe packed into the compiled
+app. This can be useful for debugging. We do not need to distribute bundle.js.
+It's for development/debuggin use only.
+
+Note that all of the DART command line tools will be built into a single
+executable called `dart-cli`. This is in part because nexe binaries are large
+(over 40 MB) and include only about 200k-800k of JavaScript. Better to
+distribute one 40 MB binary than ten.
+
+The other advantage to having a single binary is that when we update core DART
+code, we have to redistribute only one binary instead of ten.
