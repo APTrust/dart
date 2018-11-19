@@ -2,7 +2,7 @@
 
 echo 'Building dart-cli'
 
-./node_modules/.bin/nexe -i apps/dart-cli.js -o apps/bin/dart-cli --build mac-x64-11.0.0 --debugBundle=apps/bin/bundle.js
+./node_modules/.bin/nexe -i apps/dart-cli.js -o apps/bin/dart-cli -t mac-x64-10.13.0 --debugBundle=apps/bin/bundle.js
 
 echo 'Executable is in ./apps/bin/dart-cli'
 echo ''
