@@ -389,7 +389,7 @@ class BagItProfile extends PersistentObject {
             tagsByFile[tag.tagFile].push(tag);
         }
         for (var f of Object.keys(tagsByFile)) {
-            let sortFunction = Util.getSortFunction('name', 'asc');
+            let sortFunction = Util.getSortFunction('tagName', 'asc');
             tagsByFile[f].sort(sortFunction);
         }
         return tagsByFile;

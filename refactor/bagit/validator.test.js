@@ -198,9 +198,9 @@ test('Validator identifies errors in bad APTrust bag', done => {
         "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-md5.txt is missing from bag.",
         "Bad sha256 digest for 'custom_tags/tracked_tag_file.txt': manifest says '0000000000000000000000000000000000000000000000000000000000000000', file digest is '3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd'.",
         "File 'custom_tags/tag_file_xyz.pdf' in tagmanifest-sha256.txt is missing from bag.",
-        "Value for tag 'Title' in aptrust-info.txt is missing.",
         "Tag 'Access' in aptrust-info.txt contains illegal value 'acksess'. [Allowed: Consortia, Institution, Restricted]",
-        "Tag 'Storage-Option' in aptrust-info.txt contains illegal value 'Cardboard-Box'. [Allowed: Standard, Glacier-OH, Glacier-OR, Glacier-VA]"
+        "Tag 'Storage-Option' in aptrust-info.txt contains illegal value 'Cardboard-Box'. [Allowed: Standard, Glacier-OH, Glacier-OR, Glacier-VA]",
+        "Value for tag 'Title' in aptrust-info.txt is missing."
     ];
     validator.on('error', function(err) {
         // Force failure & stop test.
