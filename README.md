@@ -17,7 +17,7 @@ APTrust's production repository since March of 2018.
 
 The code in the master branch of this project represents a working prototype.
 It does its job, but it is not maintainable. (It's always a bad sign when the
-person who wrote the code no longer understands it.) The *refactor branch*,
+person who wrote the code no longer understands it.) The [refactor branch](https://github.com/APTrust/dart/tree/refactor),
 begun in July, 2018, will clean up the code to a point where others can contribute.
 The refactor will:
 
@@ -30,7 +30,7 @@ use cases, including sending digital artefacts from producers to preservationist
 within the organization. (For example, researchers can bag and send data to the
 library across campus.)
 
-For more info, see the [Current Status and Roadmap](#current-status-and-roadmap-updated-august-1-2018)
+For more info, see the [Current Status and Roadmap](#current-status-and-roadmap-updated-november-20-2018)
 
 # Installer
 
@@ -113,10 +113,10 @@ bagit-profiles project at https://github.com/ruebot/bagit-profiles. The major
 difference between these profiles and ruebot's is that these provide broader
 support for required tags in specific tag files other than bag-info.txt.
 
-# Current Status and Roadmap (Updated August 1, 2018)
+# Current Status and Roadmap (Updated November 20, 2018)
 
-New APTrust depositors are already using early alpha versions to push materials into
-our production repositories. As of March, 2018, the following features are working:
+New APTrust depositors have been using prototype versions of DART to push materials into
+our production repositories. The following features are working in the prototype version:
 
 1. Creating bags that conform to the APTrust BagIt spec by simply dragging and dropping files.
 2. Uploading bags to APTrust's S3 receiving buckets.
@@ -126,26 +126,30 @@ Immediate items on the roadmap, in order of importance:
 1. Code cleanup and refactoring. The existing code is messy and does not adequately
 separate concerns. Model classes should be separate from forms, and UI code should be
 separate from models and forms. Cleanup and refactoring will give us a stable codebase
-that others can contribute to. This work is underway in the refactor branch.
+that others can contribute to. [This work is already underway in the refactor branch.]
 2. Formal unit and integration tests. This depends on completion of #1 above. This is
-underway in the refactor branch.
+underway in the refactor branch. [This work is already underway in the refactor branch.
+We're using Jest for unit testing.]
 3. Command line tools for bagging, bag validation, uploading files and running jobs.
 Users should be able to call command line tools from the language of their choice
 (Python, Ruby, PHP, etc.) to automate the processes of creating, validating, and
-uploading bags. Not started as of August 1, 2018.
+uploading bags. [This work is already underway in the refactor branch. The bag
+validator is the first of the command-line tools to be up and running.]
 4. Integration with APTrust's REST API. At the moment, this requirement has higher
 priority than formal testing because users need to see the full outcome of the
 pack-ship-ingest process. This is partially implemented in the existing releases
-as of April, 2018, but will be better implemented in the refactor.
+as of April, 2018, but will be better implemented in the refactor. [Not yet
+started in the refactor branch.]
 
 
 Additional tasks, in no particular order:
 
 * Add workflows, so a user can say, "These are the files, here's the essential bag
-metadata, now pack it and ship it in the usual way."
-* Formalize plugin interfaces, so other developers can contribute plugins.
+metadata, now pack it and ship it in the usual way." [Not started.]
+* Formalize plugin interfaces, so other developers can contribute plugins. [Already
+underway in the refactor branch.]
 * Finish automated build, deployment, and auto-updating features, so the app can keep
 itself up to date without user intervention. Automated build and deployment are
 done, as of August 2018.
 * Separate the JavaScript and Go code into distinct repositories. The current
-builds don't use the Go code at all.
+builds don't use the Go code at all. [Not started. Coming soon.]
