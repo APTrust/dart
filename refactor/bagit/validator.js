@@ -227,7 +227,8 @@ class Validator extends EventEmitter {
 
     /**
      * Returns a reader plugin that is capable of reading the bag we want
-     * to validate.
+     * to validate. Note that this always returns a new reader, so if you
+     * call it 20 times, you're going to get 20 individual reader objects.
      *
      * @returns {Plugin}
      */
