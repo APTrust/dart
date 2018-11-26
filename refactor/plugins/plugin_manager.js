@@ -1,3 +1,10 @@
+const FormatReaders = requireDir("./formats/readers");
+const FormatWriters = requireDir("./formats/writers");
+const NetworkClients = requireDir("./network");
+const RepositoryProviders = requireDir("./repository");
+const SetupProviders = requireDir("./setup");
+const { Util } = require('../core/util');
+
 /**
  * pluginTypes describe the types of DART plugins.
  *
@@ -41,6 +48,42 @@ class PluginManager {
     }
 
     /**
+     * This returns a list of available plugins of the specified
+     * type. This function is primarily meant for internal use.
+     * You'll generally want to use {@link listByType} to get an
+     * alphabetically ordered list of plugin descriptions.
+     *
+     * @returns {Array<Plugin>}
+     */
+    static getModuleCollection(type) {
+        var modules;
+        switch (type) {
+            case 'FormatReader':
+              modules = FormatReaders;
+              break;
+            case 'FormatWriter':
+              modules = FormatWriters;
+              break;
+            case 'NetworkClient':
+              modules = NetworkClients;
+              break;
+            case 'Repository':
+              modules = RepositoryProviders;
+              break;
+            case 'Setup':
+              modules = SetupProviders;
+              break;
+            case 'All':
+              modules = FormatReaders.concat(FormatWriters, NetWorkClients,
+                                             RepositoryProviders, SetupProviders);
+              break;
+            default:
+              throw `Param 'type' must be one of: Array.join(pluginTypes, ', ')`;
+        }
+        return modules;
+    }
+
+    /**
      * This returns a list of all plugins of the specified type.
      * For example, listByType('FormatWriter') returns a list of all
      * plugins of type FormatWriter.
@@ -48,7 +91,13 @@ class PluginManager {
      * @returns {Array<Plugin>}
      */
     static listByType(type) {
-
+        var modules = PluginManager.getModuleCollection(type);
+        var providers = [];
+        for(var module in modules) {
+            providers.push(module.description());
+        }
+        providers.sort(Util.getSortFunction('name', 'asc'));
+        return providers;
     }
 
     /**
@@ -57,7 +106,14 @@ class PluginManager {
      * @returns {Plugin}
      */
     static findById(id) {
-
+        var modules = PluginManager.getModuleCollection('All');
+        for (var module in modules) {
+            var desc = module.description();
+            if (desc.id == id) {
+                return module;
+            }
+        }
+        return null;
     }
 
     /**
@@ -66,10 +122,14 @@ class PluginManager {
      * plugins that can read tar files. Use 'filesystem' if you're
      * looking for plugins that can read from the file system.
      *
+     * @param {string} fileExtension - A string specifying the extension
+     * of the file type you want to read. This should be all lowercase,
+     * such as '.tar', '.zip', etc.
+     *
      * @returns {Array<Plugin>}
      */
     static canRead(fileExtension) {
-
+        return PluginManager.pluginProvides('FormatReaders', 'readsFormats', fileExtension)
     }
 
     /**
@@ -78,10 +138,14 @@ class PluginManager {
      * plugins that can write tar files. Use 'filesystem' if you're
      * looking for plugins that can write to the file system.
      *
+     * @param {string} fileExtension - A string specifying the extension
+     * of the file type you want to write. This should be all lowercase,
+     * such as '.tar', '.zip', etc.
+     *
      * @returns {Array<Plugin>}
      */
     static canWrite(fileExtension) {
-
+        return PluginManager.pluginProvides('FormatWriters', 'writesFormats', fileExtension)
     }
 
     /**
@@ -89,10 +153,14 @@ class PluginManager {
      * network protocol. For example, implementsProtocol('s3') returns a
      * list of plugins that can talk to s3 servers.
      *
+     * @param {string} protocol - A string specifying what network protocol
+     * you want to use. This should be all lowercase, such as 'ftp', 'sftp',
+     * 's3', etc.
+     *
      * @returns {Array<Plugin>}
      */
     static implementsProtocol(proto) {
-
+        return PluginManager.pluginProvides('NetworkClients', 'implementsProtocols', proto)
     }
 
     /**
@@ -100,9 +168,53 @@ class PluginManager {
      * of the specified type. For example, talksTo('fedora') returns a
      * list of plugins that can talk to Fedora REST services.
      *
+     * @param {string} repoType - A string specifying what kind of repository
+     * you want to talk to. This should be all lowercase, such as 'aptrust',
+     * 'fedora', etc.
+     *
      * @returns {Array<Plugin>}
      */
     static talksTo(repoType) {
+        return PluginManager.pluginProvides('Repository', 'talksToRepository', repoType)
+    }
 
+    /**
+     * This returns a list of all plugins that provide setup services for
+     * the specified configuration. For example, 'aptrust' provides setup
+     * services to get the basic APTrust configuration in place.
+     *
+     * @param {string} what - A string specifying what kind of setup you're
+     * looking for. This should be all lowercase, such as 'aptrust'.
+     *
+     * @returns {Array<Plugin>}
+     */
+    static setsUp(what) {
+        return PluginManager.pluginProvides('Setup', 'setsUp', what)
+    }
+
+    /**
+     * This returns a list of plugins that provide a certain service,
+     * such as being able to read a specified format or communicate via a
+     * specific network protocol. This function is used internally by the
+     * convenience functions {@link canRead}, {@link canWrite},
+     * {@link implementsProtocol}, {@link talksTo}, and {@link setsUp}.
+     * You should generally use those functions instead of this one.
+     *
+     *
+     *
+     * @returns {Array<Plugin>}
+     */
+    static pluginProvides(pluginType, propertyToCheck, valueToFind) {
+        var modules = PluginManager.getModuleCollection(pluginType);
+        var providers = [];
+        for (var module in modules) {
+            var desc = module.description();
+            if (Array.isArray(desc[propetyToCheck]) && desc[propertyToCheck].contains(valueToFind))
+                providers.push(desc);
+            } else if (desc[propetyToCheck] === valueToFind) {
+                providers.push(desc);
+            }
+        }
+        return providers;
     }
 }
