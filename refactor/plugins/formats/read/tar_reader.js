@@ -18,7 +18,7 @@ const tar = require('tar-stream');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-class TarReader extends Plugin {
+module.exports = class TarReader extends Plugin {
 
     /**
       * Creates a new TarReader.
@@ -49,6 +49,20 @@ class TarReader extends Plugin {
          * @type {number}
          */
         this.dirCount = 0;
+    }
+
+    static description() {
+        return {
+            id: 'd1045d20-153b-478c-aca4-7192c4ce624f',
+            name: 'TarReader',
+            description: 'Built-in DART tar reader',
+            version: '0.1',
+            readsFormats: ['.tar'],
+            writesFormats: [],
+            implementsProtocols: [],
+            talksToRepository: [],
+            setsUp: []
+        };
     }
 
     /**
@@ -207,5 +221,3 @@ class TarReader extends Plugin {
         });
     }
 }
-
-module.exports.TarReader = TarReader;

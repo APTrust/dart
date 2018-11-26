@@ -1,6 +1,6 @@
 const path = require('path');
 const { PassThrough } = require('stream');
-const { TarReader } = require('./tar_reader');
+const TarReader = require('./tar_reader');
 
 test('TarReader.read() emits expected events', done => {
     var streamCount = 0;

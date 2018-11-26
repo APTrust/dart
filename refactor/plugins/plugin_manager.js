@@ -1,8 +1,8 @@
-const FormatReaders = requireDir("./formats/read");
-const FormatWriters = requireDir("./formats/write");
-const NetworkClients = requireDir("./network");
-const RepositoryProviders = requireDir("./repository");
-const SetupProviders = requireDir("./setup");
+const FormatReaders = require("./formats/read");
+const FormatWriters = require("./formats/write");
+const NetworkClient = require("./network");
+const Repository = require("./repository");
+const Setup = require("./setup");
 const { Util } = require('../core/util');
 
 /**
@@ -59,23 +59,19 @@ class PluginManager {
         var modules;
         switch (type) {
             case 'FormatReader':
-              modules = FormatReaders;
+              modules = FormatReaders.Providers;
               break;
             case 'FormatWriter':
-              modules = FormatWriters;
+              modules = FormatWriters.Providers;
               break;
             case 'NetworkClient':
-              modules = NetworkClients;
+              modules = NetworkClient.Providers;
               break;
             case 'Repository':
-              modules = RepositoryProviders;
+              modules = Repository.Providers;
               break;
             case 'Setup':
-              modules = SetupProviders;
-              break;
-            case 'All':
-              modules = FormatReaders.concat(FormatWriters, NetWorkClients,
-                                             RepositoryProviders, SetupProviders);
+              modules = Setup.Providers;
               break;
             default:
               throw `Param 'type' must be one of: Array.join(pluginTypes, ', ')`;
@@ -106,11 +102,12 @@ class PluginManager {
      * @returns {Plugin}
      */
     static findById(id) {
-        var modules = PluginManager.getModuleCollection('All');
-        for (var module in modules) {
-            var desc = module.description();
-            if (desc.id == id) {
-                return module;
+        for (var pluginType of pluginTypes) {
+            var modules = PluginManager.getModuleCollection(pluginType);
+            for (var module of modules) {
+                if (module.description().id == id) {
+                    return module;
+                }
             }
         }
         return null;
@@ -129,7 +126,7 @@ class PluginManager {
      * @returns {Array<Plugin>}
      */
     static canRead(fileExtension) {
-        return PluginManager.pluginProvides('FormatReaders', 'readsFormats', fileExtension)
+        return PluginManager.pluginProvides('FormatReader', 'readsFormats', fileExtension)
     }
 
     /**
@@ -145,7 +142,7 @@ class PluginManager {
      * @returns {Array<Plugin>}
      */
     static canWrite(fileExtension) {
-        return PluginManager.pluginProvides('FormatWriters', 'writesFormats', fileExtension)
+        return PluginManager.pluginProvides('FormatWriter', 'writesFormats', fileExtension)
     }
 
     /**
@@ -160,7 +157,7 @@ class PluginManager {
      * @returns {Array<Plugin>}
      */
     static implementsProtocol(proto) {
-        return PluginManager.pluginProvides('NetworkClients', 'implementsProtocols', proto)
+        return PluginManager.pluginProvides('NetworkClient', 'implementsProtocols', proto)
     }
 
     /**
@@ -207,12 +204,12 @@ class PluginManager {
     static pluginProvides(pluginType, propertyToCheck, valueToFind) {
         var modules = PluginManager.getModuleCollection(pluginType);
         var providers = [];
-        for (var module in modules) {
+        for (var module of modules) {
             var desc = module.description();
-            if (Array.isArray(desc[propetyToCheck]) && desc[propertyToCheck].contains(valueToFind))
-                providers.push(desc);
-            } else if (desc[propetyToCheck] === valueToFind) {
-                providers.push(desc);
+            if (Array.isArray(desc[propertyToCheck]) && desc[propertyToCheck].includes(valueToFind)) {
+                providers.push(module);
+            } else if (desc[propertyToCheck] === valueToFind) {
+                providers.push(module);
             }
         }
         return providers;

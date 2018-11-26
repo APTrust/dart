@@ -3,14 +3,13 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const crypto = require('crypto');
 const EventEmitter = require('events');
-const { FileSystemReader } = require('../packaging/file_system_reader');
 const fs = require('fs');
 const { ManifestParser } = require('./manifest_parser');
 const os = require('os');
 const path = require('path');
+const { PluginManager } = require('../plugins/plugin_manager');
 const stream = require('stream');
 const { TagFileParser } = require('./tag_file_parser');
-const { TarReader } = require('../packaging/tar_reader');
 const { TaskDescription } = require('./task_description');
 const { Util } = require('../core/util');
 
@@ -160,6 +159,34 @@ class Validator extends EventEmitter {
     }
 
     /**
+     * readingFromDir returns true if the bag being validated is
+     * unserialized. That is, it is a directory on a file system, and not
+     * a tar, zip, gzip, or other single-file format.
+     *
+     * @returns {boolean}
+     */
+    readingFromDir() {
+        return fs.existsSync(this.pathToBag) && fs.statSync(this.pathToBag).isDirectory();
+    }
+
+    /**
+     * This returns the file extension of the bag in this.pathToBag.
+     * If the bag is a directory, this returns an empty string, but
+     * you should still check on your own to see whether pathToBag
+     * points to a directory. In the special (and common) case of
+     * '.tar.gz' files, this returns '.tar.gz'.
+     *
+     * @returns {string}
+     */
+    fileExtension() {
+        var ext = path.extname(this.pathToBag);
+        if (this.pathToBag.endsWith('.tar.gz')) {
+            ext = '.tar.gz';
+        }
+        return ext;
+    }
+
+    /**
      * Returns an array of BagItFile objects that represent payload files.
      *
      * @returns {Array<BagItFile>}
@@ -193,6 +220,26 @@ class Validator extends EventEmitter {
      */
     tagManifests() {
         return Object.values(this.files).filter(f => f.isTagManifest());
+    }
+
+    /**
+     * Returns a reader plugin that is capable of reading the bag we want
+     * to validate.
+     *
+     * @returns {Plugin}
+     */
+    getNewReader() {
+        var fileExtension = path.extname(this.pathToBag);
+        if (this.readingFromDir()) {
+            fileExtension = 'directory';
+        }
+        var plugins = PluginManager.canRead(fileExtension);
+        if (!plugins) {
+            throw `No plugins know how to read ${this.pathToBag}`
+        }
+        // plugins[0] is a reader plugin (a class) with a constructor
+        // that takes pathToBag as its sole param.
+        return new plugins[0](this.pathToBag);
     }
 
     /**
@@ -251,12 +298,7 @@ class Validator extends EventEmitter {
      */
     _scanBag() {
         var validator = this;
-        var reader = null;
-        if (this.readingFromTar()) {
-            reader = new TarReader(this.pathToBag);
-        } else {
-            reader = new FileSystemReader(this.pathToBag);
-        }
+        var reader = this.getNewReader();
         reader.on('error', function(err) { validator.emit('error', err) });
         reader.on('entry', function (entry) {
             var relPath = validator._cleanEntryRelPath(entry.relPath);
@@ -282,12 +324,7 @@ class Validator extends EventEmitter {
     _readBag() {
         // Attach listeners to our reader.
         var validator = this;
-        var reader = null;
-        if (this.readingFromTar()) {
-            reader = new TarReader(this.pathToBag);
-        } else {
-            reader = new FileSystemReader(this.pathToBag);
-        }
+        var reader = this.getNewReader();
         reader.on('entry', function (entry) { validator._readEntry(entry) });
         reader.on('error', function(err) { validator.emit('error', err) });
 

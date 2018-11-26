@@ -67,6 +67,36 @@ test('_validateProfile()', () => {
     expect(validator2.errors).toEqual(expected);
 });
 
+test('readingFromTar()', () => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    expect(validator.readingFromTar()).toEqual(true);
+
+    validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    expect(validator.readingFromTar()).toEqual(false);
+});
+
+test('readingFromDir()', () => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    expect(validator.readingFromDir()).toEqual(false);
+
+    validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    expect(validator.readingFromDir()).toEqual(true);
+});
+
+test('fileExtension()', () => {
+    let validator = new Validator("path/to/bag.tar", new BagItProfile());
+    expect(validator.fileExtension()).toEqual(".tar");
+
+    validator.pathToBag = "path/to/bag.tar.gz";
+    expect(validator.fileExtension()).toEqual(".tar.gz");
+
+    validator.pathToBag = "path/to/bag.zip";
+    expect(validator.fileExtension()).toEqual(".zip");
+
+    validator.pathToBag = "path/to/bag";
+    expect(validator.fileExtension()).toEqual("");
+});
+
 
 // --------- FROM HERE DOWN, TEST ACTUAL BAGS ----------- //
 

@@ -18,7 +18,7 @@ const readdirp = require('readdirp');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-class FileSystemReader extends EventEmitter {
+module.exports = class FileSystemReader extends Plugin {
 
     /**
       * Creates a new FileSystemReader.
@@ -49,6 +49,20 @@ class FileSystemReader extends EventEmitter {
          * @type {number}
          */
         this.dirCount = 0;
+    }
+
+    static description() {
+        return {
+            id: '265f724e-8289-4bf7-bbdf-803a65bcdf19',
+            name: 'FileSystemReader',
+            description: 'Built-in DART file system reader',
+            version: '0.1',
+            readsFormats: ['directory'],
+            writesFormats: [],
+            implementsProtocols: [],
+            talksToRepository: [],
+            setsUp: []
+        };
     }
 
     /**
@@ -233,5 +247,3 @@ class FileSystemReader extends EventEmitter {
         });
     }
 }
-
-module.exports.FileSystemReader = FileSystemReader;
