@@ -1,5 +1,5 @@
-const FormatReaders = requireDir("./formats/readers");
-const FormatWriters = requireDir("./formats/writers");
+const FormatReaders = requireDir("./formats/read");
+const FormatWriters = requireDir("./formats/write");
 const NetworkClients = requireDir("./network");
 const RepositoryProviders = requireDir("./repository");
 const SetupProviders = requireDir("./setup");
@@ -218,3 +218,5 @@ class PluginManager {
         return providers;
     }
 }
+
+module.exports.PluginManager = PluginManager;

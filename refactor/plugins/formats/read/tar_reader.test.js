@@ -5,7 +5,7 @@ const { TarReader } = require('./tar_reader');
 test('TarReader.read() emits expected events', done => {
     var streamCount = 0;
     var finishCount = 0;
-    var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
+    var pathToTarFile = path.join(__dirname, "..", "..", "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
     var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.
@@ -115,7 +115,7 @@ var expectedStats = {
 }
 
 test('TarReader.read() returns correct stats', done => {
-    var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
+    var pathToTarFile = path.join(__dirname, "..", "..", "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
     var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.
@@ -142,7 +142,7 @@ test('TarReader.read() returns correct stats', done => {
 });
 
 test('TarReader.list() returns correct stats', done => {
-    var pathToTarFile = path.join(__dirname, "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
+    var pathToTarFile = path.join(__dirname, "..", "..", "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
     var tarReader = new TarReader(pathToTarFile);
 
     // Count the number of stream events.

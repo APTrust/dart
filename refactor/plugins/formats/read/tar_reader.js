@@ -1,7 +1,8 @@
 const fs = require('fs');
 const EventEmitter = require('events');
-const { FileStat } = require('../util/file/filestat');
+const { FileStat } = require('../../../util/file/filestat');
 const { PassThrough } = require('stream');
+const { Plugin } = require('../../plugin');
 const tar = require('tar-stream');
 
 /**
@@ -17,7 +18,7 @@ const tar = require('tar-stream');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-class TarReader extends EventEmitter {
+class TarReader extends Plugin {
 
     /**
       * Creates a new TarReader.

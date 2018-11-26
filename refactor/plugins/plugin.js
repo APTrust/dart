@@ -69,3 +69,5 @@ class Plugin extends EventEmitter {
         }
     }
 }
+
+module.exports.Plugin = Plugin;
