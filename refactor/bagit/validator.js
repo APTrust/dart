@@ -152,9 +152,12 @@ class Validator extends EventEmitter {
     /**
      * readingFromTar returns true if the bag being validated is in tar format.
      *
+     * @deprecated Will be removed soon.
+     *
      * @returns {boolean}
      */
     readingFromTar() {
+        // TODO: Remove me!
         return this.pathToBag.endsWith('.tar');
     }
 

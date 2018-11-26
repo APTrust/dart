@@ -6,6 +6,8 @@ test('types()', () => {
     expect(PluginManager.types()).toEqual(['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository', 'Setup']);
 });
 
+// TODO: Write these!
+
 // test('getModuleCollection()', () => {
 
 // });
@@ -14,10 +16,10 @@ test('types()', () => {
 
 // });
 
-// test('findById()', () => {
-//     var fsReader = PluginManager.findById('265f724e-8289-4bf7-bbdf-803a65bcdf19');
-//     expect(fsReader.description().name).toEqual('FileSystemReader');
-// });
+test('findById()', () => {
+    var fsReader = PluginManager.findById('265f724e-8289-4bf7-bbdf-803a65bcdf19');
+    expect(fsReader.description().name).toEqual('FileSystemReader');
+});
 
 test('canRead()', () => {
     var fsReaders = PluginManager.canRead('directory');
