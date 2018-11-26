@@ -1,5 +1,7 @@
 const { BagItProfile } = require('./bagit_profile');
+const FileSystemReader = require('../plugins/formats/read/file_system_reader');
 const path = require('path');
+const TarReader = require('../plugins/formats/read/tar_reader');
 const { Validator } = require('./validator');
 
 test('Constructor sets initial properties', () => {
@@ -97,6 +99,15 @@ test('fileExtension()', () => {
     expect(validator.fileExtension()).toEqual("");
 });
 
+test('getNewReader()', () => {
+    let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
+    let reader = validator.getNewReader();
+    expect(reader instanceof TarReader).toEqual(true);
+
+    validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
+    reader = validator.getNewReader();
+    expect(reader instanceof FileSystemReader).toEqual(true);
+});
 
 // --------- FROM HERE DOWN, TEST ACTUAL BAGS ----------- //
 
