@@ -3,8 +3,6 @@
 dist/
 docs/
 # Compiled binaries
-apps/easy_store_setup/easy_store_setup
-apps/apt_create_bag/apt_create_bag
 tsconfig.json
-refactor/apps/bin/*
-refactor/node_modules/fuse-box/.cache-busting/
+apps/bin/*
+node_modules/fuse-box/.cache-busting/
