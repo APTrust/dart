@@ -38,20 +38,23 @@ test('findById()', () => {
 test('canRead()', () => {
     var fsReaders = PluginManager.canRead('directory');
     expect(fsReaders.length).toEqual(1);
-    expect(fsReaders[0].description().name).toEqual('FileSystemReader');
+    expect(fsReaders[0]).toEqual(FileSystemReader);
 
     var tarReaders = PluginManager.canRead('.tar');
     expect(tarReaders.length).toEqual(1);
-    expect(tarReaders[0].description().name).toEqual('TarReader');
+    expect(tarReaders[0]).toEqual(TarReader);
 
-    var noReaders = PluginManager.canRead('i-am-javascript-i-am-unreadable');
+    var noReaders = PluginManager.canRead('your mind');
     expect(noReaders.length).toEqual(0);
 
 });
 
-// test('canWrite()', () => {
-
-// });
+test('canWrite()', () => {
+    var tarWriters = PluginManager.canWrite('.tar');
+    expect(tarWriters.length).toEqual(1);
+    expect(tarWriters[0]).toEqual(TarWriter);
+    expect(PluginManager.canWrite('.x0x0')).toEqual([]);
+});
 
 // test('implementsProtocol()', () => {
 

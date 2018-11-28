@@ -23,7 +23,7 @@ module.exports = class TarWriter extends Plugin {
             description: 'Built-in DART tar writer. Writes files directory into a tarball.',
             version: '0.1',
             readsFormats: [],
-            writesFormats: ['tar'],
+            writesFormats: ['.tar'],
             implementsProtocols: [],
             talksToRepository: [],
             setsUp: []
