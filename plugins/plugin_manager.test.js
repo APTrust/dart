@@ -56,18 +56,41 @@ test('canWrite()', () => {
     expect(PluginManager.canWrite('.x0x0')).toEqual([]);
 });
 
-// test('implementsProtocol()', () => {
+test('implementsProtocol()', () => {
+    var plugins = PluginManager.implementsProtocol('s3');
+    expect(plugins).toBeDefined();
+    expect(plugins.length).toBeGreaterThan(0);
+    var foundS3Client = false;
+    for (var plugin of plugins) {
+        if (plugin.description().name === 'S3Client') {
+            foundS3Client = true;
+        }
+    }
+    expect(foundS3Client).toEqual(true);
+});
 
-// });
+test('talksTo()', () => {
+    var plugins = PluginManager.talksTo('aptrust');
+    expect(plugins).toBeDefined();
+    expect(plugins.length).toBeGreaterThan(0);
+    var foundAPTrustClient = false;
+    for (var plugin of plugins) {
+        if (plugin.description().name === 'APTrust') {
+            foundAPTrustClient = true;
+        }
+    }
+    expect(foundAPTrustClient).toEqual(true);
+});
 
-// test('talksTo()', () => {
-
-// });
-
-// test('setsUp()', () => {
-
-// });
-
-test('pluginProvides()', () => {
-
+test('setsUp()', () => {
+    var plugins = PluginManager.setsUp('aptrust');
+    expect(plugins).toBeDefined();
+    expect(plugins.length).toBeGreaterThan(0);
+    var foundAPTrustSetup = false;
+    for (var plugin of plugins) {
+        if (plugin.description().name === 'APTrust') {
+            foundAPTrustSetup = true;
+        }
+    }
+    expect(foundAPTrustSetup).toEqual(true);
 });
