@@ -1,8 +1,9 @@
 const async = require('async');
 const EventEmitter = require('events');
 const path = require('path');
+const { Plugin } = require('../../plugin');
 
-class TarWriter extends EventEmitter {
+module.exports = class TarWriter extends Plugin {
     constructor(pathToTarFile) {
         super();
         this.pathToTarFile = pathToTarFile;
@@ -13,6 +14,20 @@ class TarWriter extends EventEmitter {
         this._queue.drain = function () {
             this.emit('finish');
         }
+    }
+
+    static description() {
+        return {
+            id: '90110710-1ff9-4650-a086-d7b23772238f',
+            name: 'TarWriter',
+            description: 'Built-in DART tar writer. Writes files directory into a tarball.',
+            version: '0.1',
+            readsFormats: [],
+            writesFormats: ['tar'],
+            implementsProtocols: [],
+            talksToRepository: [],
+            setsUp: []
+        };
     }
 
     add(bagItFile, cryptoHashes = []) {
@@ -80,5 +95,3 @@ function writeIntoArchive(data, done) {
     reader.pipe(writer);
     reader.resume();
 }
-
-module.exports.TarWriter = TarWriter;

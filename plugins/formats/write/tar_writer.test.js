@@ -1,7 +1,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { TarWriter } = require('./tar_writer');
+const TarWriter = require('./tar_writer');
 
 var pathToTarFile;
 
