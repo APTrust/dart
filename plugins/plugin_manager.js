@@ -50,8 +50,6 @@ class PluginManager {
     /**
      * This returns a list of available plugins of the specified
      * type. This function is primarily meant for internal use.
-     * You'll generally want to use {@link listByType} to get an
-     * alphabetically ordered list of plugin descriptions.
      *
      * @returns {Array<Plugin>}
      */
@@ -79,22 +77,6 @@ class PluginManager {
         return modules;
     }
 
-    /**
-     * This returns a list of all plugins of the specified type.
-     * For example, listByType('FormatWriter') returns a list of all
-     * plugins of type FormatWriter.
-     *
-     * @returns {Array<Plugin>}
-     */
-    static listByType(type) {
-        var modules = PluginManager.getModuleCollection(type);
-        var providers = [];
-        for(var module in modules) {
-            providers.push(module.description());
-        }
-        providers.sort(Util.getSortFunction('name', 'asc'));
-        return providers;
-    }
 
     /**
      * This returns the plugin with the specified id.

@@ -1,20 +1,34 @@
 const FileSystemReader = require('./formats/read/file_system_reader');
+const fs = require('fs');
+const path = require('path');
 const { PluginManager } = require('./plugin_manager');
-const TarReader = require('./formats/read/file_system_reader');
+const TarReader = require('./formats/read/tar_reader');
+const TarWriter = require('./formats/write/tar_writer');
+
+var readerDir = path.join(__dirname, "formats", "read");
+var writerDir = path.join(__dirname, "formats", "write");
+var fileFilter = function(f) {
+    return (f != 'index.js' && f.endsWith('.js') && !f.endsWith('.test.js'));
+};
+var readerFiles = fs.readdirSync(readerDir).filter(fileFilter);
+var writerFiles = fs.readdirSync(writerDir).filter(fileFilter);
+
 
 test('types()', () => {
     expect(PluginManager.types()).toEqual(['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository', 'Setup']);
 });
 
-// TODO: Write these!
+test('getModuleCollection()', () => {
+    var readers = PluginManager.getModuleCollection('FormatReader');
+    expect(readers.length).toEqual(readerFiles.length);
+    expect(readers.includes(TarReader)).toEqual(true);
+    expect(readers.includes(FileSystemReader)).toEqual(true);
 
-// test('getModuleCollection()', () => {
+    var writers = PluginManager.getModuleCollection('FormatWriter');
+    expect(writers.length).toEqual(writerFiles.length);
+    expect(writers.includes(TarWriter)).toEqual(true);
+});
 
-// });
-
-// test('listByType()', () => {
-
-// });
 
 test('findById()', () => {
     var fsReader = PluginManager.findById('265f724e-8289-4bf7-bbdf-803a65bcdf19');
