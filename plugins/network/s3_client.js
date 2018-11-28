@@ -1,12 +1,24 @@
 const { Plugin } = require('../plugin');
 
-// This is a stub to be filled in later.
-
+/**
+ * S3Client provides access to S3 REST services that conforms to the
+ * DART network client interface.
+ *
+ *
+ */
 module.exports = class S3Client extends Plugin {
+    /**
+     *
+     */
     constructor() {
         super();
     }
 
+    /**
+     * Returns a {@link PluginDefinition} object describing this plugin.
+     *
+     * @returns {PluginDefinition}
+     */
     static description() {
         return {
             id: '23a8f0af-a03a-418e-89a4-6d07799882b6',

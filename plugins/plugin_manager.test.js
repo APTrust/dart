@@ -75,7 +75,7 @@ test('talksTo()', () => {
     expect(plugins.length).toBeGreaterThan(0);
     var foundAPTrustClient = false;
     for (var plugin of plugins) {
-        if (plugin.description().name === 'APTrust') {
+        if (plugin.description().name === 'APTrustClient') {
             foundAPTrustClient = true;
         }
     }
@@ -88,7 +88,7 @@ test('setsUp()', () => {
     expect(plugins.length).toBeGreaterThan(0);
     var foundAPTrustSetup = false;
     for (var plugin of plugins) {
-        if (plugin.description().name === 'APTrust') {
+        if (plugin.description().name === 'APTrustSetup') {
             foundAPTrustSetup = true;
         }
     }

@@ -51,6 +51,11 @@ module.exports = class FileSystemReader extends Plugin {
         this.dirCount = 0;
     }
 
+    /**
+     * Returns a {@link PluginDefinition} object describing this plugin.
+     *
+     * @returns {PluginDefinition}
+     */
     static description() {
         return {
             id: '265f724e-8289-4bf7-bbdf-803a65bcdf19',

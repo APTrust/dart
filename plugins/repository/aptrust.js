@@ -1,16 +1,28 @@
 const { Plugin } = require('../plugin');
 
-// This is a stub to be filled in later.
-
-module.exports = class APTrust extends Plugin {
+/**
+ * APTrustClient provides methods for querying an APTrust repository
+ * that conform to the DART repository interface.
+ *
+ *
+ */
+module.exports = class APTrustClient extends Plugin {
+    /**
+     *
+     */
     constructor() {
         super();
     }
 
+    /**
+     * Returns a {@link PluginDefinition} object describing this plugin.
+     *
+     * @returns {PluginDefinition}
+     */
     static description() {
         return {
             id: 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd',
-            name: 'APTrust',
+            name: 'APTrustClient',
             description: 'APTrust repository client. This allows DART to talk to the APTrust demo and/or production repository.',
             version: '0.1',
             readsFormats: [],

@@ -51,6 +51,11 @@ module.exports = class TarReader extends Plugin {
         this.dirCount = 0;
     }
 
+    /**
+     * Returns a {@link PluginDefinition} object describing this plugin.
+     *
+     * @returns {PluginDefinition}
+     */
     static description() {
         return {
             id: 'd1045d20-153b-478c-aca4-7192c4ce624f',

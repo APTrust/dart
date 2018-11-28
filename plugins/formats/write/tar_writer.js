@@ -3,6 +3,13 @@ const EventEmitter = require('events');
 const path = require('path');
 const { Plugin } = require('../../plugin');
 
+/**
+ * TarWriter writes files directly into a tarball. By obviating the need
+ * to copy files into a directory and then tar up the directory, this can
+ * save considerable time and disk space when tarring large bags into a
+ * tarred BagIt package.
+ *
+ */
 module.exports = class TarWriter extends Plugin {
     constructor(pathToTarFile) {
         super();
@@ -16,6 +23,11 @@ module.exports = class TarWriter extends Plugin {
         }
     }
 
+    /**
+     * Returns a {@link PluginDefinition} object describing this plugin.
+     *
+     * @returns {PluginDefinition}
+     */
     static description() {
         return {
             id: '90110710-1ff9-4650-a086-d7b23772238f',
