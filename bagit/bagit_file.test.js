@@ -1,8 +1,9 @@
 const { BagItFile } = require('./bagit_file');
 const { Constants } = require('../core/constants');
-const { Util } = require('../core/util');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { Util } = require('../core/util');
 
 test('Constructor sets initial properties', () => {
     let stats = fs.statSync(__filename);
@@ -95,4 +96,23 @@ test('isTagManifest', () => {
 
     f = new BagItFile('/path/to/file.txt', 'custom-tags/random-tag-file.txt', stats);
     expect(f.isTagManifest()).toEqual(false);
+});
+
+test('getCryptoHash()', done => {
+    let stats = fs.statSync(__filename);
+    var f = new BagItFile('/path/to/file.txt', 'data/file.txt', stats);
+    var md5 = f.getCryptoHash('md5', function(data) {
+        expect(data.absSourcePath).toEqual('/path/to/file.txt');
+        expect(data.relDestPath).toEqual('data/file.txt');
+        expect(data.algorithm).toEqual('md5');
+        expect(data.digest).toEqual('d4ff2da092d09cbc0ef62428b78d13b1');
+        expect(f.checksums.md5).toEqual(data.digest);
+        done();
+    });
+    expect(typeof md5).toEqual('object');
+
+    // Pipe in the contents of a known file, so we get a predictable digest.
+    var testFile = path.join(__dirname, '..', 'test', 'fixtures', 'bag-info.txt')
+    var reader = fs.createReadStream(testFile);
+    reader.pipe(md5);
 });

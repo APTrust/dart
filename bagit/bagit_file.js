@@ -1,4 +1,5 @@
 const { Constants } = require('../core/constants');
+const crypto = require('crypto');
 
 /**
  * BagItFile contains metadata about a file that the bagger
@@ -172,6 +173,48 @@ class BagItFile {
       */
     isTagManifest() {
         return BagItFile.getFileType(this.relDestPath) == Constants.TAG_MANIFEST;
+    }
+
+    /**
+      * This returns a crypto hash that will add a hex digest to this
+      * BagItFile's checksums object upon completion. For example, adding
+      * a crypto hash with algorithm 'sha512' will result in
+      * bagItFile.checksums['sha512'] being populated with the file's
+      * sha512 digest after you pipe the file's contents through the hash
+      * object. It's up to the caller to pipe the data through.
+      *
+      * @param {string} algorithm - The hash digest algorithm to calculate.
+      * For example, 'md5', 'sha256', 'sha512', etc.
+      *
+      * @param {function} done - A callback to call when hasing is complete.
+      * The callback will be given data with the format:
+      *
+      * @example
+      *
+      * { absSourcePath: <bagItFile.absSourcePath>,
+      *   relPath: <bagItFile.relDestPath>,
+      *   algorithm: <hashing algorithm>,
+      *   digest: <message digest as hex string>
+      * }
+      *
+      */
+    getCryptoHash(algorithm, done) {
+        let bagItFile = this;
+        let hash = crypto.createHash(algorithm);
+        let cbData = {
+            absSourcePath: bagItFile.absSourcePath,
+            relDestPath: bagItFile.relDestPath,
+            algorithm: algorithm
+        }
+        hash.setEncoding('hex');
+        hash.on('finish', function() {
+            hash.end();
+            bagItFile.checksums[algorithm] = cbData.digest = hash.read();
+            if (done && typeof done === 'function') {
+                done(cbData);
+            }
+        });
+        return hash;
     }
 
     /**
