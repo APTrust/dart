@@ -636,17 +636,12 @@ class Validator extends EventEmitter {
         let m = this.profile.manifestsRequired;
         let t = this.profile.tagManifestsRequired;
         let f = this.manifestAlgorithmsFoundInBag;
-        let algorithms = new Set(m.concat(t).concat(f).filter(alg => alg != ''));
+        let algorithms = new Set(m.concat(t, f).filter(alg => alg != ''));
+        // The done function decreases the validator's internal counter
+        // of how many digests are still begin calculated.
+        let done = function() { validator._hashCompleted() };
         for (let algorithm of algorithms) {
-            let thisAlg = algorithm;
-            let hash = crypto.createHash(algorithm);
-            hash.setEncoding('hex');
-            hash.on('finish', function() {
-                hash.end();
-                bagItFile.checksums[thisAlg] = hash.read();
-                validator._hashCompleted();
-            });
-            hashes.push(hash);
+            hashes.push(bagItFile.getCryptoHash(algorithm, done));
             validator._hashesInProgress++;
         }
         return hashes;
