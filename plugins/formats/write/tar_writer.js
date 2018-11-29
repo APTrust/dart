@@ -1,5 +1,6 @@
 const async = require('async');
 const EventEmitter = require('events');
+const fs = require('fs');
 const path = require('path');
 const { Plugin } = require('../../plugin');
 const tar = require('tar-stream');
@@ -121,29 +122,30 @@ module.exports = class TarWriter extends Plugin {
      *
      */
     add(bagItFile, cryptoHashes = []) {
-        var bagger = this;
+        var tarWriter = this;
         var header = {
             // Don't use path.join because Windows will give us
             // backslashes and tar file needs forward slashes.
             name: this.bagName + '/' + bagItFile.relDestPath,
-            size: bagItFile.stats.size,
-            mode: bagItFile.stats.mode,
-            uid: bagItFile.stats.uid,
-            gid: bagItFile.stats.gid,
-            mtime: bagItFile.stats.mtime
+            size: bagItFile.size,
+            mode: bagItFile.mode,
+            uid: bagItFile.uid,
+            gid: bagItFile.gid,
+            mtime: bagItFile.mtime
         };
         // pax headers allow us to include files over 8GB in size
         header.pax = {
-            size: bagItFile.stats.size
+            size: bagItFile.size
         };
 
-        var startFn = function() { bagger.emitter.emit('fileAddStart', `Adding file ${bagItFile.relDestPath}`); }
-        var endFn = function() { bagger.emitter.emit('fileAddEnd', `Added file ${bagItFile.relDestPath}`); }
+        // TODO: Emit JS objects, not strings.
+        var startFn = function() { tarWriter.emit('fileAddStart', `Adding file ${bagItFile.relDestPath}`); }
+        var endFn = function() { tarWriter.emit('fileAddEnd', `Added file ${bagItFile.relDestPath}`); }
         var data = {
             absSourcePath: bagItFile.absSourcePath,
             header: header,
             tar: this._getTarPacker(),
-            hashes: hashes,
+            hashes: cryptoHashes,
             startFn: startFn,
             endFn: endFn
         };
@@ -161,7 +163,7 @@ module.exports = class TarWriter extends Plugin {
     _getTarPacker() {
         if (this._tarPacker == null) {
             this._tarPacker = tar.pack();
-            this._tarPacker.pipe(this.getTarOutputWriter());
+            this._tarPacker.pipe(this._getTarOutputWriter());
         }
         return this._tarPacker;
     }
