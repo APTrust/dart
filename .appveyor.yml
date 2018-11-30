@@ -9,7 +9,7 @@ init:
     #  - set BUILDVER=%APPVEYOR_BUILD_VERSION%-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))
 
 cache:
-  - electron\node_modules
+  - node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
@@ -25,16 +25,13 @@ install:
   - ps: Install-Product node 8 x64
   - git reset --hard HEAD
   - npm install npm -g
-  - npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
-  - cd electron && npm install
-  - echo %PATH%
-  - echo %GOPATH%
+    #  - npm install electron-builder@next # force install next version to test electron-builder
+  - npm install
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
-  - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
+  - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
 
 build_script:
-  - npm run --prefix ./electron
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
+  - npm test -- --runInBand
     #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 #artifacts:
@@ -42,23 +39,6 @@ build_script:
 #    name: DART-Windows
 
 test: off
-after_build:
-  - ps: Get-ChildItem .\electron\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }
-
-deploy:
-  provider: S3
-  name: S3-public-deployment
-  access_key_id:
-   secure: u4NH7eUlYuzO9hl5Hk/7P5K1qvo31iqZ19BW484x8BE=
-  secret_access_key:
-   secure: FMvYL/QE+0kHdy9L7GxtayJwx3KwQB3AA2mcIBqGGeEM0lqLLv4tq2b4wH9y3nJ8
-  bucket: aptrust.public.download
-  region: us-east-1
-  set_public: true
-  folder: DART
-#  artifact: DART-Windows
-  reduced_redundancy: true
-
 notifications:
   - provider: Slack
     incoming_webhook:
