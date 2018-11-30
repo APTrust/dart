@@ -17,33 +17,6 @@ before_script:
 script:
   - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
   - npm test -- --runInBand
-  -  npm install
-  - nexe -i apps/dart-cli.js -o apps/bin/dart-cli -t mac-x64-10.13.0
-addons:
-  artifacts:
-    working_dir: dist
-    paths:
-    - $(git ls-files -o dist/{*.dmg,*.exe,*.deb} | tr "\n" ":")
-    target_paths:
-    - "/app/build-${TRAVIS_BUILD_NUMBER}_commit-${TRAVIS_COMMIT:0:7}$([ ! -z ${TRAVIS_TAG}
-      ] && echo _tag-${TRAVIS_TAG})"
-    - DART/DART-cli-latest
-    bucket: aptrust.public.download
-    key: AKIAIN34AYPE5DX5EJUQ
-    secret:
-      secure: eOwbN81+m8xAntNpef0zDMrsz6ZzEry9ZRvnxjvL9izpo9IlIAPwlPtDrLMlAv9Nf1g1WJvAUt25NelSRoApLsBbSZohdyMyy0AlC+KiyXv6sHVMhzmZQ2WFPg/atQkg+WwxQsizRur2VWaqR0Ke2K0cFmlo0HZm+w3iEJt8Y8lGewsAe9AcHLoxd8hFtABnijfeHq0fUzzLSgpdme9UTDGgO3HSj7I4B01+Rfq00W5u3RPZVqqff8bErQKC+8ZAYC1HAgM3FnK/m+vzwNkOl6m9t5xiUiNXGCaCb3/zRR8ZH/snFup8xKJwikNfLlxGkEpkfH+mlcNzER3e3xRF3m2eZO410spoLa/9PkI5GRfv2ZX+tm8mNpqZjU5v1BHmsirdspzJ2uVTH456yM2RfS46M202OuX7W1i7HMmliRNRNgvvsYnNqgSxiPI2283xJxSmfn0UysuMe4he+zVM5SIqu6Bhx0zrrSw9oLP4vTCYjnzlNMFqDcxlsjLOfi1aCM8fxnEBCSupHbEMTIqSNfL7lMqhBiGbHp0CUVWuj37Z7BAjZLmvtndV25Ju3AnOOMybzk+6KpKZhGwdYQWnN48Z28r3kqKyZESdx44Z+LA8SxRuiOBqvL/R0qCcZfqATxvmW+aPkFj9cjASro92WWVR8niNg2v7aLXXH1GJIEQ=
-deploy:
-  provider: s3
-  access_key_id: AKIAIN34AYPE5DX5EJUQ
-  secret_access_key:
-    secure: eOwbN81+m8xAntNpef0zDMrsz6ZzEry9ZRvnxjvL9izpo9IlIAPwlPtDrLMlAv9Nf1g1WJvAUt25NelSRoApLsBbSZohdyMyy0AlC+KiyXv6sHVMhzmZQ2WFPg/atQkg+WwxQsizRur2VWaqR0Ke2K0cFmlo0HZm+w3iEJt8Y8lGewsAe9AcHLoxd8hFtABnijfeHq0fUzzLSgpdme9UTDGgO3HSj7I4B01+Rfq00W5u3RPZVqqff8bErQKC+8ZAYC1HAgM3FnK/m+vzwNkOl6m9t5xiUiNXGCaCb3/zRR8ZH/snFup8xKJwikNfLlxGkEpkfH+mlcNzER3e3xRF3m2eZO410spoLa/9PkI5GRfv2ZX+tm8mNpqZjU5v1BHmsirdspzJ2uVTH456yM2RfS46M202OuX7W1i7HMmliRNRNgvvsYnNqgSxiPI2283xJxSmfn0UysuMe4he+zVM5SIqu6Bhx0zrrSw9oLP4vTCYjnzlNMFqDcxlsjLOfi1aCM8fxnEBCSupHbEMTIqSNfL7lMqhBiGbHp0CUVWuj37Z7BAjZLmvtndV25Ju3AnOOMybzk+6KpKZhGwdYQWnN48Z28r3kqKyZESdx44Z+LA8SxRuiOBqvL/R0qCcZfqATxvmW+aPkFj9cjASro92WWVR8niNg2v7aLXXH1GJIEQ=
-  bucket: aptrust.public.download
-  local-dir: dist
-  upload-dir: DART
-  acl: public_read
-  skip_cleanup: true
-  on:
-    repo: APTrust/dart
 notifications:
   slack:
       secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
