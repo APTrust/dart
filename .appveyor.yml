@@ -9,7 +9,7 @@ init:
     #  - set BUILDVER=%APPVEYOR_BUILD_VERSION%-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))
 
 cache:
-  - electron\node_modules
+  - node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
@@ -25,16 +25,16 @@ install:
   - ps: Install-Product node 8 x64
   - git reset --hard HEAD
   - npm install npm -g
-  - npm install --prefix ./electron electron-builder@next # force install next version to test electron-builder
-  - cd electron && npm install
+  - npm install electron-builder@next # force install next version to test electron-builder
+  - npm install
   - echo %PATH%
   - echo %GOPATH%
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
-  - set PATH=%APPVEYOR_BUILD_FOLDER%/electron/node_modules/.bin;%PATH%
+  - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
 
 build_script:
-  - npm run --prefix ./electron
-  - cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
+  - npm run
+  - cd %APPVEYOR_BUILD_FOLDER% && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
     #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 #artifacts:
