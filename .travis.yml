@@ -5,8 +5,6 @@ node_js: '9'
 cache:
   directories:
   - node_modules
-  - "$HOME/.cache/electron"
-  - "$HOME/.cache/electron-builder"
   - "$HOME/.npm/_prebuilds"
 before_install:
 - |
@@ -17,11 +15,10 @@ before_install:
 before_script:
 - git lfs pull
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm install; fi
-- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
-  -1)"
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm install && electron-builder
-  -p never --em.version=$buildver; fi
+  - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
+  - npm test -- --runInBand
+  -  npm install
+  - nexe -i apps/dart-cli.js -o apps/bin/dart-cli -t mac-x64-10.13.0
 addons:
   artifacts:
     working_dir: dist
@@ -30,7 +27,7 @@ addons:
     target_paths:
     - "/app/build-${TRAVIS_BUILD_NUMBER}_commit-${TRAVIS_COMMIT:0:7}$([ ! -z ${TRAVIS_TAG}
       ] && echo _tag-${TRAVIS_TAG})"
-    - DART/DART-$buildver.dmg
+    - DART/DART-cli-latest
     bucket: aptrust.public.download
     key: AKIAIN34AYPE5DX5EJUQ
     secret:
