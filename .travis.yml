@@ -17,10 +17,10 @@ before_install:
 before_script:
 - git lfs pull
 script:
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; npm install; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then npm install; fi
 - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
   -1)"
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; npm install && electron-builder
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm install && electron-builder
   -p never --em.version=$buildver; fi
 addons:
   artifacts:
