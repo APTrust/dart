@@ -91,10 +91,32 @@ const Constants =  {
     SERIALIZATION_FORMATS: {
         "application/tar": new RegExp("\.tar$"),
         "application/zip": new RegExp("\.zip$"),
-        "application/gzip": new RegExp("\.gzip$"),
+        "application/gzip": new RegExp("\.gzip$|\.gz$"),
         "application/x-rar": new RegExp("\.rar$"),
         "application/tar+gzip": new RegExp("\.tgz$|\.tar\.gz$")
-    }
+    },
+    /**
+     * Regular Expression to match OSX DS_Store files. We often
+     * want to omit these when creating bags.
+     *
+     * @type {RegExp}
+     */
+    RE_MAC_JUNK_FILE: new RegExp('\._DS_Store$|\.DS_Store$', 'i'),
+    /**
+     * Regular Expression to match Mac/Linux hidden files that begin.
+     * with a period. Users may choose to omit these when creating bags.
+     *
+     * @type {RegExp}
+     */
+    RE_DOT_FILE: new RegExp('^\.[^\/]+$|^\.[^\\\\]+$'),
+    /**
+     * Regular Expression to match .keep files. When users choose to
+     * omit dot files, they often want to or need to keep these files
+     * which have a special significance in certain applications.
+     *
+     * @type {RegExp}
+     */
+    RE_DOT_KEEP_FILE: new RegExp('\/\.keep$|\\\.keep$', 'i')
 };
 
 Object.freeze(Constants);
