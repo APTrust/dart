@@ -34,7 +34,7 @@ install:
 
 build_script:
   - npm run
-  - cd %APPVEYOR_BUILD_FOLDER% && electron-builder . --em.version=%APPVEYOR_BUILD_VERSION%
+  - cd %APPVEYOR_BUILD_FOLDER% && electron-builder . -c.extraMetadata.version=%APPVEYOR_BUILD_VERSION%
     #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
 
 #artifacts:
