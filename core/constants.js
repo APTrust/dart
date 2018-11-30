@@ -43,7 +43,7 @@ const Constants =  {
        *
        * @type {string[]}
        */
-    BAGIT_VERSIONS: ["0.97"],
+    BAGIT_VERSIONS: ["0.97", "1.0"],
     /**
        * This is the list of digest algorithms that the bagger and
        * validator understand. The bagger can produce manifests and
@@ -81,7 +81,7 @@ const Constants =  {
        *
        * @type {RegExp}
        */
-    RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$/'),
+    RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$'),
     /**
        * This maps serialization formats found in BagItProfiles
        * to file extensions.
@@ -101,7 +101,7 @@ const Constants =  {
      *
      * @type {RegExp}
      */
-    RE_MAC_JUNK_FILE: new RegExp('\._DS_Store$|\.DS_Store$', 'i'),
+    RE_MAC_JUNK_FILE: new RegExp('\\._DS_Store$|\\.DS_Store$', 'i'),
     /**
      * Regular Expression to match Mac/Linux hidden files that begin.
      * with a period. Users may choose to omit these when creating bags.
