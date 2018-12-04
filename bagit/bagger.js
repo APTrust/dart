@@ -1,7 +1,8 @@
 const BagItFile = require('./bagit_file');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
-//const fs = require('fs');
+const EventEmitter = require('events');
+const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const os = require('os');
@@ -58,13 +59,20 @@ class Bagger extends EventEmitter {
             return false;
         }
         try {
-            this.initWriter();
+            this._initWriter();
         } catch (ex) {
             packOp.result.error = ex.toString();
             return false;
         }
         this.initOutputDir();
 
+        // This is moronic.
+        // The whole node async paradigm is a mistake
+        // and is utterly unsuitable for both applications
+        // and systems programming, except for respoding
+        // to user clicks and waiting for porn videos to load.
+        // Seriously. Does any other language penalize
+        // you for trying to do things in order?
         var bagger = this;
         bagger.addPayloadFiles()
             .then(function(bagItFiles) {
@@ -77,6 +85,7 @@ class Bagger extends EventEmitter {
                 bagger.addTagManifests();
             })
             .then(function(bagItFiles) {
+                packOp.succeeded = true;
                 bagger.emit('finish');
             })
             .catch(function(error) {
@@ -103,17 +112,21 @@ class Bagger extends EventEmitter {
             });
         });
 
-        var fsReaderClass = PluginManager.find(Constants.FILESYSTEM_READER_UUID);
+        var fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         var packOp = this.job.packagingOperation;
         for (var absPath of packOp.sourceFiles) {
             var relDestPath = this._getRelDestPath(absPath);
-            var stats = os.statSync(absPath);
+            var stats = fs.statSync(absPath);
             if (stats.isFile()) {
+                console.log(`Adding from file: ${absPath}`);
                 bagItFiles.push(this._addFile(absPath, relDestPath, stats));
             } else if (stats.isDirectory()) {
                 let fsReader = new fsReaderClass(absPath);
                 fsReader.on('data', function(entry) {
-                    bagItFiles.push(bagger._addFile(absPath, entry.relPath, entry.fileStat));
+                    if(entry.fileStat.isFile()) {
+                        console.log(`Adding from dir: ${absPath}`);
+                        bagItFiles.push(bagger._addFile(absPath, entry.relPath, entry.fileStat));
+                    }
                 });
                 fsReader.on('error', function(err) {
                     packOp.result.error += err.toString();
@@ -164,16 +177,28 @@ class Bagger extends EventEmitter {
     addTagFiles(bagItFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
+        return new Promise(function(resolve, reject) {
+            console.log("addTagFiles");
+            return bagItFiles;
+        });
     }
 
     addManifests(bagItFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
+        return new Promise(function(resolve, reject) {
+            console.log("addManifests");
+            return bagItFiles;
+        });
     }
 
     addTagManifests(bagFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
+        return new Promise(function(resolve, reject) {
+            console.log("addTagManifests");
+            return bagItFiles;
+        });
     }
 
     _getCryptoHashes(bagItFile, algorithms) {

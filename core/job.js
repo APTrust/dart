@@ -30,6 +30,7 @@ class Job extends PersistentObject {
      */
     validate() {
         // TODO: Validate
+        return new ValidationResult();
     }
 
     /**
