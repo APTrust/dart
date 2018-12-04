@@ -15,8 +15,9 @@ const { ValidationResult } = require('./validation_result');
 class Job extends PersistentObject {
     constructor() {
         super('Job');
-        this.packagingOperations = [];
-        this.validationOperations = [];
+        this.bagItProfile = null;
+        this.packagingOperation = null;
+        this.validationOperation = null;
         this.uploadOperations = [];
     }
 

@@ -36,7 +36,7 @@ class ValidationOperation {
          *
          * @type {OperationResult}
          */
-        this.operationResult = null;
+        this.result = null;
     }
 }
 

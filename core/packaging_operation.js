@@ -71,7 +71,7 @@ class PackagingOperation {
          *
          * @type {OperationResult}
          */
-        this.operationResult = null;
+        this.result = null;
         /**
          * The total size, in bytes, of the files to be packaged.
          *

@@ -235,7 +235,7 @@ class Util {
 
     /**
 	  * Converts an absolute Windows path to a path with forward slashes suitable
-	  * for a BagIt file or tar file.
+	  * for a BagIt file or tar file. Also strips off drive letters and share names.
       *
       * @param {string} winPath - An absolute Windows path.
       * @returns {string} - Path with drive and share removed, and slashes leaning the right way.

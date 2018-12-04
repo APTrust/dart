@@ -68,6 +68,13 @@ const Constants =  {
        */
     YES_NO: ["Yes", "No"],
     /**
+       * This is the unique identifier of the built-in DART FileSystemReader
+       * plugin.
+       *
+       * @type {string}
+       */
+    FILESYSTEM_READER_UUID: '265f724e-8289-4bf7-bbdf-803a65bcdf19',
+    /**
        * This regular expression matches the name of payload
        * manifest files, and includes a capture to extract the
        * checksum algorithm.
