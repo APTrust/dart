@@ -1,6 +1,7 @@
 const { BagItFile } = require('./bagit_file');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -41,7 +42,7 @@ class Bagger extends EventEmitter {
                 var err = jobValidationResult.errors[key];
                 packOp.error += `\n${key}: ${err}`;
             }
-            packOp.completed = Date.now();
+            packOp.completed = dateFormat(Date.now(), 'isoUtcDateTime');
             packOp.succeeded = false;
             return false;
         }
@@ -53,7 +54,7 @@ class Bagger extends EventEmitter {
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
         packOp.result = new OperationResult('bagging', 'DART bagger');
         packOp.result.filename = packOp.outputPath;
-        packOp.started = Date.now();
+        packOp.result.started = dateFormat(Date.now(), 'isoUtcDateTime');
         if (!this.validateJob()) {
             return false;
         }
@@ -64,8 +65,17 @@ class Bagger extends EventEmitter {
             return false;
         }
         var bagger = this;
+        this.formatWriter.on('error', function(err) {
+            bagger.job.packagingOperation.error += error;
+        });
         this.formatWriter.on('finish', function() {
-            console.log(bagger.formatWriter.pathToTarFile);
+            var result = bagger.job.packagingOperation.result;
+            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
+            result.succeeded = !result.error;
+            if (fs.existsSync(result.filename)) {
+                let stat = fs.statSync(result.filename);
+                result.filesize = stat.size;
+            }
             bagger.emit('finish');
         });
         this.initOutputDir();
@@ -73,37 +83,36 @@ class Bagger extends EventEmitter {
     }
 
     addPayloadFiles() {
-        var bagger = this;
-        var fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         var packOp = this.job.packagingOperation;
         for (var absPath of packOp.sourceFiles) {
-            console.log(`Adding ${absPath}`);
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
             if (stats.isFile()) {
-                console.log(`Adding from file: ${absPath}`);
-                bagger._addPayloadFile(absPath, relDestPath, stats);
+                this._addPayloadFile(absPath, relDestPath, stats);
             } else if (stats.isDirectory()) {
-                let fsReader = new fsReaderClass(absPath);
-                fsReader.on('entry', function(entry) {
-                    let fullPath = path.join(absPath, entry.relPath);
-                    if(entry.fileStat.isFile()) {
-                        console.log(`Adding ${fullPath}`);
-                        bagger._addPayloadFile(fullPath, entry.relPath, entry.fileStat);
-                    } else {
-                        console.log(`Ignoring ${fullPath}`);
-                    }
-                });
-                fsReader.on('error', function(err) {
-                    packOp.result.error += err.toString();
-                });
-                fsReader.on('end', function(fileCount) {
-                    // Do we need to do anything with fileCount?
-                    console.log(`Done reading ${absPath}`);
-                });
-                fsReader.list();
+                this._addDirectory(absPath);
             }
         }
+    }
+
+    _addDirectory(absPath) {
+        let bagger = this;
+        let packOp = this.job.packagingOperation;
+        let fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
+        let fsReader = new fsReaderClass(absPath);
+        fsReader.on('entry', function(entry) {
+            let fullPath = path.join(absPath, entry.relPath);
+            if(entry.fileStat.isFile()) {
+                bagger._addPayloadFile(fullPath, entry.relPath, entry.fileStat);
+            }
+        });
+        fsReader.on('error', function(err) {
+            packOp.result.error += err.toString();
+        });
+        fsReader.on('end', function(fileCount) {
+            // Do we need to do anything with fileCount?
+        });
+        fsReader.list();
     }
 
     _initWriter() {
