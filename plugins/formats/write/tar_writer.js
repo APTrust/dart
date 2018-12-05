@@ -89,8 +89,7 @@ module.exports = class TarWriter extends Plugin {
 
     /**
      * Writes a file into the tar archive. This method is asynchronous, emitting
-     * events 'fileAddStart' when it begins writing a file into the archive,
-     * and 'fileAddEnd' when it's done writing a file.
+     * events 'fileAdded' when it's done writing a file.
      *
      * Files will be written into the archive in the order they are added.
      * Because tar file contents must be written one at a type, this class
@@ -138,16 +137,12 @@ module.exports = class TarWriter extends Plugin {
             size: bagItFile.size
         };
 
-        // TODO: Emit JS objects, not strings.
-        var startFn = function() { tarWriter.emit('fileAddStart', `Adding file ${bagItFile.relDestPath}`); }
-        var endFn = function() { tarWriter.emit('fileAddEnd', `Added file ${bagItFile.relDestPath}`); }
         var data = {
-            absSourcePath: bagItFile.absSourcePath,
+            bagItFile: bagItFile,
             header: header,
             tar: this._getTarPacker(),
             hashes: cryptoHashes,
-            startFn: startFn,
-            endFn: endFn
+            endFn: () => tarWriter.emit('fileAdded', bagItFile)
         };
         this._queue.push(data);
     }
@@ -204,10 +199,9 @@ module.exports = class TarWriter extends Plugin {
  * @private
  */
 function writeIntoArchive(data, done) {
-    data.startFn();
-    var reader = fs.createReadStream(data.absSourcePath);
-    reader.on('end', data.endFn);
+    var reader = fs.createReadStream(data.bagItFile.absSourcePath);
     var writer = data.tar.entry(data.header, done);
+    writer.on('finish', data.endFn);
     reader.pause();
     for (var h of data.hashes) {
         reader.pipe(h)

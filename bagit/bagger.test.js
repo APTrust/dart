@@ -18,12 +18,12 @@ function getJob() {
 test('ha!', done => {
     let bagger = new Bagger(getJob());
     var succeeded = false;
-    done();
-    // bagger.on('finish', function() {
-    //     expect(bagger.job.packagingOperation.result.error).toBeNull();
-    //     expect(succeeded).toEqual(true);
-    //     done();
-    // });
+    // done();
+    bagger.on('finish', function() {
+        expect(bagger.job.packagingOperation.result.error).toBeNull();
+        expect(succeeded).toEqual(true);
+        done();
+    });
 
-    // bagger.create();
+    bagger.create();
 });

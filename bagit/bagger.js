@@ -1,4 +1,4 @@
-const BagItFile = require('./bagit_file');
+const { BagItFile } = require('./bagit_file');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const EventEmitter = require('events');
@@ -17,7 +17,6 @@ class Bagger extends EventEmitter {
         // We need to clean these up when we're done.
         this.tmpFiles = [];
         this.formatWriter = null;
-        this._hashesInProgress = 0;
     }
 
     initOutputDir() {
@@ -64,68 +63,35 @@ class Bagger extends EventEmitter {
             packOp.result.error = ex.toString();
             return false;
         }
-        this.initOutputDir();
-
-        // This is moronic.
-        // The whole node async paradigm is a mistake
-        // and is utterly unsuitable for both applications
-        // and systems programming, except for respoding
-        // to user clicks and waiting for porn videos to load.
-        // Seriously. Does any other language penalize
-        // you for trying to do things in order?
         var bagger = this;
-        bagger.addPayloadFiles()
-            .then(function(bagItFiles) {
-                bagger.addTagFiles();
-            })
-            .then(function(bagItFiles) {
-                bagger.addManifests();
-            })
-            .then(function(bagItFiles) {
-                bagger.addTagManifests();
-            })
-            .then(function(bagItFiles) {
-                packOp.succeeded = true;
-                bagger.emit('finish');
-            })
-            .catch(function(error) {
-                packOp.error = error;
-                packOp.succeeded = false;
-            });
+        this.formatWriter.on('finish', function() {
+            console.log(bagger.formatWriter.pathToTarFile);
+            bagger.emit('finish');
+        });
+        this.initOutputDir();
+        this.addPayloadFiles()
     }
 
     addPayloadFiles() {
         var bagger = this;
-        var bagItFiles = [];
-
-        let promise = new Promise(function(resolve, reject) {
-            bagger.formatWriter.once('finish', function() {
-                // HACK: Just because the writer is finished doesn't mean
-                // all of piped hashes are done. Same hack exists in the
-                // bag validator. How to work around this?
-                let hashInterval = setInterval(() => {
-                    if (bagger._hashesInProgress === 0) {
-                        clearInterval(hashInterval);
-                        resolve(bagItFiles);
-                    }
-                }, 50);
-            });
-        });
-
         var fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         var packOp = this.job.packagingOperation;
         for (var absPath of packOp.sourceFiles) {
+            console.log(`Adding ${absPath}`);
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
             if (stats.isFile()) {
                 console.log(`Adding from file: ${absPath}`);
-                bagItFiles.push(this._addFile(absPath, relDestPath, stats));
+                bagger._addPayloadFile(absPath, relDestPath, stats);
             } else if (stats.isDirectory()) {
                 let fsReader = new fsReaderClass(absPath);
-                fsReader.on('data', function(entry) {
+                fsReader.on('entry', function(entry) {
+                    let fullPath = path.join(absPath, entry.relPath);
                     if(entry.fileStat.isFile()) {
-                        console.log(`Adding from dir: ${absPath}`);
-                        bagItFiles.push(bagger._addFile(absPath, entry.relPath, entry.fileStat));
+                        console.log(`Adding ${fullPath}`);
+                        bagger._addPayloadFile(fullPath, entry.relPath, entry.fileStat);
+                    } else {
+                        console.log(`Ignoring ${fullPath}`);
                     }
                 });
                 fsReader.on('error', function(err) {
@@ -133,11 +99,11 @@ class Bagger extends EventEmitter {
                 });
                 fsReader.on('end', function(fileCount) {
                     // Do we need to do anything with fileCount?
+                    console.log(`Done reading ${absPath}`);
                 });
                 fsReader.list();
             }
         }
-        return promise;
     }
 
     _initWriter() {
@@ -159,9 +125,9 @@ class Bagger extends EventEmitter {
         this.formatWriter = new plugins[0](outputPath);
     }
 
-    _addFile(absPath, relDestPath, stats) {
+    _addPayloadFile(absPath, relDestPath, stats) {
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
-        let cryptoHashes = this.getCryptoHashes(bagItFile, this.job.profile.manifestsRequired);
+        let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
         return bagItFile;
     }
@@ -177,45 +143,25 @@ class Bagger extends EventEmitter {
     addTagFiles(bagItFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
-        return new Promise(function(resolve, reject) {
-            console.log("addTagFiles");
-            return bagItFiles;
-        });
     }
 
     addManifests(bagItFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
-        return new Promise(function(resolve, reject) {
-            console.log("addManifests");
-            return bagItFiles;
-        });
     }
 
     addTagManifests(bagFiles) {
         var packOp = this.job.packagingOperation;
         // Write to temp file, then copy into packager.
-        return new Promise(function(resolve, reject) {
-            console.log("addTagManifests");
-            return bagItFiles;
-        });
     }
 
     _getCryptoHashes(bagItFile, algorithms) {
-        let bagger = this;
         let hashes = [];
-        let done = function() { bagger._hashCompleted() };
         for (let algorithm of algorithms) {
-            hashes.push(bagItFile.getCryptoHash(algorithm, done));
-            bagger._hashesInProgress++;
+            hashes.push(bagItFile.getCryptoHash(algorithm));
         }
         return hashes;
     }
-
-    _hashCompleted() {
-        this._hashesInProgress--;
-    }
-
 }
 
 module.exports.Bagger = Bagger;
