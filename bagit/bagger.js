@@ -4,6 +4,7 @@ const { Context } = require('../core/context');
 const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
+const { KeyValueCollection } = require('./key_value_collection');
 const mkdirp = require('mkdirp');
 const path = require('path');
 const os = require('os');
@@ -17,9 +18,11 @@ class Bagger extends EventEmitter {
         // Temp copies of tag files and manifests.
         // We need to clean these up when we're done.
         this.tmpFiles = [];
+        this.bagItFiles = [];
         this.formatWriter = null;
     }
 
+    // TODO: Move to writer.
     initOutputDir() {
         var packOp = this.job.packagingOperation;
         if (!fs.existsSync(packOp.outputPath)) {
@@ -67,6 +70,9 @@ class Bagger extends EventEmitter {
         var bagger = this;
         this.formatWriter.on('error', function(err) {
             bagger.job.packagingOperation.error += error;
+        });
+        this.formatWriter.on('fileAdded', function(bagItFile) {
+            // Anything to do here?
         });
         this.formatWriter.once('finish', function() {
             bagger.addTagFiles();
@@ -136,7 +142,7 @@ class Bagger extends EventEmitter {
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
         let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
-        return bagItFile;
+        this.bagItFiles.push(bagItFile);
     }
 
     _getRelDestPath(absPath) {
@@ -150,15 +156,7 @@ class Bagger extends EventEmitter {
     addTagFiles(bagItFiles) {
         let bagger = this;
         this.formatWriter.once('finish', function() {
-            var result = bagger.job.packagingOperation.result;
-            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-            result.succeeded = !result.error;
-            if (fs.existsSync(result.filename)) {
-                let stat = fs.statSync(result.filename);
-                result.filesize = stat.size;
-            }
-            bagger._deleteTempFiles();
-            bagger.emit('finish');
+            bagger.addManifests();
         });
         var profile = this.job.bagItProfile;
         for (let tagFileName of profile.tagFileNames()) {
@@ -181,8 +179,34 @@ class Bagger extends EventEmitter {
     }
 
     addManifests(bagItFiles) {
-        var packOp = this.job.packagingOperation;
-        // Write to temp file, then copy into packager.
+        let bagger = this;
+        this.formatWriter.once('finish', function() {
+            var result = bagger.job.packagingOperation.result;
+            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
+            result.succeeded = !result.error;
+            if (fs.existsSync(result.filename)) {
+                let stat = fs.statSync(result.filename);
+                result.filesize = stat.size;
+            }
+            // TODO: Don't call this until the very end.
+            bagger._deleteTempFiles();
+            // TODO: Add manifests here, then add tag manifests.
+            bagger.emit('finish');
+        });
+        var profile = this.job.bagItProfile;
+        for (let algorithm of profile.manifestsRequired) {
+            var manifestName = `manifest-${algorithm}.txt`;
+            let tmpFile = path.join(os.tmpdir(), manifestName + Date.now());
+            this.tmpFiles.push(tmpFile);
+            var fd = fs.openSync(tmpFile, 'w')
+            for (let bagItFile of bagger.bagItFiles) {
+                let digest = bagItFile.checksums[algorithm];
+                fs.writeSync(fd, `${digest} ${bagItFile.relDestPath}\n`);
+            }
+            fs.closeSync(fd);
+            var stats = fs.statSync(tmpFile);
+            this._addFile(tmpFile, manifestName, stats);
+        }
     }
 
     addTagManifests(bagFiles) {

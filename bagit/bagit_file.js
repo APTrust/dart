@@ -1,5 +1,6 @@
 const { Constants } = require('../core/constants');
 const crypto = require('crypto');
+const { KeyValueCollection } = require('./key_value_collection');
 
 /**
  * BagItFile contains metadata about a file that the bagger

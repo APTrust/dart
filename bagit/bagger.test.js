@@ -28,7 +28,7 @@ test('create()', done => {
     let bagger = new Bagger(getJob());
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        // console.log(result);
+        //console.log(result);
         expect(result.error).toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.started).not.toBeNull();
