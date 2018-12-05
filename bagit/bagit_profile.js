@@ -257,7 +257,7 @@ class BagItProfile extends PersistentObject {
      * @see also {@link findMatchingTag}
      *
      * @param {string} property - The name of the TagDefinition
-     * property to match. For example, 'name' or 'defaultValue'.
+     * property to match. For example, 'tagName' or 'defaultValue'.
      * @param {string} value - The value of the property to match.
      *
      * @returns {TagDefinition[]}
@@ -273,7 +273,7 @@ class BagItProfile extends PersistentObject {
      * @see also {@link findMatchingTags}
      *
      * @param {string} property - The name of the TagDefinition
-     * property to match. For example, 'name' or 'defaultValue'.
+     * property to match. For example, 'tagName' or 'defaultValue'.
      * @param {string} value - The value of the property to match.
      *
      * @returns {TagDefinition}

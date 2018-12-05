@@ -8,19 +8,27 @@ const path = require('path');
 
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 
-afterEach(() => {
-    if (fs.existsSync(tmpFile)) {
-        fs.unlinkSync(tmpFile);
-    }
-});
+// afterEach(() => {
+//     if (fs.existsSync(tmpFile)) {
+//         fs.unlinkSync(tmpFile);
+//     }
+// });
 
 function getJob() {
     var job = new Job();
     job.packagingOperation = new PackagingOperation('TestBag', tmpFile, '.tar');
-    var sourceDir = path.join(__dirname, '..', 'core');
+    var sourceDir = path.join(__dirname, '..', 'util');
     job.packagingOperation.sourceFiles.push(sourceDir);
     var profilesDir = path.join(__dirname, '..', 'test', 'profiles');
     job.bagItProfile = BagItProfile.load(path.join(profilesDir, 'multi_manifest.json'));
+
+    // Set required APTrust tags
+    var access = job.bagItProfile.firstMatchingTag('Access');
+    access.userValue = 'Institution';
+    var title = job.bagItProfile.firstMatchingTag('Title');
+    title.userValue = 'Test Bag';
+    var description = job.bagItProfile.firstMatchingTag('Description');
+    description.userValue = 'Bag of files for unit testing.';
     return job;
 }
 
