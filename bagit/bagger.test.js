@@ -8,11 +8,28 @@ const path = require('path');
 
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 
-// afterEach(() => {
-//     if (fs.existsSync(tmpFile)) {
-//         fs.unlinkSync(tmpFile);
-//     }
-// });
+afterEach(() => {
+    if (fs.existsSync(tmpFile)) {
+        fs.unlinkSync(tmpFile);
+    }
+});
+
+
+// TODO:
+//
+// 1. Don't use filter and find in BagItProfile to find tags
+// because that returns copies instead of references.
+//
+// findMatchingTags
+// findMatchingTag
+// getTagsFromFile
+//
+// 2. Make sure tags are written correctly to tag files.
+//
+// 3. Validate entire bag.
+//
+// 4. Check for expected payload files.
+//
 
 function getJob() {
     var job = new Job();
