@@ -26,9 +26,12 @@ afterEach(() => {
 //
 // 2. Make sure tags are written correctly to tag files.
 //
-// 3. Validate entire bag.
+// 3. Set internal tags, like Payload-Oxum, Bagging-Date,
+// Bagging-Software, etc.
 //
-// 4. Check for expected payload files.
+// 4. Validate entire bag.
+//
+// 5. Check for expected payload files.
 //
 
 function getJob() {
