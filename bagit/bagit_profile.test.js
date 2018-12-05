@@ -201,8 +201,8 @@ test('getTagFileContents()', () => {
     profile.getTagsFromFile('bag-info.txt', 'Organization-Address')[0].userValue = '1234 Main St., Charlottesville, VA 22903';
     profile.getTagsFromFile('bag-info.txt', 'Payload-Oxum')[0].userValue = '10232.4';
     profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].userValue = 'Academic Preservation Trust';
-    let bagItContents = "BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8";
-    let bagInfoContents = "Bag-Count: 1\nBag-Group-Identifier: Stuff Collection\nBag-Size: 10887\nBagging-Date: 2018-08-20\nContact-Email: bagger@aptrust.org\nContact-Name: Bagger Vance\nContact-Phone: 434-555-1212\nExternal-Description: Bag of Stuff\nExternal-Identifier: MYLB/NDA\nInternal-Sender-Description: Bag of miscellaneous junk\nInternal-Sender-Identifier: NMOT\nOrganization-Address: 1234 Main St., Charlottesville, VA 22903\nPayload-Oxum: 10232.4\nSource-Organization: Academic Preservation Trust";
+    let bagItContents = "BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8\n";
+    let bagInfoContents = "Bag-Count: 1\nBag-Group-Identifier: Stuff Collection\nBag-Size: 10887\nBagging-Date: 2018-08-20\nContact-Email: bagger@aptrust.org\nContact-Name: Bagger Vance\nContact-Phone: 434-555-1212\nExternal-Description: Bag of Stuff\nExternal-Identifier: MYLB/NDA\nInternal-Sender-Description: Bag of miscellaneous junk\nInternal-Sender-Identifier: NMOT\nOrganization-Address: 1234 Main St., Charlottesville, VA 22903\nPayload-Oxum: 10232.4\nSource-Organization: Academic Preservation Trust\n";
     expect(profile.getTagFileContents('bagit.txt')).toEqual(bagItContents);
     expect(profile.getTagFileContents('bag-info.txt')).toEqual(bagInfoContents);
 });

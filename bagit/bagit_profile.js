@@ -420,7 +420,7 @@ class BagItProfile extends PersistentObject {
         for(var tagDef of tags) {
             lines.push(tagDef.toFormattedString());
         }
-        return lines.join("\n");
+        return lines.join("\n") + "\n";
     }
     /**
       * Returns true if filename is a custom file added for a

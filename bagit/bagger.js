@@ -68,15 +68,8 @@ class Bagger extends EventEmitter {
         this.formatWriter.on('error', function(err) {
             bagger.job.packagingOperation.error += error;
         });
-        this.formatWriter.on('finish', function() {
-            var result = bagger.job.packagingOperation.result;
-            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-            result.succeeded = !result.error;
-            if (fs.existsSync(result.filename)) {
-                let stat = fs.statSync(result.filename);
-                result.filesize = stat.size;
-            }
-            bagger.emit('finish');
+        this.formatWriter.once('finish', function() {
+            bagger.addTagFiles();
         });
         this.initOutputDir();
         this.addPayloadFiles()
@@ -88,7 +81,7 @@ class Bagger extends EventEmitter {
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
             if (stats.isFile()) {
-                this._addPayloadFile(absPath, relDestPath, stats);
+                this._addFile(absPath, relDestPath, stats);
             } else if (stats.isDirectory()) {
                 this._addDirectory(absPath);
             }
@@ -103,7 +96,12 @@ class Bagger extends EventEmitter {
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
             if(entry.fileStat.isFile()) {
-                bagger._addPayloadFile(fullPath, entry.relPath, entry.fileStat);
+                let relDestPath = path.join('data', entry.relPath);
+                if (bagger.formatWriter.constructor.name === 'TarWriter') {
+                    // For tar files, use forward slash, even on Windows.
+                    relDestPath = 'data/' + entry.relPath;
+                }
+                bagger._addFile(fullPath, relDestPath, entry.fileStat);
             }
         });
         fsReader.on('error', function(err) {
@@ -134,7 +132,7 @@ class Bagger extends EventEmitter {
         this.formatWriter = new plugins[0](outputPath);
     }
 
-    _addPayloadFile(absPath, relDestPath, stats) {
+    _addFile(absPath, relDestPath, stats) {
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
         let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
@@ -150,8 +148,36 @@ class Bagger extends EventEmitter {
     }
 
     addTagFiles(bagItFiles) {
-        var packOp = this.job.packagingOperation;
-        // Write to temp file, then copy into packager.
+        let bagger = this;
+        this.formatWriter.once('finish', function() {
+            var result = bagger.job.packagingOperation.result;
+            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
+            result.succeeded = !result.error;
+            if (fs.existsSync(result.filename)) {
+                let stat = fs.statSync(result.filename);
+                result.filesize = stat.size;
+            }
+            bagger._deleteTempFiles();
+            bagger.emit('finish');
+        });
+        var profile = this.job.bagItProfile;
+        for (let tagFileName of profile.tagFileNames()) {
+            let content = profile.getTagFileContents(tagFileName);
+            let tmpFile = path.join(os.tmpdir(), tagFileName + Date.now());
+            this.tmpFiles.push(tmpFile);
+            fs.writeFileSync(tmpFile, content);
+            var stats = fs.statSync(tmpFile);
+            this._addFile(tmpFile, tagFileName, stats);
+        }
+    }
+
+    // Call this on finish
+    _deleteTempFiles() {
+        for (let f of this.tmpFiles) {
+            if (fs.existsSync(f)) {
+                fs.unlinkSync(f);
+            }
+        }
     }
 
     addManifests(bagItFiles) {
