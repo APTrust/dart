@@ -181,6 +181,14 @@ class Bagger extends EventEmitter {
     addManifests(bagItFiles) {
         let bagger = this;
         this.formatWriter.once('finish', function() {
+            bagger.addTagManifests();
+        });
+        this._writeManifests('payload');
+    }
+
+    addTagManifests(bagFiles) {
+        let bagger = this;
+        this.formatWriter.once('finish', function() {
             var result = bagger.job.packagingOperation.result;
             result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
             result.succeeded = !result.error;
@@ -188,18 +196,36 @@ class Bagger extends EventEmitter {
                 let stat = fs.statSync(result.filename);
                 result.filesize = stat.size;
             }
-            // TODO: Don't call this until the very end.
             bagger._deleteTempFiles();
-            // TODO: Add manifests here, then add tag manifests.
             bagger.emit('finish');
         });
+        bagger._writeManifests('tag');
+    }
+
+    _writeManifests(payloadOrTag) {
         var profile = this.job.bagItProfile;
-        for (let algorithm of profile.manifestsRequired) {
-            var manifestName = `manifest-${algorithm}.txt`;
+        var manifestAlgs = profile.manifestsRequired;
+        var fileNamePrefix = 'manifest';
+        if (payloadOrTag == 'tag') {
+            manifestAlgs = profile.tagManifestsRequired;
+            fileNamePrefix = 'tagmanifest';
+        }
+        if (manifestAlgs.length == 0) {
+            this.formatWriter.emit('finish');
+            return;
+        }
+        for (let algorithm of manifestAlgs) {
+            var manifestName = `${fileNamePrefix}-${algorithm}.txt`;
             let tmpFile = path.join(os.tmpdir(), manifestName + Date.now());
             this.tmpFiles.push(tmpFile);
             var fd = fs.openSync(tmpFile, 'w')
-            for (let bagItFile of bagger.bagItFiles) {
+            for (let bagItFile of this.bagItFiles) {
+                if (payloadOrTag === 'payload' && !bagItFile.isPayloadFile()) {
+                    continue;
+                }
+                if (payloadOrTag === 'tag' && (bagItFile.isPayloadFile() || bagItFile.isTagManifest())) {
+                    continue;
+                }
                 let digest = bagItFile.checksums[algorithm];
                 fs.writeSync(fd, `${digest} ${bagItFile.relDestPath}\n`);
             }
@@ -207,11 +233,6 @@ class Bagger extends EventEmitter {
             var stats = fs.statSync(tmpFile);
             this._addFile(tmpFile, manifestName, stats);
         }
-    }
-
-    addTagManifests(bagFiles) {
-        var packOp = this.job.packagingOperation;
-        // Write to temp file, then copy into packager.
     }
 
     _getCryptoHashes(bagItFile, algorithms) {

@@ -20,7 +20,7 @@ function getJob() {
     var sourceDir = path.join(__dirname, '..', 'core');
     job.packagingOperation.sourceFiles.push(sourceDir);
     var profilesDir = path.join(__dirname, '..', 'test', 'profiles');
-    job.bagItProfile = BagItProfile.load(path.join(profilesDir, 'aptrust_bagit_profile_2.2.json'));
+    job.bagItProfile = BagItProfile.load(path.join(profilesDir, 'multi_manifest.json'));
     return job;
 }
 
