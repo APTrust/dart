@@ -5,7 +5,6 @@ const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
 const { KeyValueCollection } = require('./key_value_collection');
-const mkdirp = require('mkdirp');
 const path = require('path');
 const os = require('os');
 const { OperationResult } = require('../core/operation_result');
@@ -20,21 +19,6 @@ class Bagger extends EventEmitter {
         this.tmpFiles = [];
         this.bagItFiles = [];
         this.formatWriter = null;
-    }
-
-    // TODO: Move to writer.
-    initOutputDir() {
-        var packOp = this.job.packagingOperation;
-        if (!fs.existsSync(packOp.outputPath)) {
-            var opts = { mode: 0o755 };
-            if (path.extname(packOp.outputPath) == '') {
-                Context.logger.info(`Creating directory ${packOp.outputPath}`)
-                mkdirp.sync(packOp.outputPath, opts);
-            } else if (!fs.existsSync(path.dirname(packOp.outputPath))) {
-                Context.logger.info(`Creating directory ${path.dirname(packOp.outputPath)}`);
-                mkdirp.sync(path.dirname(packOp.outputPath), opts);
-            }
-        }
     }
 
     validateJob() {
@@ -72,9 +56,8 @@ class Bagger extends EventEmitter {
             bagger.job.packagingOperation.error += error;
         });
         this.formatWriter.on('fileAdded', function(bagItFile) {
-            // Anything to do here?
+            bagger.emit('fileAdded', bagItFile);
         });
-        this.initOutputDir();
         this.addPayloadFiles();
     }
 

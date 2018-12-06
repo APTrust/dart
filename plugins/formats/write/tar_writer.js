@@ -1,6 +1,7 @@
 const async = require('async');
 const EventEmitter = require('events');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 const path = require('path');
 const { Plugin } = require('../../plugin');
 const tar = require('tar-stream');
@@ -174,6 +175,10 @@ module.exports = class TarWriter extends Plugin {
         if (this._tarOutputWriter == null) {
             if (!this.pathToTarFile.endsWith(".tar")) {
                 throw `pathToTarFile '${this.pathToTarFile}' must have .tar extension`;
+            }
+            var dir = path.dirname(this.pathToTarFile);
+            if (!fs.existsSync(dir)) {
+                mkdirp.sync(dir, { mode: 0o755 });
             }
             var options = {
                 mode: 0o644,
