@@ -149,7 +149,6 @@ class Bagger extends EventEmitter {
         let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
         this.bagItFiles.push(bagItFile);
-        console.log(`Added ${bagItFile.relDestPath}`);
         return new Promise(function(resolve) {
             resolve(bagItFile);
         });
@@ -171,7 +170,6 @@ class Bagger extends EventEmitter {
             let tmpFile = path.join(os.tmpdir(), tagFileName + Date.now());
             this.tmpFiles.push(tmpFile);
             fs.writeFileSync(tmpFile, content);
-            console.log(content);
             var stats = fs.statSync(tmpFile);
             await this._addFile(tmpFile, tagFileName, stats);
         }
