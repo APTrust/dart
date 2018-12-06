@@ -5,14 +5,15 @@ const { Job } = require('../core/job');
 const os = require('os');
 const { PackagingOperation } = require('../core/packaging_operation');
 const path = require('path');
+const { Validator } = require('./validator');
 
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 
-// afterEach(() => {
-//     if (fs.existsSync(tmpFile)) {
-//         fs.unlinkSync(tmpFile);
-//     }
-// });
+afterEach(() => {
+    if (fs.existsSync(tmpFile)) {
+        fs.unlinkSync(tmpFile);
+    }
+});
 
 
 // TODO:
@@ -42,6 +43,8 @@ function getJob(...sources) {
     title.userValue = 'Test Bag';
     var description = job.bagItProfile.firstMatchingTag('tagName', 'Description');
     description.userValue = 'Bag of files for unit testing.';
+    var sourceOrg = job.bagItProfile.firstMatchingTag('tagName', 'Source-Organization');
+    sourceOrg.userValue = 'School of Hard Knocks';
     return job;
 }
 
@@ -94,7 +97,17 @@ test('create() with multiple dirs and files', done => {
         expect(result.error).toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
-        done();
+
+        let validator = new Validator(tmpFile, job.bagItProfile);
+        validator.on('end', function(taskDesc) {
+            expect(validator.errors).toEqual([]);
+            //expect(validator.payloadFiles().length).toEqual(4);
+            expect(validator.payloadManifests().length).toEqual(2);
+            expect(validator.tagFiles().length).toEqual(3);
+            expect(validator.tagManifests().length).toEqual(2);
+            done();
+        });
+        validator.validate();
     });
 
     bagger.create();
