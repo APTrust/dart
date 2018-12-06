@@ -305,6 +305,9 @@ class Validator extends EventEmitter {
         var reader = this.getNewReader();
         reader.on('error', function(err) { validator.emit('error', err) });
         reader.on('entry', function (entry) {
+            if (validator.bagRoot == null && validator.readingFromTar()) {
+                validator.bagRoot = entry.relPath.split(/\//)[0];
+            }
             var relPath = validator._cleanEntryRelPath(entry.relPath);
             if (relPath.match(Constants.RE_MANIFEST) || relPath.match(Constants.RE_TAG_MANIFEST)) {
                 var algorithm = relPath.split('-')[1].split('.')[0];
