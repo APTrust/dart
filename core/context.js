@@ -92,12 +92,11 @@ class GlobalContext {
      * @returns {string}
      */
     dartVersion() {
-        var commitId = "$Id$";
         var pkg = this.getPackageInfo();
         if (pkg == null) {
             return "Cannot read version from package.json file.";
         }
-        return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} with Node.js ${process.version} for ${os.platform()} ${os.arch()} ${os.release()}. Commit ${commitId.slice(8)})`
+        return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`
     }
 }
 
