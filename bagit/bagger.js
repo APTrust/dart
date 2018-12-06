@@ -218,7 +218,6 @@ class Bagger extends EventEmitter {
 
     async addTagManifests(bagFiles) {
         let bagger = this;
-        bagger._writeManifests('tag');
         this.formatWriter.once('finish', function() {
             var result = bagger.job.packagingOperation.result;
             result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
@@ -230,6 +229,7 @@ class Bagger extends EventEmitter {
             bagger._deleteTempFiles();
             bagger.emit('finish');
         });
+        await bagger._writeManifests('tag');
     }
 
     async _writeManifests(payloadOrTag) {

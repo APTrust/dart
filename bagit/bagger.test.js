@@ -104,7 +104,6 @@ test('create() with multiple dirs and files', done => {
         expect(result.error).toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
-        console.log(bagger.bagItFiles.length);
         done();
     });
 
