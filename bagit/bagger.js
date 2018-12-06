@@ -10,9 +10,23 @@ const os = require('os');
 const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
 
+/**
+ * Bagger creates a bag based on a BagItProfile.
+ *
+ * @param {Job} job - A job object that includes a
+ * {@link PackagingOperation} describing a number of files to be
+ * packaged and a {@link BagItProfile} describing how to package them.
+ *
+ */
 class Bagger extends EventEmitter {
     constructor(job) {
         super();
+        /**
+         * The Job object contains information about what the bagger
+         * is supposed to bag, and according to what profile.
+         *
+         * @type {Job}
+         */
         this.job = job;
         // Temp copies of tag files and manifests.
         // We need to clean these up when we're done.
