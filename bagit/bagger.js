@@ -74,24 +74,28 @@ class Bagger extends EventEmitter {
         this.formatWriter.on('fileAdded', function(bagItFile) {
             // Anything to do here?
         });
-        this.formatWriter.once('finish', function() {
-            bagger.addTagFiles();
-        });
         this.initOutputDir();
         this.addPayloadFiles();
     }
 
-    addPayloadFiles() {
+    async addPayloadFiles() {
         var packOp = this.job.packagingOperation;
         for (var absPath of packOp.sourceFiles) {
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
             if (stats.isFile()) {
-                this._addFile(absPath, relDestPath, stats);
+                await this._addFile(absPath, relDestPath, stats);
             } else if (stats.isDirectory()) {
-                this._addDirectory(absPath);
+                // Wait until entire directory is added before
+                // attaching finish listener, else queue will
+                // drain more than once.
+                await this._addDirectory(absPath);
             }
         }
+        var bagger = this;
+        this.formatWriter.once('finish', function() {
+            bagger.addTagFiles();
+        });
     }
 
     _addDirectory(absPath) {
@@ -113,10 +117,12 @@ class Bagger extends EventEmitter {
         fsReader.on('error', function(err) {
             packOp.result.error += err.toString();
         });
-        fsReader.on('end', function(fileCount) {
-            // Do we need to do anything with fileCount?
-        });
         fsReader.list();
+        return new Promise(function(resolve, reject) {
+            fsReader.on('end', function(fileCount) {
+                resolve(fileCount);
+            });
+        });
     }
 
     _initWriter() {
@@ -144,6 +150,9 @@ class Bagger extends EventEmitter {
         this.formatWriter.add(bagItFile, cryptoHashes);
         this.bagItFiles.push(bagItFile);
         console.log(`Added ${bagItFile.relDestPath}`);
+        return new Promise(function(resolve) {
+            resolve(bagItFile);
+        });
     }
 
     _getRelDestPath(absPath) {
@@ -154,11 +163,7 @@ class Bagger extends EventEmitter {
         return relDestPath;
     }
 
-    addTagFiles(bagItFiles) {
-        let bagger = this;
-        this.formatWriter.once('finish', function() {
-            bagger.addManifests();
-        });
+    async addTagFiles(bagItFiles) {
         this.setBagInfoAutoValues();
         var profile = this.job.bagItProfile;
         for (let tagFileName of profile.tagFileNames()) {
@@ -168,8 +173,12 @@ class Bagger extends EventEmitter {
             fs.writeFileSync(tmpFile, content);
             console.log(content);
             var stats = fs.statSync(tmpFile);
-            this._addFile(tmpFile, tagFileName, stats);
+            await this._addFile(tmpFile, tagFileName, stats);
         }
+        let bagger = this;
+        this.formatWriter.once('finish', function() {
+            bagger.addManifests();
+        });
     }
 
     // Set some automatic values in the bag-info.txt file.
@@ -201,16 +210,17 @@ class Bagger extends EventEmitter {
         }
     }
 
-    addManifests(bagItFiles) {
+    async addManifests(bagItFiles) {
         let bagger = this;
+        await this._writeManifests('payload');
         this.formatWriter.once('finish', function() {
             bagger.addTagManifests();
         });
-        this._writeManifests('payload');
     }
 
-    addTagManifests(bagFiles) {
+    async addTagManifests(bagFiles) {
         let bagger = this;
+        bagger._writeManifests('tag');
         this.formatWriter.once('finish', function() {
             var result = bagger.job.packagingOperation.result;
             result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
@@ -222,10 +232,9 @@ class Bagger extends EventEmitter {
             bagger._deleteTempFiles();
             bagger.emit('finish');
         });
-        bagger._writeManifests('tag');
     }
 
-    _writeManifests(payloadOrTag) {
+    async _writeManifests(payloadOrTag) {
         var profile = this.job.bagItProfile;
         var manifestAlgs = profile.manifestsRequired;
         var fileNamePrefix = 'manifest';
@@ -254,7 +263,7 @@ class Bagger extends EventEmitter {
             }
             fs.closeSync(fd);
             var stats = fs.statSync(tmpFile);
-            this._addFile(tmpFile, manifestName, stats);
+            await this._addFile(tmpFile, manifestName, stats);
         }
     }
 
