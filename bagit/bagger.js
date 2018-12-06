@@ -78,7 +78,7 @@ class Bagger extends EventEmitter {
             bagger.addTagFiles();
         });
         this.initOutputDir();
-        this.addPayloadFiles()
+        this.addPayloadFiles();
     }
 
     addPayloadFiles() {
@@ -143,6 +143,7 @@ class Bagger extends EventEmitter {
         let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
         this.bagItFiles.push(bagItFile);
+        console.log(`Added ${bagItFile.relDestPath}`);
     }
 
     _getRelDestPath(absPath) {
@@ -158,6 +159,7 @@ class Bagger extends EventEmitter {
         this.formatWriter.once('finish', function() {
             bagger.addManifests();
         });
+        this.setBagInfoAutoValues();
         var profile = this.job.bagItProfile;
         for (let tagFileName of profile.tagFileNames()) {
             let content = profile.getTagFileContents(tagFileName);
@@ -168,6 +170,26 @@ class Bagger extends EventEmitter {
             var stats = fs.statSync(tmpFile);
             this._addFile(tmpFile, tagFileName, stats);
         }
+    }
+
+    // Set some automatic values in the bag-info.txt file.
+    setBagInfoAutoValues() {
+        var profile = this.job.bagItProfile;
+        var baggingDate = profile.firstMatchingTag('tagName', 'Bagging-Date');
+        baggingDate.userValue = dateFormat(Date.now(), 'isoUtcDateTime');
+        var baggingSoftware = profile.firstMatchingTag('tagName', 'Bagging-Software');
+        baggingSoftware.userValue = Context.dartVersion();
+
+        var fileCount = 0;
+        var byteCount = 0;
+        var payloadOxum = profile.firstMatchingTag('tagName', 'Payload-Oxum');
+        for (let f of this.bagItFiles) {
+            if (f.isPayloadFile()) {
+                fileCount += 1;
+                byteCount += f.size;
+            }
+        }
+        payloadOxum.userValue = `${byteCount}.${fileCount}`;
     }
 
     // Call this on finish
