@@ -8,11 +8,11 @@ const path = require('path');
 
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 
-afterEach(() => {
-    if (fs.existsSync(tmpFile)) {
-        fs.unlinkSync(tmpFile);
-    }
-});
+// afterEach(() => {
+//     if (fs.existsSync(tmpFile)) {
+//         fs.unlinkSync(tmpFile);
+//     }
+// });
 
 
 // TODO:
@@ -43,11 +43,11 @@ function getJob() {
     job.bagItProfile = BagItProfile.load(path.join(profilesDir, 'multi_manifest.json'));
 
     // Set required APTrust tags
-    var access = job.bagItProfile.firstMatchingTag('Access');
+    var access = job.bagItProfile.firstMatchingTag('tagName', 'Access');
     access.userValue = 'Institution';
-    var title = job.bagItProfile.firstMatchingTag('Title');
+    var title = job.bagItProfile.firstMatchingTag('tagName', 'Title');
     title.userValue = 'Test Bag';
-    var description = job.bagItProfile.firstMatchingTag('Description');
+    var description = job.bagItProfile.firstMatchingTag('tagName', 'Description');
     description.userValue = 'Bag of files for unit testing.';
     return job;
 }
@@ -56,7 +56,7 @@ test('create()', done => {
     let bagger = new Bagger(getJob());
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        //console.log(result);
+        console.log(result);
         expect(result.error).toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.started).not.toBeNull();
