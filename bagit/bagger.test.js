@@ -17,21 +17,11 @@ var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 
 // TODO:
 //
-// 1. Don't use filter and find in BagItProfile to find tags
-// because that returns copies instead of references.
+// Make sure tags are written correctly to tag files.
 //
-// findMatchingTags
-// findMatchingTag
-// getTagsFromFile
+// Validate entire bag.
 //
-// 2. Make sure tags are written correctly to tag files.
-//
-// 3. Set internal tags, like Payload-Oxum, Bagging-Date,
-// Bagging-Software, etc.
-//
-// 4. Validate entire bag.
-//
-// 5. Check for expected payload files.
+// Check for expected payload files.
 //
 
 function getJob(...sources) {
