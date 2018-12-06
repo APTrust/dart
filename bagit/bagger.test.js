@@ -15,16 +15,6 @@ afterEach(() => {
     }
 });
 
-
-// TODO:
-//
-// Make sure tags are written correctly to tag files.
-//
-// Validate entire bag.
-//
-// Check for expected payload files.
-//
-
 function getJob(...sources) {
     var job = new Job();
     job.packagingOperation = new PackagingOperation('TestBag', tmpFile, '.tar');
@@ -38,12 +28,12 @@ function getJob(...sources) {
 
     // Set required tags for this profile, otherwise the bag will be invalid.
     var access = job.bagItProfile.firstMatchingTag('tagName', 'Access');
-    access.userValue = 'Institution';
     var title = job.bagItProfile.firstMatchingTag('tagName', 'Title');
-    title.userValue = 'Test Bag';
     var description = job.bagItProfile.firstMatchingTag('tagName', 'Description');
-    description.userValue = 'Bag of files for unit testing.';
     var sourceOrg = job.bagItProfile.firstMatchingTag('tagName', 'Source-Organization');
+    access.userValue = 'Institution';
+    title.userValue = 'Test Bag';
+    description.userValue = 'Bag of files for unit testing.';
     sourceOrg.userValue = 'School of Hard Knocks';
     return job;
 }
@@ -86,6 +76,8 @@ test('create() with one file', done => {
     bagger.create();
 });
 
+// This test is unreliable. Usually completes in ~150ms,
+// but sometimes times out after 5 seconds.
 test('create() with multiple dirs and files', done => {
     let utilDir = path.join(__dirname, '..', 'util');
     let bagsDir = path.join(__dirname, '..', 'test', 'bags');
@@ -101,10 +93,21 @@ test('create() with multiple dirs and files', done => {
         let validator = new Validator(tmpFile, job.bagItProfile);
         validator.on('end', function(taskDesc) {
             expect(validator.errors).toEqual([]);
-            //expect(validator.payloadFiles().length).toEqual(4);
+            expect(validator.payloadFiles().length).toBeGreaterThan(20);
             expect(validator.payloadManifests().length).toEqual(2);
             expect(validator.tagFiles().length).toEqual(3);
             expect(validator.tagManifests().length).toEqual(2);
+
+            // Make sure tags were written correctly
+            let bagInfoFile = validator.files['bag-info.txt'];
+            expect(bagInfoFile).not.toBeNull();
+            expect(bagInfoFile.keyValueCollection.first('Source-Organization')).toEqual('School of Hard Knocks');
+            let aptInfoFile = validator.files['aptrust-info.txt'];
+            expect(bagInfoFile).not.toBeNull();
+            expect(aptInfoFile.keyValueCollection.first('Access')).toEqual('Institution');
+            expect(aptInfoFile.keyValueCollection.first('Title')).toEqual('Test Bag');
+            expect(aptInfoFile.keyValueCollection.first('Description')).toEqual('Bag of files for unit testing.');
+
             done();
         });
         validator.validate();
