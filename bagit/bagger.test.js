@@ -6,18 +6,21 @@ const os = require('os');
 const { PackagingOperation } = require('../core/packaging_operation');
 const path = require('path');
 const { Validator } = require('./validator');
+const { Util } = require('../core/util');
 
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
+var tmpOutputDir = path.join(os.tmpdir(), 'dart-bagger-test');
 
 afterEach(() => {
     if (fs.existsSync(tmpFile)) {
         fs.unlinkSync(tmpFile);
     }
+    Util.deleteRecursive(tmpOutputDir);
 });
 
 function getJob(...sources) {
     var job = new Job();
-    job.packagingOperation = new PackagingOperation('TestBag', tmpFile, '.tar');
+    job.packagingOperation = new PackagingOperation('TestBag', tmpFile);
 
     // Add the sources we want to pack into the bag
     job.packagingOperation.sourceFiles.push(...sources);
@@ -91,6 +94,50 @@ test('create() with multiple dirs and files', done => {
         expect(result.filesize).toBeGreaterThan(0);
 
         let validator = new Validator(tmpFile, job.bagItProfile);
+        validator.on('end', function(taskDesc) {
+            expect(validator.errors).toEqual([]);
+            expect(validator.payloadFiles().length).toBeGreaterThan(20);
+            expect(validator.payloadManifests().length).toEqual(2);
+            expect(validator.tagFiles().length).toEqual(3);
+            expect(validator.tagManifests().length).toEqual(2);
+
+            // Make sure tags were written correctly
+            let bagInfoFile = validator.files['bag-info.txt'];
+            expect(bagInfoFile).not.toBeNull();
+            expect(bagInfoFile.keyValueCollection.first('Source-Organization')).toEqual('School of Hard Knocks');
+            let aptInfoFile = validator.files['aptrust-info.txt'];
+            expect(bagInfoFile).not.toBeNull();
+            expect(aptInfoFile.keyValueCollection.first('Access')).toEqual('Institution');
+            expect(aptInfoFile.keyValueCollection.first('Title')).toEqual('Test Bag');
+            expect(aptInfoFile.keyValueCollection.first('Description')).toEqual('Bag of files for unit testing.');
+
+            done();
+        });
+        validator.validate();
+    });
+
+    bagger.create();
+});
+
+test('create() using FileSystemWriter', done => {
+    let utilDir = path.join(__dirname, '..', 'util');
+    let bagsDir = path.join(__dirname, '..', 'test', 'bags');
+    let job = getJob(utilDir, __filename, bagsDir);
+    job.packagingOperation.packageName = 'dart-bagger-test';
+    job.packagingOperation.outputPath = tmpOutputDir;
+    job.bagItProfile.serialization = 'optional';
+    let bagger = new Bagger(job);
+
+    bagger.on('fileAdded', function(bagItFile) {
+        //console.log(bagItFile.relDestPath);
+    });
+    bagger.on('finish', function() {
+        let result = bagger.job.packagingOperation.result;
+        expect(result.error).toBeNull();
+        expect(result.succeeded).toEqual(true);
+        expect(result.filesize).toBeGreaterThan(0);
+
+        let validator = new Validator(tmpOutputDir, job.bagItProfile);
         validator.on('end', function(taskDesc) {
             expect(validator.errors).toEqual([]);
             expect(validator.payloadFiles().length).toBeGreaterThan(20);
