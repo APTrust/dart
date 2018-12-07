@@ -1,3 +1,6 @@
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const { Util } = require('./util');
 
 test('Util.uuid4()', () => {
@@ -142,4 +145,33 @@ test('Util.walkSync()', () => {
     expect(files.length).toEqual(originalListLength - 1);
     thisFile = files.filter(f => f.absPath == __filename);
     expect(thisFile.length).toEqual(0);
+});
+
+test('Util.deleteRecursive()', () => {
+    var dir1 = path.join(os.tmpdir(), 'dart-util-test');
+    var dir2 = path.join(dir1, 'subdir');
+    var file1 = path.join(dir1, path.basename(__filename));
+    var file2 = path.join(dir2, path.basename(__filename));
+
+    if (!fs.existsSync(dir1)) {
+        fs.mkdirSync(dir1);
+    }
+    if (!fs.existsSync(dir2)) {
+        fs.mkdirSync(dir2);
+    }
+
+    fs.copyFileSync(__filename, file1);
+    fs.copyFileSync(__filename, file2);
+
+    expect(fs.existsSync(dir1)).toEqual(true);
+    expect(fs.existsSync(dir2)).toEqual(true);
+    expect(fs.existsSync(file1)).toEqual(true);
+    expect(fs.existsSync(file2)).toEqual(true);
+
+    Util.deleteRecursive(dir1);
+    expect(fs.existsSync(dir1)).toEqual(false);
+    expect(fs.existsSync(dir2)).toEqual(false);
+    expect(fs.existsSync(file1)).toEqual(false);
+    expect(fs.existsSync(file2)).toEqual(false);
+
 });

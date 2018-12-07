@@ -291,7 +291,7 @@ class Util {
     };
 
     /**
-     * Recursively deletes a directory and all its contents.
+     * Recursively and synchronously deletes a directory and all its contents.
      * This will throw an exception if you try to delete any path that's
      * too close to the root of the file system (fewer than 8 characters
      * or fewer than 3 slashes/backslashes).
