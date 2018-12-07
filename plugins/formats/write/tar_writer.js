@@ -64,6 +64,14 @@ module.exports = class TarWriter extends Plugin {
           */
         this._queue = async.queue(writeIntoArchive, 1);
         var tarWriter = this;
+
+        /**
+         * @event TarWriter#finish - This event fires after all files
+         * have been written to the underlying tar file.
+         *
+         * @type {BagItFile}
+         *
+         */
         this._queue.drain = function () {
             tarWriter.emit('finish');
         }
@@ -138,6 +146,13 @@ module.exports = class TarWriter extends Plugin {
             size: bagItFile.size
         };
 
+        /**
+         * @event TarWriter#fileAdded - This event fires after a file
+         * has been written into the underlying tar file.
+         *
+         * @type {BagItFile}
+         *
+         */
         var data = {
             bagItFile: bagItFile,
             header: header,
