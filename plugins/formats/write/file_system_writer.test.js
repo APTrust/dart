@@ -79,5 +79,4 @@ test('FileSystemWriter adds files', done => {
         ]
         fsWriter.add(bagItFile, cryptoHashes);
     }
-    console.log(pathToOutputDir);
 });
