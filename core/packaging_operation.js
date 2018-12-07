@@ -15,12 +15,9 @@ class PackagingOperation {
      * @param {string} outputPath - The absolute path to which the package
      * should be written.
      *
-     * @param {string} outputFormat - A file extension describing the format
-     * in which the output should be written. For example, '.tar', '.zip',
-     * 'directory'.
      *
      */
-    constructor(packageName, outputPath, outputFormat) {
+    constructor(packageName, outputPath) {
         /**
          * The name of the package. Usually, this will be a bag name,
          * and should not include a file extension.
@@ -38,14 +35,6 @@ class PackagingOperation {
          * @type {string}
          */
         this.outputPath = outputPath;
-        /**
-         * The file extension of the format DART is packaging. For example,
-         * '.tar', '.zip', '.tgz', etc. If the output format is a directory,
-         * this should be 'directory'.
-         *
-         * @type {string}
-         */
-        this.outputFormat = outputFormat;
         /**
          * A list of files DART will be packaging. Each entry in this list
          * should be an absolute path.
