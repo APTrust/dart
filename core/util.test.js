@@ -174,4 +174,15 @@ test('Util.deleteRecursive()', () => {
     expect(fs.existsSync(file1)).toEqual(false);
     expect(fs.existsSync(file2)).toEqual(false);
 
+    // Sanity check - we should not be able to delete
+    // anything too close to the root of the filesystem
+    expect(() => {
+        Util.deleteRecursive('/no/no');
+    }).toThrow('/no/no does not look safe to delete');
+
+    // Should not throw if dir does not exist
+    expect(() => {
+        Util.deleteRecursive('/no/no/-255a7796e602-');
+    }).not.toThrow();
+
 });
