@@ -17,6 +17,27 @@ const { PluginManager } = require('../plugins/plugin_manager');
  * {@link PackagingOperation} describing a number of files to be
  * packaged and a {@link BagItProfile} describing how to package them.
  *
+ * Since bagging is basically a streaming operation, streaming data
+ * into a specified format, this class implements a subset of the
+ * Node.js stream events. The 'error' and 'finish' events are the
+ * primary ones to listen to.
+ *
+ *
+ * @example
+ * // Assuming you have already created a Job object
+ * var bagger = new Bagger(job);
+ * bagger.on('error', function(err) {
+ *    // Check the contents of job.packagingOperation.result.errors
+ *    // for details of what went wrong.
+ * });
+ * bagger.on('finish', function() {
+ *     // Do whatever you want when the bag is complete.
+ *     // If needed, you can inspect the contents of the bagItFiles
+ *     // array. Manifests and tag files in the bagItFiles array
+ *     // will include the file contents. Payload files will not.
+ * });
+ * bagger.create();
+ *
  */
 class Bagger extends EventEmitter {
     constructor(job) {
@@ -28,10 +49,33 @@ class Bagger extends EventEmitter {
          * @type {Job}
          */
         this.job = job;
-        // Temp copies of tag files and manifests.
-        // We need to clean these up when we're done.
+        /**
+         * This is a list of absolute paths to temporary tag files and
+         * manifests. These go into the system temp directory during
+         * bagging, and the bagger deletes them when it's done.
+         *
+         * @type {Array<string>}
+         */
         this.tmpFiles = [];
+        /**
+         * This is a list of {@link BagItFile} objects that were packed
+         * into the bag. This includes payload files, manifests, tag files
+         * and tag manifests.
+         *
+         * @type {BagItFile}
+         */
         this.bagItFiles = [];
+        /**
+         * The formatWriter is a plugin used to write the bag onto disk.
+         * For example, a bag being written into a directory on the file
+         * system will use the FileSystemWriter plugin. A bag being written
+         * to a tar file will use the TarWriter plugin, etc.
+         *
+         * The bagger chooses the formatWriter at runtime, based on
+         * heuristics such as the file extension of the output file.
+         *
+         * @type {object}
+         */
         this.formatWriter = null;
     }
 
