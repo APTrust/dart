@@ -30,9 +30,15 @@ const { PluginManager } = require('../plugins/plugin_manager');
  *    // Check the contents of job.packagingOperation.result.errors
  *    // for details of what went wrong.
  * });
+ * bagger.on('fileAdded', function(bagItFile) {
+ *    // Do something with the BagItFile, such as displaying
+ *    // a message saying it's been written into the bag.
+ *    // Don't alter the bagItFile object since it's still
+ *    // in use by the bagger.
+ * });
  * bagger.on('finish', function() {
  *     // Do whatever you want when the bag is complete.
- *     // If needed, you can inspect the contents of the bagItFiles
+ *     // If needed, you can inspect the contents of the bagger.bagItFiles
  *     // array. Manifests and tag files in the bagItFiles array
  *     // will include the file contents. Payload files will not.
  * });
@@ -79,6 +85,12 @@ class Bagger extends EventEmitter {
         this.formatWriter = null;
     }
 
+    /**
+     * This ensures the job is valid before the bagger tries to run it.
+     *
+     * @returns {boolean} - True or false, indicating whether or not
+     * the job is valid.
+     */
     validateJob() {
         var jobValidationResult = this.job.validate();
         if (!jobValidationResult.isValid()) {
@@ -94,6 +106,12 @@ class Bagger extends EventEmitter {
         return true;
     }
 
+    /**
+     * This creates the bag based in the BagItProfile and other info specified
+     * in the {@link Job} object. See the documentation for the {@link Bagger}
+     * class for an example of how to use this method.
+     *
+     */
     async create() {
         var packOp = this.job.packagingOperation;
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
@@ -110,21 +128,42 @@ class Bagger extends EventEmitter {
             return false;
         }
         var bagger = this;
+        /**
+         * @event Bagger#error
+         *
+         * @description Emits a string describing an error encountered
+         * during the bagging process. Processing may continue after
+         * some types of errors.
+         *
+         * @type {string}
+         */
         this.formatWriter.on('error', function(err) {
             bagger.job.packagingOperation.error += error;
+            bagger.emit(err);
         });
+        /**
+         * @event Bagger#fileAdded
+         *
+         * @description Emits a {@link BagItFile} object describing a
+         * file that was just written into the bag.
+         *
+         * @type {BagItFile}
+         */
         this.formatWriter.on('fileAdded', function(bagItFile) {
             bagger.emit('fileAdded', bagItFile);
         });
 
-        await this.addPayloadFiles();
-        await this.addTagFiles();
-        await this.addManifests();
-        await this.addTagManifests();
-        this.finish();
+        await this._addPayloadFiles();
+        await this._addTagFiles();
+        await this._addManifests();
+        await this._addTagManifests();
+        this._finish();
     }
 
-    async addPayloadFiles() {
+    /**
+     * This adds payload files to the bag.
+     */
+    async _addPayloadFiles() {
         var packOp = this.job.packagingOperation;
         for (var absPath of packOp.sourceFiles) {
             var relDestPath = this._getRelDestPath(absPath);
@@ -146,6 +185,67 @@ class Bagger extends EventEmitter {
         });
     }
 
+    /**
+     * Adds a tag file to the bag, writing out all of the tag
+     * name-value pairs.
+     *
+     * @private
+     */
+    async _addTagFiles(bagItFiles) {
+        this._setBagInfoAutoValues();
+        var profile = this.job.bagItProfile;
+        for (let tagFileName of profile.tagFileNames()) {
+            let content = profile.getTagFileContents(tagFileName);
+            let tmpFile = path.join(os.tmpdir(), tagFileName + Date.now());
+            this.tmpFiles.push(tmpFile);
+            fs.writeFileSync(tmpFile, content);
+            var stats = fs.statSync(tmpFile);
+            await this._addFile(tmpFile, tagFileName, stats);
+        }
+        let bagger = this;
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Adds payload manifests to the bag.
+     *
+     * @private
+     */
+    async _addManifests() {
+        await this._writeManifests('payload');
+        let bagger = this;
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Adds tag manifests to the bag.
+     *
+     * @private
+     */
+    async _addTagManifests() {
+        let bagger = this;
+        await bagger._writeManifests('tag');
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
+        });
+    }
+
+
+    /**
+     * Adds an entire directory to the bag's payload.
+     *
+     * @private
+     */
     _addDirectory(absPath) {
         let bagger = this;
         let packOp = this.job.packagingOperation;
@@ -173,6 +273,28 @@ class Bagger extends EventEmitter {
         });
     }
 
+    /**
+     * Adds a single file to the bag's payload.
+     *
+     * @private
+     */
+    _addFile(absPath, relDestPath, stats) {
+        let bagItFile = new BagItFile(absPath, relDestPath, stats);
+        let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
+        this.formatWriter.add(bagItFile, cryptoHashes);
+        this.bagItFiles.push(bagItFile);
+        return new Promise(function(resolve) {
+            resolve(bagItFile);
+        });
+    }
+
+    /**
+     * This chooses the plugin that will be used when writing the bag
+     * to disk. Tarred bags will use the TarWriter plugin, unserialized
+     * bags will use the FileSystemWriter plugin, etc.
+     *
+     * @private
+     */
     _initWriter() {
         if (this.formatWriter) {
             // Don't create another because it will overwrite our output file.
@@ -192,16 +314,16 @@ class Bagger extends EventEmitter {
         this.formatWriter = new plugins[0](outputPath);
     }
 
-    _addFile(absPath, relDestPath, stats) {
-        let bagItFile = new BagItFile(absPath, relDestPath, stats);
-        let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
-        this.formatWriter.add(bagItFile, cryptoHashes);
-        this.bagItFiles.push(bagItFile);
-        return new Promise(function(resolve) {
-            resolve(bagItFile);
-        });
-    }
-
+    /**
+     * Given a file's path on disk this returns the relative path that
+     * file will occupy inside the bag.
+     *
+     * @param {string} absPath - The path of the source file on disk.
+     *
+     * @returns {string} - The path the file will occupy inside the bag.
+     *
+     * @private
+     */
     _getRelDestPath(absPath) {
         var relDestPath = 'data' + absPath;
         if (os.platform == 'win32') {
@@ -210,27 +332,13 @@ class Bagger extends EventEmitter {
         return relDestPath;
     }
 
-    async addTagFiles(bagItFiles) {
-        this.setBagInfoAutoValues();
-        var profile = this.job.bagItProfile;
-        for (let tagFileName of profile.tagFileNames()) {
-            let content = profile.getTagFileContents(tagFileName);
-            let tmpFile = path.join(os.tmpdir(), tagFileName + Date.now());
-            this.tmpFiles.push(tmpFile);
-            fs.writeFileSync(tmpFile, content);
-            var stats = fs.statSync(tmpFile);
-            await this._addFile(tmpFile, tagFileName, stats);
-        }
-        let bagger = this;
-        return new Promise(function(resolve, reject) {
-            bagger.formatWriter.once('finish', function() {
-                resolve();
-            });
-        });
-    }
-
-    // Set some automatic values in the bag-info.txt file.
-    setBagInfoAutoValues() {
+    /**
+     * Sets some automatic values in the bag-info.txt file, including
+     * Bagging-Date, Bagging-Software, and Payload-Oxum.
+     *
+     * @private
+     */
+    _setBagInfoAutoValues() {
         var profile = this.job.bagItProfile;
         var baggingDate = profile.firstMatchingTag('tagName', 'Bagging-Date');
         baggingDate.userValue = dateFormat(Date.now(), 'isoUtcDateTime');
@@ -249,7 +357,12 @@ class Bagger extends EventEmitter {
         payloadOxum.userValue = `${byteCount}.${fileCount}`;
     }
 
-    // Call this on finish
+    /**
+     * Deletes temporary manifest and tag files that were generated during
+     * the bagging process.
+     *
+     * @private
+     */
     _deleteTempFiles() {
         for (let f of this.tmpFiles) {
             if (fs.existsSync(f)) {
@@ -258,28 +371,13 @@ class Bagger extends EventEmitter {
         }
     }
 
-    async addManifests(bagItFiles) {
-        await this._writeManifests('payload');
-        let bagger = this;
-        return new Promise(function(resolve, reject) {
-            bagger.formatWriter.once('finish', function() {
-                resolve();
-            });
-        });
-    }
-
-    async addTagManifests(bagFiles) {
-        let bagger = this;
-        await bagger._writeManifests('tag');
-        return new Promise(function(resolve, reject) {
-            bagger.formatWriter.once('finish', function() {
-                resolve();
-            });
-        });
-    }
-
-
-    finish() {
+    /**
+     * Records results of the bagging operation, cleans up temp files,
+     * and emits the 'finish' event.
+     *
+     * @private
+     */
+    _finish() {
         var result = this.job.packagingOperation.result;
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
         result.succeeded = !result.error;
@@ -288,10 +386,26 @@ class Bagger extends EventEmitter {
             result.filesize = stat.size;
         }
         this._deleteTempFiles();
+        /**
+         * @event Bagger#finish
+         *
+         * @description Emits an empty event indicating the bagger has
+         * completed its work. Check bagger.job.packagingOperation.result
+         * for errors.
+         *
+         */
         this.emit('finish');
     }
 
 
+    /**
+     * Adds manifests of the specified type to the bag.
+     *
+     * @param {string} payloadOrTag - Describes whether to add payload
+     * or tag manifests.
+     *
+     * @private
+     */
     async _writeManifests(payloadOrTag) {
         var profile = this.job.bagItProfile;
         var manifestAlgs = profile.manifestsRequired;
@@ -325,6 +439,23 @@ class Bagger extends EventEmitter {
         }
     }
 
+    /**
+     * Returns a list of cryptographic hash objects that must be calculated
+     * on a file as it's written into the bag. DART can calculate multiple
+     * digests on a file during a single write.
+     *
+     * @param {BagItFile} bagItFile - The BagItFile on which to calculate
+     * the hash digest.
+     *
+     * @param {Array<string>} algorithms - The names of the algorithms to
+     * calculate. For example, ['md5', 'sha256', 'sha512']. This info comes
+     * from the manifestsRequired and tagManifestsRequired properties of the
+     * BagItProfile.
+     *
+     * @returns {Array<object>} - An array of Node.js crypto.Hash objects.
+     *
+     * @private
+     */
     _getCryptoHashes(bagItFile, algorithms) {
         let hashes = [];
         for (let algorithm of algorithms) {
