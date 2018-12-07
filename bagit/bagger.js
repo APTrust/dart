@@ -50,7 +50,7 @@ class Bagger extends EventEmitter {
         return true;
     }
 
-    create() {
+    async create() {
         var packOp = this.job.packagingOperation;
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
         packOp.result = new OperationResult('bagging', 'DART bagger');
@@ -72,7 +72,12 @@ class Bagger extends EventEmitter {
         this.formatWriter.on('fileAdded', function(bagItFile) {
             bagger.emit('fileAdded', bagItFile);
         });
-        this.addPayloadFiles();
+
+        await this.addPayloadFiles();
+        await this.addTagFiles();
+        await this.addManifests();
+        await this.addTagManifests();
+        this.finish();
     }
 
     async addPayloadFiles() {
@@ -90,8 +95,10 @@ class Bagger extends EventEmitter {
             }
         }
         var bagger = this;
-        this.formatWriter.once('finish', function() {
-            bagger.addTagFiles();
+        return new Promise( function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
         });
     }
 
@@ -171,8 +178,10 @@ class Bagger extends EventEmitter {
             await this._addFile(tmpFile, tagFileName, stats);
         }
         let bagger = this;
-        this.formatWriter.once('finish', function() {
-            bagger.addManifests();
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
         });
     }
 
@@ -206,28 +215,38 @@ class Bagger extends EventEmitter {
     }
 
     async addManifests(bagItFiles) {
-        let bagger = this;
         await this._writeManifests('payload');
-        this.formatWriter.once('finish', function() {
-            bagger.addTagManifests();
+        let bagger = this;
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
         });
     }
 
     async addTagManifests(bagFiles) {
         let bagger = this;
-        this.formatWriter.once('finish', function() {
-            var result = bagger.job.packagingOperation.result;
-            result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-            result.succeeded = !result.error;
-            if (fs.existsSync(result.filename)) {
-                let stat = fs.statSync(result.filename);
-                result.filesize = stat.size;
-            }
-            bagger._deleteTempFiles();
-            bagger.emit('finish');
-        });
         await bagger._writeManifests('tag');
+        return new Promise(function(resolve, reject) {
+            bagger.formatWriter.once('finish', function() {
+                resolve();
+            });
+        });
     }
+
+
+    finish() {
+        var result = this.job.packagingOperation.result;
+        result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
+        result.succeeded = !result.error;
+        if (fs.existsSync(result.filename)) {
+            let stat = fs.statSync(result.filename);
+            result.filesize = stat.size;
+        }
+        this._deleteTempFiles();
+        this.emit('finish');
+    }
+
 
     async _writeManifests(payloadOrTag) {
         var profile = this.job.bagItProfile;
