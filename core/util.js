@@ -289,6 +289,31 @@ class Util {
         });
         return filelist;
     };
+
+    /**
+     * Recursively deletes a directory and all its contents.
+     * This will throw an exception if you try to delete any path that's
+     * too close to the root of the file system (fewer than 8 characters
+     * or fewer than 3 slashes/backslashes).
+     *
+     * @param {string} dir - Path to the directory you want to delete.
+    */
+    static deleteRecursive(filepath) {
+        if (filepath.length < 8 || filepath.split(path.sep).length < 3) {
+            throw `${filepath} does not look safe to delete`;
+        }
+        if (fs.existsSync(filepath)) {
+            fs.readdirSync(filepath).forEach(function(file, index){
+                var curPath = path.join(filepath, file);
+                if (fs.lstatSync(curPath).isDirectory()) {
+                    Util.deleteRecursive(curPath);
+                } else {
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(filepath);
+        }
+    };
 }
 
 module.exports.Util = Util;
