@@ -4,6 +4,7 @@ const CLI = require('./cli_constants');
 var dateFormat = require('dateformat');
 const { manual } = require('./manual');
 const minimist = require('minimist')
+const { ProfileValidator } = require('./profile_validator');
 
 
 async function main() {
@@ -11,19 +12,9 @@ async function main() {
     let opts = parseArgs();
     let task;
     if (opts.command == "validate-bag") {
-        // let validator = await validateBag(opts);
-        // if (validator.errors.length == 0) {
-        //     console.log("Bag is valid")
-        // } else {
-        //     console.log("Bag has the following errors:");
-        //     for (let e of validator.errors) {
-        //         console.log(`    ${e}`);
-        //         process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
-        //     }
-        // }
         task = new BagValidator(opts);
     } else if (opts.command == "validate-profile") {
-        validateProfile(opts);
+        task = new ProfileValidator(opts);
     }
     try {
         task.run();
@@ -34,39 +25,19 @@ async function main() {
     }
 }
 
-// function validateBag(opts) {
-//     return new Promise(function(resolve, reject) {
-//         let profile = BagItProfile.load(opts.profile);
-//         let validator = new Validator(opts.bag, profile);
-//         validator.on('error', function(err) {
-//             resolve(validator);
-//         });
-//         validator.on('end', function() {
-//             resolve(validator);
-//         });
-//         if (opts.debug) {
-//             validator.on('task', function(taskDesc) {
-//                 let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
-//                 console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path}`);
-//             });
+// function validateProfile(opts) {
+//     let profile = BagItProfile.load(opts.profile);
+//     let result = profile.validate();
+//     if (result.isValid()) {
+//         console.log("BagItProfile is valid.");
+//     } else {
+//         console.log("BagItProfile has the following errors:");
+//         for (let [key, value] of Object.entries(result.errors)) {
+//             console.log(`    ${key}: ${value}`);
 //         }
-//         validator.validate();
-//     });
+//         process.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
+//     }
 // }
-
-function validateProfile(opts) {
-    let profile = BagItProfile.load(opts.profile);
-    let result = profile.validate();
-    if (result.isValid()) {
-        console.log("BagItProfile is valid.");
-    } else {
-        console.log("BagItProfile has the following errors:");
-        for (let [key, value] of Object.entries(result.errors)) {
-            console.log(`    ${key}: ${value}`);
-        }
-        process.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
-    }
-}
 
 // TODO: Move this to seperate file.
 function parseArgs() {

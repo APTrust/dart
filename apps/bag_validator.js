@@ -31,6 +31,7 @@ class BagValidator {
                 }
                 resolve(validator);
             });
+            // TODO: This is not working.
             if (bagValidator.opts.debug) {
                 validator.on('task', function(taskDesc) {
                     let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
