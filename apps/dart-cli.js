@@ -48,29 +48,12 @@ function parseArgs() {
     if (!CLI.VALID_COMMANDS.includes(opts.command)) {
         exitWithError(CLI.EXIT_INVALID_PARAMS, "Invalid command ${opts.command}");
     }
-    if (opts.command == "validate-bag" && !opts.profile) {
-         exitWithError(CLI.EXIT_INVALID_PARAMS, "Missing required option [-p | --profile] <path to BagIt profile>");
-    }
-    if (opts._.length == 0 || opts._[0] == "") {
-        let missingParam = "path/to/bag";
-        let sample = `Example: dart-cli --command validate-bag --profile path/to/profile.json path/to/bag`;
-        if (opts.c == "validate-profile") {
-            missingParam = "path/to/profile.json";
-            sample = `Example: dart-cli --command validate-profile path/to/profile.json`;
-        } else if (opts.c == "run-job") {
-            missingParam = "path/to/job_file.json";
-            sample = `Example: dart-cli --command run-job path/to/job_file.json`;
-        }
-        exitWithError(CLI.EXIT_INVALID_PARAMS, `Missing final argument ${missingParam}\n${sample}`);
-    } else {
-        if (opts.c == "validate-bag") {
-            opts.bag = opts._[0];
-        } else if (opts.c == "validate-profile") {
-            opts.profile = opts._[0];
-        } else if (opts.c == "run-job") {
-            opts.job = opts._[0];
-        }
-
+    if (opts.c == "validate-bag") {
+        opts.bag = opts._[0];
+    } else if (opts.c == "validate-profile") {
+        opts.profile = opts._[0];
+    } else if (opts.c == "run-job") {
+        opts.job = opts._[0];
     }
     return opts;
 }
