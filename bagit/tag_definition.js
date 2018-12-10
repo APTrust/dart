@@ -142,6 +142,7 @@ class TagDefinition {
           */
         this.isUserAddedTag = false;
     }
+
     /**
      * This returns a ValidationResult that describes what if anything
      * is not valid about this TagDefinition.
@@ -161,6 +162,7 @@ class TagDefinition {
         }
         return result
     }
+
     /**
      * This returns a list of errors describing what's wrong with
      * the tag's value. For example, if a tag value is empty when empty
@@ -179,6 +181,7 @@ class TagDefinition {
         }
         return errors;
     }
+
     /**
       * Returns true if the system, and not the user, must set this value.
       * The system sets certain values, such as Bagging-Date, internally
@@ -191,6 +194,7 @@ class TagDefinition {
     systemMustSet() {
         return Util.listContains(tagsSetBySystem, this.tagName);
     }
+
     /**
       * Returns this tag's userValue, if that's non-empty, or its defaultValue.
       *
@@ -199,6 +203,7 @@ class TagDefinition {
     getValue() {
         return this.userValue || this.defaultValue;
     }
+
     /**
       * Returns true if the tag name contains the word 'description'.
       *
@@ -207,6 +212,7 @@ class TagDefinition {
     looksLikeDescriptionTag() {
         return this.tagName.toLowerCase().includes("description");
     }
+
     /**
       * toFormattedString returns the tag as string in a format suitable
       * for writing to a tag file. Following LOC's bagit.py, this function
@@ -218,6 +224,35 @@ class TagDefinition {
     toFormattedString() {
         var val = (this.getValue() || "").replace(/(\r\n)|\n|\r/g, ' ').replace(/ +/g, ' ').trim();
         return `${this.tagName}: ${val}`;
+    }
+
+    /**
+      * Given a tag string in command-line format, this returns a new
+      * TagDefinition object.
+      *
+      * @param {string} str - A tag definition string in command-line format,
+      * which is filename/tagname: value. For example, call with param
+      * 'bag-info/Source-Organization: Faber College' would return a new
+      * TagDefinition object with the properties tagFile = 'bag-info.txt',
+      * tagName = 'Souce-Organization', userValue = 'Faber College'.
+      *
+      * @returns {TagDefinition}
+      */
+    static fromCommandLineArg(str) {
+        var tag;
+        try {
+            var i = str.indexOf(':');
+            var [fileAndTag, value] = [str.slice(0,i), str.slice(i+1)];
+            var [file, tagName] = fileAndTag.split('/');
+            if (!file.endsWith('.txt')) {
+                file += '.txt';
+            }
+            var tag = new TagDefinition(file.trim(), tagName.trim());
+            tag.userValue = value.trim();
+            return tag;
+        } catch (ex) {
+            throw `Invalid format for command-line tag string. '${str}' -> sould be in format 'filename/tagname: value'`
+        }
     }
 }
 

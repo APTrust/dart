@@ -125,3 +125,24 @@ test('toFormattedString() replaces returns and trims leading and trailing spaces
     tagDef.userValue = '  Faber \r\n   College \n  ';
     expect(tagDef.toFormattedString()).toEqual('Source-Organization: Faber College');
 });
+
+test('fromCommandLineArg() returns tag with correct values', () => {
+    // Without .txt
+    let tagDef = TagDefinition.fromCommandLineArg('bag-info/Source-Organization: Faber College');
+    expect(tagDef).toBeDefined();
+    expect(tagDef.tagFile).toEqual('bag-info.txt');
+    expect(tagDef.tagName).toEqual('Source-Organization');
+    expect(tagDef.userValue).toEqual('Faber College');
+
+    // With .txt
+    tagDef = TagDefinition.fromCommandLineArg('bag-info.txt/Source-Organization: Faber College');
+    expect(tagDef).toBeDefined();
+    expect(tagDef.tagFile).toEqual('bag-info.txt');
+    expect(tagDef.tagName).toEqual('Source-Organization');
+    expect(tagDef.userValue).toEqual('Faber College');
+
+    // Throw on bad input format. Colon and slash are in the wrong places.
+    expect(() => {
+        TagDefinition.fromCommandLineArg('bag-info.txt:Source-Organization/ Faber College');
+    }).toThrow();
+});
