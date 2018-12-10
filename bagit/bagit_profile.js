@@ -329,6 +329,7 @@ class BagItProfile extends PersistentObject {
         }
         return suggestion;
     }
+
     /**
      * This returns a generic unique bag name suggestion.
      *
@@ -337,6 +338,7 @@ class BagItProfile extends PersistentObject {
     static suggestGenericBagName() {
         return `bag-${Date.now()}`;
     }
+
     /**
      * This returns true if the bag name contains no illegal
      * characters. Illegal characters include <, >, :, ", /, \, ?, *,
@@ -350,6 +352,7 @@ class BagItProfile extends PersistentObject {
         var illegal = /[<>:"\/\|\?\*\\\s\t\n\r]/g;
         return !Util.isEmpty(name) && name.match(illegal) == null;
     }
+
     /**
      * This returns true if the name is legal for this profile.
      *
@@ -373,6 +376,7 @@ class BagItProfile extends PersistentObject {
             return BagItProfile.nameLooksLegal(name)
         }
     }
+
     /**
       * Returns a hash of required tags, with filename
       * as the key. Value is a list of required tags,
@@ -422,6 +426,7 @@ class BagItProfile extends PersistentObject {
         }
         return lines.join("\n") + "\n";
     }
+
     /**
       * Returns true if filename is a custom file added for a
       * specific job (i.e. is not part of the core profile).
@@ -439,6 +444,7 @@ class BagItProfile extends PersistentObject {
         }
         return false;
     }
+
     /**
       * Returns the names of all tag files, in alpha order.
       *
@@ -453,56 +459,7 @@ class BagItProfile extends PersistentObject {
         }
         return Array.from(fileNames).sort();
     }
-    // ---------------------------------------------------------
-    // TODO: Move to validator.
-    // ---------------------------------------------------------
-    /**
-      * Returns true if the specified tag file has values for all
-      * required tags.
-      *
-      * @param {string} tagFileName - The name of the tag file to check.
-      *
-      * @returns {boolean}
-      */
-    fileHasAllRequiredValues(tagFileName) {
-        for (var tag of this.tags) {
-            if(tag.tagFile == tagFileName) {
-                if (tag.addedForJob) {
-                    // This is a custom tag file that the user
-                    // added for one specific job. We have no
-                    // way of knowing what's required for this
-                    // file because the tags don't have complete
-                    // definitions, so return false. False also
-                    // forces the UI to display the tag value form
-                    // for this file.
-                    return false;
-                }
-                var needsValue = (tag.required && !tag.emptyOk && !tag.systemMustSet());
-                var hasValue = (!Util.isEmpty(tag.defaultValue) || !Util.isEmpty(tag.userValue));
-                if (needsValue && !hasValue) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    // ---------------------------------------------------------
-    // TODO: Move to validator.
-    // ---------------------------------------------------------
-    /**
-      * Returns a hash, where key is tag file name and value is true/false,
-      * indicating whether are required values in that file are present.
-      * Used in job.js to validate that tag files have all required values.
-      *
-      * @returns {Object<string, boolean>}
-      */
-    tagFileCompletionStatus() {
-        var status = {};
-        for (var fileName of this.requiredTagFileNames()) {
-            status[fileName] = this.fileHasAllRequiredValues(fileName);
-        }
-        return status;
-    }
+
     /**
       * Returns true if this profile says the bag must be tarred.
       *
@@ -514,6 +471,7 @@ class BagItProfile extends PersistentObject {
                 this.acceptSerialization[0] == "application/tar" &&
                 this.serialization == "required");
     }
+
     /**
       * This converts the stored representation, which is basically
       * a JSON hash, to a full-fledged BagItProfile object.
@@ -541,6 +499,7 @@ class BagItProfile extends PersistentObject {
         }
         return profile;
     }
+
     /**
      * This loads a BagItProfile from a JSON file and returns
      * the BagItProfile object. After you've loaded the profile,
@@ -560,6 +519,7 @@ class BagItProfile extends PersistentObject {
         let json = fs.readFileSync(pathToJsonFile);
         return BagItProfile.fromJson(json);
     }
+
     /**
       * Returns the best guess at bag title by checking
       * tags called 'Title' or that include 'Title' in the
@@ -580,6 +540,7 @@ class BagItProfile extends PersistentObject {
         }
         return exactTitle || maybeTitle;
     }
+
     /**
       * Returns the best guess at bag description by checking
       * tags called 'Internal-Sender-Description' and 'Description'
@@ -600,6 +561,7 @@ class BagItProfile extends PersistentObject {
         }
         return exactDesc || maybeDesc;
     }
+
     /**
       * Returns the bag's Internal-Sender-Identifier as specified
       * in the tag files, or an empty string if there is none.
@@ -615,15 +577,19 @@ class BagItProfile extends PersistentObject {
         let tags = this.getTagsFromFile('bag-info.txt', 'Internal-Sender-Identifier');
         return tags.length > 0 ? tags[0].userValue : '';
     }
+
     /**
-      * Copy default tag values from other profile to this profile,
-      * and saves those changes to the data store.
+      * Copy default tag values from other profile to this profile.
       *
       * If multiple tags with the same name appear in the same
       * tag file, this copies only the first value. While the BagIt
       * spec permits multiple instances of a tag within a file, we're
       * assuming (naively?) that a BagItProfile will specify only one
       * default value for a tag in a given file.
+      *
+      * This method is generally used for cloning BagItProfiles.
+      * If you want to copy userValues, for instance, when you're
+      * creating a bag, see {@link mergeTagValues}.
       *
       * @param {BagItProfile} otherProfile - The BagItProfile whose
       * TagDefinition default values you want to copy.
@@ -635,11 +601,38 @@ class BagItProfile extends PersistentObject {
             var tags = this.getTagsFromFile(t.tagFile, t.tagName);
             if (tags[0] && t.tagFile == tags[0].tagFile && !Util.isEmpty(t.defaultValue)) {
                 tags[0].defaultValue = t.defaultValue;
-                changed = true;
             }
         }
-        if (changed) {
-            this.save();
+    }
+
+    /**
+      * Copy values into the userValue field of this profile's tags.
+      * Use this when you're creating a bag and you want to write actual
+      * values into the bag's tag files (as opposed to when you are
+      * creating a reusable BagItProfile).
+      *
+      * If multiple tags with the same name appear in the same
+      * tag file, this copies only the first value. If a tag in the
+      * tags param does not exist in the profile, it will be added
+      * for one-time use. (That is, it will be added to the profile for
+      * the scope of one bagging or validation operation, but will
+      * not be saved as part of the reusable BagItProfile.)
+      *
+      * If you want to copy default values when cloning an existing
+      * BagItProfile, see {@link copyDefaultValuesFrom}.
+      *
+      * @param {Array<TagDefinition>} tags - An array of tags whose
+      * userValues you want to copy into this profile.
+      *
+      */
+    mergeTagValues(tags) {
+        for(var t of tags) {
+            var existingTags = this.getTagsFromFile(t.tagFile, t.tagName);
+            if (existingTags[0] && t.tagFile == existingTags[0].tagFile) {
+                existingTags[0].userValue = t.userValue;
+            } else if (!existingTags[0]) {
+                this.tags.push(t);
+            }
         }
     }
 

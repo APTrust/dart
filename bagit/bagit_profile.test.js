@@ -359,3 +359,46 @@ test('copyDefaultTagValuesFrom()', () => {
     expect(profile2.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].defaultValue).toEqual('Academic Preservation Trust');
 
 });
+
+test('mergeTagValues()', () => {
+    // Set up a profile with specific default tag values.
+    let profile = new BagItProfile();
+    profile.getTagsFromFile('bag-info.txt', 'External-Description')[0].userValue = '';
+    profile.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].userValue = '';
+    profile.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].userValue = '';
+    profile.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].userValue = '';
+    profile.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].userValue = '';
+
+    expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-1')[0]).toBeUndefined();
+    expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-2')[0]).toBeUndefined();
+
+    // Create some tags to merge in.
+    let desc = new TagDefinition('bag-info.txt', 'External-Description');
+    let count = new TagDefinition('bag-info.txt', 'Bag-Count');
+    let size = new TagDefinition('bag-info.txt', 'Bag-Size');
+    let date = new TagDefinition('bag-info.txt', 'Bagging-Date');
+    let email = new TagDefinition('bag-info.txt', 'Contact-Email');
+    let newTag1 = new TagDefinition('bag-info.txt', 'New-Tag-1');
+    let newTag2 = new TagDefinition('bag-info.txt', 'New-Tag-2');
+    desc.userValue = 'Bag of Stuff';
+    count.userValue = '1';
+    size.userValue = '10887';
+    date.userValue = '2018-08-20';
+    email.userValue = 'bagger@aptrust.org';
+    newTag1.userValue = 'Bagger Vance';
+    newTag2.userValue = '434-555-1212';
+
+    let tags = [desc, count, size, date, email, newTag1, newTag2];
+    profile.mergeTagValues(tags);
+
+    // Make sure user values were merged in.
+    expect(profile.getTagsFromFile('bag-info.txt', 'External-Description')[0].userValue).toEqual('Bag of Stuff');
+    expect(profile.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].userValue).toEqual('1');
+    expect(profile.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].userValue).toEqual('10887');
+    expect(profile.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].userValue).toEqual('2018-08-20');
+    expect(profile.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].userValue).toEqual('bagger@aptrust.org');
+
+    // Make sure tags that didn't exist before were added.
+    expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-1')[0].userValue).toEqual('Bagger Vance');
+    expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-2')[0].userValue).toEqual('434-555-1212');
+});
