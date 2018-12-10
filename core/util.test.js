@@ -186,3 +186,25 @@ test('Util.deleteRecursive()', () => {
     }).not.toThrow();
 
 });
+
+test('Util.bagNameFromPath()', () => {
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.7z')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.s7z')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.bz')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.bz2')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.gz')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.par')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.par2')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tar')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tar.gz')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tgz')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tar.Z')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tar.bz')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.tar.bz2')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.zip')).toEqual('bag_of_photos');
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.zipx')).toEqual('bag_of_photos');
+
+    // Should not trim off unrecognized extension
+    expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.123')).toEqual('bag_of_photos.123');
+});

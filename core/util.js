@@ -314,6 +314,29 @@ class Util {
             fs.rmdirSync(filepath);
         }
     };
+
+    /**
+     * This function returns the basename of the given file path with
+     * with the following extensions stripped off:
+     *
+     * * .7z, .s7z
+     * * .bz, .bz2
+     * * .gz
+     * * .par, par2
+     * * .rar
+     * * .tar, .tar.gz, .tgz, .tar.Z
+     * * .zip, .zipx
+     *
+     * The point is to return the expected name of the bag, based
+     * on the file path. If the file's basename has an unrecognized
+     * extension or no extension, this will return the basename unaltered.
+     *
+     * @param {string} filepath - Path to the bag.
+    */
+    static bagNameFromPath(filepath) {
+        var bagName = path.basename(filepath);
+        return bagName.replace(/\.tar$|\.tar\.gz$|\.t?gz$|\.tar\.Z$|\.tar\.bz$|\.tar\.bz2$|\.bz$|\.bz2$|\.zip$|\.zipx$|\.rar$|\.7z$|\.s7z$|\.par$|\.par2$/, '');
+    }
 }
 
 module.exports.Util = Util;
