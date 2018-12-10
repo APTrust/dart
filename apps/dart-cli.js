@@ -25,20 +25,6 @@ async function main() {
     }
 }
 
-// function validateProfile(opts) {
-//     let profile = BagItProfile.load(opts.profile);
-//     let result = profile.validate();
-//     if (result.isValid()) {
-//         console.log("BagItProfile is valid.");
-//     } else {
-//         console.log("BagItProfile has the following errors:");
-//         for (let [key, value] of Object.entries(result.errors)) {
-//             console.log(`    ${key}: ${value}`);
-//         }
-//         process.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
-//     }
-// }
-
 // TODO: Move this to seperate file.
 function parseArgs() {
     let opts = minimist(process.argv.slice(2), {
