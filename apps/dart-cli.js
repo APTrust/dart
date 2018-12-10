@@ -1,7 +1,6 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { BagValidator } = require('./bag_validator');
 const CLI = require('./cli_constants');
-var dateFormat = require('dateformat');
 const { manual } = require('./manual');
 const minimist = require('minimist')
 const { ProfileValidator } = require('./profile_validator');
@@ -46,7 +45,7 @@ function parseArgs() {
         exitWithError(CLI.EXIT_INVALID_PARAMS, "Missing required option [-c | -command] <${VALID_COMMANDS.join('|')}>.");
     }
     if (!CLI.VALID_COMMANDS.includes(opts.command)) {
-        exitWithError(CLI.EXIT_INVALID_PARAMS, "Invalid command ${opts.command}");
+        exitWithError(CLI.EXIT_INVALID_PARAMS, `Invalid command ${opts.command}`);
     }
     if (opts.c == "validate-bag") {
         opts.bag = opts._[0];

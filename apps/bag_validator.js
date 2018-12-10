@@ -1,5 +1,6 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const CLI = require('./cli_constants');
+var dateFormat = require('dateformat');
 const { Validator } = require('../bagit/validator');
 
 class BagValidator {
@@ -35,7 +36,8 @@ class BagValidator {
             if (bagValidator.opts.debug) {
                 validator.on('task', function(taskDesc) {
                     let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
-                    console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path}`);
+                    let msg = taskDesc.msg || '';
+                    console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path} ${msg}`);
                 });
             }
             validator.validate();
