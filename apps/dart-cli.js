@@ -1,54 +1,58 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { BagValidator } = require('./bag_validator');
+const CLI = require('./cli_constants');
 var dateFormat = require('dateformat');
 const { manual } = require('./manual');
 const minimist = require('minimist')
-const { Validator } = require('../bagit/validator');
-
-const EXIT_SUCCESS = 0;
-const EXIT_COMPLETED_WITH_ERRORS = 1;
-const EXIT_INVALID_PARAMS = 2;
-const EXIT_RUNTIME_ERROR = 3;
-const VALID_COMMANDS = ["validate-bag", "validate-profile", "create-bag", "run-job"]
 
 
 async function main() {
-    process.exitCode = EXIT_SUCCESS;
+    process.exitCode = CLI.EXIT_SUCCESS;
     let opts = parseArgs();
+    let task;
     if (opts.command == "validate-bag") {
-        let validator = await validateBag(opts);
-        if (validator.errors.length == 0) {
-            console.log("Bag is valid")
-        } else {
-            console.log("Bag has the following errors:");
-            for (let e of validator.errors) {
-                console.log(`    ${e}`);
-                process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
-            }
-        }
+        // let validator = await validateBag(opts);
+        // if (validator.errors.length == 0) {
+        //     console.log("Bag is valid")
+        // } else {
+        //     console.log("Bag has the following errors:");
+        //     for (let e of validator.errors) {
+        //         console.log(`    ${e}`);
+        //         process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
+        //     }
+        // }
+        task = new BagValidator(opts);
     } else if (opts.command == "validate-profile") {
         validateProfile(opts);
     }
+    try {
+        task.run();
+    } catch (ex) {
+        console.log(ex)
+    } finally {
+        process.exit = task.exitCode;
+    }
 }
 
-function validateBag(opts) {
-    return new Promise(function(resolve, reject) {
-        let profile = BagItProfile.load(opts.profile);
-        let validator = new Validator(opts.bag, profile);
-        validator.on('error', function(err) {
-            resolve(validator);
-        });
-        validator.on('end', function() {
-            resolve(validator);
-        });
-        if (opts.debug) {
-            validator.on('task', function(taskDesc) {
-                let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
-                console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path}`);
-            });
-        }
-        validator.validate();
-    });
-}
+// function validateBag(opts) {
+//     return new Promise(function(resolve, reject) {
+//         let profile = BagItProfile.load(opts.profile);
+//         let validator = new Validator(opts.bag, profile);
+//         validator.on('error', function(err) {
+//             resolve(validator);
+//         });
+//         validator.on('end', function() {
+//             resolve(validator);
+//         });
+//         if (opts.debug) {
+//             validator.on('task', function(taskDesc) {
+//                 let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
+//                 console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path}`);
+//             });
+//         }
+//         validator.validate();
+//     });
+// }
 
 function validateProfile(opts) {
     let profile = BagItProfile.load(opts.profile);
@@ -60,7 +64,7 @@ function validateProfile(opts) {
         for (let [key, value] of Object.entries(result.errors)) {
             console.log(`    ${key}: ${value}`);
         }
-        process.exitCode = EXIT_COMPLETED_WITH_ERRORS;
+        process.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
     }
 }
 
@@ -82,13 +86,13 @@ function parseArgs() {
         process.exit(0);
     }
     if (opts.command == "") {
-        exitWithError(EXIT_INVALID_PARAMS, "Missing required option [-c | -command] <${VALID_COMMANDS.join('|')}>.");
+        exitWithError(CLI.EXIT_INVALID_PARAMS, "Missing required option [-c | -command] <${VALID_COMMANDS.join('|')}>.");
     }
-    if (!VALID_COMMANDS.includes(opts.command)) {
-        exitWithError(EXIT_INVALID_PARAMS, "Invalid command ${opts.command}");
+    if (!CLI.VALID_COMMANDS.includes(opts.command)) {
+        exitWithError(CLI.EXIT_INVALID_PARAMS, "Invalid command ${opts.command}");
     }
     if (opts.command == "validate-bag" && !opts.profile) {
-         exitWithError(EXIT_INVALID_PARAMS, "Missing required option [-p | --profile] <path to BagIt profile>");
+         exitWithError(CLI.EXIT_INVALID_PARAMS, "Missing required option [-p | --profile] <path to BagIt profile>");
     }
     if (opts._.length == 0 || opts._[0] == "") {
         let missingParam = "path/to/bag";
@@ -100,7 +104,7 @@ function parseArgs() {
             missingParam = "path/to/job_file.json";
             sample = `Example: dart-cli --command run-job path/to/job_file.json`;
         }
-        exitWithError(EXIT_INVALID_PARAMS, `Missing final argument ${missingParam}\n${sample}`);
+        exitWithError(CLI.EXIT_INVALID_PARAMS, `Missing final argument ${missingParam}\n${sample}`);
     } else {
         if (opts.c == "validate-bag") {
             opts.bag = opts._[0];
