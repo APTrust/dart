@@ -1,4 +1,5 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const CLI = require('./cli_constants');
 const { manual } = require('./manual');
@@ -18,6 +19,7 @@ async function main() {
         task = new ProfileValidator(opts);
         break;
       case "create-bag":
+        task = new BagCreator(opts);
         break;
       case "run-job":
         break;
@@ -25,7 +27,9 @@ async function main() {
         invalidParams(`Invalid command '${opts.command}'. ${CLI.VALID_COMMANDS.join('|')}`);
     }
     try {
-        task.run();
+        await task.run().catch(function (ex) {
+            console.log(ex);
+        });
     } catch (ex) {
         console.log(ex)
     } finally {
@@ -42,6 +46,7 @@ function parseArgs() {
         alias: { d: ['debug'], p: ['profile'], v: ['version'], h: ['help'],
                  c: ['command'], s: ['source'], o: ['output'], t: ['tag']}
     });
+    console.log(opts);
     if (opts.help) {
         printUsage();
         process.exit(0);
