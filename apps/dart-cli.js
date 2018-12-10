@@ -10,10 +10,19 @@ async function main() {
     process.exitCode = CLI.EXIT_SUCCESS;
     let opts = parseArgs();
     let task;
-    if (opts.command == "validate-bag") {
+    switch (opts.command) {
+      case "validate-bag":
         task = new BagValidator(opts);
-    } else if (opts.command == "validate-profile") {
+        break;
+      case "validate-profile":
         task = new ProfileValidator(opts);
+        break;
+      case "create-bag":
+        break;
+      case "run-job":
+        break;
+      default:
+        invalidParams(`Invalid command '${opts.command}'. ${CLI.VALID_COMMANDS.join('|')}`);
     }
     try {
         task.run();
@@ -41,12 +50,6 @@ function parseArgs() {
         printVersion();
         process.exit(0);
     }
-    if (opts.command == "") {
-        exitWithError(CLI.EXIT_INVALID_PARAMS, "Missing required option [-c | -command] <${VALID_COMMANDS.join('|')}>.");
-    }
-    if (!CLI.VALID_COMMANDS.includes(opts.command)) {
-        exitWithError(CLI.EXIT_INVALID_PARAMS, `Invalid command ${opts.command}`);
-    }
     if (opts.c == "validate-bag") {
         opts.bag = opts._[0];
     } else if (opts.c == "validate-profile") {
@@ -66,9 +69,9 @@ function printUsage() {
     console.log(manual);
 }
 
-function exitWithError(code, message) {
+function invalidParams(message) {
     console.error(message);
-    process.exit(code);
+    process.exit(CLI.EXIT_INVALID_PARAMS);
 }
 
 if (!module.parent) {
