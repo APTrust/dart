@@ -8,7 +8,7 @@ const path = require('path');
 const { TagDefinition } = require('../bagit/tag_definition');
 const { Util } = require('../core/util');
 
-// node apps/dart-cli.js --command create-bag --profile test/profiles/aptrust_bagit_profile_2.2.json --source /Users/apd4n/go/src/github.com/APTrust/dart/test/bags/ --output /Users/apd4n/tmp/newbag.tar --tags 'bag-info/Source-Organization: APTrust' --tags 'aptrust-info/Access: Institution' --tags 'aptrust-info/Title: Bag of Goodies'
+// node apps/dart-cli.js --command create-bag --profile test/profiles/aptrust_bagit_profile_2.2.json --source ~/go/src/github.com/APTrust/dart/test/bags/ --output ~/tmp/newbag.tar --tags 'bag-info/Source-Organization: APTrust' --tags 'aptrust-info/Access: Institution' --tags 'aptrust-info/Title: Bag of Goodies'
 
 class BagCreator {
 
@@ -25,7 +25,13 @@ class BagCreator {
         var job = new Job();
         var bagName = Util.bagNameFromPath(this.opts.output)
         job.packagingOperation = new PackagingOperation(bagName, this.opts.output);
-        job.packagingOperation.sourceFiles.push(...this.opts.source);
+        if (typeof this.opts.source == 'string') {
+            job.packagingOperation.sourceFiles.push(this.opts.source);
+        } else {
+            for (let source of this.opts.source) {
+                job.packagingOperation.sourceFiles.push(source);
+            }
+        }
         job.bagItProfile = BagItProfile.load(this.opts.profile);
 
         var creator = this;
@@ -39,21 +45,20 @@ class BagCreator {
             console.log(bagItFile.relDestPath);
         });
 
-
         var promise = new Promise(function(resolve, reject) {
             bagger.on('finish', function() {
                 let result = bagger.job.packagingOperation.result;
                 if (result.error != '') {
                     this.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
                     console.log(result.error);
-                    resolve(result);
                 } else {
                     // TODO: Validate the bag.
                     console.log(`Bag created at ${this.opts.output}`);
-                    resolve(result);
                 }
+                resolve(result);
             });
         });
+
         bagger.create();
         return promise;
     }
@@ -71,12 +76,6 @@ class BagCreator {
         for (var tagString of this.opts.tags) {
             this.tags.push(TagDefinition.fromCommandLineArg(tagString));
         }
-    }
-
-    // TODO: Move to Util & test
-    getBagName() {
-        var bagName = path.basename(opts.output);
-        return bagName.replace(/(\.tar)$|(\.tar\.gz)$|(\.gz)$/, '');
     }
 
 }

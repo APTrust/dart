@@ -27,13 +27,11 @@ async function main() {
         invalidParams(`Invalid command '${opts.command}'. ${CLI.VALID_COMMANDS.join('|')}`);
     }
     try {
-        await task.run().catch(function (ex) {
-            console.log(ex);
-        });
+        await task.run();
     } catch (ex) {
         console.log(ex)
     } finally {
-        process.exit = task.exitCode;
+        process.exit(task.exitCode);
     }
 }
 
@@ -46,7 +44,7 @@ function parseArgs() {
         alias: { d: ['debug'], p: ['profile'], v: ['version'], h: ['help'],
                  c: ['command'], s: ['source'], o: ['output'], t: ['tag']}
     });
-    console.log(opts);
+    //console.log(opts);
     if (opts.help) {
         printUsage();
         process.exit(0);
