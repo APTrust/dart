@@ -216,13 +216,14 @@ class Bagger extends EventEmitter {
      * @private
      */
     async _addManifests() {
-        await this._writeManifests('payload');
         let bagger = this;
-        return new Promise(function(resolve, reject) {
+        let promise = new Promise(function(resolve, reject) {
             bagger.formatWriter.once('finish', function() {
                 resolve();
             });
         });
+        await this._writeManifests('payload');
+        return promise;
     }
 
     /**
@@ -232,12 +233,13 @@ class Bagger extends EventEmitter {
      */
     async _addTagManifests() {
         let bagger = this;
-        await bagger._writeManifests('tag');
-        return new Promise(function(resolve, reject) {
+        let promise = new Promise(function(resolve, reject) {
             bagger.formatWriter.once('finish', function() {
                 resolve();
             });
         });
+        await bagger._writeManifests('tag');
+        return promise;
     }
 
 
