@@ -30,9 +30,8 @@ async function main() {
         await task.run();
     } catch (ex) {
         console.log(ex)
-    } finally {
-        process.exit(task.exitCode);
     }
+    return(task.exitCode);
 }
 
 // TODO: Move this to seperate file.

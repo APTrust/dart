@@ -41,25 +41,25 @@ class BagCreator {
         bagger.on('error', function(err) {
             this.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
             console.log(err);
+            //throw(err);
         });
         bagger.on('fileAdded', function(bagItFile) {
             console.log(bagItFile.relDestPath);
         });
-
         var promise = new Promise(function(resolve, reject) {
+            // Finish never fires. Why? But promise resolves. How?
             bagger.on('finish', function() {
                 let result = bagger.job.packagingOperation.result;
-                if (result.error != '') {
-                    this.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
+                if (result.error) {
+                    creator.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
                     console.log(result.error);
                 } else {
                     // TODO: Validate the bag.
-                    console.log(`Bag created at ${this.opts.output}`);
+                    console.log(`Bag created at ${creator.opts.output}`);
                 }
                 resolve(result);
             });
         });
-
         bagger.create();
         return promise;
     }
