@@ -33,6 +33,7 @@ class BagCreator {
             }
         }
         job.bagItProfile = BagItProfile.load(this.opts.profile);
+        job.bagItProfile.mergeTagValues(this.tags);
 
         var creator = this;
         var bagger = new Bagger(job);
