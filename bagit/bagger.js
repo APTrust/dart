@@ -14,7 +14,7 @@ const { PluginManager } = require('../plugins/plugin_manager');
  * Bagger creates a bag based on a BagItProfile.
  *
  * @param {Job} job - A job object that includes a
- * {@link PackagingOperation} describing a number of files to be
+ * {@link PackageOperation} describing a number of files to be
  * packaged and a {@link BagItProfile} describing how to package them.
  *
  * Since bagging is basically a streaming operation, streaming data

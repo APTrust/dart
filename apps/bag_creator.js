@@ -3,7 +3,7 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const CLI = require('./cli_constants');
 const dateFormat = require('dateformat');
 const { Job } = require('../core/job');
-const { PackagingOperation } = require('../core/packaging_operation');
+const { PackageOperation } = require('../core/package_operation');
 const path = require('path');
 const { TagDefinition } = require('../bagit/tag_definition');
 const { Util } = require('../core/util');
@@ -24,7 +24,7 @@ class BagCreator {
 
         var job = new Job();
         var bagName = Util.bagNameFromPath(this.opts.output)
-        job.packagingOp = new PackagingOperation(bagName, this.opts.output);
+        job.packagingOp = new PackageOperation(bagName, this.opts.output);
         if (typeof this.opts.source == 'string') {
             job.packagingOp.sourceFiles.push(this.opts.source);
         } else {

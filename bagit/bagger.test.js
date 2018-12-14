@@ -3,7 +3,7 @@ const { BagItProfile } = require('./bagit_profile');
 const fs = require('fs');
 const { Job } = require('../core/job');
 const os = require('os');
-const { PackagingOperation } = require('../core/packaging_operation');
+const { PackageOperation } = require('../core/package_operation');
 const path = require('path');
 const { Validator } = require('./validator');
 const { Util } = require('../core/util');
@@ -20,7 +20,7 @@ afterEach(() => {
 
 function getJob(...sources) {
     var job = new Job();
-    job.packagingOp = new PackagingOperation('TestBag', tmpFile);
+    job.packagingOp = new PackageOperation('TestBag', tmpFile);
 
     // Add the sources we want to pack into the bag
     job.packagingOp.sourceFiles.push(...sources);

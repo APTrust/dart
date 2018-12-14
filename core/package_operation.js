@@ -2,14 +2,14 @@ const { ValidationResult } = require('./validation_result');
 const { Util } = require('./util');
 
 /**
- * PackagingOperation contains information describing a number of files
+ * PackageOperation contains information describing a number of files
  * to be packaged, what format they should be packed into, and where the
  * final output should be stored.
  *
  */
-class PackagingOperation {
+class PackageOperation {
     /**
-     * Creates a new PackagingOperation.
+     * Creates a new PackageOperation.
      *
      * @param {string} packageName - The name of the package to create.
      * Typically, this is the name of a bag, excluding any '.tar', '.zip'
@@ -71,7 +71,7 @@ class PackagingOperation {
 
     /**
      * validate returns a ValidationResult that describes what if anything
-     * is not valid about this PackagingOperation.
+     * is not valid about this PackageOperation.
      *
      * @returns {ValidationResult} - The result of the validation check.
      */
@@ -90,4 +90,4 @@ class PackagingOperation {
     }
 }
 
-module.exports.PackagingOperation = PackagingOperation;
+module.exports.PackageOperation = PackageOperation;

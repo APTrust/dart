@@ -1,7 +1,7 @@
-const { PackagingOperation } = require('./packaging_operation');
+const { PackageOperation } = require('./package_operation');
 
 test('Constructor sets expected properties', () => {
-    let packOp = new PackagingOperation('bag_name', '/path/to/output.tar');
+    let packOp = new PackageOperation('bag_name', '/path/to/output.tar');
     expect(packOp.packageName).toEqual('bag_name');
     expect(packOp.outputPath).toEqual('/path/to/output.tar');
     expect(Array.isArray(packOp.sourceFiles)).toEqual(true);
@@ -13,14 +13,14 @@ test('Constructor sets expected properties', () => {
 });
 
 test('validate()', () => {
-    let packOp1 = new PackagingOperation();
+    let packOp1 = new PackageOperation();
     let result1 = packOp1.validate();
     expect(result1.isValid()).toEqual(false);
     expect(result1.errors['PackageOperation.packageName']).toEqual('Package name is required.');
     expect(result1.errors['PackageOperation.outputPath']).toEqual('Output path is required.');
     expect(result1.errors['PackageOperation.sourceFiles']).toEqual('Specify at least one file or directory to package.');
 
-    let packOp2 = new PackagingOperation('bag_name', '/path/to/output.tar');
+    let packOp2 = new PackageOperation('bag_name', '/path/to/output.tar');
     packOp2.sourceFiles.push('/path/to/something/you/want/to/bag');
     let result2 = packOp2.validate();
     expect(result2.isValid()).toEqual(true);

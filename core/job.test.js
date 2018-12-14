@@ -1,5 +1,5 @@
 const { Job } = require('./job');
-const { PackagingOperation } = require('./packaging_operation');
+const { PackageOperation } = require('./package_operation');
 
 test('Constructor sets expected properties', () => {
     let job = new Job();
@@ -13,7 +13,7 @@ test('Constructor sets expected properties', () => {
 test('validate()', () => {
     let job = new Job();
     // TODO: Add validationOp and uploadOps
-    job.packagingOp = new PackagingOperation();
+    job.packagingOp = new PackageOperation();
 
     // Errors should be passed through.
     let result = job.validate();
