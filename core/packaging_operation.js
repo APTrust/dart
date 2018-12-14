@@ -1,3 +1,6 @@
+const { ValidationResult } = require('./validation_result');
+const { Util } = require('./util');
+
 /**
  * PackagingOperation contains information describing a number of files
  * to be packaged, what format they should be packed into, and where the
@@ -43,19 +46,6 @@ class PackagingOperation {
          */
         this.sourceFiles = [];
         /**
-         * The id of the BagItProfile that describes how to package the
-         * bag that DART will create. This should be a UUID that
-         * BagItProfile.find() can look up in the local data store.
-         *
-         * If this is null, DART will assume no bagging is necessary before
-         * packaging the files into the requested format. If this is
-         * non-empty and DART cannot find a BagItProfile with the specified
-         * id, DART will raise an exception.
-         *
-         * @type {string}
-         */
-        this.bagItProfileId = null;
-        /**
          * This describes the result of DART's attempt to package the files.
          *
          * @type {OperationResult}
@@ -77,6 +67,26 @@ class PackagingOperation {
          * @type {Array<string>}
          */
         this.skipFiles = [];
+    }
+
+    /**
+     * validate returns a ValidationResult that describes what if anything
+     * is not valid about this PackagingOperation.
+     *
+     * @returns {ValidationResult} - The result of the validation check.
+     */
+    validate() {
+        var result = new ValidationResult();
+        if (typeof this.packageName != 'string' || Util.isEmpty(this.packageName)) {
+            result.errors.push('PackageOperation requires a package name.');
+        }
+        if (typeof this.outputPath != 'string' || Util.isEmpty(this.outputPath)) {
+            result.errors.push('PackageOperation requires an output path.');
+        }
+        if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
+            result.errors.push('PackageOperation requires at least one source file or directory to package.');
+        }
+        return result;
     }
 }
 
