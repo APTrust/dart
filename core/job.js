@@ -16,9 +16,9 @@ class Job extends PersistentObject {
     constructor() {
         super('Job');
         this.bagItProfile = null;
-        this.packagingOperation = null;
-        this.validationOperation = null;
-        this.uploadOperations = [];
+        this.packagingOp = null;
+        this.validationOp = null;
+        this.uploadOps = [];
     }
 
     /**

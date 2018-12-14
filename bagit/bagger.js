@@ -113,7 +113,7 @@ class Bagger extends EventEmitter {
      *
      */
     async create() {
-        var packOp = this.job.packagingOperation;
+        var packOp = this.job.packagingOp;
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
         packOp.result = new OperationResult('bagging', 'DART bagger');
         packOp.result.filename = packOp.outputPath;
@@ -164,7 +164,7 @@ class Bagger extends EventEmitter {
      * This adds payload files to the bag.
      */
     async _addPayloadFiles() {
-        var packOp = this.job.packagingOperation;
+        var packOp = this.job.packagingOp;
         for (var absPath of packOp.sourceFiles) {
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
@@ -250,7 +250,7 @@ class Bagger extends EventEmitter {
      */
     _addDirectory(absPath) {
         let bagger = this;
-        let packOp = this.job.packagingOperation;
+        let packOp = this.job.packagingOp;
         let fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         let fsReader = new fsReaderClass(absPath);
         fsReader.on('entry', function(entry) {
@@ -302,7 +302,7 @@ class Bagger extends EventEmitter {
             // Don't create another because it will overwrite our output file.
             return;
         }
-        var outputPath = this.job.packagingOperation.outputPath;
+        var outputPath = this.job.packagingOp.outputPath;
         var fileExtension = path.extname(outputPath);
         if (fileExtension === '') {
             fileExtension = 'directory';
@@ -380,7 +380,7 @@ class Bagger extends EventEmitter {
      * @private
      */
     _finish() {
-        var result = this.job.packagingOperation.result;
+        var result = this.job.packagingOp.result;
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
         result.succeeded = result.errors.length == 0;
         if (fs.existsSync(result.filename)) {
@@ -392,7 +392,7 @@ class Bagger extends EventEmitter {
          * @event Bagger#finish
          *
          * @description Emits an empty event indicating the bagger has
-         * completed its work. Check bagger.job.packagingOperation.result
+         * completed its work. Check bagger.job.packagingOp.result
          * for errors.
          *
          */

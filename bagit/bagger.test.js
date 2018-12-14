@@ -20,10 +20,10 @@ afterEach(() => {
 
 function getJob(...sources) {
     var job = new Job();
-    job.packagingOperation = new PackagingOperation('TestBag', tmpFile);
+    job.packagingOp = new PackagingOperation('TestBag', tmpFile);
 
     // Add the sources we want to pack into the bag
-    job.packagingOperation.sourceFiles.push(...sources);
+    job.packagingOp.sourceFiles.push(...sources);
 
     // Load the profile that describes how to create the bag.
     var profilesDir = path.join(__dirname, '..', 'test', 'profiles');
@@ -47,7 +47,7 @@ test('create() with one dir', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOperation.result;
+        let result = bagger.job.packagingOp.result;
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.started).not.toBeNull();
@@ -67,7 +67,7 @@ test('create() with one file', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOperation.result;
+        let result = bagger.job.packagingOp.result;
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
@@ -88,7 +88,7 @@ test('create() with multiple dirs and files', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOperation.result;
+        let result = bagger.job.packagingOp.result;
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
@@ -123,8 +123,8 @@ test('create() using FileSystemWriter', done => {
     let utilDir = path.join(__dirname, '..', 'util');
     let bagsDir = path.join(__dirname, '..', 'test', 'bags');
     let job = getJob(utilDir, __filename, bagsDir);
-    job.packagingOperation.packageName = 'dart-bagger-test';
-    job.packagingOperation.outputPath = tmpOutputDir;
+    job.packagingOp.packageName = 'dart-bagger-test';
+    job.packagingOp.outputPath = tmpOutputDir;
     job.bagItProfile.serialization = 'optional';
     let bagger = new Bagger(job);
 
@@ -132,7 +132,7 @@ test('create() using FileSystemWriter', done => {
         //console.log(bagItFile.relDestPath);
     });
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOperation.result;
+        let result = bagger.job.packagingOp.result;
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
