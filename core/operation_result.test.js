@@ -5,6 +5,8 @@ test('Constructor sets expected properties', () => {
     expect(result.operation).toEqual('bagging');
     expect(result.provider).toEqual('bagger');
     expect(result.attemptNumber).toEqual(0);
+    expect(result.errors).not.toBeNull();
+    expect(result.errors.length).toEqual(0);
 });
 
 test('reset()', () => {
@@ -38,5 +40,6 @@ test('reset()', () => {
     expect(result.remoteChecksum).toBeNull();
     expect(result.info).toBeNull();
     expect(result.warning).toBeNull();
-    expect(result.error).toBeNull();
+    expect(result.errors).not.toBeNull();
+    expect(result.errors.length).toEqual(0);
 });

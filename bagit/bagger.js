@@ -94,10 +94,10 @@ class Bagger extends EventEmitter {
     validateJob() {
         var jobValidationResult = this.job.validate();
         if (!jobValidationResult.isValid()) {
-            packOp.error = "Job is not valid.";
+            packOp.errors.push("Job is not valid.");
             for(var key of Object.keys(jobValidationResult.errors)) {
                 var err = jobValidationResult.errors[key];
-                packOp.error += `\n${key}: ${err}`;
+                packOp.errors.push(`${key}: ${err}`);
             }
             packOp.completed = dateFormat(Date.now(), 'isoUtcDateTime');
             packOp.succeeded = false;
@@ -124,7 +124,7 @@ class Bagger extends EventEmitter {
         try {
             this._initWriter();
         } catch (ex) {
-            packOp.result.error = ex.toString();
+            packOp.result.errors.push(ex.toString());
             return false;
         }
         var bagger = this;
@@ -138,7 +138,7 @@ class Bagger extends EventEmitter {
          * @type {string}
          */
         this.formatWriter.on('error', function(err) {
-            bagger.job.packagingOperation.error += error;
+            packOp.errors.push(error);
             bagger.emit(err);
         });
         /**
@@ -265,7 +265,7 @@ class Bagger extends EventEmitter {
             }
         });
         fsReader.on('error', function(err) {
-            packOp.result.error += err.toString();
+            packOp.result.errors.push(err.toString());
         });
         fsReader.list();
         return new Promise(function(resolve, reject) {
@@ -382,7 +382,7 @@ class Bagger extends EventEmitter {
     _finish() {
         var result = this.job.packagingOperation.result;
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-        result.succeeded = !result.error;
+        result.succeeded = result.errors.length == 0;
         if (fs.existsSync(result.filename)) {
             let stat = fs.statSync(result.filename);
             result.filesize = stat.size;

@@ -48,7 +48,7 @@ test('create() with one dir', done => {
 
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        expect(result.error).toBeNull();
+        expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.started).not.toBeNull();
         expect(result.competed).not.toBeNull();
@@ -68,7 +68,7 @@ test('create() with one file', done => {
 
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        expect(result.error).toBeNull();
+        expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
         // 2 manifests, 2 tag manifests, 3 tag files, 1 payload file
@@ -89,7 +89,7 @@ test('create() with multiple dirs and files', done => {
 
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        expect(result.error).toBeNull();
+        expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
 
@@ -133,7 +133,7 @@ test('create() using FileSystemWriter', done => {
     });
     bagger.on('finish', function() {
         let result = bagger.job.packagingOperation.result;
-        expect(result.error).toBeNull();
+        expect(result.errors.length).toEqual(0);
         expect(result.succeeded).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
 

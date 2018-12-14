@@ -105,11 +105,11 @@ class OperationResult {
         */
         this.warning = null
         /**
-        * Error message describing what went wrong during the operation.
+        * Error messages describing what went wrong during the operation.
         *
-        * @type {string}
+        * @type {Array<string>}
         */
-        this.error = null;
+        this.errors = [];
     }
     /**
      * This resets all of the properties of the OperationResult,
@@ -128,7 +128,7 @@ class OperationResult {
         this.remoteChecksum = null;
         this.info = null;
         this.warning = null;
-        this.error = null;
+        this.errors = [];
     }
 }
 
