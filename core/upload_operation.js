@@ -1,3 +1,6 @@
+const { ValidationResult } = require('./validation_result');
+const { Util } = require('./util');
+
 /**
  * UploadOperation contains information describing a number of files
  * to be uploaded and where they should be sent.
@@ -51,6 +54,26 @@ class UploadOperation {
          * @type {OperationResult}
          */
         this.payloadSize = 0;
+    }
+
+    /**
+     * validate returns a ValidationResult that describes what if anything
+     * is not valid about this UploadOperation.
+     *
+     * @returns {ValidationResult} - The result of the validation check.
+     */
+    validate() {
+        var result = new ValidationResult();
+        if (typeof this.destination != 'string' || Util.isEmpty(this.destination)) {
+            result.errors['UploadOperation.destination'] = 'Destination is required.';
+        }
+        if (typeof this.protocol != 'string' || Util.isEmpty(this.protocol)) {
+            result.errors['UploadOperation.protocol'] = 'Protocol is required.';
+        }
+        if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
+            result.errors['UploadOperation.sourceFiles'] = 'Specify at least one file or directory to upload.';
+        }
+        return result;
     }
 }
 
