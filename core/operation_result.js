@@ -92,6 +92,22 @@ class OperationResult {
         */
         this.succeeded = false;
         /**
+        * The URL of the object or file in the remote storage service.
+        * This will be set only on upload operations. It describes
+        * where the file was uploaded.
+        *
+        * @type {string}
+        */
+        this.remoteURL = null;
+        /**
+        * The checksum or etag returned by the remote storage provider
+        * after a successful upload. This will be set only on upload
+        * operations.
+        *
+        * @type {string}
+        */
+        this.remoteURL = null;
+        /**
         * Informational message about the operation. This can be
         * used for logging, debugging, or display.
         *
