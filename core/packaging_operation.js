@@ -78,13 +78,13 @@ class PackagingOperation {
     validate() {
         var result = new ValidationResult();
         if (typeof this.packageName != 'string' || Util.isEmpty(this.packageName)) {
-            result.errors.push('PackageOperation requires a package name.');
+            result.errors['PackageOperation.packageName'] = 'Package name is required.';
         }
         if (typeof this.outputPath != 'string' || Util.isEmpty(this.outputPath)) {
-            result.errors.push('PackageOperation requires an output path.');
+            result.errors['PackageOperation.outputPath'] = 'Output path is required.';
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
-            result.errors.push('PackageOperation requires at least one source file or directory to package.');
+            result.errors['PackageOperation.sourceFiles'] = 'Specify at least one file or directory to package.';
         }
         return result;
     }

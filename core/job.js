@@ -29,8 +29,26 @@ class Job extends PersistentObject {
      * @returns {ValidationResult} - The result of the validation check.
      */
     validate() {
-        // TODO: Validate
-        return new ValidationResult();
+        var result = new ValidationResult();
+        var opValidationResults = [];
+        if (this.packagingOp) {
+            opValidationResults.push(this.packagingOp.validate());
+            // TODO: Require BagItProfile if packaging op is BagIt.
+            // TODO: Mechanism for signifying this is a BagIt job (as opposed to just tar or zip)
+        }
+        if (this.validationOp) {
+            opValidationResults.push(this.validationOp.validate());
+            if (!this.bagItProfile) {
+                result.errors['Job.bagItProfile'] = 'Validation requires a BagItProfile.';
+            }
+        }
+        for (var uploadOp of this.uploadOps) {
+            opValidationResults.push(uploadOp.validate());
+        }
+        for (var opValResult of opValidationResults) {
+            result.errors = Object.assign(result.errors, opValResult.errors);
+        }
+        return result;
     }
 
     /**
