@@ -31,12 +31,12 @@ class OperationResult {
         */
         this.provider = provider;
         /**
-        * The name of the file that packaged, stored, validated or otherwise
+        * The path to the file that packaged, stored, validated or otherwise
         * operated on.
         *
         * @type {string}
         */
-        this.filename = null;
+        this.filepath = null;
         /**
         * The size of the file that packaged, stored, validated or otherwise
         * operated on.
@@ -137,7 +137,7 @@ class OperationResult {
         this.started = null;
         this.completed = null;
         this.succeeded = false;
-        this.filename = null;
+        this.filepath = null;
         this.filesize = 0;
         this.fileMtime = null;
         this.remoteUrl = null;

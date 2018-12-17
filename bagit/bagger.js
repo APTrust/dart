@@ -116,7 +116,7 @@ class Bagger extends EventEmitter {
         var packOp = this.job.packagingOp;
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
         packOp.result = new OperationResult('bagging', 'DART bagger');
-        packOp.result.filename = packOp.outputPath;
+        packOp.result.filepath = packOp.outputPath;
         packOp.result.started = dateFormat(Date.now(), 'isoUtcDateTime');
         if (!this.validateJob()) {
             return false;
@@ -383,8 +383,8 @@ class Bagger extends EventEmitter {
         var result = this.job.packagingOp.result;
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
         result.succeeded = result.errors.length == 0;
-        if (fs.existsSync(result.filename)) {
-            let stat = fs.statSync(result.filename);
+        if (fs.existsSync(result.filepath)) {
+            let stat = fs.statSync(result.filepath);
             result.filesize = stat.size;
         }
         this._deleteTempFiles();

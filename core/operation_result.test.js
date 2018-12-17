@@ -15,7 +15,7 @@ test('reset()', () => {
     result.started = now;
     result.completed = now;
     result.succeeded = true;
-    result.filename = "/path/to/file.txt";
+    result.filepath = "/path/to/file.txt";
     result.filesize = 8800;
     result.fileMtime = now;
     result.remoteUrl = 'https://aptrust.org';
@@ -33,7 +33,7 @@ test('reset()', () => {
     expect(result.started).toBeNull();
     expect(result.completed).toBeNull();
     expect(result.succeeded).toEqual(false);
-    expect(result.filename).toBeNull();
+    expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
     expect(result.remoteUrl).toBeNull();

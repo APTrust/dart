@@ -54,7 +54,7 @@ test('create() with one dir', done => {
         expect(result.competed).not.toBeNull();
         expect(result.operation).toEqual('bagging');
         expect(result.provider).toEqual('DART bagger');
-        expect(result.filename.endsWith('TestBag.tar')).toEqual(true);
+        expect(result.filepath.endsWith('TestBag.tar')).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
         done();
     });
