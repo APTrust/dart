@@ -72,7 +72,7 @@ class OperationResult {
         *
         * @type {string}
         */
-        this.attemptNumber = 0;
+        this.attempt = 0;
         /**
         * Time at which DART last attempted this operation.
         *
@@ -129,7 +129,7 @@ class OperationResult {
     }
     /**
      * This resets all of the properties of the OperationResult,
-     * except operation, provider, and attemptNumber. DART calls
+     * except operation, provider, and attempt. DART calls
      * this before it retries a failed operation.
      *
      */

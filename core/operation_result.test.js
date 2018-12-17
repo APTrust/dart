@@ -4,7 +4,7 @@ test('Constructor sets expected properties', () => {
     let result = new OperationResult('bagging', 'bagger');
     expect(result.operation).toEqual('bagging');
     expect(result.provider).toEqual('bagger');
-    expect(result.attemptNumber).toEqual(0);
+    expect(result.attempt).toEqual(0);
     expect(result.errors).not.toBeNull();
     expect(result.errors.length).toEqual(0);
 });
@@ -23,13 +23,13 @@ test('reset()', () => {
     result.info = 'Ned Flanders';
     result.warning = 'Come out, Neville.';
     result.error = 'There was no error.';
-    result.attemptNumber = 1;
+    result.attempt = 1;
 
     result.reset();
 
     expect(result.operation).toEqual('bagging');
     expect(result.provider).toEqual('bagger');
-    expect(result.attemptNumber).toEqual(1);
+    expect(result.attempt).toEqual(1);
     expect(result.started).toBeNull();
     expect(result.completed).toBeNull();
     expect(result.succeeded).toEqual(false);
