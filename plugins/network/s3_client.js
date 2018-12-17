@@ -1,4 +1,6 @@
+const fs = require('fs');
 const { Plugin } = require('../plugin');
+const { S3Transfer } = require('./s3_transfer');
 
 const MAX_ATTEMPTS = 10;
 
@@ -59,7 +61,7 @@ module.exports = class S3Client extends Plugin {
             keyname = path.basename(filepath);
         }
         try {
-            var xfer = this.initUpload(filepath, keyname);
+            var xfer = this._initUploadXfer(filepath, keyname);
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 var msg = `${filepath} is not a file`;
                 this.emit('error', msg);
@@ -100,8 +102,8 @@ module.exports = class S3Client extends Plugin {
         return trueOrFalse;
     }
 
-    _initUpload(filepath, keyname) {
-        var xfer = new S3transfer('upload');
+    _initUploadXfer(filepath, keyname) {
+        var xfer = new S3Transfer('upload', S3Client.description().name);
         xfer.localPath = filepath;
         xfer.bucket = this.storageService.bucket;
         xfer.key = keyname;
@@ -191,19 +193,4 @@ module.exports = class S3Client extends Plugin {
         return minioClient;
     }
 
-}
-
-class S3Transfer {
-    // operation should be either 'upload' or 'download'
-    constructor(operation) {
-        this.bucket = '';
-        this.key = '';
-        this.localPath = '';
-        this.operation = operation;
-        this.localStat = null;
-        this.remoteStat = null;
-        this.etag = '';
-        this.error = null;
-        this.result = new OperationResult(operation, S3Client.description().name);
-    }
 }
