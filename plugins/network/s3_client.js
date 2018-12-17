@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Minio = require('minio');
 const { Plugin } = require('../plugin');
 const { S3Transfer } = require('./s3_transfer');
 
@@ -167,10 +168,11 @@ module.exports = class S3Client extends Plugin {
         }
     }
 
+    // TODO: Does this belong in this class?
     _getRemoteUrl(key) {
         let url = 'https://' + this.storageService.host.replace('/','');
         if (this.storageService.port) {
-            url += `:${port}`;
+            url += `:${this.storageService.port}`;
         }
         url += `/${this.storageService.bucket}/${key}`;
         return url;
@@ -179,8 +181,8 @@ module.exports = class S3Client extends Plugin {
     _getClient() {
         var minioClient = new Minio.Client({
             endPoint:  this.storageService.host,
-            accessKey: this.storageService.loginName,
-            secretKey: this.storageService.loginPassword
+            accessKey: this.storageService.login,
+            secretKey: this.storageService.password
         });
         // TODO: This is too specialized to go in a general-use client.
         // Where should this go?
@@ -188,7 +190,7 @@ module.exports = class S3Client extends Plugin {
             minioClient.region = 'us-east-1';
         }
         if (this.storageService.port === parseInt(this.storageService.port, 10)) {
-            minioClient.port = port;
+            minioClient.port = this.storageService.port;
         }
         return minioClient;
     }

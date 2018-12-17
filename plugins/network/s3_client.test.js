@@ -1,3 +1,4 @@
+const Minio = require('minio');
 const path = require('path');
 const S3Client = require('./s3_client');
 const { StorageService } = require('../../core/storage_service');
@@ -7,10 +8,11 @@ function getStorageService() {
     ss.protocol = 's3';
     ss.host = 's3.amazonaws.com';
     ss.bucket = 'aptrust.receiving.test.edu';
+    ss.port = 9999;
     return ss;
 }
 
-function canTalkToS3() {
+function envHasS3Credentials() {
     return (typeof process.env.AWS_ACCESS_KEY_ID != 'undefined' && process.env.AWS_SECRET_ACCESS_KEY != 'undefined');
 }
 
@@ -73,4 +75,23 @@ test('_handleError() sets failure result after too many retries', done => {
     });
 
     client._handleError('Oops!', xfer);
+});
+
+test('_getRemoteUrl()', () => {
+    var storageService = getStorageService();
+    var client = new S3Client(storageService);
+    expect(client._getRemoteUrl('bag.tar')).toEqual('https://s3.amazonaws.com:9999/aptrust.receiving.test.edu/bag.tar');
+});
+
+test('_getClient()', () => {
+    if (!envHasS3Credentials()) {
+        return;
+    }
+    var storageService = getStorageService();
+    storageService.login = process.env.AWS_ACCESS_KEY_ID;
+    storageService.password = process.env.AWS_SECRET_ACCESS_KEY;
+    var client = new S3Client(storageService);
+    var minioClient = client._getClient();
+    expect(minioClient).not.toBeNull();
+    expect(minioClient instanceof Minio.Client).toEqual(true);
 });
