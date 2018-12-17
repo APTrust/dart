@@ -12,13 +12,9 @@ module.exports = class S3Client extends Plugin {
     /**
      *
      */
-    constructor(filepath, storageService) {
+    constructor(storageService) {
         super();
-        this.filepath = filepath;
         this.storageService = storageService;
-        this.localStat = null;
-        this.result = new OperationResult('upload', S3Client.description().name);
-        this.result.filename = filepath;
     }
 
     /**
@@ -40,18 +36,36 @@ module.exports = class S3Client extends Plugin {
         };
     }
 
-    upload() {
+    /**
+     * Uploads a file to the remote bucket. The name of the remote bucket is
+     * determined by the {@link StorageService} passed in to this class'
+     * constructor.
+     *
+     * @param {string} filepath - The path to the local file to be uploaded
+     * to S3.
+     *
+     * @param {string} keyname - This name of the key to put into the remote
+     * bucket. This parameter is optional. If not specified, it defaults to
+     * the basename of filepath. That is, /path/to/bagOfPhotos.tar would
+     * default to bagOfPhotos.tar.
+     *
+     * @returns
+     */
+    upload(filepath, keyname) {
+        if (!filepath) {
+            throw 'Param filepath is required for upload.';
+        }
+        if (!keyname) {
+            keyname = path.basename(filepath);
+        }
         try {
-            this.localStat = fs.lstatSync(this.filepath);
-            if (this.localStat == null || !(this.localStat.isFile() || localStat.isSymbolicLink())) {
-                var msg = `${this.filepath} is not a file`;
+            var xfer = this.initUpload(filepath, keyname);
+            if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
+                var msg = `${filepath} is not a file`;
                 this.emit('error', msg);
                 return;
             }
-            this.result.attempt += 1;
-            this.result.filesize = localStat.size;
-            this.result.started = Date.now();
-            this._upload();
+            this._upload(xfer);
         } catch (ex) {
             log.error(typeof ex);
             log.error(ex);
@@ -86,70 +100,82 @@ module.exports = class S3Client extends Plugin {
         return trueOrFalse;
     }
 
+    _initUpload(filepath, keyname) {
+        var xfer = new S3transfer('upload');
+        xfer.localPath = filepath;
+        xfer.bucket = this.storageService.bucket;
+        xfer.key = keyname;
+        xfer.result.attempt += 1;
+        xfer.result.started = Date.now();
+        xfer.localStat = fs.lstatSync(filepath);
+        xfer.result.filesize = xfer.localStat.size;
+        return xfer;
+    }
 
-    _upload() {
+    _upload(xfer) {
         var host = this.storageService.host;
-        var bucket = this.storageService.bucket;
-        var objectName = path.basename(this.filepath);
-        this.emit('start', `Uploading ${this.filepath} to ${host} ${bucket}/${objectName}`)
+        this.emit('start', `Uploading ${xfer.filepath} to ${host} ${xfer.bucket}/${xfer.key}`)
         var uploader = this;
         var s3Client = uploader._getClient();
 
-        s3Client.fPutObject(bucket, objectName, this.filepath, function(err) {
+        s3Client.fPutObject(xfer.bucket, xfer.key, xfer.filepath, function(err) {
             if (err) {
-                uploader._handleError(err);
+                uploader._handleError(err, xfer);
                 return;
             }
             // Note: Buckets must allow GetObject or you'll get
             // "valid credentials required" error from remote.
-            s3Client.statObject(bucket, objectName, uploader._verifyRemote);
+            s3Client.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
+                xfer.error = err;
+                xfer.remoteState = remoteStat;
+                uploader._verifyRemote(xfer);
+            });
         });
     }
 
-    _verifyRemote(err, remoteStat) {
-        this.result.completed = Date.now();
-        if (err) {
-            this.result.errors.push(`After upload, could not get object stats. ${err.toString()}`);
-            this.result.succeeded = false;
+    _verifyRemote(xfer) {
+        xfer.result.completed = Date.now();
+        if (xfer.error) {
+            xfer.result.errors.push(`After upload, could not get object stats. ${xfer.error.toString()}`);
+            xfer.result.succeeded = false;
         }
-        if (!err && remoteStat.size != this.localStat.size) {
-            this.result.errors.push(`Object was not correctly uploaded. Local size is ${this.localStat.size}, remote size is ${remoteStat.size}`);
-            this.result.succeeded = false;
+        if (!xfer.error && xfer.remoteStat.size != xfer.localStat.size) {
+            xfer.result.errors.push(`Object was not correctly uploaded. Local size is ${xfer.localStat.size}, remote size is ${xfer.remoteStat.size}`);
+            xfer.result.succeeded = false;
         } else {
-            this.result.remoteUrl = this._getRemoteUrl()
-            this.result.remoteChecksum = remoteStat.etag;
-            this.result.succeeded = true;
+            xfer.result.remoteUrl = this._getRemoteUrl(xfer.key)
+            xfer.result.remoteChecksum = remoteStat.etag;
+            xfer.result.succeeded = true;
         }
-        this.emit('finish', this.result);
+        this.emit('finish', xfer.result);
     }
 
-    _handleError(err) {
-        if (this.result.attempt < MAX_ATTEMPTS) {
+    _handleError(err, xfer) {
+        if (xfer.result.attempt < MAX_ATTEMPTS) {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            uploader.emit('warning', `Got error ${err} on attempt number ${this.result.attempt}. Will try again in five seconds.`);
-            setTimeout(function() { uploader._upload(this.filepath) }, 5000);
+            uploader.emit('warning', `Got error ${err} on attempt number ${xfer.result.attempt}. Will try again in five seconds.`);
+            setTimeout(function() { uploader._upload(xfer) }, 5000);
         } else {
-            this.result.completed = Date.now();
-            this.result.succeeded = false;
-            this.result.errors.push(err.toString());
-            uploader.emit('finish', this.result);
+            xfer.result.completed = Date.now();
+            xfer.result.succeeded = false;
+            xfer.result.errors.push(err.toString());
+            uploader.emit('finish', xfer.result);
         }
     }
 
-    _getRemoteUrl() {
+    _getRemoteUrl(key) {
         let url = 'https://' + this.storageService.host.replace('/','');
-        let objectName = path.basename(this.filepath);
         if (this.storageService.port) {
             url += `:${port}`;
         }
-        url += `/${this.storageService.bucket}/${objectName}`;
+        url += `/${this.storageService.bucket}/${key}`;
         return url;
     }
 
     _getClient() {
-        var s3Client = new Minio.Client({
+        var minioClient = new Minio.Client({
             endPoint:  this.storageService.host,
             accessKey: this.storageService.loginName,
             secretKey: this.storageService.loginPassword
@@ -157,12 +183,27 @@ module.exports = class S3Client extends Plugin {
         // TODO: This is too specialized to go in a general-use client.
         // Where should this go?
         if (this.storageService.host == 's3.amazonaws.com' && this.storageService.bucket.startsWith('aptrust.')) {
-            s3Client.region = 'us-east-1';
+            minioClient.region = 'us-east-1';
         }
-        if (this.storageService.port == parseInt(this.storageService.port, 10)) {
-            s3Client.port = port;
+        if (this.storageService.port === parseInt(this.storageService.port, 10)) {
+            minioClient.port = port;
         }
-        return s3Client;
+        return minioClient;
     }
 
+}
+
+class S3Transfer {
+    // operation should be either 'upload' or 'download'
+    constructor(operation) {
+        this.bucket = '';
+        this.key = '';
+        this.localPath = '';
+        this.operation = operation;
+        this.localStat = null;
+        this.remoteStat = null;
+        this.etag = '';
+        this.error = null;
+        this.result = new OperationResult(operation, S3Client.description().name);
+    }
 }
