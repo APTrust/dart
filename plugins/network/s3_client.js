@@ -157,13 +157,13 @@ module.exports = class S3Client extends Plugin {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            uploader.emit('warning', `Got error ${err} on attempt number ${xfer.result.attempt}. Will try again in five seconds.`);
-            setTimeout(function() { uploader._upload(xfer) }, 5000);
+            this.emit('warning', `Got error ${err} on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
+            setTimeout(function() { this._upload(xfer) }, 1500);
         } else {
             xfer.result.completed = Date.now();
             xfer.result.succeeded = false;
             xfer.result.errors.push(err.toString());
-            uploader.emit('finish', xfer.result);
+            this.emit('finish', xfer.result);
         }
     }
 
