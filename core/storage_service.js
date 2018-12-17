@@ -63,19 +63,19 @@ class StorageService extends PersistentObject {
           */
         this.bucket = "";
         /**
-          * loginName is the name to use when logging in to the remote server.
+          * login is the name to use when logging in to the remote server.
           * For s3 connections, it's the Access Key Id.
           *
           * @type {string}
           */
-        this.loginName = "";
+        this.login = "";
         /**
           * password is the password required to connect to the remote server.
           * For S3, it's the secret key (aka AWS Secret Access Key).
           *
           * @type {string}
           */
-        this.loginPassword = "";
+        this.password = "";
         /**
           * loginExtra is any additional information required by plugins to
           * connect to remote services. What the plugin does with this bit of info
