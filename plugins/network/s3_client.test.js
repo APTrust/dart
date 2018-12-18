@@ -97,6 +97,10 @@ test('_getClient()', () => {
 });
 
 test('upload()', done => {
+    if (!envHasS3Credentials()) {
+        console.log('Skipping S3 upload test: no credentials in ENV.');
+        return;
+    }
     var storageService = getStorageService();
     storageService.login = process.env.AWS_ACCESS_KEY_ID;
     storageService.password = process.env.AWS_SECRET_ACCESS_KEY;
