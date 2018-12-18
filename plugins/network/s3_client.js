@@ -62,8 +62,8 @@ module.exports = class S3Client extends Plugin {
         if (!keyname) {
             keyname = path.basename(filepath);
         }
+        var xfer = this._initUploadXfer(filepath, keyname);
         try {
-            var xfer = this._initUploadXfer(filepath, keyname);
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 var msg = `${filepath} is not a file`;
                 this.emit('error', msg);
@@ -71,9 +71,7 @@ module.exports = class S3Client extends Plugin {
             }
             this._upload(xfer);
         } catch (ex) {
-            xfer.result.completed = Date.now();
-            xfer.result.succeeded = false;
-            xfer.result.errors.push(ex.toString());
+            xfer.result.finish(false, ex.toString());
             this.emit('finish', xfer);
         }
     }
@@ -110,8 +108,7 @@ module.exports = class S3Client extends Plugin {
         xfer.localPath = filepath;
         xfer.bucket = this.storageService.bucket;
         xfer.key = keyname;
-        xfer.result.attempt += 1;
-        xfer.result.started = Date.now();
+        xfer.result.start();
         xfer.localStat = fs.lstatSync(filepath);
         xfer.result.filesize = xfer.localStat.size;
         return xfer;
@@ -139,9 +136,7 @@ module.exports = class S3Client extends Plugin {
                 s3Client.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
                     // TODO: Refactor duplicate code...
                     if (err) {
-                        xfer.result.errors.push(ex.toString());
-                        xfer.result.completed = Date.now();
-                        xfer.result.succeeded = false;
+                        xfer.result.finish(false, err.toString());
                         uploader.emit('finish', xfer.result);
                         return;
                     }
@@ -150,27 +145,25 @@ module.exports = class S3Client extends Plugin {
                 });
             });
         } catch (ex) {
-            xfer.result.errors.push(ex.toString());
-            xfer.result.completed = Date.now();
-            xfer.result.succeeded = false;
+            xfer.result.finish(false, ex.toString());
             uploader.emit('finish', xfer.result);
         }
     }
 
     _verifyRemote(xfer) {
-        xfer.result.completed = Date.now();
+        var succeeded = false;
+        var message;
         if (xfer.error) {
-            xfer.result.errors.push(`After upload, could not get object stats. ${xfer.error.toString()}`);
-            xfer.result.succeeded = false;
+            message = `After upload, could not get object stats. ${xfer.error.toString()}`;
         }
         if (!xfer.error && xfer.remoteStat.size != xfer.localStat.size) {
-            xfer.result.errors.push(`Object was not correctly uploaded. Local size is ${xfer.localStat.size}, remote size is ${xfer.remoteStat.size}`);
-            xfer.result.succeeded = false;
+            message = `Object was not correctly uploaded. Local size is ${xfer.localStat.size}, remote size is ${xfer.remoteStat.size}`;
         } else {
             xfer.result.remoteUrl = this._getRemoteUrl(xfer.key)
             xfer.result.remoteChecksum = xfer.remoteStat.etag;
-            xfer.result.succeeded = true;
+            succeeded = true;
         }
+        xfer.result.finish(succeeded, message);
         this.emit('finish', xfer.result);
     }
 
@@ -183,9 +176,7 @@ module.exports = class S3Client extends Plugin {
             this.emit('warning', `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
             setTimeout(function() { uploader._upload(xfer) }, 1500);
         } else {
-            xfer.result.completed = Date.now();
-            xfer.result.succeeded = false;
-            xfer.result.errors.push(err.toString());
+            xfer.result.finish(false, err.toString());
             this.emit('finish', xfer.result);
         }
     }
