@@ -1,3 +1,4 @@
+const { Context } = require('../../core/context');
 const fs = require('fs');
 const Minio = require('minio');
 const { Plugin } = require('../plugin');
@@ -70,14 +71,15 @@ module.exports = class S3Client extends Plugin {
             }
             this._upload(xfer);
         } catch (ex) {
-            log.error(typeof ex);
-            log.error(ex);
-            this.emit('complete', false, ex);
+            xfer.result.completed = Date.now();
+            xfer.result.succeeded = false;
+            xfer.result.errors.push(ex.toString());
+            this.emit('finish', xfer);
         }
     }
 
     download() {
-
+        // TODO: Write me... though not necessary for early versions of DART.
     }
 
     list() {
@@ -117,23 +119,42 @@ module.exports = class S3Client extends Plugin {
 
     _upload(xfer) {
         var host = this.storageService.host;
-        this.emit('start', `Uploading ${xfer.filepath} to ${host} ${xfer.bucket}/${xfer.key}`)
         var uploader = this;
         var s3Client = uploader._getClient();
-
-        s3Client.fPutObject(xfer.bucket, xfer.key, xfer.filepath, function(err) {
-            if (err) {
-                uploader._handleError(err, xfer);
-                return;
-            }
-            // Note: Buckets must allow GetObject or you'll get
-            // "valid credentials required" error from remote.
-            s3Client.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
-                xfer.error = err;
-                xfer.remoteState = remoteStat;
-                uploader._verifyRemote(xfer);
+        var metadata = {
+            'Uploaded-By': `${Context.dartVersion()}`,
+            'Original-Path': xfer.localPath,
+            'Size': xfer.localStat.size
+        };
+        this.emit('start', `Uploading ${xfer.localPath} to ${host} ${xfer.bucket}/${xfer.key}`)
+        try {
+            s3Client.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
+                if (err) {
+                    uploader._handleError(err, xfer);
+                    return;
+                }
+                // Note: Buckets must allow GetObject or you'll get
+                // "valid credentials required" error from remote.
+                xfer.remoteChecksum = etag;
+                s3Client.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
+                    // TODO: Refactor duplicate code...
+                    if (err) {
+                        xfer.result.errors.push(ex.toString());
+                        xfer.result.completed = Date.now();
+                        xfer.result.succeeded = false;
+                        uploader.emit('finish', xfer.result);
+                        return;
+                    }
+                    xfer.remoteStat = remoteStat;
+                    uploader._verifyRemote(xfer);
+                });
             });
-        });
+        } catch (ex) {
+            xfer.result.errors.push(ex.toString());
+            xfer.result.completed = Date.now();
+            xfer.result.succeeded = false;
+            uploader.emit('finish', xfer.result);
+        }
     }
 
     _verifyRemote(xfer) {
@@ -147,19 +168,20 @@ module.exports = class S3Client extends Plugin {
             xfer.result.succeeded = false;
         } else {
             xfer.result.remoteUrl = this._getRemoteUrl(xfer.key)
-            xfer.result.remoteChecksum = remoteStat.etag;
+            xfer.result.remoteChecksum = xfer.remoteStat.etag;
             xfer.result.succeeded = true;
         }
         this.emit('finish', xfer.result);
     }
 
     _handleError(err, xfer) {
+        var uploader = this;
         if (xfer.result.attempt < MAX_ATTEMPTS) {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            this.emit('warning', `Got error ${err} on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
-            setTimeout(function() { this._upload(xfer) }, 1500);
+            this.emit('warning', `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
+            setTimeout(function() { uploader._upload(xfer) }, 1500);
         } else {
             xfer.result.completed = Date.now();
             xfer.result.succeeded = false;
@@ -181,6 +203,7 @@ module.exports = class S3Client extends Plugin {
     _getClient() {
         var minioClient = new Minio.Client({
             endPoint:  this.storageService.host,
+            port: this.storageService.port || 443,
             accessKey: this.storageService.login,
             secretKey: this.storageService.password
         });
@@ -188,9 +211,6 @@ module.exports = class S3Client extends Plugin {
         // Where should this go?
         if (this.storageService.host == 's3.amazonaws.com' && this.storageService.bucket.startsWith('aptrust.')) {
             minioClient.region = 'us-east-1';
-        }
-        if (this.storageService.port === parseInt(this.storageService.port, 10)) {
-            minioClient.port = this.storageService.port;
         }
         return minioClient;
     }

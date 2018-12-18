@@ -7,8 +7,7 @@ function getStorageService() {
     var ss = new StorageService('unittest');
     ss.protocol = 's3';
     ss.host = 's3.amazonaws.com';
-    ss.bucket = 'aptrust.receiving.test.edu';
-    ss.port = 9999;
+    ss.bucket = 'aptrust.dart.test';
     return ss;
 }
 
@@ -79,8 +78,9 @@ test('_handleError() sets failure result after too many retries', done => {
 
 test('_getRemoteUrl()', () => {
     var storageService = getStorageService();
+    storageService.port = 9999;
     var client = new S3Client(storageService);
-    expect(client._getRemoteUrl('bag.tar')).toEqual('https://s3.amazonaws.com:9999/aptrust.receiving.test.edu/bag.tar');
+    expect(client._getRemoteUrl('bag.tar')).toEqual('https://s3.amazonaws.com:9999/aptrust.dart.test/bag.tar');
 });
 
 test('_getClient()', () => {
@@ -94,4 +94,32 @@ test('_getClient()', () => {
     var minioClient = client._getClient();
     expect(minioClient).not.toBeNull();
     expect(minioClient instanceof Minio.Client).toEqual(true);
+});
+
+test('upload()', done => {
+    var storageService = getStorageService();
+    storageService.login = process.env.AWS_ACCESS_KEY_ID;
+    storageService.password = process.env.AWS_SECRET_ACCESS_KEY;
+    var client = new S3Client(storageService);
+
+    var startCalled = false;
+    client.on('start', function(message) {
+        startCalled = true;
+    });
+
+    client.on('warning', function(message) {
+        console.log(message);
+    });
+
+    client.on('finish', function(result) {
+        expect(startCalled).toEqual(true);
+        expect(result.errors).toEqual([]);
+        expect(result.completed).not.toBeNull();
+        expect(result.succeeded).toEqual(true);
+        expect(result.remoteUrl).toEqual('https://s3.amazonaws.com/aptrust.dart.test/DartUnitTestFile.js');
+        expect(result.remoteChecksum.length).toEqual(32);
+        done();
+    });
+
+    client.upload(__filename, 'DartUnitTestFile.js');
 });
