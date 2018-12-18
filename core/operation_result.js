@@ -146,6 +146,37 @@ class OperationResult {
         this.warning = null;
         this.errors = [];
     }
+
+    /**
+     * This resets all of the properties of the OperationResult,
+     * except operation, provider, and attempt, and sets the
+     * started attribute to the current datetime, in ISO format.
+     * It also increments the attempt attribute.
+     *
+     */
+    start() {
+        this.reset();
+        this.started = dateFormat(Date.now(), 'isoUtcDateTime');
+        this.attempt += 1;
+    }
+
+    /**
+     * Sets the completed attribute to the current datetime, in ISO format,
+     * and sets the succeeded and errors attributes.
+     *
+     * @param {boolean} succeeded - Indicates whether or not the operation
+     * succeeded.
+     *
+     * @param {string} errorMessage - An optional error message. If this is
+     * passed in, it will be appended the errors array.
+     */
+    finish(succeeded, errorMessage) {
+        this.completed = dateFormat(Date.now(), 'isoUtcDateTime');
+        this.succeeded = succeeded;
+        if (errorMessage) {
+            this.errors.push(errorMessage);
+        }
+    }
 }
 
 module.exports.OperationResult = OperationResult;
