@@ -99,6 +99,7 @@ test('_getClient()', () => {
 test('upload()', done => {
     if (!envHasS3Credentials()) {
         console.log('Skipping S3 upload test: no credentials in ENV.');
+        done();
         return;
     }
     var storageService = getStorageService();
