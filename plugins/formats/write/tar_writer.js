@@ -66,10 +66,10 @@ module.exports = class TarWriter extends Plugin {
         var tarWriter = this;
 
         /**
-         * @event TarWriter#finish - This event fires after all files
-         * have been written to the underlying tar file.
+         * @event TarWriter#finish
          *
-         * @type {BagItFile}
+         * This event fires after all files have been written to the underlying
+         * tar file.
          *
          */
         this._queue.drain = function () {

@@ -6,15 +6,22 @@ const { S3Transfer } = require('./s3_transfer');
 
 const MAX_ATTEMPTS = 10;
 
+// TODO: Have all events emit the same object type?
+// TODO: Figure out why JSDoc formatting is messed up for events.
+
 /**
  * S3Client provides access to S3 REST services that conforms to the
  * DART network client interface.
  *
- *
  */
 module.exports = class S3Client extends Plugin {
     /**
+     * Creates a new S3Client.
      *
+     * @param {StorageService} storageService - A StorageService record that
+     * includes information about how to connect to a remote S3 service.
+     * This record includes the host URL, default bucket, and connection
+     * credentials.
      */
     constructor(storageService) {
         super();
@@ -53,7 +60,6 @@ module.exports = class S3Client extends Plugin {
      * the basename of filepath. That is, /path/to/bagOfPhotos.tar would
      * default to bagOfPhotos.tar.
      *
-     * @returns
      */
     upload(filepath, keyname) {
         if (!filepath) {
@@ -76,6 +82,19 @@ module.exports = class S3Client extends Plugin {
         }
     }
 
+    /**
+     * Downloads a file fron the remote bucket. The name of the remote bucket is
+     * determined by the {@link StorageService} passed in to this class'
+     * constructor.
+     *
+     * @param {string} filepath - The local path to which we should save the
+     * downloaded file.
+     *
+     * @param {string} keyname - This name of the key (object) to download from
+     * the S3 bucket.
+     *
+     * @returns
+     */
     download(filepath, keyname) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
@@ -94,21 +113,28 @@ module.exports = class S3Client extends Plugin {
         });
     }
 
+    /**
+     * Lists files in a remote S3 bucket. NOT YET IMPLEMENTED.
+     *
+     */
     list() {
-        var minioClient = this.getClient();
-        var stream = minioClient.listObjects(this.storageService.bucket, '', false);
-        stream.on('data', function(obj) { console.log(obj) } )
-        stream.on('error', function(err) { console.log("Error: " + err) } )
+        throw 'S3Client.list() is not yet implemented.';
+        // var minioClient = this.getClient();
+        // var stream = minioClient.listObjects(this.storageService.bucket, '', false);
+        // stream.on('data', function(obj) { console.log(obj) } )
+        // stream.on('error', function(err) { console.log("Error: " + err) } )
     }
 
     /**
      * Checks to see whether a file already exists on the storage provider.
+     * NOT YET IMPLEMENTED.
      *
-     * @param {string} filepath - Basename of the file to check.
+     * @param {string} key - The key whose existence you want to check.
      *
      * @returns {bool} - True if the file exists.
      */
-    exists(filepath) {
+    exists(key) {
+        throw 'S3Client.exists() is not yet implemented.';
         try {
             // TODO: Write me
         } catch (err) {
@@ -117,13 +143,29 @@ module.exports = class S3Client extends Plugin {
         return trueOrFalse;
     }
 
-    _initXferRecord(operation, filepath, keyname) {
+    /**
+     * Creates the S3Transfer record used internally by this client
+     * to record details of an S3 upload or download.
+     *
+     * @param {string} operation - Should be 'upload' or 'download'.
+     *
+     * @param {string} filepath - Path of the file on the local file system
+     * to upload (if operation is uplaod). Path on the local file system where
+     * we should write the contents of the S3 object we download (if operation
+     * is download).
+     *
+     * @param {string} key - The S3 key to upload or download.
+     *
+     * @private
+     * @returns {S3Transfer}
+     */
+    _initXferRecord(operation, filepath, key) {
         var xfer = new S3Transfer(operation, S3Client.description().name);
         xfer.host = this.storageService.host;
         xfer.port = this.storageService.port;
         xfer.localPath = filepath;
         xfer.bucket = this.storageService.bucket;
-        xfer.key = keyname;
+        xfer.key = key;
         xfer.result.start();
         if (operation === 'upload') {
             xfer.localStat = fs.lstatSync(filepath);
@@ -135,6 +177,14 @@ module.exports = class S3Client extends Plugin {
         return xfer;
     }
 
+    /**
+     * Uploads a file to S3.
+     *
+     * @param {S3Transfer} xfer - An object describing what to upload
+     * and where it should go.
+     *
+     * @private
+     */
     _upload(xfer) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
@@ -154,7 +204,6 @@ module.exports = class S3Client extends Plugin {
                 // "valid credentials required" error from remote.
                 xfer.remoteChecksum = etag;
                 minioClient.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
-                    // TODO: Refactor duplicate code...
                     if (err) {
                         xfer.result.finish(false, err.toString());
                         s3Client.emit('finish', xfer.result);
@@ -170,6 +219,15 @@ module.exports = class S3Client extends Plugin {
         }
     }
 
+    /**
+     * Ensures that the file we uploaded to S3 has the correct size
+     * and that no errors occurred.
+     *
+     * @param {S3Transfer} xfer - An object describing what to upload
+     * and where it should go.
+     *
+     * @private
+     */
     _verifyRemote(xfer) {
         var succeeded = false;
         var message;
@@ -187,6 +245,18 @@ module.exports = class S3Client extends Plugin {
         this.emit('finish', xfer.result);
     }
 
+    /**
+     * Handles an S3 upload error by either retrying or quitting and recording
+     * the error message.
+     *
+     * @param {Error} err - An optional error object, caught during the upload
+     * attempt.
+     *
+     * @param {S3Transfer} xfer - An object describing what to upload
+     * and where it should go.
+     *
+     * @private
+     */
     _handleError(err, xfer) {
         var s3Client = this;
         if (xfer.result.attempt < MAX_ATTEMPTS) {
@@ -201,6 +271,11 @@ module.exports = class S3Client extends Plugin {
         }
     }
 
+    /**
+     * Returns a Minio S3 client.
+     *
+     * @private
+     */
     _getClient() {
         var minioClient = new Minio.Client({
             endPoint:  this.storageService.host,
@@ -216,4 +291,20 @@ module.exports = class S3Client extends Plugin {
         return minioClient;
     }
 
+    /**
+     * @event S3Client#start
+     * @type {string} A message indicating that the upload or download is starting.
+     *
+     * @event S3Client#warning
+     * @type {string} A warning message describing why the S3Client is retrying
+     * an upload or download operation.
+     *
+     * @event S3Client#error
+     * @type {OperationResult} Contains information about what went wrong during
+     * an upload or download operation.
+     *
+     * @event S3Client#finish
+     * @type {OperationResult} Contains information about the outcome of
+     * an upload or download operation.
+     */
 }
