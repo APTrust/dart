@@ -62,7 +62,7 @@ module.exports = class S3Client extends Plugin {
         if (!keyname) {
             keyname = path.basename(filepath);
         }
-        var xfer = this._initUploadXfer(filepath, keyname);
+        var xfer = this._initXferRecord('upload', filepath, keyname);
         try {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 var msg = `${filepath} is not a file`;
@@ -76,13 +76,27 @@ module.exports = class S3Client extends Plugin {
         }
     }
 
-    download() {
-        // TODO: Write me... though not necessary for early versions of DART.
+    download(filepath, keyname) {
+        var s3Client = this;
+        var minioClient = s3Client._getClient();
+        var xfer = this._initXferRecord('download', filepath, keyname);
+        this.emit('start', `Downloading ${this.storageService.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`)
+        minioClient.fGetObject(xfer.bucket, xfer.key, xfer.localPath, function(err) {
+            if (err) {
+                s3Client.emit('error', err.toString());
+                xfer.result.finish(false, err.toString());
+            } else {
+                xfer.localStat = fs.statSync(filepath);
+                xfer.result.filesize = xfer.localStat.size;
+                xfer.result.finish(true);
+            }
+            s3Client.emit('finish', xfer.result);
+        });
     }
 
     list() {
-        var s3Client = this.getClient();
-        var stream = s3Client.listObjects(this.storageService.bucket, '', false);
+        var minioClient = this.getClient();
+        var stream = minioClient.listObjects(this.storageService.bucket, '', false);
         stream.on('data', function(obj) { console.log(obj) } )
         stream.on('error', function(err) { console.log("Error: " + err) } )
     }
@@ -103,21 +117,26 @@ module.exports = class S3Client extends Plugin {
         return trueOrFalse;
     }
 
-    _initUploadXfer(filepath, keyname) {
-        var xfer = new S3Transfer('upload', S3Client.description().name);
+    _initXferRecord(operation, filepath, keyname) {
+        var xfer = new S3Transfer(operation, S3Client.description().name);
         xfer.localPath = filepath;
         xfer.bucket = this.storageService.bucket;
         xfer.key = keyname;
         xfer.result.start();
-        xfer.localStat = fs.lstatSync(filepath);
-        xfer.result.filesize = xfer.localStat.size;
+        if (operation === 'upload') {
+            xfer.localStat = fs.lstatSync(filepath);
+            xfer.result.filesize = xfer.localStat.size;
+        }
+        if (operation === 'download') {
+            xfer.result.remoteURL = this._getRemoteUrl(xfer.key);
+        }
         return xfer;
     }
 
     _upload(xfer) {
         var host = this.storageService.host;
-        var uploader = this;
-        var s3Client = uploader._getClient();
+        var s3Client = this;
+        var minioClient = s3Client._getClient();
         var metadata = {
             'Uploaded-By': `${Context.dartVersion()}`,
             'Original-Path': xfer.localPath,
@@ -125,28 +144,28 @@ module.exports = class S3Client extends Plugin {
         };
         this.emit('start', `Uploading ${xfer.localPath} to ${host} ${xfer.bucket}/${xfer.key}`)
         try {
-            s3Client.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
+            minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
                 if (err) {
-                    uploader._handleError(err, xfer);
+                    s3Client._handleError(err, xfer);
                     return;
                 }
                 // Note: Buckets must allow GetObject or you'll get
                 // "valid credentials required" error from remote.
                 xfer.remoteChecksum = etag;
-                s3Client.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
+                minioClient.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
                     // TODO: Refactor duplicate code...
                     if (err) {
                         xfer.result.finish(false, err.toString());
-                        uploader.emit('finish', xfer.result);
+                        s3Client.emit('finish', xfer.result);
                         return;
                     }
                     xfer.remoteStat = remoteStat;
-                    uploader._verifyRemote(xfer);
+                    s3Client._verifyRemote(xfer);
                 });
             });
         } catch (ex) {
             xfer.result.finish(false, ex.toString());
-            uploader.emit('finish', xfer.result);
+            s3Client.emit('finish', xfer.result);
         }
     }
 
@@ -159,7 +178,7 @@ module.exports = class S3Client extends Plugin {
         if (!xfer.error && xfer.remoteStat.size != xfer.localStat.size) {
             message = `Object was not correctly uploaded. Local size is ${xfer.localStat.size}, remote size is ${xfer.remoteStat.size}`;
         } else {
-            xfer.result.remoteUrl = this._getRemoteUrl(xfer.key)
+            xfer.result.remoteURL = this._getRemoteUrl(xfer.key);
             xfer.result.remoteChecksum = xfer.remoteStat.etag;
             succeeded = true;
         }
@@ -168,13 +187,13 @@ module.exports = class S3Client extends Plugin {
     }
 
     _handleError(err, xfer) {
-        var uploader = this;
+        var s3Client = this;
         if (xfer.result.attempt < MAX_ATTEMPTS) {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
             this.emit('warning', `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
-            setTimeout(function() { uploader._upload(xfer) }, 1500);
+            setTimeout(function() { s3Client._upload(xfer) }, 1500);
         } else {
             xfer.result.finish(false, err.toString());
             this.emit('finish', xfer.result);

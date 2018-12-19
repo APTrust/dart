@@ -100,14 +100,6 @@ class OperationResult {
         */
         this.remoteURL = null;
         /**
-        * The checksum or etag returned by the remote storage provider
-        * after a successful upload. This will be set only on upload
-        * operations.
-        *
-        * @type {string}
-        */
-        this.remoteURL = null;
-        /**
         * Informational message about the operation. This can be
         * used for logging, debugging, or display.
         *
