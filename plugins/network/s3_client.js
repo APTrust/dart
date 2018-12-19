@@ -70,8 +70,8 @@ module.exports = class S3Client extends Plugin {
                 return;
             }
             this._upload(xfer);
-        } catch (ex) {
-            xfer.result.finish(false, ex.toString());
+        } catch (err) {
+            xfer.result.finish(false, err.toString());
             this.emit('finish', xfer);
         }
     }
@@ -111,7 +111,7 @@ module.exports = class S3Client extends Plugin {
     exists(filepath) {
         try {
             // TODO: Write me
-        } catch (ex) {
+        } catch (err) {
             // TODO: Write me
         }
         return trueOrFalse;
@@ -164,8 +164,8 @@ module.exports = class S3Client extends Plugin {
                     s3Client._verifyRemote(xfer);
                 });
             });
-        } catch (ex) {
-            xfer.result.finish(false, ex.toString());
+        } catch (err) {
+            xfer.result.finish(false, err.toString());
             s3Client.emit('finish', xfer.result);
         }
     }
