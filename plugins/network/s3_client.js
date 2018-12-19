@@ -80,7 +80,7 @@ module.exports = class S3Client extends Plugin {
         var s3Client = this;
         var minioClient = s3Client._getClient();
         var xfer = this._initXferRecord('download', filepath, keyname);
-        this.emit('start', `Downloading ${this.storageService.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`)
+        this.emit('start', `Downloading ${xfer.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`)
         minioClient.fGetObject(xfer.bucket, xfer.key, xfer.localPath, function(err) {
             if (err) {
                 s3Client.emit('error', err.toString());
@@ -119,6 +119,8 @@ module.exports = class S3Client extends Plugin {
 
     _initXferRecord(operation, filepath, keyname) {
         var xfer = new S3Transfer(operation, S3Client.description().name);
+        xfer.host = this.storageService.host;
+        xfer.port = this.storageService.port;
         xfer.localPath = filepath;
         xfer.bucket = this.storageService.bucket;
         xfer.key = keyname;
@@ -128,13 +130,12 @@ module.exports = class S3Client extends Plugin {
             xfer.result.filesize = xfer.localStat.size;
         }
         if (operation === 'download') {
-            xfer.result.remoteURL = this._getRemoteUrl(xfer.key);
+            xfer.result.remoteURL = xfer.getRemoteUrl();
         }
         return xfer;
     }
 
     _upload(xfer) {
-        var host = this.storageService.host;
         var s3Client = this;
         var minioClient = s3Client._getClient();
         var metadata = {
@@ -142,7 +143,7 @@ module.exports = class S3Client extends Plugin {
             'Original-Path': xfer.localPath,
             'Size': xfer.localStat.size
         };
-        this.emit('start', `Uploading ${xfer.localPath} to ${host} ${xfer.bucket}/${xfer.key}`)
+        this.emit('start', `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`)
         try {
             minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
                 if (err) {
@@ -178,7 +179,7 @@ module.exports = class S3Client extends Plugin {
         if (!xfer.error && xfer.remoteStat.size != xfer.localStat.size) {
             message = `Object was not correctly uploaded. Local size is ${xfer.localStat.size}, remote size is ${xfer.remoteStat.size}`;
         } else {
-            xfer.result.remoteURL = this._getRemoteUrl(xfer.key);
+            xfer.result.remoteURL = xfer.getRemoteUrl();
             xfer.result.remoteChecksum = xfer.remoteStat.etag;
             succeeded = true;
         }
@@ -198,16 +199,6 @@ module.exports = class S3Client extends Plugin {
             xfer.result.finish(false, err.toString());
             this.emit('finish', xfer.result);
         }
-    }
-
-    // TODO: Does this belong in this class?
-    _getRemoteUrl(key) {
-        let url = 'https://' + this.storageService.host.replace('/','');
-        if (this.storageService.port) {
-            url += `:${this.storageService.port}`;
-        }
-        url += `/${this.storageService.bucket}/${key}`;
-        return url;
     }
 
     _getClient() {

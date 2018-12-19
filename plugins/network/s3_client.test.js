@@ -34,6 +34,8 @@ test('_initXferRecord', () => {
     var client = new S3Client(storageService);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
     expect(xfer).not.toBeNull();
+    expect(xfer.host).toEqual(storageService.host);
+    expect(xfer.port).toEqual(storageService.port);
     expect(xfer.localPath).toEqual(__filename);
     expect(xfer.bucket).toEqual(storageService.bucket);
     expect(xfer.key).toEqual('s3_client.test.js');
@@ -45,6 +47,8 @@ test('_initXferRecord', () => {
 
     xfer = client._initXferRecord('download', __filename, 's3_client.test.js');
     expect(xfer).not.toBeNull();
+    expect(xfer.host).toEqual(storageService.host);
+    expect(xfer.port).toEqual(storageService.port);
     expect(xfer.localPath).toEqual(__filename);
     expect(xfer.bucket).toEqual(storageService.bucket);
     expect(xfer.key).toEqual('s3_client.test.js');
@@ -90,13 +94,6 @@ test('_handleError() sets failure result after too many retries', done => {
     });
 
     client._handleError('Oops!', xfer);
-});
-
-test('_getRemoteUrl()', () => {
-    var storageService = getStorageService();
-    storageService.port = 9999;
-    var client = new S3Client(storageService);
-    expect(client._getRemoteUrl('bag.tar')).toEqual('https://s3.amazonaws.com:9999/aptrust.dart.test/bag.tar');
 });
 
 test('_getClient()', () => {
