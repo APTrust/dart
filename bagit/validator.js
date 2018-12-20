@@ -905,10 +905,8 @@ class Validator extends EventEmitter {
                     this.errors.push(`Value for tag '${tagDef.tagName}' in ${filename} is missing.`);
                     continue;
                 }
-                if (Array.isArray(tagDef.values) && tagDef.values.length > 0) {
-                    if (!Util.listContains(tagDef.values, value)) {
-                        this.errors.push(`Tag '${tagDef.tagName}' in ${filename} contains illegal value '${value}'. [Allowed: ${tagDef.values.join(', ')}]`);
-                    }
+                if (Array.isArray(tagDef.values) && tagDef.values.length > 0 && !Util.listContains(tagDef.values, value)) {
+                    this.errors.push(`Tag '${tagDef.tagName}' in ${filename} contains illegal value '${value}'. [Allowed: ${tagDef.values.join(', ')}]`);
                 }
             }
         }
