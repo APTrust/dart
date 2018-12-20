@@ -6,9 +6,6 @@ const { S3Transfer } = require('./s3_transfer');
 
 const MAX_ATTEMPTS = 10;
 
-// TODO: Have all events emit the same object type?
-// TODO: Figure out why JSDoc formatting is messed up for events.
-
 /**
  * S3Client provides access to S3 REST services that conforms to the
  * DART network client interface.
@@ -99,9 +96,9 @@ class S3Client extends Plugin {
         var s3Client = this;
         var minioClient = s3Client._getClient();
         var xfer = this._initXferRecord('download', filepath, keyname);
-        // xxxxxxxxx start() ?
         xfer.result.info = `Downloading ${xfer.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`;
         this.emit('start', xfer.result);
+        // TODO: Build in retries?
         minioClient.fGetObject(xfer.bucket, xfer.key, xfer.localPath, function(err) {
             if (err) {
                 xfer.result.errors.push(err.toString());
