@@ -88,3 +88,14 @@ test('finish()', () => {
     expect(result.errors.length).toEqual(1);
     expect(result.errors).toContain('No friggin way, Mister Lahey!');
 });
+
+test('first and last error', () => {
+    let result = new OperationResult('bagging', 'bagger');
+    expect(result.firstError()).not.toBeDefined();
+    expect(result.lastError()).not.toBeDefined();
+
+    result.errors.push('Rickey and Bubbles, get in the car.');
+    result.errors.push('No friggin way, Mister Lahey!');
+    expect(result.firstError()).toEqual('Rickey and Bubbles, get in the car.');
+    expect(result.lastError()).toEqual('No friggin way, Mister Lahey!');
+});

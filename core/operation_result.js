@@ -169,6 +169,33 @@ class OperationResult {
             this.errors.push(errorMessage);
         }
     }
+
+    /**
+     * Returns the first error message in the result's errors array, or
+     * undefined if there are no errors. This is useful for handling
+     * error events emitted by plugins.
+     *
+     * @returns {string}
+     */
+    firstError() {
+        if (this.errors.length > 0) {
+            return this.errors[0];
+        }
+    }
+
+    /**
+     * Returns the last error message in the result's errors array, or
+     * undefined if there are no errors. This is useful for handling
+     * error events emitted by plugins.
+     *
+     * @returns {string}
+     */
+    lastError() {
+        if (this.errors.length > 0) {
+            return this.errors[this.errors.length-1];
+        }
+    }
+
 }
 
 module.exports.OperationResult = OperationResult;

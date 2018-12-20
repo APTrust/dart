@@ -71,14 +71,14 @@ class S3Client extends Plugin {
         var xfer = this._initXferRecord('upload', filepath, keyname);
         try {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
-                var msg = `${filepath} is not a file`;
-                this.emit('error', msg);
+                xfer.result.errors.push(`${filepath} is not a file`);
+                this.emit('error', xfer.result);
                 return;
             }
             this._upload(xfer);
         } catch (err) {
             xfer.result.finish(false, err.toString());
-            this.emit('finish', xfer);
+            this.emit('finish', xfer.result);
         }
     }
 
@@ -99,10 +99,13 @@ class S3Client extends Plugin {
         var s3Client = this;
         var minioClient = s3Client._getClient();
         var xfer = this._initXferRecord('download', filepath, keyname);
-        this.emit('start', `Downloading ${xfer.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`)
+        // xxxxxxxxx start() ?
+        xfer.result.info = `Downloading ${xfer.host} ${xfer.bucket}/${xfer.key} to ${xfer.localPath}`;
+        this.emit('start', xfer.result);
         minioClient.fGetObject(xfer.bucket, xfer.key, xfer.localPath, function(err) {
             if (err) {
-                s3Client.emit('error', err.toString());
+                xfer.result.errors.push(err.toString());
+                s3Client.emit('error', xfer.result);
                 xfer.result.finish(false, err.toString());
             } else {
                 xfer.localStat = fs.statSync(filepath);
@@ -193,7 +196,8 @@ class S3Client extends Plugin {
             'Original-Path': xfer.localPath,
             'Size': xfer.localStat.size
         };
-        this.emit('start', `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`)
+        xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
+        this.emit('start', xfer.result)
         try {
             minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
                 if (err) {
@@ -263,7 +267,8 @@ class S3Client extends Plugin {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            this.emit('warning', `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`);
+            xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`;
+            this.emit('warning', xfer.result);
             setTimeout(function() { s3Client._upload(xfer) }, 1500);
         } else {
             xfer.result.finish(false, err.toString());
