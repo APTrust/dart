@@ -315,6 +315,8 @@ class BagItProfile extends PersistentObject {
      * This returns a suggested unique bag name that is valid for
      * the current profile.
      *
+     * TODO: This belongs in a profile or in a vendor-specific module.
+     *
      * @returns {string}
      */
     suggestBagName() {
@@ -528,17 +530,7 @@ class BagItProfile extends PersistentObject {
       * @returns {string}
       */
     bagTitle() {
-        var exactTitle = "";
-        var maybeTitle = "";
-        for(var tag of this.tags) {
-            var tagName = tag.tagName.toLowerCase();
-            if (tagName == "title") {
-                exactTitle = tag.userValue;
-            } else if (tagName.includes("title")) {
-                maybeTitle = tag.userValue;
-            }
-        }
-        return exactTitle || maybeTitle;
+        return this.findExactOrPartial("title", "title");
     }
 
     /**
@@ -549,17 +541,30 @@ class BagItProfile extends PersistentObject {
       * @returns {string}
       */
     bagDescription() {
-        var exactDesc = "";
-        var maybeDesc = "";
+        return this.findExactOrPartial("internal-sender-description", "description");
+    }
+
+    /**
+      * Returns the value of the first tag whose name matches exactTagName,
+      * or if there are none, the value of the the first tag whose name
+      * contains partialTagName. Names are case insensitive.
+      *
+      * @returns {string}
+      */
+    findExactOrPartial(exactTagName, partialTagName) {
+        var exactMatch = "";
+        var partialMatch = "";
+        var lcExactTagName = exactTagName.toLowerCase();
+        var lcPartialTagName = partialTagName.toLowerCase();
         for(var tag of this.tags) {
             var tagName = tag.tagName.toLowerCase();
-            if (tagName == "internal-sender-description") {
-                exactDesc = tag.userValue;
-            } else if (tagName.includes("description")) {
-                maybeDesc = tag.userValue;
+            if (tagName === lcExactTagName) {
+                exactMatch = tag.getValue();
+            } else if (tagName.includes(lcPartialTagName)) {
+                partialMatch = tag.getValue();
             }
         }
-        return exactDesc || maybeDesc;
+        return exactMatch || partialMatch;
     }
 
     /**
@@ -636,24 +641,6 @@ class BagItProfile extends PersistentObject {
         }
     }
 
-    // TODO: Move this to a plugin
-    isDPNProfile() {
-        return (this.id == builtinProfiles.DPNProfileId || this.baseProfileId == builtinProfiles.DPNProfileId);
-    }
-
-    // TODO: Move this to a plugin
-    setDPNIdTags(uuid) {
-        var dpnIdTag = this.findTagByName("DPN-Object-ID");
-        if (dpnIdTag != null) {
-            dpnIdTag.userValue = uuid;
-        }
-        // As of early 2018, DPN only supports first version bags,
-        // so First-Version-Object-ID will always match DPN-Object-ID.
-        var firstVersionTag = this.findTagByName("First-Version-Object-ID");
-        if (firstVersionTag != null) {
-            firstVersionTag.userValue = uuid;
-        }
-    }
 };
 
 module.exports.BagItProfile = BagItProfile;
