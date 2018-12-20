@@ -6,7 +6,7 @@ const { Plugin } = require('../plugin');
  *
  *
  */
-module.exports = class APTrustSetup extends Plugin {
+class APTrustSetup extends Plugin {
     /**
      *
      */
@@ -34,3 +34,5 @@ module.exports = class APTrustSetup extends Plugin {
     }
 
 }
+
+module.exports = APTrustSetup;

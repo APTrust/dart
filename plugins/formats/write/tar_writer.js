@@ -13,7 +13,7 @@ const tar = require('tar-stream');
  * tarred BagIt package.
  *
  */
-module.exports = class TarWriter extends Plugin {
+class TarWriter extends Plugin {
     /**
      * Creates a new TarWriter.
      *
@@ -229,3 +229,5 @@ function writeIntoArchive(data, done) {
     reader.pipe(writer);
     reader.resume();
 }
+
+module.exports = TarWriter;

@@ -14,7 +14,7 @@ const MAX_ATTEMPTS = 10;
  * DART network client interface.
  *
  */
-module.exports = class S3Client extends Plugin {
+class S3Client extends Plugin {
     /**
      * Creates a new S3Client.
      *
@@ -307,4 +307,8 @@ module.exports = class S3Client extends Plugin {
      * @type {OperationResult} Contains information about the outcome of
      * an upload or download operation.
      */
+
 }
+
+// Use because declaring module.exports above cause jsdoc to screw up.
+module.exports = S3Client;

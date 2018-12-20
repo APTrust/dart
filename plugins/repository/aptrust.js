@@ -6,7 +6,7 @@ const { Plugin } = require('../plugin');
  *
  *
  */
-module.exports = class APTrustClient extends Plugin {
+class APTrustClient extends Plugin {
     /**
      *
      */
@@ -33,3 +33,5 @@ module.exports = class APTrustClient extends Plugin {
         };
     }
 }
+
+module.exports = APTrustClient;
