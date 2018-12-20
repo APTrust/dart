@@ -735,26 +735,35 @@ class Validator extends EventEmitter {
     _validateTopLevelFiles() {
         Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
         if (!this.profile.allowMiscTopLevelFiles) {
-            var exceptions = this.profile.tagFileNames();
-            for (var alg of this.profile.manifestsRequired) {
-                exceptions.push(`manifest-${alg}.txt`);
-            }
-            for (var alg of this.profile.tagManifestsRequired) {
-                exceptions.push(`tagmanifest-${alg}.txt`);
-            }
+            var expected = this._expectedTopLevelFiles();
             for (var name of this.topLevelFiles) {
-                if (name == 'fetch.txt') {
-                    // This one has its own rule
-                    if (!this.profile.allowFetchTxt) {
-                        this.errors.push(`Bag contains fetch.txt file, which profile prohibits.`);
-                    }
-                    continue;
-                }
-                if (!Util.listContains(exceptions, name)) {
+                if (!Util.listContains(expected, name)) {
                     this.errors.push(`Profile prohibits top-level file ${name}`);
                 }
             }
         }
+    }
+
+    /**
+     * This returns a list of expected top-level file names, based on the
+     * BagItProfile. Top-level files are those directly beneath the bag's
+     * top-level folder, such as bag-info.txt and manifests.
+     *
+     * @returns {Array<string>}
+     *
+     */
+    _expectedTopLevelFiles() {
+        var expected = this.profile.tagFileNames();
+        if (this.profile.allowFetchTxt) {
+            expected.push('fetch.txt');
+        }
+        for (var alg of this.profile.manifestsRequired) {
+            expected.push(`manifest-${alg}.txt`);
+        }
+        for (var alg of this.profile.tagManifestsRequired) {
+            expected.push(`tagmanifest-${alg}.txt`);
+        }
+        return expected;
     }
 
     /**
