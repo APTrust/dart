@@ -1,7 +1,7 @@
 os: osx
 sudo: false
 language: node_js
-node_js: '9'
+node_js: 'node'
 cache:
   directories:
   - node_modules
