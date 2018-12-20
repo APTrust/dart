@@ -1,7 +1,7 @@
 os: osx
 sudo: false
 language: node_js
-node_js: '9'
+node_js: node
 cache:
   directories:
   - node_modules
@@ -15,8 +15,13 @@ before_install:
 before_script:
 - git lfs pull
 script:
-  - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
-  - npm test -- --runInBand
+- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
+  -1)"
+- npm test -- --runInBand
+- jsdoc.sh
 notifications:
   slack:
-      secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
+    secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
+env:
+  global:
+    secure: DOii0bKihTpjis3jL5g6L1a9pfycx1uhHVrMnJSK0qUmArCKmGhPGlhask39Rvi6x/P2ho0dgTo+wZz3VzidYyfDpUXloTQDsBjxgZ45d/p2mojEti9864ohaUgWBaaD03J7UhHp/W5MuPOAqR6Xgqphaj8l9FwFkMbXzWNxjyVKHxoF7u8VrCWTCDAx8bN4M9C8GGZKi1f2jkwlIg30yMo9gz+5yyjRZBkJgB+libIMBLyY5Swvt5p/D/OYJlsCdD/GRkGxy4SM2NqUnxHt54vqA7rQMQ14jIePyvFeiRhjpPUq2ODuk6/zvzgAyWGwufePJX0i5iVokg6C+WR8s1csnhq0AOXwROWuzpb701LQhD4A4KA+SZf4D2KX5Jm0oeEE0m6Q/EPysYsyWePi+zB+3CxMXDF9Q6odUILHQ5VRkUgjDuJtf7+H9KRw6+rIdqwKTGFrbYPIvHYOO71ddpDjxT9ht1tuNh/Yc+Y6P1Deb02BYW80ymLg3jnidRULcjARJLQOBpny3R20uSd6FUdV5jsDPdy02HEAROaxiKqm0E4zkG0JlHDkY7QrO1/mfJyld4QZwyTKu0BlZxFLdKu8jNQDhLSeDruDLw+oyHqyIW9xLDoElMjcWjtN3lmIxmVJ+lm4/fiRiC0iUX46TA+eUOyZ56OlPzRMp3sMZSw=

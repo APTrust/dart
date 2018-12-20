@@ -30,6 +30,10 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
 
+branches:
+    only:
+     - never-build-branch-automatically-dont-use-this-name
+
 build_script:
   - npm test -- --runInBand
     #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
