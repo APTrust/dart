@@ -170,6 +170,7 @@ test('download()', done => {
         fs.unlinkSync(tmpFile);
         expect(startCalled).toEqual(true);
         expect(result.errors).toEqual([]);
+        expect(result.startted).not.toBeNull();
         expect(result.completed).not.toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.remoteURL).toEqual('https://s3.amazonaws.com/aptrust.dart.test/DartUnitTestFile.js');
