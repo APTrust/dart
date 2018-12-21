@@ -11,7 +11,7 @@ function getPreFabResult() {
     result.filepath = "/path/to/file.txt";
     result.filesize = 8800;
     result.fileMtime = now;
-    result.remoteUrl = 'https://aptrust.org';
+    result.remoteURL = 'https://aptrust.org';
     result.remoteChecksum = '12345678';
     result.info = 'Ned Flanders';
     result.warning = 'Come out, Neville.';
@@ -42,7 +42,7 @@ test('reset()', () => {
     expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
-    expect(result.remoteUrl).toBeNull();
+    expect(result.remoteURL).toBeNull();
     expect(result.remoteChecksum).toBeNull();
     expect(result.info).toBeNull();
     expect(result.warning).toBeNull();
@@ -66,7 +66,7 @@ test('start()', () => {
     expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
-    expect(result.remoteUrl).toBeNull();
+    expect(result.remoteURL).toBeNull();
     expect(result.remoteChecksum).toBeNull();
     expect(result.info).toBeNull();
     expect(result.warning).toBeNull();

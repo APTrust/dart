@@ -61,13 +61,6 @@ class OperationResult {
          */
         this.remoteChecksum = null;
         /**
-        * The location to which DART sent a file.
-        * This is set only on storage operations.
-        *
-        * @type {string}
-        */
-        this.remoteUrl = null;
-        /**
         * The number of times DART attempted this operation.
         *
         * @type {string}
@@ -132,7 +125,7 @@ class OperationResult {
         this.filepath = null;
         this.filesize = 0;
         this.fileMtime = null;
-        this.remoteUrl = null;
+        this.remoteURL = null;
         this.remoteChecksum = null;
         this.info = null;
         this.warning = null;
