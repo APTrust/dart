@@ -131,7 +131,7 @@ class InternalSetting extends PersistentObject {
      *
      * @see {@link PersistentObject} for examples.
      *
-     * @param {filterFunction} filterFunction - The name of the property to match.
+     * @param {filterFunction} filterFunction - A function to filter out items that should not go into the results.
      * @param {Object} opts - Optional additional params.
      * @param {number} opts.limit - Limit to this many results.
      * @param {number} opts.offset - Start results from this offset.
@@ -152,7 +152,7 @@ class InternalSetting extends PersistentObject {
      *
      * @see {@link PersistentObject} for examples.
      *
-     * @param {filterFunction} filterFunction - The name of the property to match.
+     * @param {filterFunction} filterFunction - A function to filter out items that should not go into the results.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
      * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
