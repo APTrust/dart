@@ -3,13 +3,14 @@ const dateFormat = require('dateformat');
 const { Job } = require('../core/job');
 const path = require('path');
 const { PluginManager } = require('../plugins/plugin_manager');
+const { StorageService } = require('../core/storage_service');
 const { UploadOperation } = require('../core/upload_operation');
 const { Util } = require('../core/util');
 
 class S3Upload {
 
     constructor(opts) {
-        this.opts = opts;
+        this.opts = opts || {};
         this.exitCode = CLI.EXIT_SUCCESS;
     }
 
@@ -31,7 +32,7 @@ class S3Upload {
      *
      */
     validateOpts() {
-        if (this.opts.source.length < 1) {
+        if (!this.opts.source || this.opts.source.length < 1 || Util.isEmpty(this.opts.source[0])) {
             throw 'Specify at least one file to upload.'
         }
         if (this.opts.source.length > 1) {
@@ -76,17 +77,17 @@ class S3Upload {
      * protocol and matches the hostname of the URL specified in this.opts.dest.
      * It will return the StorageService whose bucket property exactly matches
      * the URL's pathname, if there is such a service. Failing that, it will
-     * return the service that contains the path name. Failing that, it will
-     * return the first service with the matching host and protocol.
+     * return the service whose bucket starts with the path name. Failing that,
+     * it will return the first service with the matching host and protocol.
      *
      * @returns {StorageService} or null.
      */
     getStorageService() {
         let url = new URL(this.opts.dest);
         let exact = (obj) => { return obj.protocol == 's3' && obj.host == url.host && obj.bucket == url.pathname };
-        let includes = (obj) => { return obj.protocol == 's3' && obj.host == url.host && url.pathname.includes(obj.bucket)};
+        let includes = (obj) => { return obj.protocol == 's3' && obj.host == url.host && !Util.isEmpty(obj.bucket) && url.pathname.startsWith('/'+obj.bucket)};
         let hostMatches = (obj) => { return obj.protocol == 's3' && obj.host == url.host };
-        return StorageService.first(exact) || StorageService.first(includes) || StorageService.first(host);
+        return StorageService.first(exact) || StorageService.first(includes) || StorageService.first(hostMatches);
     }
 }
 
