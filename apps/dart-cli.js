@@ -37,11 +37,12 @@ async function main() {
 // TODO: Move this to seperate file.
 function parseArgs() {
     let opts = minimist(process.argv.slice(2), {
-        string: ['bag', 'profile', 'job', 'source', 'output', 'tag'],
+        string: ['bag', 'profile', 'job', 'source', 'dest', 'output', 'tag'],
         boolean: ['d', 'debug', 'h', 'help'],
-        default: { d: false, debug: false, h: false, help: false},
-        alias: { d: ['debug'], p: ['profile'], v: ['version'], h: ['help'],
-                 c: ['command'], s: ['source'], o: ['output'], t: ['tag']}
+        default: { D: false, debug: false, h: false, help: false},
+        alias: { D: ['debug'], p: ['profile'], v: ['version'], h: ['help'],
+                 c: ['command'], s: ['source'], o: ['output'], t: ['tag'],
+                 d: ['dest']}
     });
     //console.log(opts);
     if (opts.help) {

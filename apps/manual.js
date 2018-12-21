@@ -11,6 +11,8 @@ OPTIONS:
 
   -c --command   Required. The command to run. This should be one of:
 
+                 upload: Upload a file to a remote S3 or FTP server.
+
                  validate-profile: Validate a BagIt profile.
 
                  validate-bag: Validate a bag according to some BagIt profile.
@@ -18,10 +20,14 @@ OPTIONS:
                  run-job: Run a DART job, which includes packaging and
                  uploading a bag.
 
-  -d --debug     Optional. If specified, the validator will send verbose output
+  -D --debug     If specified, the validator will send verbose output
                  to stdout.
 
-  -h --help      Optional. Prints this message and exits.
+  -d --dest      The destination to which you want to upload a file.
+                 This should be a URL. When specifying --dest in an upload
+                 command, you must also specify --source.
+
+  -h --help      Prints this message and exits.
 
   -o --output    When command is create-bag, this specifies the output file or
                  directory to which to write the bag. If the output parameter
@@ -30,14 +36,16 @@ OPTIONS:
                  specified path and write the bag into that directory (it will
                  not be tarred, zipped, or otherwise serialized).
 
-  -p --profile   Required. Path to BagIt profile json file that describes what
-                 constitutes a valid bag.
+  -p --profile   Path to BagIt profile json file that describes what
+                 constitutes a valid bag. Required when creating or validating
+                 bags.
 
-  -s --sources   The path or paths to the files and/or directories that should
-                 be bagged. This option is valid only for the create-bag
-                 command.
+  -s --source    The path or paths to the files and/or directories that should
+                 be bagged, validated, or uploaded. This option is valid for the
+                 create-bag and upload commands. It can be specified multiple
+                 times for create-bag, and only once for the upload command.
 
-  -v --version   Optional. Prints version and exits.
+  -v --version   Print version and exit.
 
 The final command line parameter is the path to the bag, which can be a
 directory or a tar file.
