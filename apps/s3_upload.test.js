@@ -33,6 +33,9 @@ test('validateOpts()', () => {
     s3 = new S3Upload({source: ['  ']});
     expect(() => { s3.validateOpts() }).toThrow('Specify at least one file to upload.');
 
+    s3 = new S3Upload({source: ['/file/does/not/exist/9d6831f1']});
+    expect(() => { s3.validateOpts() }).toThrow('File does not exist: /file/does/not/exist/9d6831f1.');
+
     s3 = new S3Upload({source: [__filename]});
     expect(() => { s3.validateOpts() }).toThrow('Specify where you want to upload the file.');
 
@@ -47,12 +50,12 @@ test('getProvider()', () => {
     expect(provider.description().name).toEqual('S3Client');
 });
 
-test('storageService() returns null when appropriate', () => {
+test('getStorageService() throws when it cannot find a match', () => {
     let s3 = new S3Upload(opts);
-    expect(s3.getStorageService()).toBeNull();
+    expect(() => s3.getStorageService()).toThrow('Cannot find a StorageService record for s3.amazonaws.com.');
 });
 
-test('storageService() returns best matching S3 service', () => {
+test('getStorageService() returns best matching S3 service', () => {
     let url = new URL(opts.dest);
 
     // Create some storage services in our temporary DB.
@@ -90,4 +93,24 @@ test('storageService() returns best matching S3 service', () => {
     let hostMatch = s3.getStorageService();
     expect(hostMatch).not.toBeNull();
     expect(hostMatch.name).toEqual(host.name);
+});
+
+test('initOpRecord()', () => {
+    let url = new URL(opts.dest);
+    let service = new StorageService('S3 Service for Unit Testing');
+    service.bucket = url.pathname;
+    service.host = url.host;
+    service.protocol = 's3';
+    service.save();
+
+    let s3 = new S3Upload(opts);
+    let op = s3.initOpRecord();
+    expect(op).not.toBeNull();
+    expect(op.payloadSize).toBeGreaterThan(0);
+    expect(op.result).not.toBeNull();
+    expect(op.result.filepath).toEqual(__filename);
+    expect(op.result.filesize).toBeGreaterThan(0);
+    expect(op.result.remoteURL).toEqual(opts.dest);
+    expect(op.started).not.toBeNull();
+    expect(op.result.attempt).toEqual(1);
 });

@@ -1,7 +1,9 @@
 const CLI = require('./cli_constants');
 const dateFormat = require('dateformat');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const path = require('path');
+const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('../core/storage_service');
 const { UploadOperation } = require('../core/upload_operation');
@@ -16,8 +18,7 @@ class S3Upload {
 
     run() {
         this.validateOpts();
-        //let url = URL.parse(this.opts.dest);
-        let provider = this.getProvider();
+        // 'let op' = 'pay attention' in Nederlands
         let op = this.initOpRecord();
         try {
 
@@ -38,6 +39,9 @@ class S3Upload {
         if (this.opts.source.length > 1) {
             console.warn(`Multiple sources specified. Only ${this.opts.source[0]} will be uploaded.`);
         }
+        if (!fs.existsSync(this.opts.source[0])) {
+            throw `File does not exist: ${this.opts.source[0]}.`
+        }
         if (!this.opts.dest) {
             throw 'Specify where you want to upload the file.'
         }
@@ -51,10 +55,21 @@ class S3Upload {
      * @returns {UploadOperation}
      */
     initOpRecord() {
-        let op = new UploadOperation(this.opts.dest, 's3', [this.this.opts.source[0]]);
-        op.result = new OperationResult();
+        let stats = fs.statSync(this.opts.source[0]);
+        let provider = this.getProvider();
+        let storageService = this.getStorageService();
+        let op = new UploadOperation(this.opts.dest, 's3', [this.opts.source[0]]);
+        op.result = new OperationResult('upload', provider.description().name);
+        // Be careful because start() calls reset() internally,
+        // clearing some of the attributes we set below. So call
+        // start() first, then set attrs.
+        // TODO: Smarter start()/reset() for this class?
         op.result.start();
-
+        op.result.filepath = this.opts.source[0];
+        op.payloadSize = op.result.filesize = stats.size;
+        op.result.fileMtime = dateFormat(stats.mtime, 'isoUtcDateTime');
+        op.result.remoteURL = this.opts.dest;
+        return op;
     }
 
     /**
@@ -87,7 +102,11 @@ class S3Upload {
         let exact = (obj) => { return obj.protocol == 's3' && obj.host == url.host && obj.bucket == url.pathname };
         let includes = (obj) => { return obj.protocol == 's3' && obj.host == url.host && !Util.isEmpty(obj.bucket) && url.pathname.startsWith('/'+obj.bucket)};
         let hostMatches = (obj) => { return obj.protocol == 's3' && obj.host == url.host };
-        return StorageService.first(exact) || StorageService.first(includes) || StorageService.first(hostMatches);
+        let storageService = StorageService.first(exact) || StorageService.first(includes) || StorageService.first(hostMatches);
+        if (!storageService) {
+            throw `Cannot find a StorageService record for ${url.host}.`;
+        }
+        return storageService;
     }
 }
 
