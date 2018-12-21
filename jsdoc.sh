@@ -16,6 +16,6 @@ else
     git init
     git add .
     git commit -m "Latest docs Travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
-    git push -v --force "https://${GH_TOKEN}@github.com/APTrust/dart.git" master:gh-pages > /dev/null 2>&1
+    git push -v --force "https://${GH_TOKEN}@github.com/APTrust/dart.git" master:gh-pages
 fi
 
