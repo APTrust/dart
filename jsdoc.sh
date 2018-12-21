@@ -9,10 +9,13 @@ if [[ -z "${TRAVIS}" ]]; then
     exit;
 else
     echo "Travis: Yup, here."
+    cd docs || exit
+    git init
     git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "travis-ci"
-    git add docs
-    git commit -m "Latest docs on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
-   git push -fq origin master > /dev/null
+    git config --global user.name "Travis-CI"
+#    git remote add origin-docs https://${GH_TOKEN}@github.com/APTrust/dart.git > /dev/null 2>&1
+    git add .
+    git commit -m "Latest docs Travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+    git push --force --quiet "https://${GH_TOKEN}@github.com/APTrust/dart.git" master:gh-pages > /dev/null 2>&1
 fi
 
