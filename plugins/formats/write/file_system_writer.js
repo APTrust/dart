@@ -9,7 +9,7 @@ const { Plugin } = require('../../plugin');
  * FileSystemWriter writes files directly to the file system.
  * Use this for creating unserialzed bags.
  */
-module.exports = class FileSystemWriter extends Plugin {
+class FileSystemWriter extends Plugin {
     /**
      * Creates a new FileSystemWriter.
      *
@@ -154,3 +154,5 @@ function writeIntoArchive(data, done) {
         reader.resume();
     }
 }
+
+module.exports = FileSystemWriter;

@@ -735,26 +735,35 @@ class Validator extends EventEmitter {
     _validateTopLevelFiles() {
         Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
         if (!this.profile.allowMiscTopLevelFiles) {
-            var exceptions = this.profile.tagFileNames();
-            for (var alg of this.profile.manifestsRequired) {
-                exceptions.push(`manifest-${alg}.txt`);
-            }
-            for (var alg of this.profile.tagManifestsRequired) {
-                exceptions.push(`tagmanifest-${alg}.txt`);
-            }
+            var expected = this._expectedTopLevelFiles();
             for (var name of this.topLevelFiles) {
-                if (name == 'fetch.txt') {
-                    // This one has its own rule
-                    if (!this.profile.allowFetchTxt) {
-                        this.errors.push(`Bag contains fetch.txt file, which profile prohibits.`);
-                    }
-                    continue;
-                }
-                if (!Util.listContains(exceptions, name)) {
+                if (!Util.listContains(expected, name)) {
                     this.errors.push(`Profile prohibits top-level file ${name}`);
                 }
             }
         }
+    }
+
+    /**
+     * This returns a list of expected top-level file names, based on the
+     * BagItProfile. Top-level files are those directly beneath the bag's
+     * top-level folder, such as bag-info.txt and manifests.
+     *
+     * @returns {Array<string>}
+     *
+     */
+    _expectedTopLevelFiles() {
+        var expected = this.profile.tagFileNames();
+        if (this.profile.allowFetchTxt) {
+            expected.push('fetch.txt');
+        }
+        for (var alg of this.profile.manifestsRequired) {
+            expected.push(`manifest-${alg}.txt`);
+        }
+        for (var alg of this.profile.tagManifestsRequired) {
+            expected.push(`tagmanifest-${alg}.txt`);
+        }
+        return expected;
     }
 
     /**
@@ -867,29 +876,46 @@ class Validator extends EventEmitter {
                 this.errors.push(`Tag file ${filename} has no data`);
                 continue;
             }
-            var tagsRequiredForThisFile = requiredTags[filename];
-            for (var tagDef of tagsRequiredForThisFile) {
-                var parsedTagValues = tagFile.keyValueCollection.all(tagDef.tagName);
-                if (parsedTagValues == null) {
-                    // Tag was not present at all.
-                    if (tagDef.required) {
-                        this.errors.push(`Required tag ${tagDef.tagName} is missing from ${filename}`);
-                    }
+            this._validateTagsInFile(filename, tagFile);
+        }
+    }
+
+    /**
+     * _validateTagsInFile ensures that all required tags in the specified file
+     * are present, that all required tags are present, and that all tags have
+     * valid values if valid values were defined in the {@link BagItProfile}.
+     * This method records all the problems it finds in the Validator.errors
+     * array.
+     *
+     * @param {string} filename - The name of the tag file. E.g. bag-info.txt.
+     *
+     * @param {BagItFile} tagFile - The tag file whose contents we want to
+     * examine.
+     *
+     * @private
+     *
+     */
+    _validateTagsInFile(filename, tagFile) {
+        var requiredTags = this.profile.tagsGroupedByFile();
+        for (var tagDef of requiredTags[filename]) {
+            var parsedTagValues = tagFile.keyValueCollection.all(tagDef.tagName);
+            if (parsedTagValues == null) {
+                // Tag was not present at all.
+                if (tagDef.required) {
+                    this.errors.push(`Required tag ${tagDef.tagName} is missing from ${filename}`);
+                }
+                continue;
+            }
+            for (var value of parsedTagValues) {
+                if (value == '' && tagDef.emptyOk) {
                     continue;
                 }
-                for (var value of parsedTagValues) {
-                    if (value == '' && tagDef.emptyOk) {
-                        continue;
-                    }
-                    if (value == '' && !tagDef.emptyOk) {
-                        this.errors.push(`Value for tag '${tagDef.tagName}' in ${filename} is missing.`);
-                        continue;
-                    }
-                    if (Array.isArray(tagDef.values) && tagDef.values.length > 0) {
-                        if (!Util.listContains(tagDef.values, value)) {
-                            this.errors.push(`Tag '${tagDef.tagName}' in ${filename} contains illegal value '${value}'. [Allowed: ${tagDef.values.join(', ')}]`);
-                        }
-                    }
+                if (value == '' && !tagDef.emptyOk) {
+                    this.errors.push(`Value for tag '${tagDef.tagName}' in ${filename} is missing.`);
+                    continue;
+                }
+                if (Array.isArray(tagDef.values) && tagDef.values.length > 0 && !Util.listContains(tagDef.values, value)) {
+                    this.errors.push(`Tag '${tagDef.tagName}' in ${filename} contains illegal value '${value}'. [Allowed: ${tagDef.values.join(', ')}]`);
                 }
             }
         }

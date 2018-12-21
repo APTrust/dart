@@ -18,7 +18,7 @@ const tar = require('tar-stream');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-module.exports = class TarReader extends Plugin {
+class TarReader extends Plugin {
 
     /**
       * Creates a new TarReader.
@@ -226,3 +226,5 @@ module.exports = class TarReader extends Plugin {
         });
     }
 }
+
+module.exports = TarReader;

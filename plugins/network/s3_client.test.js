@@ -70,8 +70,8 @@ test('_handleError() retries if it has not exceeded MAX_ATTEMPTS', done => {
     // Set this to MAX_ATTEMPTS - 1, so _handleError retries.
     xfer.result.attempt = 9;
 
-    client.on('warning', function(message) {
-        expect(message).toMatch(/Will try again/);
+    client.on('warning', function(result) {
+        expect(result.warning).toMatch(/Will try again/);
         done();
     });
 
@@ -121,12 +121,12 @@ test('upload()', done => {
     var client = new S3Client(storageService);
 
     var startCalled = false;
-    client.on('start', function(message) {
+    client.on('start', function(result) {
         startCalled = true;
     });
 
-    client.on('warning', function(message) {
-        console.log(message);
+    client.on('warning', function(result) {
+        console.log(result.warning);
     });
 
     client.on('finish', function(result) {
@@ -155,21 +155,22 @@ test('download()', done => {
     let tmpFile = path.join(os.tmpdir(), 'DartUnitTestFile.js_' + Date.now());
 
     var startCalled = false;
-    client.on('start', function(message) {
+    client.on('start', function(result) {
         startCalled = true;
     });
 
-    client.on('error', function(message) {
+    client.on('error', function(result) {
         // Error means test failed.
         fs.unlinkSync(tmpFile);
         expect(message).toEqual('');
-        dont();
+        done();
     });
 
     client.on('finish', function(result) {
         fs.unlinkSync(tmpFile);
         expect(startCalled).toEqual(true);
         expect(result.errors).toEqual([]);
+        expect(result.startted).not.toBeNull();
         expect(result.completed).not.toBeNull();
         expect(result.succeeded).toEqual(true);
         expect(result.remoteURL).toEqual('https://s3.amazonaws.com/aptrust.dart.test/DartUnitTestFile.js');

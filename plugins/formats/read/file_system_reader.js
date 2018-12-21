@@ -18,7 +18,7 @@ const readdirp = require('readdirp');
   * See the list() and read() functions below for information about
   * the events they emit.
  */
-module.exports = class FileSystemReader extends Plugin {
+class FileSystemReader extends Plugin {
 
     /**
       * Creates a new FileSystemReader.
@@ -252,3 +252,5 @@ module.exports = class FileSystemReader extends Plugin {
         });
     }
 }
+
+module.exports = FileSystemReader;
