@@ -1202,12 +1202,6 @@
                       </a></li>
                       
                       <li><a
-                        href='#operationresultremoteurl'
-                        class='regular pre-open'>
-                        #remoteUrl
-                      </a></li>
-                      
-                      <li><a
                         href='#operationresultreset'
                         class='regular pre-open'>
                         #reset
@@ -2855,6 +2849,46 @@ have been written to the file system.
                   
                   
                 </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#getprovider'
+                  class="">
+                  getProvider
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#getstorageservice'
+                  class="">
+                  getStorageService
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#initoprecord'
+                  class="">
+                  initOpRecord
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#validateopts'
+                  class="">
+                  validateOpts
+                  
+                </a>
                 
                 </li>
               
@@ -11649,7 +11683,7 @@ single item at most (or null if there are no matches).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -11894,7 +11928,7 @@ or null if no item matches.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -13309,60 +13343,6 @@ where the file was uploaded.</p>
  
   
     <div class='pre p1 fill-light mt0'>remoteURL</div>
-   
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='operationresultremoteurl'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>remoteUrl</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The location to which DART sent a file.
-This is set only on storage operations.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>remoteUrl</div>
    
   
     <p>
@@ -17465,7 +17445,7 @@ single item at most (or null if there are no matches).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -17710,7 +17690,7 @@ or null if no item matches.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -25986,7 +25966,7 @@ single item at most (or null if there are no matches).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -26231,7 +26211,7 @@ or null if no item matches.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -26901,7 +26881,7 @@ single item at most (or null if there are no matches).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -27146,7 +27126,7 @@ or null if no item matches.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    A function to filter out items that should not go into the results.
 
           </div>
           
@@ -27391,6 +27371,232 @@ must have their own custom implementation of this method.</p>
     </div>
   
 </div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='getprovider'>
+      getProvider
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This returns the first network provider plugin that implements the
+S3 protocol. If it can't find a plugin for the S3 protocol, it throws
+an exception.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>getProvider(): <a href="#plugin">Plugin</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#plugin">Plugin</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='getstorageservice'>
+      getStorageService
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This returns the first StorageService record that implements the S3
+protocol and matches the hostname of the URL specified in this.opts.dest.
+It will return the StorageService whose bucket property exactly matches
+the URL's pathname, if there is such a service. Failing that, it will
+return the service whose bucket starts with the path name. Failing that,
+it will return the first service with the matching host and protocol.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>getStorageService(): <a href="#storageservice">StorageService</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#storageservice">StorageService</a></code>:
+        or null.
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='initoprecord'>
+      initOpRecord
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This returns a fully initialized <a href="#uploadoperation">UploadOperation</a> record that
+will be used as a manifest to describe what work the uploader did and
+what the outcome was.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>initOpRecord(): <a href="#uploadoperation">UploadOperation</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#uploadoperation">UploadOperation</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='validateopts'>
+      validateOpts
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This validates the options passed in from the command line. If the
+source or destination is missing, this will throw an exception.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>validateOpts()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
   
 
