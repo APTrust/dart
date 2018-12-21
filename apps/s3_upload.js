@@ -11,7 +11,6 @@ class S3Upload {
     constructor(opts) {
         this.opts = opts;
         this.exitCode = CLI.EXIT_SUCCESS;
-        this.tags = [];
     }
 
     run() {
@@ -89,6 +88,6 @@ class S3Upload {
         let hostMatches = (obj) => { return obj.protocol == 's3' && obj.host == url.host };
         return StorageService.first(exact) || StorageService.first(includes) || StorageService.first(host);
     }
-
-
 }
+
+module.exports = S3Upload;
