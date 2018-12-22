@@ -59,7 +59,7 @@ npm test -- --runInBand
 ## Documentation
 After every commit the documentation is rebuilt and published at
 
-[https://aptrust.github.io/dart] (https://aptrust.github.io/dart)
+[https://aptrust.github.io/dart](https://aptrust.github.io/dart)
 
 ## Building the Docs
 
