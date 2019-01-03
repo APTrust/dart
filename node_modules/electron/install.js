@@ -17,7 +17,9 @@ try {
 
 var platformPath = getPlatformPath()
 
-if (installedVersion === version && fs.existsSync(path.join(__dirname, platformPath))) {
+var electronPath = process.env.ELECTRON_OVERRIDE_DIST_PATH || path.join(__dirname, 'dist', platformPath)
+
+if (installedVersion === version && fs.existsSync(electronPath)) {
   process.exit(0)
 }
 
@@ -35,7 +37,7 @@ download({
 // unzips and makes path.txt point at the correct executable
 function extractFile (err, zipPath) {
   if (err) return onerror(err)
-  extract(zipPath, {dir: path.join(__dirname, 'dist')}, function (err) {
+  extract(zipPath, { dir: path.join(__dirname, 'dist') }, function (err) {
     if (err) return onerror(err)
     fs.writeFile(path.join(__dirname, 'path.txt'), platformPath, function (err) {
       if (err) return onerror(err)
@@ -52,12 +54,12 @@ function getPlatformPath () {
 
   switch (platform) {
     case 'darwin':
-      return 'dist/Electron.app/Contents/MacOS/Electron'
+      return 'Electron.app/Contents/MacOS/Electron'
     case 'freebsd':
     case 'linux':
-      return 'dist/electron'
+      return 'electron'
     case 'win32':
-      return 'dist/electron.exe'
+      return 'electron.exe'
     default:
       throw new Error('Electron builds are not available on platform: ' + platform)
   }

@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
-        "electron": "^1.8.8",
+        "electron": "^4.0.0",
         "electron-builder": "^19.56.2",
         "electron-rebuild": "^1.7.3",
         "electron-toolkit": "^1.0.24",
