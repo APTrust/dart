@@ -15,7 +15,8 @@ function createWindow () {
   win = new BrowserWindow({
       width: 1200,
       height: 900,
-      webPreferences: { nodeIntegration: true }
+      webPreferences: { nodeIntegration: true },
+      icon: path.join(__dirname, 'include/img/dart.png')
   });
 
   // and load the index.html of the app.

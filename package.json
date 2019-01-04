@@ -46,7 +46,7 @@
         "appId": "com.electron.DART",
         "copyright": "Copyright © 2018 APTrust",
         "productName": "DART",
-        "electronVersion": "1.8.4",
+        "electronVersion": "4.0.0",
         "asar": true,
         "directories": {
             "output": "dist"
