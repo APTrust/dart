@@ -1,5 +1,5 @@
-const ui = require('./common/ui.js');
+const { UI } = require('./common/ui.js');
 
 $(function() {
-
+    $('#nav').html(UI.renderNav('Dashboard'));
 });

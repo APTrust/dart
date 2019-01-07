@@ -5,10 +5,10 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav">
-      <li class="nav-item active">
-        <a class="nav-link" href="#dashboardShow">Dashboard <span class="sr-only">(current)</span></a>
+      <li class="nav-item <%if (section == 'Dashboard') {%>active<%}%>">
+        <a class="nav-link" href="#dashboardShow">Dashboard</span></a>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown <%if (section == 'Settings') {%>active<%}%>">
         <a class="nav-link dropdown-toggle" href="#" id="navbarSettingsDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings</a>
         <div class="dropdown-menu" aria-labelledby="navbarSettingsDropdownLink">
           <a class="dropdown-item" href="#appSettingList" id="menuAppSettingList">Application Settings</a>
@@ -16,14 +16,14 @@
           <a class="dropdown-item" href="#storageServiceList" id="menuStorageServiceList">Storage Services</a>
         </div>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown <%if (section == 'Jobs') {%>active<%}%>">
         <a class="nav-link dropdown-toggle" href="#" id="navbarJobsDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Jobs</a>
         <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
           <a class="dropdown-item" href="#jobList" id="menuJobList">List</a>
           <a class="dropdown-item" href="#jobNew" id="menuJobNew">New</a>
         </div>
       </li>
-      <li class="nav-item dropdown">
+      <li class="nav-item dropdown <%if (section == 'Help') {%>active<%}%>">
         <a class="nav-link dropdown-toggle" href="#" id="navbarHelpDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
         <div class="dropdown-menu" aria-labelledby="navbarHelpDropdownLink">
           <a class="dropdown-item" href="#aboutShow" id="menuAbout">About</a>
