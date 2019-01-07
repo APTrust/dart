@@ -31,10 +31,13 @@ class UI {
             str = str.slice(1);
         }
         let url = new URL(str, 'https://dart');
-        let [controller, method] = url.pathname.split('/');
+        let [_, controller, fn] = url.pathname.split('/');
+        if (!controller || !fn) {
+            throw `Invalid URL: '${str}' is missing controller or function name.`;
+        }
         return {
             controller: controller,
-            method: method,
+            fn: fn,
             params: url.searchParams
         }
     }
