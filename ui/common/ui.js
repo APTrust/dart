@@ -1,6 +1,7 @@
 const ejs = require('ejs');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const TemplateFiles = {
     nav: path.join(__dirname, '..', 'templates', 'partials', 'nav.ejs')
@@ -22,6 +23,20 @@ class UI {
 
     renderNav(section) {
         return this.templates.nav({ section: section });
+    }
+
+    parseLocation(str) {
+        // controller, method, params
+        if(str.startsWith('#')) {
+            str = str.slice(1);
+        }
+        let url = new URL(str, 'https://dart');
+        let [controller, method] = url.pathname.split('/');
+        return {
+            controller: controller,
+            method: method,
+            params: url.searchParams
+        }
     }
 }
 
