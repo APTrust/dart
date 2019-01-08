@@ -10,25 +10,27 @@ class UIHelper {
     }
 
     parseLocation(href) {
-        if(href.startsWith('#')) {
-            href = href.slice(1);
+        let [_, hashAndQueryString] = href.split('#');
+        if (!hashAndQueryString) {
+            throw `Invalid URL: '${href}' is missing hash.`;
         }
-        let requestUrl = new url.URL(href, 'https://example.com/');
-        let [_, controller, fn] = requestUrl.pathname.split('/');
+        let [hash, queryString] = hashAndQueryString.split('?');
+        let params = new url.URLSearchParams(queryString);
+        let [controller, fn] = hash.split('/');
         if (!controller || !fn) {
             throw `Invalid URL: '${href}' is missing controller or function name.`;
         }
         return {
             controller: controller + 'Controller',
             fn: fn,
-            params: requestUrl.searchParams
+            params: params
         }
     }
 
-    routeRequest(href) {
+    handleRequest(href) {
         let req = this.parseLocation(href);
         let controller = new Controllers[req.controller](req.params);
-        controller[req.fn]();
+        return controller[req.fn]();
     }
 
 }

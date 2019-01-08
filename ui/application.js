@@ -1,11 +1,13 @@
-const { UI } = require('./common/ui.js');
+const Controllers = require('./controllers');
+const Templates = require('./common/templates');
+const { UIHelper } = require('./common/ui_helper');
 
 $(function() {
     $(window).on('hashchange', function() {
-        alert(UI.parseLocation(window.location.href));
+        $('#container').html(UIHelper.handleRequest(window.location.href));
     });
     if(!window.location.hash) {
         window.location.hash = '#';
     }
-    $('#nav').html(UI.renderNav('Dashboard'));
+    $('#nav').html(Templates.nav({ section: 'Dashboard' }));
 });

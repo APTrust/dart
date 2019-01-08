@@ -6,6 +6,7 @@ const templateDir = path.join(__dirname, "..", "templates");
 function pathTo(subDir, filename) {
     return path.join(templateDir, subDir, filename)
 }
+
 function readFile(subDir, filename) {
     return fs.readFileSync(pathTo(subDir, filename), 'utf8');
 }
