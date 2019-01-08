@@ -58,6 +58,16 @@ class Util {
     }
 
     /**
+      * Returns true or false, indicating whether or not we're
+      * currently running in Electron.
+      *
+      * @returns {number}
+      */
+    static electronIsRunning() {
+        return process && process.versions && process.versions.hasOwnProperty('electron');
+    }
+
+    /**
       * Returns true if str matches the regex for hex-formatted uuid.
       *
       * @param {string} str - The string to measure.
