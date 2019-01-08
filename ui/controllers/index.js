@@ -1,3 +1,4 @@
+const { AboutController } = require('./about');
 const { AppSettingController } = require('./app_setting');
 const { BagItProfileController } = require('./bagit_profile');
 const { DashboardController } = require('./dashboard');
@@ -8,6 +9,7 @@ const { ManifestController } = require('./manifest');
 const { SetupController } = require('./setup');
 const { StorageServiceController } = require('./storage_service');
 
+module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
 module.exports.BagItProfileController = BagItProfileController;
 module.exports.DashboardController = DashboardController;
