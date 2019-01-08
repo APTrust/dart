@@ -13,7 +13,7 @@ function activeNavPattern(which) {
         let escaped = which.replace('/', '\/');
         pattern = `<li class="nav-item active">\\s+<a class="nav-link" href="${escaped}">`;
     } else {
-        pattern = `<li class="nav-item dropdown active">\\s+<a class="nav-link dropdown-toggle" href="#" id="\\w+" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${which}</a>`;
+        pattern = `<li class="nav-item dropdown active">\\s+<a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">${which}</a>`;
     }
     return new RegExp(pattern);
 }

@@ -7,6 +7,10 @@ class ManifestController extends BaseController {
         super(params, 'Jobs');
     }
 
+    list() {
+        return this.containerContent('List Manifests');
+    }
+
     show() {
         return this.containerContent('Show Manifest');
     }

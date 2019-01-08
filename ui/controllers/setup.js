@@ -7,6 +7,10 @@ class SetupController extends BaseController {
         super(params, 'Settings');
     }
 
+    list() {
+        return this.containerContent('List available setup plugins');
+    }
+
     start() {
         return this.containerContent('Start Setup');
     }
