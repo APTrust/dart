@@ -1,17 +1,18 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class SetupController {
+class SetupController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Settings');
     }
 
     start() {
-        return 'Start Setup';
+        return this.containerContent('Start Setup');
     }
 
     next(params) {
-        return 'Next Setup';
+        return this.containerContent('Next Setup');
     }
 
 }

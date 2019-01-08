@@ -1,25 +1,26 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class JobController {
+class JobController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Jobs');
     }
 
     create() {
-        return 'Create Job';
+        return this.containerContent('Create Job');
     }
 
     update() {
-        return 'Update Job';
+        return this.containerContent('Update Job');
     }
 
     list() {
-        return 'List Job';
+        return this.containerContent('List Jobs');
     }
 
     destroy() {
-        return 'Destroy Job';
+        return this.containerContent('Destroy Job');
     }
 }
 

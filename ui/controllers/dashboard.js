@@ -1,13 +1,14 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class DashboardController {
+class DashboardController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Dashboard')
     }
 
     show() {
-        return 'Show Dashboard';
+        return this.containerContent('Show Dashboard');
     }
 
 }

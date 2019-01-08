@@ -1,25 +1,26 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class StorageServiceController {
+class StorageServiceController extends BaseController {
 
-    constructor(setup) {
-        this.setup = setup;
+    constructor(params) {
+        super(params, 'Settings');
     }
 
     create() {
-        return 'Create StorageService';
+        return this.containerContent('Create StorageService');
     }
 
     update() {
-        return 'Update StorageService';
+        return this.containerContent('Update StorageService');
     }
 
     list() {
-        return 'List StorageService';
+        return this.containerContent('List StorageService');
     }
 
     destroy() {
-        return 'Destroy StorageService';
+        return this.containerContent('Destroy StorageService');
     }
 }
 

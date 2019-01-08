@@ -1,25 +1,26 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class BagItProfileController {
+class BagItProfileController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Settings');
     }
 
     create() {
-        return 'Create BagItProfile';
+        return this.containerContent('Create BagItProfile');
     }
 
     update() {
-        return 'Update BagItProfile';
+        return this.containerContent('Update BagItProfile');
     }
 
     list() {
-        return 'List BagItProfile';
+        return this.containerContent('List BagItProfile');
     }
 
     destroy() {
-        return 'Destroy BagItProfile';
+        return this.containerContent('Destroy BagItProfile');
     }
 }
 

@@ -1,13 +1,14 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class ManifestController {
+class ManifestController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Jobs');
     }
 
     show() {
-        return 'Show Manifest';
+        return this.containerContent('Show Manifest');
     }
 
 }
