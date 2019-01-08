@@ -2,19 +2,19 @@ const Templates = require('../common/templates');
 
 class BagItProfileController {
 
-    constructor(bagItProfile) {
-        this.bagItProfile = bagItProfile;
+    constructor(params) {
+        this.params = params;
     }
 
     create() {
         return 'Create BagItProfile';
     }
 
-    update(params) {
+    update() {
         return 'Update BagItProfile';
     }
 
-    list(params) {
+    list() {
         return 'List BagItProfile';
     }
 

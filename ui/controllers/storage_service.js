@@ -2,19 +2,19 @@ const Templates = require('../common/templates');
 
 class StorageServiceController {
 
-    constructor(storageService) {
-        this.storageService = storageService;
+    constructor(setup) {
+        this.setup = setup;
     }
 
     create() {
         return 'Create StorageService';
     }
 
-    update(params) {
+    update() {
         return 'Update StorageService';
     }
 
-    list(params) {
+    list() {
         return 'List StorageService';
     }
 

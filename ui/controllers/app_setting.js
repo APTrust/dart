@@ -2,19 +2,19 @@ const Templates = require('../common/templates');
 
 class AppSettingController {
 
-    constructor(appSetting) {
-        this.appSetting = appSetting;
+    constructor(params) {
+        this.params = params;
     }
 
     create() {
         return 'Create AppSetting';
     }
 
-    update(params) {
+    update() {
         return 'Update AppSetting';
     }
 
-    list(params) {
+    list() {
         return 'List AppSetting';
     }
 

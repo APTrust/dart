@@ -2,8 +2,8 @@ const Templates = require('../common/templates');
 
 class SetupController {
 
-    constructor(setup) {
-        this.setup = setup;
+    constructor(params) {
+        this.params = params;
     }
 
     start() {

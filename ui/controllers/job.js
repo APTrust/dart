@@ -2,19 +2,19 @@ const Templates = require('../common/templates');
 
 class JobController {
 
-    constructor(job) {
-        this.job = job;
+    constructor(params) {
+        this.params = params;
     }
 
     create() {
         return 'Create Job';
     }
 
-    update(params) {
+    update() {
         return 'Update Job';
     }
 
-    list(params) {
+    list() {
         return 'List Job';
     }
 

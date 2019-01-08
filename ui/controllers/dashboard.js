@@ -2,8 +2,8 @@ const Templates = require('../common/templates');
 
 class DashboardController {
 
-    constructor() {
-
+    constructor(params) {
+        this.params = params;
     }
 
     show() {
