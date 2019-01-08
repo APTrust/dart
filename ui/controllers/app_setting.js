@@ -1,9 +1,10 @@
+const { BaseController } = require('./base_controller');
 const Templates = require('../common/templates');
 
-class AppSettingController {
+class AppSettingController extends BaseController {
 
     constructor(params) {
-        this.params = params;
+        super(params, 'Settings');
     }
 
     create() {
@@ -15,10 +16,7 @@ class AppSettingController {
     }
 
     list() {
-        return {
-            '#nav': Templates.nav({ section: 'Settings' }),
-            '#container': 'List AppSetting'
-        }
+        return this.containerContent('List AppSetting');
     }
 
     destroy() {

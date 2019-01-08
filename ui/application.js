@@ -4,15 +4,15 @@ const { UIHelper } = require('./common/ui_helper');
 
 $(function() {
     $(window).on('hashchange', function() {
-        // Response may include data to be rendered in #container,
-        // #nav, #modalTitle, #modalContent
         let response = UIHelper.handleRequest(window.location.href);
-        if (typeof response === 'string') {
-            $('#container').html(response);
-        } else {
-            for (let elementId of Object.keys(response)) {
-                $(elementId).html(response[elementId]);
-            };
+        if (response.container) {
+            $('#nav').html(response.nav);
+            $('#container').html(response.container);
+            $('#modal').modal('hide');
+        } else if (response.modalContent) {
+            $('#modalTitle').html(response.modalTitle);
+            $('#modalContent').html(response.modalContent);
+            $('#modal').modal('show');
         }
     });
     if(!window.location.hash) {
