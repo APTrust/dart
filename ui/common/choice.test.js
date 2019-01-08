@@ -12,12 +12,14 @@ test('Constructor sets expected properies', () => {
     expect(choice.selected).toEqual(true);
 });
 
-test('makeList', () => {
+test('makeList()', () => {
     let items = [
         { name: 'First', id: '1' },
         { name: 'Second', id: '2' },
         { name: 'Third', id: '3' }
     ];
+
+    // Test with multiple selected items.
     let selected = ['2', '3'];
     let list = Choice.makeList(items, selected, true);
     expect(list.length).toEqual(4);
@@ -37,4 +39,12 @@ test('makeList', () => {
     expect(list[3].label).toEqual('Third');
     expect(list[3].value).toEqual('3');
     expect(list[3].selected).toEqual(true);
+
+    // Test with just one selected item
+    list = Choice.makeList(items, '1', true);
+    expect(list.length).toEqual(4);
+    expect(list[0].selected).toEqual(false);
+    expect(list[1].selected).toEqual(true);
+    expect(list[2].selected).toEqual(false);
+    expect(list[3].selected).toEqual(false);
 });
