@@ -1,0 +1,19 @@
+const { AppSettingController } = require('./app_setting');
+const { BagItProfileController } = require('./bagit_profile');
+const { DashboardController } = require('./dashboard');
+const { HelpController } = require('./help');
+const { JobController } = require('./job');
+const { LogController } = require('./log');
+const { ManifestController } = require('./manifest');
+const { SetupController } = require('./setup');
+const { StorageServiceController } = require('./storage_service');
+
+module.exports.AppSettingController = AppSettingController;
+module.exports.BagItProfileController = BagItProfileController;
+module.exports.DashboardController = DashboardController;
+module.exports.HelpController = HelpController;
+module.exports.JobController = JobController;
+module.exports.LogController = LogController;
+module.exports.ManifestController = ManifestController;
+module.exports.SetupController = SetupController;
+module.exports.StorageServiceController = StorageServiceController;
