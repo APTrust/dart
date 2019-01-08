@@ -1,7 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Log = UI.templates.log;
+const Templates = require('../common/templates');
 
 class LogController {
 

@@ -1,7 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Dash = UI.templates.dashboard;
+const Templates = require('../common/templates');
 
 class DashboardController {
 

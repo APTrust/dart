@@ -1,8 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Start = UI.templates.setupStart;
-const Question = UI.templates.setupQuestion;
+const Templates = require('../common/templates');
 
 class SetupController {
 

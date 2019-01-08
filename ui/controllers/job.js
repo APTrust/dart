@@ -1,14 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Files = UI.templates.jobForm;
-const List = UI.templates.jobForm;
-const Packaging = UI.templates.jobForm;
-const Review = UI.templates.jobForm;
-const Storage = UI.templates.jobForm;
-const Summary = UI.templates.jobForm;
-
-const List = UI.templates.jobList;
+const Templates = require('../common/templates');
 
 class JobController {
 

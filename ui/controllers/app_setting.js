@@ -1,8 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Form = UI.templates.appSettingForm;
-const List = UI.templates.appSettingList;
+const Templates = require('../common/templates');
 
 class AppSettingController {
 

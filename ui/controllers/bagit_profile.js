@@ -1,11 +1,4 @@
-const ejs = require('ejs');
-const { UI } = require('../common/ui');
-
-const Form = UI.templates.bagItProfileForm;
-const List = UI.templates.bagItProfileList;
-const TagDefForm = UI.templates.bagItProfileTagDefForm;
-const TagFileForm = UI.templates.bagItProfileTagFileForm;
-const TagsList = UI.templates.bagItProfileTagsList;
+const Templates = require('../common/templates');
 
 class BagItProfileController {
 
