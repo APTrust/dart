@@ -5,10 +5,10 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav">
-      <li class="nav-item <%if (section == 'Dashboard') {%>active<%}%>">
+      <li class="nav-item {{#if (eq section 'Dashboard') }}active{{/if}}">
         <a class="nav-link" href="#Dashboard/show">Dashboard</span></a>
       </li>
-      <li class="nav-item dropdown <%if (section == 'Settings') {%>active<%}%>">
+      <li class="nav-item dropdown {{#if (eq section 'Settings')}}active{{/if}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarSettingsDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings</a>
         <div class="dropdown-menu" aria-labelledby="navbarSettingsDropdownLink">
           <a class="dropdown-item" href="#AppSetting/list" id="menuAppSettingList">Application Settings</a>
@@ -16,14 +16,14 @@
           <a class="dropdown-item" href="#StorageService/list" id="menuStorageServiceList">Storage Services</a>
         </div>
       </li>
-      <li class="nav-item dropdown <%if (section == 'Jobs') {%>active<%}%>">
+      <li class="nav-item dropdown {{#if (eq section 'Jobs')}}active{{/if}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarJobsDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Jobs</a>
         <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
           <a class="dropdown-item" href="#Job/list" id="menuJobList">List</a>
           <a class="dropdown-item" href="#Job/create" id="menuJobNew">New</a>
         </div>
       </li>
-      <li class="nav-item dropdown <%if (section == 'Help') {%>active<%}%>">
+      <li class="nav-item dropdown {{#if (eq section 'Help')}}active{{/if}}">
         <a class="nav-link dropdown-toggle" href="#" id="navbarHelpDropdownLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
         <div class="dropdown-menu" aria-labelledby="navbarHelpDropdownLink">
           <a class="dropdown-item" href="#About/show" id="menuAbout">About</a>
