@@ -15,7 +15,10 @@ class AppSettingController {
     }
 
     list() {
-        return 'List AppSetting';
+        return {
+            '#nav': Templates.nav({ section: 'Settings' }),
+            '#container': 'List AppSetting'
+        }
     }
 
     destroy() {
