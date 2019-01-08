@@ -9,22 +9,28 @@ class UIHelper {
 
     }
 
-    parseLocation(str) {
-        // controller, method, params
-        if(str.startsWith('#')) {
-            str = str.slice(1);
+    parseLocation(href) {
+        if(href.startsWith('#')) {
+            href = href.slice(1);
         }
-        let url = new URL(str, 'https://dart');
-        let [_, controller, fn] = url.pathname.split('/');
+        let requestUrl = new url.URL(href, 'https://example.com/');
+        let [_, controller, fn] = requestUrl.pathname.split('/');
         if (!controller || !fn) {
-            throw `Invalid URL: '${str}' is missing controller or function name.`;
+            throw `Invalid URL: '${href}' is missing controller or function name.`;
         }
         return {
-            controller: controller,
+            controller: controller + 'Controller',
             fn: fn,
-            params: url.searchParams
+            params: requestUrl.searchParams
         }
     }
+
+    routeRequest(href) {
+        let req = this.parseLocation(href);
+        let controller = new Controllers[req.controller](req.params);
+        controller[req.fn]();
+    }
+
 }
 
 module.exports.UIHelper = Object.freeze(new UIHelper());
