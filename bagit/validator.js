@@ -468,9 +468,8 @@ class Validator extends EventEmitter {
             this.errors.push("Cannot validate bag because BagItProfile is missing.");
             return false;
         }
-        var result = this.profile.validate();
-        if (!result.isValid()) {
-            for (let err of Object.values(result.errors)) {
+        if (!this.profile.validate()) {
+            for (let err of Object.values(this.profile.errors)) {
                 this.errors.push(`BagItProfile: ${err}`);
             }
             return false;

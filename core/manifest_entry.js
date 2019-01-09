@@ -2,7 +2,6 @@ const { Context } = require('./context');
 const dateFormat = require('dateformat');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
 
 /**
  * ManifestEntry objects record info about files that were bagged or

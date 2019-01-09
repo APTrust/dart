@@ -6,7 +6,6 @@ const fs = require('fs');
 const { PersistentObject } = require('../core/persistent_object');
 const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
-const { ValidationResult } = require('../core/validation_result');
 
 /**
  * BagItProfile describes what constitutes a valid bag.
@@ -165,6 +164,14 @@ class BagItProfile extends PersistentObject {
           * @default false
           */
         this.tarDirMustMatchName = false;
+        /**
+         * Contains information describing validation errors. Key is the
+         * name of the invalid field. Value is a description of why the
+         * field is not valid.
+         *
+         * @type {Object<string, string>}
+         */
+        this.errors = {};
 
         this._addStandardBagItFile();
         this._addStandardBagInfoFile();
@@ -216,38 +223,37 @@ class BagItProfile extends PersistentObject {
         }
     }
 
-
     /**
-     * This returns a ValidationResult that describes what if anything
-     * is not valid about this profile. Note that this method validates
-     * the profile itself. It does not validate a bag.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (Util.isEmpty(this.id)) {
-            result.errors["id"] = "Id cannot be empty.";
+            this.errors["id"] = "Id cannot be empty.";
         }
         if (Util.isEmpty(this.name)) {
-            result.errors["name"] = "Name cannot be empty.";
+            this.errors["name"] = "Name cannot be empty.";
         }
         if (Util.isEmptyStringArray(this.acceptBagItVersion)) {
-            result.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
+            this.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
         }
         if (Util.isEmptyStringArray(this.manifestsRequired)) {
-            result.errors["manifestsRequired"] = "Profile must require at least one manifest.";
+            this.errors["manifestsRequired"] = "Profile must require at least one manifest.";
         }
         if (!this.hasTagFile("bagit.txt")) {
-            result.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
+            this.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
         }
         if (!this.hasTagFile("bag-info.txt")) {
-            result.errors["tags"] += "\nProfile lacks requirements for bag-info.txt tag file.";
+            this.errors["tags"] += "\nProfile lacks requirements for bag-info.txt tag file.";
         }
         if (!Util.listContains(Constants.REQUIREMENT_OPTIONS, this.serialization)) {
-            result.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
+            this.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
         }
-        return result;
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

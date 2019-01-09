@@ -19,30 +19,30 @@ test('Constructor sets initial properties', () => {
 test('validate()', () => {
     var tagDef = new TagDefinition('', '');
     var result = tagDef.validate();
-    expect(result.isValid()).toEqual(false);
-    expect(Object.keys(result.errors).length).toEqual(2);
-    expect(result.errors['tagFile']).toEqual('You must specify a tag file.');
-    expect(result.errors['tagName']).toEqual('You must specify a tag name.');
+    expect(result).toEqual(false);
+    expect(Object.keys(tagDef.errors).length).toEqual(2);
+    expect(tagDef.errors['tagFile']).toEqual('You must specify a tag file.');
+    expect(tagDef.errors['tagName']).toEqual('You must specify a tag name.');
 
     tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
     result = tagDef.validate();
-    expect(result.isValid()).toEqual(true);
+    expect(result).toEqual(true);
 
     tagDef.values = ['honest', 'respectable', 'responsible'];
     result = tagDef.validate();
-    expect(result.isValid()).toEqual(false);
-    expect(Object.keys(result.errors).length).toEqual(1);
-    expect(result.errors['defaultValue']).toEqual('The default value must be one of the allowed values.');
+    expect(result).toEqual(false);
+    expect(Object.keys(tagDef.errors).length).toEqual(1);
+    expect(tagDef.errors['defaultValue']).toEqual('The default value must be one of the allowed values.');
 
     tagDef.defaultValue = 'drump';
     result = tagDef.validate();
-    expect(result.isValid()).toEqual(false);
-    expect(Object.keys(result.errors).length).toEqual(1);
-    expect(result.errors['defaultValue']).toEqual('The default value must be one of the allowed values.');
+    expect(result).toEqual(false);
+    expect(Object.keys(tagDef.errors).length).toEqual(1);
+    expect(tagDef.errors['defaultValue']).toEqual('The default value must be one of the allowed values.');
 
     tagDef.defaultValue = 'honest';
     result = tagDef.validate();
-    expect(result.isValid()).toEqual(true);
+    expect(result).toEqual(true);
 });
 
 test('validateForJob() permits legal empty tag value', () => {

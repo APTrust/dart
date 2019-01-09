@@ -1,5 +1,4 @@
 const { Util } = require('../core/util');
-const { ValidationResult } = require('../core/validation_result');
 
 /**
  * This is a list of BagIt tags that the system sets internally
@@ -141,26 +140,35 @@ class TagDefinition {
           * @type {boolean}
           */
         this.isUserAddedTag = false;
+        /**
+         * Contains information describing validation errors. Key is the
+         * name of the invalid field. Value is a description of why the
+         * field is not valid.
+         *
+         * @type {Object<string, string>}
+         */
+        this.errors = {};
     }
 
     /**
-     * This returns a ValidationResult that describes what if anything
-     * is not valid about this TagDefinition.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (Util.isEmpty(this.tagFile)) {
-            result.errors['tagFile'] = "You must specify a tag file.";
+            this.errors['tagFile'] = "You must specify a tag file.";
         }
         if (Util.isEmpty(this.tagName)) {
-            result.errors['tagName'] = "You must specify a tag name.";
+            this.errors['tagName'] = "You must specify a tag name.";
         }
         if (this.values.length > 0 && !Util.listContains(this.values, this.defaultValue)) {
-            result.errors['defaultValue'] = "The default value must be one of the allowed values.";
+            this.errors['defaultValue'] = "The default value must be one of the allowed values.";
         }
-        return result
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

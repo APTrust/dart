@@ -47,13 +47,13 @@ test('validate() catches invalid properties', () => {
     profile.tags = [];
     profile.serialization = "Cap'n Crunch";
     let result = profile.validate();
-    expect(result.isValid()).toEqual(false);
-    expect(result.errors['id']).toEqual('Id cannot be empty.');
-    expect(result.errors['name']).toEqual('Name cannot be empty.');
-    expect(result.errors['acceptBagItVersion']).toEqual("Profile must accept at least one BagIt version.");
-    expect(result.errors['manifestsRequired']).toEqual("Profile must require at least one manifest.");
-    expect(result.errors['tags']).toEqual("Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.");
-    expect(result.errors['serialization']).toEqual("Serialization must be one of: required, optional, forbidden.");
+    expect(result).toEqual(false);
+    expect(profile.errors['id']).toEqual('Id cannot be empty.');
+    expect(profile.errors['name']).toEqual('Name cannot be empty.');
+    expect(profile.errors['acceptBagItVersion']).toEqual("Profile must accept at least one BagIt version.");
+    expect(profile.errors['manifestsRequired']).toEqual("Profile must require at least one manifest.");
+    expect(profile.errors['tags']).toEqual("Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.");
+    expect(profile.errors['serialization']).toEqual("Serialization must be one of: required, optional, forbidden.");
 });
 
 test('findMatchingTags()', () => {

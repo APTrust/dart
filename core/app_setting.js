@@ -1,7 +1,6 @@
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
 
 /**
  * AppSetting is a simple, storable name-value pair that users

@@ -2,7 +2,6 @@ const { AppSetting } = require('./app_setting');
 const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
 
 /**
  * Job describes a series of related actions for DART to perform.

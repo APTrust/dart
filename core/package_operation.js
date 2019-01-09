@@ -1,4 +1,3 @@
-const { ValidationResult } = require('./validation_result');
 const { Util } = require('./util');
 
 /**

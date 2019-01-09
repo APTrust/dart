@@ -1,7 +1,6 @@
 const { Context } = require('./context');
 const { JsonStore } = require('./json_store');
 const { Util } = require('./util');
-const { ValidationResult } = require('./validation_result');
 
 /**
  * PersistentObject is the base class for all objects that we want
