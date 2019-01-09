@@ -1,4 +1,5 @@
 const { BaseController } = require('./base_controller');
+const Dart = require('../../core');
 const Templates = require('../common/templates');
 
 class AboutController extends BaseController {
@@ -8,10 +9,11 @@ class AboutController extends BaseController {
     }
 
     show() {
+        var app = require('electron').remote.app;
         let data = {
-            version: 'xxx',
-            appPath: 'yyy',
-            userDataPath: 'zzz'
+            version: Dart.Context.dartVersion(),
+            appPath: app.getAppPath(),
+            userDataPath: app.getPath('userData')
         }
         let html = Templates.about(data);
         return this.modalContent('About DART', html);
