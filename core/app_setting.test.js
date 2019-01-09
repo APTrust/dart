@@ -26,20 +26,20 @@ test('Constructor sets expected properties', () => {
 test('validate()', () => {
     let obj = new AppSetting('', '');
     let result1 = obj.validate();
-    expect(result1.isValid()).toEqual(false);
-    expect(result1.errors['name']).toEqual('Name cannot be empty');
+    expect(result1).toEqual(false);
+    expect(obj.errors['name']).toEqual('Name cannot be empty');
 
     let originalId = obj.id;
     obj.id = null; // never do this!
     let result2 = obj.validate();
-    expect(result2.isValid()).toEqual(false);
-    expect(result2.errors['name']).toEqual('Name cannot be empty');
-    expect(result2.errors['id']).toEqual('Id cannot be empty');
+    expect(result2).toEqual(false);
+    expect(obj.errors['name']).toEqual('Name cannot be empty');
+    expect(obj.errors['id']).toEqual('Id cannot be empty');
 
     obj.name = 'Something';
     obj.id = originalId;
     let result3 = obj.validate();
-    expect(result3.isValid()).toEqual(true);
+    expect(result3).toEqual(true);
 });
 
 test('find()', () => {

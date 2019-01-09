@@ -47,21 +47,21 @@ class AppSetting extends PersistentObject {
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this object. Classes that derive from PersistentObject
-     * must have their own custom implementation of this method.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (Util.isEmpty(this.id)) {
-            result.errors["id"] = "Id cannot be empty";
+            this.errors["id"] = "Id cannot be empty";
         }
         if (Util.isEmpty(this.name)) {
-            result.errors["name"] = "Name cannot be empty";
+            this.errors["name"] = "Name cannot be empty";
         }
-        return result
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

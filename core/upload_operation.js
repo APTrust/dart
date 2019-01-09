@@ -54,26 +54,35 @@ class UploadOperation {
          * @type {OperationResult}
          */
         this.payloadSize = 0;
+        /**
+         * Contains information describing validation errors. Key is the
+         * name of the invalid field. Value is a description of why the
+         * field is not valid.
+         *
+         * @type {Object<string, string>}
+         */
+        this.errors = {};
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this UploadOperation.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (typeof this.destination != 'string' || Util.isEmpty(this.destination)) {
-            result.errors['UploadOperation.destination'] = 'Destination is required.';
+            this.errors['UploadOperation.destination'] = 'Destination is required.';
         }
         if (typeof this.protocol != 'string' || Util.isEmpty(this.protocol)) {
-            result.errors['UploadOperation.protocol'] = 'Protocol is required.';
+            this.errors['UploadOperation.protocol'] = 'Protocol is required.';
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
-            result.errors['UploadOperation.sourceFiles'] = 'Specify at least one file or directory to upload.';
+            this.errors['UploadOperation.sourceFiles'] = 'Specify at least one file or directory to upload.';
         }
-        return result;
+        return Object.keys(this.errors).length == 0;
     }
 }
 

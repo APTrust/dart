@@ -67,26 +67,35 @@ class PackageOperation {
          * @type {Array<string>}
          */
         this.skipFiles = [];
+        /**
+         * Contains information describing validation errors. Key is the
+         * name of the invalid field. Value is a description of why the
+         * field is not valid.
+         *
+         * @type {Object<string, string>}
+         */
+        this.errors = {};
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this PackageOperation.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (typeof this.packageName != 'string' || Util.isEmpty(this.packageName)) {
-            result.errors['PackageOperation.packageName'] = 'Package name is required.';
+            this.errors['PackageOperation.packageName'] = 'Package name is required.';
         }
         if (typeof this.outputPath != 'string' || Util.isEmpty(this.outputPath)) {
-            result.errors['PackageOperation.outputPath'] = 'Output path is required.';
+            this.errors['PackageOperation.outputPath'] = 'Output path is required.';
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
-            result.errors['PackageOperation.sourceFiles'] = 'Specify at least one file or directory to package.';
+            this.errors['PackageOperation.sourceFiles'] = 'Specify at least one file or directory to package.';
         }
-        return result;
+        return Object.keys(this.errors).length == 0;
     }
 }
 

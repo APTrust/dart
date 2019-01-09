@@ -30,16 +30,16 @@ test('Constructor sets expected properties', () => {
 test('validate()', () => {
     let obj = new ManifestEntry();
     let result1 = obj.validate();
-    expect(result1.isValid()).toEqual(false);
-    expect(result1.errors['jobId']).toEqual('jobId cannot be empty');
-    expect(result1.errors['origPath']).toEqual('origPath cannot be empty');
-    expect(result1.errors['pathInBag']).toEqual('pathInBag cannot be empty');
-    expect(result1.errors['algorithm']).toEqual('algorithm cannot be empty');
-    expect(result1.errors['digest']).toEqual('digest cannot be empty');
+    expect(result1).toEqual(false);
+    expect(obj.errors['jobId']).toEqual('jobId cannot be empty');
+    expect(obj.errors['origPath']).toEqual('origPath cannot be empty');
+    expect(obj.errors['pathInBag']).toEqual('pathInBag cannot be empty');
+    expect(obj.errors['algorithm']).toEqual('algorithm cannot be empty');
+    expect(obj.errors['digest']).toEqual('digest cannot be empty');
 
     let obj2 = makeObjects(1)[0];
     let result2 = obj2.validate();
-    expect(result2.isValid()).toEqual(true);
+    expect(result2).toEqual(true);
 });
 
 test('find()', () => {

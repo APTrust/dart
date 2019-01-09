@@ -66,14 +66,27 @@ class PersistentObject {
           * @default false
           */
         this.userCanDelete = true;
+        /**
+          * The errors property contains information about why this object
+          * is not valid. This property will be empty when an object is
+          * created, and is populated by the validate() method. If there
+          * are validation errors, the keys in the error object will be
+          * the names of invalid properties. The values will be error messages
+          * describing why the property is invalid. If validate() determines
+          * that the object is valid, errors will be empty.
+          *
+          * @type {Object<string, string>}
+          */
+        this.errors = {};
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this object. Classes that derive from PersistentObject
+     * validate returns true if this object is valid, false if not. If the
+     * object is not valid, this populates the errors property with info
+     * describing what is not valid. Classes that derive from PersistentObject
      * must have their own custom implementation of this method.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
         throw new Error("Method validate() is implemented in base class.");

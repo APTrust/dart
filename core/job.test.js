@@ -17,8 +17,8 @@ test('validate()', () => {
 
     // Errors should be passed through.
     let result = job.validate();
-    expect(result.isValid()).toEqual(false);
-    expect(result.errors['PackageOperation.packageName']).toBeDefined();
-    expect(result.errors['PackageOperation.outputPath']).toBeDefined();
-    expect(result.errors['PackageOperation.sourceFiles']).toBeDefined();
+    expect(result).toEqual(false);
+    expect(job.errors['PackageOperation.packageName']).toBeDefined();
+    expect(job.errors['PackageOperation.outputPath']).toBeDefined();
+    expect(job.errors['PackageOperation.sourceFiles']).toBeDefined();
 });

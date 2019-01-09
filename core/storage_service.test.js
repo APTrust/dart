@@ -27,21 +27,21 @@ test('validate()', () => {
     obj.id = null;
     obj.port = 'Port of Spain';
     let result1 = obj.validate();
-    expect(result1.isValid()).toEqual(false);
-    expect(result1.errors['name']).toEqual('Name cannot be empty');
-    expect(result1.errors['id']).toEqual('Id cannot be empty');
-    expect(result1.errors['protocol']).toEqual('Protocol cannot be empty');
-    expect(result1.errors['host']).toEqual('Host cannot be empty');
-    expect(result1.errors['port']).toEqual('Port must be a whole number, or leave blank to use the default port.');
+    expect(result1).toEqual(false);
+    expect(obj.errors['name']).toEqual('Name cannot be empty');
+    expect(obj.errors['id']).toEqual('Id cannot be empty');
+    expect(obj.errors['protocol']).toEqual('Protocol cannot be empty');
+    expect(obj.errors['host']).toEqual('Host cannot be empty');
+    expect(obj.errors['port']).toEqual('Port must be a whole number, or leave blank to use the default port.');
 
     obj.id = originalId;
     obj.name = 'Something';
     obj.protocol = 's3';
     obj.host = 's3.amazonaws.com';
     obj.port = null;
-    expect(obj.validate().isValid()).toEqual(true);
+    expect(obj.validate()).toEqual(true);
     obj.port = 443;  // port can be empty or a valid integer
-    expect(obj.validate().isValid()).toEqual(true);
+    expect(obj.validate()).toEqual(true);
 });
 
 test('find()', () => {

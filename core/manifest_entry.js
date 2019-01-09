@@ -89,33 +89,33 @@ class ManifestEntry extends PersistentObject {
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this object. Classes that derive from PersistentObject
-     * must have their own custom implementation of this method.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
+        this.errors = {};
         if (Util.isEmpty(this.id)) {
-            result.errors["id"] = "id cannot be empty";
+            this.errors["id"] = "id cannot be empty";
         }
         if (Util.isEmpty(this.jobId)) {
-            result.errors["jobId"] = "jobId cannot be empty";
+            this.errors["jobId"] = "jobId cannot be empty";
         }
         if (Util.isEmpty(this.origPath)) {
-            result.errors["origPath"] = "origPath cannot be empty";
+            this.errors["origPath"] = "origPath cannot be empty";
         }
         if (Util.isEmpty(this.pathInBag)) {
-            result.errors["pathInBag"] = "pathInBag cannot be empty";
+            this.errors["pathInBag"] = "pathInBag cannot be empty";
         }
         if (Util.isEmpty(this.algorithm)) {
-            result.errors["algorithm"] = "algorithm cannot be empty";
+            this.errors["algorithm"] = "algorithm cannot be empty";
         }
         if (Util.isEmpty(this.digest)) {
-            result.errors["digest"] = "digest cannot be empty";
+            this.errors["digest"] = "digest cannot be empty";
         }
-        return result
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

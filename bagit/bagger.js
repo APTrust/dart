@@ -92,12 +92,10 @@ class Bagger extends EventEmitter {
      * the job is valid.
      */
     validateJob() {
-        var jobValidationResult = this.job.validate();
-        if (!jobValidationResult.isValid()) {
+        if (!this.job.validate()) {
             packOp.errors.push("Job is not valid.");
-            for(var key of Object.keys(jobValidationResult.errors)) {
-                var err = jobValidationResult.errors[key];
-                packOp.errors.push(`${key}: ${err}`);
+            for(var [key, value] of Object.keys(jobValidationResult.errors)) {
+                packOp.errors.push(`${key}: ${value}`);
             }
             packOp.completed = dateFormat(Date.now(), 'isoUtcDateTime');
             packOp.succeeded = false;

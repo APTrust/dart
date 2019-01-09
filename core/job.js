@@ -22,33 +22,40 @@ class Job extends PersistentObject {
     }
 
     /**
-     * validate returns a ValidationResult that describes what if anything
-     * is not valid about this job. Classes that derive from PersistentObject
-     * must have their own custom implementation of this method.
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
      *
-     * @returns {ValidationResult} - The result of the validation check.
+     * @returns {boolean}
      */
     validate() {
-        var result = new ValidationResult();
-        var opValidationResults = [];
+        this.errors = {};
         if (this.packagingOp) {
-            opValidationResults.push(this.packagingOp.validate());
+            this.packagingOp.validate();
+            for(let [key, value] of Object.entries(this.packagingOp.errors)) {
+                this.errors[key] = value;
+            }
             // TODO: Require BagItProfile if packaging op is BagIt.
             // TODO: Mechanism for signifying this is a BagIt job (as opposed to just tar or zip)
         }
         if (this.validationOp) {
-            opValidationResults.push(this.validationOp.validate());
+            this.validationOp.validate();
+            for(let [key, value] of Object.entries(this.validationOp.errors)) {
+                this.errors[key] = value;
+            }
             if (!this.bagItProfile) {
                 result.errors['Job.bagItProfile'] = 'Validation requires a BagItProfile.';
             }
         }
+        var opNum = 0;
         for (var uploadOp of this.uploadOps) {
-            opValidationResults.push(uploadOp.validate());
+            uploadOp.validate();
+            for(let [key, value] of Object.entries(this.validationOp.errors)) {
+                this.errors[key] = value;
+            }
+            opNum++;
         }
-        for (var opValResult of opValidationResults) {
-            result.errors = Object.assign(result.errors, opValResult.errors);
-        }
-        return result;
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

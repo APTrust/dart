@@ -25,6 +25,14 @@ class ValidationOperation {
          * @type {OperationResult}
          */
         this.result = null;
+        /**
+         * Contains information describing validation errors. Key is the
+         * name of the invalid field. Value is a description of why the
+         * field is not valid.
+         *
+         * @type {Object<string, string>}
+         */
+        this.errors = {};
     }
 }
 

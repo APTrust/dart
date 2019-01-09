@@ -15,16 +15,16 @@ test('Constructor sets expected properties', () => {
 test('validate()', () => {
     let packOp1 = new PackageOperation();
     let result1 = packOp1.validate();
-    expect(result1.isValid()).toEqual(false);
-    expect(result1.errors['PackageOperation.packageName']).toEqual('Package name is required.');
-    expect(result1.errors['PackageOperation.outputPath']).toEqual('Output path is required.');
-    expect(result1.errors['PackageOperation.sourceFiles']).toEqual('Specify at least one file or directory to package.');
+    expect(result1).toEqual(false);
+    expect(packOp1.errors['PackageOperation.packageName']).toEqual('Package name is required.');
+    expect(packOp1.errors['PackageOperation.outputPath']).toEqual('Output path is required.');
+    expect(packOp1.errors['PackageOperation.sourceFiles']).toEqual('Specify at least one file or directory to package.');
 
     let packOp2 = new PackageOperation('bag_name', '/path/to/output.tar');
     packOp2.sourceFiles.push('/path/to/something/you/want/to/bag');
     let result2 = packOp2.validate();
-    expect(result2.isValid()).toEqual(true);
-    expect(result2.errors['PackageOperation.packageName']).toBeUndefined();
-    expect(result2.errors['PackageOperation.outputPath']).toBeUndefined();
-    expect(result2.errors['PackageOperation.sourceFiles']).toBeUndefined();
+    expect(result2).toEqual(true);
+    expect(packOp2.errors['PackageOperation.packageName']).toBeUndefined();
+    expect(packOp2.errors['PackageOperation.outputPath']).toBeUndefined();
+    expect(packOp2.errors['PackageOperation.sourceFiles']).toBeUndefined();
 });
