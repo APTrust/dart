@@ -1,39 +1,48 @@
+const { AppSetting } = require('../../core/app_setting');
 const { Field } = require('./field');
 const { Form } = require('./form');
+const { Util } = require('../../core/util');
 
-test('Constructor sets expected properies', () => {
-    let form = new Form('id-1234');
-    expect(form.id).toEqual('id-1234');
-    expect(form.fields).toEqual({});
+test('Constructor initializes form fields', () => {
+    let appSetting = new AppSetting('fruit', 'apple');
+    appSetting.help = 'Help text';
+    appSetting.errors['value'] = 'Value must be cherry.';
+    let form = new Form('appSettingForm', appSetting);
+    expect(form.id).toEqual('appSettingForm');
     expect(form.inlineForms).toEqual([]);
-});
+    expect(Object.keys(form.fields).length).toEqual(4);
 
-test('setErrors()', () => {
-    let form = new Form('id-1234');
-    for(let i = 0; i < 10; i++) {
-        let field = new Field('id' + i, 'field_' + i, 'label' + i, 'value' + i);
-        form.fields[field.name] = field;
+    // These are on the default exclude list.
+    for (let name of ['errors', 'help', 'type']) {
+        expect(form.fields[name]).not.toBeDefined();
     }
 
-    let errors = {
-        'field_3': 'Error in field 3',
-        'field_6': 'Error in field 6'
-    }
-
-    form.setErrors(errors);
-
-    let errorsSet = 0;
-    for (let name of Object.keys(form.fields)) {
-        var field = form.fields[name];
-        if (name === 'field_3') {
-            expect(field.error).toEqual('Error in field 3');
-            errorsSet++;
-        } else if (name === 'field_6') {
-            expect(field.error).toEqual('Error in field 6');
-            errorsSet++;
+    for (let name of ['id', 'name', 'value', 'userCanDelete']) {
+        let field = form.fields[name];
+        let value = appSetting[name];
+        expect(field).toBeDefined();
+        expect(field.id).toEqual('appSettingForm_' + name);
+        expect(field.name).toEqual(name);
+        expect(field.label).toEqual(Util.camelToTitle(name));
+        expect(field.value).toEqual(value);
+        if (name === 'value') {
+            expect(field.error).toEqual('Value must be cherry.');
         } else {
-            expect(field.error).toEqual('');
+            expect(field.error).not.toBeDefined();
         }
     }
-    expect(errorsSet).toEqual(2);
+});
+
+test('Constructor initializes form fields with custom exclude', () => {
+    let appSetting = new AppSetting('fruit', 'apple');
+    appSetting.help = 'Help text';
+    appSetting.errors['value'] = 'Value must be cherry.';
+    let form = new Form('appSettingForm', appSetting, []);
+
+    // We said exclude nothing this time, so we should
+    // get fields for all properties.
+    expect(Object.keys(form.fields).length).toEqual(7);
+    for (let name of ['errors', 'help', 'type']) {
+        expect(form.fields[name]).toBeDefined();
+    }
 });
