@@ -1,0 +1,23 @@
+const { Bagger } = require('./bagger');
+const { BagItFile } = require('./bagit_file');
+const { BagItProfile } = require('./bagit_profile');
+const { BagItProfileInfo } = require('./bagit_profile_info');
+const { BagItUtil } = require('./bagit_util');
+const { KeyValueCollection } = require('./key_value_collection');
+const { ManifestParser } = require('./manifest_parser');
+const { TagDefinition } = require('./tag_definition');
+const { TagFileParser } = require('./tag_file_parser');
+const { TaskDescription } = require('./task_description');
+const { Validator } = require('./validator');
+
+module.exports.Bagger = Bagger;
+module.exports.BagItFile = BagItFile;
+module.exports.BagItProfile = BagItProfile;
+module.exports.BagItProfileInfo = BagItProfileInfo;
+module.exports.BagItUtil = BagItUtil;
+module.exports.KeyValueCollection = KeyValueCollection;
+module.exports.ManifestParser = ManifestParser;
+module.exports.TagDefinition = TagDefinition;
+module.exports.TagFileParser = TagFileParser;
+module.exports.TaskDescription = TaskDescription;
+module.exports.Validator = Validator;
