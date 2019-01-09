@@ -36,6 +36,14 @@ class AppSetting extends PersistentObject {
           * @type {string}
           */
         this.value = value;
+        /**
+          * This is an optional description telling the user what this
+          * AppSetting means, or what it does. If provided, this will
+          * appear in the DART UI when the user edits the AppSetting.
+          *
+          * @type {string}
+          */
+        this.help = "";
     }
 
     /**
