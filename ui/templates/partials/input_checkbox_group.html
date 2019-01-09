@@ -1,0 +1,13 @@
+{{#each field.choices }}
+<div class="form-check {{#each field.cssClasses }}{{ this }} {{/each }}"
+     {{#each field.attrs }}{{ @key }}="{{ this }}"{{/each }}>
+  <label class="form-check-label">
+    <input class="form-check-input" type="checkbox" name="{{ ../field.name }}" value="{{ this.value }}" {{#if this.selected }}checked{{/if }}>
+    {{ this.label }}
+  </label>
+</div>
+{{/each}}
+
+<small id="{{ field.id }}Error" class="form-text text-danger">
+    {{ field.error }}
+</small>
