@@ -36,6 +36,10 @@ test('Util.isEmpty()', () => {
     expect(Util.isEmpty(" ;) ")).toEqual(false);
 });
 
+test('Util.camelToTitle()', () => {
+    expect(Util.camelToTitle("myVarName")).toEqual("My Var Name");
+});
+
 test('Util.isEmptyStringArray()', () => {
     expect(Util.isEmptyStringArray(null)).toEqual(true);
     expect(Util.isEmptyStringArray([])).toEqual(true);

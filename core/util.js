@@ -96,6 +96,19 @@ class Util {
     }
 
     /**
+      * Converts a camel case variable name to title-cased text.
+      * For example, myVarName is converted to My Var Name.
+      * This is useful for converting var names to labels in the UI.
+      *
+      * @param {string} str - The string to convert
+      * @returns {string}
+      */
+    static camelToTitle(str) {
+        var spaced = str.replace( /([A-Z])/g, " $1" );
+        return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+    }
+
+    /**
       * Returns true if array of strings is empty, or if all elements
       * of the array are null or empty.
       *
