@@ -49,7 +49,7 @@ class Job extends PersistentObject {
         var opNum = 0;
         for (var uploadOp of this.uploadOps) {
             uploadOp.validate();
-            for(let [key, value] of Object.entries(this.validationOp.errors)) {
+            for(let [key, value] of Object.entries(this.uploadOp.errors)) {
                 this.errors[key] = value;
             }
             opNum++;
