@@ -1,3 +1,5 @@
+const electron = require('electron');
+
 class BaseController {
 
     constructor(params, navSection) {
@@ -17,6 +19,11 @@ class BaseController {
             modalTitle: title,
             modalContent: body
         }
+    }
+
+    openExternal() {
+        console.log(this.params);
+        electron.shell.openExternal(this.params.get('url'));
     }
 }
 

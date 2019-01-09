@@ -8,7 +8,13 @@ class AboutController extends BaseController {
     }
 
     show() {
-        return this.modalContent('About DART', 'About text is coming soon.');
+        let data = {
+            version: 'xxx',
+            appPath: 'yyy',
+            userDataPath: 'zzz'
+        }
+        let html = Templates.about(data);
+        return this.modalContent('About DART', html);
     }
 
 }

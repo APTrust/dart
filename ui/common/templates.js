@@ -8,7 +8,7 @@ function readFile(filename) {
     return fs.readFileSync(filepath, 'utf8');
 }
 
-// var about = handlebars.compile(readFile('about.html'));
+var about = handlebars.compile(readFile(path.join('about', 'index.html')));
 // var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
 // var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
 // var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
@@ -59,9 +59,8 @@ handlebars.registerHelper('resultSummary', function(result) {
     return result.summary();
 });
 
-module.exports.nav = nav;
 
-// module.exports.about = about;
+module.exports.about = about;
 // module.exports.appSettingForm = appSettingForm;
 // module.exports.appSettingList = appSettingList;
 // module.exports.bagItProfileForm = bagItProfileForm;
@@ -78,6 +77,7 @@ module.exports.nav = nav;
 // module.exports.jobTags = jobTags;
 // module.exports.log = log;
 // module.exports.manifest = manifest;
+module.exports.nav = nav;
 // module.exports.newTagFileForm = newTagFileForm;
 // module.exports.setup = setup;
 // module.exports.setupQuestion = setupQuestion;
