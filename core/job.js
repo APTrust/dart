@@ -28,7 +28,7 @@ class Job extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        this.errors = {};
+        super.validate();
         if (this.packagingOp) {
             this.packagingOp.validate();
             for(let [key, value] of Object.entries(this.packagingOp.errors)) {

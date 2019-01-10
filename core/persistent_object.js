@@ -83,12 +83,16 @@ class PersistentObject {
      * validate returns true if this object is valid, false if not. If the
      * object is not valid, this populates the errors property with info
      * describing what is not valid. Classes that derive from PersistentObject
-     * must have their own custom implementation of this method.
+     * should have their own custom implementation of this method.
      *
      * @returns {boolean}
      */
     validate() {
-        throw new Error("Method validate() is implemented in base class.");
+        this.errors = {};
+        if (Util.isEmpty(this.id)) {
+            this.errors["id"] = "Id cannot be empty.";
+        }
+        return Object.keys(this.errors).length == 0;
     }
 
     /**

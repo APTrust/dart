@@ -36,7 +36,10 @@ test('Constructor sets expected properties', () => {
 
 test('validate() throws error because it must be implemented in derived class', () => {
     let obj = new PersistentObject('test1');
-    expect(() => { obj.validate() }).toThrow(Error);
+    expect(obj.validate()).toEqual(true);
+    obj.id = '';
+    expect(obj.validate()).toEqual(false);
+    expect(obj.errors['id']).toEqual('Id cannot be empty.');
 });
 
 test('Basic operations: save(), find(), delete()', () => {

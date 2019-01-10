@@ -51,12 +51,9 @@ class InternalSetting extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.id)) {
-            this.errors["id"] = "Id cannot be empty";
-        }
+        super.validate();
         if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty";
+            this.errors["name"] = "Name cannot be empty.";
         }
         return Object.keys(this.errors).length == 0;
     }

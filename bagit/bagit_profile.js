@@ -231,10 +231,7 @@ class BagItProfile extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.id)) {
-            this.errors["id"] = "Id cannot be empty.";
-        }
+        super.validate();
         if (Util.isEmpty(this.name)) {
             this.errors["name"] = "Name cannot be empty.";
         }

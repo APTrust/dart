@@ -27,14 +27,14 @@ test('validate()', () => {
     let obj = new InternalSetting('', '');
     let result1 = obj.validate();
     expect(result1).toEqual(false);
-    expect(obj.errors['name']).toEqual('Name cannot be empty');
+    expect(obj.errors['name']).toEqual('Name cannot be empty.');
 
     let originalId = obj.id;
     obj.id = null; // never do this!
     let result2 = obj.validate();
     expect(result2).toEqual(false);
-    expect(obj.errors['name']).toEqual('Name cannot be empty');
-    expect(obj.errors['id']).toEqual('Id cannot be empty');
+    expect(obj.errors['name']).toEqual('Name cannot be empty.');
+    expect(obj.errors['id']).toEqual('Id cannot be empty.');
 
     obj.name = 'Something';
     obj.id = originalId;

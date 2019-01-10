@@ -95,18 +95,15 @@ class StorageService extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.id)) {
-            this.errors["id"] = "Id cannot be empty";
-        }
+        super.validate();
         if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty";
+            this.errors["name"] = "Name cannot be empty.";
         }
         if (Util.isEmpty(this.protocol)) {
-            this.errors["protocol"] = "Protocol cannot be empty";
+            this.errors["protocol"] = "Protocol cannot be empty.";
         }
         if (Util.isEmpty(this.host)) {
-            this.errors["host"] = "Host cannot be empty";
+            this.errors["host"] = "Host cannot be empty.";
         }
         if (!Util.isEmpty(this.port) && parseInt(this.port, 10) != this.port) {
             this.errors["port"] = "Port must be a whole number, or leave blank to use the default port.";

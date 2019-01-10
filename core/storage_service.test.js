@@ -28,10 +28,10 @@ test('validate()', () => {
     obj.port = 'Port of Spain';
     let result1 = obj.validate();
     expect(result1).toEqual(false);
-    expect(obj.errors['name']).toEqual('Name cannot be empty');
-    expect(obj.errors['id']).toEqual('Id cannot be empty');
-    expect(obj.errors['protocol']).toEqual('Protocol cannot be empty');
-    expect(obj.errors['host']).toEqual('Host cannot be empty');
+    expect(obj.errors['name']).toEqual('Name cannot be empty.');
+    expect(obj.errors['id']).toEqual('Id cannot be empty.');
+    expect(obj.errors['protocol']).toEqual('Protocol cannot be empty.');
+    expect(obj.errors['host']).toEqual('Host cannot be empty.');
     expect(obj.errors['port']).toEqual('Port must be a whole number, or leave blank to use the default port.');
 
     obj.id = originalId;

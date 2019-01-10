@@ -95,24 +95,21 @@ class ManifestEntry extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.id)) {
-            this.errors["id"] = "id cannot be empty";
-        }
+        super.validate();
         if (Util.isEmpty(this.jobId)) {
-            this.errors["jobId"] = "jobId cannot be empty";
+            this.errors["jobId"] = "jobId cannot be empty.";
         }
         if (Util.isEmpty(this.origPath)) {
-            this.errors["origPath"] = "origPath cannot be empty";
+            this.errors["origPath"] = "origPath cannot be empty.";
         }
         if (Util.isEmpty(this.pathInBag)) {
-            this.errors["pathInBag"] = "pathInBag cannot be empty";
+            this.errors["pathInBag"] = "pathInBag cannot be empty.";
         }
         if (Util.isEmpty(this.algorithm)) {
-            this.errors["algorithm"] = "algorithm cannot be empty";
+            this.errors["algorithm"] = "algorithm cannot be empty.";
         }
         if (Util.isEmpty(this.digest)) {
-            this.errors["digest"] = "digest cannot be empty";
+            this.errors["digest"] = "digest cannot be empty.";
         }
         return Object.keys(this.errors).length == 0;
     }
