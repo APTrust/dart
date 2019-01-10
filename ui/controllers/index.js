@@ -7,7 +7,7 @@ const { JobController } = require('./job');
 const { LogController } = require('./log');
 const { ManifestController } = require('./manifest');
 const { SetupController } = require('./setup');
-const { StorageServiceController } = require('./storage_service');
+const { UploadTargetController } = require('./upload_target');
 
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
@@ -18,4 +18,4 @@ module.exports.JobController = JobController;
 module.exports.LogController = LogController;
 module.exports.ManifestController = ManifestController;
 module.exports.SetupController = SetupController;
-module.exports.StorageServiceController = StorageServiceController;
+module.exports.UploadTargetController = UploadTargetController;

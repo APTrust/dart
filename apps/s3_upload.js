@@ -5,7 +5,7 @@ const { Job } = require('../core/job');
 const path = require('path');
 const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
-const { StorageService } = require('../core/storage_service');
+const { UploadTarget } = require('../core/upload_target');
 const { UploadOperation } = require('../core/upload_operation');
 const { Util } = require('../core/util');
 
@@ -57,7 +57,7 @@ class S3Upload {
     initOpRecord() {
         let stats = fs.statSync(this.opts.source[0]);
         let provider = this.getProvider();
-        let storageService = this.getStorageService();
+        let uploadTarget = this.getUploadTarget();
         let op = new UploadOperation(this.opts.dest, 's3', [this.opts.source[0]]);
         op.result = new OperationResult('upload', provider.description().name);
         // Be careful because start() calls reset() internally,
@@ -88,25 +88,25 @@ class S3Upload {
     }
 
     /**
-     * This returns the first StorageService record that implements the S3
+     * This returns the first UploadTarget record that implements the S3
      * protocol and matches the hostname of the URL specified in this.opts.dest.
-     * It will return the StorageService whose bucket property exactly matches
+     * It will return the UploadTarget whose bucket property exactly matches
      * the URL's pathname, if there is such a service. Failing that, it will
      * return the service whose bucket starts with the path name. Failing that,
      * it will return the first service with the matching host and protocol.
      *
-     * @returns {StorageService} or null.
+     * @returns {UploadTarget} or null.
      */
-    getStorageService() {
+    getUploadTarget() {
         let url = new URL(this.opts.dest);
         let exact = (obj) => { return obj.protocol == 's3' && obj.host == url.host && obj.bucket == url.pathname };
         let includes = (obj) => { return obj.protocol == 's3' && obj.host == url.host && !Util.isEmpty(obj.bucket) && url.pathname.startsWith('/'+obj.bucket)};
         let hostMatches = (obj) => { return obj.protocol == 's3' && obj.host == url.host };
-        let storageService = StorageService.first(exact) || StorageService.first(includes) || StorageService.first(hostMatches);
-        if (!storageService) {
-            throw `Cannot find a StorageService record for ${url.host}.`;
+        let uploadTarget = UploadTarget.first(exact) || UploadTarget.first(includes) || UploadTarget.first(hostMatches);
+        if (!uploadTarget) {
+            throw `Cannot find a UploadTarget record for ${url.host}.`;
         }
-        return storageService;
+        return uploadTarget;
     }
 }
 

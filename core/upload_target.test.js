@@ -1,28 +1,28 @@
 const fs = require('fs');
 const path = require('path');
 const { Context } = require('./context');
-const { StorageService } = require('./storage_service');
+const { UploadTarget } = require('./upload_target');
 const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
 beforeEach(() => {
-    TestUtil.deleteJsonFile('StorageService');
+    TestUtil.deleteJsonFile('UploadTarget');
 });
 
 afterAll(() => {
-    TestUtil.deleteJsonFile('StorageService');
+    TestUtil.deleteJsonFile('UploadTarget');
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new StorageService('name1');
-    expect(obj.type).toEqual('StorageService');
+    let obj = new UploadTarget('name1');
+    expect(obj.type).toEqual('UploadTarget');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
 });
 
 
 test('validate()', () => {
-    let obj = new StorageService('');
+    let obj = new UploadTarget('');
     let originalId = obj.id;
     obj.id = null;
     obj.port = 'Port of Spain';
@@ -47,33 +47,33 @@ test('validate()', () => {
 test('find()', () => {
     let objs = makeObjects(3);
     let obj = objs[1];
-    expect(StorageService.find(obj.id)).toEqual(obj);
+    expect(UploadTarget.find(obj.id)).toEqual(obj);
 });
 
 test('sort()', () => {
     let objs = makeObjects(3);
-    let sortedAsc = StorageService.sort("name", "asc");
+    let sortedAsc = UploadTarget.sort("name", "asc");
     expect(sortedAsc[0].name).toEqual("Name 1");
     expect(sortedAsc[2].name).toEqual("Name 3");
-    let sortedDesc = StorageService.sort("name", "desc");
+    let sortedDesc = UploadTarget.sort("name", "desc");
     expect(sortedDesc[0].name).toEqual("Name 3");
     expect(sortedDesc[2].name).toEqual("Name 1");
 });
 
 test('findMatching()', () => {
     let objs = makeObjects(3);
-    let matches = StorageService.findMatching("host", "Host 3");
+    let matches = UploadTarget.findMatching("host", "Host 3");
     expect(matches.length).toEqual(1);
     expect(matches[0].host).toEqual("Host 3");
-    matches = StorageService.findMatching("protocol", "s3");
+    matches = UploadTarget.findMatching("protocol", "s3");
     expect(matches.length).toEqual(2);
-    matches = StorageService.findMatching("protocol", "sneakernet");
+    matches = UploadTarget.findMatching("protocol", "sneakernet");
     expect(matches.length).toEqual(0);
 });
 
 test('firstMatching()', () => {
     let objs = makeObjects(3);
-    let match = StorageService.firstMatching("protocol", "sftp");
+    let match = UploadTarget.firstMatching("protocol", "sftp");
     expect(match).not.toBeNull();
     expect(match.protocol).toEqual("sftp");
 });
@@ -89,7 +89,7 @@ test('list()', () => {
         orderBy: "host",
         sortDirection: "asc"
     }
-    let matches = StorageService.list(fn, opts);
+    let matches = UploadTarget.list(fn, opts);
     expect(matches.length).toEqual(2);
     expect(matches[0].host).toEqual("Host 2");
     expect(matches[1].host).toEqual("Host 3");
@@ -104,7 +104,7 @@ test('first()', () => {
         orderBy: "host",
         sortDirection: "desc"
     }
-    let match = StorageService.first(fn, opts);
+    let match = UploadTarget.first(fn, opts);
     expect(match).not.toBeNull();
     expect(match.host).toEqual("Host 3");
 });
@@ -113,7 +113,7 @@ function makeObjects(howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {
         let name = `Name ${i + 1}`;
-        let obj = new StorageService(name);
+        let obj = new UploadTarget(name);
         obj.host = `Host ${i + 1}`;
         if (i % 2 == 0) {
             obj.protocol = 's3';

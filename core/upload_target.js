@@ -3,30 +3,30 @@ const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
 
 /**
- * StorageService describes any remote service (s3, ftp, etc.) to which
+ * UploadTarget describes any remote service (s3, ftp, etc.) to which
  * we can upload data. This object contains the information required to
  * connect to the remote service (hostname, login name, password, etc.).
  */
-class StorageService extends PersistentObject {
+class UploadTarget extends PersistentObject {
     /**
-     * Creates a new StorageService.
+     * Creates a new UploadTarget.
      *
-     * @param {string} name - The name of the remote storage service. This
+     * @param {string} name - The name of the remote upload target. This
      * can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
      * 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
      *
      */
     constructor(name) {
-        super('StorageService');
+        super('UploadTarget');
         /**
-          * name is the name of this storage service. It should be meaningful
+          * name is the name of this upload target. It should be meaningful
           * to the user.
           *
           * @type {string}
           */
         this.name = name;
         /**
-          * A description of this storage service. It should be meaningful
+          * A description of this upload target. It should be meaningful
           * to the user.
           *
           * @type {string}
@@ -120,7 +120,7 @@ class StorageService extends PersistentObject {
      * @returns {Object}
      */
     static find(id) {
-        return Context.db('StorageService').get(id);
+        return Context.db('UploadTarget').get(id);
     }
 
     /**
@@ -135,7 +135,7 @@ class StorageService extends PersistentObject {
      * @returns {Object[]}
      */
     static sort(property, direction) {
-        return PersistentObject.sort(Context.db('StorageService'), property, direction);
+        return PersistentObject.sort(Context.db('UploadTarget'), property, direction);
     }
 
     /**
@@ -154,7 +154,7 @@ class StorageService extends PersistentObject {
      * @returns {Object[]}
      */
     static findMatching(property, value, opts) {
-        return PersistentObject.findMatching(Context.db('StorageService'), property, value, opts);
+        return PersistentObject.findMatching(Context.db('UploadTarget'), property, value, opts);
     }
 
     /**
@@ -172,7 +172,7 @@ class StorageService extends PersistentObject {
      * @returns {Object}
      */
     static firstMatching(property, value, opts) {
-        return PersistentObject.firstMatching(Context.db('StorageService'), property, value, opts);
+        return PersistentObject.firstMatching(Context.db('UploadTarget'), property, value, opts);
     }
 
     /**
@@ -190,7 +190,7 @@ class StorageService extends PersistentObject {
      * @returns {Object[]}
      */
     static list(filterFunction, opts) {
-        return PersistentObject.list(Context.db('StorageService'), filterFunction, opts);
+        return PersistentObject.list(Context.db('UploadTarget'), filterFunction, opts);
     }
 
     /**
@@ -210,9 +210,9 @@ class StorageService extends PersistentObject {
      * @returns {Object}
      */
     static first(filterFunction, opts) {
-        return PersistentObject.first(Context.db('StorageService'), filterFunction, opts);
+        return PersistentObject.first(Context.db('UploadTarget'), filterFunction, opts);
     }
 
 }
 
-module.exports.StorageService = StorageService;
+module.exports.UploadTarget = UploadTarget;
