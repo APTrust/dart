@@ -10,7 +10,7 @@ function readFile(...args) {
 
 var about = handlebars.compile(readFile('about', 'index.html'));
 var appSettingForm = handlebars.compile(readFile('app_setting', 'form.html'));
-// var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
+var appSettingList = handlebars.compile(readFile('app_setting', 'list.html'));
 // var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
 // var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
 // var bagItProfileNew = handlebars.compile(readFile('bagit_profile_new.html'));
@@ -62,7 +62,7 @@ handlebars.registerHelper('resultSummary', function(result) {
 
 module.exports.about = about;
 module.exports.appSettingForm = appSettingForm;
-// module.exports.appSettingList = appSettingList;
+module.exports.appSettingList = appSettingList;
 // module.exports.bagItProfileForm = bagItProfileForm;
 // module.exports.bagItProfileList = bagItProfileList;
 // module.exports.bagItProfileNew = bagItProfileNew;

@@ -21,7 +21,10 @@ class AppSettingController extends BaseController {
     }
 
     list() {
-        return this.containerContent('List AppSetting');
+        let items = AppSetting.list();
+        let data = { items: items };
+        let html = Templates.appSettingList(data);
+        return this.containerContent(html);
     }
 
     destroy() {
