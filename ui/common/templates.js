@@ -61,12 +61,6 @@ handlebars.registerHelper('resultSummary', function(result) {
     return result.summary();
 });
 
-// Return a random number to force hash change.
-// __rand={{ rand }}
-handlebars.registerHelper('rand', function() {
-  return Math.random();
-});
-
 module.exports.about = about;
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
