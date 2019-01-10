@@ -1,0 +1,29 @@
+<h2>Application Setting</h2>
+
+<form method="post" action="#" id="{{ form.id }}">
+
+  {{> inputText field = form.fields.name }}
+
+
+  {{#if form.fields.value.choices}}
+  {{> inputSelect field = form.fields.value }}
+  {{else}}
+  {{> inputText field = form.fields.value }}
+  {{/if}}
+
+  {{> inputHidden field = form.fields.userCanDelete }}
+
+  {{> inputHidden field = form.fields.id }}
+
+  <div class="bottom-buttons">
+    {{#if form.obj.userCanDelete }}
+    <div class="pull-left">
+      <button type="button" id="btnApplicationSettingDelete" class="btn btn-danger">Delete</button>
+    </div>
+    {{/if}}
+    <div class="pull-right">
+      <button type="button" id="btnApplicationSettingSave" class="btn btn-primary">Save</button>
+    </div>
+  </div>
+
+</form>
