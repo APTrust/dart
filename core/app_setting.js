@@ -69,7 +69,11 @@ class AppSetting extends PersistentObject {
      * @returns {Object}
      */
     static find(id) {
-        return Context.db('AppSetting').get(id);
+        let data = Context.db('AppSetting').get(id);
+        if (data) {
+            return Object.assign(new AppSetting(), data);
+        }
+        return undefined;
     }
 
     /**

@@ -22,6 +22,11 @@ $(function() {
         }
     });
 
+    // Route clicks on table rows
+    $('#container').on('click', 'table tr.clickable-row', function() {
+        window.location.href = $(this).data('url');
+    });
+
     // Load the inital nav.
     $('#nav').html(Templates.nav({ section: 'Dashboard' }));
 

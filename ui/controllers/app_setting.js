@@ -10,14 +10,30 @@ class AppSettingController extends BaseController {
     }
 
     create() {
-        let form = new AppSettingForm(new AppSetting());
-        let data = { form: form };
-        let html = Templates.appSettingForm(data);
-        return this.containerContent(html)
+        let form = AppSettingForm.create(new AppSetting());
+        let html = Templates.appSettingForm({ form: form });
+        return this.containerContent(html);
+    }
+
+    edit() {
+        let appSetting = AppSetting.find(this.params.get('id'));
+        let form = AppSettingForm.create(appSetting);
+        let html = Templates.appSettingForm({ form: form });
+        return this.containerContent(html);
     }
 
     update() {
-        return 'Update AppSetting';
+        let appSetting = AppSetting.find(this.params.get('id')) || new AppSetting();
+        let form = AppSettingForm.create(appSetting);
+        form.parseFromDom();
+        console.log(form);
+        if (!form.obj.validate()) {
+            form.setErrors();
+            let html = Templates.appSettingForm({ form: form });
+            return this.containerContent(html);
+        }
+        appSetting.save();
+        return this.list();
     }
 
     list() {

@@ -32,12 +32,12 @@ class Form {
     parseFromDom() {
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
-            let formValue = $(field.id).val().trim();
-            let newValue = this.castFormValueToType(oldValue, formValue);
+            let formValue = $(`#${field.id}`).val().trim();
+            let newValue = this.castNewValueToType(oldValue, formValue);
             if (oldValue !== newValue) {
                 this.changed[name] = {
-                    old: this.obj[name],
-                    new: value
+                    old: oldValue,
+                    new: newValue
                 };
                 this.obj[name] = newValue;
             }
@@ -57,6 +57,11 @@ class Form {
             }
         }
         return castValue;
+    }
+
+    setErrors() {
+        this.changed = {};
+        this._initFields();
     }
 }
 
