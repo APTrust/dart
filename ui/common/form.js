@@ -3,8 +3,8 @@ const { Util } = require('../../core/util');
 
 class Form {
 
-    constructor(id, obj, exclude = ['errors', 'help', 'type']) {
-        this.id = id;
+    constructor(formId, obj, exclude = ['errors', 'help', 'type']) {
+        this.formId = formId;
         this.obj = obj;
         this.exclude = exclude;
         this.fields = {};
@@ -18,7 +18,7 @@ class Form {
     _initFields() {
         for(let [name, value] of Object.entries(this.obj)) {
             if (!this.exclude.includes(name)) {
-                let elementId = `${this.id}_${name}`;
+                let elementId = `${this.formId}_${name}`;
                 let label = Util.camelToTitle(name);
                 let field = new Field(elementId, name, label, value);
                 field.error = this.obj.errors[name];

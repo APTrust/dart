@@ -8,7 +8,7 @@ test('Constructor initializes form fields', () => {
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
     let form = new Form('appSettingForm', appSetting);
-    expect(form.id).toEqual('appSettingForm');
+    expect(form.formId).toEqual('appSettingForm');
     expect(form.inlineForms).toEqual([]);
     expect(Object.keys(form.fields).length).toEqual(4);
 
