@@ -26,7 +26,7 @@ class AppSettingController extends BaseController {
     update() {
         let appSetting = AppSetting.find(this.params.get('id')) || new AppSetting();
         let form = AppSettingForm.create(appSetting);
-        form.parseFromDom();
+        form.parseFromDOM();
         if (!form.obj.validate()) {
             form.setErrors();
             let html = Templates.appSettingForm({ form: form });

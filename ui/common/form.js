@@ -29,7 +29,12 @@ class Form {
 
     // Update the properties of this.obj with the values the user
     // entered in the HTML form.
-    parseFromDom() {
+    parseFromDOM() {
+        // This is required for jest tests.
+        if ($ === undefined) {
+            var $ = require('jquery');
+        }
+        this.changed = {};
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
             let formValue = $(`#${field.id}`).val().trim();

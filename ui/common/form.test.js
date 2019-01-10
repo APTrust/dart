@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { Field } = require('./field');
 const { Form } = require('./form');
@@ -81,4 +82,35 @@ test('castNewValueToType()', () => {
     expect(form.castNewValueToType(obj.str, 'string 2')).toBe('string 2');
     expect(form.castNewValueToType(obj.number, '2')).toBe(2);
     expect(form.castNewValueToType(obj.bool, 'true')).toBe(true);
+});
+
+test('parseFromDOM()', () => {
+    let appSetting = new AppSetting();
+    let form = new Form('appSettingForm', appSetting);
+
+
+    document.body.innerHTML =
+    '<form>' +
+    '  <input type="text" id="appSettingForm_name" value="Homer" />' +
+    '  <input type="text" id="appSettingForm_value" value="Simpson" />' +
+    '  <input type="hidden" id="appSettingForm_id" value="1234" />' +
+    '  <input type="hidden" id="appSettingForm_userCanDelete" value="false" />' +
+    '</form>';
+
+    form.parseFromDOM();
+
+    // Use toBe() for exact type matching.
+    expect(form.obj.name).toBe('Homer');
+    expect(form.obj.value).toBe('Simpson');
+    expect(form.obj.id).toBe('1234');
+    expect(form.obj.userCanDelete).toBe(false);
+
+    expect(form.changed.name.old).toBeUndefined();
+    expect(form.changed.name.new).toEqual('Homer');
+    expect(form.changed.value.old).toBeUndefined();
+    expect(form.changed.value.new).toEqual('Simpson');
+    expect(Util.looksLikeUUID(form.changed.id.old)).toBe(true);
+    expect(form.changed.id.new).toEqual('1234');
+    expect(form.changed.userCanDelete.old).toBe(true);
+    expect(form.changed.userCanDelete.new).toBe(false);
 });
