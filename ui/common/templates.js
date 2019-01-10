@@ -35,6 +35,7 @@ var nav = handlebars.compile(readFile('nav.html'));
 // var uploadOrRebag = handlebars.compile(readFile('upload_or_rebag.html'));
 
 handlebars.registerPartial({
+    bannerAlert: readFile(path.join('partials', 'banner_alert.html')),
     customTag: readFile(path.join('partials', 'custom_tag.html')),
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),

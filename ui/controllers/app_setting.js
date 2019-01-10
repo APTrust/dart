@@ -7,6 +7,7 @@ class AppSettingController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
+        this.alertMessage = null;
     }
 
     create() {
@@ -26,19 +27,22 @@ class AppSettingController extends BaseController {
         let appSetting = AppSetting.find(this.params.get('id')) || new AppSetting();
         let form = AppSettingForm.create(appSetting);
         form.parseFromDom();
-        console.log(form);
         if (!form.obj.validate()) {
             form.setErrors();
             let html = Templates.appSettingForm({ form: form });
             return this.containerContent(html);
         }
+        this.alertMessage = `Saved application setting "${form.obj.name}"`;
         appSetting.save();
         return this.list();
     }
 
     list() {
         let items = AppSetting.list();
-        let data = { items: items };
+        let data = {
+            alertMessage: this.alertMessage,
+            items: items
+        };
         let html = Templates.appSettingList(data);
         return this.containerContent(html);
     }

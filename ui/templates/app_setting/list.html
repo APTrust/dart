@@ -1,9 +1,4 @@
-{{#if success }}
-<div class="alert alert-success" role="alert">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  {{ success }}
-</div>
-{{/if }}
+{{> bannerAlert message = alertMessage }}
 
 <h2>Application Settings</h2>
 <div class="pull-right mt-1 mb-3">
