@@ -62,7 +62,7 @@ class PersistentObject {
           * to false and the user will not be able to delete the property.
           *
           * @type {string}
-          * @default false
+          * @default true
           */
         this.userCanDelete = true;
         /**
