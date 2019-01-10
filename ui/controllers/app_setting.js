@@ -48,7 +48,13 @@ class AppSettingController extends BaseController {
     }
 
     destroy() {
-        return 'Destroy AppSetting';
+        let appSetting = AppSetting.find(this.params.get('id'));
+        if (confirm(`Delete application setting "${appSetting.name}"?`)) {
+            this.alertMessage = `Deleted application setting "${appSetting.name}"`;
+            appSetting.delete();
+            return this.list();
+        }
+        return this.noContent();
     }
 }
 
