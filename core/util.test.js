@@ -15,10 +15,6 @@ test('Util.unicodeByteLength()', () => {
     expect(Util.unicodeByteLength("總統是一個道德品質低下的人，不適合任職")).toEqual(57);
 });
 
-test('Util.electronIsRunning()', () => {
-    expect(Util.electronIsRunning()).toEqual(false);
-});
-
 test('Util.looksLikeUUID()', () => {
     let uuidV4 = "bf24a457-2d19-47c5-b3f5-a54a8cc790f7";
     let uuidV1 = "5ecc6bc8-91b1-11e8-9eb6-529269fb1459";

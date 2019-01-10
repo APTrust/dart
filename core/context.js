@@ -71,6 +71,17 @@ class GlobalContext {
     }
 
     /**
+      * Returns true or false, indicating whether or not we're
+      * currently running in Electron. This will be false in jest
+      * tests and when DART runs as a command-line tool.
+      *
+      * @returns {number}
+      */
+    electronIsRunning() {
+        return process && process.versions && process.versions.hasOwnProperty('electron');
+    }
+
+    /**
      * Returns a JavaScript object built from parsing this application's
      * package.json file.
      *

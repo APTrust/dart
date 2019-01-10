@@ -22,6 +22,10 @@ test('Context.db creates and returns data stores', () => {
     catch (ex) { }
 });
 
+test("Context knows when we're running inside Electron", () => {
+    expect(Context.electronIsRunning()).toEqual(false);
+});
+
 test("Context knows when it's in Electron dev mode", () => {
     expect(Context.isElectronDevMode()).toEqual(false);
 });
