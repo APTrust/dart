@@ -2,6 +2,14 @@ const { Config } = require('../core/config');
 const path = require('path');
 const winston = require('winston');
 
+const consoleFormat = winston.format.printf(function(info) {
+    if (info.level.includes('error')) {
+        return `${new Date().toISOString()} - ${info.level}: ${info.message}\n`;
+    }
+    return `${new Date().toISOString()} - ${info.level}: ${JSON.stringify(info.message, null, 4)}\n`;
+});
+
+
 // Define the custom settings for each transport.
 // TODO: Make some of these into AppSettings or internal settings
 // that can change at runtime.
@@ -32,6 +40,7 @@ var options = {
     console: {
         level: 'debug',
         handleExceptions: true,
+        format: winston.format.combine(winston.format.colorize(), consoleFormat),
         json: false,
         colorize: true,
     },
