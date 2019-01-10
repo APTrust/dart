@@ -15,18 +15,6 @@
 
   {{> inputHidden field = form.fields.id }}
 
-  <div class="bottom-buttons">
-    {{#if form.obj.userCanDelete }}
-    <div class="pull-left">
-      <a class="btn btn-danger" href="#AppSetting/destroy" role="button">Delete</a>
-    </div>
-    {{/if}}
-    <div class="pull-right">
-      <a class="btn btn-primary" href="#AppSetting/update?id={{ form.fields.id.value }}&__rand={{ rand }}" role="button">Save</a>
-    </div>
-    <div class="pull-right mr-5">
-      <a class="btn btn-secondary" href="#AppSetting/list" role="button">Cancel</a>
-    </div>
-  </div>
+  {{> formButtons form = form }}
 
 </form>

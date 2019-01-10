@@ -36,6 +36,7 @@ var nav = handlebars.compile(readFile('nav.html'));
 
 handlebars.registerPartial({
     customTag: readFile(path.join('partials', 'custom_tag.html')),
+    formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
     inputPassword: readFile(path.join('partials', 'input_password.html')),
