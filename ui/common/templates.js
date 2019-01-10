@@ -3,13 +3,13 @@ const fs = require('fs');
 const handlebars = require('handlebars')
 const templateDir = path.join(__dirname, "..", "templates");
 
-function readFile(filename) {
-    let filepath = path.join(templateDir, filename)
+function readFile(...args) {
+    let filepath = path.join(templateDir, ...args)
     return fs.readFileSync(filepath, 'utf8');
 }
 
-var about = handlebars.compile(readFile(path.join('about', 'index.html')));
-// var appSettingForm = handlebars.compile(readFile('app_setting_form.html'));
+var about = handlebars.compile(readFile('about', 'index.html'));
+var appSettingForm = handlebars.compile(readFile('app_setting', 'form.html'));
 // var appSettingList = handlebars.compile(readFile('app_setting_list.html'));
 // var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
 // var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
@@ -61,7 +61,7 @@ handlebars.registerHelper('resultSummary', function(result) {
 
 
 module.exports.about = about;
-// module.exports.appSettingForm = appSettingForm;
+module.exports.appSettingForm = appSettingForm;
 // module.exports.appSettingList = appSettingList;
 // module.exports.bagItProfileForm = bagItProfileForm;
 // module.exports.bagItProfileList = bagItProfileList;
