@@ -1808,9 +1808,9 @@
               
                 
                 <li><a
-                  href='#storageservice'
+                  href='#uploadtarget'
                   class=" toggle-sibling">
-                  StorageService
+                  UploadTarget
                   <span class='icon'>▸</span>
                 </a>
                 
@@ -1820,37 +1820,37 @@
                     <li class='h5'><span>Static members</span></li>
                     
                       <li><a
-                        href='#storageservicefind'
+                        href='#uploadtargetfind'
                         class='regular pre-open'>
                         .find
                       </a></li>
                     
                       <li><a
-                        href='#storageservicefindmatching'
+                        href='#uploadtargetfindmatching'
                         class='regular pre-open'>
                         .findMatching
                       </a></li>
                     
                       <li><a
-                        href='#storageservicefirst'
+                        href='#uploadtargetfirst'
                         class='regular pre-open'>
                         .first
                       </a></li>
                     
                       <li><a
-                        href='#storageservicefirstmatching'
+                        href='#uploadtargetfirstmatching'
                         class='regular pre-open'>
                         .firstMatching
                       </a></li>
                     
                       <li><a
-                        href='#storageservicelist'
+                        href='#uploadtargetlist'
                         class='regular pre-open'>
                         .list
                       </a></li>
                     
                       <li><a
-                        href='#storageservicesort'
+                        href='#uploadtargetsort'
                         class='regular pre-open'>
                         .sort
                       </a></li>
@@ -1862,61 +1862,61 @@
                       <li class='h5'><span>Instance members</span></li>
                       
                       <li><a
-                        href='#storageservicebucket'
+                        href='#uploadtargetbucket'
                         class='regular pre-open'>
                         #bucket
                       </a></li>
                       
                       <li><a
-                        href='#storageservicedescription'
+                        href='#uploadtargetdescription'
                         class='regular pre-open'>
                         #description
                       </a></li>
                       
                       <li><a
-                        href='#storageservicehost'
+                        href='#uploadtargethost'
                         class='regular pre-open'>
                         #host
                       </a></li>
                       
                       <li><a
-                        href='#storageservicelogin'
+                        href='#uploadtargetlogin'
                         class='regular pre-open'>
                         #login
                       </a></li>
                       
                       <li><a
-                        href='#storageserviceloginextra'
+                        href='#uploadtargetloginextra'
                         class='regular pre-open'>
                         #loginExtra
                       </a></li>
                       
                       <li><a
-                        href='#storageservicename'
+                        href='#uploadtargetname'
                         class='regular pre-open'>
                         #name
                       </a></li>
                       
                       <li><a
-                        href='#storageservicepassword'
+                        href='#uploadtargetpassword'
                         class='regular pre-open'>
                         #password
                       </a></li>
                       
                       <li><a
-                        href='#storageserviceport'
+                        href='#uploadtargetport'
                         class='regular pre-open'>
                         #port
                       </a></li>
                       
                       <li><a
-                        href='#storageserviceprotocol'
+                        href='#uploadtargetprotocol'
                         class='regular pre-open'>
                         #protocol
                       </a></li>
                       
                       <li><a
-                        href='#storageservicevalidate'
+                        href='#uploadtargetvalidate'
                         class='regular pre-open'>
                         #validate
                       </a></li>
@@ -3121,9 +3121,9 @@ have been written to the file system.
               
                 
                 <li><a
-                  href='#getstorageservice'
+                  href='#getuploadtarget'
                   class="">
-                  getStorageService
+                  getUploadTarget
                   
                 </a>
                 
@@ -6335,7 +6335,7 @@ DART network client interface.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new S3Client(storageService: <a href="#storageservice">StorageService</a>)</div>
+    <div class='pre p1 fill-light mt0'>new S3Client(uploadTarget: <a href="#uploadtarget">UploadTarget</a>)</div>
    
   
   
@@ -6360,8 +6360,8 @@ DART network client interface.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>storageService</span> <code class='quiet'>(<a href="#storageservice">StorageService</a>)</code>
-	    A StorageService record that
+            <span class='code bold'>uploadTarget</span> <code class='quiet'>(<a href="#uploadtarget">UploadTarget</a>)</code>
+	    A UploadTarget record that
 includes information about how to connect to a remote S3 service.
 This record includes the host URL, default bucket, and connection
 credentials.
@@ -6462,7 +6462,7 @@ credentials.
   
 
   <p>Downloads a file fron the remote bucket. The name of the remote bucket is
-determined by the <a href="#storageservice">StorageService</a> passed in to this class'
+determined by the <a href="#uploadtarget">UploadTarget</a> passed in to this class'
 constructor.</p>
 
  
@@ -6656,7 +6656,7 @@ NOT YET IMPLEMENTED.</p>
   
 
   <p>Uploads a file to the remote bucket. The name of the remote bucket is
-determined by the <a href="#storageservice">StorageService</a> passed in to this class'
+determined by the <a href="#uploadtarget">UploadTarget</a> passed in to this class'
 constructor.</p>
 
  
@@ -18695,21 +18695,21 @@ The returned list will not include links, only files.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='storageservice'>
-      StorageService
+    <h3 class='fl m0' id='uploadtarget'>
+      UploadTarget
     </h3>
     
     
   </div>
   
 
-  <p>StorageService describes any remote service (s3, ftp, etc.) to which
+  <p>UploadTarget describes any remote service (s3, ftp, etc.) to which
 we can upload data. This object contains the information required to
 connect to the remote service (hostname, login name, password, etc.).</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new StorageService(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new UploadTarget(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
    
   
   
@@ -18735,7 +18735,7 @@ connect to the remote service (hostname, login name, password, etc.).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the remote storage service. This
+	    The name of the remote upload target. This
 can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
 
@@ -18758,7 +18758,7 @@ can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
     <div class='py1 quiet mt1 prose-big'>Static Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='storageservicefind'>
+    <div class='border-bottom' id='uploadtargetfind'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -18829,7 +18829,7 @@ and returns it. Returns undefined if the object is not in the datastore.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicefindmatching'>
+    <div class='border-bottom' id='uploadtargetfindmatching'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -18969,7 +18969,7 @@ and returns it. Returns undefined if the object is not in the datastore.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicefirst'>
+    <div class='border-bottom' id='uploadtargetfirst'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19094,7 +19094,7 @@ single item at most (or null if there are no matches).</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicefirstmatching'>
+    <div class='border-bottom' id='uploadtargetfirstmatching'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19217,7 +19217,7 @@ or null if no item matches.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicelist'>
+    <div class='border-bottom' id='uploadtargetlist'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19348,7 +19348,7 @@ or null if no item matches.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicesort'>
+    <div class='border-bottom' id='uploadtargetsort'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19438,7 +19438,7 @@ it returns a sorted list of objects.</p>
     <div class='py1 quiet mt1 prose-big'>Instance Members</div>
     <div class="clearfix">
   
-    <div class='border-bottom' id='storageservicebucket'>
+    <div class='border-bottom' id='uploadtargetbucket'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19492,7 +19492,7 @@ to cd into on the remote server.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicedescription'>
+    <div class='border-bottom' id='uploadtargetdescription'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19504,7 +19504,7 @@ to cd into on the remote server.</p>
 
   
 
-  <p>A description of this storage service. It should be meaningful
+  <p>A description of this upload target. It should be meaningful
 to the user.</p>
 
  
@@ -19546,7 +19546,7 @@ to the user.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicehost'>
+    <div class='border-bottom' id='uploadtargethost'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19599,7 +19599,7 @@ to the user.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicelogin'>
+    <div class='border-bottom' id='uploadtargetlogin'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19653,7 +19653,7 @@ For s3 connections, it's the Access Key Id.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageserviceloginextra'>
+    <div class='border-bottom' id='uploadtargetloginextra'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19710,7 +19710,7 @@ file here.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicename'>
+    <div class='border-bottom' id='uploadtargetname'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19722,7 +19722,7 @@ file here.</p>
 
   
 
-  <p>name is the name of this storage service. It should be meaningful
+  <p>name is the name of this upload target. It should be meaningful
 to the user.</p>
 
  
@@ -19764,7 +19764,7 @@ to the user.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicepassword'>
+    <div class='border-bottom' id='uploadtargetpassword'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19818,7 +19818,7 @@ For S3, it's the secret key (aka AWS Secret Access Key).</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageserviceport'>
+    <div class='border-bottom' id='uploadtargetport'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19873,7 +19873,7 @@ to the service's default port.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageserviceprotocol'>
+    <div class='border-bottom' id='uploadtargetprotocol'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -19928,7 +19928,7 @@ capable of communicating via that protocol.</p>
       </div>
     </div>
   
-    <div class='border-bottom' id='storageservicevalidate'>
+    <div class='border-bottom' id='uploadtargetvalidate'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -29930,24 +29930,24 @@ an exception.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='getstorageservice'>
-      getStorageService
+    <h3 class='fl m0' id='getuploadtarget'>
+      getUploadTarget
     </h3>
     
     
   </div>
   
 
-  <p>This returns the first StorageService record that implements the S3
+  <p>This returns the first UploadTarget record that implements the S3
 protocol and matches the hostname of the URL specified in this.opts.dest.
-It will return the StorageService whose bucket property exactly matches
+It will return the UploadTarget whose bucket property exactly matches
 the URL's pathname, if there is such a service. Failing that, it will
 return the service whose bucket starts with the path name. Failing that,
 it will return the first service with the matching host and protocol.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>getStorageService(): <a href="#storageservice">StorageService</a></div>
+    <div class='pre p1 fill-light mt0'>getUploadTarget(): <a href="#uploadtarget">UploadTarget</a></div>
    
   
   
@@ -29966,7 +29966,7 @@ it will return the first service with the matching host and protocol.</p>
   
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#storageservice">StorageService</a></code>:
+      <code><a href="#uploadtarget">UploadTarget</a></code>:
         or null.
 
       
