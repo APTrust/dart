@@ -1,7 +1,7 @@
-const { AppSettingController } = require('../controllers/app_setting');
+const { AppSettingController } = require('../controllers/app_setting_controller');
 const { UIHelper } = require('./ui_helper');
 const url = require('url');
-jest.mock('../controllers/app_setting');
+jest.mock('../controllers/app_setting_controller');
 
 beforeEach(() => {
   AppSettingController.mockClear();

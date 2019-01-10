@@ -1,13 +1,13 @@
-const { AboutController } = require('./about');
-const { AppSettingController } = require('./app_setting');
-const { BagItProfileController } = require('./bagit_profile');
-const { DashboardController } = require('./dashboard');
-const { HelpController } = require('./help');
-const { JobController } = require('./job');
-const { LogController } = require('./log');
-const { ManifestController } = require('./manifest');
-const { SetupController } = require('./setup');
-const { UploadTargetController } = require('./upload_target');
+const { AboutController } = require('./about_controller');
+const { AppSettingController } = require('./app_setting_controller');
+const { BagItProfileController } = require('./bagit_profile_controller');
+const { DashboardController } = require('./dashboard_controller');
+const { HelpController } = require('./help_controller');
+const { JobController } = require('./job_controller');
+const { LogController } = require('./log_controller');
+const { ManifestController } = require('./manifest_controller');
+const { SetupController } = require('./setup_controller');
+const { UploadTargetController } = require('./upload_target_controller');
 
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
