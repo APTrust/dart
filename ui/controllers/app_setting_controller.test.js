@@ -44,23 +44,117 @@ test('new()', () => {
     expect(navLinkClass).toContain('active');
     expect($('h2:contains("Application Setting")').length).toEqual(1);
     expect($('form').length).toEqual(1);
+
     expect($('#appSettingForm_name').length).toEqual(1);
     expect($('#appSettingForm_value').length).toEqual(1);
     expect($('#appSettingForm_userCanDelete').length).toEqual(1);
     expect($('#appSettingForm_id').length).toEqual(1);
+
     let saveButton = $('a:contains("Save")').first();
     expect(saveButton).toBeDefined();
     expect(saveButton.attr('href')).toContain('#AppSetting/update');
 });
 
-// test('edit()', () => {
-// });
+test('edit()', () => {
+    let appSetting = createAppSetting();
+    let idParams = new url.URLSearchParams({ id: appSetting.id });
+    let controller = new AppSettingController(idParams);
+    let response = controller.edit();
+    UITestUtil.setDocumentBody(response);
 
-// test('update()', () => {
-// });
+    expect($('h2:contains("Application Setting")').length).toEqual(1);
+    expect($('form').length).toEqual(1);
 
+    expect($('#appSettingForm_name').val()).toEqual(appSetting.name);
+    expect($('#appSettingForm_value').val()).toEqual(appSetting.value);
+    expect($('#appSettingForm_userCanDelete').val()).toEqual(appSetting.userCanDelete.toString());
+    expect($('#appSettingForm_id').val()).toEqual(appSetting.id);
+
+    let saveButton = $('a:contains("Save")').first();
+    expect(saveButton).toBeDefined();
+    expect(saveButton.attr('href')).toContain('#AppSetting/update');
+});
+
+test('update()', () => {
+    let appSetting = createAppSetting();
+    let idParams = new url.URLSearchParams({ id: appSetting.id });
+    let controller = new AppSettingController(idParams);
+
+    // Set up the form.
+    let response = controller.edit();
+    UITestUtil.setDocumentBody(response);
+
+    // Change the form values.
+    $('#appSettingForm_name').val('New Name');
+    $('#appSettingForm_value').val('New Value');
+    $('#appSettingForm_userCanDelete').val('false')
+
+    // Submit form to controller.
+    controller.update();
+
+    // Make sure values were saved to DB.
+    appSetting = AppSetting.find(appSetting.id);
+    expect(appSetting.name).toEqual('New Name');
+    expect(appSetting.value).toEqual('New Value');
+    expect(appSetting.userCanDelete).toEqual(false);
+});
+
+// -----------------------------------------------------------------
+// TODO: Need to implement filter parsing in AppController first.
+// -----------------------------------------------------------------
 // test('list()', () => {
+//     let setting1 = new AppSetting('Name 1', 'chocolate');
+//     let setting2 = new AppSetting('Name 2', 'vanilla');
+//     let setting3 = new AppSetting('Name 3', 'cherry');
+//     let setting4 = new AppSetting('Name 3', 'caramel');
+//     let setting5 = new AppSetting('Name 3', 'coffee');
+
+//     let listParams = new url.URLSearchParams({
+//         offset: 1,
+//         limit: 3,
+//         orderBy: 'name',
+//         sortDirection: 'desc'
+//     });
+//     let controller = new AppSettingController(listParams);
+
+
 // });
 
-// test('destroy()', () => {
-// });
+test('destroy() deletes the object when you say yes', () => {
+
+    // Mock window.confirm to return true
+    window.confirm = jest.fn(() => true)
+
+    let appSetting = createAppSetting();
+    let idParams = new url.URLSearchParams({ id: appSetting.id });
+    let controller = new AppSettingController(idParams);
+
+    expect(AppSetting.find(appSetting.id)).toBeDefined();
+
+    let deleteResponse = controller.destroy();
+    expect(AppSetting.find(appSetting.id)).not.toBeDefined();
+
+    // Confirm that destroy returns the user to the list.
+    let listResponse = controller.list();
+    expect(deleteResponse).toEqual(listResponse);
+});
+
+test('destroy() does not delete the object when you say no', () => {
+
+    // Mock window.confirm to return false
+    window.confirm = jest.fn(() => false)
+
+    let appSetting = createAppSetting();
+    let idParams = new url.URLSearchParams({ id: appSetting.id });
+    let controller = new AppSettingController(idParams);
+
+    expect(AppSetting.find(appSetting.id)).toBeDefined();
+
+    let deleteResponse = controller.destroy();
+
+    // Object should still be there.
+    expect(AppSetting.find(appSetting.id)).toBeDefined();
+
+    // And the response should be empty.
+    expect(deleteResponse).toEqual({});
+});

@@ -42,4 +42,18 @@ test('handleRequest', () => {
     expect(AppSettingController).toHaveBeenCalledTimes(1);
     expect(AppSettingController).toHaveBeenCalledWith(params);
     expect(AppSettingController.mock.instances[0].list).toHaveBeenCalledTimes(1);
-})
+});
+
+// -----------------------------------------------------------------
+// TODO: Move casting code, then activate & test this method.
+// -----------------------------------------------------------------
+// test('paramsToHash', () => {
+//     let hash = {
+//         offset: 1,
+//         limit: 3,
+//         orderBy: 'name',
+//         sortDirection: 'desc'
+//     };
+//     let params = new url.URLSearchParams(hash);
+//     expect(UIHelper.paramsToHash(params)).toEqual(hash);
+// });
