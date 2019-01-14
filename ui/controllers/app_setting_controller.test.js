@@ -40,7 +40,8 @@ test('new()', () => {
     let controller = new AppSettingController();
     let response = controller.new();
     UITestUtil.setDocumentBody(response);
-    UITestUtil.assertActiveNavItem("Settings");
+    let navLinkClass = UITestUtil.getNavItemCssClass("Settings");
+    expect(navLinkClass).toContain('active');
     expect($('h2:contains("Application Setting")').length).toEqual(1);
     expect($('form').length).toEqual(1);
     expect($('#appSettingForm_name').length).toEqual(1);

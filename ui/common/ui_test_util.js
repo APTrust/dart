@@ -10,11 +10,11 @@ class UITestUtil {
 
     }
 
-    // Check that the expected nav section heading is set to active.
+    // Get the CSS class of the specified nav section heading.
     // Sections include Dashboard, Settings, Jobs, Help.
-    assertActiveNavItem(expected) {
-        let cssClass = $(`a:contains(${expected})`).parent().attr('class');
-        expect(cssClass).toContain("active");
+    getNavItemCssClass(expected) {
+        return $(`a:contains(${expected})`).parent().attr('class');
+        //expect(cssClass).toContain("active");
     }
 
     // Set the document body from the controller response.
