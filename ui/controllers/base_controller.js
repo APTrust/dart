@@ -1,10 +1,12 @@
 const electron = require('electron');
+const Templates = require('../common/templates');
 
 class BaseController {
 
     constructor(params, navSection) {
         this.params = params;
         this.navSection = navSection;
+        this.alertMessage = null;
     }
 
     containerContent(html) {

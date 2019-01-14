@@ -7,10 +7,9 @@ class AppSettingController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
-        this.alertMessage = null;
     }
 
-    create() {
+    new() {
         let form = AppSettingForm.create(new AppSetting());
         let html = Templates.appSettingForm({ form: form });
         return this.containerContent(html);
