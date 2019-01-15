@@ -19,7 +19,7 @@ test('Constructor sets expected properties', () => {
     expect(controller.alertMessage).toBeNull();
 });
 
-test('paramsToHash()', () => {
+test('paramsToHash() with typeMap entries', () => {
     let controller = new BaseController(params, "Settings");
     controller.typeMap = {
         limit: 'number',
@@ -34,6 +34,19 @@ test('paramsToHash()', () => {
     expect(data.orderBy).toBe('name');
     expect(data.sortDirection).toBe('desc');
     expect(data.boolValue).toBe(true);
+    expect(data.url).toBe('https://example.com');
+});
+
+test('paramsToHash() without typeMap entries', () => {
+    let controller = new BaseController(params, "Settings");
+    let data = controller.paramsToHash();
+
+    // All items remain strings
+    expect(data.limit).toBe('10');
+    expect(data.offset).toBe('0');
+    expect(data.orderBy).toBe('name');
+    expect(data.sortDirection).toBe('desc');
+    expect(data.boolValue).toBe('true');
     expect(data.url).toBe('https://example.com');
 });
 

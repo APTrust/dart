@@ -33,6 +33,11 @@ test('Constructor sets expected properties', () => {
     let controller = new AppSettingController(params);
     expect(controller.params).toEqual(params);
     expect(controller.navSection).toEqual("Settings");
+    expect(controller.typeMap).toEqual({
+        "limit": "number",
+        "offset": "number",
+        "userCanDelete": "boolean"
+    });
     expect(controller.alertMessage).toBeNull();
 });
 
@@ -99,15 +104,15 @@ test('update()', () => {
     expect(appSetting.userCanDelete).toEqual(false);
 });
 
-// -----------------------------------------------------------------
-// TODO: Need to implement filter parsing in AppController first.
-// -----------------------------------------------------------------
+// -----------------------------------------------------------
+// TODO: Fix this!
+// -----------------------------------------------------------
 // test('list()', () => {
 //     let setting1 = new AppSetting('Name 1', 'chocolate');
 //     let setting2 = new AppSetting('Name 2', 'vanilla');
 //     let setting3 = new AppSetting('Name 3', 'cherry');
-//     let setting4 = new AppSetting('Name 3', 'caramel');
-//     let setting5 = new AppSetting('Name 3', 'coffee');
+//     let setting4 = new AppSetting('Name 4', 'caramel');
+//     let setting5 = new AppSetting('Name 5', 'coffee');
 
 //     let listParams = new url.URLSearchParams({
 //         offset: 1,
@@ -116,8 +121,14 @@ test('update()', () => {
 //         sortDirection: 'desc'
 //     });
 //     let controller = new AppSettingController(listParams);
+//     let response = controller.list();
+//     UITestUtil.setDocumentBody(response);
 
-
+//     expect($('td:contains(chocolate)').length).toEqual(0);
+//     expect($('td:contains(vanilla)').length).toEqual(1);
+//     expect($('td:contains(cherry)').length).toEqual(1);
+//     expect($('td:contains(caramel)').length).toEqual(1);
+//     expect($('td:contains(apple)').length).toEqual(0);
 // });
 
 test('destroy() deletes the object when you say yes', () => {

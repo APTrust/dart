@@ -275,7 +275,7 @@ class PersistentObject {
         let matches = [];  // List of matched objects to return
         let matched = 0;   // Count of objects matched so far. We may skip some, due to opts.offset.
         for (let obj of sortedList) {
-            if (filterFunction(obj)) {
+            if (typeof filterFunction === 'function' && filterFunction(obj)) {
                 matched++;
                 if (matched > opts.offset && (opts.limit < 1 || matches.length < opts.limit)) {
                     matches.push(obj);

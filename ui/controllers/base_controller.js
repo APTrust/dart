@@ -11,10 +11,11 @@ class BaseController {
         this.alertMessage = null;
     }
 
+    // Converts URLSearchParams to a simple hash with correct data types.
     paramsToHash() {
         let data = {};
         for(let [key, value] of this.params.entries()) {
-            let toType = this.typeMap[key];
+            let toType = this.typeMap[key] || 'string';
             if (toType === 'string') {
                 data[key] = value;
             } else {
