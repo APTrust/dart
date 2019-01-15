@@ -33,17 +33,6 @@ class UIHelper {
         return controller[req.fn]();
     }
 
-    // -----------------------------------------------------------------
-    // TODO: Needs type casting. Move casting from Form to Util first.
-    // -----------------------------------------------------------------
-    // Convert URLSearchParams to hash.
-    // paramsToHash(params) {
-    //     let data = {};
-    //     for(let [key, value] of params.entries()) {
-    //         data[key] = value;
-    //     }
-    //     return data;
-    // }
 }
 
 module.exports.UIHelper = Object.freeze(new UIHelper());
