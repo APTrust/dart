@@ -1819,6 +1819,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#utilcast'
+                        class='regular pre-open'>
+                        .cast
+                      </a></li>
+                    
+                      <li><a
                         href='#utildeleterecursive'
                         class='regular pre-open'>
                         .deleteRecursive
@@ -18796,7 +18802,7 @@ false = "false" = "no".</p>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>boolValue(str)</span>
+            <span class='code strong strong truncate'>boolValue(val)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -18809,7 +18815,7 @@ are true. "false" and "no" are false. String is case-insensitive.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>boolValue(str: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
+    <div class='pre p1 fill-light mt0'>boolValue(val: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
    
   
   
@@ -18827,8 +18833,8 @@ are true. "false" and "no" are false. String is case-insensitive.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>str</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>))</code>
-	    The string to examine.
+            <span class='code bold'>val</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>))</code>
+	    The value to examine.
 
           </div>
           
@@ -18843,7 +18849,8 @@ are true. "false" and "no" are false. String is case-insensitive.</p>
     
       <div class='py1 quiet mt1 prose-big'>Returns</div>
       <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
-        The boolean value of the string, or null if it can't be determined.
+        The boolean value of the string, or undefined
+if it can't be determined.
 
       
     
@@ -18923,6 +18930,90 @@ This is useful for converting var names to labels in the UI.</p>
 
   
 
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='utilcast'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>cast(str, toType)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This casts the string value str to type toType and returns
+the cast value. This is used primarily for converting values
+from HTML forms to correctly-typed JavaScript values.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>cast(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, toType: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>str</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The string value to be cast.
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>toType</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The type to which the string value
+should be cast. Currently supports only 'number' and 'boolean'.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>Util.cast(<span class="hljs-string">'false'</span>, <span class="hljs-string">'boolean'</span>) <span class="hljs-comment">// returns false</span>
+Util.cast(<span class="hljs-string">'yes'</span>, <span class="hljs-string">'boolean'</span>)   <span class="hljs-comment">// returns true</span>
+Util.cast(<span class="hljs-string">'1'</span>, <span class="hljs-string">'boolean'</span>)     <span class="hljs-comment">// returns true</span>
+Util.cast(<span class="hljs-string">'3'</span>, <span class="hljs-string">'number'</span>)      <span class="hljs-comment">// returns 3</span>
+Util.cast(<span class="hljs-string">'3.14'</span>, <span class="hljs-string">'number'</span>)   <span class="hljs-comment">// returns 3.14</span></pre>
+    
   
 
   
