@@ -196,17 +196,25 @@ class Util {
       * Returns the boolean value of a string. "true" and "yes"
       * are true. "false" and "no" are false. String is case-insensitive.
       *
-      * @param {boolean|string} str - The string to examine.
-      * @returns {boolean} The boolean value of the string, or null if it can't be determined.
+      * @param {boolean|string} val - The value to examine.
+      *
+      * @returns {boolean} The boolean value of the string, or undefined
+      * if it can't be determined.
       */
-    static boolValue(str) {
-        var lcString = String(str).toLowerCase();
-        if (lcString == "true" || lcString == "yes") {
-            return true;
-        } else if (lcString == "false" || lcString == "no") {
-            return false;
+    static boolValue(val) {
+        if (typeof val === 'boolean') {
+            return val;
         }
-        return null;
+        var lcString = String(val).toLowerCase();
+        var trueValues = ['true', 'yes', '1'];
+        var falseValues = ['false', 'no', '0'];
+        var retValue;
+        if (trueValues.includes(lcString)) {
+            retValue = true;
+        } else if (falseValues.includes(lcString)) {
+            retValue = false;
+        }
+        return retValue;
     }
 
     /**
@@ -350,6 +358,38 @@ class Util {
         var bagName = path.basename(filepath);
         return bagName.replace(/\.tar$|\.tar\.gz$|\.t?gz$|\.tar\.Z$|\.tar\.bz$|\.tar\.bz2$|\.bz$|\.bz2$|\.zip$|\.zipx$|\.rar$|\.7z$|\.s7z$|\.par$|\.par2$/, '');
     }
+
+    /**
+     * This casts the string value str to type toType and returns
+     * the cast value. This is used primarily for converting values
+     * from HTML forms to correctly-typed JavaScript values.
+     *
+     * @example
+     * Util.cast('false', 'boolean') // returns false
+     * Util.cast('yes', 'boolean')   // returns true
+     * Util.cast('1', 'boolean')     // returns true
+     * Util.cast('3', 'number')      // returns 3
+     * Util.cast('3.14', 'number')   // returns 3.14
+     *
+     * @param {string} str - The string value to be cast.
+     *
+     * @param {string} toType - The type to which the string value
+     * should be cast. Currently supports only 'number' and 'boolean'.
+    */
+    static cast(str, toType) {
+        let castValue = str;
+        if (toType === 'boolean') {
+            castValue = Util.boolValue(str);
+        } else if (toType === 'number') {
+            if (str.indexOf('.') > -1) {
+                castValue = parseFloat(str);
+            } else {
+                castValue = parseInt(str);
+            }
+        }
+        return castValue;
+    }
+
 }
 
 module.exports.Util = Util;

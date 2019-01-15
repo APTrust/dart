@@ -113,7 +113,7 @@ test('Util.boolValue()', () => {
     expect(Util.boolValue(false)).toEqual(false);
     expect(Util.boolValue("False")).toEqual(false);
     expect(Util.boolValue("No")).toEqual(false);
-    expect(Util.boolValue("random word")).toBeNull();
+    expect(Util.boolValue("random word")).toBeUndefined();
 });
 
 test('Util.toHumanSize()', () => {
@@ -211,4 +211,12 @@ test('Util.bagNameFromPath()', () => {
 
     // Should not trim off unrecognized extension
     expect(Util.bagNameFromPath('/var/tmp/bag_of_photos.123')).toEqual('bag_of_photos.123');
+});
+
+test('Util.cast()', () => {
+     expect(Util.cast('false', 'boolean')).toBe(false);
+     expect(Util.cast('yes', 'boolean')).toBe(true);
+     expect(Util.cast('1', 'boolean')).toBe(true);
+     expect(Util.cast('3', 'number')).toBe(3);
+     expect(Util.cast('3.14', 'number')).toBe(3.14);
 });
