@@ -51,17 +51,8 @@ class Form {
 
     // Cast strings from DOM form to bool or number if necessary.
     castNewValueToType(oldValue, formValue) {
-        let castValue = formValue
-        if (typeof oldValue === 'boolean') {
-            castValue = Util.boolValue(formValue);
-        } else if (typeof oldValue === 'number') {
-            if (formValue.indexOf('.') > -1) {
-                castValue = parseFloat(formValue);
-            } else {
-                castValue = parseInt(formValue);
-            }
-        }
-        return castValue;
+        let toType = typeof oldValue;
+        return Util.cast(formValue, toType);
     }
 
     setErrors() {
