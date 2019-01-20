@@ -21,7 +21,7 @@
         "handlebars": "^4.0.12",
         "minio": "^7.0.2",
         "nexe": "^2.0.0-rc.34",
-        "popper.js": "^1.14.3",
+        "popper.js": "^1.14.6",
         "react": "^16.7.0",
         "require-dir": "^1.2.0",
         "tar-stream": "^1.6.2",
