@@ -27,6 +27,7 @@ class Form {
         }
     }
 
+
     // Update the properties of this.obj with the values the user
     // entered in the HTML form.
     parseFromDOM() {

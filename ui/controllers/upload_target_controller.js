@@ -4,7 +4,7 @@ const Templates = require('../common/templates');
 class UploadTargetController extends BaseController {
 
     constructor(params) {
-        super(params, 'Settings');
+        super(params, 'UploadTarget');
     }
 
     create() {

@@ -1,0 +1,27 @@
+<h1>Storage Service</h1>
+
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = form.fields.name }}
+
+  {{> inputText field = form.fields.description }}
+
+  {{> inputSelect field = form.fields.protocol }}
+
+  {{> inputText field = form.fields.host }}
+
+  {{> inputText field = form.fields.port }}
+
+  {{> inputText field = form.fields.bucket }}
+
+  {{> inputText field = form.fields.login }}
+
+  {{> inputPassword field = form.fields.password }}
+
+  {{> inputText field = form.fields.loginExtra }}
+
+  {{> inputHidden field = form.fields.id }}
+
+  {{> formButtons form = form }}
+
+</form>
