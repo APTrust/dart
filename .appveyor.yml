@@ -19,7 +19,7 @@ environment:
 #  artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
-  - ps: Install-Product node 8 x64
+    #  - ps: Install-Product node 8 x64
   - git reset --hard HEAD
   - npm install npm -g
     #  - npm install electron-builder@next # force install next version to test electron-builder
@@ -27,9 +27,9 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
 
-branches:
-    only:
-     - never-build-branch-automatically-dont-use-this-name
+    #branches:
+    #    only:
+        #     - never-build-branch-automatically-dont-use-this-name
 
 build_script:
   - npm test -- --runInBand
