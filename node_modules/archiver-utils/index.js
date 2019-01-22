@@ -10,7 +10,7 @@ var path = require('path');
 var nutil = require('util');
 var lazystream = require('lazystream');
 var normalizePath = require('normalize-path');
-var _ = require('lodash');
+var _ = { defaults: require('lodash.defaults') };
 
 var Stream = require('stream').Stream;
 var PassThrough = require('readable-stream').PassThrough;

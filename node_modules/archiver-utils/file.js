@@ -8,7 +8,14 @@
 var fs = require('graceful-fs');
 var path = require('path');
 
-var _ = require('lodash');
+var _ = { flatten: require('lodash.flatten'),
+          difference: require('lodash.difference'),
+          union: require('lodash.union'),
+          toArray: require('lodash.toarray'),
+          isPlainObject: require('lodash.isplainobject'),
+          defaults: require('lodash.defaults'),
+          extend: require('lodash.assign')
+        }
 var glob = require('glob');
 
 var file = module.exports = {};
