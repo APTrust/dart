@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = toHAST
+module.exports = toHast
 
 var xtend = require('xtend')
 var u = require('unist-builder')
@@ -12,7 +12,7 @@ var one = require('./one')
 var footer = require('./footer')
 var handlers = require('./handlers')
 
-/* Factory to transform. */
+// Factory to transform.
 function factory(tree, options) {
   var settings = options || {}
   var dangerous = settings.allowDangerousHTML
@@ -27,13 +27,12 @@ function factory(tree, options) {
 
   return h
 
-  /* Finalise the created `right`, a HAST node, from
-   * `left`, an MDAST node.   */
+  // Finalise the created `right`, a hast node, from `left`, an mdast node.
   function augment(left, right) {
     var data
     var ctx
 
-    /* Handle `data.hName`, `data.hProperties, `hChildren`. */
+    // Handle `data.hName`, `data.hProperties, `hChildren`.
     if (left && 'data' in left) {
       data = left.data
 
@@ -62,7 +61,7 @@ function factory(tree, options) {
     return right
   }
 
-  /* Create an element for a `node`. */
+  // Create an element for a `node`.
   function h(node, tagName, props, children) {
     if (
       (children === undefined || children === null) &&
@@ -86,8 +85,8 @@ function factory(tree, options) {
   }
 }
 
-/* Transform `tree`, which is an MDAST node, to a HAST node. */
-function toHAST(tree, options) {
+// Transform `tree`, which is an mdast node, to a hast node.
+function toHast(tree, options) {
   var h = factory(tree, options)
   var node = one(h, tree)
   var footnotes = footer(h)

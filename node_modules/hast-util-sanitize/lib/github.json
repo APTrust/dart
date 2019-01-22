@@ -100,7 +100,8 @@
     "s",
     "strike",
     "summary",
-    "details"
+    "details",
+    "input"
   ],
   "attributes": {
     "a": [
@@ -109,6 +110,13 @@
     "img": [
       "src",
       "longDesc"
+    ],
+    "input": [
+      ["type", "checkbox"],
+      ["disabled", true]
+    ],
+    "li": [
+      ["className", "task-list-item"]
     ],
     "div": [
       "itemScope",
@@ -196,5 +204,11 @@
       "width",
       "itemProp"
     ]
+  },
+  "required": {
+    "input": {
+      "type": "checkbox",
+      "disabled": true
+    }
   }
 }

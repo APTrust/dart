@@ -2,7 +2,7 @@
 
 module.exports = statistics
 
-/* Get stats for a file, list of files, or list of messages. */
+// Get stats for a file, list of files, or list of messages.
 function statistics(files) {
   var result = {true: 0, false: 0, null: 0}
 
@@ -19,10 +19,10 @@ function statistics(files) {
   function count(value) {
     if (value) {
       if (value[0] && value[0].messages) {
-        /* Multiple vfiles */
+        // Multiple vfiles
         countInAll(value)
       } else {
-        /* One vfile / messages */
+        // One vfile / messages
         countAll(value.messages || value)
       }
     }
