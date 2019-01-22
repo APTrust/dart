@@ -5,7 +5,7 @@ platform: x64
 init:
   - git config --global core.autocrlf input
     # TODO: Needs select-str to get version from package.json to save in env and update below
-  - ps: Update-AppveyorBuild -Version "0.1.9-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))-Windows"
+    #  - ps: Update-AppveyorBuild -Version "0.1.9-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))-Windows"
     #  - set BUILDVER=%APPVEYOR_BUILD_VERSION%-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))
 
 cache:
