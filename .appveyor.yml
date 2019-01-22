@@ -5,7 +5,7 @@ platform: x64
 init:
   - git config --global core.autocrlf input
     # TODO: Needs select-str to get version from package.json to save in env and update below
-  - ps: Update-AppveyorBuild -Version "0.1.9-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))-Windows"
+    #  - ps: Update-AppveyorBuild -Version "0.1.9-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))-Windows"
     #  - set BUILDVER=%APPVEYOR_BUILD_VERSION%-$($env:APPVEYOR_REPO_COMMIT.substring(0,7))
 
 cache:
@@ -13,16 +13,13 @@ cache:
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
-clone_folder: c:\gopath\src\github.com\APTrust\dart
-
 environment:
-  GOPATH: c:\gopath
   access_token:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
 #  artifactName: DART.Setup.0.1.8.$(APPVEYOR_BUILD_VERSION).$(APPVEYOR_REPO_COMMIT).exe
 
 install:
-  - ps: Install-Product node 8 x64
+  - ps: Install-Product node 11.2.0 x64
   - git reset --hard HEAD
   - npm install npm -g
     #  - npm install electron-builder@next # force install next version to test electron-builder
@@ -30,9 +27,9 @@ install:
   - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
 
-branches:
-    only:
-     - never-build-branch-automatically-dont-use-this-name
+    #branches:
+    #    only:
+        #     - never-build-branch-automatically-dont-use-this-name
 
 build_script:
   - npm test -- --runInBand

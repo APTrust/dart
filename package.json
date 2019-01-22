@@ -46,7 +46,7 @@
     },
     "build": {
         "appId": "com.electron.DART",
-        "copyright": "Copyright © 2018 APTrust",
+        "copyright": "Copyright © 2019 APTrust",
         "productName": "DART",
         "electronVersion": "4.0.0",
         "asar": true,
