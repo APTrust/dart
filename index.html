@@ -25102,9 +25102,9 @@ and returns it. Returns undefined if the object is not in the datastore.</p>
   
 
   <p>first returns the first item matching that passes the filterFunction.
-You can combine orderBy, sortDirection, and offset to get the second, third, etc.
-match for the given criteria, but note that this function only returns a
-single item at most (or null if there are no matches).</p>
+You can combine orderBy, sortDirection, and offset to get the second,
+third, etc. match for the given criteria, but note that this function
+only returns a single item at most (or null if there are no matches).</p>
 
  
   
@@ -25136,7 +25136,8 @@ single item at most (or null if there are no matches).</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>filterFunction</span> <code class='quiet'>(<a href="#filterfunction">filterFunction</a>)</code>
-	    The name of the property to match.
+	    The name of the property
+to match.
 
           </div>
           
@@ -25174,7 +25175,8 @@ single item at most (or null if there are no matches).</p>
                 <tr>
   <td class='break-word'><span class='code bold'>opts.sortDirection</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
   </td>
-  <td class='break-word'><span>Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+  <td class='break-word'><span>Sort the list 'asc' (ascending)
+or 'desc'. Default is asc.
 </span></td>
 </tr>
 
@@ -25183,7 +25185,8 @@ single item at most (or null if there are no matches).</p>
                 <tr>
   <td class='break-word'><span class='code bold'>opts.offset</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></code>
   </td>
-  <td class='break-word'><span>Skip this many items before choosing a result.
+  <td class='break-word'><span>Skip this many items before choosing
+a result.
 </span></td>
 </tr>
 
@@ -25224,13 +25227,16 @@ single item at most (or null if there are no matches).</p>
 <span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge);
 
 <span class="hljs-comment">// Get the newest matching object</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,  {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>});
+<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>});
 
 <span class="hljs-comment">// Get the second newest matching object</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,  {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>, <span class="hljs-attr">offset</span>: <span class="hljs-number">1</span>});
+<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>, <span class="hljs-attr">offset</span>: <span class="hljs-number">1</span>});
 
 <span class="hljs-comment">// Get the oldest matching object</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,  {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'asc'</span>});</pre>
+<span class="hljs-keyword">let</span> obj = persistentObject.first(nameAndAge,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'asc'</span>});</pre>
     
   
 
@@ -25336,7 +25342,8 @@ or null if no item matches.</p>
                 <tr>
   <td class='break-word'><span class='code bold'>opts.sortDirection</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
   </td>
-  <td class='break-word'><span>Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+  <td class='break-word'><span>Sort the list 'asc' (ascending)
+or 'desc'. Default is asc.
 </span></td>
 </tr>
 
@@ -25373,15 +25380,18 @@ or null if no item matches.</p>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Get the newest object where obj.name == 'Homer'</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.findMatching(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>, {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>});</pre>
+<span class="hljs-keyword">let</span> obj = persistentObject.findMatching(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>});</pre>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Get the second newest object where obj.name == 'Homer'</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.first(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>, {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>, <span class="hljs-attr">offset</span>: <span class="hljs-number">1</span>});</pre>
+<span class="hljs-keyword">let</span> obj = persistentObject.first(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'desc'</span>, <span class="hljs-attr">offset</span>: <span class="hljs-number">1</span>});</pre>
     
       
       <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Get the oldest object where obj.name == 'Homer'</span>
-<span class="hljs-keyword">let</span> obj = persistentObject.findMatching(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>, {<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'asc'</span>});</pre>
+<span class="hljs-keyword">let</span> obj = persistentObject.findMatching(<span class="hljs-string">'name'</span>, <span class="hljs-string">'Homer'</span>,
+{<span class="hljs-attr">orderBy</span>: <span class="hljs-string">'createdAt'</span>, <span class="hljs-attr">sortDirection</span>: <span class="hljs-string">'asc'</span>});</pre>
     
   
 
@@ -25495,7 +25505,8 @@ or null if no item matches.</p>
                 <tr>
   <td class='break-word'><span class='code bold'>opts.sortDirection</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
   </td>
-  <td class='break-word'><span>Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+  <td class='break-word'><span>Sort the list 'asc' (ascending)
+or 'desc'. Default is asc.
 </span></td>
 </tr>
 
