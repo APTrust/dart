@@ -1,4 +1,5 @@
 const { BaseController } = require('./base_controller');
+const { PluginManager } = require('../../plugins/plugin_manager');
 const Templates = require('../common/templates');
 const { UploadTarget } = require('../../core/upload_target');
 const { UploadTargetForm } = require('../forms/upload_target_form');
@@ -48,6 +49,12 @@ class UploadTargetController extends BaseController {
     list() {
         let listParams = this.paramsToHash();
         let items = UploadTarget.list(null, listParams);
+        for (let i = 0; i < items.length; i++) {
+            let plugin = PluginManager.findById(items[i].protocol);
+            if (plugin) {
+                items[i].protocolNames = plugin.description().implementsProtocols.join(', ');
+            }
+        }
         let data = {
             alertMessage: this.alertMessage,
             items: items
