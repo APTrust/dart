@@ -21,12 +21,12 @@ environment:
 install:
   - ps: Install-Product node ''
   - git reset --hard HEAD
+  - rm -r node_modules
   - npm install --global npm@latest
     #  - npm install electron-builder@next # force install next version to test electron-builder
-  - set PATH=%APPDATA%\npm;%PATH%
-  - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
+  - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%APPVEYOR_BUILD_FOLDER%/node_modules/;C:\Users\appveyor\AppData\Roaming\npm\node_modules;%PATH%
   - echo %PATH%
-  - cd %APPVEYOR_BUILD_FOLDER% && npm install
+  - npm install
 
 build_script:
   - npm test -- --runInBand
