@@ -5,7 +5,7 @@ const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const url = require('url');
 
-// jest/jquery DOM: https://jestjs.io/docs/en/tutorial-jquery
+const formFields = ['id', 'name', 'value', 'userCanDelete'];
 
 const settingName = "Unit Test Setting";
 const settingValue = "Principal Skinner";
@@ -29,6 +29,17 @@ function createAppSetting(name, value) {
     return appSetting;
 }
 
+function confirmSaveButton() {
+    let saveButton = $('a:contains("Save")').first();
+    expect(saveButton).toBeDefined();
+    expect(saveButton.attr('href')).toContain('#AppSetting/update');
+}
+
+function confirmHeading() {
+    expect($('h2:contains("Application Setting")').length).toEqual(1);
+    expect($('form').length).toEqual(1);
+}
+
 test('Constructor sets expected properties', () => {
     let controller = new AppSettingController(params);
     expect(controller.params).toEqual(params);
@@ -47,17 +58,14 @@ test('new()', () => {
     UITestUtil.setDocumentBody(response);
     let navLinkClass = UITestUtil.getNavItemCssClass("Settings");
     expect(navLinkClass).toContain('active');
-    expect($('h2:contains("Application Setting")').length).toEqual(1);
-    expect($('form').length).toEqual(1);
 
-    expect($('#appSettingForm_name').length).toEqual(1);
-    expect($('#appSettingForm_value').length).toEqual(1);
-    expect($('#appSettingForm_userCanDelete').length).toEqual(1);
-    expect($('#appSettingForm_id').length).toEqual(1);
+    confirmSaveButton();
+    confirmHeading();
 
-    let saveButton = $('a:contains("Save")').first();
-    expect(saveButton).toBeDefined();
-    expect(saveButton.attr('href')).toContain('#AppSetting/update');
+    for(let field of formFields) {
+        let selector = `#appSettingForm_${field}`;
+        expect($(selector).length).toEqual(1);
+    }
 });
 
 test('edit()', () => {
@@ -67,17 +75,13 @@ test('edit()', () => {
     let response = controller.edit();
     UITestUtil.setDocumentBody(response);
 
-    expect($('h2:contains("Application Setting")').length).toEqual(1);
-    expect($('form').length).toEqual(1);
+    confirmSaveButton();
+    confirmHeading();
 
-    expect($('#appSettingForm_name').val()).toEqual(appSetting.name);
-    expect($('#appSettingForm_value').val()).toEqual(appSetting.value);
-    expect($('#appSettingForm_userCanDelete').val()).toEqual(appSetting.userCanDelete.toString());
-    expect($('#appSettingForm_id').val()).toEqual(appSetting.id);
-
-    let saveButton = $('a:contains("Save")').first();
-    expect(saveButton).toBeDefined();
-    expect(saveButton.attr('href')).toContain('#AppSetting/update');
+    for(let field of formFields) {
+        let selector = `#appSettingForm_${field}`;
+        expect($(selector).val()).toEqual(appSetting[field].toString());
+    }
 });
 
 test('update()', () => {
