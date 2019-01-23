@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new AppSetting('name1', 'value1');
+    let obj = new AppSetting({ name: 'name1', value: 'value1' });
     expect(obj.type).toEqual('AppSetting');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
@@ -24,7 +24,7 @@ test('Constructor sets expected properties', () => {
 
 
 test('validate()', () => {
-    let obj = new AppSetting('', '');
+    let obj = new AppSetting();
     let result1 = obj.validate();
     expect(result1).toEqual(false);
     expect(obj.errors['name']).toEqual('Name cannot be empty.');
@@ -108,7 +108,7 @@ function makeObjects(howMany) {
     for(let i=0; i < howMany; i++) {
         let name = `Name ${i + 1}`;
         let value = `Value ${i + 1}`;
-        let obj = new AppSetting(name, value);
+        let obj = new AppSetting({ name: name, value: value });
         obj.save();
         list.push(obj);
     }

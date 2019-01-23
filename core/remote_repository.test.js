@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new RemoteRepository('name1');
+    let obj = new RemoteRepository({name: 'name1'});
     expect(obj.type).toEqual('RemoteRepository');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
@@ -23,7 +23,7 @@ test('Constructor sets expected properties', () => {
 
 
 test('validate()', () => {
-    let obj = new RemoteRepository('');
+    let obj = new RemoteRepository();
     let result1 = obj.validate();
     expect(result1).toEqual(false);
     expect(obj.errors['name']).toEqual('Name cannot be empty.');
@@ -107,7 +107,7 @@ function makeObjects(howMany) {
     for(let i=0; i < howMany; i++) {
         let name = `Name ${i + 1}`;
         let value = `Value ${i + 1}`;
-        let obj = new RemoteRepository(name);
+        let obj = new RemoteRepository({ name: name });
         obj.url = `https://repo${i + 1}.example.com`;
         obj.save();
         list.push(obj);

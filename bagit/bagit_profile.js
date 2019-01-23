@@ -17,29 +17,38 @@ const { Util } = require('../core/util');
  * @see {@link BagItProfileInfo}
  * @see {@link TagDefinition}
  *
- * @param {string} name - The name this profile.
+ * @param {object} opts - Object containing properties to set.
+ *
+ * @param {string} opts.id - A UUID in hex-string format. This is
+ * the object's unique identifier.
+ *
+ * @param {boolean} opts.userCanDelete - Indicates whether user is
+ * allowed to delete this record.
+ *
+ * @param {string} opts.name - The name this profile.
  * @default 'New BagIt Profile'
- * @param {string} description - A helpful description of the profile for people
- * who will be using it.
+ * @param {string} opts.description - A helpful description of the profile
+ * for people who will be using it.
  * @default 'New custom BagIt profile'
  */
 class BagItProfile extends PersistentObject {
 
-    constructor(name, description) {
-        super('BagItProfile');
+    constructor(opts = {}) {
+        opts.type = 'BagItProfile'
+        super(opts);
         /**
           * Name is the name of this profile.
           * Names should be unique, to prevent confusion.
           *
           * @type {string}
           */
-        this.name = name || 'New BagIt Profile';
+        this.name = opts.name || 'New BagIt Profile';
         /**
           * The description of this profile should be meaningful to the user.
           *
           * @type {string}
           */
-        this.description = description || 'New custom BagIt profile';
+        this.description = opts.description || 'New custom BagIt profile';
         /**
           * A list of BagIt versions that are valid for bags that
           * conform to this profile. For example, '0.97'.
@@ -64,7 +73,7 @@ class BagItProfile extends PersistentObject {
           * @type {boolean}
           * @default false
           */
-        this.allowFetchTxt = false;
+        this.allowFetchTxt = opts.allowFetchTxt === true ? true : false;
         /**
           * Describes whether bags conforming to this profile
           * may include files in the top-level folder other
@@ -74,7 +83,7 @@ class BagItProfile extends PersistentObject {
           * @type {boolean}
           * @default false
           */
-        this.allowMiscTopLevelFiles = false;
+        this.allowMiscTopLevelFiles = opts.allowMiscTopLevelFiles === true ? true : false;
         /**
           * Describes whether bags conforming to this profile
           * may include directories other than the payload
@@ -85,14 +94,14 @@ class BagItProfile extends PersistentObject {
           * @type {boolean}
           * @default false
           */
-        this.allowMiscDirectories = false;
+        this.allowMiscDirectories = opts.allowMiscDirectories === true ? true : false;
         /**
           * This contains metadata about the BagIt profile
           * itself, such as who publishes and maintains it.
           *
           * @type {BagItProfileInfo}
           */
-        this.bagItProfileInfo = new BagItProfileInfo();
+        this.bagItProfileInfo = opts.bagItProfileInfo || new BagItProfileInfo();
         /**
           * A list of algorithms of required manifests.
           * For example, 'sha256' indicates that bags conforming
@@ -101,7 +110,7 @@ class BagItProfile extends PersistentObject {
           * @type {string[]}
           * @default ['sha256']
           */
-        this.manifestsRequired = ['sha256'];
+        this.manifestsRequired = opts.manifestsRequired || ['sha256'];
         /**
           * A list of algorithms of required tag manifests.
           * For example, 'sha256' indicates that bags conforming
@@ -111,7 +120,7 @@ class BagItProfile extends PersistentObject {
           * @type {string[]}
           * @default []
           */
-        this.tagManifestsRequired = [];
+        this.tagManifestsRequired = opts.tagManifestsRequired || [];
         /**
           * A list of tags that you expect to be present or expect
           * to parse when creating or validating bags that conform to
@@ -123,7 +132,7 @@ class BagItProfile extends PersistentObject {
           *
           * @type {TagDefinition[]}
           */
-        this.tags = [];
+        this.tags = opts.tags || [];
         /**
           * Describes whether bags conforming to this profile may or
           * may not be serialized. Allowed values are 'required',
@@ -132,7 +141,7 @@ class BagItProfile extends PersistentObject {
           * @type {string}
           * @default 'optional'
           */
-        this.serialization = "optional";
+        this.serialization = opts.serialization || "optional";
         /**
           * baseProfileId allows us to track whether this profile
           * is based on a built-in. If so, we don't allow the user
@@ -142,7 +151,7 @@ class BagItProfile extends PersistentObject {
           * @type {string}
           * @default null
           */
-        this.baseProfileId = null;
+        this.baseProfileId = opts.baseProfileId || null;
         /**
           * Describes whether this profile is built into the application.
           * Builtin profiles cannot be deleted by users.
@@ -150,7 +159,7 @@ class BagItProfile extends PersistentObject {
           * @type {boolean}
           * @default false
           */
-        this.isBuiltIn = false;
+        this.isBuiltIn = opts.isBuiltIn === true ? true : false;
         /**
           * Describes whether a tarred bag MUST untar to a directory
           * whose name matches the tar file name.
@@ -163,7 +172,7 @@ class BagItProfile extends PersistentObject {
           * @type {boolean}
           * @default false
           */
-        this.tarDirMustMatchName = false;
+        this.tarDirMustMatchName = opts.tarDirMustMatchName === true ? true : false;
         /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the

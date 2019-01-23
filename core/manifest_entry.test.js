@@ -111,7 +111,13 @@ function makeObjects(howMany) {
         let pathInBag = `data/${i + 1}.pdf`;
         let algorithm = 'sha256';
         let digest = Math.random().toString();
-        let obj = new ManifestEntry(jobId, origPath, pathInBag, algorithm, digest);
+        let obj = new ManifestEntry({
+            jobId: jobId,
+            origPath: origPath,
+            pathInBag: pathInBag,
+            algorithm: algorithm,
+            digest: digest
+        });
         obj.save();
         list.push(obj);
     }

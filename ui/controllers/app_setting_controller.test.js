@@ -24,7 +24,7 @@ afterAll(() => {
 });
 
 function createAppSetting(name, value) {
-    let appSetting = new AppSetting(name, value);
+    let appSetting = new AppSetting({ name: name, value: value });
     appSetting.save();
     return appSetting;
 }

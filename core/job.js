@@ -12,12 +12,35 @@ const { Util } = require('./util');
  * to an S3 bucket.
  */
 class Job extends PersistentObject {
-    constructor() {
-        super('Job');
-        this.bagItProfile = null;
-        this.packagingOp = null;
-        this.validationOp = null;
-        this.uploadOps = [];
+    /**
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {BagItProfile} opts.bagItProfile - A BagItProfile object.
+     * This is required only for bagging and validation jobs.
+     *
+     * @param {PackagingOperation} opts.packagingOp - An object describing
+     * what this job is supposed to package. The is relevant only to
+     * jobs that involving bagging or other forms of packaging.
+     *
+     * @param {ValidationOperation} opts.validationOp - An object
+     * describing what is to be validated. This is relevant only if the
+     * job includes a validation step.
+     *
+     * @param {Array<UploadOperation>} opts.uploadOps - A list of objects
+     * describing what should be uploaded, and to where. This is relevant
+     * only for jobs that will be uploading materials.
+     */
+    constructor(opts = {}) {
+        opts.type = 'Job';
+        super(opts);
+        this.bagItProfile = opts.bagItProfile || null;
+        this.packagingOp = opts.packagingOp || null;
+        this.validationOp = opts.validationOp || null;
+        this.uploadOps = opts.uploadOps || [];
     }
 
     /**

@@ -16,30 +16,39 @@ class ManifestEntry extends PersistentObject {
     /**
      * Creates a new ManifestEntry
      *
-     * @param {string} name - The id (UUID) of the job that packaged the
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.jobId - The id (UUID) of the job that packaged the
      * files in this manifest.
      *
-     * @param {string} origPath - The original path of the file, before it
+     * @param {string} opts.origPath - The original path of the file, before it
      * was bagged or otherwise packaged. This is usually an absolute path
      * from the local filesystem or from an attached network share.
      *
-     * @param {string} pathInBag - The relative path of the file within the
+     * @param {string} opts.pathInBag - The relative path of the file within the
      * bag or package. For bagged files, this will begin with 'data/'.
      *
-     * @param {string} algorithm - The algorithm used to produce the checksums
+     * @param {string} opts.algorithm - The algorithm used to produce the checksums
      * in this manifest. For example, 'md5', 'sha256', etc.
      *
-     * @param {string} digest - The digest/checksum of the file.
+     * @param {string} opts.digest - The digest/checksum of the file.
      */
-    constructor(jobId, origPath, pathInBag, algorithm, digest) {
-        super('ManifestEntry');
+    constructor(opts = {}) {
+        opts.type = 'ManifestEntry';
+        super(opts);
 
         /**
           * The id (UUID) of the job that packaged the files in this manifest.
           *
           * @type {string}
           */
-        this.jobId = jobId;
+        this.jobId = opts.jobId || null;
 
         /**
           * The original path of the file, before it was bagged or otherwise
@@ -48,7 +57,7 @@ class ManifestEntry extends PersistentObject {
           *
           * @type {string}
           */
-        this.origPath = origPath;
+        this.origPath = opts.origPath || "";
 
         /**
           * The relative path of the file within the bag or package. For bagged
@@ -56,7 +65,7 @@ class ManifestEntry extends PersistentObject {
           *
           * @type {string}
           */
-        this.pathInBag = pathInBag;
+        this.pathInBag = opts.pathInBag || "";
 
         /**
           * The algorithm used to produce the checksums in this manifest.
@@ -64,14 +73,14 @@ class ManifestEntry extends PersistentObject {
           *
           * @type {string}
           */
-        this.algorithm = algorithm;
+        this.algorithm = opts.algorithm || "";
 
         /**
           * The digest/checksum of the file.
           *
           * @type {string}
           */
-        this.digest = digest;
+        this.digest = opts.digest || "";
 
         /**
           * The date and time this manifest was created, in ISO datetime

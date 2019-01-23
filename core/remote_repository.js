@@ -13,26 +13,48 @@ class RemoteRepository extends PersistentObject {
     /**
      * Creates a new RemoteRepository
      *
-     * @param {string} name - The name of the setting. This should be
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.name - The name of the setting. This should be
      * unique, to prevent conflicts.
      *
-     * @param {string} value - The value of the setting.
+     * @param {string} opts.url - The url of the remote repository.
+     *
+     * @param {string} opts.userId - The user id required to log in to
+     * the remote repository.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.apiToken - The API token to authenticate with
+     * the remote repository.
+     *
+     * @param {object} opts.loginExtra - Extra information required to
+     * authenticate with the remote repo.
+     *
+     * @param {string} opts.pluginId - The UUID that identifies the plugin
+     * that lets us connect to the remote repo.
+     *
      */
-    constructor(name) {
-        super('RemoteRepository');
+    constructor(opts = {}) {
+        opts.type = 'RemoteRepository';
+        super(opts);
         /**
           * Name is the name of the setting.
           * Setting names should be unique, to prevent confusion.
           *
           * @type {string}
           */
-        this.name = name;
+        this.name = opts.name || "";
         /**
           * The URL that runs the remote repository's REST service.
           *
           * @type {string}
           */
-        this.url = "";
+        this.url = opts.url || "";
         /**
           * The User ID used to connect to the repository's REST services.
           * This is optional, and will often be blank, as most REST
@@ -40,21 +62,21 @@ class RemoteRepository extends PersistentObject {
           *
           * @type {string}
           */
-        this.userId = "";
+        this.userId = opts.userId || "";
         /**
           * The API token required to connect to the remote repository's
           * REST service.
           *
           * @type {string}
           */
-        this.apiToken = "";
+        this.apiToken = opts.apiToken || "";
         /**
           * Optional additional information required to connect to the
           * remote REST service. Most services won't use this.
           *
           * @type {string}
           */
-        this.loginExtra = "";
+        this.loginExtra = opts.loginExtra || "";
         /**
           * The UUID of the DART plugin that provides access to the REST
           * service. You cannot connect to any remote REST service without
@@ -62,7 +84,7 @@ class RemoteRepository extends PersistentObject {
           *
           * @type {string}
           */
-        this.pluginId = "";
+        this.pluginId = opts.pluginId || "";
     }
 
     /**
