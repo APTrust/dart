@@ -15,7 +15,7 @@ const typeMap = {
 class UploadTargetController extends BaseController {
 
     constructor(params) {
-        super(params, 'UploadTarget');
+        super(params, 'Settings');
         this.typeMap = typeMap;
     }
 
