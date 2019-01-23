@@ -8789,7 +8789,7 @@ some changes and additions.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new BagItProfile(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, description: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new BagItProfile(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -8814,20 +8814,66 @@ some changes and additions.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name this profile.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>description</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    A helpful description of the profile for people
-who will be using it.
+          <table class='mt1 mb2 fixed-table h5 col-12'>
+            <colgroup>
+              <col width='30%' />
+              <col width='70%' />
+            </colgroup>
+            <thead>
+              <tr class='bold fill-light'>
+                <th>Name</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody class='mt1'>
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.id</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>A UUID in hex-string format. This is
+the object's unique identifier.
+</span></td>
+</tr>
 
-          </div>
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.userCanDelete</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>
+  </td>
+  <td class='break-word'><span>Indicates whether user is
+allowed to delete this record.
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.name</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>The name this profile.
+</span></td>
+</tr>
+
+
+              
+                <tr>
+  <td class='break-word'><span class='code bold'>opts.description</span> <code class='quiet'><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></code>
+  </td>
+  <td class='break-word'><span>A helpful description of the profile
+for people who will be using it.
+</span></td>
+</tr>
+
+
+              
+            </tbody>
+          </table>
           
         </div>
       
@@ -11674,7 +11720,7 @@ entries, each with a timestamp indicating when it was packaged.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new ManifestEntry(jobId: any, origPath: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, pathInBag: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, algorithm: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, digest: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new ManifestEntry(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -11699,57 +11745,9 @@ entries, each with a timestamp indicating when it was packaged.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>jobId</span> <code class='quiet'>(any)</code>
-	    
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>origPath</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The original path of the file, before it
-was bagged or otherwise packaged. This is usually an absolute path
-from the local filesystem or from an attached network share.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>pathInBag</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The relative path of the file within the
-bag or package. For bagged files, this will begin with 'data/'.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>algorithm</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The algorithm used to produce the checksums
-in this manifest. For example, 'md5', 'sha256', etc.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>digest</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The digest/checksum of the file.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The id (UUID) of the job that packaged the
-files in this manifest.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -12866,7 +12864,7 @@ from the remote repo.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new RemoteRepository(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new RemoteRepository(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -12891,18 +12889,9 @@ from the remote repo.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the setting. This should be
-unique, to prevent conflicts.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The value of the setting.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -14024,7 +14013,7 @@ for settings you don't want users to delete.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new AppSetting(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new AppSetting(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -14049,18 +14038,9 @@ for settings you don't want users to delete.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the setting. This should be
-unique, to prevent conflicts.
-
-          </div>
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The value of the setting.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -20010,7 +19990,7 @@ connect to the remote service (hostname, login name, password, etc.).</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new UploadTarget(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new UploadTarget(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -20035,10 +20015,9 @@ connect to the remote service (hostname, login name, password, etc.).</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the remote upload target. This
-can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
-'Library SFTP Server', etc.). Names should be unique to prevent confusion.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -24803,7 +24782,7 @@ function that accesses the underlying datastore.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new PersistentObject(type: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+    <div class='pre p1 fill-light mt0'>new PersistentObject(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)</div>
    
   
   
@@ -24821,12 +24800,9 @@ function that accesses the underlying datastore.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>type</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The class name of the object you are creating.
-The underlying JsonStore will save this object (and all others of its
-class) in a file whose name matches the type paramater you pass in here.
-<p>This constructor is meant to be called by the constructors in subclasses,
-which pass their class name as the type param.</p>
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -29519,7 +29495,7 @@ array that lists which data migrations have already run.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new InternalSetting(name: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+    <div class='pre p1 fill-light mt0'>new InternalSetting(opts: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>, value: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
    
   
   
@@ -29544,8 +29520,9 @@ array that lists which data migrations have already run.</p>
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the setting. This should be unique, to prevent confusion.
+            <span class='code bold'>opts</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>
+            = <code>{}</code>)</code>
+	    Object containing properties to set.
 
           </div>
           
@@ -29554,7 +29531,9 @@ array that lists which data migrations have already run.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>value</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
-	    The value of the setting. Any object type is OK.
+	    The value of the setting. Any object type
+is OK, but keep in mind that it will be serialized to JSON when
+saved to the DB.
 
           </div>
           
@@ -30457,7 +30436,7 @@ to an S3 bucket.</p>
 
  
   
-    <div class='pre p1 fill-light mt0'>new Job()</div>
+    <div class='pre p1 fill-light mt0'>new Job(opts: any)</div>
    
   
   
@@ -30476,6 +30455,20 @@ to an S3 bucket.</p>
   
   
 
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>opts</span> <code class='quiet'>(any
+            = <code>{}</code>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
   
 
   
