@@ -22,6 +22,8 @@ class UploadTargetController extends BaseController {
         this.formTemplate = Templates.uploadTargetForm;
         this.listTemplate = Templates.uploadTargetList;
         this.nameProperty = 'name';
+        this.defaultOrderBy = 'name';
+        this.defaultSortDirection = 'asc';
     }
 
 }

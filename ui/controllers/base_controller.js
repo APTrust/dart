@@ -84,6 +84,8 @@ class BaseController {
 
     list() {
         let listParams = this.paramsToHash();
+        listParams.orderBy = listParams.sortBy || this.defaultOrderBy;
+        listParams.sortDirection = listParams.sortOrder || this.defaultSortDirection;
         let items = this.model.list(null, listParams);
         let data = {
             alertMessage: this.alertMessage,

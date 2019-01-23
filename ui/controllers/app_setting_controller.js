@@ -23,6 +23,8 @@ class AppSettingController extends BaseController {
         this.formTemplate = Templates.appSettingForm;
         this.listTemplate = Templates.appSettingList;
         this.nameProperty = 'name';
+        this.defaultOrderBy = 'name';
+        this.defaultSortDirection = 'asc';
     }
 
 }
