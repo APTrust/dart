@@ -16,27 +16,36 @@ class AppSetting extends PersistentObject {
     /**
      * Creates a new AppSetting
      *
-     * @param {string} name - The name of the setting. This should be
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.name - The name of the setting. This should be
      * unique, to prevent conflicts.
      *
-     * @param {string} value - The value of the setting.
+     * @param {string} opts.value - The value of the setting.
      */
-    constructor(name, value) {
-        super('AppSetting');
+    constructor(opts = {}) {
+        opts.type = 'AppSetting';
+        super(opts);
         /**
           * Name is the name of the setting.
           * Setting names should be unique, to prevent confusion.
           *
           * @type {string}
           */
-        this.name = name;
+        this.name = opts.name || '';
         /**
           * Value is the value of the setting.
           * It should be a string, so users can edit it in the DART UI.
           *
           * @type {string}
           */
-        this.value = value;
+        this.value = opts.value || '';
         /**
           * This is an optional description telling the user what this
           * AppSetting means, or what it does. If provided, this will
@@ -44,7 +53,7 @@ class AppSetting extends PersistentObject {
           *
           * @type {string}
           */
-        this.help = "";
+        this.help = opts.help || '';
     }
 
     /**
@@ -73,7 +82,7 @@ class AppSetting extends PersistentObject {
     static find(id) {
         let data = Context.db('AppSetting').get(id);
         if (data) {
-            return Object.assign(new AppSetting(), data);
+            return new AppSetting(data);
         }
         return undefined;
     }

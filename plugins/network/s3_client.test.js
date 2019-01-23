@@ -6,7 +6,7 @@ const S3Client = require('./s3_client');
 const { UploadTarget } = require('../../core/upload_target');
 
 function getUploadTarget() {
-    var ss = new UploadTarget('unittest');
+    var ss = new UploadTarget({ name: 'unittest' });
     ss.protocol = 's3';
     ss.host = 's3.amazonaws.com';
     ss.bucket = 'aptrust.dart.test';

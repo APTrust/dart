@@ -24,18 +24,18 @@ afterAll(() => {
 test('Constructor throws error if type is missing or empty', () => {
     expect(() => { new PersistentObject() }).toThrow(Error);
     expect(() => { new PersistentObject(null) }).toThrow(Error);
-    expect(() => { new PersistentObject('') }).toThrow(Error);
-    expect(() => { new PersistentObject('  ') }).toThrow(Error);
+    expect(() => { new PersistentObject({}) }).toThrow(Error);
+    expect(() => { new PersistentObject({type: '  '}) }).toThrow(Error);
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new PersistentObject('test1');
+    let obj = new PersistentObject({type: 'test1'});
     expect(obj.type).toEqual('test1');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
 });
 
 test('validate() throws error because it must be implemented in derived class', () => {
-    let obj = new PersistentObject('test1');
+    let obj = new PersistentObject({type: 'test1'});
     expect(obj.validate()).toEqual(true);
     obj.id = '';
     expect(obj.validate()).toEqual(false);
@@ -44,7 +44,7 @@ test('validate() throws error because it must be implemented in derived class', 
 
 test('Basic operations: save(), find(), delete()', () => {
     // Make sure we can save an object withouth error.
-    let obj = new PersistentObject('test1');
+    let obj = new PersistentObject({type: 'test1'});
     expect(() => { obj.save() }).not.toThrow(Error);
     let saved = obj.save();
     expect(saved).toEqual(obj);
@@ -70,7 +70,7 @@ test('Basic operations: save(), find(), delete()', () => {
 
 test('userCanDelete == false should prevent deletion', () => {
     // Make sure we can save an object withouth error.
-    let obj = new PersistentObject('test1');
+    let obj = new PersistentObject({type: 'test1'});
     obj.userCanDelete = false;
     expect(() => { obj.save() }).not.toThrow(Error);
     obj.save();
@@ -80,14 +80,14 @@ test('userCanDelete == false should prevent deletion', () => {
 test('mergeDefaultOptions()', () => {
     var opts1 = PersistentObject.mergeDefaultOpts();
     expect(opts1).not.toBeNull();
-    expect(opts1.limit).toEqual(0);
+    expect(opts1.limit).toEqual(10);
     expect(opts1.offset).toEqual(0);
     expect(opts1.orderBy).toBeNull();
     expect(opts1.sortDirection).toEqual('asc');
 
     var opts2 = PersistentObject.mergeDefaultOpts({});
     expect(opts2).not.toBeNull();
-    expect(opts2.limit).toEqual(0);
+    expect(opts2.limit).toEqual(10);
     expect(opts2.offset).toEqual(0);
     expect(opts2.orderBy).toBeNull();
     expect(opts2.sortDirection).toEqual('asc');
@@ -292,7 +292,7 @@ test('first()', () => {
 function makeObjects(type, howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {
-        let obj = new PersistentObject(type);
+        let obj = new PersistentObject({type: type});
         obj.name = `Object ${i + 1}`;
         obj.age = 100 - ((i + 1) * 5);
         obj.save();

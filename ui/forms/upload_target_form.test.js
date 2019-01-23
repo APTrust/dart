@@ -2,7 +2,7 @@ const { UploadTarget } = require('../../core/upload_target');
 const { UploadTargetForm } = require('./upload_target_form');
 
 test('create()', () => {
-    let target = new UploadTarget('APTrust Demo');
+    let target = new UploadTarget({ name: 'APTrust Demo' });
     target.description = 'APTrust demo ingest bucket';
     target.protocol = 's3';
     target.host = 'https://s3.example.com';
@@ -29,6 +29,10 @@ test('create()', () => {
     for (let choice of choices) {
         expect(choice.value).toBeDefined();
         expect(choice.label).toBeDefined();
-        expect(choice.selected).toBe(false);
+        if (choice.value === target.protocol) {
+            expect(choice.selected).toBe(true);
+        } else {
+            expect(choice.selected).toBe(false);
+        }
     }
 });

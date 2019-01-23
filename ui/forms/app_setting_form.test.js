@@ -2,7 +2,7 @@ const { AppSetting } = require('../../core/app_setting');
 const { AppSettingForm } = require('./app_setting_form');
 
 test('create()', () => {
-    let appSetting = new AppSetting('Name 1', 'Value 1');
+    let appSetting = new AppSetting({ name: 'Name 1', value: 'Value 1'});
     appSetting.help = 'Help for app setting';
 
     let form = AppSettingForm.create(appSetting);

@@ -19,7 +19,8 @@ test('Constructor sets initial properties', () => {
     expect(profile.name).toEqual('New BagIt Profile');
     expect(profile.description).toEqual('New custom BagIt profile');
 
-    profile = new BagItProfile('Test Profile', 'Profile for testing');
+    profile = new BagItProfile({ name: 'Test Profile',
+                                 description: 'Profile for testing'});
     expect(profile.name).toEqual('Test Profile');
     expect(profile.description).toEqual('Profile for testing');
 
@@ -120,7 +121,7 @@ test('hasTagFile()', () => {
 });
 
 test('suggestBagName()', () => {
-    let inst = new AppSetting('Institution Domain', 'aptrust.org');
+    let inst = new AppSetting({ name: 'Institution Domain', value: 'aptrust.org' });
     inst.save();
 
     // Make something that looks like an APTrust profile,
@@ -159,7 +160,7 @@ test('nameLooksLegal() accepts valid file names and rejects invalid ones', () =>
 });
 
 test('isValidBagName() asserts profile-specific naming rules', () => {
-    let inst = new AppSetting('Institution Domain', 'aptrust.org');
+    let inst = new AppSetting({ name: 'Institution Domain', value: 'aptrust.org' });
     inst.save();
 
     let aptrustProfile = new BagItProfile();

@@ -60,15 +60,15 @@ test('getUploadTarget() returns best matching S3 service', () => {
 
     // Create some storage services in our temporary DB.
     // First one matches protocol, host, and exact bucket name.
-    let exact = new UploadTarget('Best Match');
+    let exact = new UploadTarget({ name: 'Best Match' });
     exact.bucket = url.pathname;
 
     // Second matches host, protocol, and partial bucket name.
-    let partial = new UploadTarget('Second Best Match');
+    let partial = new UploadTarget({ name: 'Second Best Match' });
     partial.bucket = 'aptrust.dart.test';
 
     // Third matches host and protocol only.
-    let host = new UploadTarget('Third Best Match');
+    let host = new UploadTarget({ name: 'Third Best Match' });
     [host, partial, exact].forEach(function(item) {
         item.host = url.host;
         item.protocol = 's3';
@@ -97,7 +97,7 @@ test('getUploadTarget() returns best matching S3 service', () => {
 
 test('initOpRecord()', () => {
     let url = new URL(opts.dest);
-    let service = new UploadTarget('S3 Service for Unit Testing');
+    let service = new UploadTarget({ name: 'S3 Service for Unit Testing' });
     service.bucket = url.pathname;
     service.host = url.host;
     service.protocol = 's3';

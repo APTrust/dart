@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new UploadTarget('name1');
+    let obj = new UploadTarget({ name: 'name1'});
     expect(obj.type).toEqual('UploadTarget');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
@@ -22,7 +22,7 @@ test('Constructor sets expected properties', () => {
 
 
 test('validate()', () => {
-    let obj = new UploadTarget('');
+    let obj = new UploadTarget();
     let originalId = obj.id;
     obj.id = null;
     obj.port = 'Port of Spain';
@@ -32,7 +32,7 @@ test('validate()', () => {
     expect(obj.errors['id']).toEqual('Id cannot be empty.');
     expect(obj.errors['protocol']).toEqual('Protocol cannot be empty.');
     expect(obj.errors['host']).toEqual('Host cannot be empty.');
-    expect(obj.errors['port']).toEqual('Port must be a whole number, or leave blank to use the default port.');
+    expect(obj.errors['port']).toEqual('Port must be a whole number, or leave at zero to use the default port.');
 
     obj.id = originalId;
     obj.name = 'Something';
@@ -113,7 +113,7 @@ function makeObjects(howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {
         let name = `Name ${i + 1}`;
-        let obj = new UploadTarget(name);
+        let obj = new UploadTarget({ name: name });
         obj.host = `Host ${i + 1}`;
         if (i % 2 == 0) {
             obj.protocol = 's3';

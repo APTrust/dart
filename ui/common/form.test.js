@@ -5,7 +5,7 @@ const { Form } = require('./form');
 const { Util } = require('../../core/util');
 
 test('Constructor initializes form fields', () => {
-    let appSetting = new AppSetting('fruit', 'apple');
+    let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
     let form = new Form('appSettingForm', appSetting);
@@ -35,7 +35,7 @@ test('Constructor initializes form fields', () => {
 });
 
 test('Constructor initializes form fields with custom exclude', () => {
-    let appSetting = new AppSetting('fruit', 'apple');
+    let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
     let form = new Form('appSettingForm', appSetting, []);
@@ -49,7 +49,7 @@ test('Constructor initializes form fields with custom exclude', () => {
 });
 
 test('setErrors()', () => {
-    let appSetting = new AppSetting('fruit', 'apple');
+    let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
     let form = new Form('appSettingForm', appSetting);
     for (let name of ['id', 'name', 'value', 'userCanDelete']) {
         let field = form.fields[name];
@@ -105,9 +105,9 @@ test('parseFromDOM()', () => {
     expect(form.obj.id).toBe('1234');
     expect(form.obj.userCanDelete).toBe(false);
 
-    expect(form.changed.name.old).toBeUndefined();
+    expect(form.changed.name.old).toEqual('');
     expect(form.changed.name.new).toEqual('Homer');
-    expect(form.changed.value.old).toBeUndefined();
+    expect(form.changed.value.old).toEqual('');
     expect(form.changed.value.new).toEqual('Simpson');
     expect(Util.looksLikeUUID(form.changed.id.old)).toBe(true);
     expect(form.changed.id.new).toEqual('1234');

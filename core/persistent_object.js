@@ -24,7 +24,15 @@ class PersistentObject {
     /**
      * Creates a new PersistentObject.
      *
-     * @param {string} type - The class name of the object you are creating.
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.type - The class name of the object you are creating.
      * The underlying JsonStore will save this object (and all others of its
      * class) in a file whose name matches the type paramater you pass in here.
      *
@@ -32,8 +40,8 @@ class PersistentObject {
      * which pass their class name as the type param.
      *
      */
-    constructor(type) {
-        if (Util.isEmpty(type)) {
+    constructor(opts = {}) {
+        if (Util.isEmpty(opts.type)) {
             throw new Error("Param 'type' is required.");
         }
         /**
@@ -44,14 +52,14 @@ class PersistentObject {
           *
           * @type {string}
           */
-        this.id = Util.uuid4();
+        this.id = opts.id || Util.uuid4();
         /**
           * type is the object's classname. This should be set by the
           * constructor in all derived classes.
           *
           * @type {string}
           */
-        this.type = type;
+        this.type = opts.type;
         /**
           * userCanDelete indicates whether or not the user can delete
           * this object from storage. The defaults to false, but you may
@@ -64,7 +72,7 @@ class PersistentObject {
           * @type {string}
           * @default true
           */
-        this.userCanDelete = true;
+        this.userCanDelete = opts.userCanDelete === false ? false : true;
         /**
           * The errors property contains information about why this object
           * is not valid. This property will be empty when an object is
@@ -144,7 +152,7 @@ class PersistentObject {
     static mergeDefaultOpts(opts) {
         // Don't overwrite opts. Caller may want to reuse it.
         var mergedOpts = Object.assign({}, opts);
-        mergedOpts.limit = mergedOpts.limit || 0;
+        mergedOpts.limit = mergedOpts.limit || 10;
         mergedOpts.offset = mergedOpts.offset || 0;
         mergedOpts.orderBy = mergedOpts.orderBy || null;
         mergedOpts.sortDirection = mergedOpts.sortDirection || 'asc';

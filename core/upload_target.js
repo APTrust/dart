@@ -11,27 +11,59 @@ class UploadTarget extends PersistentObject {
     /**
      * Creates a new UploadTarget.
      *
-     * @param {string} name - The name of the remote upload target. This
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.name - The name of the remote upload target. This
      * can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
      * 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
      *
+     * @param {string} opts.description - A user-friendly description of
+     * the upload target.
+     *
+     * @param {string} opts.protocol - The protocol to use when connecting
+     * to the remote repo ('s3', 'sftp', etc.).
+     *
+     * @param {string} opts.host - The name or IP address of the remote host.
+     *
+     * @param {string} opts.port - The port to connect to on the remote host.
+     * A value of zero means use the default port.
+     *
+     * @param {string} opts.bucket - The bucket or root folder into which
+     * to upload material.
+     *
+     * @param {string} opts.login - The user name or AWS Access Key ID to use
+     * when authenticating with the remote service.
+     *
+     * @param {string} opts.password - The password or AWS Secret Access Key
+     * to use when authenticating with the remote service.
+     *
+     * @param {string} opts.loginExtra - Optional additional information to
+     * pass to the remote service during the authentication process.
+     *
      */
-    constructor(name) {
-        super('UploadTarget');
+    constructor(opts = {}) {
+        opts.type = 'UploadTarget';
+        super(opts);
         /**
           * name is the name of this upload target. It should be meaningful
           * to the user.
           *
           * @type {string}
           */
-        this.name = name;
+        this.name = opts.name || "";
         /**
           * A description of this upload target. It should be meaningful
           * to the user.
           *
           * @type {string}
           */
-        this.description = "";
+        this.description = opts.description || "";
         /**
           * The protocol to use when connecting to the remote service.
           * For example, 's3', 'sftp', etc. There should be a valid plugin
@@ -39,13 +71,13 @@ class UploadTarget extends PersistentObject {
           *
           * @type {string}
           */
-        this.protocol = "";
+        this.protocol = opts.protocol || "";
         /**
           * The hostname or IP address of the remote server.
           *
           * @type {string}
           */
-        this.host = "";
+        this.host = opts.host || "";
         /**
           * The port number to connect to on the remote server. This should
           * be a whole number. You can leave this blank if you're connecting
@@ -53,28 +85,28 @@ class UploadTarget extends PersistentObject {
           *
           * @type {number}
           */
-        this.port = 0;
+        this.port = opts.port || 0;
         /**
           * Bucket is the name of the s3 bucket to connect to, or the directory
           * to cd into on the remote server.
           *
           * @type {string}
           */
-        this.bucket = "";
+        this.bucket = opts.bucket || "";
         /**
           * login is the name to use when logging in to the remote server.
           * For s3 connections, it's the Access Key Id.
           *
           * @type {string}
           */
-        this.login = "";
+        this.login = opts.login || "";
         /**
           * password is the password required to connect to the remote server.
           * For S3, it's the secret key (aka AWS Secret Access Key).
           *
           * @type {string}
           */
-        this.password = "";
+        this.password = opts.password || "";
         /**
           * loginExtra is any additional information required by plugins to
           * connect to remote services. What the plugin does with this bit of info
@@ -84,7 +116,7 @@ class UploadTarget extends PersistentObject {
           *
           * @type {string}
           */
-        this.loginExtra = "";
+        this.loginExtra = opts.loginExtra || "";
     }
 
     /**
@@ -105,8 +137,8 @@ class UploadTarget extends PersistentObject {
         if (Util.isEmpty(this.host)) {
             this.errors["host"] = "Host cannot be empty.";
         }
-        if (!Util.isEmpty(this.port) && parseInt(this.port, 10) != this.port) {
-            this.errors["port"] = "Port must be a whole number, or leave blank to use the default port.";
+        if (!Util.isEmpty(this.port) && this.port != 0 && parseInt(this.port, 10) != this.port) {
+            this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
         }
         return Object.keys(this.errors).length == 0;
     }
@@ -120,7 +152,11 @@ class UploadTarget extends PersistentObject {
      * @returns {Object}
      */
     static find(id) {
-        return Context.db('UploadTarget').get(id);
+        let data = Context.db('UploadTarget').get(id);
+        if (data) {
+            return new UploadTarget(data);
+        }
+        return undefined;
     }
 
     /**

@@ -20,10 +20,7 @@ class UploadTargetForm {
         for (let client of PluginManager.getModuleCollection('NetworkClient')) {
             let description = client.description();
             for (let protocol of description.implementsProtocols) {
-                clients.push({
-                    id: description.id,
-                    name: protocol
-                });
+                clients.push(protocol);
             };
         }
         form.fields['protocol'].choices = Choice.makeList(

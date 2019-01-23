@@ -17,18 +17,31 @@ class InternalSetting extends PersistentObject {
     /**
      * Creates a new InternalSetting
      *
-     * @param {string} name - The name of the setting. This should be unique, to prevent confusion.
-     * @param {Object} value - The value of the setting. Any object type is OK.
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.name - The name of the setting. This should
+     * be unique, to prevent confusion.
+     *
+     * @param {Object} value - The value of the setting. Any object type
+     * is OK, but keep in mind that it will be serialized to JSON when
+     * saved to the DB.
      */
-    constructor(name, value) {
-        super('InternalSetting');
+    constructor(opts = {}) {
+        opts.type = 'InternalSetting';
+        super(opts);
         /**
           * Name is the name of the setting.
           * Setting names should be unique, to prevent confusion.
           *
           * @type {string}
           */
-        this.name = name;
+        this.name = opts.name || '';
         /**
           * Value is the value of the setting, which can be any
           * valid JavaScript object. Keep in mind that this object
@@ -40,7 +53,7 @@ class InternalSetting extends PersistentObject {
           *
           * @type {Object}
           */
-        this.value = value;
+        this.value = opts.value || '';
     }
 
     /**
