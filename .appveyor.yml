@@ -1,4 +1,4 @@
-version: "0.1.9-{build}"
+version: "2.0.0-{build}"
 
 platform: x64
 
@@ -23,9 +23,9 @@ install:
   - git reset --hard HEAD
   - npm install npm -g
     #  - npm install electron-builder@next # force install next version to test electron-builder
-  - npm install
-  - set PATH=%GOPATH%\bin;c:\go\bin;%PATH%
+  - npm install --save-dev
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%PATH%
+  - dir %APPVEYOR_BUILD_FOLDER%/node_modules/.bin
 
     #branches:
     #    only:
