@@ -16,55 +16,14 @@ class UploadTargetController extends BaseController {
     constructor(params) {
         super(params, 'Settings');
         this.typeMap = typeMap;
+
+        this.model = UploadTarget;
+        this.form = UploadTargetForm;
+        this.formTemplate = Templates.uploadTargetForm;
+        this.listTemplate = Templates.uploadTargetList;
+        this.nameProperty = 'name';
     }
 
-    new() {
-        let form = UploadTargetForm.create(new UploadTarget());
-        let html = Templates.uploadTargetForm({ form: form });
-        return this.containerContent(html);
-    }
-
-    edit() {
-        let target = UploadTarget.find(this.params.get('id'));
-        let form = UploadTargetForm.create(target);
-        let html = Templates.uploadTargetForm({ form: form });
-        return this.containerContent(html);
-    }
-
-    update() {
-        let target = UploadTarget.find(this.params.get('id')) || new UploadTarget();
-        let form = UploadTargetForm.create(target);
-        form.parseFromDOM();
-        if (!form.obj.validate()) {
-            form.setErrors();
-            let html = Templates.uploadTargetForm({ form: form });
-            return this.containerContent(html);
-        }
-        this.alertMessage = `Saved upload target "${form.obj.name}"`;
-        target.save();
-        return this.list();
-    }
-
-    list() {
-        let listParams = this.paramsToHash();
-        let items = UploadTarget.list(null, listParams);
-        let data = {
-            alertMessage: this.alertMessage,
-            items: items
-        };
-        let html = Templates.uploadTargetList(data);
-        return this.containerContent(html);
-    }
-
-    destroy() {
-        let target = UploadTarget.find(this.params.get('id'));
-        if (confirm(`Delete upload target "${target.name}"?`)) {
-            this.alertMessage = `Deleted upload target "${target.name}"`;
-            target.delete();
-            return this.list();
-        }
-        return this.noContent();
-    }
 }
 
 module.exports.UploadTargetController = UploadTargetController;
