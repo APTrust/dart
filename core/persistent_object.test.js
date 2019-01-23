@@ -80,14 +80,14 @@ test('userCanDelete == false should prevent deletion', () => {
 test('mergeDefaultOptions()', () => {
     var opts1 = PersistentObject.mergeDefaultOpts();
     expect(opts1).not.toBeNull();
-    expect(opts1.limit).toEqual(0);
+    expect(opts1.limit).toEqual(10);
     expect(opts1.offset).toEqual(0);
     expect(opts1.orderBy).toBeNull();
     expect(opts1.sortDirection).toEqual('asc');
 
     var opts2 = PersistentObject.mergeDefaultOpts({});
     expect(opts2).not.toBeNull();
-    expect(opts2.limit).toEqual(0);
+    expect(opts2.limit).toEqual(10);
     expect(opts2.offset).toEqual(0);
     expect(opts2.orderBy).toBeNull();
     expect(opts2.sortDirection).toEqual('asc');
