@@ -214,22 +214,26 @@ class PersistentObject {
      *
      * @example
      * // Get the newest object where obj.name == 'Homer'
-     * let obj = persistentObject.findMatching('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'desc'});
+     * let obj = persistentObject.findMatching('name', 'Homer',
+     * {orderBy: 'createdAt', sortDirection: 'desc'});
      *
      * @example
      * // Get the second newest object where obj.name == 'Homer'
-     * let obj = persistentObject.first('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
+     * let obj = persistentObject.first('name', 'Homer',
+     * {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
      *
      * @example
      * // Get the oldest object where obj.name == 'Homer'
-     * let obj = persistentObject.findMatching('name', 'Homer', {orderBy: 'createdAt', sortDirection: 'asc'});
+     * let obj = persistentObject.findMatching('name', 'Homer',
+     * {orderBy: 'createdAt', sortDirection: 'asc'});
      *
      * @param {Conf} db - The conf datastore in which to search.
      * @param {string} property - The name of the property to match.
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
      *
      * @returns {Object}
      */
@@ -262,18 +266,21 @@ class PersistentObject {
      * @param {number} opts.limit - Limit to this many results.
      * @param {number} opts.offset - Start results from this offset.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
      *
      * @returns {Object[]}
      */
     static list(db, filterFunction, opts) {
         opts = PersistentObject.mergeDefaultOpts(opts);
-        let sortedList = PersistentObject.sort(db, opts.orderBy, opts.sortDirection);
-        if (filterFunction == null) {
-            return sortedList;
+        if (!filterFunction) {
+            filterFunction = () => { return true };
         }
-        let matches = [];  // List of matched objects to return
-        let matched = 0;   // Count of objects matched so far. We may skip some, due to opts.offset.
+        let sortedList = PersistentObject.sort(db, opts.orderBy, opts.sortDirection);
+        // List of matched objects to return
+        let matches = [];
+        // Count of objects matched so far. We may skip some, due to opts.offset.
+        let matched = 0;
         for (let obj of sortedList) {
             if (typeof filterFunction === 'function' && filterFunction(obj)) {
                 matched++;
@@ -290,9 +297,9 @@ class PersistentObject {
 
     /**
      * first returns the first item matching that passes the filterFunction.
-     * You can combine orderBy, sortDirection, and offset to get the second, third, etc.
-     * match for the given criteria, but note that this function only returns a
-     * single item at most (or null if there are no matches).
+     * You can combine orderBy, sortDirection, and offset to get the second,
+     * third, etc. match for the given criteria, but note that this function
+     * only returns a single item at most (or null if there are no matches).
      *
      * @example
      * // Define a filter function
@@ -304,20 +311,26 @@ class PersistentObject {
      * let obj = persistentObject.first(nameAndAge);
      *
      * // Get the newest matching object
-     * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'desc'});
+     * let obj = persistentObject.first(nameAndAge,
+     * {orderBy: 'createdAt', sortDirection: 'desc'});
      *
      * // Get the second newest matching object
-     * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
+     * let obj = persistentObject.first(nameAndAge,
+     * {orderBy: 'createdAt', sortDirection: 'desc', offset: 1});
      *
      * // Get the oldest matching object
-     * let obj = persistentObject.first(nameAndAge,  {orderBy: 'createdAt', sortDirection: 'asc'});
+     * let obj = persistentObject.first(nameAndAge,
+     * {orderBy: 'createdAt', sortDirection: 'asc'});
      *
      * @param {Conf} db - The conf datastore in which to search.
-     * @param {filterFunction} filterFunction - The name of the property to match.
+     * @param {filterFunction} filterFunction - The name of the property
+     * to match.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
-     * @param {number} opts.offset - Skip this many items before choosing a result.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
+     * @param {number} opts.offset - Skip this many items before choosing
+     * a result.
      *
      * @returns {Object}
      */

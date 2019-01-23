@@ -23,8 +23,8 @@ afterAll(() => {
     TestUtil.deleteJsonFile('AppSetting');
 });
 
-function createAppSetting() {
-    let appSetting = new AppSetting(settingName, settingValue);
+function createAppSetting(name, value) {
+    let appSetting = new AppSetting(name, value);
     appSetting.save();
     return appSetting;
 }
@@ -61,7 +61,7 @@ test('new()', () => {
 });
 
 test('edit()', () => {
-    let appSetting = createAppSetting();
+    let appSetting = createAppSetting(settingName, settingValue);
     let idParams = new url.URLSearchParams({ id: appSetting.id });
     let controller = new AppSettingController(idParams);
     let response = controller.edit();
@@ -81,7 +81,7 @@ test('edit()', () => {
 });
 
 test('update()', () => {
-    let appSetting = createAppSetting();
+    let appSetting = createAppSetting(settingName, settingValue);
     let idParams = new url.URLSearchParams({ id: appSetting.id });
     let controller = new AppSettingController(idParams);
 
@@ -104,39 +104,36 @@ test('update()', () => {
     expect(appSetting.userCanDelete).toEqual(false);
 });
 
-// -----------------------------------------------------------
-// TODO: Fix this!
-// -----------------------------------------------------------
-// test('list()', () => {
-//     let setting1 = new AppSetting('Name 1', 'chocolate');
-//     let setting2 = new AppSetting('Name 2', 'vanilla');
-//     let setting3 = new AppSetting('Name 3', 'cherry');
-//     let setting4 = new AppSetting('Name 4', 'caramel');
-//     let setting5 = new AppSetting('Name 5', 'coffee');
+test('list()', () => {
+    let setting1 = createAppSetting('Name 1', 'chocolate');
+    let setting2 = createAppSetting('Name 2', 'vanilla');
+    let setting3 = createAppSetting('Name 3', 'cherry');
+    let setting4 = createAppSetting('Name 4', 'caramel');
+    let setting5 = createAppSetting('Name 5', 'coffee');
 
-//     let listParams = new url.URLSearchParams({
-//         offset: 1,
-//         limit: 3,
-//         orderBy: 'name',
-//         sortDirection: 'desc'
-//     });
-//     let controller = new AppSettingController(listParams);
-//     let response = controller.list();
-//     UITestUtil.setDocumentBody(response);
+    let listParams = new url.URLSearchParams({
+        offset: 1,
+        limit: 3,
+        orderBy: 'name',
+        sortDirection: 'desc'
+    });
+    let controller = new AppSettingController(listParams);
+    let response = controller.list();
+    UITestUtil.setDocumentBody(response);
 
-//     expect($('td:contains(chocolate)').length).toEqual(0);
-//     expect($('td:contains(vanilla)').length).toEqual(1);
-//     expect($('td:contains(cherry)').length).toEqual(1);
-//     expect($('td:contains(caramel)').length).toEqual(1);
-//     expect($('td:contains(apple)').length).toEqual(0);
-// });
+    expect($('td:contains(chocolate)').length).toEqual(0);
+    expect($('td:contains(vanilla)').length).toEqual(1);
+    expect($('td:contains(cherry)').length).toEqual(1);
+    expect($('td:contains(caramel)').length).toEqual(1);
+    expect($('td:contains(coffee)').length).toEqual(0);
+});
 
 test('destroy() deletes the object when you say yes', () => {
 
     // Mock window.confirm to return true
     window.confirm = jest.fn(() => true)
 
-    let appSetting = createAppSetting();
+    let appSetting = createAppSetting(settingName, settingValue);
     let idParams = new url.URLSearchParams({ id: appSetting.id });
     let controller = new AppSettingController(idParams);
 
@@ -155,7 +152,7 @@ test('destroy() does not delete the object when you say no', () => {
     // Mock window.confirm to return false
     window.confirm = jest.fn(() => false)
 
-    let appSetting = createAppSetting();
+    let appSetting = createAppSetting(settingName, settingValue);
     let idParams = new url.URLSearchParams({ id: appSetting.id });
     let controller = new AppSettingController(idParams);
 

@@ -48,12 +48,6 @@ class AppSettingController extends BaseController {
 
     list() {
         let listParams = this.paramsToHash();
-        // TODO: Fix this in a more general way!
-        listParams.offset = listParams.offset || 0;
-        listParams.limit = listParams.limit || 25;
-        listParams.orderBy = listParams.orderBy || 'name';
-        listParams.sortDirection = listParams.sortDirection || 'asc';
-        // END TODO
         let items = AppSetting.list(null, listParams);
         let data = {
             alertMessage: this.alertMessage,
