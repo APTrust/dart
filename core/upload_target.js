@@ -105,7 +105,7 @@ class UploadTarget extends PersistentObject {
         if (Util.isEmpty(this.host)) {
             this.errors["host"] = "Host cannot be empty.";
         }
-        if (!Util.isEmpty(this.port) && parseInt(this.port, 10) != this.port) {
+        if (!Util.isEmpty(this.port) && this.port != 0 && parseInt(this.port, 10) != this.port) {
             this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
         }
         return Object.keys(this.errors).length == 0;
