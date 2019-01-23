@@ -24,7 +24,7 @@ class UploadTarget extends PersistentObject {
           *
           * @type {string}
           */
-        this.name = name;
+        this.name = name || "";
         /**
           * A description of this upload target. It should be meaningful
           * to the user.
@@ -106,7 +106,7 @@ class UploadTarget extends PersistentObject {
             this.errors["host"] = "Host cannot be empty.";
         }
         if (!Util.isEmpty(this.port) && parseInt(this.port, 10) != this.port) {
-            this.errors["port"] = "Port must be a whole number, or leave blank to use the default port.";
+            this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
         }
         return Object.keys(this.errors).length == 0;
     }
@@ -120,7 +120,11 @@ class UploadTarget extends PersistentObject {
      * @returns {Object}
      */
     static find(id) {
-        return Context.db('UploadTarget').get(id);
+        let data = Context.db('UploadTarget').get(id);
+        if (data) {
+            return Object.assign(new UploadTarget(), data);
+        }
+        return undefined;
     }
 
     /**

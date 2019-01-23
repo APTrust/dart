@@ -1,4 +1,4 @@
-<h1>Storage Service</h1>
+<h1>Upload Target</h1>
 
 <form method="post" action="#" id="{{ id }}">
 
@@ -21,6 +21,8 @@
   {{> inputText field = form.fields.loginExtra }}
 
   {{> inputHidden field = form.fields.id }}
+
+  {{> inputHidden field = form.fields.userCanDelete }}
 
   {{> formButtons form = form }}
 
