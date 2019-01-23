@@ -24,7 +24,7 @@ install:
   - npm install --global npm@latest
     #  - npm install electron-builder@next # force install next version to test electron-builder
   - set PATH=%APPDATA%\npm;%PATH%
-  - npm install
+  - cd %APPVEYOR_BUILD_FOLDER% && npm install
 
 build_script:
   - npm test -- --runInBand
