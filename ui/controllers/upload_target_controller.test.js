@@ -27,7 +27,7 @@ function createTarget(name) {
     let target = new UploadTarget({ name: name });
     target.description = 'Test Description';
     target.host = 'example.com';
-    target.protocol = '23a8f0af-a03a-418e-89a4-6d07799882b6';
+    target.protocol = 's3';
     target.port = 999;
     target.bucket = 'root';
     target.login = 'jo@example.com';

@@ -27,7 +27,7 @@ class UploadTarget extends PersistentObject {
      * the upload target.
      *
      * @param {string} opts.protocol - The protocol to use when connecting
-     * to the remote repo.
+     * to the remote repo ('s3', 'sftp', etc.).
      *
      * @param {string} opts.host - The name or IP address of the remote host.
      *

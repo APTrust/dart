@@ -29,6 +29,10 @@ test('create()', () => {
     for (let choice of choices) {
         expect(choice.value).toBeDefined();
         expect(choice.label).toBeDefined();
-        expect(choice.selected).toBe(false);
+        if (choice.value === target.protocol) {
+            expect(choice.selected).toBe(true);
+        } else {
+            expect(choice.selected).toBe(false);
+        }
     }
 });
