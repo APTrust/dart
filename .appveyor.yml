@@ -27,11 +27,27 @@ install:
 
 build_script:
   - npm test -- --runInBand
-    #- cd %APPVEYOR_BUILD_FOLDER%/electron && electron-builder .
+  - electron-builder . --publish never
 
 #artifacts:
 #  - file: electron/dist/*.exe
 #    name: DART-Windows
+after_build:
+  - ps: Get-ChildItem .\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }
+
+
+deploy:
+  provider: S3
+  name: S3-public-deployment
+  access_key_id:
+   secure: u4NH7eUlYuzO9hl5Hk/7P5K1qvo31iqZ19BW484x8BE=
+  secret_access_key:
+   secure: FMvYL/QE+0kHdy9L7GxtayJwx3KwQB3AA2mcIBqGGeEM0lqLLv4tq2b4wH9y3nJ8
+  bucket: aptrust.public.download
+  region: us-east-1
+  set_public: true
+  folder: DART
+  reduced_redundancy: true
 
 test: off
 notifications:
