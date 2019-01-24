@@ -22,9 +22,7 @@ install:
   - git reset --hard HEAD
   - rm -rf node_modules
   - npm install --global npm@latest
-    #  - npm install electron-builder@next # force install next version to test electron-builder
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%APPVEYOR_BUILD_FOLDER%/node_modules/;C:\Users\appveyor\AppData\Roaming\npm\node_modules;%PATH%
-  - echo %PATH%
   - npm install
 
 build_script:
