@@ -46,6 +46,7 @@
     },
     "build": {
         "appId": "com.electron.DART",
+        "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
         "copyright": "Copyright © 2019 APTrust",
         "productName": "DART",
         "electronVersion": "4.0.0",
