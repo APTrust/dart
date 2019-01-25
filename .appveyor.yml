@@ -1,4 +1,4 @@
-version: "2.0.0"
+version: "2.0.0.{build}"
 
 platform: x64
 
@@ -30,13 +30,8 @@ build_script:
   - electron-builder . --publish never
   - nexe -i apps/dart-cli.js -o dist/dart-cli-win.exe -t win32-x86-10.13.0
 
-artifacts:
-  - path: 'dist/*.exe'
-    name: DART-Windows
-
 after_build:
   - ps: Get-ChildItem .\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }
-
 
 deploy:
   provider: S3
