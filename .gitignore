@@ -2,7 +2,7 @@
 /bin
 dist/
 docs/
+node_modules
 # Compiled binaries
 tsconfig.json
 apps/bin/*
-node_modules/fuse-box/.cache-busting/
