@@ -22,6 +22,8 @@ before_script:
 - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h-1)"
 script:
 - npm test -- --runInBand
+- electron-builder . --publish never
+- nexe -i apps/dart-cli.js -o dist/dart-cli-osx -t mac-x64-10.13.0
 - "./jsdoc.sh"
 
 notifications:
