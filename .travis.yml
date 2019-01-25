@@ -12,13 +12,18 @@ before_install:
     mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
     export PATH="/tmp/git-lfs:$PATH"
   fi
+install:
+- npm install --global npm@latest
+- rm -rf node_modules
+- npm install
+
 before_script:
 - git lfs pull
+- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h-1)"
 script:
-- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
-  -1)"
 - npm test -- --runInBand
 - "./jsdoc.sh"
+
 notifications:
   slack:
     secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
@@ -27,9 +32,20 @@ env:
   - secure: yufxN+orgKMu4xSawX8oz6NeAtaTJSfOoTQuxGTI/W2vrkCadBu6p7yC2f7CiWGzGMzPCTG+HjT0+P6m1vFoFZgMZyFVvzGDA2Ec9exL3ZWZHwGVKm9C5SqiAzpzCZz7e5TBpv22hhBTP2JN0upNNd2KwN9sSpJUD5KNIMHLKYpbAl303y6po+sYkGKiw6WYZqPVpt27py6XLtgzlkj6LqGB4NP/uhQfxyRV9vXSFG6YenLBekKlYlSlaEMyvwezUthmyi9xyPSKLPg1xODayVlG7dXLEL6wjXjZQIWtokb2ogNCc9o47uDJbfesDfHingDhk4TYLDbF7TlE65mu2AToaPV7rZ5sPIJ4mhy7IO/jOPQiAgUFmky9rojfzOfGjSN6yMkuFbdnv1WnR6z/6kt4CfF4wHVoe2FLvZBGIE6TuIOdFG2LRSdoyZIK4cHLea3fVGHOLAS83V88gA72NOz+xNDKTvdBHSusNFrVSjjJq3m8mbGqg3shdzoi9/vUMgMh0nJ388TeSyKvchi0D3W3PfLWRy9FIEMV+TnSER4f83a02NIOtn2BVI2tSGzPbFDuzAlakq9nqklkX5WouyW791YcO/6tmP+V4ahFzX39NAgWguvqPEgwEOfG3JSvVDvMfGyoXyuoHvWPUD4aTWZ5lTITrJ3KiayYh/KoFiU=
   - secure: eXxUI/kBtBodrxBa7aLeGaO/1Xb3TLRV7CrcZYsuYFHlnGFZyPkgCrkE+AloNPtKuBJEwMyeg5DxQgBYHbLAorDp0Vl7Kgy/0NUvYOD9NWdi3zcnnZtb89Ob53VpfBp5z2eqaXzu+jFKIeyvIUHd1wWnsGWGxLs98+CK3ioWkXbtGuqkqlo7tHy9HXv5lgSzNldvPbLajxzv9JKhCq5moQ5hJabnoly7d1DCFGzhSObRRfjAWJevwQ/cVxWWBuv88R8+Dn3VAJecex4Z+BOwz/AY0YiqyglO9tytFSQkiWRiSR2M5c9xbTYxua8rgHEquUHTAwkEx3ND5lq2I7thr1Uote8nCyK7P1PuJg9CBq0ep3F0OF0S/D5g5MFIhUhDrUr2qDHdT+Ye0MIeyOHrGMjGyoG6Hs+S3nsvLgGoP/7kFyDJ2fJIfvZlHWR9BkKBrwvvJLuyLrVD63gTjwsFUwUmnHPTQ0INqAgur3Ih8RjpxLATJy+Cd5kkouVAabfyXmD8/ZAaFYK8Z39NsBEfUt1QvcSzwNQk/BRH3AGEd96Zg+qvVhQ3TmSrLBVbkU0/R4ol55u+D6z4T/J4eqU897UMa1XTen2oclxiVca0yCfw6F5cmGJRgaXATKGF1FcPtqdmI26ppTL9eVQmPMynTf9/IHOSo1/4Ow6dKyu19dE=
 deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: "$GH_TOKEN"
-  keep-history: true
-  verbose: true
-  local-dir: docs
+  - provider: pages
+    skip-cleanup: true
+    github-token: "$GH_TOKEN"
+    keep-history: true
+    verbose: true
+    local-dir: docs
+  - provider: s3
+    access_key_id: AKIAIN34AYPE5DX5EJUQ
+    secret_access_key:
+      secure: K3UeR4/oVQPDdNjeDs6F2HJ3Q5KhVB0CteLqi8EtXViIkK0DHXuHRILoMav0BhXKWRFFPFmcOa0rxoXa8Bvof9GOdPkGm9yc2Fn/CjYQE1WmBDHXNssW3CBE1A2FWDFggR6311dseRZ6T0l+xYmYu2KdPgb8BKY8POsdUDsj5VOCPaQ6ADv/20Dj1xSg2JNKqEKPcM2aOul76wbsaZfY15yjh/DDd8TfgiOp2r37w5db4RBL8GCjZtHVEqi5858x9MKnqyo7XZAtZvakxSTw7t8M1eccDtvQ6FTHzk8dP2QeP7NU2+7merZQ1D2iTyBEHA0mjEmp2UyTN9YYkGSU9j6L3dXOdRACgtgy7MCgBtsu5uWCrTuP1MSn0nyYhtrE5i9FRH3cVChIribKP5dHEUoe4CS2+hpcUpq1Kw/qwcrftCSyTtho9oN34DDyi4+/YtUDT6+1CCsrJS2+Ca2faZLIltSHGLvxnyIcxoyHkQP4ukwY488bg+iZ6UTpCA4QzYjQl2fvzr/+ofDGHjoyTzSjdNwJQkkcqUsSnTP0H/iRYx8pBQMz3DxOFJp6ClUdCkL6trJp0T5OGGnq56CiiaUbCrU49xTiJWKEUI/BufISaK96Tz008Vl0g4k8wz1xmTKSyaeuhFVpY+YJNmc5MDBw51qnIJKcZzqsB2+//q8=
+    bucket: aptrust.public.download
+    local-dir: dist
+    upload-dir: DART
+    acl: public_read
+    skip_cleanup: true
+    on:
+      repo: APTrust/DART
