@@ -36,7 +36,7 @@
         "electron-rebuild": "^1.8.2",
         "electron-toolkit": "^1.0.24",
         "jest": "^23.6.0",
-        "tape": "^4.9.0"
+        "tape": "^4.9.2"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
