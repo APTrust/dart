@@ -10,7 +10,7 @@
     "license": "Apache-2.0",
     "dependencies": {
         "archiver": "^3.0.0",
-        "asar": "^0.14.3",
+        "asar": "^0.14.6",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
         "documentation": "^9.1.1",
