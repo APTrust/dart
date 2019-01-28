@@ -189,19 +189,24 @@ class BagItProfile extends PersistentObject {
     _addStandardBagItFile() {
         // BagIt spec says these two tags in bagit.txt file
         // are always required.
-        var version = new TagDefinition('bagit.txt', 'BagIt-Version');
-        version.required = true;
-        version.emptyOk = false;
-        version.values = Constants.BAGIT_VERSIONS;
-        version.defaultValue = "0.97";
-        version.help = "Which version of the BagIt specification describes this bag's format?";
-        var encoding = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
-        encoding.required = true;
-        encoding.emptyOk = false;
-        encoding.defaultValue = "UTF-8";
-        encoding.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
-        this.tags.push(version);
-        this.tags.push(encoding);
+        if(this.getTagsFromFile('bagit.txt', 'Bagit-Version').length == 0) {
+            var version = new TagDefinition('bagit.txt', 'BagIt-Version');
+            version.required = true;
+            version.emptyOk = false;
+            version.values = Constants.BAGIT_VERSIONS;
+            version.defaultValue = "0.97";
+            version.help = "Which version of the BagIt specification describes this bag's format?";
+
+        }
+        if(this.getTagsFromFile('bagit.txt', 'Tag-File-Character-Encoding').length == 0) {
+            var encoding = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
+            encoding.required = true;
+            encoding.emptyOk = false;
+            encoding.defaultValue = "UTF-8";
+            encoding.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
+            this.tags.push(version);
+            this.tags.push(encoding);
+        }
     }
 
     // This adds a standard bag-info.txt file to the BagIt profile.
@@ -651,6 +656,130 @@ class BagItProfile extends PersistentObject {
                 this.tags.push(t);
             }
         }
+    }
+
+
+    /* ------- Implementation of PersistentObject methods -------- */
+
+    /**
+     * find finds the object with the specified id in the datastore
+     * and returns it. Returns undefined if the object is not in the datastore.
+     *
+     * @param {string} id - The id (UUID) of the object you want to find.
+     *
+     * @returns {Object}
+     */
+    static find(id) {
+        let data = Context.db('BagItProfile').get(id);
+        if (data) {
+            let profile = new BagItProfile(data);
+            profile.bagItProfileInfo = new BagItProfileInfo();
+            Object.assign(profile.bagItProfileInfo, data.bagItProfileInfo);
+            for (let i=0; i < data.tags.length; i++) {
+                let tagDef = new TagDefinition();
+                Object.assign(tagDef, data.tags[i]);
+                profile.tags[i] = tagDef;
+            }
+            return profile;
+        }
+        return undefined;
+    }
+
+    /**
+     * sort sorts all of the items in the Conf datastore (JSON text file)
+     * on the specified property in either 'asc' (ascending) or 'desc' (descending)
+     * order. This does not affect the order of the records in the file, but
+     * it returns a sorted list of objects.
+     *
+     * @param {string} property - The property to sort on.
+     * @param {string} direction - Sort direction: 'asc' or 'desc'
+     *
+     * @returns {Object[]}
+     */
+    static sort(property, direction) {
+        return PersistentObject.sort(Context.db('BagItProfile'), property, direction);
+    }
+
+    /**
+     * findMatching returns an array of items matching the specified criteria.
+     *
+     * @see {@link PersistentObject} for examples.
+     *
+     * @param {string} property - The name of the property to match.
+     * @param {string} value - The value of the property to match.
+     * @param {Object} opts - Optional additional params.
+     * @param {number} opts.limit - Limit to this many results.
+     * @param {number} opts.offset - Start results from this offset.
+     * @param {string} opts.orderBy - Sort the list on this property.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
+     *
+     * @returns {Object[]}
+     */
+    static findMatching(property, value, opts) {
+        return PersistentObject.findMatching(Context.db('BagItProfile'), property, value, opts);
+    }
+
+    /**
+     * firstMatching returns the first item matching the specified criteria,
+     * or null if no item matches.
+     *
+     * @see {@link PersistentObject} for examples.
+     *
+     * @param {string} property - The name of the property to match.
+     * @param {string} value - The value of the property to match.
+     * @param {Object} opts - Optional additional params.
+     * @param {string} opts.orderBy - Sort the list on this property.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
+     *
+     * @returns {Object}
+     */
+    static firstMatching(property, value, opts) {
+        return PersistentObject.firstMatching(Context.db('BagItProfile'), property, value, opts);
+    }
+
+    /**
+     * list returns an array of items matched by the filter function.
+     *
+     * @see {@link PersistentObject} for examples.
+     *
+     * @param {filterFunction} filterFunction - A function to filter out items
+     * that should not go into the results.
+     * @param {Object} opts - Optional additional params.
+     * @param {number} opts.limit - Limit to this many results.
+     * @param {number} opts.offset - Start results from this offset.
+     * @param {string} opts.orderBy - Sort the list on this property.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
+     *
+     * @returns {Object[]}
+     */
+    static list(filterFunction, opts) {
+        return PersistentObject.list(Context.db('BagItProfile'), filterFunction, opts);
+    }
+
+    /**
+     * first returns the first item matching that passes the filterFunction.
+     * You can combine orderBy, sortDirection, and offset to get the second,
+     * third, etc. match for the given criteria, but note that this function
+     * only returns a single item at most (or null if there are no matches).
+     *
+     * @see {@link PersistentObject} for examples.
+     *
+     * @param {filterFunction} filterFunction - A function to filter out items that
+     * should not go into the results.
+     * @param {Object} opts - Optional additional params.
+     * @param {string} opts.orderBy - Sort the list on this property.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
+     * @param {number} opts.offset - Skip this many items before choosing
+     * a result.
+     *
+     * @returns {Object}
+     */
+    static first(filterFunction, opts) {
+        return PersistentObject.first(Context.db('BagItProfile'), filterFunction, opts);
     }
 
 };

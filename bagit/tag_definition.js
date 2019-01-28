@@ -18,7 +18,9 @@ const tagsSetBySystem = ['Bagging-Date', 'Bagging-Software',
  *
  * @see {@link BagItProfile}
  *
- * @param {string} tagFile - The name of the tag file in which this tag should appear.
+ * @param {string} tagFile - The name of the tag file in which this tag
+ * should appear.
+ *
  * @param {string} tagName - The name of the tag.
  *
  */

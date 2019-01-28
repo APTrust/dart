@@ -403,3 +403,80 @@ test('mergeTagValues()', () => {
     expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-1')[0].userValue).toEqual('Bagger Vance');
     expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-2')[0].userValue).toEqual('434-555-1212');
 });
+
+// ---------------------------------
+// Tests of PersistentObject methods
+// ---------------------------------
+
+test('find()', () => {
+    let objs = makeObjects(3);
+    let obj = objs[1];
+    expect(BagItProfile.find(obj.id)).toEqual(obj);
+});
+
+test('sort()', () => {
+    let objs = makeObjects(3);
+    let sortedAsc = BagItProfile.sort("name", "asc");
+    expect(sortedAsc[0].name).toEqual("Name 1");
+    expect(sortedAsc[2].name).toEqual("Name 3");
+    let sortedDesc = BagItProfile.sort("name", "desc");
+    expect(sortedDesc[0].name).toEqual("Name 3");
+    expect(sortedDesc[2].name).toEqual("Name 1");
+});
+
+test('findMatching()', () => {
+    let objs = makeObjects(3);
+    let matches = BagItProfile.findMatching("description", "Description 3");
+    expect(matches.length).toEqual(1);
+    expect(matches[0].description).toEqual("Description 3");
+});
+
+test('firstMatching()', () => {
+    let objs = makeObjects(3);
+    let match = BagItProfile.firstMatching("description", "Description 3");
+    expect(match).not.toBeNull();
+    expect(match.description).toEqual("Description 3");
+});
+
+test('list()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.description != null;
+    }
+    let opts = {
+        limit: 2,
+        offset: 1,
+        orderBy: "description",
+        sortDirection: "asc"
+    }
+    let matches = BagItProfile.list(fn, opts);
+    expect(matches.length).toEqual(2);
+    expect(matches[0].description).toEqual("Description 2");
+    expect(matches[1].description).toEqual("Description 3");
+});
+
+test('first()', () => {
+    let objs = makeObjects(3);
+    let fn = function(obj) {
+        return obj.description != null;
+    }
+    let opts = {
+        orderBy: "description",
+        sortDirection: "desc"
+    }
+    let match = BagItProfile.first(fn, opts);
+    expect(match).not.toBeNull();
+    expect(match.description).toEqual("Description 3");
+});
+
+function makeObjects(howMany) {
+    let list = [];
+    for(let i=0; i < howMany; i++) {
+        let name = `Name ${i + 1}`;
+        let description = `Description ${i + 1}`;
+        let obj = new BagItProfile({ name: name, description: description });
+        obj.save();
+        list.push(obj);
+    }
+    return list;
+}
