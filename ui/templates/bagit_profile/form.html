@@ -1,0 +1,109 @@
+<h2>BagIt Profile</h2>
+
+<ul class='text-danger'>
+{{#each errors as |err| }}
+  <li>{{ err }}</li>
+{{/each }}
+</ul>
+
+<form method="post" action="#" id="{{ id }}">
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">About This Profile</h3>
+      </div>
+      <div class="panel-body">
+
+        {{> inputText field = form.fields.name }}
+
+        {{> inputText field = form.fields.description }}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a href="#generalReqs" data-toggle="collapse">General Requirements</a></h3>
+      </div>
+      <div class="panel-body panel-collapse in" id="generalReqs">
+
+        {{> inputSelect field = form.fields.allowFetchTxt }}
+
+        {{> inputSelect field = form.fields.allowMiscTopLevelFiles }}
+
+        {{> inputSelect field = form.fields.allowMiscDirectories }}
+
+        {{> inputSelect field = form.fields.serialization }}
+
+        {{> inputSelect field = form.fields.acceptBagItVersion }}
+
+        {{> inputSelect field = form.fields.manifestsRequired }}
+
+        {{> inputSelect field = form.fields.tagManifestsRequired }}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><a href="#profileInfo" data-toggle="collapse">BagIt Profile Info</a></h3>
+      </div>
+      <div class="panel-body panel-collapse in" id="profileInfo">
+
+        <div class="well">
+          Fill out this section only if you intend to make your
+          BagIt profile a published standard. If your profile is
+          for internal use, leave this section blank.
+        </div>
+
+        {{> inputText field = form.fields.bagItProfileInfo.bagItProfileIdentifier }}
+
+        {{> inputText field = form.fields.bagItProfileInfo.contactEmail }}
+
+        {{> inputText field = form.fields.bagItProfileInfo.contactName }}
+
+        {{> inputText field = form.fields.bagItProfileInfo.externalDescription }}
+
+        {{> inputText field = form.fields.bagItProfileInfo.sourceOrganization }}
+
+        {{> inputText field = form.fields.bagItProfileInfo.version }}
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  {{> profileTags }}
+
+  {{> inputHidden field = form.fields.id }}
+  {{> inputHidden field = form.fields.baseProfileId }}
+
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="pull-right">
+          <a class="btn btn-primary btn-xs" id="btnNewTagFile" role="button">Add Tag File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  {{> formButtons form = form }}
+
+</form>

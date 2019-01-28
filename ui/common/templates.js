@@ -11,9 +11,9 @@ function readFile(...args) {
 var about = handlebars.compile(readFile('about', 'index.html'));
 var appSettingForm = handlebars.compile(readFile('app_setting', 'form.html'));
 var appSettingList = handlebars.compile(readFile('app_setting', 'list.html'));
-// var bagItProfileList = handlebars.compile(readFile('bagit_profile_list.html'));
-// var bagItProfileForm = handlebars.compile(readFile('bagit_profile_form.html'));
-// var bagItProfileNew = handlebars.compile(readFile('bagit_profile_new.html'));
+var bagItProfileList = handlebars.compile(readFile('bagit_profile', 'list.html'));
+var bagItProfileForm = handlebars.compile(readFile('bagit_profile', 'form.html'));
+var bagItProfileNew = handlebars.compile(readFile('bagit_profile', 'new.html'));
 // var dashboard = handlebars.compile(readFile('dashboard.html'));
 // var help = handlebars.compile(readFile('help.html'));
 // var jobFiles = handlebars.compile(readFile('job_files.html'));
@@ -66,9 +66,9 @@ handlebars.registerHelper('resultSummary', function(result) {
 module.exports.about = about;
 module.exports.appSettingForm = appSettingForm;
 module.exports.appSettingList = appSettingList;
-// module.exports.bagItProfileForm = bagItProfileForm;
-// module.exports.bagItProfileList = bagItProfileList;
-// module.exports.bagItProfileNew = bagItProfileNew;
+module.exports.bagItProfileForm = bagItProfileForm;
+module.exports.bagItProfileList = bagItProfileList;
+module.exports.bagItProfileNew = bagItProfileNew;
 // module.exports.dashboard = dashboard;
 // module.exports.help = help;
 // module.exports.jobFiles = jobFiles;
