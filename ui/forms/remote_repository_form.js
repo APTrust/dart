@@ -14,7 +14,10 @@ class RemoteRepositoryForm {
         if (!remoteRepository.userCanDelete) {
             form.fields['name'].attrs['disabled'] = true;
         }
-        form.fields['name'].help = remoteRepository.help;
+
+        if (!form.fields['url'].value) {
+            form.fields['url'].attrs.placeholder = 'https://repo.example.com/api';
+        }
 
         let repoProviders = PluginManager.getModuleCollection('Repository');
         let sortedProviders = repoProviders.sort(Util.getSortFunction('name', 'asc'));
