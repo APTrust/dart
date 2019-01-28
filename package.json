@@ -68,6 +68,14 @@
                 }
             ],
             "category": "public.app-category.productivity"
+        },
+       "linux": {
+            "target": [
+                {
+                    "target": "deb"
+                }
+            ],
+            "category": "public.app-category.productivity"
         }
     }
 }
