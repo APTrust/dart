@@ -60,20 +60,35 @@ class Util {
     /**
       * Returns true if str matches the regex for hex-formatted uuid.
       *
-      * @param {string} str - The string to measure.
+      * @param {string} str - The string to test.
       * @returns {boolean}
       */
     static looksLikeUUID(str) {
+        var regex = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?)$/i;
+        return Util.stringMatchesRegex(str, regex);
+    }
+
+    /**
+      * Returns true if str matches the regex for a URL beginning
+      * with http or https.
+      *
+      * @param {string} str - The string to test.
+      * @returns {boolean}
+      */
+    static looksLikeHypertextURL(str) {
+        let regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+        return Util.stringMatchesRegex(str, regex);
+    }
+
+    static stringMatchesRegex(str, pattern) {
         var match = null
         try {
-            var re = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?)$/i;
-            match = str.match(re);
+            match = str.match(pattern);
         } catch (ex) {
             // null string or non-string
         }
         return match != null;
     }
-
 
     /**
       * Returns true if str is null or empty.

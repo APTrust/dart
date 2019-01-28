@@ -25,6 +25,16 @@ test('Util.looksLikeUUID()', () => {
     expect(Util.looksLikeUUID(null)).toEqual(false);
 });
 
+test('Util.looksLikeHyperTextURL()', () => {
+    expect(Util.looksLikeHypertextURL("http://example.com/api")).toEqual(true);
+    expect(Util.looksLikeHypertextURL("https://repo.example.com/api/v2")).toEqual(true);
+    expect(Util.looksLikeHypertextURL("ftp://example.com/upload")).toEqual(false);
+    expect(Util.looksLikeHypertextURL("ταὐτὰ παρίσταταί")).toEqual(false);
+    expect(Util.looksLikeHypertextURL("")).toEqual(false);
+    expect(Util.looksLikeHypertextURL(null)).toEqual(false);
+    expect(Util.looksLikeHypertextURL(6)).toEqual(false);
+});
+
 test('Util.isEmpty()', () => {
     expect(Util.isEmpty("")).toEqual(true);
     expect(Util.isEmpty("  ")).toEqual(true);
