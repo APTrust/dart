@@ -8,6 +8,10 @@
         "url": "https://github.com/APTrust/dart.git"
     },
     "license": "Apache-2.0",
+    "author": {
+        "name": "Andrew Diamond",
+        "email": "dev@aptrust.org"
+    },
     "dependencies": {
         "archiver": "^3.0.0",
         "asar": "^0.14.3",
