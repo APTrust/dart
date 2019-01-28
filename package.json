@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "archiver": "^3.0.0",
-        "asar": "^0.14.3",
+        "asar": "^0.14.6",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
         "documentation": "^9.1.1",
@@ -23,7 +23,7 @@
         "electron-store": "^2.0.0",
         "es6-error": "^4.1.1",
         "handlebars": "^4.0.12",
-        "minio": "^7.0.3",
+        "minio": "^7.0.4",
         "nexe": "^2.0.0-rc.34",
         "popper.js": "^1.14.6",
         "react": "^16.7.0",
@@ -31,7 +31,7 @@
         "tar-stream": "^1.6.2",
         "tmp": "0.0.33",
         "vue": "^2.5.22",
-        "winston": "^3.1.0"
+        "winston": "^3.2.0"
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
@@ -39,8 +39,8 @@
         "electron-builder": "^20.38.5",
         "electron-rebuild": "^1.8.2",
         "electron-toolkit": "^1.0.24",
-        "jest": "^23.6.0",
-        "tape": "^4.9.0"
+        "jest": "^24.0.0",
+        "tape": "^4.9.2"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",

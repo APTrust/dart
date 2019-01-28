@@ -43,8 +43,9 @@ class RemoteRepository extends PersistentObject {
         opts.type = 'RemoteRepository';
         super(opts);
         /**
-          * Name is the name of the setting.
-          * Setting names should be unique, to prevent confusion.
+          * Name is the name of the remote repo. This should be
+          * descriptive, like "APTrust Demo Repository", "APTrust
+          * Production Repository," etc.
           *
           * @type {string}
           */
@@ -98,6 +99,9 @@ class RemoteRepository extends PersistentObject {
         super.validate();
         if (Util.isEmpty(this.name)) {
             this.errors["name"] = "Name cannot be empty.";
+        }
+        if (!Util.looksLikeHypertextURL(this.url)) {
+            this.errors["url"] = "Repository URL must a valid URL beginning with http:// or https://.";
         }
         return Object.keys(this.errors).length == 0;
     }

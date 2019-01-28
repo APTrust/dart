@@ -34,9 +34,11 @@ test('validate()', () => {
     expect(result2).toEqual(false);
     expect(obj.errors['name']).toEqual('Name cannot be empty.');
     expect(obj.errors['id']).toEqual('Id cannot be empty.');
+    expect(obj.errors['url']).toEqual('Repository URL must a valid URL beginning with http:// or https://.');
 
     obj.name = 'Something';
     obj.id = originalId;
+    obj.url = 'https://example.com/placeholder';
     let result3 = obj.validate();
     expect(result3).toEqual(true);
 });
