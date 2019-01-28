@@ -100,6 +100,9 @@ class RemoteRepository extends PersistentObject {
         if (Util.isEmpty(this.name)) {
             this.errors["name"] = "Name cannot be empty.";
         }
+        if (!Util.looksLikeHypertextURL(this.url)) {
+            this.errors["url"] = "Repository URL must a valid URL beginning with http:// or https://.";
+        }
         return Object.keys(this.errors).length == 0;
     }
 
