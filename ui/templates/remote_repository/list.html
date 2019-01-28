@@ -1,0 +1,24 @@
+{{> bannerAlert message = alertMessage }}
+
+<h2>Remote Repositories</h2>
+<div class="pull-right mt-1 mb-3">
+  <a class="btn btn-primary" href="#RemoteRepository/new" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items}}
+    <tr class="clickable-row" data-url="#RemoteRepository/edit?id={{ id }}">
+      <td>{{ name }}</td>
+      <td>{{ url }}</td>
+    </tr>
+    {{/each }}
+  </tbody>
+</table>
+
+{{> tableBottomLinks }}

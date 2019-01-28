@@ -43,8 +43,9 @@ class RemoteRepository extends PersistentObject {
         opts.type = 'RemoteRepository';
         super(opts);
         /**
-          * Name is the name of the setting.
-          * Setting names should be unique, to prevent confusion.
+          * Name is the name of the remote repo. This should be
+          * descriptive, like "APTrust Demo Repository", "APTrust
+          * Production Repository," etc.
           *
           * @type {string}
           */

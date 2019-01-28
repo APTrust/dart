@@ -179,8 +179,6 @@ class PluginManager {
      * {@link implementsProtocol}, {@link talksTo}, and {@link setsUp}.
      * You should generally use those functions instead of this one.
      *
-     *
-     *
      * @returns {Array<Plugin>}
      */
     static pluginProvides(pluginType, propertyToCheck, valueToFind) {

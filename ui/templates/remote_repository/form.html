@@ -1,0 +1,23 @@
+<h2>Remote Repository</h2>
+
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = form.fields.name }}
+
+  {{> inputText field = form.fields.url }}
+
+  {{> inputSelect field = form.fields.pluginId }}
+
+  {{> inputText field = form.fields.userId }}
+
+  {{> inputText field = form.fields.apiToken }}
+
+  {{> inputText field = form.fields.loginExtra }}
+
+  {{> inputHidden field = form.fields.id }}
+
+  {{> inputHidden field = form.fields.userCanDelete }}
+
+  {{> formButtons form = form }}
+
+</form>
