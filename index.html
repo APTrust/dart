@@ -1862,6 +1862,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#utillookslikehypertexturl'
+                        class='regular pre-open'>
+                        .looksLikeHypertextURL
+                      </a></li>
+                    
+                      <li><a
                         href='#utillookslikeuuid'
                         class='regular pre-open'>
                         .looksLikeUUID
@@ -13718,8 +13724,9 @@ remote REST service. Most services won't use this.</p>
 
   
 
-  <p>Name is the name of the setting.
-Setting names should be unique, to prevent confusion.</p>
+  <p>Name is the name of the remote repo. This should be
+descriptive, like "APTrust Demo Repository", "APTrust
+Production Repository," etc.</p>
 
  
   
@@ -19454,6 +19461,77 @@ special handling for boolean values.</p>
       </div>
     </div>
   
+    <div class='border-bottom' id='utillookslikehypertexturl'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>looksLikeHypertextURL(str)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns true if str matches the regex for a URL beginning
+with http or https.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>looksLikeHypertextURL(str: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>str</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The string to test.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='utillookslikeuuid'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -19489,7 +19567,7 @@ special handling for boolean values.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>str</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The string to measure.
+	    The string to test.
 
           </div>
           
