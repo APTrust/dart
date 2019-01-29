@@ -710,6 +710,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#bagitprofileinflatefrom'
+                        class='regular pre-open'>
+                        .inflateFrom
+                      </a></li>
+                    
+                      <li><a
                         href='#bagitprofilelist'
                         class='regular pre-open'>
                         .list
@@ -9464,6 +9470,86 @@ a JSON hash, to a full-fledged BagItProfile object.</p>
 </li>
       
     </ul>
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='bagitprofileinflatefrom'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>inflateFrom(otherProfile)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This creates a new BagItProfile or a vanilla data object that
+contains the attributes of a BagItProfile. This is used by the
+find() method to inflate a JSON hash retrieved from the DB into
+a full-fledged BagItProfile object, and by the BagItProfileController
+when creating a new BagItProfile based on an existing BagItProfile.</p>
+<p>If you intend to clone an existing profile to create a new one, be
+sure to change the profile's id after cloning it. Otherwise, when you
+save the new (cloned) profile, it will overwrite the old one in the DB.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>inflateFrom(otherProfile: (<a href="#bagitprofile">BagItProfile</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>)): <a href="#bagitprofile">BagItProfile</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>otherProfile</span> <code class='quiet'>((<a href="#bagitprofile">BagItProfile</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>))</code>
+	    The BagItProfile you want
+to copy, or a vanilla object that contains the same properties as a
+BagItProfile (such as BagItProfile JSON record retrieved from the
+DART database).
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#bagitprofile">BagItProfile</a></code>:
+        
+
+      
+    
+  
+
   
 
   
