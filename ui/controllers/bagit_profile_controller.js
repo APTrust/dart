@@ -32,7 +32,7 @@ class BagItProfileController extends BaseController {
     // creating a new BagItProfile includes the extra step of
     // optionally cloning an existing profile.
     new() {
-        let form = new NewBagItProfileForm();
+        let form = NewBagItProfileForm.create();
         let html = Templates.bagItProfileNew({ form: form });
         return this.containerContent(html);
     }
