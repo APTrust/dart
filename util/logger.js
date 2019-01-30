@@ -2,6 +2,14 @@ const { Config } = require('../core/config');
 const path = require('path');
 const winston = require('winston');
 
+// We have to explicitly load these, even though winston requires them
+// internally. Without explicit loading, nexe blows up at runtime.
+// Nexe claims to have a number of workarounds for this, but their
+// documentation is either wrong, useless, or non-existent.
+const { printf } = require('logform/printf');
+const { combine } = require('logform/combine');
+const { colorize } = require('logform/colorize');
+
 const consoleFormat = winston.format.printf(function(info) {
     if (info.level.includes('error')) {
         return `${new Date().toISOString()} - ${info.level}: ${info.message}\n`;
