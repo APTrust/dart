@@ -1554,6 +1554,12 @@
                       </a></li>
                     
                       <li><a
+                        href='#constantsbuiltin_profile_ids'
+                        class='regular pre-open'>
+                        .BUILTIN_PROFILE_IDS
+                      </a></li>
+                    
+                      <li><a
                         href='#constantsdigest_algorithms'
                         class='regular pre-open'>
                         .DIGEST_ALGORITHMS
@@ -2355,6 +2361,12 @@
                         #logger
                       </a></li>
                       
+                      <li><a
+                        href='#globalcontexty18n'
+                        class='regular pre-open'>
+                        #y18n
+                      </a></li>
+                      
                     </ul>
                   
                   
@@ -2638,6 +2650,12 @@
                         href='#testutildeletejsonfile'
                         class='regular pre-open'>
                         .deleteJsonFile
+                      </a></li>
+                    
+                      <li><a
+                        href='#testutilloadprofile'
+                        class='regular pre-open'>
+                        .loadProfile
                       </a></li>
                     
                     </ul>
@@ -3321,6 +3339,16 @@ have been written to the file system.
               
                 
                 <li><a
+                  href='#loadbuiltinprofiles'
+                  class="">
+                  loadBuiltInProfiles
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#taskdescription'
                   class=" toggle-sibling">
                   TaskDescription
@@ -3374,6 +3402,26 @@ have been written to the file system.
                   href='#plugintypes'
                   class="">
                   pluginTypes
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#run'
+                  class="">
+                  run
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#runall'
+                  class="">
+                  runAll
                   
                 </a>
                 
@@ -17398,6 +17446,61 @@ understand.</p>
       </div>
     </div>
   
+    <div class='border-bottom' id='constantsbuiltin_profile_ids'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>BUILTIN_PROFILE_IDS</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This maps serialization formats found in BagItProfiles
+to file extensions. Key is the name of the profile,
+value is the profile's UUID.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>BUILTIN_PROFILE_IDS</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='constantsdigest_algorithms'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -24088,8 +24191,8 @@ creating it first if necessary.</p>
         <div class='space-bottom0'>
           <div>
             <span class='code bold'>name</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the datastore. This can be a class name,
-so each object type has it's own JSON data file.
+	    The name of the datastore. This can be a
+class name, so each object type has it's own JSON data file.
 
           </div>
           
@@ -24243,7 +24346,8 @@ package.json file.</p>
 
   
 
-  <p>Returns true if we're running in Electron dev mode rather than in compiled mode.</p>
+  <p>Returns true if we're running in Electron dev mode rather than
+in compiled mode.</p>
 
  
   
@@ -24360,6 +24464,59 @@ facility. See <a href="https://github.com/winstonjs/winston">https://github.com/
  
   
     <div class='pre p1 fill-light mt0'>logger</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='globalcontexty18n'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>y18n</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>y18n allows us to translate/localize the UI.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>y18n</div>
    
   
     <p>
@@ -27086,6 +27243,78 @@ next test.</p>
 
   
 
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='testutilloadprofile'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>loadProfile(filename)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This loads a BagItProfile from the builtin directory or from
+the test/profiles directory.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>loadProfile(filename: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): <a href="#bagitprofile">BagItProfile</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>filename</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The file name of the BagIt profile to
+load. For example, "my_profile.json".
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#bagitprofile">BagItProfile</a></code>:
+        
+
+      
+    
   
 
   
@@ -32426,6 +32655,55 @@ will have a .json extension appended automatically.
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='loadbuiltinprofiles'>
+      loadBuiltInProfiles
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Load APTrust and DPN profiles in the local BagItProfile database
+if they are not already there.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>loadBuiltInProfiles()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='taskdescription'>
       TaskDescription
     </h3>
@@ -32870,6 +33148,111 @@ same by talking to a Fedora REST service.</li>
  
   
     <div class='pre p1 fill-light mt0'>pluginTypes</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='run'>
+      run
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Migration 20190130T190816Z adds the built-in BagIt profiles for APTrust
+and DPN to the user's local BagItProfile database.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>run()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='runall'>
+      runAll
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This runs all migrations in the migrations directory.</p>
+<p>Migrations allow us to add, remove, or change application settings,
+move and transform data and data structures, etc.</p>
+<p>Each migration must export a function called 'run', and it will be
+run at startup.</p>
+<p>Migrations will be run in order (0001.js, 0002.js, etc.) and run()
+will ALWAYS be called at startup. The run function should check an
+internal var called 'Migration_0001' (or whatver its name is) and
+should not re-run itself if it's been run before.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>runAll()</div>
    
   
   
