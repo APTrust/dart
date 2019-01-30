@@ -6,7 +6,7 @@ const path = require('path');
 const { TestUtil } = require('../core/test_util');
 
 /**
- * Migration 2019-01-30.01 adds the built-in BagIt profiles for APTrust
+ * Migration 20190130T190816Z adds the built-in BagIt profiles for APTrust
  * and DPN to the user's local BagItProfile database.
  *
  */
@@ -52,6 +52,8 @@ function loadBuiltInProfiles() {
             let jsonFile = jsonFiles[name];
             Context.logger.info(`Installing profile ${name} from ${jsonFile}`);
             profile = TestUtil.loadProfile(jsonFile);
+            profile.isBuiltIn = true;
+            profile.userCanDelete = false;
             profile.save();
         } else {
             Context.logger.info(`Profile ${name} is already installed`);
