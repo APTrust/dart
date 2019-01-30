@@ -1,7 +1,14 @@
-const os = require('os');
 const { Config } = require('./config');
 const { JsonStore } = require('./json_store');
 const logger = require('../util/logger.js');
+const os = require('os');
+const osLocale = require('os-locale');
+const path = require('path');
+
+const y18n = require('y18n')({
+    directory: path.join(__dirname, '..', 'locales'),
+    locale: osLocale.sync()
+});
 
 /**
  * GlobalContext is a single, globally available object that provides
@@ -45,13 +52,20 @@ class GlobalContext {
          * @type {Object}
          */
         this.logger = logger;
+
+        /**
+         * y18n allows us to translate/localize the UI.
+         *
+         * @type {Object}
+         */
+        this.y18n = y18n;
     }
     /**
       * Returns the JsonStore with the specified name (class name),
       * creating it first if necessary.
       *
-      * @param {string} name - The name of the datastore. This can be a class name,
-      * so each object type has it's own JSON data file.
+      * @param {string} name - The name of the datastore. This can be a
+      * class name, so each object type has it's own JSON data file.
      */
     db(name) {
         if (this.dataStores[name] == null) {
@@ -61,7 +75,8 @@ class GlobalContext {
     }
 
     /**
-     * Returns true if we're running in Electron dev mode rather than in compiled mode.
+     * Returns true if we're running in Electron dev mode rather than
+     * in compiled mode.
      *
      * @returns {boolean}
      */
