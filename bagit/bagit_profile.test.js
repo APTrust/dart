@@ -1,5 +1,6 @@
 const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('./bagit_profile');
+const { Constants } = require('../core/constants');
 const { TagDefinition } = require('./tag_definition');
 const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
@@ -252,15 +253,15 @@ test('mustBeTarred()', () => {
 });
 
 test('fromJson()', () => {
-    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'aptrust_bagit_profile_2.2.json');
+    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
     let jsonString = fs.readFileSync(jsonFile);
     let profile = BagItProfile.fromJson(jsonString);
     expect(profile).not.toBeNull();
 
     // This doesn't test everything, but we spot check a few properties.
-    expect(profile.id).toEqual('043f1c22-c9ff-4112-86f8-8f8f1e6a2dca');
+    expect(profile.id).toEqual(Constants.BUILTIN_PROFILE_IDS['aptrust']);
     expect(profile.name).toEqual('APTrust');
-    expect(profile.description).toEqual('APTrust 2.0 default BagIt profile.');
+    expect(profile.description).toEqual('APTrust 2.2 default BagIt profile.');
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
@@ -269,14 +270,14 @@ test('fromJson()', () => {
 });
 
 test('load()', () => {
-    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'aptrust_bagit_profile_2.2.json');
+    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
     let profile = BagItProfile.load(jsonFile);
     expect(profile).not.toBeNull();
 
     // Check some basics.
-    expect(profile.id).toEqual('043f1c22-c9ff-4112-86f8-8f8f1e6a2dca');
+    expect(profile.id).toEqual(Constants.BUILTIN_PROFILE_IDS['aptrust']);
     expect(profile.name).toEqual('APTrust');
-    expect(profile.description).toEqual('APTrust 2.0 default BagIt profile.');
+    expect(profile.description).toEqual('APTrust 2.2 default BagIt profile.');
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
@@ -405,7 +406,7 @@ test('mergeTagValues()', () => {
 });
 
 test('inflateFrom()', () => {
-    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'aptrust_bagit_profile_2.2.json');
+    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
     let profile = BagItProfile.load(jsonFile);
     let copy = BagItProfile.inflateFrom(profile);
     expect(copy).toEqual(profile);

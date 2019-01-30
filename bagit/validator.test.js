@@ -2,6 +2,7 @@ const { BagItProfile } = require('./bagit_profile');
 const FileSystemReader = require('../plugins/formats/read/file_system_reader');
 const path = require('path');
 const TarReader = require('../plugins/formats/read/tar_reader');
+const { TestUtil } = require('../core/test_util');
 const { Validator } = require('./validator');
 
 test('Constructor sets initial properties', () => {
@@ -113,9 +114,10 @@ test('getNewReader()', () => {
 
 function getValidator(profileName, bagDir, bagName) {
     let testDir = path.join(__dirname, "..", "test");
-    let profilePath = path.join(testDir, "profiles", profileName);
+    //let profilePath = path.join(testDir, "profiles", profileName);
     let bagPath = path.join(testDir, "bags", bagDir, bagName)
-    let profile = BagItProfile.load(profilePath);
+    //let profile = BagItProfile.load(profilePath);
+    let profile = TestUtil.loadProfile(profileName);
     return new Validator(bagPath, profile);
 }
 
