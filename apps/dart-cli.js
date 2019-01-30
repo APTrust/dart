@@ -1,7 +1,9 @@
+const _throwaway = require('./nexe_force_load');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const CLI = require('./cli_constants');
+const { Context } = require('../core/context');
 const { manual } = require('./manual');
 const Migrations = require('../migrations/migrations');
 const minimist = require('minimist')
