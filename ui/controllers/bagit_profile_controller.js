@@ -3,6 +3,7 @@ const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { BaseController } = require('./base_controller');
 const { NewBagItProfileForm } = require('../forms/new_bagit_profile_form');
 const Templates = require('../common/templates');
+const { Util } = require('../../core/util');
 
 const typeMap = {
     allowFetchTxt: 'boolean',
@@ -41,9 +42,35 @@ class BagItProfileController extends BaseController {
     // BagItProfile and then showing the user the standard edit
     // form.
     create() {
-        return this.containerContent('Create new BagItProfile...');
+        let newProfile = this.getNewProfileFromBase();
+        newProfile.save();
+        this.params.set('id', newProfile.id);
+        return this.edit();
     }
 
+    /**
+     * This returns an entirely new BagItProfile, or a new BagItProfile
+     * that is a copy of a base profile.
+     *
+     * @returns {BagItProfile}
+     */
+    getNewProfileFromBase() {
+        let newProfile = null;
+        let form = NewBagItProfileForm.create();
+        form.parseFromDOM();
+        if(form.obj.baseProfile) {
+            let baseProfile = BagItProfile.find(form.obj.baseProfile);
+            newProfile = BagItProfile.inflateFrom(baseProfile);
+            newProfile.id = Util.uuid4();
+            newProfile.baseProfileId = baseProfile.id;
+            newProfile.isBuiltIn = false;
+            newProfile.name = `Copy of ${baseProfile.name}`;
+            newProfile.description = `Customized version of ${baseProfile.name}`;
+        } else {
+            newProfile = new BagItProfile();
+        }
+        return newProfile;
+    }
 
 }
 

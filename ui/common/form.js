@@ -38,6 +38,7 @@ class Form {
         this.changed = {};
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
+            // console.log(name);
             let formValue = $(`#${field.id}`).val().trim();
             let newValue = this.castNewValueToType(oldValue, formValue);
             if (oldValue !== newValue) {
