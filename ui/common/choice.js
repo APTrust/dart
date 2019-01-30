@@ -10,9 +10,8 @@ class Choice {
 
     static makeList(items, selected, includeEmptyFirstOption) {
         if (!Array.isArray(selected)) {
-            var selValue = selected;
-            var selected = []
-            selected.push(selValue)
+            // Coerce to array
+            selected = [selected];
         }
         var choices = [];
         if (includeEmptyFirstOption == true) {
