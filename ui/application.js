@@ -46,4 +46,16 @@ $(function() {
     $('#modal').on('hidden.bs.modal', function(e) {
         location.href = lastHref;
     });
+
+    // Attach popover help tips to dynamically added elements
+    var popOverSettings = {
+        container: 'body',
+        trigger: 'hover',
+        html: true,
+        selector: '[data-toggle="popover"]',
+        content: function () {
+            return $('#popover-content').html();
+        }
+    }
+    $('body').popover(popOverSettings);
 });
