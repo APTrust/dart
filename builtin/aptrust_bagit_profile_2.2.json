@@ -1,7 +1,7 @@
 {
     "id": "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca",
     "name": "APTrust",
-    "description": "APTrust 2.0 default BagIt profile.",
+    "description": "APTrust 2.2 default BagIt profile.",
     "acceptBagItVersion": [
         "0.97", "1.0"
     ],

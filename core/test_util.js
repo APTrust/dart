@@ -1,3 +1,4 @@
+const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const path = require('path');
 const fs = require('fs');
@@ -20,6 +21,26 @@ class TestUtil {
                 fs.unlinkSync(jsonFile);
             }
         }
+    }
+
+    /**
+     * This loads a BagItProfile from the builtin directory or from
+     * the test/profiles directory.
+     *
+     * @param {string} filename - The file name of the BagIt profile to
+     * load. For example, "my_profile.json".
+     *
+     * @returns {BagItProfile}
+     */
+    static loadProfile(filename) {
+        let builtInDir = path.join(__dirname, "..", "builtin");
+        let profilePath = path.join(builtInDir, filename);
+        if (!fs.existsSync(profilePath)) {
+            let testDir = path.join(__dirname, "..", "test");
+            profilePath = path.join(testDir, "profiles", filename);
+
+        }
+        return BagItProfile.load(profilePath);
     }
 }
 
