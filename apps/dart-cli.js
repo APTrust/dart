@@ -3,11 +3,12 @@ const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const CLI = require('./cli_constants');
 const { manual } = require('./manual');
+const Migrations = require('../migrations/migrations');
 const minimist = require('minimist')
 const { ProfileValidator } = require('./profile_validator');
 
-
 async function main() {
+    Migrations.runAll();
     process.exitCode = CLI.EXIT_SUCCESS;
     let opts = parseArgs();
     let task;
