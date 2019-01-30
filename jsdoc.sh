@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 set -x
 echo "Generating documentation..."
-find . -type f -name "*.js" -not -path "*/node_modules/*" -not -path "*/docs/*" -not -path "*/apps/bin" -not -path "*/ui/*" | xargs documentation build -f html -o docs --sort-order alpha
+find . -type f -name "*.js" -not -path "*/node_modules/*" -not -path "*/docs/*" -not -path "*/apps/bin" -not -path "*/ui/*" | xargs ./node_modules/.bin/documentation build -f html -o docs --sort-order alpha
 echo "New doc is in docs/index.html"
 
 #echo "Hello, Travis! You there?"
