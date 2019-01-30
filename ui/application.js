@@ -1,8 +1,14 @@
 const Controllers = require('./controllers');
+const Migrations = require('../migrations/migrations');
 const Templates = require('./common/templates');
 const { UIHelper } = require('./common/ui_helper');
 
 $(function() {
+
+    // Run all migrations so that the user's enviromnent is
+    // up to date.
+    Migrations.runAll();
+
     let lastHref = '#';
     $(window).on('hashchange', function() {
         // Don't reload after resetting hash or closing modal.
