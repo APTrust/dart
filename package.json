@@ -25,13 +25,15 @@
         "handlebars": "^4.0.12",
         "minio": "^7.0.4",
         "nexe": "^2.0.0-rc.34",
+        "os-locale": "^3.1.0",
         "popper.js": "^1.14.6",
         "react": "^16.7.0",
         "require-dir": "^1.2.0",
         "tar-stream": "^1.6.2",
         "tmp": "0.0.33",
         "vue": "^2.5.22",
-        "winston": "^3.2.0"
+        "winston": "^3.2.0",
+        "y18n": "^4.0.0"
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
@@ -69,7 +71,7 @@
             ],
             "category": "public.app-category.productivity"
         },
-       "linux": {
+        "linux": {
             "target": [
                 {
                     "target": "deb"
