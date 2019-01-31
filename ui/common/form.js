@@ -2,8 +2,37 @@ const { Context } = require('../../core/context')
 const { Field } = require('./field');
 const { Util } = require('../../core/util');
 
+/**
+ * The Form class converts objects into a structure that can be
+ * run through a template and converted into an HTML form.
+ *
+ */
 class Form {
-
+    /**
+     * This returns a new form object that DART's templates can render
+     * as an HTML form.
+     *
+     * @param {string} formId - This will become the id attribute of
+     * the HTML form tag.
+     *
+     * @param {PersistentObject|object} obj - The object from which you want
+     * to create a form. This class will generate the form fields for all
+     * of the attributes of obj, except those specified in the exclude param.
+     * The obj param should be an instance of an object derived from
+     * {@ref PersistentObject}, but you can create an empty form by passing
+     * in an empty object like so:
+     *
+     * <code>
+     * var myForm = new Form('myForm', {});
+     * </code>.
+     *
+     * @param {Array<string>} exclude - A list of object attributes to
+     * exclude from the form. The form will not include fields for these
+     * items. You don't need to include the 'id' or 'userCanDelete'
+     * attributes in this list.
+     * @default ['errors', 'help', 'type', 'required']
+     *
+     */
     constructor(formId, obj, exclude = ['errors', 'help', 'type', 'required']) {
         this.formId = formId;
         this.obj = obj;
@@ -14,8 +43,32 @@ class Form {
         this._initFields();
     }
 
-    // This does most of the grunt work, but you'll still have
-    // to do some customization afterward.
+    /**
+     * This creates fields for each attribute of form.obj, including
+     * setting the name, id, value, label, error message and help text
+     * of each item.
+     *
+     * The label and help text come from the locale file for each
+     * specific language. To set the label, add an entry to to the
+     * locale file named <ClassName>_<property>_label. To set the
+     * help text, add an entry to the locale file named
+     * <ClassName>_<property>_help. For example:
+     *
+     * <code>
+     * {
+     *   "MyClass_surname_label": "Surname",
+     *   "MyClass_surname_help": "Enter your family name.",
+     * }
+     * </code>
+     *
+     * This does not set the choices for select lists or checkbox groups.
+     * You'll have to do that yourself after the form is created.
+     *
+     * This method does not determine which HTML control will render
+     * on the form. Since that is a layout issue, you can specify that
+     * in your form template.
+     *
+     */
     _initFields() {
         for(let [name, value] of Object.entries(this.obj)) {
             if (!this.exclude.includes(name)) {
@@ -30,7 +83,29 @@ class Form {
         }
     }
 
-    // Get the localized label for this field.
+    /**
+     * This method returns the localized label for a form field.
+     * It extracts the label from the locale file that matches the
+     * user's current system settings. The locale file should have
+     * an entry like the one below to specify the label.
+     *
+     * <code>
+     * {
+     *   "MyClass_surname_label": "Surname",
+     * }
+     * </code>
+     *
+     * If there's no matching entry in the locale file, this returns
+     * a modified version of the property name with the first letter
+     * of each word capitalized. For example, fieldName "phoneNumber"
+     * would return "Phone Number" if there is no matching locale entry.
+     *
+     * @param {string} fieldName - The name of the field. This is the
+     * same as the name of the object property that the field will
+     * represent.
+     *
+     * @returns {string}
+     */
     _getLocalizedLabel(fieldName) {
         let labelKey = `${this.obj.type}_${fieldName}_label`;
         let labelText = Context.y18n.__(labelKey);
@@ -40,14 +115,33 @@ class Form {
         return labelText;
     }
 
-    // Set the 'required' html attribute if this field is required.
+    /**
+     * This sets the html attribute "required='true'" on the field
+     * if the field is required. (That is, if it's included in the
+     * PersistentObject's required attribute.)
+     *
+     * @param {Field} field
+     */
     _setRequired(field) {
         if (this.obj.required && this.obj.required.includes(field.name)) {
             field.attrs['required'] = true;
         }
     }
 
-    // Set the help text for the field, if it exists in the locale file.
+    /**
+     * This sets the help tooltip for the field, if it can be found
+     * in the locale file. If Form.obj happens to be an AppSetting,
+     * it reads the help directly from the AppSetting.help property.
+     * Help strings in the locale file look like this:
+     *
+     * <code>
+     * {
+     *   "MyClass_surname_help": "Enter your family name.",
+     * }
+     * </code>
+     *
+     * @param {Field} field
+     */
     _setFieldHelpText(field) {
         if (this.obj.type == 'AppSetting' && this.obj.help) {
             field.help = this.obj.help;
@@ -63,6 +157,21 @@ class Form {
 
     // Update the properties of this.obj with the values the user
     // entered in the HTML form.
+    /**
+     * This updates all of the values of Form.obj based on what the
+     * user entered in the HTML form. Note that because there are no
+     * PUT or POST operations in DART, this method reads directly from
+     * the HTML form on the current page, casting number and boolean
+     * values to the correct types.
+     *
+     * This also sets the values of the Form.changed object, which
+     * shows the old and new values of each property that the user
+     * changed.
+     *
+     * This returns nothing. Check the values of Form.obj and Form.changed
+     * after calling this. The controller classes call this method when
+     * users submit forms.
+     */
     parseFromDOM() {
         // This is required for jest tests.
         if ($ === undefined) {
@@ -84,12 +193,28 @@ class Form {
         }
     }
 
-    // Cast strings from DOM form to bool or number if necessary.
+    /**
+     * This casts a string value from a form to the correct type required
+     * by the underlying object, including strings, numbers and booleans.
+     *
+     * @param {string|number|boolean} oldValue - The original value, read
+     * from the property of Form.obj.
+     *
+     * @param {string} formValue - The value read from the HTML form, which
+     * will always be a string.
+     *
+     * @returns {string|number|boolean} - The formValue cast to a type
+     * that matches the type of oldValue.
+     */
     castNewValueToType(oldValue, formValue) {
         let toType = typeof oldValue;
         return Util.cast(formValue, toType);
     }
 
+    /**
+     * This sets the errors on the form, based on errors flagged in the
+     * {@ref PersistentObject} Form.obj.errors.
+     */
     setErrors() {
         this.changed = {};
         this._initFields();
