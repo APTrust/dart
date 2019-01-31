@@ -86,5 +86,12 @@
   "BagItProfile_manifestsRequired_label": "BagItProfile_manifestsRequired_label",
   "BagItProfile_tagManifestsRequired_label": "BagItProfile_tagManifestsRequired_label",
   "BagItProfile_serialization_label": "BagItProfile_serialization_label",
-  "BagItProfile_tarDirMustMatchName_label": "BagItProfile_tarDirMustMatchName_label"
+  "BagItProfile_tarDirMustMatchName_label": "BagItProfile_tarDirMustMatchName_label",
+  "AppSetting_type_label": "AppSetting_type_label",
+  "AppSetting_required_label": "AppSetting_required_label",
+  "AppSetting_errors_label": "AppSetting_errors_label",
+  "AppSetting_help_label": "AppSetting_help_label",
+  "undefined_str_label": "undefined_str_label",
+  "undefined_number_label": "undefined_number_label",
+  "undefined_bool_label": "undefined_bool_label"
 }

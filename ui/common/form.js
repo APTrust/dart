@@ -42,7 +42,7 @@ class Form {
 
     // Set the 'required' html attribute if this field is required.
     _setRequired(field) {
-        if (this.obj.required.includes(field.name)) {
+        if (this.obj.required && this.obj.required.includes(field.name)) {
             field.attrs['required'] = true;
         }
     }
