@@ -105,6 +105,7 @@ class Form {
      * represent.
      *
      * @returns {string}
+     * @private
      */
     _getLocalizedLabel(fieldName) {
         let labelKey = `${this.obj.type}_${fieldName}_label`;
@@ -121,6 +122,7 @@ class Form {
      * PersistentObject's required attribute.)
      *
      * @param {Field} field
+     * @private
      */
     _setRequired(field) {
         if (this.obj.required && this.obj.required.includes(field.name)) {
@@ -141,6 +143,7 @@ class Form {
      * </code>
      *
      * @param {Field} field
+     * @private
      */
     _setFieldHelpText(field) {
         if (this.obj.type == 'AppSetting' && this.obj.help) {

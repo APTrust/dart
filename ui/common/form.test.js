@@ -1,8 +1,20 @@
 const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
+const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
+const { InternalSetting } = require('../../core/internal_setting');
+const osLocale = require('os-locale');
 const { Util } = require('../../core/util');
+
+beforeEach(() => {
+    Context.y18n.setLocale(osLocale.sync());
+});
+
+afterAll(() => {
+    Context.y18n.setLocale(osLocale.sync());
+});
+
 
 test('Constructor initializes form fields', () => {
     let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
@@ -88,7 +100,6 @@ test('parseFromDOM()', () => {
     let appSetting = new AppSetting();
     let form = new Form('appSettingForm', appSetting);
 
-
     document.body.innerHTML =
     '<form>' +
     '  <input type="text" id="appSettingForm_name" value="Homer" />' +
@@ -113,4 +124,35 @@ test('parseFromDOM()', () => {
     expect(form.changed.id.new).toEqual('1234');
     expect(form.changed.userCanDelete.old).toBe(true);
     expect(form.changed.userCanDelete.new).toBe(false);
+});
+
+test('_getLocalizedLabel()', () => {
+    Context.y18n.setLocale('test_TEST');
+    let internalSetting = new InternalSetting();
+    let form = new Form('internalSettingForm', internalSetting);
+    expect(form.fields.name.label).toEqual('Test Label');
+});
+
+test('_setRequired()', () => {
+    let appSetting = new AppSetting();
+    let form = new Form('appSettingForm', appSetting);
+    expect(form.fields.name.attrs.required).toEqual(true);
+    expect(form.fields.value.attrs.required).not.toBeDefined();
+
+    // Sanity check on our own tests
+    expect(Context.y18n.locale).not.toEqual('test_TEST');
+});
+
+test('_setFieldHelpText()', () => {
+    Context.y18n.setLocale('test_TEST');
+    let internalSetting = new InternalSetting();
+    let form = new Form('internalSettingForm', internalSetting);
+    expect(form.fields.name.help).toEqual('Test help entry');
+
+    // Special case for AppSetting
+    let appSetting = new AppSetting();
+    appSetting.help = 'I am what I am';
+    form = new Form('appSettingForm', appSetting);
+    expect(form.fields.name.help).toEqual('I am what I am');
+
 });
