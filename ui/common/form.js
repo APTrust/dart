@@ -20,7 +20,7 @@ class Form {
         for(let [name, value] of Object.entries(this.obj)) {
             if (!this.exclude.includes(name)) {
                 let elementId = `${this.formId}_${name}`;
-                let label = Util.camelToTitle(name);
+                let label = this._getLocalizedLabel(name);
                 let field = new Field(elementId, name, label, value);
                 field.error = this.obj.errors[name];
                 this._setFieldHelpText(field);
@@ -28,6 +28,16 @@ class Form {
                 this.fields[name] = field;
             }
         }
+    }
+
+    // Get the localized label for this field.
+    _getLocalizedLabel(fieldName) {
+        let labelKey = `${this.obj.type}_${fieldName}_label`;
+        let labelText = Context.y18n.__(labelKey);
+        if (labelText == labelKey) {
+            labelText = Util.camelToTitle(fieldName);
+        }
+        return labelText;
     }
 
     // Set the 'required' html attribute if this field is required.

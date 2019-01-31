@@ -12,7 +12,6 @@ class AppSettingForm {
         if (!appSetting.userCanDelete) {
             form.fields['name'].attrs['disabled'] = true;
         }
-        form.fields['name'].attrs['required'] = true;
         return form
     }
 
