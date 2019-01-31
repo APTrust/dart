@@ -409,6 +409,52 @@
               
                 
                 <li><a
+                  href='#form'
+                  class=" toggle-sibling">
+                  Form
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#form_initfields'
+                        class='regular pre-open'>
+                        #_initFields
+                      </a></li>
+                      
+                      <li><a
+                        href='#formcastnewvaluetotype'
+                        class='regular pre-open'>
+                        #castNewValueToType
+                      </a></li>
+                      
+                      <li><a
+                        href='#formparsefromdom'
+                        class='regular pre-open'>
+                        #parseFromDOM
+                      </a></li>
+                      
+                      <li><a
+                        href='#formseterrors'
+                        class='regular pre-open'>
+                        #setErrors
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
                   href='#tarwriter'
                   class=" toggle-sibling">
                   TarWriter
@@ -2602,6 +2648,12 @@
                       </a></li>
                       
                       <li><a
+                        href='#persistentobjectrequired'
+                        class='regular pre-open'>
+                        #required
+                      </a></li>
+                      
+                      <li><a
                         href='#persistentobjectsave'
                         class='regular pre-open'>
                         #save
@@ -3284,6 +3336,16 @@ have been written to the file system.
                   
                   
                 </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#getnewprofilefrombase'
+                  class="">
+                  getNewProfileFromBase
+                  
+                </a>
                 
                 </li>
               
@@ -6908,6 +6970,362 @@ default to bagOfPhotos.tar.
         </div>
       
     </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='form'>
+      Form
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>The Form class converts objects into a structure that can be
+run through a template and converted into an HTML form.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>new Form(formId: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, obj: (<a href="#persistentobject">PersistentObject</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>), exclude: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>formId</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    This will become the id attribute of
+the HTML form tag.
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>obj</span> <code class='quiet'>((<a href="#persistentobject">PersistentObject</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a>))</code>
+	    The object from which you want
+to create a form. This class will generate the form fields for all
+of the attributes of obj, except those specified in the exclude param.
+The obj param should be an instance of an object derived from
+{@ref PersistentObject}, but you can create an empty form by passing
+in an empty object like so:
+<code>
+var myForm = new Form('myForm', {});
+</code>.
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>exclude</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+            = <code>[&#39;errors&#39;,&#39;help&#39;,&#39;type&#39;,&#39;required&#39;]</code>)</code>
+	    A list of object attributes to
+exclude from the form. The form will not include fields for these
+items. You don't need to include the 'id' or 'userCanDelete'
+attributes in this list.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='form_initfields'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>_initFields()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This creates fields for each attribute of form.obj, including
+setting the name, id, value, label, error message and help text
+of each item.</p>
+<p>The label and help text come from the locale file for each
+specific language. To set the label, add an entry to to the
+locale file named <ClassName><em><property>_label. To set the
+help text, add an entry to the locale file named
+<ClassName></em><property>_help. For example:</p>
+<code>
+{
+  "MyClass_surname_label": "Surname",
+  "MyClass_surname_help": "Enter your family name.",
+}
+</code>
+<p>This does not set the choices for select lists or checkbox groups.
+You'll have to do that yourself after the form is created.</p>
+<p>This method does not determine which HTML control will render
+on the form. Since that is a layout issue, you can specify that
+in your form template.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>_initFields()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='formcastnewvaluetotype'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>castNewValueToType(oldValue, formValue)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This casts a string value from a form to the correct type required
+by the underlying object, including strings, numbers and booleans.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>castNewValueToType(oldValue: (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>), formValue: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>): (<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>oldValue</span> <code class='quiet'>((<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>))</code>
+	    The original value, read
+from the property of Form.obj.
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>formValue</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The value read from the HTML form, which
+will always be a string.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a> | <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a>)</code>:
+        The formValue cast to a type
+that matches the type of oldValue.
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='formparsefromdom'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>parseFromDOM()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This updates all of the values of Form.obj based on what the
+user entered in the HTML form. Note that because there are no
+PUT or POST operations in DART, this method reads directly from
+the HTML form on the current page, casting number and boolean
+values to the correct types.</p>
+<p>This also sets the values of the Form.changed object, which
+shows the old and new values of each property that the user
+changed.</p>
+<p>This returns nothing. Check the values of Form.obj and Form.changed
+after calling this. The controller classes call this method when
+users submit forms.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>parseFromDOM()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='formseterrors'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>setErrors()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This sets the errors on the form, based on errors flagged in the
+{@ref PersistentObject} Form.obj.errors.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setErrors()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
   
 
   
@@ -26916,6 +27334,61 @@ you create a new PersistentObject. You should not change it.</p>
       </div>
     </div>
   
+    <div class='border-bottom' id='persistentobjectrequired'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>required</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This is a list of required properties. The DART UI won't let
+you save an instance of this object unless the required
+attributes have a value.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>required</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>&#x3C;<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
     <div class='border-bottom' id='persistentobjectsave'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
@@ -32331,6 +32804,63 @@ the errors property for specific errors.</p>
     </div>
   
 </div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='getnewprofilefrombase'>
+      getNewProfileFromBase
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This returns an entirely new BagItProfile, or a new BagItProfile
+that is a copy of a base profile.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>getNewProfileFromBase(): <a href="#bagitprofile">BagItProfile</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#bagitprofile">BagItProfile</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
 
   
 
