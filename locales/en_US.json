@@ -1,3 +1,5 @@
 {
-    "Comment": "This file will be for localization..."
+    "BagItProfile_allowFetchTxt_help": "Are fetch.txt files allowed? These files contain URLs of files that should be part of the bag. DART does not yet support packaging or validating fetch.txt files.",
+    "BagItProfile_allowMiscTopLevelFiles_help": "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?",
+    "BagItProfile_allowMiscDirectories_help": "Can the bag contain directories other than 'data' in the top-level directory?"
 }

@@ -1,6 +1,7 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('../common/choice');
 const { Constants } = require('../../core/constants');
+const { Context } = require('../../core/context')
 const { Field } = require('../common/field');
 const { Form } = require('../common/form');
 
@@ -27,14 +28,14 @@ class BagItProfileForm {
             Constants.YES_NO,
             bagItProfile.allowFetchTxt,
             false);
-        form.fields['allowFetchTxt'].help = "Are fetch.txt files allowed? These files contain URLs of files that should be part of the bag. DART does not yet support packaging or validating fetch.txt files.";
+        form.fields['allowFetchTxt'].help = Context.y18n.__('BagItProfile_allowFetchTxt_help');
 
         // Allow misc top-level files
         form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(
             Constants.YES_NO,
             bagItProfile.allowMiscTopLevelFiles,
             false);
-        form.fields['allowMiscTopLevelFiles'].help = "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?";
+        form.fields['allowMiscTopLevelFiles'].help = Context.y18n.__('BagItProfile_allowMiscTopLevelFiles_help');
 
 
         // Allow misc directories
@@ -42,7 +43,7 @@ class BagItProfileForm {
             Constants.YES_NO,
             bagItProfile.allowMiscDirectories,
             false);
-        form.fields['allowMiscDirectories'].help = "Can the bag contain directories other than 'data' in the top-level directory?";
+        form.fields['allowMiscDirectories'].help = Context.y18n.__('BagItProfile_allowMiscDirectories_help');
 
 
         // DEBUG
