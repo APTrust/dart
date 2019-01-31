@@ -47,5 +47,6 @@
   "AppSetting_help_help": "AppSetting_help_help",
   "undefined_str_help": "undefined_str_help",
   "undefined_number_help": "undefined_number_help",
-  "undefined_bool_help": "undefined_bool_help"
+  "undefined_bool_help": "undefined_bool_help",
+  "BagItProfile_required_help": "BagItProfile_required_help"
 }

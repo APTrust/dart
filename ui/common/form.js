@@ -24,8 +24,16 @@ class Form {
                 let field = new Field(elementId, name, label, value);
                 field.error = this.obj.errors[name];
                 this._setFieldHelpText(field);
+                this._setRequired(field);
                 this.fields[name] = field;
             }
+        }
+    }
+
+    // Set the 'required' html attribute if this field is required.
+    _setRequired(field) {
+        if (this.obj.required.includes(field.name)) {
+            field.attrs['required'] = true;
         }
     }
 
