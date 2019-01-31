@@ -41,6 +41,7 @@ class ManifestEntry extends PersistentObject {
      */
     constructor(opts = {}) {
         opts.type = 'ManifestEntry';
+        opts.required = ['jobId', 'origPath', 'pathInBag', 'algorithm', 'digest'];
         super(opts);
 
         /**
@@ -104,23 +105,7 @@ class ManifestEntry extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        super.validate();
-        if (Util.isEmpty(this.jobId)) {
-            this.errors["jobId"] = "jobId cannot be empty.";
-        }
-        if (Util.isEmpty(this.origPath)) {
-            this.errors["origPath"] = "origPath cannot be empty.";
-        }
-        if (Util.isEmpty(this.pathInBag)) {
-            this.errors["pathInBag"] = "pathInBag cannot be empty.";
-        }
-        if (Util.isEmpty(this.algorithm)) {
-            this.errors["algorithm"] = "algorithm cannot be empty.";
-        }
-        if (Util.isEmpty(this.digest)) {
-            this.errors["digest"] = "digest cannot be empty.";
-        }
-        return Object.keys(this.errors).length == 0;
+        return super.validate();
     }
 
     /**

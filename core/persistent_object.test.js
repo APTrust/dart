@@ -32,6 +32,7 @@ test('Constructor sets expected properties', () => {
     let obj = new PersistentObject({type: 'test1'});
     expect(obj.type).toEqual('test1');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
+    expect(obj.required).toEqual(['id']);
 });
 
 test('validate() throws error because it must be implemented in derived class', () => {

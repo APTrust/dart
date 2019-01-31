@@ -12,15 +12,7 @@ class AppSettingForm {
         if (!appSetting.userCanDelete) {
             form.fields['name'].attrs['disabled'] = true;
         }
-        form.fields['name'].help = appSetting.help;
-
-        // ----------------------------------------------------
-        // TODO: Enable this later, when plugins are available.
-        // ----------------------------------------------------
-        // if (appSetting.name == "Remote Repository") {
-        //     form.fields['value'].choices = Choice.makeList(Plugins.listRepositoryProviders(), appSetting.value, true);
-        // }
-
+        form.fields['name'].attrs['required'] = true;
         return form
     }
 

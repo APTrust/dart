@@ -35,6 +35,7 @@ class BagItProfile extends PersistentObject {
 
     constructor(opts = {}) {
         opts.type = 'BagItProfile'
+        opts.required = ['name'];
         super(opts);
         /**
           * Name is the name of this profile.
@@ -246,9 +247,6 @@ class BagItProfile extends PersistentObject {
      */
     validate() {
         super.validate();
-        if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty.";
-        }
         if (Util.isEmptyStringArray(this.acceptBagItVersion)) {
             this.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
         }

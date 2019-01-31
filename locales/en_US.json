@@ -31,5 +31,21 @@
   "UploadTarget_bucket_help": "The name of the bucket or default folder into which items should be uploaded.",
   "UploadTarget_login_help": "The login name or email address used to connect to the remote server. For S3 connections, this can be an AWS access key ID.",
   "UploadTarget_password_help": "The password used to connect to the remote server. For S3 connections, this can be the AWS secret access key.",
-  "UploadTarget_loginExtra_help": "Leave this blank unless otherwise instructed."
+  "UploadTarget_loginExtra_help": "Leave this blank unless otherwise instructed.",
+  "AppSetting_id_help": "AppSetting_id_help",
+  "AppSetting_userCanDelete_help": "AppSetting_userCanDelete_help",
+  "AppSetting_name_help": "AppSetting_name_help",
+  "AppSetting_value_help": "AppSetting_value_help",
+  "cannot be empty": "cannot be empty",
+  "%s cannot be empty": "%s cannot be empty",
+  "%s cannot be empty.": "%s cannot be empty.",
+  "RemoteRepository_required_help": "RemoteRepository_required_help",
+  "UploadTarget_required_help": "UploadTarget_required_help",
+  "AppSetting_required_help": "AppSetting_required_help",
+  "AppSetting_type_help": "AppSetting_type_help",
+  "AppSetting_errors_help": "AppSetting_errors_help",
+  "AppSetting_help_help": "AppSetting_help_help",
+  "undefined_str_help": "undefined_str_help",
+  "undefined_number_help": "undefined_number_help",
+  "undefined_bool_help": "undefined_bool_help"
 }

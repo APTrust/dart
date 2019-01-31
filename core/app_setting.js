@@ -31,6 +31,7 @@ class AppSetting extends PersistentObject {
      */
     constructor(opts = {}) {
         opts.type = 'AppSetting';
+        opts.required = ['name'];
         super(opts);
         /**
           * Name is the name of the setting.
@@ -64,11 +65,7 @@ class AppSetting extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        super.validate();
-        if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty.";
-        }
-        return Object.keys(this.errors).length == 0;
+        return super.validate();
     }
 
     /**

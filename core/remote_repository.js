@@ -41,6 +41,7 @@ class RemoteRepository extends PersistentObject {
      */
     constructor(opts = {}) {
         opts.type = 'RemoteRepository';
+        opts.required = ['name'];
         super(opts);
         /**
           * Name is the name of the remote repo. This should be
@@ -97,9 +98,6 @@ class RemoteRepository extends PersistentObject {
      */
     validate() {
         super.validate();
-        if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty.";
-        }
         if (!Util.looksLikeHypertextURL(this.url)) {
             this.errors["url"] = "Repository URL must a valid URL beginning with http:// or https://.";
         }

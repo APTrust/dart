@@ -49,6 +49,7 @@ class UploadTarget extends PersistentObject {
      */
     constructor(opts = {}) {
         opts.type = 'UploadTarget';
+        opts.required = ["name", "protocol", "host"];
         super(opts);
         /**
           * name is the name of this upload target. It should be meaningful
@@ -128,15 +129,6 @@ class UploadTarget extends PersistentObject {
      */
     validate() {
         super.validate();
-        if (Util.isEmpty(this.name)) {
-            this.errors["name"] = "Name cannot be empty.";
-        }
-        if (Util.isEmpty(this.protocol)) {
-            this.errors["protocol"] = "Protocol cannot be empty.";
-        }
-        if (Util.isEmpty(this.host)) {
-            this.errors["host"] = "Host cannot be empty.";
-        }
         if (!Util.isEmpty(this.port) && this.port != 0 && parseInt(this.port, 10) != this.port) {
             this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
         }

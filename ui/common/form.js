@@ -4,7 +4,7 @@ const { Util } = require('../../core/util');
 
 class Form {
 
-    constructor(formId, obj, exclude = ['errors', 'help', 'type']) {
+    constructor(formId, obj, exclude = ['errors', 'help', 'type', 'required']) {
         this.formId = formId;
         this.obj = obj;
         this.exclude = exclude;
@@ -31,10 +31,14 @@ class Form {
 
     // Set the help text for the field, if it exists in the locale file.
     _setFieldHelpText(field) {
-        let helpKey = `${this.obj.type}_${field.name}_help`;
-        let helpText = Context.y18n.__(helpKey);
-        if (helpText && helpText != helpKey) {
-            field.help = helpText;
+        if (this.obj.type == 'AppSetting' && this.obj.help) {
+            field.help = this.obj.help;
+        } else {
+            let helpKey = `${this.obj.type}_${field.name}_help`;
+            let helpText = Context.y18n.__(helpKey);
+            if (helpText && helpText != helpKey) {
+                field.help = helpText;
+            }
         }
     }
 

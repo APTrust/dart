@@ -14,7 +14,7 @@ test('Constructor initializes form fields', () => {
     expect(Object.keys(form.fields).length).toEqual(4);
 
     // These are on the default exclude list.
-    for (let name of ['errors', 'help', 'type']) {
+    for (let name of ['errors', 'help', 'type', 'required']) {
         expect(form.fields[name]).not.toBeDefined();
     }
 
@@ -42,8 +42,8 @@ test('Constructor initializes form fields with custom exclude', () => {
 
     // We said exclude nothing this time, so we should
     // get fields for all properties.
-    expect(Object.keys(form.fields).length).toEqual(7);
-    for (let name of ['errors', 'help', 'type']) {
+    expect(Object.keys(form.fields).length).toEqual(8);
+    for (let name of ['errors', 'help', 'type', 'required']) {
         expect(form.fields[name]).toBeDefined();
     }
 });

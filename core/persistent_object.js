@@ -74,6 +74,17 @@ class PersistentObject {
           */
         this.userCanDelete = opts.userCanDelete === false ? false : true;
         /**
+          * This is a list of required properties. The DART UI won't let
+          * you save an instance of this object unless the required
+          * attributes have a value.
+          *
+          * @type {Array<string>}
+          */
+        this.required = opts.required || [];
+        if (!this.required.includes('id')) {
+            this.required.push('id');
+        }
+        /**
           * The errors property contains information about why this object
           * is not valid. This property will be empty when an object is
           * created, and is populated by the validate() method. If there
@@ -97,8 +108,10 @@ class PersistentObject {
      */
     validate() {
         this.errors = {};
-        if (Util.isEmpty(this.id)) {
-            this.errors["id"] = "Id cannot be empty.";
+        for (let property of this.required) {
+            if (Util.isEmpty(this[property])) {
+                this.errors[property] = Context.y18n.__('%s cannot be empty.', Util.camelToTitle(property));
+            }
         }
         return Object.keys(this.errors).length == 0;
     }

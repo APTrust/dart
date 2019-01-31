@@ -31,11 +31,11 @@ test('validate()', () => {
     let obj = new ManifestEntry();
     let result1 = obj.validate();
     expect(result1).toEqual(false);
-    expect(obj.errors['jobId']).toEqual('jobId cannot be empty.');
-    expect(obj.errors['origPath']).toEqual('origPath cannot be empty.');
-    expect(obj.errors['pathInBag']).toEqual('pathInBag cannot be empty.');
-    expect(obj.errors['algorithm']).toEqual('algorithm cannot be empty.');
-    expect(obj.errors['digest']).toEqual('digest cannot be empty.');
+    expect(obj.errors['jobId']).toEqual('Job Id cannot be empty.');
+    expect(obj.errors['origPath']).toEqual('Orig Path cannot be empty.');
+    expect(obj.errors['pathInBag']).toEqual('Path In Bag cannot be empty.');
+    expect(obj.errors['algorithm']).toEqual('Algorithm cannot be empty.');
+    expect(obj.errors['digest']).toEqual('Digest cannot be empty.');
 
     let obj2 = makeObjects(1)[0];
     let result2 = obj2.validate();
