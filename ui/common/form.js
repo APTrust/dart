@@ -1,3 +1,4 @@
+const { Context } = require('../../core/context')
 const { Field } = require('./field');
 const { Util } = require('../../core/util');
 
@@ -22,8 +23,18 @@ class Form {
                 let label = Util.camelToTitle(name);
                 let field = new Field(elementId, name, label, value);
                 field.error = this.obj.errors[name];
+                this._setFieldHelpText(field);
                 this.fields[name] = field;
             }
+        }
+    }
+
+    // Set the help text for the field, if it exists in the locale file.
+    _setFieldHelpText(field) {
+        let helpKey = `${this.obj.type}_${field.name}_help`;
+        let helpText = Context.y18n.__(helpKey);
+        if (helpText && helpText != helpKey) {
+            field.help = helpText;
         }
     }
 

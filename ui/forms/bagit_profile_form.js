@@ -28,14 +28,12 @@ class BagItProfileForm {
             Constants.YES_NO,
             bagItProfile.allowFetchTxt,
             false);
-        form.fields['allowFetchTxt'].help = Context.y18n.__('BagItProfile_allowFetchTxt_help');
 
         // Allow misc top-level files
         form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(
             Constants.YES_NO,
             bagItProfile.allowMiscTopLevelFiles,
             false);
-        form.fields['allowMiscTopLevelFiles'].help = Context.y18n.__('BagItProfile_allowMiscTopLevelFiles_help');
 
 
         // Allow misc directories
@@ -43,7 +41,6 @@ class BagItProfileForm {
             Constants.YES_NO,
             bagItProfile.allowMiscDirectories,
             false);
-        form.fields['allowMiscDirectories'].help = Context.y18n.__('BagItProfile_allowMiscDirectories_help');
 
 
         // DEBUG

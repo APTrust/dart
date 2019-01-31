@@ -1,5 +1,16 @@
 {
-    "BagItProfile_allowFetchTxt_help": "Are fetch.txt files allowed? These files contain URLs of files that should be part of the bag. DART does not yet support packaging or validating fetch.txt files.",
-    "BagItProfile_allowMiscTopLevelFiles_help": "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?",
-    "BagItProfile_allowMiscDirectories_help": "Can the bag contain directories other than 'data' in the top-level directory?"
+  "BagItProfile_allowFetchTxt_help": "Are fetch.txt files allowed? These files contain URLs of files that should be part of the bag. DART does not yet support packaging or validating fetch.txt files.",
+  "BagItProfile_allowMiscTopLevelFiles_help": "Can the bag contain files in the top-level directory other than manifests, tag manifests, and standard tag files like bagit.txt and bag-info.txt?",
+  "BagItProfile_allowMiscDirectories_help": "Can the bag contain directories other than 'data' in the top-level directory?",
+  "BagItProfile_id_help": "BagItProfile_id_help",
+  "BagItProfile_userCanDelete_help": "BagItProfile_userCanDelete_help",
+  "BagItProfile_name_help": "BagItProfile_name_help",
+  "BagItProfile_description_help": "BagItProfile_description_help",
+  "BagItProfile_acceptBagItVersion_help": "BagItProfile_acceptBagItVersion_help",
+  "BagItProfile_acceptSerialization_help": "BagItProfile_acceptSerialization_help",
+  "BagItProfile_bagItProfileInfo_help": "BagItProfile_bagItProfileInfo_help",
+  "BagItProfile_manifestsRequired_help": "BagItProfile_manifestsRequired_help",
+  "BagItProfile_tagManifestsRequired_help": "BagItProfile_tagManifestsRequired_help",
+  "BagItProfile_serialization_help": "BagItProfile_serialization_help",
+  "BagItProfile_tarDirMustMatchName_help": "BagItProfile_tarDirMustMatchName_help"
 }
