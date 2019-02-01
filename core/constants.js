@@ -96,6 +96,7 @@ const Constants =  {
      * @type {Object<string, RegExp>}
      */
     SERIALIZATION_FORMATS: {
+        "application/x-7z-compressed": new RegExp("\.7z$", 'i'),
         "application/tar": new RegExp("\.tar$"),
         "application/zip": new RegExp("\.zip$"),
         "application/gzip": new RegExp("\.gzip$|\.gz$"),

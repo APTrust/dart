@@ -23,6 +23,25 @@ class BagItProfileForm {
             bagItProfile.acceptBagItVersion,
             false);
 
+        // Accept-Serialization
+        form.fields['acceptSerialization'].attrs['multiple'] = true;
+        form.fields['acceptSerialization'].choices = Choice.makeList(
+            Object.keys(Constants.SERIALIZATION_FORMATS),
+            bagItProfile.acceptSerialization,
+            false);
+
+        // Serialization
+        form.fields['serialization'].choices = Choice.makeList(
+            Constants.REQUIREMENT_OPTIONS,
+            bagItProfile.serialization,
+            false);
+
+        // Tar dir must match name
+        form.fields['tarDirMustMatchName'].choices = Choice.makeList(
+            Constants.YES_NO,
+            bagItProfile.tarDirMustMatchName,
+            false);
+
         // Allow-Fetch.txt
         form.fields['allowFetchTxt'].choices = Choice.makeList(
             Constants.YES_NO,
@@ -35,13 +54,30 @@ class BagItProfileForm {
             bagItProfile.allowMiscTopLevelFiles,
             false);
 
-
         // Allow misc directories
         form.fields['allowMiscDirectories'].choices = Choice.makeList(
             Constants.YES_NO,
             bagItProfile.allowMiscDirectories,
             false);
 
+        // Manifests required
+        form.fields['manifestsRequired'].attrs['multiple'] = true;
+        form.fields['manifestsRequired'].choices = Choice.makeList(
+            Constants.DIGEST_ALGORITHMS,
+            bagItProfile.manifestsRequired,
+            false);
+
+        // Tag manifests require
+        form.fields['tagManifestsRequired'].attrs['multiple'] = true;
+        form.fields['tagManifestsRequired'].choices = Choice.makeList(
+            Constants.DIGEST_ALGORITHMS,
+            bagItProfile.tagManifestsRequired,
+            false);
+
+
+        // BagItProfileInfo
+
+        // Tags (alpha sort by file and name)
 
         // DEBUG
         window.BagItForm = form;
