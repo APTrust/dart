@@ -15,7 +15,15 @@
     <a class="nav-item nav-link" id="navGeneralTab" data-toggle="tab" href="#profileGeneral" role="tab" aria-controls="profileGeneral" aria-selected="false">General</a>
     <a class="nav-item nav-link" id="navManifestsTab" data-toggle="tab" href="#profileManifests" role="tab" aria-controls="profileManifests" aria-selected="false">Manifests</a>
     <a class="nav-item nav-link" id="navSerializationTab" data-toggle="tab" href="#profileSerialization" role="tab" aria-controls="profileSerialization" aria-selected="false">Serialization</a>
-    <a class="nav-item nav-link" id="navTagsTab" data-toggle="tab" href="#profileTags" role="tab" aria-controls="profileTags" aria-selected="false">Tags</a>
+
+    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tag Files</a>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" id="navTags-bagit.txt" data-toggle="tab" href="#profileTags-bagit.txt" role="tab" aria-controls="profileTags-bagit.txt" aria-selected="false">bagit.txt</a>
+      <a class="dropdown-item" id="navTags-bag-info.txt" data-toggle="tab" href="#profileTags-bag-info.txt" role="tab" aria-controls="profileTags-bag-info.txt" aria-selected="false">bag-info.txt</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="#">Add New Tag File</a>
+    </div>
+
   </div>
 </nav>
 
@@ -48,50 +56,21 @@
     {{> inputSelect field = form.fields.acceptSerialization }}
     {{> inputSelect field = form.fields.tarDirMustMatchName }}
   </div>
-  <div class="tab-pane fade" role="tabpanel" id="profileTags" aria-labelledby="navTagsTab">
-    {{> profileTags }}
+  <div class="tab-pane fade" role="tabpanel" id="profileTags-bagit.txt" aria-labelledby="navTagsTab">
+    bagit.txt tags will go here
+    <!-- {{> profileTags }} -->
+  </div>
+  <div class="tab-pane fade" role="tabpanel" id="profileTags-bag-info.txt" aria-labelledby="navTagsTab">
+    bag-info.txt tags will go here
+    <!-- {{> profileTags }} -->
   </div>
 </div>
 
 
+{{> inputHidden field = form.fields.id }}
+{{> inputHidden field = form.fields.userCanDelete }}
+{{> inputHidden field = form.fields.baseProfileId }}
 
-<!--
-  <div class="card mb-4">
-    <div class="card-header">Serialization</div>
-    <div class="card-body">
-
-    {{> inputSelect field = form.fields.serialization }}
-
-    {{> inputSelect field = form.fields.acceptSerialization }}
-
-    {{> inputSelect field = form.fields.tarDirMustMatchName }}
-
-    </div>
-  </div>
-
--->
-
-
-
-
-  {{> inputHidden field = form.fields.id }}
-  {{> inputHidden field = form.fields.userCanDelete }}
-  {{> inputHidden field = form.fields.baseProfileId }}
-
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <div class="pull-right">
-          <a class="btn btn-primary btn-xs" id="btnNewTagFile" role="button">Add Tag File</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-  {{> formButtons form = form }}
+{{> formButtons form = form }}
 
 </form>
