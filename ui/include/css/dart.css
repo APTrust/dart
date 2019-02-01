@@ -118,3 +118,9 @@ hr.menu-divider {
 .about {
     padding: 20px;
 }
+
+/* Fix Bootstrap legend overlying fieldset border */
+legend {
+    width: auto;
+    border-bottom: none;
+}
