@@ -81,5 +81,8 @@
   "UploadTarget_id_label": "UploadTarget_id_label",
   "UploadTarget_id_help": "UploadTarget_id_help",
   "UploadTarget_userCanDelete_label": "UploadTarget_userCanDelete_label",
-  "UploadTarget_userCanDelete_help": "UploadTarget_userCanDelete_help"
+    "UploadTarget_userCanDelete_help": "UploadTarget_userCanDelete_help",
+    "ObjectSaved_message": "Saved %s \"%s\"",
+    "Confirm_deletion": "Delete %s \"%s\"?",
+    "ObjectDeleted_message": "Deleted %s \"%s\"."
 }

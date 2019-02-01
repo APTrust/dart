@@ -1,3 +1,4 @@
+const { Context } = require('../../core/context')
 const electron = require('electron');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
@@ -77,7 +78,10 @@ class BaseController {
             let html = this.formTemplate({ form: form });
             return this.containerContent(html);
         }
-        this.alertMessage = `Saved ${Util.camelToTitle(obj.type)} "${obj[this.nameProperty]}"`;
+        this.alertMessage = Context.y18n.__(
+            "ObjectSaved_message",
+            Util.camelToTitle(obj.type),
+            obj[this.nameProperty]);
         obj.save();
         return this.list();
     }
@@ -97,8 +101,15 @@ class BaseController {
 
     destroy() {
         let obj = this.model.find(this.params.get('id'));
-        if (confirm(`Delete ${Util.camelToTitle(obj.type)} "${obj[this.nameProperty]}"?`)) {
-            this.alertMessage = `Deleted ${Util.camelToTitle(obj.type)} "${obj[this.nameProperty]}"`;
+        let confirmDeletionMessage = Context.y18n.__(
+            "Confirm_deletion",
+            Util.camelToTitle(obj.type),
+            obj[this.nameProperty]);
+        if (confirm(confirmDeletionMessage)) {
+            this.alertMessage =Context.y18n.__(
+                "ObjectDeleted_message",
+                Util.camelToTitle(obj.type),
+                obj[this.nameProperty]);
             obj.delete();
             return this.list();
         }
