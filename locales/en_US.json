@@ -81,8 +81,17 @@
   "UploadTarget_id_label": "UploadTarget_id_label",
   "UploadTarget_id_help": "UploadTarget_id_help",
   "UploadTarget_userCanDelete_label": "UploadTarget_userCanDelete_label",
-    "UploadTarget_userCanDelete_help": "UploadTarget_userCanDelete_help",
-    "ObjectSaved_message": "Saved %s \"%s\"",
-    "Confirm_deletion": "Delete %s \"%s\"?",
-    "ObjectDeleted_message": "Deleted %s \"%s\"."
+  "UploadTarget_userCanDelete_help": "UploadTarget_userCanDelete_help",
+  "ObjectSaved_message": "Saved %s \"%s\"",
+  "Confirm_deletion": "Delete %s \"%s\"?",
+  "ObjectDeleted_message": "Deleted %s \"%s\".",
+  "AppSetting_type_label": "AppSetting_type_label",
+  "AppSetting_required_label": "AppSetting_required_label",
+  "AppSetting_errors_label": "AppSetting_errors_label",
+  "undefined_str_label": "undefined_str_label",
+  "undefined_str_help": "undefined_str_help",
+  "undefined_number_label": "undefined_number_label",
+  "undefined_number_help": "undefined_number_help",
+  "undefined_bool_label": "undefined_bool_label",
+  "undefined_bool_help": "undefined_bool_help"
 }
