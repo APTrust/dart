@@ -1,5 +1,6 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('../common/choice');
+const { Context } = require('../../core/context');
 const { Field } = require('../common/field');
 const { Form } = require('../common/form');
 const { Util } = require('../../core/util');
@@ -17,7 +18,7 @@ class NewBagItProfileForm {
         });
         let choices = [{
             id:'',
-            name: 'None - I want to build a new profile from scratch'
+            name: Context.y18n.__('baseProfile_empty_label')
         }];
         for (let profile of profiles) {
             choices.push({
@@ -28,7 +29,7 @@ class NewBagItProfileForm {
         form.fields['baseProfile'] = new Field(
             `${form.formId}_baseProfile`,
             'baseProfile',
-            'Base New BagIt Profile On...',
+            Context.y18n.__('baseProfile_label'),
             null
         );
         form.fields['baseProfile'].choices = Choice.makeList(
