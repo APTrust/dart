@@ -1,9 +1,9 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
-const { Choice } = require('../common/choice');
+const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context')
-const { Field } = require('../common/field');
-const { Form } = require('../common/form');
+const { Field } = require('./field');
+const { Form } = require('./form');
 
 class BagItProfileForm {
 

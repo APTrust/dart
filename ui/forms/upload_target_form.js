@@ -1,7 +1,7 @@
 const { UploadTarget } = require('../../core/upload_target');
-const { Choice } = require('../common/choice');
-const { Field } = require('../common/field');
-const { Form } = require('../common/form');
+const { Choice } = require('./choice');
+const { Field } = require('./field');
+const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
 
 class UploadTargetForm {
