@@ -18,7 +18,11 @@ class BagItProfileForm extends Form {
         if (!this.obj.userCanDelete) {
             this.fields['name'].attrs['disabled'] = true;
         }
+        this._setBasicFields();
+        this._setProfileInfoFields();
+    }
 
+    _setBasicFields() {
         // Accept-BagIt-Version
         this.fields['acceptBagItVersion'].attrs['multiple'] = true;
         this.fields['acceptBagItVersion'].choices = Choice.makeList(
@@ -76,8 +80,9 @@ class BagItProfileForm extends Form {
             Constants.DIGEST_ALGORITHMS,
             this.obj.tagManifestsRequired,
             false);
+    }
 
-
+    _setProfileInfoFields() {
         // BagItProfileInfo
         let info = this.obj.bagItProfileInfo;
         this._initField('infoIdentifier', info.bagItProfileIdentifier);
@@ -86,8 +91,6 @@ class BagItProfileForm extends Form {
         this._initField('infoExternalDescription', info.externalDescription);
         this._initField('infoSourceOrganization', info.sourceOrganization);
         this._initField('infoVersion', info.version);
-
-        // Tags (alpha sort by file and name)
     }
 }
 

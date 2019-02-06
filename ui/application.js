@@ -47,6 +47,16 @@ $(function() {
         location.href = lastHref;
     });
 
+    // Fixes Bootstrap bug #17371: Items in dropdown get stuck in 'active' mode.
+    // https://github.com/twbs/bootstrap/issues/17371
+    $('#container').on('shown.bs.tab', 'a[data-toggle="tab"]', function (e) {
+        if (e.relatedTarget) {
+            // relatedTarget is the previously active tab,
+            // which should now be deactivated.
+            $(e.relatedTarget).removeClass('active');
+        }
+    })
+
     // Attach popover help tips to dynamically added elements
     var popOverSettings = {
         container: 'body',

@@ -18,8 +18,9 @@
 
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tag Files</a>
     <div class="dropdown-menu">
-      <a class="dropdown-item" id="navTags-bagit.txt" data-toggle="tab" href="#profileTags-bagit.txt" role="tab" aria-controls="profileTags-bagit.txt" aria-selected="false">bagit.txt</a>
-      <a class="dropdown-item" id="navTags-bag-info.txt" data-toggle="tab" href="#profileTags-bag-info.txt" role="tab" aria-controls="profileTags-bag-info.txt" aria-selected="false">bag-info.txt</a>
+      {{#each tagFileNames as |tagFile| }}
+      <a class="dropdown-item" id="navTags-{{ tagFile }}" data-toggle="tab" href="#profileTags-{{ tagFile }}" aria-controls="profileTags-{{ tagFile }}" aria-selected="false">{{ tagFile }}</a>
+      {{/each }}
       <div class="dropdown-divider"></div>
       <a class="dropdown-item" href="#">Add New Tag File</a>
     </div>
@@ -56,14 +57,14 @@
     {{> inputSelect field = form.fields.acceptSerialization }}
     {{> inputSelect field = form.fields.tarDirMustMatchName }}
   </div>
-  <div class="tab-pane fade" role="tabpanel" id="profileTags-bagit.txt" aria-labelledby="navTagsTab">
-    bagit.txt tags will go here
+
+  {{#each tagFileNames as |tagFile| }}
+  <div class="tab-pane fade" role="tabpanel" id="profileTags-{{ tagFile }}" aria-labelledby="navTags-{{ tagFile }}">
+    {{ tagFile }} tags will go here
     <!-- {{> profileTags }} -->
   </div>
-  <div class="tab-pane fade" role="tabpanel" id="profileTags-bag-info.txt" aria-labelledby="navTagsTab">
-    bag-info.txt tags will go here
-    <!-- {{> profileTags }} -->
-  </div>
+  {{/each }}
+
 </div>
 
 

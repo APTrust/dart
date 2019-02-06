@@ -48,6 +48,21 @@ class BagItProfileController extends BaseController {
         return this.edit();
     }
 
+    // Override the base class edit method, because we have more to do here
+    // than we do with most objects.
+    edit() {
+        let profile = BagItProfile.find(this.params.get('id'));
+        let form = new BagItProfileForm(profile);
+        let tagsByFile = profile.tagsGroupedByFile();
+        let tagFileNames = Object.keys(tagsByFile).sort();
+        let html = this.formTemplate({
+            form: form,
+            tagFileNames: tagFileNames,
+            tagsByFile: tagsByFile
+        });
+        return this.containerContent(html);
+    }
+
     /**
      * This returns an entirely new BagItProfile, or a new BagItProfile
      * that is a copy of a base profile.
