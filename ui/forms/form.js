@@ -72,15 +72,27 @@ class Form {
     _initFields() {
         for(let [name, value] of Object.entries(this.obj)) {
             if (!this.exclude.includes(name)) {
-                let elementId = `${this.formId}_${name}`;
-                let label = this._getLocalizedLabel(name);
-                let field = new Field(elementId, name, label, value);
-                field.error = this.obj.errors[name];
-                this._setFieldHelpText(field);
-                this._setRequired(field);
-                this.fields[name] = field;
+                this._initField(name, value);
             }
         }
+    }
+
+    /**
+     * This creates a single field with the given name and value and
+     * adds it to the fields property of the form.
+     *
+     * @param {string} name - The name of the field to add.
+     *
+     * @value {string|number|boolean} value - The value of the field.
+     */
+    _initField(name, value) {
+        let elementId = `${this.formId}_${name}`;
+        let label = this._getLocalizedLabel(name);
+        let field = new Field(elementId, name, label, value);
+        field.error = this.obj.errors[name];
+        this._setFieldHelpText(field);
+        this._setRequired(field);
+        this.fields[name] = field;
     }
 
     /**

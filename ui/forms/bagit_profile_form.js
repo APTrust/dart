@@ -79,6 +79,13 @@ class BagItProfileForm extends Form {
 
 
         // BagItProfileInfo
+        let info = this.obj.bagItProfileInfo;
+        this._initField('infoIdentifier', info.bagItProfileIdentifier);
+        this._initField('infoContactEmail', info.contactEmail);
+        this._initField('infoContactName', info.contactName);
+        this._initField('infoExternalDescription', info.externalDescription);
+        this._initField('infoSourceOrganization', info.sourceOrganization);
+        this._initField('infoVersion', info.version);
 
         // Tags (alpha sort by file and name)
     }

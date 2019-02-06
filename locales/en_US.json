@@ -93,5 +93,17 @@
   "undefined_number_label": "undefined_number_label",
   "undefined_number_help": "undefined_number_help",
   "undefined_bool_label": "undefined_bool_label",
-  "undefined_bool_help": "undefined_bool_help"
+  "undefined_bool_help": "undefined_bool_help",
+  "BagItProfile_infoIdentifier_label": "Identifier",
+  "BagItProfile_infoIdentifier_help": "A URL that identifies this profile. Ideally, a copy of the profile is available at this URL.",
+  "BagItProfile_infoContactEmail_label": "Contact Email",
+  "BagItProfile_infoContactEmail_help": "The email address of the person who maintains this profile.",
+  "BagItProfile_infoContactName_label": "Contact Name",
+  "BagItProfile_infoContactName_help": "The name of the person who maintains this profile.",
+  "BagItProfile_infoExternalDescription_label": "External Description",
+  "BagItProfile_infoExternalDescription_help": "A description of this profile.",
+  "BagItProfile_infoSourceOrganization_label": "Source Organization",
+  "BagItProfile_infoSourceOrganization_help": "The name of the organization that maintains this profile.",
+  "BagItProfile_infoVersion_label": "Version",
+  "BagItProfile_infoVersion_help": "The version of this profile"
 }

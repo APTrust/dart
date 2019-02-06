@@ -34,12 +34,12 @@
     {{> inputText field = form.fields.description }}
   </div>
   <div class="tab-pane fade" role="tabpanel" id="profileInfo" aria-labelledby="navInfoTab">
-    {{> inputText field = form.fields.bagItProfileInfo.bagItProfileIdentifier }}
-    {{> inputText field = form.fields.bagItProfileInfo.contactEmail }}
-    {{> inputText field = form.fields.bagItProfileInfo.contactName }}
-    {{> inputText field = form.fields.bagItProfileInfo.externalDescription }}
-    {{> inputText field = form.fields.bagItProfileInfo.sourceOrganization }}
-    {{> inputText field = form.fields.bagItProfileInfo.version }}
+    {{> inputText field = form.fields.infoIdentifier }}
+    {{> inputText field = form.fields.infoContactEmail }}
+    {{> inputText field = form.fields.infoContactName }}
+    {{> inputText field = form.fields.infoExternalDescription }}
+    {{> inputText field = form.fields.infoSourceOrganization }}
+    {{> inputText field = form.fields.infoVersion }}
   </div>
   <div class="tab-pane fade" role="tabpanel" id="profileGeneral" aria-labelledby="navGeneralTab">
     {{> inputSelect field = form.fields.acceptBagItVersion }}
