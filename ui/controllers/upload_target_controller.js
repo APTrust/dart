@@ -18,7 +18,7 @@ class UploadTargetController extends BaseController {
         this.typeMap = typeMap;
 
         this.model = UploadTarget;
-        this.form = UploadTargetForm;
+        this.formClass = UploadTargetForm;
         this.formTemplate = Templates.uploadTargetForm;
         this.listTemplate = Templates.uploadTargetList;
         this.nameProperty = 'name';

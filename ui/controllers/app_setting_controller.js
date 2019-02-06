@@ -19,7 +19,7 @@ class AppSettingController extends BaseController {
         this.typeMap = typeMap;
 
         this.model = AppSetting;
-        this.form = AppSettingForm;
+        this.formClass = AppSettingForm;
         this.formTemplate = Templates.appSettingForm;
         this.listTemplate = Templates.appSettingList;
         this.nameProperty = 'name';

@@ -4,10 +4,14 @@ const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
 
-class UploadTargetForm {
+class UploadTargetForm extends Form{
 
-    static create(uploadTarget) {
-        var form = new Form('uploadTargetForm', uploadTarget);
+    constructor(uploadTarget) {
+        super('uploadTargetForm', uploadTarget);
+        this._init();
+    }
+
+    _init() {
         let clients = [];
         for (let client of PluginManager.getModuleCollection('NetworkClient')) {
             let description = client.description();
@@ -15,13 +19,11 @@ class UploadTargetForm {
                 clients.push(protocol);
             };
         }
-        form.fields['protocol'].choices = Choice.makeList(
+        this.fields['protocol'].choices = Choice.makeList(
             clients,
-            uploadTarget.protocol,
+            this.obj.protocol,
             true
         );
-
-        return form
     }
 
 }

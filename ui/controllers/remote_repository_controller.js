@@ -14,7 +14,7 @@ class RemoteRepositoryController extends BaseController {
         this.typeMap = typeMap;
 
         this.model = RemoteRepository;
-        this.form = RemoteRepositoryForm;
+        this.formClass = RemoteRepositoryForm;
         this.formTemplate = Templates.remoteRepositoryForm;
         this.listTemplate = Templates.remoteRepositoryList;
         this.nameProperty = 'name';

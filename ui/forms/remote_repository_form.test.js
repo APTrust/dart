@@ -16,7 +16,7 @@ test('create()', () => {
     };
     let remoteRepository = new RemoteRepository(opts);
 
-    let form = RemoteRepositoryForm.create(remoteRepository);
+    let form = new RemoteRepositoryForm(remoteRepository);
 
     expect(Object.keys(form.fields).length).toEqual(8);
     expect(form.fields['id']).toBeDefined();
@@ -54,7 +54,7 @@ test('create()', () => {
 
     // If user cannot delete this setting, make name editing is disabled.
     remoteRepository.userCanDelete = false;
-    form = RemoteRepositoryForm.create(remoteRepository);
+    form = new RemoteRepositoryForm(remoteRepository);
     expect(form.fields['userCanDelete'].value).toEqual(false);
     expect(form.fields['name'].attrs['disabled']).toBeDefined();
 });

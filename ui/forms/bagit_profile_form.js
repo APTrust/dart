@@ -5,87 +5,83 @@ const { Context } = require('../../core/context')
 const { Field } = require('./field');
 const { Form } = require('./form');
 
-class BagItProfileForm {
+class BagItProfileForm extends Form {
 
-    static create(bagItProfile) {
+    constructor(bagItProfile) {
         let exclude = ["errors", "help", "type", "baseProfileId",
                        "isBuiltIn", "tags"];
-        let form = new Form('bagItProfileForm', bagItProfile, exclude);
+        super('bagItProfileForm', bagItProfile, exclude);
+        this._init();
+    }
 
-        if (!bagItProfile.userCanDelete) {
-            form.fields['name'].attrs['disabled'] = true;
+    _init() {
+        if (!this.obj.userCanDelete) {
+            this.fields['name'].attrs['disabled'] = true;
         }
 
         // Accept-BagIt-Version
-        form.fields['acceptBagItVersion'].attrs['multiple'] = true;
-        form.fields['acceptBagItVersion'].choices = Choice.makeList(
+        this.fields['acceptBagItVersion'].attrs['multiple'] = true;
+        this.fields['acceptBagItVersion'].choices = Choice.makeList(
             Constants.BAGIT_VERSIONS,
-            bagItProfile.acceptBagItVersion,
+            this.obj.acceptBagItVersion,
             false);
 
         // Accept-Serialization
-        form.fields['acceptSerialization'].attrs['multiple'] = true;
-        form.fields['acceptSerialization'].choices = Choice.makeList(
+        this.fields['acceptSerialization'].attrs['multiple'] = true;
+        this.fields['acceptSerialization'].choices = Choice.makeList(
             Object.keys(Constants.SERIALIZATION_FORMATS),
-            bagItProfile.acceptSerialization,
+            this.obj.acceptSerialization,
             false);
 
         // Serialization
-        form.fields['serialization'].choices = Choice.makeList(
+        this.fields['serialization'].choices = Choice.makeList(
             Constants.REQUIREMENT_OPTIONS,
-            bagItProfile.serialization,
+            this.obj.serialization,
             false);
 
         // Tar dir must match name
-        form.fields['tarDirMustMatchName'].choices = Choice.makeList(
+        this.fields['tarDirMustMatchName'].choices = Choice.makeList(
             Constants.YES_NO,
-            bagItProfile.tarDirMustMatchName,
+            this.obj.tarDirMustMatchName,
             false);
 
         // Allow-Fetch.txt
-        form.fields['allowFetchTxt'].choices = Choice.makeList(
+        this.fields['allowFetchTxt'].choices = Choice.makeList(
             Constants.YES_NO,
-            bagItProfile.allowFetchTxt,
+            this.obj.allowFetchTxt,
             false);
 
         // Allow misc top-level files
-        form.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(
+        this.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(
             Constants.YES_NO,
-            bagItProfile.allowMiscTopLevelFiles,
+            this.obj.allowMiscTopLevelFiles,
             false);
 
         // Allow misc directories
-        form.fields['allowMiscDirectories'].choices = Choice.makeList(
+        this.fields['allowMiscDirectories'].choices = Choice.makeList(
             Constants.YES_NO,
-            bagItProfile.allowMiscDirectories,
+            this.obj.allowMiscDirectories,
             false);
 
         // Manifests required
-        form.fields['manifestsRequired'].attrs['multiple'] = true;
-        form.fields['manifestsRequired'].choices = Choice.makeList(
+        this.fields['manifestsRequired'].attrs['multiple'] = true;
+        this.fields['manifestsRequired'].choices = Choice.makeList(
             Constants.DIGEST_ALGORITHMS,
-            bagItProfile.manifestsRequired,
+            this.obj.manifestsRequired,
             false);
 
         // Tag manifests require
-        form.fields['tagManifestsRequired'].attrs['multiple'] = true;
-        form.fields['tagManifestsRequired'].choices = Choice.makeList(
+        this.fields['tagManifestsRequired'].attrs['multiple'] = true;
+        this.fields['tagManifestsRequired'].choices = Choice.makeList(
             Constants.DIGEST_ALGORITHMS,
-            bagItProfile.tagManifestsRequired,
+            this.obj.tagManifestsRequired,
             false);
 
 
         // BagItProfileInfo
 
         // Tags (alpha sort by file and name)
-
-        // DEBUG
-        window.BagItForm = form;
-        // END DEBUG
-
-        return form
     }
-
 }
 
 module.exports.BagItProfileForm = BagItProfileForm;

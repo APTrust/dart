@@ -21,7 +21,7 @@ class BagItProfileController extends BaseController {
         super(params, 'Settings');
         this.typeMap = typeMap;
         this.model = BagItProfile;
-        this.form = BagItProfileForm;
+        this.formClass = BagItProfileForm;
         this.formTemplate = Templates.bagItProfileForm;
         this.listTemplate = Templates.bagItProfileList;
         this.nameProperty = 'name';
@@ -33,7 +33,7 @@ class BagItProfileController extends BaseController {
     // creating a new BagItProfile includes the extra step of
     // optionally cloning an existing profile.
     new() {
-        let form = NewBagItProfileForm.create();
+        let form = new NewBagItProfileForm();
         let html = Templates.bagItProfileNew({ form: form });
         return this.containerContent(html);
     }
@@ -56,7 +56,7 @@ class BagItProfileController extends BaseController {
      */
     getNewProfileFromBase() {
         let newProfile = null;
-        let form = NewBagItProfileForm.create();
+        let form = new NewBagItProfileForm();
         form.parseFromDOM();
         if(form.obj.baseProfile) {
             let baseProfile = BagItProfile.find(form.obj.baseProfile);

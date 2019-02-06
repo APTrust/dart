@@ -4,7 +4,7 @@ const { TestUtil } = require('../../core/test_util');
 
 test('create()', () => {
     let profile = TestUtil.loadProfile('aptrust_bagit_profile_2.2.json');
-    let form = BagItProfileForm.create(profile);
+    let form = new BagItProfileForm(profile);
 
     // expect(Object.keys(form.fields).length).toEqual(11);
 

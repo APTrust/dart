@@ -5,7 +5,7 @@ test('create()', () => {
     let appSetting = new AppSetting({ name: 'Name 1', value: 'Value 1'});
     appSetting.help = 'Help for app setting';
 
-    let form = AppSettingForm.create(appSetting);
+    let form = new AppSettingForm(appSetting);
 
     expect(Object.keys(form.fields).length).toEqual(4);
     expect(form.fields['id']).toBeDefined();
@@ -27,7 +27,7 @@ test('create()', () => {
 
     // If user cannot delete this setting, make name editing is disabled.
     appSetting.userCanDelete = false;
-    form = AppSettingForm.create(appSetting);
+    form = new AppSettingForm(appSetting);
     expect(form.fields['userCanDelete'].value).toEqual(false);
     expect(form.fields['name'].attrs['disabled']).toBeDefined();
 });

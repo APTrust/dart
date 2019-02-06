@@ -13,7 +13,7 @@ class BaseController {
 
         // The following are all set by child classes.
         this.model;
-        this.form;
+        this.formClass;
         this.formTemplate;
         this.listTemplate;
         this.nameProperty;
@@ -57,21 +57,21 @@ class BaseController {
     }
 
     new() {
-        let form = this.form.create(new this.model());
+        let form = new this.formClass(new this.model());
         let html = this.formTemplate({ form: form });
         return this.containerContent(html);
     }
 
     edit() {
         let obj = this.model.find(this.params.get('id'));
-        let form = this.form.create(obj);
+        let form = new this.formClass(obj);
         let html = this.formTemplate({ form: form });
         return this.containerContent(html);
     }
 
     update() {
         let obj = this.model.find(this.params.get('id')) || new this.model();
-        let form = this.form.create(obj);
+        let form = new this.formClass(obj);
         form.parseFromDOM();
         if (!form.obj.validate()) {
             form.setErrors();

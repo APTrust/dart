@@ -18,7 +18,7 @@ class InternalSettingController extends BaseController {
         this.typeMap = typeMap;
 
         this.model = InternalSetting;
-        this.form = null;
+        this.formClass = null;
         this.formTemplate = null;
         this.listTemplate = Templates.internalSettingList;
         this.nameProperty = 'name';

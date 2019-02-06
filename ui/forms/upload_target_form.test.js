@@ -11,7 +11,7 @@ test('create()', () => {
     target.login = 'plankton';
     target.password = 'krabs';
     target.loginExtra = 'patrick';
-    let form = UploadTargetForm.create(target);
+    let form = new UploadTargetForm(target);
 
     // Fields for all properties listed above, plus id & userCanDelete.
     expect(Object.keys(form.fields).length).toEqual(11);

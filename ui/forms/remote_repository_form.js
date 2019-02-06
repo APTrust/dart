@@ -5,20 +5,20 @@ const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const { Util } = require('../../core/util');
 
-class RemoteRepositoryForm {
+class RemoteRepositoryForm extends Form{
 
-    static create(remoteRepository) {
-        var form = new Form('remoteRepositoryForm', remoteRepository);
+    constructor(remoteRepository) {
+        super('remoteRepositoryForm', remoteRepository);
+        this._init();
+    }
 
-        // Customize
-        if (!remoteRepository.userCanDelete) {
-            form.fields['name'].attrs['disabled'] = true;
+    _init() {
+        if (!this.obj.userCanDelete) {
+            this.fields['name'].attrs['disabled'] = true;
         }
-
-        if (!form.fields['url'].value) {
-            form.fields['url'].attrs.placeholder = 'https://repo.example.com/api';
+        if (!this.fields['url'].value) {
+            this.fields['url'].attrs.placeholder = 'https://repo.example.com/api';
         }
-
         let repoProviders = PluginManager.getModuleCollection('Repository');
         let sortedProviders = repoProviders.sort(Util.getSortFunction('name', 'asc'));
         let choices = [];
@@ -29,14 +29,12 @@ class RemoteRepositoryForm {
                 name: description.name
             });
         }
-        form.fields['pluginId'].choices = Choice.makeList(
+        this.fields['pluginId'].choices = Choice.makeList(
             choices,
-            remoteRepository.pluginId,
+            this.obj.pluginId,
             true
         );
-        return form
     }
-
 }
 
 module.exports.RemoteRepositoryForm = RemoteRepositoryForm;

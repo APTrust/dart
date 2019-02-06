@@ -5,11 +5,15 @@ const { Field } = require('./field');
 const { Form } = require('./form');
 const { Util } = require('../../core/util');
 
-class NewBagItProfileForm {
+class NewBagItProfileForm extends Form {
 
-    static create() {
+    constructor() {
         // Create an empty form from an empty object.
-        var form = new Form('bagItProfileForm', {});
+        super('bagItProfileForm', {});
+        this._init();
+    }
+
+    _init() {
         var profiles = BagItProfile.list(null, {
             limit: 0,
             offset: 0,
@@ -26,20 +30,18 @@ class NewBagItProfileForm {
                 name: Util.truncateString(profile.description, 60).replace(/\.$/, '')
             });
         }
-        form.fields['baseProfile'] = new Field(
+        this.fields['baseProfile'] = new Field(
             `${form.formId}_baseProfile`,
             'baseProfile',
             Context.y18n.__('baseProfile_label'),
             null
         );
-        form.fields['baseProfile'].choices = Choice.makeList(
+        this.fields['baseProfile'].choices = Choice.makeList(
             choices,
             '',
             false
         );
-        return form
     }
-
 }
 
 module.exports.NewBagItProfileForm = NewBagItProfileForm;

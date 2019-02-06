@@ -3,16 +3,17 @@ const { Choice } = require('./choice');
 const { Field } = require('./field');
 const { Form } = require('./form');
 
-class AppSettingForm {
+class AppSettingForm extends Form {
 
-    static create(appSetting) {
-        var form = new Form('appSettingForm', appSetting);
+    constructor(appSetting) {
+        super('appSettingForm', appSetting);
+        this._init();
+    }
 
-        // Customize
-        if (!appSetting.userCanDelete) {
-            form.fields['name'].attrs['disabled'] = true;
+    _init() {
+        if (!this.obj.userCanDelete) {
+            this.fields['name'].attrs['disabled'] = true;
         }
-        return form
     }
 
 }
