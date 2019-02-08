@@ -2,6 +2,7 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { BaseController } = require('./base_controller');
 const { NewBagItProfileForm } = require('../forms/new_bagit_profile_form');
+const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
@@ -56,11 +57,11 @@ class BagItProfileController extends BaseController {
         let tagsByFile = profile.tagsGroupedByFile();
         let tagFileNames = Object.keys(tagsByFile).sort();
         let html = this.formTemplate({
+            bagItProfileId: profile.id,
             form: form,
             tagFileNames: tagFileNames,
             tagsByFile: tagsByFile
         });
-        console.log(tagsByFile);
         return this.containerContent(html);
     }
 
@@ -88,6 +89,30 @@ class BagItProfileController extends BaseController {
         return newProfile;
     }
 
+    newTagFile() {
+
+    }
+
+    newTagDefinition() {
+
+    }
+
+    editTagDefinition() {
+        console.log(this.params);
+        let profile = BagItProfile.find(this.params.get('id'));
+        let tagDefinitionId = this.params.get('tagDefinitionId');
+        let tagDef = profile.firstMatchingTag('id', tagDefinitionId);
+        let form = new TagDefinitionForm(tagDef);
+        let body = Templates.TagDefinitionForm({ form: form });
+        return this.modalContent({
+            title: `${tagDef.tagFile}: ${tagDef.tagName}`,
+            body: body
+        });
+    }
+
+    updateTagDefinition() {
+
+    }
 }
 
 module.exports.BagItProfileController = BagItProfileController;

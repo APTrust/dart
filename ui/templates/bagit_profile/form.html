@@ -60,14 +60,11 @@
 
   {{#each tagFileNames as |tagFile| }}
   <div class="tab-pane fade" role="tabpanel" id="profileTags-{{ tagFile }}" aria-labelledby="navTags-{{ tagFile }}">
-    {{#with (lookup ../tagsByFile tagFile) as |tags|}}
-    {{> profileTags tags = tags }}
-    {{/with}}
+    {{> profileTags tags = (lookup ../tagsByFile tagFile) bagItProfileId = ../bagItProfileId}}
   </div>
   {{/each }}
 
 </div>
-
 
 {{> inputHidden field = form.fields.id }}
 {{> inputHidden field = form.fields.userCanDelete }}

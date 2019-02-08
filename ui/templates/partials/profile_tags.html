@@ -7,7 +7,7 @@
   </thead>
   <tbody>
     {{#each tags as |tag| }}
-    <tr class="clickable-row" data-object-id="{{ tag.id }}" data-object-type="TagDefinition">
+    <tr class="clickable-row" data-url="#BagItProfile/editTagDefinition?id={{ ../bagItProfileId }}&tagDefinitionId={{ tag.id }}">
       <td>
         {{ tag.tagName }}
         {{#if tag.help }}
@@ -18,7 +18,7 @@
         {{#if tag.systemMustSet }}
         <span class='text-muted'>[Set automatically by bagger]</span>
         {{else}}
-        {{ tag.defaultValue }}
+        {{ tag.defaultValue }} {{ bagItProfileId }}
         {{/if}}
       </td>
     </tr>
