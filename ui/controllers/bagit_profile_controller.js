@@ -60,6 +60,7 @@ class BagItProfileController extends BaseController {
             tagFileNames: tagFileNames,
             tagsByFile: tagsByFile
         });
+        console.log(tagsByFile);
         return this.containerContent(html);
     }
 

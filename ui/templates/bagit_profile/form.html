@@ -60,8 +60,9 @@
 
   {{#each tagFileNames as |tagFile| }}
   <div class="tab-pane fade" role="tabpanel" id="profileTags-{{ tagFile }}" aria-labelledby="navTags-{{ tagFile }}">
-    {{ tagFile }} tags will go here
-    <!-- {{> profileTags }} -->
+    {{#with (lookup ../tagsByFile tagFile) as |tags|}}
+    {{> profileTags tags = tags }}
+    {{/with}}
   </div>
   {{/each }}
 
