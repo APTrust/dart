@@ -12,7 +12,7 @@ test('create()', () => {
     let expectedFields = [
         'id', 'tagFile', 'tagName', 'required', 'emptyOk',
         'values', 'defaultValue', 'userValue', 'isBuiltIn',
-        'isUserAddedFile', 'isUserAddedTag'
+        'isUserAddedFile', 'isUserAddedTag', 'help'
     ];
     let form = new TagDefinitionForm(tagDefinition);
     expect(Object.keys(form.fields).length).toEqual(expectedFields.length);

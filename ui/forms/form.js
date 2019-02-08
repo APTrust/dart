@@ -120,7 +120,8 @@ class Form {
      * @private
      */
     _getLocalizedLabel(fieldName) {
-        let labelKey = `${this.obj.type}_${fieldName}_label`;
+        let objType = this.obj.type || this.obj.constructor.name;
+        let labelKey = `${objType}_${fieldName}_label`;
         let labelText = Context.y18n.__(labelKey);
         if (labelText == labelKey) {
             labelText = Util.camelToTitle(fieldName);
@@ -170,8 +171,6 @@ class Form {
     }
 
 
-    // Update the properties of this.obj with the values the user
-    // entered in the HTML form.
     /**
      * This updates all of the values of Form.obj based on what the
      * user entered in the HTML form. Note that because there are no

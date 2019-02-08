@@ -10,13 +10,13 @@
 
   {{> inputTextArea field = form.fields.values }}
 
-  {{> inputTextArea field = form.fields.help }}
-
   {{#if form.fields.defaultValue.choices }}
     {{> inputSelect field = form.fields.defaultValue }}
   {{else}}
     {{> inputText field = form.fields.defaultValue }}
   {{/if}}
+
+  {{> inputText field = form.fields.help }}
 
   {{> inputHidden field = form.fields.tagDefinitionId }}
 

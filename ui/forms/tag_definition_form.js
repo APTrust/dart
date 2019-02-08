@@ -7,7 +7,7 @@ class TagDefinitionForm extends Form {
 
     constructor(tagDefinition) {
         // On this form, we do include 'required'
-        super('tagDefinitionForm', tagDefinition,  ['errors', 'help', 'type']);
+        super('tagDefinitionForm', tagDefinition,  ['errors', 'type']);
         this._init();
     }
 
@@ -15,6 +15,13 @@ class TagDefinitionForm extends Form {
         if (!this.obj.isBuiltIn) {
             this.fields['tagName'].attrs['disabled'] = true;
             this.fields['tagFile'].attrs['disabled'] = true;
+        }
+
+        // For some tag definitions, the 'values' attribute contains a list
+        // of allowed values. If this is the case, make them appear on
+        // seperate lines of the textarea on the form.
+        if (this.fields.values.value && Array.isArray(this.fields.values.value)) {
+            this.fields['values'].value = this.fields['values'].value.join("\n").trim();
         }
     }
 
