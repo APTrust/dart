@@ -137,7 +137,7 @@ class Form {
      * @private
      */
     _setRequired(field) {
-        if (this.obj.required && this.obj.required.includes(field.name)) {
+        if (this.obj.required && Array.isArray(this.obj.required) && this.obj.required.includes(field.name)) {
             field.attrs['required'] = true;
         }
     }

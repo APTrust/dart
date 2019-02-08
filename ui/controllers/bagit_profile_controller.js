@@ -98,16 +98,13 @@ class BagItProfileController extends BaseController {
     }
 
     editTagDefinition() {
-        console.log(this.params);
         let profile = BagItProfile.find(this.params.get('id'));
         let tagDefinitionId = this.params.get('tagDefinitionId');
         let tagDef = profile.firstMatchingTag('id', tagDefinitionId);
         let form = new TagDefinitionForm(tagDef);
-        let body = Templates.TagDefinitionForm({ form: form });
-        return this.modalContent({
-            title: `${tagDef.tagFile}: ${tagDef.tagName}`,
-            body: body
-        });
+        let title = `${tagDef.tagFile}: ${tagDef.tagName}`;
+        let body = Templates.tagDefinitionForm({ form: form });
+        return this.modalContent(title, body);
     }
 
     updateTagDefinition() {
