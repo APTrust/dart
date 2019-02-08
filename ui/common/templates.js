@@ -1,3 +1,4 @@
+const { Context } = require('../../core/context');
 const path = require('path');
 const fs = require('fs');
 const handlebars = require('handlebars')
@@ -62,6 +63,10 @@ handlebars.registerHelper('jobFormTagField', function(tag) {
 
 handlebars.registerHelper('resultSummary', function(result) {
     return result.summary();
+});
+
+handlebars.registerHelper('translate', function(message) {
+    return Context.y18n.__(message);
 });
 
 module.exports.about = about;
