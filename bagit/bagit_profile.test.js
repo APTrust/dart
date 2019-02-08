@@ -60,7 +60,10 @@ test('validate() catches invalid properties', () => {
 
 test('findMatchingTags()', () => {
     let profile = new BagItProfile();
-    profile.tags.push(new TagDefinition('custom-tag-file.txt', 'Contact-Name'));
+    profile.tags.push(new TagDefinition({
+        tagFile: 'custom-tag-file.txt',
+        tagName: 'Contact-Name'
+    }));
     let tags = profile.findMatchingTags('tagName', 'Contact-Name');
     expect(tags.length).toEqual(2);
     expect(tags[0].tagFile).toEqual('bag-info.txt'); // was set in BagItProfile constructor
@@ -78,7 +81,10 @@ test('findMatchingTags()', () => {
 
 test('firstMatchingTag()', () => {
     let profile = new BagItProfile();
-    profile.tags.push(new TagDefinition('custom-tag-file.txt', 'Contact-Name'));
+    profile.tags.push(new TagDefinition({
+        tagFile: 'custom-tag-file.txt',
+        tagName: 'Contact-Name'
+    }));
     let tag = profile.firstMatchingTag('tagName', 'Contact-Name');
     expect(tag.tagFile).toEqual('bag-info.txt');
 
@@ -106,7 +112,10 @@ test('getTagsFromFile()', () => {
     expect(tags[0].tagName).toEqual('Contact-Name');
 
     // Yes, the spec says a tag can appear more than once in a tag file.
-    profile.tags.push(new TagDefinition('bag-info.txt', 'Contact-Name'));
+    profile.tags.push(new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Contact-Name'
+    }));
     tags = profile.getTagsFromFile('bag-info.txt', 'Contact-Name');
     expect(tags.length).toEqual(2);
 
@@ -128,13 +137,19 @@ test('suggestBagName()', () => {
     // Make something that looks like an APTrust profile,
     // just because it has an aptrust-info.txt tag file.
     let aptrustProfile = new BagItProfile();
-    aptrustProfile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
+    aptrustProfile.tags.push(new TagDefinition({
+        tagFile: 'aptrust-info.txt',
+        tagName: 'Access'
+    }));
     expect(aptrustProfile.suggestBagName()).toMatch(/^aptrust.org.bag-\d+$/);
 
     // Make something that looks like a DPN profile,
     // just because it has an dpn-tags/dpn-info.txt tag file.
     let dpnProfile = new BagItProfile();
-    dpnProfile.tags.push(new TagDefinition('dpn-tags/dpn-info.txt', 'Member-Id'));
+    dpnProfile.tags.push(new TagDefinition({
+        tagFile: 'dpn-tags/dpn-info.txt',
+        tagName: 'Member-Id'
+    }));
     let bagName = dpnProfile.suggestBagName();
     expect(Util.looksLikeUUID(bagName)).toEqual(true);
 
@@ -165,12 +180,18 @@ test('isValidBagName() asserts profile-specific naming rules', () => {
     inst.save();
 
     let aptrustProfile = new BagItProfile();
-    aptrustProfile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
+    aptrustProfile.tags.push(new TagDefinition({
+        tagFile: 'aptrust-info.txt',
+        tagName: 'Access'
+    }));
     expect(aptrustProfile.isValidBagName("aptrust.org.historical-photos-1951")).toEqual(true);
     expect(aptrustProfile.isValidBagName("historical-photos-1951")).toEqual(false);
 
     let dpnProfile = new BagItProfile();
-    dpnProfile.tags.push(new TagDefinition('dpn-tags/dpn-info.txt', 'Member-Id'));
+    dpnProfile.tags.push(new TagDefinition({
+        tagFile: 'dpn-tags/dpn-info.txt',
+        tagName: 'Member-Id'
+    }));
     expect(dpnProfile.isValidBagName(Util.uuid4())).toEqual(true);
     expect(dpnProfile.isValidBagName("BagOfGlass")).toEqual(false);
 
@@ -217,13 +238,19 @@ test('isCustomTagFile()', () => {
     expect(profile.isCustomTagFile('bag-info.txt')).toEqual(false);
 
     // This won't be custom, because we're not flagging it as custom.
-    let aptrustTag = new TagDefinition('aptrust-info.txt', 'Access');
+    let aptrustTag = new TagDefinition({
+        tagFile: 'aptrust-info.txt',
+        tagName: 'Access'
+    });
     aptrustTag.userValue = 'Institution';
     profile.tags.push(aptrustTag);
     expect(profile.isCustomTagFile('aptrust-info.txt')).toEqual(false);
 
     // This will be custom, because we're flagging it as such.
-    let customTag = new TagDefinition('custom-tags.txt', 'Sample-Tag');
+    let customTag = new TagDefinition({
+        tagFile: 'custom-tags.txt',
+        tagName: 'Sample-Tag'
+    });
     customTag.isUserAddedFile = true;
     customTag.isUserAddedTag = true;
     customTag.userValue = 'electra';
@@ -238,8 +265,14 @@ test('tagFileNames()', () => {
     let profile = new BagItProfile();
     expect(profile.tagFileNames()).toEqual(['bag-info.txt', 'bagit.txt']);
 
-    profile.tags.push(new TagDefinition('aptrust-info.txt', 'Access'));
-    profile.tags.push(new TagDefinition('custom-tags.txt', 'Sample-Tag'));
+    profile.tags.push(new TagDefinition({
+        tagFile: 'aptrust-info.txt',
+        tagName: 'Access'
+    }));
+    profile.tags.push(new TagDefinition({
+        tagFile: 'custom-tags.txt',
+        tagName: 'Sample-Tag'
+    }));
     expect(profile.tagFileNames()).toEqual(['aptrust-info.txt', 'bag-info.txt', 'bagit.txt', 'custom-tags.txt']);
 });
 
@@ -289,12 +322,18 @@ test('bagTitle()', () => {
     let profile = new BagItProfile();
     expect(profile.bagTitle()).toEqual('');
 
-    let titleTag1 = new TagDefinition('bag-info.txt', 'Internal-Title');
+    let titleTag1 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Internal-Title'
+    });
     titleTag1.userValue = 'First Title';
     profile.tags.push(titleTag1);
     expect(profile.bagTitle()).toEqual('First Title');
 
-    let titleTag2 = new TagDefinition('bag-info.txt', 'Title');
+    let titleTag2 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Title'
+    });
     titleTag2.userValue = 'Second Title';
     profile.tags.push(titleTag2);
     expect(profile.bagTitle()).toEqual('Second Title');
@@ -304,12 +343,18 @@ test('bagDescription()', () => {
     let profile = new BagItProfile();
     expect(profile.bagDescription()).toEqual('');
 
-    let titleTag1 = new TagDefinition('bag-info.txt', 'Description');
+    let titleTag1 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Description'
+    });
     titleTag1.userValue = 'First Description';
     profile.tags.push(titleTag1);
     expect(profile.bagDescription()).toEqual('First Description');
 
-    let titleTag2 = new TagDefinition('bag-info.txt', 'Internal-Sender-Description');
+    let titleTag2 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Internal-Sender-Description'
+    });
     titleTag2.userValue = 'Second Description';
     profile.tags.push(titleTag2);
     expect(profile.bagDescription()).toEqual('Second Description');
@@ -375,13 +420,34 @@ test('mergeTagValues()', () => {
     expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-2')[0]).toBeUndefined();
 
     // Create some tags to merge in.
-    let desc = new TagDefinition('bag-info.txt', 'External-Description');
-    let count = new TagDefinition('bag-info.txt', 'Bag-Count');
-    let size = new TagDefinition('bag-info.txt', 'Bag-Size');
-    let date = new TagDefinition('bag-info.txt', 'Bagging-Date');
-    let email = new TagDefinition('bag-info.txt', 'Contact-Email');
-    let newTag1 = new TagDefinition('bag-info.txt', 'New-Tag-1');
-    let newTag2 = new TagDefinition('bag-info.txt', 'New-Tag-2');
+    let desc = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'External-Description'
+    });
+    let count = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Bag-Count'
+    });
+    let size = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Bag-Size'
+    });
+    let date = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Bagging-Date'
+    });
+    let email = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Contact-Email'
+    });
+    let newTag1 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'New-Tag-1'
+    });
+    let newTag2 = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'New-Tag-2'
+    });
     desc.userValue = 'Bag of Stuff';
     count.userValue = '1';
     size.userValue = '10887';

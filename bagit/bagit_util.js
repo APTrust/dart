@@ -66,7 +66,10 @@ class BagItUtil {
             var tags = obj["Tag-Files-Required"][fileName]
             for (var tagName of Object.keys(tags)) {
                 var originalDef = tags[tagName];
-                var tagDef = new TagDefinition(fileName, tagName);
+                var tagDef = new TagDefinition({
+                    tagFile: fileName,
+                    tagName: tagName
+                });
                 tagDef.required = originalDef["required"] || false;
                 tagDef.emptyOk = originalDef["emptyOk"] || false;
                 tagDef.values = originalDef["values"] || [];

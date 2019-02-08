@@ -18,14 +18,13 @@ const tagsSetBySystem = ['Bagging-Date', 'Bagging-Software',
  *
  * @see {@link BagItProfile}
  *
- * @param {string} tagFile - The name of the tag file in which this tag
- * should appear.
- *
- * @param {string} tagName - The name of the tag.
+ * @param {object} opts - Values to copy into TagDefinition properties.
+ * The properties of this object match the properties of the TagDefinition
+ * class, which are described below.
  *
  */
 class TagDefinition {
-    constructor(tagFile, tagName) {
+    constructor(opts = {}) {
         /**
           * The unique identifier for this TagDefinition.
           * This is a version 4 UUID in hex string format.
@@ -39,13 +38,13 @@ class TagDefinition {
           *
           * @type {string}
           */
-        this.tagFile = tagFile;
+        this.tagFile = opts.tagFile;
         /**
           * The name of the tag. For example, 'Source-Organization'.
           *
           * @type {string}
           */
-        this.tagName = tagName;
+        this.tagName = opts.tagName;
         /**
           * True if this tag must be present in the tag file.
           * Some tags may be present but empty.
@@ -55,7 +54,7 @@ class TagDefinition {
           * @type {boolean}
           * @default false
           */
-        this.required = false;
+        this.required = opts.required === true ? true : false;
         /**
           * True it's OK for this tag to be empty.
           *
@@ -64,7 +63,7 @@ class TagDefinition {
           * @type {boolean}
           * @default false
           */
-        this.emptyOk = false;
+        this.emptyOk = opts.emptyOk === true ? true : false;
         /**
           * A list of valid values for this tag. If this list
           * is empty, then any values are valid. If it is not
@@ -74,7 +73,7 @@ class TagDefinition {
           *
           * @type {string[]}
           */
-        this.values = [];
+        this.values = opts.values || [];
         /**
           * The default value for this tag. This is the value
           * that will be assigned to the tag when you create a bag
@@ -90,7 +89,7 @@ class TagDefinition {
           *
           * @type {string}
           */
-        this.defaultValue = "";
+        this.defaultValue = opts.defaultValue || "";
         /**
           * A user-defined value to assign to this tag when creating
           * a bag. If this value is non-empty, it overrides defaultValue.
@@ -102,7 +101,7 @@ class TagDefinition {
           *
           * @type {string}
           */
-        this.userValue = "";
+        this.userValue = opts.userValue || "";
         /**
           * Help describes the significance of this tag to end users.
           * In the DART UI, it appears as a tooltip to help the user fill
@@ -110,7 +109,7 @@ class TagDefinition {
           *
           * @type {string}
           */
-        this.help = "";
+        this.help = opts.help || "";
         /**
           * The isBuiltIn flag is true for built-in tags whose
           * definition should not be altered or even changeable
@@ -121,7 +120,7 @@ class TagDefinition {
           *
           * @type {boolean}
           */
-        this.isBuiltIn = false;
+        this.isBuiltIn = opts.isBuiltIn === true ? true : false;
         /**
           * isUserAddedFile is a special flag indicating the user
           * added this custom tag file, which is not part of the
@@ -130,7 +129,7 @@ class TagDefinition {
           *
           * @type {boolean}
           */
-        this.isUserAddedFile = false;
+        this.isUserAddedFile = opts.isUserAddedFile === true ? true : false;
         /**
           * isUserAddedTag describes whether this tag was added by
           * the user (and hence is not part of the standard BagIt profile
@@ -141,7 +140,7 @@ class TagDefinition {
           *
           * @type {boolean}
           */
-        this.isUserAddedTag = false;
+        this.isUserAddedTag = opts.isUserAddedTag === true? true : false;
         /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the
@@ -149,7 +148,7 @@ class TagDefinition {
          *
          * @type {Object<string, string>}
          */
-        this.errors = {};
+        this.errors = opts.errors || {};
     }
 
     /**
@@ -257,7 +256,10 @@ class TagDefinition {
             if (!file.endsWith('.txt')) {
                 file += '.txt';
             }
-            var tag = new TagDefinition(file.trim(), tagName.trim());
+            var tag = new TagDefinition({
+                tagFile: file.trim(),
+                tagName: tagName.trim()
+            });
             tag.userValue = value.trim();
             return tag;
         } catch (ex) {

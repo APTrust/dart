@@ -191,7 +191,10 @@ class BagItProfile extends PersistentObject {
         // BagIt spec says these two tags in bagit.txt file
         // are always required.
         if(this.getTagsFromFile('bagit.txt', 'Bagit-Version').length == 0) {
-            var version = new TagDefinition('bagit.txt', 'BagIt-Version');
+            var version = new TagDefinition({
+                tagFile: 'bagit.txt',
+                tagName: 'BagIt-Version'
+            });
             version.required = true;
             version.emptyOk = false;
             version.values = Constants.BAGIT_VERSIONS;
@@ -200,7 +203,10 @@ class BagItProfile extends PersistentObject {
 
         }
         if(this.getTagsFromFile('bagit.txt', 'Tag-File-Character-Encoding').length == 0) {
-            var encoding = new TagDefinition('bagit.txt', 'Tag-File-Character-Encoding');
+            var encoding = new TagDefinition({
+                tagFile: 'bagit.txt',
+                tagName: 'Tag-File-Character-Encoding'
+            });
             encoding.required = true;
             encoding.emptyOk = false;
             encoding.defaultValue = "UTF-8";
@@ -230,7 +236,10 @@ class BagItProfile extends PersistentObject {
             'Source-Organization']
         for(var tagName of tags) {
             if(this.getTagsFromFile('bag-info.txt', tagName).length == 0) {
-                var t = new TagDefinition('bag-info.txt', tagName);
+                var t = new TagDefinition({
+                    tagFile: 'bag-info.txt',
+                    tagName: tagName
+                });
                 t.required = false;
                 t.emptyOk = true;
                 this.tags.push(t);

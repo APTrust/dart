@@ -2,7 +2,10 @@ const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
 
 test('Constructor sets initial properties', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     expect(Util.looksLikeUUID(tagDef.id)).toEqual(true);
     expect(tagDef.tagFile).toEqual('bag-info.txt');
     expect(tagDef.tagName).toEqual('Source-Organization');
@@ -17,14 +20,17 @@ test('Constructor sets initial properties', () => {
 });
 
 test('validate()', () => {
-    var tagDef = new TagDefinition('', '');
+    var tagDef = new TagDefinition();
     var result = tagDef.validate();
     expect(result).toEqual(false);
     expect(Object.keys(tagDef.errors).length).toEqual(2);
     expect(tagDef.errors['tagFile']).toEqual('You must specify a tag file.');
     expect(tagDef.errors['tagName']).toEqual('You must specify a tag name.');
 
-    tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     result = tagDef.validate();
     expect(result).toEqual(true);
 
@@ -46,7 +52,10 @@ test('validate()', () => {
 });
 
 test('validateForJob() permits legal empty tag value', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.required = false;
     tagDef.emptyOk = true;
     let errors = tagDef.validateForJob();
@@ -55,7 +64,10 @@ test('validateForJob() permits legal empty tag value', () => {
 
 
 test('validateForJob() catches illegal empty tag values', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.values = ['honest', 'respectable', 'responsible'];
     let errors = tagDef.validateForJob();
     expect(errors.length).toEqual(1);
@@ -63,7 +75,10 @@ test('validateForJob() catches illegal empty tag values', () => {
 });
 
 test('validateForJob() catches illegal non-empty tag values', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.required = true;
     tagDef.emptyOk = false;
     tagDef.values = ['honest', 'respectable', 'responsible'];
@@ -79,40 +94,61 @@ test('systemMustSet() identifies which tags the system must set', () => {
                'First-Version-Object-ID', 'Bag-Size'];
     let no = ['Popeye', 'Olive Oyl'];
     for (let tagName of yes) {
-        let tagDef = new TagDefinition('custom.txt', tagName);
+        let tagDef = new TagDefinition({
+            tagFile: 'custom.txt',
+            tagName: tagName
+        });
         expect(tagDef.systemMustSet(tagName)).toEqual(true);
     }
     for (let tagName of no) {
-        let tagDef = new TagDefinition('custom.txt', tagName);
+        let tagDef = new TagDefinition({
+            tagFile: 'custom.txt',
+            tagName: tagName
+        });
         expect(tagDef.systemMustSet(tagName)).toEqual(false);
     }
 });
 
 test('getValue() returns defaultValue when no userValue is present', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.defaultValue = 'xyz';
     expect(tagDef.getValue()).toEqual('xyz');
 });
 
 test('getValue() returns userValue when present', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.defaultValue = 'xyz';
     tagDef.userValue = 'abc';
     expect(tagDef.getValue()).toEqual('abc');
 });
 
 test('looksLikeDescriptionTag() returns true if tag name includes description', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Internal-Sender-Description');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Internal-Sender-Description'
+    });
     expect(tagDef.looksLikeDescriptionTag()).toEqual(true);
 });
 
 test('looksLikeDescriptionTag() returns false if tag name does not include description', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Duhskripshin');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Duhskripshin'
+    });
     expect(tagDef.looksLikeDescriptionTag()).toEqual(false);
 });
 
 test('toFormattedString() returns correct format and value', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.defaultValue = 'School of Hard Knocks';
     expect(tagDef.toFormattedString()).toEqual('Source-Organization: School of Hard Knocks');
 
@@ -121,7 +157,10 @@ test('toFormattedString() returns correct format and value', () => {
 });
 
 test('toFormattedString() replaces returns and trims leading and trailing spaces', () => {
-    let tagDef = new TagDefinition('bag-info.txt', 'Source-Organization');
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Source-Organization'
+    });
     tagDef.userValue = '  Faber \r\n   College \n  ';
     expect(tagDef.toFormattedString()).toEqual('Source-Organization: Faber College');
 });
