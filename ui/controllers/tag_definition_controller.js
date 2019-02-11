@@ -40,21 +40,39 @@ class TagDefinitionController extends BaseController {
         let tagDef = profile.firstMatchingTag('id', tagDefinitionId);
         let form = new TagDefinitionForm(tagDef);
         let title = `${tagDef.tagFile}: ${tagDef.tagName}`;
-        let body = Templates.tagDefinitionForm({ form: form });
+        let body = Templates.tagDefinitionForm({
+            form: form,
+            bagItProfileId: profile.id
+        });
         return this.modalContent(title, body);
     }
 
     update() {
-        // Save add tag to profile and save profile.
+        let profile = BagItProfile.find(this.params.get('bagItProfileId'));
+        let tagDefinitionId = this.params.get('id');
+        let tagDef = profile.firstMatchingTag('id', tagDefinitionId);
+        let form = new TagDefinitionForm(tagDef);
+        form.parseFromDOM();
 
-        // let obj = this.model.find(this.params.get('id')) || new this.model();
-        // let form = new this.formClass(obj);
-        // form.parseFromDOM();
-        // if (!form.obj.validate()) {
-        //     form.setErrors();
-        //     let html = this.formTemplate({ form: form });
-        //     return this.containerContent(html);
-        // }
+        // Special parsing for allowed values
+        let allowedVals = $('#tagDefinitionForm_values').val().split('\n');
+        tagDef.values = allowedVals.map(str => str.trim());
+
+        if (!form.obj.validate()) {
+            form.setErrors();
+            let title = `${tagDef.tagFile}: ${tagDef.tagName}`;
+            let body = Templates.tagDefinitionForm({
+                form: form,
+                bagItProfileId: profile.id
+            });
+            return this.modalContent(title, body);
+        }
+        // Save the underlying profile and add the new tag to
+        // the underlying list in the UI.
+
+        console.log(profile.tags);
+        console.log(tagDef);
+
         // this.alertMessage = Context.y18n.__(
         //     "ObjectSaved_message",
         //     Util.camelToTitle(obj.type),

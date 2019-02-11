@@ -1,5 +1,6 @@
 const { TagDefinition } = require('../../bagit/tag_definition');
 const { Choice } = require('./choice');
+const { Constants } = require('../../core/constants');
 const { Field } = require('./field');
 const { Form } = require('./form');
 
@@ -7,7 +8,7 @@ class TagDefinitionForm extends Form {
 
     constructor(tagDefinition) {
         // On this form, we do include 'required'
-        super('tagDefinitionForm', tagDefinition,  ['errors', 'type']);
+        super('tagDefinitionForm', tagDefinition, ['errors', 'type']);
         this._init();
     }
 
@@ -23,6 +24,16 @@ class TagDefinitionForm extends Form {
         if (this.fields.values.value && Array.isArray(this.fields.values.value)) {
             this.fields['values'].value = this.fields['values'].value.join("\n").trim();
         }
+
+        this.fields['required'].choices = Choice.makeList(
+            Constants.YES_NO,
+            this.obj.required,
+            false);
+
+        this.fields['emptyOk'].choices = Choice.makeList(
+            Constants.YES_NO,
+            this.obj.emptyOk,
+            false);
     }
 
 }
