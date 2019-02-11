@@ -91,7 +91,7 @@ class BagItProfileController extends BaseController {
     }
 
     newTagFile() {
-
+        // TODO: Simple form & callback to add into new UI.
     }
 
 }
