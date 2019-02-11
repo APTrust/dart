@@ -27,7 +27,7 @@
         "nexe": "^2.0.0-rc.34",
         "os-locale": "^3.1.0",
         "popper.js": "^1.14.7",
-        "react": "^16.7.0",
+        "react": "^16.8.1",
         "require-dir": "^1.2.0",
         "tar-stream": "^2.0.0",
         "tmp": "0.0.33",
