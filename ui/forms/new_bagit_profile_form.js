@@ -31,7 +31,7 @@ class NewBagItProfileForm extends Form {
             });
         }
         this.fields['baseProfile'] = new Field(
-            `${form.formId}_baseProfile`,
+            `${this.formId}_baseProfile`,
             'baseProfile',
             Context.y18n.__('baseProfile_label'),
             null
