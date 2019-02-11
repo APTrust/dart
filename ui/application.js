@@ -1,14 +1,16 @@
-const Controllers = require('./controllers');
-const Migrations = require('../migrations/migrations');
-const Templates = require('./common/templates');
-const { UIHelper } = require('./common/ui_helper');
+// Import DART into the window's global namespace.
+// This is our only global. Add the UI package as well,
+// since we're running in the GUI context here.
+const DART = require('../dart');
+DART.UI = require('../ui');
 
+// Now set everything up when the page loads.
 $(function() {
-
     // Run all migrations so that the user's enviromnent is
     // up to date.
-    Migrations.runAll();
+    DART.Migrations.runAll();
 
+    // Connect navigation to controller callbacks.
     let lastHref = '#';
     $(window).on('hashchange', function() {
         // Don't reload after resetting hash or closing modal.
@@ -16,7 +18,7 @@ $(function() {
             lastHref = location.hash = '#!';
             return;
         }
-        let response = UIHelper.handleRequest(location.href);
+        let response = DART.UI.Common.UIHelper.handleRequest(location.href);
         if (response.container) {
             $('#nav').html(response.nav);
             $('#container').html(response.container);
@@ -38,7 +40,7 @@ $(function() {
     });
 
     // Load the inital nav.
-    $('#nav').html(Templates.nav({ section: 'Dashboard' }));
+    $('#nav').html(DART.UI.Common.Templates.nav({ section: 'Dashboard' }));
 
     // Modal is fired by an href change. When it closes, we want
     // to reset the href to the underlying page, else clicking to
