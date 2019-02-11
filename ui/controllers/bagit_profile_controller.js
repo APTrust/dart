@@ -81,6 +81,7 @@ class BagItProfileController extends BaseController {
             newProfile.id = Util.uuid4();
             newProfile.baseProfileId = baseProfile.id;
             newProfile.isBuiltIn = false;
+            newProfile.userCanDelete = true;
             newProfile.name = `Copy of ${baseProfile.name}`;
             newProfile.description = `Customized version of ${baseProfile.name}`;
         } else {

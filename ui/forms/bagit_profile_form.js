@@ -8,8 +8,17 @@ const { Form } = require('./form');
 class BagItProfileForm extends Form {
 
     constructor(bagItProfile) {
-        let exclude = ["errors", "help", "type", "baseProfileId",
-                       "isBuiltIn", "tags"];
+        let exclude = [
+            "bagItProfileInfo",
+            "baseProfileId",
+            "errors",
+            "help",
+            "isBuiltIn",
+            "required",
+            "tags",
+            "type",
+            "userCanDelete",
+        ];
         super('bagItProfileForm', bagItProfile, exclude);
         this._init();
     }
