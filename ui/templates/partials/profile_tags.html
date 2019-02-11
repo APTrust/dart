@@ -7,7 +7,7 @@
   </thead>
   <tbody>
     {{#each tags as |tag| }}
-    <tr class="clickable-row" data-url="#BagItProfile/editTagDefinition?id={{ ../bagItProfileId }}&tagDefinitionId={{ tag.id }}">
+    <tr class="clickable-row" data-url="#TagDefinition/edit?bagItProfileId={{ ../bagItProfileId }}&id={{ tag.id }}">
       <td>
         {{ tag.tagName }}
         {{#if tag.help }}

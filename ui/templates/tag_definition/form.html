@@ -23,11 +23,11 @@
   <div class="bottom-buttons">
     {{#if showDeleteButton}}
     <div class="pull-left">
-      <button type="button" id="btnTagDefinitionDelete" class="btn btn-danger">Delete</button>
+      <a class="btn btn-danger" href="#TagDefinition/destroy?id={{ form.fields.id.value }}" role="button">Delete</a>
     </div>
     {{/if}}
     <div class="pull-right">
-      <button type="button" id="btnTagDefinitionSave" class="btn btn-primary">Save</button>
+    <a class="btn btn-primary" href="#TagDefinition/update?id={{ form.fields.id.value }}" role="button">Save</a>
     </div>
   </div>
 </form>
