@@ -40,8 +40,7 @@
         "electron-builder": "^20.38.5",
         "electron-rebuild": "^1.8.2",
         "electron-toolkit": "^1.0.24",
-        "jest": "^24.0.0",
-        "tape": "^4.9.2"
+        "jest": "^24.0.0"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
