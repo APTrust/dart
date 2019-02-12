@@ -166,7 +166,7 @@ class TagDefinition {
         if (Util.isEmpty(this.tagName)) {
             this.errors['tagName'] = "You must specify a tag name.";
         }
-        if (this.values.length > 0 && !Util.listContains(this.values, this.defaultValue)) {
+        if (!Util.isEmptyStringArray(this.values) && !Util.listContains(this.values, this.defaultValue)) {
             this.errors['defaultValue'] = "The default value must be one of the allowed values.";
         }
         return Object.keys(this.errors).length == 0;
