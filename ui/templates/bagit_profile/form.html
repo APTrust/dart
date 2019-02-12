@@ -70,6 +70,19 @@
 {{> inputHidden field = form.fields.userCanDelete }}
 {{> inputHidden field = form.fields.baseProfileId }}
 
-{{> formButtons form = form }}
+<div class="bottom-buttons">
+  {{#if (eq form.obj.isBuiltIn false) }}
+  <div class="pull-left">
+    <a class="btn btn-danger" href="#{{ form.obj.type }}/destroy?id={{ form.fields.id.value }}" role="button">Delete Profile</a>
+  </div>
+  {{/if}}
+  <div class="pull-right">
+    <a class="btn btn-primary" href="#{{ form.obj.type }}/update?id={{ form.fields.id.value }}" role="button">Save</a>
+  </div>
+  <div class="pull-right mr-5">
+    <a class="btn btn-secondary" href="#{{ form.obj.type }}/list" role="button">Cancel</a>
+  </div>
+</div>
+
 
 </form>
