@@ -33,9 +33,10 @@ var remoteRepositoryList = handlebars.compile(readFile('remote_repository', 'lis
 // var newTagFileForm = handlebars.compile(readFile('tag_file_new.html'));
 // var setup = handlebars.compile(readFile('setup.html'));
 // var setupQuestion = handlebars.compile(readFile('setup_question.html'));
+var tagDefinitionForm = handlebars.compile(readFile('tag_definition', 'form.html'));
+var tagFileForm = handlebars.compile(readFile('tag_file', 'form.html'));
 var uploadTargetForm = handlebars.compile(readFile('upload_target', 'form.html'));
 var uploadTargetList = handlebars.compile(readFile('upload_target', 'list.html'));
-var tagDefinitionForm = handlebars.compile(readFile('tag_definition', 'form.html'));
 // var uploadOrRebag = handlebars.compile(readFile('upload_or_rebag.html'));
 
 handlebars.registerPartial({
@@ -95,7 +96,8 @@ module.exports.remoteRepositoryList = remoteRepositoryList;
 // module.exports.newTagFileForm = newTagFileForm;
 // module.exports.setup = setup;
 // module.exports.setupQuestion = setupQuestion;
+module.exports.tagDefinitionForm = tagDefinitionForm;
+module.exports.tagFileForm = tagFileForm;
 module.exports.uploadTargetForm = uploadTargetForm;
 module.exports.uploadTargetList = uploadTargetList;
-module.exports.tagDefinitionForm = tagDefinitionForm;
 // module.exports.uploadOrRebag = uploadOrRebag;

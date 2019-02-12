@@ -138,5 +138,13 @@
   "Object_str_label": "Object_str_label",
   "Object_number_label": "Object_number_label",
   "Object_bool_label": "Object_bool_label",
-  "New-Tag": "New-Tag"
+  "New-Tag": "New-Tag",
+  "New Tag File": "New Tag File",
+  "Object_id_label": "Object_id_label",
+  "Object_erors_label": "Object_erors_label",
+  "Object_tagFileName_label": "Object_tagFileName_label",
+  "undefined_tagFileName_help": "undefined_tagFileName_help",
+  "Tag file name is required": "Tag file name is required",
+  "This profile already has a tag file called %s": "This profile already has a tag file called %s",
+  "New tag file %s is available from the Tag Files menu below.": "New tag file %s is available from the Tag Files menu below."
 }

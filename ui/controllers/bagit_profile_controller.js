@@ -1,8 +1,11 @@
+const { Context } = require('../../core/context');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { BaseController } = require('./base_controller');
 const { NewBagItProfileForm } = require('../forms/new_bagit_profile_form');
+const { TagDefinition } = require('../../bagit/tag_definition');
 const { TagDefinitionForm } = require('../forms/tag_definition_form');
+const { TagFileForm } = require('../forms/tag_file_form');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
@@ -28,6 +31,7 @@ class BagItProfileController extends BaseController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'name';
         this.defaultSortDirection = 'asc';
+        this.alertMessage = null;
     }
 
     // Override the new() method from the BaseController, because
@@ -57,11 +61,13 @@ class BagItProfileController extends BaseController {
         let tagsByFile = profile.tagsGroupedByFile();
         let tagFileNames = Object.keys(tagsByFile).sort();
         let html = this.formTemplate({
+            alertMessage: this.alertMessage,
             bagItProfileId: profile.id,
             form: form,
             tagFileNames: tagFileNames,
             tagsByFile: tagsByFile
         });
+        this.alertMessage = null;
         return this.containerContent(html);
     }
 
@@ -91,7 +97,35 @@ class BagItProfileController extends BaseController {
     }
 
     newTagFile() {
-        // TODO: Simple form & callback to add into new UI.
+        let title = Context.y18n.__("New Tag File");
+        let form = new TagFileForm('custom-tags.txt');
+        let body = Templates.tagFileForm({
+            form: form,
+            bagItProfileId: this.params.get('id')
+        });
+        return this.modalContent(title, body);
+    }
+
+    newTagFileCreate() {
+        let title = Context.y18n.__("New Tag File");
+        let form = new TagFileForm();
+        form.parseFromDOM();
+        if (Util.isEmpty(form.obj.tagFileName)) {
+            $('#tagFileForm_tagFileNameError').text(Context.y18n.__('Tag file name is required'));
+            return this.noContent();
+        }
+        let profile = BagItProfile.find(this.params.get('id'));
+        if (profile.hasTagFile(form.obj.tagFileName)) {
+            $('#tagFileForm_tagFileNameError').text(Context.y18n.__('This profile already has a tag file called %s', form.obj.tagFileName));
+            return this.noContent();
+        }
+        profile.tags.push(new TagDefinition({
+            tagName: Context.y18n.__('New-Tag'),
+            tagFile: form.obj.tagFileName
+        }));
+        profile.save();
+        this.alertMessage = Context.y18n.__("New tag file %s is available from the Tag Files menu below.", form.obj.tagFileName);
+        return this.edit();
     }
 
 }
