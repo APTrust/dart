@@ -24,7 +24,7 @@
   {{> inputHidden field = form.fields.id }}
 
   <div class="bottom-buttons">
-    {{#if showDeleteButton}}
+    {{#if (eq form.fields.isBuiltIn.value 'false')}}
     <div class="pull-left">
       <a class="btn btn-danger" href="#TagDefinition/destroy?id={{ form.fields.id.value }}&bagItProfileId={{ bagItProfileId }}" role="button">Delete</a>
     </div>
