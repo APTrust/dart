@@ -89,6 +89,7 @@ module.exports.internalSettingList = internalSettingList;
 // module.exports.log = log;
 // module.exports.manifest = manifest;
 module.exports.nav = nav;
+module.exports.partials = handlebars.partials;
 module.exports.remoteRepositoryForm = remoteRepositoryForm;
 module.exports.remoteRepositoryList = remoteRepositoryList;
 // module.exports.newTagFileForm = newTagFileForm;

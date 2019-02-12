@@ -73,12 +73,19 @@ class TagDefinitionController extends BaseController {
         console.log(profile.tags);
         console.log(tagDef);
 
-        // this.alertMessage = Context.y18n.__(
-        //     "ObjectSaved_message",
-        //     Util.camelToTitle(obj.type),
-        //     obj[this.nameProperty]);
-        // obj.save();
-        // return this.list();
+        profile.save();
+        this._updateTagList(profile, tagDef);
+        $('#modal').modal('hide');
+    }
+
+    _updateTagList(profile, tagDef) {
+        let tagsByFile = profile.tagsGroupedByFile();
+        let html = Templates.partials['profileTags']({
+            tags: tagsByFile[tagDef.tagFile],
+            bagItProfileId: profile.id,
+            tagFileName: tagDef.tagFile
+        });
+        $(`table[data-tag-file-name='${tagDef.tagFile}']`).html(html);
     }
 
     list() {

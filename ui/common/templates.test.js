@@ -71,7 +71,8 @@ test('All partials are defined', () => {
         'inputTextArea',
         'jobTabs',
         'profileTags',
-        'tableBottomLinks'
+        'tableBottomLinks',
+        'tagDefRow'
     ];
     let compiledPartialNames = Object.keys(handlebars.partials);
     expect(compiledPartialNames.length).toEqual(expectedPartialNames.length);
