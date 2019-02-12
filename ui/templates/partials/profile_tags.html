@@ -7,21 +7,7 @@
   </thead>
   <tbody>
     {{#each tags as |tag| }}
-    <tr class="clickable-row" data-url="#TagDefinition/edit?bagItProfileId={{ ../bagItProfileId }}&id={{ tag.id }}">
-      <td>
-        {{ tag.tagName }}
-        {{#if tag.help }}
-        <i class="fas fa-question-circle text-primary" data-toggle="popover" data-trigger="hover" title="{{ tag.tagName }}" data-content="{{tag.help}}"></i>
-        {{/if}}
-      </td>
-      <td>
-        {{#if tag.systemMustSet }}
-        <span class='text-muted'>[Set automatically by bagger]</span>
-        {{else}}
-        {{ tag.defaultValue }} {{ bagItProfileId }}
-        {{/if}}
-      </td>
-    </tr>
+      {{> tagDefRow tag = tag bagItProfileId = ../bagItProfileId}}
     {{/each }}
     <tr>
       <td></td>

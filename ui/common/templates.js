@@ -50,7 +50,8 @@ handlebars.registerPartial({
     inputTextArea: readFile(path.join('partials', 'input_textarea.html')),
     jobTabs: readFile(path.join('partials', 'job_tabs.html')),
     profileTags: readFile(path.join('partials', 'profile_tags.html')),
-    tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html'))
+    tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
+    tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
 });
 
 handlebars.registerHelper('eq', function(a, b) {
