@@ -13,7 +13,7 @@ class TagDefinitionForm extends Form {
     }
 
     _init() {
-        if (!this.obj.isBuiltIn) {
+        if (this.obj.isBuiltIn) {
             this.fields['tagName'].attrs['disabled'] = true;
             this.fields['tagFile'].attrs['disabled'] = true;
         }

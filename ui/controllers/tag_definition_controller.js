@@ -1,4 +1,5 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Context } = require('../../core/context');
 const { TagDefinition } = require('../../bagit/tag_definition');
 const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const { BaseController } = require('./base_controller');
@@ -29,9 +30,17 @@ class TagDefinitionController extends BaseController {
     }
 
     new() {
-        // Load Profile and Tag File name
-        // Create new tag with default name
-        // Redirect to edit
+        let profile = BagItProfile.find(this.params.get('bagItProfileId'));
+        let tagDef = new TagDefinition({
+            tagFile: this.params.get('tagFileName'),
+            tagName: Context.y18n.__('New-Tag'),
+            isBuiltIn: false,
+            isUserAddedTag: true,
+        });
+        profile.tags.push(tagDef);
+        profile.save();
+        this.params.set('id', tagDef.id);
+        return this.edit();
     }
 
     edit() {
@@ -67,15 +76,13 @@ class TagDefinitionController extends BaseController {
             });
             return this.modalContent(title, body);
         }
+
         // Save the underlying profile and add the new tag to
         // the underlying list in the UI.
-
-        console.log(profile.tags);
-        console.log(tagDef);
-
         profile.save();
         this._updateTagList(profile, tagDef);
         $('#modal').modal('hide');
+        return this.noContent();
     }
 
     _updateTagList(profile, tagDef) {
@@ -85,7 +92,7 @@ class TagDefinitionController extends BaseController {
             bagItProfileId: profile.id,
             tagFileName: tagDef.tagFile
         });
-        $(`table[data-tag-file-name='${tagDef.tagFile}']`).html(html);
+        $(`div[data-tag-file-name='${tagDef.tagFile}']`).html(html);
     }
 
     list() {

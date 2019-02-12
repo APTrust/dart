@@ -140,7 +140,7 @@ class TagDefinition {
           *
           * @type {boolean}
           */
-        this.isUserAddedTag = opts.isUserAddedTag === true? true : false;
+        this.isUserAddedTag = opts.isUserAddedTag === true ? true : false;
         /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the

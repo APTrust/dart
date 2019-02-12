@@ -1,7 +1,5 @@
 <form method="post" action="#" id="{{ id }}">
 
-  {{> inputText field = form.fields.tagFile }}
-
   {{> inputText field = form.fields.tagName }}
 
   {{> inputSelect field = form.fields.required }}
@@ -18,6 +16,7 @@
 
   {{> inputText field = form.fields.help }}
 
+  {{> inputHidden field = form.fields.tagFile }}
   {{> inputHidden field = form.fields.isBuiltIn }}
   {{> inputHidden field = form.fields.isUserAddedFile }}
   {{> inputHidden field = form.fields.isUserAddedTag }}
