@@ -5,6 +5,12 @@ const { Field } = require('./field');
 const { Form } = require('./form');
 const { Util } = require('../../core/util');
 
+/**
+ * This form asks the user if they want to create a new {@link BagItProfile}
+ * from scratch, or if they want to base their new profile on an existing
+ * profile. This form appears before the form that lets the user customize
+ * the new profile.
+ */
 class NewBagItProfileForm extends Form {
 
     constructor() {
@@ -13,6 +19,14 @@ class NewBagItProfileForm extends Form {
         this._init();
     }
 
+    /**
+     * This method sets up the form's one and only field, which is a
+     * select list asking whether the user wants to create a new profile
+     * from scratch or to create a new profile based on an existing
+     * profile.
+     *
+     * @private
+     */
     _init() {
         var profiles = BagItProfile.list(null, {
             limit: 0,
