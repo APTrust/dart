@@ -18,7 +18,7 @@ const infoFields = {
 /**
  * This is the form for editing BagItProfiles.
  *
- * @param {BagItProfile}
+ * @param {BagItProfile} bagItProfile
  */
 class BagItProfileForm extends Form {
 
@@ -53,7 +53,7 @@ class BagItProfileForm extends Form {
 
     /**
      * This sets up the editable fields that are part of the
-     * {@see BagItProfile} but not part of the {@see BagItProfileInfo}
+     * {@link BagItProfile} but not part of the {@link BagItProfileInfo}
      * or tags properties.
      *
      * @private
@@ -121,7 +121,7 @@ class BagItProfileForm extends Form {
     }
 
     /**
-     * This sets up the form fields for the {@see BagItProfileInfo}
+     * This sets up the form fields for the {@link BagItProfileInfo}
      * sub-object.
      *
      */
@@ -148,7 +148,7 @@ class BagItProfileForm extends Form {
     }
 
     /**
-     * Converts the form field name for a {@see BagItProfileInfo} property
+     * Converts the form field name for a {@link BagItProfileInfo} property
      * back to the name of the actual property. For example, input
      * 'infoContactEmail' returns 'contactEmail'.
      *
@@ -164,7 +164,7 @@ class BagItProfileForm extends Form {
     }
 
     /**
-     * Converts the name of a {@see BagItProfileInfo} property
+     * Converts the name of a {@link BagItProfileInfo} property
      * to the name of a form field. For example, input
      * 'contactEmail' returns 'infoContactEmail'.
      *
