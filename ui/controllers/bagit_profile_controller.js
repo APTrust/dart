@@ -71,6 +71,65 @@ class BagItProfileController extends BaseController {
         return this.containerContent(html);
     }
 
+    update() {
+        let profile = BagItProfile.find(this.params.get('id'));
+        console.log(this.params.get('id'));
+        console.log(profile);
+        let form = new BagItProfileForm(profile);
+        form.parseFromDOM();
+        if (!form.obj.validate()) {
+            form.setErrors();
+            let errors = this._getPageLevelErrors(form.obj);
+            let html = this.formTemplate({
+                form: form,
+                errMessage: Context.y18n.__('Please correct the following errors.'),
+                errors: errors
+            });
+            return this.containerContent(html);
+        }
+        this.alertMessage = Context.y18n.__(
+            "ObjectSaved_message",
+            Util.camelToTitle(profile.type),
+            profile.name);
+        profile.save();
+        return this.list();
+    }
+
+    /**
+     * This sets page-level validation errors, including information about
+     * which tab contains the the error.
+     *
+     * @param {BagItProfile} profile
+     *
+     * @returns {Array<string>} Array of error messages to be displayed at the
+     * top of the page.
+     *
+     * @private
+     *
+     */
+    _getPageLevelErrors(profile) {
+        let errors = [];
+        if (!Util.isEmpty(profile.errors["name"])) {
+            errors.push(Context.y18n.__("About Tab: %s", profile.errors["name"]));
+        }
+        if (!Util.isEmpty(profile.errors["acceptBagItVersion"])) {
+            errors.push(Context.y18n.__("General Tab: %s", profile.errors["acceptBagItVersion"]));
+        }
+        if (!Util.isEmpty(profile.errors["manifestsRequired"])) {
+            errors.push(Context.y18n.__("Manifests Tab: %s", profile.errors["manifestsRequired"]));
+        }
+        if (!Util.isEmpty(profile.errors["serialization"])) {
+            errors.push(Context.y18n.__("Serialization Tab: %s", profile.errors["serialization"]));
+        }
+        if (!Util.isEmpty(profile.errors["acceptSerialization"])) {
+            errors.push(Context.y18n.__("Serialization Tab: %s", profile.errors["acceptSerialization"]));
+        }
+        if (!Util.isEmpty(profile.errors["tags"])) {
+            errors.push(Context.y18n.__("Tag Files Tab: %s", profile.errors["tags"]));
+        }
+        return errors;
+    }
+
     /**
      * This returns an entirely new BagItProfile, or a new BagItProfile
      * that is a copy of a base profile.

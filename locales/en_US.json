@@ -146,5 +146,15 @@
   "undefined_tagFileName_help": "undefined_tagFileName_help",
   "Tag file name is required": "Tag file name is required",
   "This profile already has a tag file called %s": "This profile already has a tag file called %s",
-  "New tag file %s is available from the Tag Files menu below.": "New tag file %s is available from the Tag Files menu below."
+  "New tag file %s is available from the Tag Files menu below.": "New tag file %s is available from the Tag Files menu below.",
+  "About: %s": "About: %s",
+  "General: %s": "General: %s",
+  "Manifests: %s": "Manifests: %s",
+  "Serialization: %s": "Serialization: %s",
+  "Please correct the folloring errors.": "Please correct the folloring errors.",
+  "Manifests Tab: %s": "Manifests Tab: %s",
+  "About Tab: %s": "About Tab: %s",
+  "General Tab: %s": "General Tab: %s",
+  "Serialization Tab: %s": "Serialization Tab: %s",
+  "Please correct the following errors.": "Please correct the following errors."
 }

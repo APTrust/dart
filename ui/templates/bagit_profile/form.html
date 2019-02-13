@@ -2,11 +2,17 @@
 
 {{> bannerAlert message = alertMessage }}
 
-<ul class='text-danger'>
-{{#each errors as |err| }}
-  <li>{{ err }}</li>
-{{/each }}
-</ul>
+{{#if errors}}
+<div class="alert alert-danger" role="alert">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <p>{{ errMessage }}</p>
+  <ul class='text-danger'>
+    {{#each errors as |err| }}
+    <li>{{ err }}</li>
+    {{/each }}
+  </ul>
+</div>
+{{/if}}
 
 <form method="post" action="#" id="{{ id }}">
 

@@ -266,10 +266,15 @@ class BagItProfile extends PersistentObject {
             this.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
         }
         if (!this.hasTagFile("bag-info.txt")) {
+            this.errors["tags"] = this.errors["tags"] || '';
             this.errors["tags"] += "\nProfile lacks requirements for bag-info.txt tag file.";
         }
         if (!Util.listContains(Constants.REQUIREMENT_OPTIONS, this.serialization)) {
             this.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
+        }
+        if ((this.serialization == 'required' || this.serialzation == 'optional') &&
+            Util.isEmptyStringArray(this.acceptSerialization)) {
+            this.errors["acceptSerialization"] = "When serialization is allowed, you must specify at least one serialization format.";
         }
         return Object.keys(this.errors).length == 0;
     }
