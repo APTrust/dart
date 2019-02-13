@@ -57,18 +57,11 @@ class BagItProfileController extends BaseController {
     // than we do with most objects.
     edit() {
         let profile = BagItProfile.find(this.params.get('id'));
-        let form = new BagItProfileForm(profile);
-        let tagsByFile = profile.tagsGroupedByFile();
-        let tagFileNames = Object.keys(tagsByFile).sort();
-        let html = this.formTemplate({
-            alertMessage: this.alertMessage,
-            bagItProfileId: profile.id,
-            form: form,
-            tagFileNames: tagFileNames,
-            tagsByFile: tagsByFile
-        });
+        let opts = {
+            alertMessage: this.alertMessage
+        };
         this.alertMessage = null;
-        return this.containerContent(html);
+        return this.containerContent(this._getPageHTML(profile, opts));
     }
 
     update() {
@@ -77,12 +70,11 @@ class BagItProfileController extends BaseController {
         form.parseFromDOM();
         if (!form.obj.validate()) {
             let errors = this._getPageLevelErrors(form.obj);
-            let html = this.formTemplate({
-                form: new BagItProfileForm(profile),
+            let opts = {
                 errMessage: Context.y18n.__('Please correct the following errors.'),
                 errors: errors
-            });
-            return this.containerContent(html);
+            }
+            return this.containerContent(this._getPageHTML(form.obj, opts));
         }
         this.alertMessage = Context.y18n.__(
             "ObjectSaved_message",
@@ -90,6 +82,20 @@ class BagItProfileController extends BaseController {
             profile.name);
         profile.save();
         return this.list();
+    }
+
+    _getPageHTML(profile, opts = {}) {
+        let errors = this._getPageLevelErrors(profile);
+        let tagsByFile = profile.tagsGroupedByFile();
+        let tagFileNames = Object.keys(tagsByFile).sort();
+        let data = {
+            bagItProfileId: profile.id,
+            form: new BagItProfileForm(profile),
+            tagFileNames: tagFileNames,
+            tagsByFile: tagsByFile
+        }
+        Object.assign(data, opts);
+        return this.formTemplate(data);
     }
 
     /**
