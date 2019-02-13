@@ -461,6 +461,16 @@
               
                 
                 <li><a
+                  href='#getnewprofilefrombase'
+                  class="">
+                  getNewProfileFromBase
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#tarwriter'
                   class=" toggle-sibling">
                   TarWriter
@@ -2755,69 +2765,6 @@
               
                 
                 <li><a
-                  href='#filesystemreader'
-                  class=" toggle-sibling">
-                  FileSystemReader
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  <ul class='list-reset py1-ul pl1'>
-                    <li class='h5'><span>Static members</span></li>
-                    
-                      <li><a
-                        href='#filesystemreaderdescription'
-                        class='regular pre-open'>
-                        .description
-                      </a></li>
-                    
-                    </ul>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#filesystemreaderdircount'
-                        class='regular pre-open'>
-                        #dirCount
-                      </a></li>
-                      
-                      <li><a
-                        href='#filesystemreaderfilecount'
-                        class='regular pre-open'>
-                        #fileCount
-                      </a></li>
-                      
-                      <li><a
-                        href='#filesystemreaderlist'
-                        class='regular pre-open'>
-                        #list
-                      </a></li>
-                      
-                      <li><a
-                        href='#filesystemreaderpathtodirectory'
-                        class='regular pre-open'>
-                        #pathToDirectory
-                      </a></li>
-                      
-                      <li><a
-                        href='#filesystemreaderread'
-                        class='regular pre-open'>
-                        #read
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
                   href='#tarreader'
                   class=" toggle-sibling">
                   TarReader
@@ -2867,6 +2814,69 @@
                       
                       <li><a
                         href='#tarreaderread'
+                        class='regular pre-open'>
+                        #read
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#filesystemreader'
+                  class=" toggle-sibling">
+                  FileSystemReader
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#filesystemreaderdescription'
+                        class='regular pre-open'>
+                        .description
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#filesystemreaderdircount'
+                        class='regular pre-open'>
+                        #dirCount
+                      </a></li>
+                      
+                      <li><a
+                        href='#filesystemreaderfilecount'
+                        class='regular pre-open'>
+                        #fileCount
+                      </a></li>
+                      
+                      <li><a
+                        href='#filesystemreaderlist'
+                        class='regular pre-open'>
+                        #list
+                      </a></li>
+                      
+                      <li><a
+                        href='#filesystemreaderpathtodirectory'
+                        class='regular pre-open'>
+                        #pathToDirectory
+                      </a></li>
+                      
+                      <li><a
+                        href='#filesystemreaderread'
                         class='regular pre-open'>
                         #read
                       </a></li>
@@ -3347,16 +3357,6 @@ have been written to the file system.
               
                 
                 <li><a
-                  href='#getnewprofilefrombase'
-                  class="">
-                  getNewProfileFromBase
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
                   href='#getprovider'
                   class="">
                   getProvider
@@ -3452,6 +3452,16 @@ have been written to the file system.
                   
                   
                 </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#parsefromdom'
+                  class="">
+                  parseFromDOM
+                  
+                </a>
                 
                 </li>
               
@@ -7424,6 +7434,63 @@ users submit forms.</p>
     </div>
   
 </div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='getnewprofilefrombase'>
+      getNewProfileFromBase
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This returns an entirely new BagItProfile, or a new BagItProfile
+that is a copy of a base profile.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>getNewProfileFromBase(): <a href="#bagitprofile">BagItProfile</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#bagitprofile">BagItProfile</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
 
   
 
@@ -28008,418 +28075,6 @@ capabilities.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='filesystemreader'>
-      FileSystemReader
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>FileSystemReader provides methods for listing and reading the contents
-of directories on a locally mounted file system. This is used by the bag
-validator to validate unserialized (i.e. untarred, unzipped, etc.) bags.</p>
-<p>Both FileSystemReader and <a href="#tarreader">TarReader</a> implement a common
-interface and emit a common set of events to provide the bag
-validator with a uniform interface for reading bags packaged in
-different formats.</p>
-<p>See the list() and read() functions below for information about
-the events they emit.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>new FileSystemReader(pathToDirectory: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
-   
-  
-  
-    <p>
-      Extends
-      
-        <a href="#plugin">Plugin</a>
-      
-    </p>
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>pathToDirectory</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The absolute path to the directory
-you want to read.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Static Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='filesystemreaderdescription'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>description()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>Returns a <a href="#plugindefinition">PluginDefinition</a> object describing this plugin.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>description(): <a href="#plugindefinition">PluginDefinition</a></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#plugindefinition">PluginDefinition</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='filesystemreaderdircount'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>dirCount</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>dirCount is the number of directories encountered during a
-read() or list() operation.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>dirCount</div>
-   
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='filesystemreaderfilecount'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>fileCount</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>fileCount is the number of files encountered during a read()
-or list() operation.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>fileCount</div>
-   
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='filesystemreaderlist'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>list()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The list() method recursively lists the contents of a directory
-and returns a relative path and an fs.Stat object for each file
-it encounters.</p>
-<p>It emits the events "entry", "error" and "end".</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>list()</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='filesystemreaderpathtodirectory'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>pathToDirectory</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>pathToDirectory is the absolute path to the directory
-you want to read.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>pathToDirectory</div>
-   
-  
-    <p>
-      Type:
-      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='filesystemreaderread'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>read()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>The read() method recursively lists the contents of a directory
-and returns an open reader for each file it encounters.</p>
-<p>It emits the events "entry", "error" and "end".</p>
-<p>Note that read() will not advance to the next entry
-until you've read the entire stream returned by
-the "entry" event.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>read()</div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='tarreader'>
       TarReader
     </h3>
@@ -28784,6 +28439,418 @@ list() method, plus a readable stream from which you can
 extract the contents of individual tar files.</p>
 <p>Note that read() will not advance to the next entry
 until you've read the entire stream returned returned by
+the "entry" event.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>read()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='filesystemreader'>
+      FileSystemReader
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>FileSystemReader provides methods for listing and reading the contents
+of directories on a locally mounted file system. This is used by the bag
+validator to validate unserialized (i.e. untarred, unzipped, etc.) bags.</p>
+<p>Both FileSystemReader and <a href="#tarreader">TarReader</a> implement a common
+interface and emit a common set of events to provide the bag
+validator with a uniform interface for reading bags packaged in
+different formats.</p>
+<p>See the list() and read() functions below for information about
+the events they emit.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>new FileSystemReader(pathToDirectory: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+   
+  
+  
+    <p>
+      Extends
+      
+        <a href="#plugin">Plugin</a>
+      
+    </p>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>pathToDirectory</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The absolute path to the directory
+you want to read.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='filesystemreaderdescription'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>description()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Returns a <a href="#plugindefinition">PluginDefinition</a> object describing this plugin.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>description(): <a href="#plugindefinition">PluginDefinition</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#plugindefinition">PluginDefinition</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='filesystemreaderdircount'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>dirCount</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>dirCount is the number of directories encountered during a
+read() or list() operation.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>dirCount</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='filesystemreaderfilecount'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>fileCount</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>fileCount is the number of files encountered during a read()
+or list() operation.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>fileCount</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='filesystemreaderlist'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>list()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>The list() method recursively lists the contents of a directory
+and returns a relative path and an fs.Stat object for each file
+it encounters.</p>
+<p>It emits the events "entry", "error" and "end".</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>list()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='filesystemreaderpathtodirectory'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>pathToDirectory</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>pathToDirectory is the absolute path to the directory
+you want to read.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>pathToDirectory</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='filesystemreaderread'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>read()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>The read() method recursively lists the contents of a directory
+and returns an open reader for each file it encounters.</p>
+<p>It emits the events "entry", "error" and "end".</p>
+<p>Note that read() will not advance to the next entry
+until you've read the entire stream returned by
 the "entry" event.</p>
 
  
@@ -32887,63 +32954,6 @@ the errors property for specific errors.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='getnewprofilefrombase'>
-      getNewProfileFromBase
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>This returns an entirely new BagItProfile, or a new BagItProfile
-that is a copy of a base profile.</p>
-
- 
-  
-    <div class='pre p1 fill-light mt0'>getNewProfileFromBase(): <a href="#bagitprofile">BagItProfile</a></div>
-   
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-    
-      <div class='py1 quiet mt1 prose-big'>Returns</div>
-      <code><a href="#bagitprofile">BagItProfile</a></code>:
-        
-
-      
-    
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='getprovider'>
       getProvider
     </h3>
@@ -33553,6 +33563,58 @@ if we're describing a bag-level event.</p>
     </div>
   
 </div>
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='parsefromdom'>
+      parseFromDOM
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This updates all of the values of Form.obj based on what the
+user entered in the HTML form. After calling the super method
+in the Form class, this hacks some values from the form into
+the BagItProfileInfo subobjects, and cleans up some extraneous
+properties on the BagItProfile object.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>parseFromDOM()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
   
 
