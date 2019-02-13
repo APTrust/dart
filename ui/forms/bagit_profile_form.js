@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
@@ -5,6 +6,20 @@ const { Context } = require('../../core/context')
 const { Field } = require('./field');
 const { Form } = require('./form');
 
+const infoFields = {
+    'infoContactEmail': 'contactEmail',
+    'infoContactName': 'contactName',
+    'infoExternalDescription': 'externalDescription',
+    'infoIdentifier': 'bagItProfileIdentifier',
+    'infoSourceOrganization': 'sourceOrganization',
+    'infoVersion': 'version'
+};
+
+/**
+ * This is the form for editing BagItProfiles.
+ *
+ * @param {BagItProfile}
+ */
 class BagItProfileForm extends Form {
 
     constructor(bagItProfile) {
@@ -23,6 +38,11 @@ class BagItProfileForm extends Form {
         this._init();
     }
 
+    /**
+     * This calls internal methods to customize the form.
+     *
+     * @private
+     */
     _init() {
         if (!this.obj.userCanDelete) {
             this.fields['name'].attrs['disabled'] = true;
@@ -31,6 +51,13 @@ class BagItProfileForm extends Form {
         this._setProfileInfoFields();
     }
 
+    /**
+     * This sets up the editable fields that are part of the
+     * {@see BagItProfile} but not part of the {@see BagItProfileInfo}
+     * or tags properties.
+     *
+     * @private
+     */
     _setBasicFields() {
         // Accept-BagIt-Version
         this.fields['acceptBagItVersion'].attrs['multiple'] = true;
@@ -93,15 +120,16 @@ class BagItProfileForm extends Form {
             false);
     }
 
+    /**
+     * This sets up the form fields for the {@see BagItProfileInfo}
+     * sub-object.
+     *
+     */
     _setProfileInfoFields() {
         // BagItProfileInfo
-        let info = this.obj.bagItProfileInfo;
-        this._initField('infoIdentifier', info.bagItProfileIdentifier);
-        this._initField('infoContactEmail', info.contactEmail);
-        this._initField('infoContactName', info.contactName);
-        this._initField('infoExternalDescription', info.externalDescription);
-        this._initField('infoSourceOrganization', info.sourceOrganization);
-        this._initField('infoVersion', info.version);
+        for (let [fieldName, propName] of Object.entries(infoFields)) {
+            this._initField(fieldName, this.obj.bagItProfileInfo[propName]);
+        }
     }
 
     /**
@@ -113,20 +141,45 @@ class BagItProfileForm extends Form {
      */
     parseFromDOM() {
         super.parseFromDOM();
-        let infoFields = {
-            'infoContactEmail': 'contactEmail',
-            'infoContactName': 'contactName',
-            'infoExternalDescription': 'externalDescription',
-            'infoIdentifier': 'bagItProfileIdentifier',
-            'infoSourceOrganization': 'sourceOrganization',
-            'infoVersion': 'version'
-        };
         for (let [fakeName, actualName] of Object.entries(infoFields)) {
             this.obj.bagItProfileInfo[actualName] = this.obj[fakeName];
             delete(this.obj[fakeName]);
         }
     }
 
+    /**
+     * Converts the form field name for a {@see BagItProfileInfo} property
+     * back to the name of the actual property. For example, input
+     * 'infoContactEmail' returns 'contactEmail'.
+     *
+     * @param {string} The name of a field on the BagItProfile form.
+     *
+     * @returns {string} The name of the property on the BagItProfileInfo
+     * object, or undefined if the field name does not map to any property.
+     *
+     * @private
+     */
+    toObjectPropertyName(name) {
+        return infoFields[name];
+    }
+
+    /**
+     * Converts the name of a {@see BagItProfileInfo} property
+     * to the name of a form field. For example, input
+     * 'contactEmail' returns 'infoContactEmail'.
+     *
+     * @param {string} The name of a BagItProfileInfo property.
+     *
+     * @returns {string} The name of the field on the BagItProfile
+     * form, or undefined if the field name does not map to any form
+     * field.
+     *
+     * @private
+     */
+    toFormFieldName(name) {
+        let invertedMap = _.invert(infoFields);
+        return invertedMap[name];
+    }
 }
 
 module.exports.BagItProfileForm = BagItProfileForm;
