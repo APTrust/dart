@@ -81,7 +81,7 @@ class BagItProfileController extends BaseController {
             form.setErrors();
             let errors = this._getPageLevelErrors(form.obj);
             let html = this.formTemplate({
-                form: form,
+                form: new BagItProfileForm(profile),
                 errMessage: Context.y18n.__('Please correct the following errors.'),
                 errors: errors
             });

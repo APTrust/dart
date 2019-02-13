@@ -29,6 +29,7 @@ class BagItProfileForm extends Form {
         }
         this._setBasicFields();
         this._setProfileInfoFields();
+        //this._setAutoUpdate();
     }
 
     _setBasicFields() {
@@ -101,6 +102,47 @@ class BagItProfileForm extends Form {
         this._initField('infoSourceOrganization', info.sourceOrganization);
         this._initField('infoVersion', info.version);
     }
+
+    // _setAutoUpdate() {
+    //     for (let field of this.fields) {
+    //         field.attrs['data-obj-prop'] =
+    //     }
+    // }
+
+    /**
+     * This updates all of the values of Form.obj based on what the
+     * user entered in the HTML form. Note that because there are no
+     * PUT or POST operations in DART, this method reads directly from
+     * the HTML form on the current page, casting number and boolean
+     * values to the correct types.
+     *
+     * This also sets the values of the Form.changed object, which
+     * shows the old and new values of each property that the user
+     * changed.
+     *
+     * This returns nothing. Check the values of Form.obj and Form.changed
+     * after calling this. The controller classes call this method when
+     * users submit forms.
+     */
+    parseFromDOM() {
+        super.parseFromDOM();
+        let infoFields = {
+            'infoContactEmail': 'contactEmail',
+            'infoContactName': 'contactName',
+            'infoExternalDescription': 'externalDescription',
+            'infoIdentifier': 'bagItProfileIdentifier',
+            'infoSourceOrganization': 'sourceOrganization',
+            'infoVersion': 'version'
+        };
+        console.log("Object ---->")
+        console.log(this.obj)
+        console.log("<----- Object")
+        for (let [fakeName, actualName] of Object.entries(infoFields)) {
+            this.obj.bagItProfileInfo[actualName] = this.obj[fakeName];
+            delete(this.obj[fakeName]);
+        }
+    }
+
 }
 
 module.exports.BagItProfileForm = BagItProfileForm;
