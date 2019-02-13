@@ -52,7 +52,6 @@ class BaseController {
     }
 
     openExternal() {
-        console.log(this.params);
         electron.shell.openExternal(this.params.get('url'));
     }
 

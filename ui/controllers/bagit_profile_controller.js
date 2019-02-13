@@ -73,12 +73,9 @@ class BagItProfileController extends BaseController {
 
     update() {
         let profile = BagItProfile.find(this.params.get('id'));
-        console.log(this.params.get('id'));
-        console.log(profile);
         let form = new BagItProfileForm(profile);
         form.parseFromDOM();
         if (!form.obj.validate()) {
-            form.setErrors();
             let errors = this._getPageLevelErrors(form.obj);
             let html = this.formTemplate({
                 form: new BagItProfileForm(profile),
