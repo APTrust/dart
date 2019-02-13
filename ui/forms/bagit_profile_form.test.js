@@ -73,3 +73,27 @@ test('parseFromDOM()', () => {
     }
 
 });
+
+test('toObjectPropertyName()', () => {
+    let form = new BagItProfileForm(new BagItProfile());
+    expect(form.toObjectPropertyName('infoContactEmail')).toEqual('contactEmail');
+    expect(form.toObjectPropertyName('infoContactName')).toEqual('contactName');
+    expect(form.toObjectPropertyName('infoExternalDescription')).toEqual('externalDescription');
+    expect(form.toObjectPropertyName('infoIdentifier')).toEqual('bagItProfileIdentifier');
+    expect(form.toObjectPropertyName('infoSourceOrganization')).toEqual('sourceOrganization');
+    expect(form.toObjectPropertyName('infoVersion')).toEqual('version');
+
+    expect(form.toObjectPropertyName('doesNotExist')).not.toBeDefined();
+});
+
+test('toFormFieldname()', () => {
+    let form = new BagItProfileForm(new BagItProfile());
+    expect(form.toFormFieldName('contactEmail')).toEqual('infoContactEmail');
+    expect(form.toFormFieldName('contactName')).toEqual('infoContactName');
+    expect(form.toFormFieldName('externalDescription')).toEqual('infoExternalDescription');
+    expect(form.toFormFieldName('bagItProfileIdentifier')).toEqual('infoIdentifier');
+    expect(form.toFormFieldName('sourceOrganization')).toEqual('infoSourceOrganization');
+    expect(form.toFormFieldName('version')).toEqual('infoVersion');
+
+    expect(form.toFormFieldName('doesNotExist')).not.toBeDefined();
+});
