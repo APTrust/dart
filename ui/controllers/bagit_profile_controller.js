@@ -14,7 +14,6 @@ const typeMap = {
     allowMiscTopLevelFiles: 'boolean',
     allowMiscDirectories: 'boolean',
     isBuiltIn: 'boolean',
-    //tags: 'object',
     tarDirMustMatchName: 'boolean',
     userCanDelete: 'boolean'
 }
@@ -287,3 +286,4 @@ class BagItProfileController extends BaseController {
 }
 
 module.exports.BagItProfileController = BagItProfileController;
+module.exports.BagItProfileControllerTypeMap = typeMap;
