@@ -210,8 +210,48 @@ test('newTagFileCreate()', () => {
     let savedProfile = BagItProfile.find(profile.id);
     expect(savedProfile.hasTagFile('unit-test-tag-file.txt')).toBe(true);
     expect(savedProfile.getTagsFromFile('unit-test-tag-file.txt', 'New-Tag').length).toEqual(1);
-
 });
+
+test('deleteTagDef()', () => {
+    let profile = new BagItProfile()
+    profile.save();
+    params.set('id', profile.id);
+    let controller = new BagItProfileController(params);
+
+    // Load the edit view...
+    UITestUtil.setDocumentBody(controller.edit());
+
+    // Simulate 'yes' click on confirmation dialog.
+    window.confirm = jest.fn(() => true)
+
+    let versionTag = profile.firstMatchingTag('tagName', 'BagIt-Version');
+    let encodingTag = profile.firstMatchingTag('tagName', 'Tag-File-Character-Encoding');
+
+    // Make sure the tags appear in the UI
+    expect($(`tr[data-tag-id="${versionTag.id}"]`).length).toEqual(1);
+    expect($(`tr[data-tag-id="${encodingTag.id}"]`).length).toEqual(1);
+
+    // Delete the versionTag, and then make sure it's no longer in the UI.
+    controller.params.set('tagDefId', versionTag.id);
+    controller.deleteTagDef();
+    expect($(`tr[data-tag-id="${versionTag.id}"]`).length).toEqual(0);
+
+    // Delete the encodingTag, and then make sure it's no longer in the UI.
+    // We have to reset the document body here, because deleting the last
+    // tag from a tag file redirects to the edit() view.
+    controller.params.set('tagDefId', encodingTag.id);
+    UITestUtil.setDocumentBody(controller.deleteTagDef());
+    expect($(`tr[data-tag-id="${encodingTag.id}"]`).length).toEqual(0);
+
+    // There should also be an alert that says the tag file was deleted.
+    let message = Context.y18n.__(
+        "Deleted tag %s and tag file %s",
+        encodingTag.tagName,
+        encodingTag.tagFile);
+    expect($('div.alert.alert-success').length).toEqual(1);
+    expect($('div.alert.alert-success').html().includes(message)).toBe(true);
+});
+
 
 function ensureBasicFormElements(profile) {
     for (let property of Object.keys(profile)) {
