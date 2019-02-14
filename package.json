@@ -22,7 +22,7 @@
         "electron-log": "^3.0.0",
         "electron-store": "^2.0.0",
         "es6-error": "^4.1.1",
-        "handlebars": "^4.0.12",
+        "handlebars": "^4.1.0",
         "minio": "^7.0.4",
         "nexe": "^2.0.0-rc.34",
         "os-locale": "^3.1.0",
