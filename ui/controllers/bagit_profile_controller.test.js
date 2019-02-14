@@ -16,6 +16,25 @@ const params = new url.URLSearchParams({
     id: Constants.BUILTIN_PROFILE_IDS['aptrust']
 });
 
+const propsNotOnForm = [
+    'errors',
+    'help',
+    'type',
+    'required',
+    'userCanDelete',
+    'baseProfileId',
+    'isBuiltIn'
+];
+
+const infoFields = [
+    'infoContactEmail',
+    'infoContactName',
+    'infoExternalDescription',
+    'infoIdentifier',
+    'infoSourceOrganization',
+    'infoVersion'
+];
+
 function preloadProfiles() {
     let aptProfile = TestUtil.loadProfile('aptrust_bagit_profile_2.2.json');
     let dpnProfile = TestUtil.loadProfile('dpn_bagit_profile_2.1.json');
@@ -106,22 +125,42 @@ test('create() without base profile', () => {
 });
 
 test('edit()', () => {
+    params.set('id', Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    let controller = new BagItProfileController(params);
+    UITestUtil.setDocumentBody(controller.edit());
+
+    // Basic sanity check to show we loaded the right profile.
+    expect($('#bagItProfileForm_id').val()).toEqual(Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    expect($('#bagItProfileForm_name').val()).toEqual('APTrust');
+    expect($('#bagItProfileForm_description').val()).toEqual('APTrust 2.2 default BagIt profile.');
+
+    // Make sure expected form elements are present
+    let profile = BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    for (let property of Object.keys(profile)) {
+        if (propsNotOnForm.includes(property)) {
+            continue;
+        }
+        if (['string', 'number', 'boolean'].includes(typeof profile[property])) {
+            let formElementId = `#bagItProfileForm_${property}`;
+            expect($(formElementId).length).toEqual(1);
+        }
+    }
+    for (let fieldName of infoFields) {
+        let formElementId = `#bagItProfileForm_${fieldName}`;
+        expect($(formElementId).length).toEqual(1);
+    }
+
+    // Make sure all tag files appear.
+    expect($('div[data-tag-file-name="bagit.txt"]').length).toEqual(1);
+    expect($('div[data-tag-file-name="bag-info.txt"]').length).toEqual(1);
+    expect($('div[data-tag-file-name="aptrust-info.txt"]').length).toEqual(1);
+});
+
+test('update() with valid profile', () => {
 
 });
 
-test('update()', () => {
-
-});
-
-test('_getPageHTML()', () => {
-
-});
-
-test('_getPageLevelErrors()', () => {
-
-});
-
-test('getNewProfileFromBase()', () => {
+test('update() with invalid profile', () => {
 
 });
 
