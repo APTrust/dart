@@ -156,5 +156,11 @@
   "About Tab: %s": "About Tab: %s",
   "General Tab: %s": "General Tab: %s",
   "Serialization Tab: %s": "Serialization Tab: %s",
-  "Please correct the following errors.": "Please correct the following errors."
+  "Please correct the following errors.": "Please correct the following errors.",
+  "Tag Files Tab: %s": "Tag Files Tab: %s",
+  "About Tab": "About Tab",
+  "General Tab": "General Tab",
+  "Manifests Tab": "Manifests Tab",
+  "Serialization Tab": "Serialization Tab",
+  "Tag Files Tab": "Tag Files Tab"
 }

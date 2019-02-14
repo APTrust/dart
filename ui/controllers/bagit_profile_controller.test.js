@@ -3,6 +3,7 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BagItProfileController, BagItProfileControllerTypeMap } = require('./bagit_profile_controller');
 const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { Constants } = require('../../core/constants');
+const { Context } = require('../../core/context');
 const Templates = require('../common/templates');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
@@ -136,6 +137,83 @@ test('edit()', () => {
 
     // Make sure expected form elements are present
     let profile = BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    ensureBasicFormElements(profile);
+
+    // Make sure all tag files appear.
+    expect($('div[data-tag-file-name="bagit.txt"]').length).toEqual(1);
+    expect($('div[data-tag-file-name="bag-info.txt"]').length).toEqual(1);
+    expect($('div[data-tag-file-name="aptrust-info.txt"]').length).toEqual(1);
+});
+
+test('update() with valid profile', () => {
+    params.set('id', Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    let controller = new BagItProfileController(params);
+    // Need to render edit first, because update reads the rendered form.
+    UITestUtil.setDocumentBody(controller.edit());
+    UITestUtil.setDocumentBody(controller.update());
+    expect($('div.alert.alert-success').length).toEqual(1);
+});
+
+test('update() with invalid profile', () => {
+    let profile = new BagItProfile();
+    profile.name = '';
+    profile.acceptBagItVersion = [];
+    profile.manifestsRequired = [];
+    profile.serialization = 'required';
+    profile.acceptSerialization = [];
+    profile.tags = [];
+    profile.save();
+    params.set('id', profile.id);
+    let controller = new BagItProfileController(params);
+    UITestUtil.setDocumentBody(controller.edit());
+    UITestUtil.setDocumentBody(controller.update());
+
+    // Make sure expected form elements are present
+    ensureBasicFormElements(profile);
+
+    expect($('div.alert.alert-danger').length).toEqual(1);
+    let errItems = $('div.alert.alert-danger').html();
+    expect(errItems.includes(Context.y18n.__('About Tab'))).toBe(true);
+    expect(errItems.includes(Context.y18n.__('General Tab'))).toBe(true);
+    expect(errItems.includes(Context.y18n.__('Manifests Tab'))).toBe(true);
+    expect(errItems.includes(Context.y18n.__('Serialization Tab'))).toBe(true);
+    expect(errItems.includes(Context.y18n.__('Tag Files Tab'))).toBe(true);
+});
+
+test('newTagFile()', () => {
+    params.set('id', Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    let controller = new BagItProfileController(params);
+    UITestUtil.setDocumentBody(controller.newTagFile());
+    expect($('#tagFileForm_tagFileName').length).toEqual(1);
+});
+
+test('newTagFileCreate()', () => {
+    let profile = new BagItProfile()
+    profile.save();
+    params.set('id', profile.id);
+    let controller = new BagItProfileController(params);
+
+    // Show the form and set the new tag file name
+    UITestUtil.setDocumentBody(controller.newTagFile());
+    $('#tagFileForm_tagFileName').val('unit-test-tag-file.txt');
+
+    // Parse the form and create the tag file
+    UITestUtil.setDocumentBody(controller.newTagFileCreate());
+
+    // We should see the edit form...
+    ensureBasicFormElements(profile);
+
+    // Make sure new tag file is in the UI.
+    expect($('div[data-tag-file-name="unit-test-tag-file.txt"]').length).toEqual(1);
+
+    // Make sure new tag file is part of the saved profile.
+    let savedProfile = BagItProfile.find(profile.id);
+    expect(savedProfile.hasTagFile('unit-test-tag-file.txt')).toBe(true);
+    expect(savedProfile.getTagsFromFile('unit-test-tag-file.txt', 'New-Tag').length).toEqual(1);
+
+});
+
+function ensureBasicFormElements(profile) {
     for (let property of Object.keys(profile)) {
         if (propsNotOnForm.includes(property)) {
             continue;
@@ -149,25 +227,4 @@ test('edit()', () => {
         let formElementId = `#bagItProfileForm_${fieldName}`;
         expect($(formElementId).length).toEqual(1);
     }
-
-    // Make sure all tag files appear.
-    expect($('div[data-tag-file-name="bagit.txt"]').length).toEqual(1);
-    expect($('div[data-tag-file-name="bag-info.txt"]').length).toEqual(1);
-    expect($('div[data-tag-file-name="aptrust-info.txt"]').length).toEqual(1);
-});
-
-test('update() with valid profile', () => {
-
-});
-
-test('update() with invalid profile', () => {
-
-});
-
-test('newTagFile()', () => {
-
-});
-
-test('newTagFileCreate()', () => {
-
-});
+}
