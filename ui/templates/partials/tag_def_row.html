@@ -1,9 +1,11 @@
-<tr class="clickable-row" data-url="#TagDefinition/edit?bagItProfileId={{ bagItProfileId }}&id={{ tag.id }}">
+<tr class="clickable-row" data-url="#TagDefinition/edit?bagItProfileId={{ bagItProfileId }}&id={{ tag.id }}" data-tag-id="{{ tag.id }}">
     <td>
-        {{ tag.tagName }}
         {{#if tag.help }}
         <i class="fas fa-question-circle text-primary" data-toggle="popover" data-trigger="hover" title="{{ tag.tagName }}" data-content="{{tag.help}}"></i>
         {{/if}}
+    </td>
+    <td>
+        {{ tag.tagName }}
     </td>
     <td>
         {{#if tag.systemMustSet }}
@@ -11,5 +13,10 @@
         {{else}}
         {{ tag.defaultValue }}
         {{/if}}
+    </td>
+    <td class="clickable-cell" data-url="#BagItProfile/deleteTagDef?id={{ bagItProfileId }}&tagDefId={{ tag.id }}">
+        {{#unless tag.isBuiltIn }}
+        <i class="fas fa-times text-danger" title="Delete {{ tag.tagName }}"></i>
+        {{/unless}}
     </td>
 </tr>

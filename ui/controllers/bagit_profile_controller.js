@@ -283,6 +283,35 @@ class BagItProfileController extends BaseController {
         return this.edit();
     }
 
+    /**
+     * This deletes a TagDefinition from this BagItProfile, if the user
+     * confirms the deletion.
+     */
+    deleteTagDef() {
+        let profile = BagItProfile.find(this.params.get('id'));
+        let tagDef = profile.firstMatchingTag('id', this.params.get('tagDefId'));
+        let isLastTagInFile = false;
+        let tagsGroupedByFile = profile.tagsGroupedByFile();
+        let message = Context.y18n.__("Delete tag %s from this profile?", tagDef.tagName);
+        if (tagsGroupedByFile[tagDef.tagFile].length < 2) {
+            message += ' ' + Context.y18n.__(
+                "Deleting the last tag in the file will delete the tag file as well.")
+            isLastTagInFile = true;
+        }
+        if (confirm(message)) {
+            profile.tags = profile.tags.filter(t => t.id !== tagDef.id);
+            profile.save();
+            $(`tr[data-tag-id="${tagDef.id}"]`).remove();
+            if (isLastTagInFile) {
+                this.alertMessage = Context.y18n.__(
+                    "Deleted tag %s and tag file %s",
+                    tagDef.tagName, tagDef.tagFile);
+                return this.edit(profile);
+            }
+        }
+        return this.noContent();
+    }
+
 }
 
 module.exports.BagItProfileController = BagItProfileController;

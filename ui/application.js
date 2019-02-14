@@ -39,6 +39,12 @@ $(function() {
         location.href = $(this).data('url');
     });
 
+    // Route clicks on table cells
+    $('#container').on('click', 'table tr td.clickable-cell', function(e) {
+        location.href = $(this).data('url');
+        e.stopPropagation();
+    });
+
     // Load the inital nav.
     $('#nav').html(DART.UI.Common.Templates.nav({ section: 'Dashboard' }));
 

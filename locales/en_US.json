@@ -162,5 +162,8 @@
   "General Tab": "General Tab",
   "Manifests Tab": "Manifests Tab",
   "Serialization Tab": "Serialization Tab",
-  "Tag Files Tab": "Tag Files Tab"
+  "Tag Files Tab": "Tag Files Tab",
+  "Delete tag %s from this profile?": "Delete tag %s from this profile?",
+  "Deleting the last tag in the file will delete the tag file as well.": "Deleting the last tag in the file will delete the tag file as well.",
+  "Deleted tag %s and tag file %s": "Deleted tag %s and tag file %s"
 }
