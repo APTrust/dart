@@ -196,7 +196,8 @@ test('Util.deleteRecursive()', () => {
 
     // Should not throw if dir does not exist
     expect(() => {
-        Util.deleteRecursive('/no/no/-255a7796e602-');
+        let fakePath = path.join('no', 'no', '-255a7796e602-');
+        Util.deleteRecursive(fakePath);
     }).not.toThrow();
 
 });

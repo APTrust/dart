@@ -5,10 +5,11 @@ const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
 const { KeyValueCollection } = require('./key_value_collection');
-const path = require('path');
-const os = require('os');
 const { OperationResult } = require('../core/operation_result');
+const os = require('os');
+const path = require('path');
 const { PluginManager } = require('../plugins/plugin_manager');
+const { Util } = require('../core/util');
 
 /**
  * Bagger creates a bag based on a BagItProfile.

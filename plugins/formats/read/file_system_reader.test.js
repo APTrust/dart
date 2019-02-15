@@ -1,6 +1,7 @@
 const path = require('path');
 const { PassThrough } = require('stream');
 const FileSystemReader = require('./file_system_reader');
+const { Util } = require('../../../core/util');
 
 // Apologies to all maintainers.
 // These tests run against the test directory, so as the number
@@ -45,9 +46,11 @@ test('FileSystemReader.read() returns expected stats', done => {
     var fsReader = new FileSystemReader(dir);
     var foundTestFile = false;
 
+    let relPath = path.join("bags", "aptrust", "example.edu.tagsample_good.tar");
+
     // Count the number of stream events.
     fsReader.on('entry', function(entry) {
-        if (entry.relPath === "bags/aptrust/example.edu.tagsample_good.tar") {
+        if (entry.relPath === relPath) {
             foundTestFile = true;
             expect(entry.fileStat.size).toEqual(32768);
             expect(entry.fileStat.mtimeMs).not.toEqual(0);

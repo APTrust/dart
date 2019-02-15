@@ -274,7 +274,8 @@ class Util {
 	  * for a BagIt file or tar file. Also strips off drive letters and share names.
       *
       * @param {string} winPath - An absolute Windows path.
-      * @returns {string} - Path with drive and share removed, and slashes leaning the right way.
+      * @returns {string} - Path with drive and share removed, and slashes leaning
+      * the right way.
       *
     */
 	static normalizeWindowsPath(winPath) {
