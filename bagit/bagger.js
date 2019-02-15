@@ -386,12 +386,13 @@ class Bagger extends EventEmitter {
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
         result.succeeded = result.errors.length == 0;
         if (fs.existsSync(result.filepath)) {
-            // Note: If result.filepath is a directory, it will
-            // return zero size on Windows and non-zero on Mac.
-            // That may cause problems for code expecting a non-zero
-            // value in result.filesize.
             let stat = fs.statSync(result.filepath);
-            result.filesize = stat.size;
+            if (stat.isDirectory()) {
+                const sum = (total, file) => total + file.size;
+                result.filesize = this.bagItFiles.reduce(sum, 0);
+            } else {
+                result.filesize = stat.size;
+            }
         }
         this._deleteTempFiles();
         /**
