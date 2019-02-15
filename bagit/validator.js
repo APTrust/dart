@@ -530,6 +530,9 @@ class Validator extends EventEmitter {
         var absPath = '';
         if (!this.readingFromTar()) {
             absPath = path.join(this.pathToBag, relPath);
+            if (os.platform() === 'win32' && relPath.indexOf("\\") > -1) {
+                relPath = relPath.replace(/\\/g, '/');
+            }
         }
         var bagItFile = new BagItFile(absPath, relPath, entry.fileStat);
         this.files[relPath] = bagItFile;
