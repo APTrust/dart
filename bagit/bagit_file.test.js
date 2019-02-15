@@ -102,7 +102,7 @@ test('isTagManifest', () => {
 test('getCryptoHash()', done => {
     let stats = fs.statSync(path.join(__dirname, '..', 'test', 'fixtures', 'tagmanifest-sha256.txt'));
     let expectedDigest = 'd4ff2da092d09cbc0ef62428b78d13b1';
-    if (os.platform === 'win32' && stats.size() === 246) {
+    if (os.platform() === 'win32' && stats.size() === 246) {
         // git checkout on windows may convert \n to \r\n,
         // adding 3 extra bytes to the file and changing
         // the checksum. This depends on user settings

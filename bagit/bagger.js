@@ -327,7 +327,7 @@ class Bagger extends EventEmitter {
      */
     _getRelDestPath(absPath) {
         var relDestPath = 'data' + absPath;
-        if (os.platform == 'win32') {
+        if (os.platform() == 'win32') {
             relDestPath = 'data' + Util.normalizeWindowsPath(absPath);
         }
         return relDestPath;

@@ -8,7 +8,7 @@ test('Config returns correct data', () => {
     expect(Config.user).not.toBeNull();
     expect(Config.user.homeDir).toEqual(os.homedir());
 
-    if (os.platform === 'win32') {
+    if (os.platform() === 'win32') {
         expect(Config.user.dataDir).toMatch(/DART\\Data/);
     } else {
         expect(Config.user.dataDir).toMatch(/DART$/);
