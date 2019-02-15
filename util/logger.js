@@ -1,4 +1,5 @@
 const { Config } = require('../core/config');
+const mkdirp = require('mkdirp');
 const path = require('path');
 const winston = require('winston');
 
@@ -48,10 +49,14 @@ var options = {
 
 // The transports array tells us where to write our logs.
 // For the user environment, we log to the user log file.
-var transports = [ new winston.transports.File(options.userLogFile) ];
+var transports;
 // For Jest tests, use the test log
 if (process.env.NODE_ENV=='test') {
+    mkdirp(options.testLogFile.filename);
     transports = [ new winston.transports.File(options.testLogFile) ];
+} else {
+    mkdirp(options.userLogFile.filename);
+    transports = [ new winston.transports.File(options.userLogFile) ];
 }
 // If we're running with "npm start" using the local node Electron,
 // we're in dev mode. Log to the console so we can see what's
