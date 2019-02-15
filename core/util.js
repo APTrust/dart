@@ -277,7 +277,7 @@ class Util {
       * @returns {string} - Path with drive and share removed, and slashes leaning
       * the right way.
       *
-    */
+      */
 	static normalizeWindowsPath(winPath) {
 		// Remove C:
 		winPath = winPath.replace(/^[A-Z]:/i, '');

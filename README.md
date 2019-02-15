@@ -56,6 +56,21 @@ See the [Jest CLI reference](https://jestjs.io/docs/en/cli.html)
 ```
 npm test -- --runInBand
 ```
+
+### Testing on Windows
+
+A number of tests will fail on Windows if git is set to automatically convert
+line endings from `\n` to `\r\n`. Specifically, tests involving bag validation
+and checksums will fail because the git checkout on Windows adds an extra byte
+to the end of each line of each text file.
+
+If you want these tests to pass, you'll need to disable git's automatic newline
+transformations with the following command:
+
+```
+git config --local core.autocrlf false
+```
+
 ## Documentation
 After every commit the documentation is rebuilt and published at
 
@@ -89,4 +104,3 @@ distribute one 40 MB binary than ten.
 
 The other advantage to having a single binary is that when we update core DART
 code, we have to redistribute only one binary instead of ten.
-
