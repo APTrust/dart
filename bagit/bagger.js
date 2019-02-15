@@ -280,6 +280,9 @@ class Bagger extends EventEmitter {
      * @private
      */
     _addFile(absPath, relDestPath, stats) {
+        if (os.platform() === 'win32') {
+            relDestPath = relDestPath.replace(/\\/g, '/');
+        }
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
         let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
         this.formatWriter.add(bagItFile, cryptoHashes);
@@ -383,6 +386,10 @@ class Bagger extends EventEmitter {
         result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
         result.succeeded = result.errors.length == 0;
         if (fs.existsSync(result.filepath)) {
+            // Note: If result.filepath is a directory, it will
+            // return zero size on Windows and non-zero on Mac.
+            // That may cause problems for code expecting a non-zero
+            // value in result.filesize.
             let stat = fs.statSync(result.filepath);
             result.filesize = stat.size;
         }
