@@ -2,6 +2,7 @@ const { BagItFile } = require('./bagit_file');
 const { Constants } = require('../core/constants');
 const crypto = require('crypto');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { Util } = require('../core/util');
 
@@ -100,12 +101,20 @@ test('isTagManifest', () => {
 
 test('getCryptoHash()', done => {
     let stats = fs.statSync(path.join(__dirname, '..', 'test', 'fixtures', 'tagmanifest-sha256.txt'));
+    let expectedDigest = 'd4ff2da092d09cbc0ef62428b78d13b1';
+    if (os.platform === 'win32' && stats.size() === 246) {
+        // git checkout on windows may convert \n to \r\n,
+        // adding 3 extra bytes to the file and changing
+        // the checksum. This depends on user settings
+        // that we cannot control.
+        expectedDigest = '48e8412dcea55789f65a03f4adb12925';
+    }
     var f = new BagItFile('/path/to/file.txt', 'data/file.txt', stats);
     var md5 = f.getCryptoHash('md5', function(data) {
         expect(data.absSourcePath).toEqual('/path/to/file.txt');
         expect(data.relDestPath).toEqual('data/file.txt');
         expect(data.algorithm).toEqual('md5');
-        expect(data.digest).toEqual('d4ff2da092d09cbc0ef62428b78d13b1');
+        expect(data.digest).toEqual(expectedDigest);
         expect(f.checksums.md5).toEqual(data.digest);
         done();
     });
