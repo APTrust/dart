@@ -99,7 +99,7 @@ test('isTagManifest', () => {
 });
 
 test('getCryptoHash()', done => {
-    let stats = fs.statSync(__filename);
+    let stats = fs.statSync(path.join(__dirname, '..', 'test', 'fixtures', 'tagmanifest-sha256.txt'));
     var f = new BagItFile('/path/to/file.txt', 'data/file.txt', stats);
     var md5 = f.getCryptoHash('md5', function(data) {
         expect(data.absSourcePath).toEqual('/path/to/file.txt');
