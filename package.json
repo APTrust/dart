@@ -17,7 +17,7 @@
         "asar": "^0.14.6",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
-        "documentation": "^9.1.1",
+        "documentation": "^9.2.0",
         "electron-context-menu": "^0.11.0",
         "electron-log": "^3.0.0",
         "electron-store": "^2.0.0",
