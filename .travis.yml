@@ -15,8 +15,7 @@ before_install:
 install:
 - npm install --global npm@latest
 - rm -rf node_modules
-- npm install fsevents #dep install fails and is broken. js is usually broken.
-- npm install
+- npm install --no-optional
 
 before_script:
 - git lfs pull
