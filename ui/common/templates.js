@@ -1,7 +1,8 @@
 const { Context } = require('../../core/context');
-const path = require('path');
+const dateFormat = require('dateformat');
 const fs = require('fs');
 const handlebars = require('handlebars')
+const path = require('path');
 const templateDir = path.join(__dirname, "..", "templates");
 
 function readFile(...args) {
@@ -69,6 +70,10 @@ handlebars.registerHelper('resultSummary', function(result) {
 
 handlebars.registerHelper('translate', function(message) {
     return Context.y18n.__(message);
+});
+
+handlebars.registerHelper('formatDate', function(date, format) {
+    return dateFormat(date, format);
 });
 
 module.exports.about = about;
