@@ -1,7 +1,23 @@
 const { AppSetting } = require('./app_setting');
 const { Context } = require('./context');
+const dateFormat = require('dateformat');
+const path = require('path');
 const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
+
+/**
+ * This is a list of BagItProfile tags to check to try to find a
+ * meaningful title for this job. DART checks them in order and
+ * returns the first one that has a non-empty user-defined value.
+ */
+const titleTags = [
+    "Title",
+    "Internal-Sender-Identifier",
+    "External-Identifier",
+    "Internal-Sender-Description",
+    "External-Description",
+    "Description"
+];
 
 /**
  * Job describes a series of related actions for DART to perform.
@@ -41,6 +57,86 @@ class Job extends PersistentObject {
         this.packagingOp = opts.packagingOp || null;
         this.validationOp = opts.validationOp || null;
         this.uploadOps = opts.uploadOps || [];
+        this.createdAt = opts.createdAt || new Date();
+    }
+
+    /**
+     * This returns a title for display purposes. It will use the first
+     * available non-empty value of: 1) the name of the file that the job
+     * packaged, 2) the name of the file that the job uploaded, or 3) a
+     * title or description of the bag from within the bag's tag files.
+     * If none of those is available, this will return "Job of <timestamp>",
+     * where timestamp is date and time the job was created.
+     *
+     * @returns {string}
+     */
+    title() {
+        // Try to get the name of the file that was created or uploaded.
+        var name = null;
+        if (this.packagingOp) {
+            name = path.basename(this.packagingOp.outputPath);
+        }
+        if (!name && this.uploadOps.length > 0 && this.uploadOps[0].sourceFiles.length > 0) {
+            name = path.basename(this.uploadOps[0].sourceFiles[0]);
+        }
+        // Try to get a title from the bag.
+        if (!name && this.bagItProfile) {
+            for (let tagName of titleTags) {
+                let tag = this.bagItProfile.firstMatchingTag('tagName', tagName);
+                if (tag && tag.userValue) {
+                    name = tag.userValue;
+                    break;
+                }
+            }
+        }
+        // If no title or filename, create a generic name.
+        if (!name) {
+            name = `Job of ${dateFormat(this.created, 'shortDate')} ${dateFormat(this.created, 'shortTime')}`;
+        }
+        return name
+    }
+
+    /**
+     * Returns the datetime on which this job's package operation completed.
+     *
+     * @returns {Date}
+     */
+    packagedAt() {
+        var packagedAt = null;
+        if (this.packageOp && this.packageOp.result && this.packageOp.result.completed) {
+            packagedAt = this.packageOp.result.completed;
+        }
+        return packagedAt;
+    }
+
+    /**
+     * Returns the datetime on which this job's validation operation completed.
+     *
+     * @returns {Date}
+     */
+    validatedAt() {
+        var validatedAt = null;
+        if (this.validationOp && this.validationOp.result && this.validationOp.result.completed) {
+            validatedAt = this.validationOp.result.completed;
+        }
+        return validatedAt;
+    }
+
+    /**
+     * Returns the datetime on which this job's last upload operation completed.
+     *
+     * @returns {Date}
+     */
+    uploadedAt() {
+        var uploadedAt = null;
+        if (this.uploadOps.length > 0) {
+            for (let uploadOp of this.uploadOps) {
+                if (uploadOp.result && uploadOp.result.completed) {
+                    uploadedAt = uploadOp.result.completed;
+                }
+            }
+        }
+        return uploadedAt;
     }
 
     /**
@@ -118,7 +214,8 @@ class Job extends PersistentObject {
      * @param {number} opts.limit - Limit to this many results.
      * @param {number} opts.offset - Start results from this offset.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
      *
      * @returns {Array<Job>}
      */
@@ -136,7 +233,8 @@ class Job extends PersistentObject {
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
      *
      * @returns {Job}
      */
@@ -149,12 +247,14 @@ class Job extends PersistentObject {
      *
      * @see {@link PersistentObject} for examples.
      *
-     * @param {filterFunction} filterFunction - A function to filter out items that should not go into the results.
+     * @param {filterFunction} filterFunction - A function to filter out
+     * items that should not go into the results.
      * @param {Object} opts - Optional additional params.
      * @param {number} opts.limit - Limit to this many results.
      * @param {number} opts.offset - Start results from this offset.
      * @param {string} opts.orderBy - Sort the list on this property.
-     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
+     * @param {string} opts.sortDirection - Sort the list 'asc' (ascending)
+     * or 'desc'. Default is asc.
      *
      * @returns {Array<Job>}
      */
@@ -164,13 +264,14 @@ class Job extends PersistentObject {
 
     /**
      * first returns the first item matching that passes the filterFunction.
-     * You can combine orderBy, sortDirection, and offset to get the second, third, etc.
-     * match for the given criteria, but note that this function only returns a
-     * single item at most (or null if there are no matches).
+     * You can combine orderBy, sortDirection, and offset to get the second,
+     * third, etc. match for the given criteria, but note that this function
+     * only returns a single item at most (or null if there are no matches).
      *
      * @see {@link PersistentObject} for examples.
      *
-     * @param {filterFunction} filterFunction - A function to filter out items that should not go into the results.
+     * @param {filterFunction} filterFunction - A function to filter out items
+     * that should not go into the results.
      * @param {Object} opts - Optional additional params.
      * @param {string} opts.orderBy - Sort the list on this property.
      * @param {string} opts.sortDirection - Sort the list 'asc' (ascending) or 'desc'. Default is asc.
@@ -181,8 +282,6 @@ class Job extends PersistentObject {
     static first(filterFunction, opts) {
         return PersistentObject.first(Context.db('Job'), filterFunction, opts);
     }
-
-
 }
 
 module.exports.Job = Job;
