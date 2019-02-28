@@ -1,7 +1,9 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Job } = require('./job');
+const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
 const { UploadOperation } = require('./upload_operation');
+const { ValidationOperation } = require('./validation_operation');
 const path = require('path');
 
 function getJobWithOps() {
@@ -14,8 +16,8 @@ function getJobWithOps() {
     setTag(job.bagItProfile, 'Internal-Sender-Description', 'Internal-Sender-Description 1');
     setTag(job.bagItProfile, 'Description', 'Description 1');
 
-    job.packagingOp = new PackageOperation();
-    job.packagingOp.outputPath = "path/to/my_bag.tar";
+    job.packageOp = new PackageOperation();
+    job.packageOp.outputPath = "path/to/my_bag.tar";
 
     job.uploadOps = [new UploadOperation()];
     job.uploadOps[0].sourceFiles = ["path/to/my_file.zip"];
@@ -31,7 +33,7 @@ function setTag(profile, name, value) {
 test('Constructor sets expected properties', () => {
     let job = new Job();
     expect(job.bagItProfile).toBeNull();
-    expect(job.packagingOp).toBeNull();
+    expect(job.packageOp).toBeNull();
     expect(job.validationOp).toBeNull();
     expect(Array.isArray(job.uploadOps)).toEqual(true);
     expect(job.uploadOps.length).toEqual(0);
@@ -40,7 +42,7 @@ test('Constructor sets expected properties', () => {
 test('validate()', () => {
     let job = new Job();
     // TODO: Add validationOp and uploadOps
-    job.packagingOp = new PackageOperation();
+    job.packageOp = new PackageOperation();
 
     // Errors should be passed through.
     let result = job.validate();
@@ -57,7 +59,7 @@ test('title()', () => {
     expect(job.title()).toEqual('my_bag.tar');
 
     // Else, fall back to path of last uploaded file.
-    job.packagingOp = null;
+    job.packageOp = null;
     expect(job.title()).toEqual('my_file.zip');
 
     // Fall back to Title, then other tag values
@@ -81,14 +83,54 @@ test('title()', () => {
 
 test('packagedAt()', () => {
     let job = getJobWithOps();
+    expect(job.packagedAt()).toBeNull();
+
+    job.packageOp.result = new OperationResult('packaging', '---');
+    job.packageOp.result.start();
+    job.packageOp.result.finish();
+    expect(job.packagedAt()).not.toBeNull();
+    expect(job.packagedAt()).toEqual(job.packageOp.result.completed);
+
+    job.packageOp.result = null;
+    expect(job.packagedAt()).toBeNull();
+
+    job.packageOp = null;
+    expect(job.packagedAt()).toBeNull();
 });
 
 test('validatedAt()', () => {
-    let job = new Job();
+    let job = getJobWithOps();
+    expect(job.validatedAt()).toBeNull();
+
+    job.validationOp = new ValidationOperation();
+    job.validationOp.result = new OperationResult('validation', '---');
+    job.validationOp.result.start();
+    job.validationOp.result.finish();
+    expect(job.validatedAt()).not.toBeNull();
+    expect(job.validatedAt()).toEqual(job.validationOp.result.completed);
+
+    job.validationOp.result = null;
+    expect(job.validatedAt()).toBeNull();
+
+    job.validationOp = null;
+    expect(job.validatedAt()).toBeNull();
 });
 
 test('uploadedAt()', () => {
-    let job = new Job();
+    let job = getJobWithOps();
+    expect(job.uploadedAt()).toBeNull();
+
+    job.uploadOps[0].result = new OperationResult('upload', '---');
+    job.uploadOps[0].result.start();
+    job.uploadOps[0].result.finish();
+    expect(job.uploadedAt()).not.toBeNull();
+    expect(job.uploadedAt()).toEqual(job.uploadOps[0].result.completed);
+
+    job.uploadOps[0].result = null;
+    expect(job.uploadedAt()).toBeNull();
+
+    job.uploadOps = [];
+    expect(job.uploadedAt()).toBeNull();
 });
 
 test('packageSucceeded()', () => {

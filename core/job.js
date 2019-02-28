@@ -38,7 +38,7 @@ class Job extends PersistentObject {
      * @param {BagItProfile} opts.bagItProfile - A BagItProfile object.
      * This is required only for bagging and validation jobs.
      *
-     * @param {PackagingOperation} opts.packagingOp - An object describing
+     * @param {PackagingOperation} opts.packageOp - An object describing
      * what this job is supposed to package. The is relevant only to
      * jobs that involving bagging or other forms of packaging.
      *
@@ -54,7 +54,7 @@ class Job extends PersistentObject {
         opts.type = 'Job';
         super(opts);
         this.bagItProfile = opts.bagItProfile || null;
-        this.packagingOp = opts.packagingOp || null;
+        this.packageOp = opts.packageOp || null;
         this.validationOp = opts.validationOp || null;
         this.uploadOps = opts.uploadOps || [];
         this.createdAt = opts.createdAt || new Date();
@@ -73,8 +73,8 @@ class Job extends PersistentObject {
     title() {
         // Try to get the name of the file that was created or uploaded.
         var name = null;
-        if (this.packagingOp) {
-            name = path.basename(this.packagingOp.outputPath);
+        if (this.packageOp) {
+            name = path.basename(this.packageOp.outputPath);
         }
         if (!name && this.uploadOps.length > 0 && this.uploadOps[0].sourceFiles.length > 0) {
             name = path.basename(this.uploadOps[0].sourceFiles[0]);
@@ -148,9 +148,9 @@ class Job extends PersistentObject {
      */
     validate() {
         super.validate();
-        if (this.packagingOp) {
-            this.packagingOp.validate();
-            for(let [key, value] of Object.entries(this.packagingOp.errors)) {
+        if (this.packageOp) {
+            this.packageOp.validate();
+            for(let [key, value] of Object.entries(this.packageOp.errors)) {
                 this.errors[key] = value;
             }
             // TODO: Require BagItProfile if packaging op is BagIt.
