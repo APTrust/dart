@@ -1,4 +1,4 @@
-const dateFormat = require('dateformat');
+//const dateFormat = require('dateformat');
 const { Util } = require('./util');
 
 /**
@@ -79,12 +79,6 @@ class OperationResult {
         */
         this.completed = null;
         /**
-        * Indicates whether or not the operation succeeded.
-        *
-        * @type {boolean}
-        */
-        this.succeeded = false;
-        /**
         * The URL of the object or file in the remote storage service.
         * This will be set only on upload operations. It describes
         * where the file was uploaded.
@@ -121,7 +115,6 @@ class OperationResult {
     reset() {
         this.started = null;
         this.completed = null;
-        this.succeeded = false;
         this.filepath = null;
         this.filesize = 0;
         this.fileMtime = null;
@@ -135,29 +128,25 @@ class OperationResult {
     /**
      * This resets all of the properties of the OperationResult,
      * except operation, provider, and attempt, and sets the
-     * started attribute to the current datetime, in ISO format.
+     * started attribute to the current datetime.
      * It also increments the attempt attribute.
      *
      */
     start() {
         this.reset();
-        this.started = dateFormat(Date.now(), 'isoUtcDateTime');
+        this.started = Date.now();
         this.attempt += 1;
     }
 
     /**
-     * Sets the completed attribute to the current datetime, in ISO format,
-     * and sets the succeeded and errors attributes.
-     *
-     * @param {boolean} succeeded - Indicates whether or not the operation
-     * succeeded.
+     * Sets the completed attribute to the current datetime,
+     * and sets the errors attribute.
      *
      * @param {string} errorMessage - An optional error message. If this is
      * passed in, it will be appended the errors array.
      */
-    finish(succeeded, errorMessage) {
-        this.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-        this.succeeded = succeeded;
+    finish(errorMessage) {
+        this.completed = Date.now();
         if (errorMessage) {
             this.errors.push(errorMessage);
         }
@@ -189,6 +178,19 @@ class OperationResult {
         }
     }
 
+    /**
+     * Returns true or false, indicating whether the operation succeeded.
+     * To have succeeded, the operation must have been attempted, must
+     * be completed, and must have no errors.
+     *
+     * @returns {boolean}
+     */
+    succeeded() {
+        let attempted = this.attempt > 0;
+        let completed = (this.started != null && this.completed != null && (this.completed >= this.started));
+        let hasErrors = this.errors.length > 0;
+        return (attempted && completed && !hasErrors);
+    }
 }
 
 module.exports.OperationResult = OperationResult;

@@ -88,7 +88,7 @@ test('_handleError() sets failure result after too many retries', done => {
 
     client.on('finish', function(result) {
         expect(result.completed).not.toBeNull();
-        expect(result.succeeded).toEqual(false);
+        expect(result.succeeded()).toBe(false);
         expect(result.errors).toContain('Oops!');
         done();
     });
@@ -133,7 +133,7 @@ test('upload()', done => {
         expect(startCalled).toEqual(true);
         expect(result.errors).toEqual([]);
         expect(result.completed).not.toBeNull();
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toBe(true);
         expect(result.remoteURL).toEqual('https://s3.amazonaws.com/aptrust.dart.test/DartUnitTestFile.js');
         expect(result.remoteChecksum.length).toEqual(32);
         done();
@@ -172,7 +172,7 @@ test('download()', done => {
         expect(result.errors).toEqual([]);
         expect(result.startted).not.toBeNull();
         expect(result.completed).not.toBeNull();
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toBe(true);
         expect(result.remoteURL).toEqual('https://s3.amazonaws.com/aptrust.dart.test/DartUnitTestFile.js');
         expect(result.filesize).toBeGreaterThan(0);
         done();

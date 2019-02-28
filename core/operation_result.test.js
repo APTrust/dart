@@ -7,7 +7,6 @@ function getPreFabResult() {
     let result = new OperationResult('bagging', 'bagger');
     result.started = now;
     result.completed = now;
-    result.succeeded = true;
     result.filepath = "/path/to/file.txt";
     result.filesize = 8800;
     result.fileMtime = now;
@@ -38,7 +37,8 @@ test('reset()', () => {
     expect(result.attempt).toEqual(1);
     expect(result.started).toBeNull();
     expect(result.completed).toBeNull();
-    expect(result.succeeded).toEqual(false);
+    // No started/completed timestamps
+    expect(result.succeeded()).toBe(false);
     expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
@@ -62,7 +62,8 @@ test('start()', () => {
     expect(result.attempt).toEqual(2);
     expect(result.started).not.toBeNull();
     expect(result.completed).toBeNull();
-    expect(result.succeeded).toEqual(false);
+    // No started/completed timestamps
+    expect(result.succeeded()).toBe(false);
     expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
@@ -76,15 +77,15 @@ test('start()', () => {
 
 test('finish()', () => {
     let result = new OperationResult('bagging', 'bagger');
-    result.started = null;
-    result.finish(true);
+    result.start();
+    result.finish();
     expect(result.completed).not.toBeNull();
-    expect(result.succeeded).toEqual(true);
+    expect(result.succeeded()).toBe(true);
     expect(result.errors.length).toEqual(0);
 
-    result.finish(false, 'No friggin way, Mister Lahey!');
+    result.finish('No friggin way, Mister Lahey!');
     expect(result.completed).not.toBeNull();
-    expect(result.succeeded).toEqual(false);
+    expect(result.succeeded()).toBe(false);
     expect(result.errors.length).toEqual(1);
     expect(result.errors).toContain('No friggin way, Mister Lahey!');
 });
@@ -98,4 +99,31 @@ test('first and last error', () => {
     result.errors.push('No friggin way, Mister Lahey!');
     expect(result.firstError()).toEqual('Rickey and Bubbles, get in the car.');
     expect(result.lastError()).toEqual('No friggin way, Mister Lahey!');
+});
+
+test('succeeded()', () => {
+    let result = new OperationResult('bagging', 'bagger');
+    result.attempt = 0;
+    result.started = null;
+    result.completed = null;
+    result.errors = ['Oopsie!'];
+
+    // No success conditions fulfilled.
+    expect(result.succeeded()).toBe(false);
+
+    // Attempted, but no start or completion time.
+    result.attempt = 1;
+    expect(result.succeeded()).toBe(false);
+
+    // Not yet completed.
+    result.started = new Date('2019-02-28T14:57:00');
+    expect(result.succeeded()).toBe(false);
+
+    // Has completed time, but still has errors.
+    result.completed = new Date('2019-02-28T14:59:00');
+    expect(result.succeeded()).toBe(false);
+
+    // Attempted, started, completed, and no errors = success.
+    result.errors = [];
+    expect(result.succeeded()).toBe(true);
 });

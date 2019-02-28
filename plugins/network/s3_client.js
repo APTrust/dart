@@ -74,7 +74,7 @@ class S3Client extends Plugin {
             }
             this._upload(xfer);
         } catch (err) {
-            xfer.result.finish(false, err.toString());
+            xfer.result.finish(err.toString());
             this.emit('finish', xfer.result);
         }
     }
@@ -103,11 +103,11 @@ class S3Client extends Plugin {
             if (err) {
                 xfer.result.errors.push(err.toString());
                 s3Client.emit('error', xfer.result);
-                xfer.result.finish(false, err.toString());
+                xfer.result.finish(err.toString());
             } else {
                 xfer.localStat = fs.statSync(filepath);
                 xfer.result.filesize = xfer.localStat.size;
-                xfer.result.finish(true);
+                xfer.result.finish();
             }
             s3Client.emit('finish', xfer.result);
         });
@@ -206,7 +206,7 @@ class S3Client extends Plugin {
                 xfer.remoteChecksum = etag;
                 minioClient.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
                     if (err) {
-                        xfer.result.finish(false, err.toString());
+                        xfer.result.finish(err.toString());
                         s3Client.emit('finish', xfer.result);
                         return;
                     }
@@ -215,7 +215,7 @@ class S3Client extends Plugin {
                 });
             });
         } catch (err) {
-            xfer.result.finish(false, err.toString());
+            xfer.result.finish(err.toString());
             s3Client.emit('finish', xfer.result);
         }
     }
@@ -230,8 +230,7 @@ class S3Client extends Plugin {
      * @private
      */
     _verifyRemote(xfer) {
-        var succeeded = false;
-        var message;
+        var message = null;
         if (xfer.error) {
             message = `After upload, could not get object stats. ${xfer.error.toString()}`;
         }
@@ -240,9 +239,8 @@ class S3Client extends Plugin {
         } else {
             xfer.result.remoteURL = xfer.getRemoteUrl();
             xfer.result.remoteChecksum = xfer.remoteStat.etag;
-            succeeded = true;
         }
-        xfer.result.finish(succeeded, message);
+        xfer.result.finish(message);
         this.emit('finish', xfer.result);
     }
 
@@ -268,7 +266,7 @@ class S3Client extends Plugin {
             this.emit('warning', xfer.result);
             setTimeout(function() { s3Client._upload(xfer) }, 1500);
         } else {
-            xfer.result.finish(false, err.toString());
+            xfer.result.finish(err.toString());
             this.emit('finish', xfer.result);
         }
     }
