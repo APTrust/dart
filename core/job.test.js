@@ -22,12 +22,13 @@ function getJobWithOps() {
     job.uploadOps = [new UploadOperation()];
     job.uploadOps[0].sourceFiles = ["path/to/my_file.zip"];
 
+    job.validationOp = new ValidationOperation();
+
     return job;
 }
 
 function setTag(profile, name, value) {
     profile.firstMatchingTag('tagName', name).userValue = value;
-
 }
 
 test('Constructor sets expected properties', () => {
@@ -102,7 +103,6 @@ test('validatedAt()', () => {
     let job = getJobWithOps();
     expect(job.validatedAt()).toBeNull();
 
-    job.validationOp = new ValidationOperation();
     job.validationOp.result = new OperationResult('validation', '---');
     job.validationOp.result.start();
     job.validationOp.result.finish();
@@ -133,14 +133,56 @@ test('uploadedAt()', () => {
     expect(job.uploadedAt()).toBeNull();
 });
 
+test('packageAttempted()', () => {
+    let job = getJobWithOps();
+    expect(job.packageAttempted()).toBe(false);
+    job.packageOp.result = new OperationResult('packaging', '---');
+    job.packageOp.result.start();
+    expect(job.packageAttempted()).toBe(true);
+});
+
 test('packageSucceeded()', () => {
-    let job = new Job();
+    let job = getJobWithOps();
+    expect(job.packageSucceeded()).toBe(false);
+    job.packageOp.result = new OperationResult('packaging', '---');
+    job.packageOp.result.start();
+    expect(job.packageSucceeded()).toBe(false);
+    job.packageOp.result.finish();
+    expect(job.packageSucceeded()).toBe(true);
+});
+
+test('validationAttempted()', () => {
+    let job = getJobWithOps();
+    expect(job.validationAttempted()).toBe(false);
+    job.validationOp.result = new OperationResult('validation', '---');
+    job.validationOp.result.start();
+    expect(job.validationAttempted()).toBe(true);
 });
 
 test('validationSucceeded()', () => {
-    let job = new Job();
+    let job = getJobWithOps();
+    expect(job.validationSucceeded()).toBe(false);
+    job.validationOp.result = new OperationResult('validation', '---');
+    job.validationOp.result.start();
+    expect(job.validationSucceeded()).toBe(false);
+    job.validationOp.result.finish();
+    expect(job.validationSucceeded()).toBe(true);
 });
 
-test('uploadsSucceeded()', () => {
-    let job = new Job();
+test('uploadAttempted()', () => {
+    let job = getJobWithOps();
+    expect(job.uploadAttempted()).toBe(false);
+    job.uploadOps[0].result = new OperationResult('upload', '---');
+    job.uploadOps[0].result.start();
+    expect(job.uploadAttempted()).toBe(true);
+});
+
+test('uploadSucceeded()', () => {
+    let job = getJobWithOps();
+    expect(job.uploadSucceeded()).toBe(false);
+    job.uploadOps[0].result = new OperationResult('upload', '---');
+    job.uploadOps[0].result.start();
+    expect(job.uploadSucceeded()).toBe(false);
+    job.uploadOps[0].result.finish();
+    expect(job.uploadSucceeded()).toBe(true);
 });

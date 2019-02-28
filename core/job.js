@@ -110,6 +110,34 @@ class Job extends PersistentObject {
     }
 
     /**
+     * Returns true if DART attempted to execute this job's package
+     * operation.
+     *
+     * @returns {boolean}
+     */
+    packageAttempted() {
+        if (this.packageOp && this.packageOp.result) {
+            return this.packageOp.result.attempt > 0;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if DART successfully completed this job's package
+     * operation. Note that this will return false if packaging failed
+     * and if packaging was never attempted, so check
+     * {@link packageAttempted} as well.
+     *
+     * @returns {boolean}
+     */
+    packageSucceeded() {
+        if (this.packageOp && this.packageOp.result) {
+            return this.packageOp.result.succeeded();
+        }
+        return false;
+    }
+
+    /**
      * Returns the datetime on which this job's validation operation completed.
      *
      * @returns {Date}
@@ -120,6 +148,32 @@ class Job extends PersistentObject {
             validatedAt = this.validationOp.result.completed;
         }
         return validatedAt;
+    }
+
+    /**
+     * Returns true if DART attempted to execute this job's validation
+     * operation.
+     *
+     * @returns {boolean}
+     */
+    validationAttempted() {
+        if (this.validationOp && this.validationOp.result) {
+            return this.validationOp.result.attempt > 0;
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if DART successfully completed this job's validation
+     * operation. See {@link validationAttempted} as well.
+     *
+     * @returns {boolean}
+     */
+    validationSucceeded() {
+        if (this.validationOp && this.validationOp.result) {
+            return this.validationOp.result.succeeded();
+        }
+        return false;
     }
 
     /**
@@ -137,6 +191,49 @@ class Job extends PersistentObject {
             }
         }
         return uploadedAt;
+    }
+
+    /**
+     * Returns true if DART attempted to execute any of this job's upload
+     * operations.
+     *
+     * @returns {boolean}
+     */
+    uploadAttempted() {
+        if (this.uploadOps) {
+            for (let op of this.uploadOps) {
+                if (op.result) {
+                    if (op.result.attempt > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if DART successfully completed all of this job's upload
+     * operations. See {@link uploadAttempted} as well.
+     *
+     * @returns {boolean}
+     */
+    uploadSucceeded() {
+        let anyAttempted = false;
+        let allSucceeded = true;
+        if (this.uploadOps) {
+            for (let op of this.uploadOps) {
+                if (op.result) {
+                    if (op.result.attempt > 0) {
+                        anyAttempted = true;
+                    }
+                    if (!op.result.succeeded()) {
+                        allSucceeded = false;
+                    }
+                }
+            }
+        }
+        return (anyAttempted && allSucceeded);
     }
 
     /**
