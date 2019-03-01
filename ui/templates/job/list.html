@@ -2,7 +2,7 @@
 
 <h2>Jobs</h2>
 <div class="pull-right mt-1 mb-3">
-  <a class="btn btn-primary" href="#AppSetting/new" role="button">New</a>
+  <a class="btn btn-primary" href="#Job/new" role="button">New</a>
 </div>
 <table class="table table-hover">
   <thead class="thead-inverse">
@@ -16,7 +16,7 @@
   </thead>
   <tbody>
     {{#each items}}
-    <tr class="clickable-row" data-url="#AppSetting/edit?id={{ id }}">
+    <tr class="clickable-row" data-url="#Job/edit?id={{ id }}">
       <td>{{ name }}</td>
       <td>{{ value }}</td>
     </tr>
