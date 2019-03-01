@@ -231,3 +231,9 @@ test('Util.cast()', () => {
      expect(Util.cast('3', 'number')).toBe(3);
      expect(Util.cast('3.14', 'number')).toBe(3.14);
 });
+
+test('Util.lcFirst()', () => {
+     expect(Util.lcFirst('Homer')).toEqual('homer');
+     expect(Util.lcFirst('')).toEqual('');
+     expect(Util.lcFirst(null)).toBeNull();
+});

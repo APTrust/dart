@@ -94,38 +94,6 @@ class TagDefinitionController extends BaseController {
         });
         $(`div[data-tag-file-name='${tagDef.tagFile}']`).html(html);
     }
-
-    list() {
-        // let listParams = this.paramsToHash();
-        // listParams.orderBy = listParams.sortBy || this.defaultOrderBy;
-        // listParams.sortDirection = listParams.sortOrder || this.defaultSortDirection;
-        // let items = this.model.list(null, listParams);
-        // let data = {
-        //     alertMessage: this.alertMessage,
-        //     items: items
-        // };
-        // let html = this.listTemplate(data);
-        // return this.containerContent(html);
-    }
-
-    destroy() {
-        // let obj = this.model.find(this.params.get('id'));
-        // let confirmDeletionMessage = Context.y18n.__(
-        //     "Confirm_deletion",
-        //     Util.camelToTitle(obj.type),
-        //     obj[this.nameProperty]);
-        // if (confirm(confirmDeletionMessage)) {
-        //     this.alertMessage =Context.y18n.__(
-        //         "ObjectDeleted_message",
-        //         Util.camelToTitle(obj.type),
-        //         obj[this.nameProperty]);
-        //     obj.delete();
-        //     return this.list();
-        // }
-        // return this.noContent();
-    }
-
-
 }
 
 module.exports.TagDefinitionController = TagDefinitionController;

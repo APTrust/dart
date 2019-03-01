@@ -32,18 +32,11 @@ class PersistentObject {
      * @param {boolean} opts.userCanDelete - Indicates whether user is
      * allowed to delete this record.
      *
-     * @param {string} opts.type - The class name of the object you are creating.
-     * The underlying JsonStore will save this object (and all others of its
-     * class) in a file whose name matches the type paramater you pass in here.
-     *
      * This constructor is meant to be called by the constructors in subclasses,
      * which pass their class name as the type param.
      *
      */
     constructor(opts = {}) {
-        if (Util.isEmpty(opts.type)) {
-            throw new Error("Param 'type' is required.");
-        }
         /**
           * id is this object's unique identifier, and the best handle
           * to use when retrieving it from storage. This is a version 4
@@ -53,13 +46,6 @@ class PersistentObject {
           * @type {string}
           */
         this.id = opts.id || Util.uuid4();
-        /**
-          * type is the object's classname. This should be set by the
-          * constructor in all derived classes.
-          *
-          * @type {string}
-          */
-        this.type = opts.type;
         /**
           * userCanDelete indicates whether or not the user can delete
           * this object from storage. The defaults to false, but you may
@@ -122,7 +108,7 @@ class PersistentObject {
      * @returns {PersistentObject}
      */
     save() {
-        Context.db(this.type).set(this.id, this);
+        Context.db(this.constructor.name).set(this.id, this);
         return this;
     }
 
@@ -137,20 +123,39 @@ class PersistentObject {
         if (!this.userCanDelete) {
             throw new Error("User cannot delete this object.");
         }
-        Context.db(this.type).delete(this.id);
+        Context.db(this.constructor.name).delete(this.id);
         return this;
     }
+
+    // /**
+    //  * inflate converts a vanilla JavaScript object/hash into an object
+    //  * of the proper type. This works for most classes derived from
+    //  * PersistentObject, but some more complex classes will have to
+    //  * implement this individually in their find() method.
+    //  *
+    //  * @param {Object} data - A hash of data.
+    //  *
+    //  * @returns {PersistentObject} - An object of the correct type.
+    //  */
+    // static inflate(data) {
+    //     if (data == null || typeof data == 'undefined') {
+    //         return null;
+    //     }
+    //     let obj = new this();
+    //     Object.assign(obj, data);
+    //     return obj;
+    // }
 
     /**
      * find finds the object with the specified id in the datastore
      * and returns it. Returns undefined if the object is not in the datastore.
      *
-     * @param {Conf} db - The datastore containing the objects to search.
      * @param {string} id - The id (UUID) of the object you want to find.
      *
      * @returns {Object}
      */
-    static find(db, id) {
+    static find(id) {
+        let db = Context.db(this.name); // in static method, this is class name
         return db.get(id);
     }
 
@@ -178,13 +183,13 @@ class PersistentObject {
      * order. This does not affect the order of the records in the file, but
      * it returns a sorted list of objects.
      *
-     * @param {Conf} db - The datastore containing the objects to sort.
      * @param {string} property - The property to sort on.
      * @param {string} direction - Sort direction: 'asc' or 'desc'
      *
      * @returns {Object[]}
      */
-    static sort(db, property, direction) {
+    static sort(property, direction) {
+        let db = Context.db(this.name);  // in static method, this is class name
         let list = [];
         for (var key in db.store) {
             list.push(db.store[key]);
@@ -209,7 +214,6 @@ class PersistentObject {
      * let opts = {limit: 10, offset: 0, orderBy: 'createdAt', sortDir: 'desc'};
      * let results = persistentObject.findMatching('name', 'Homer', opts);
      *
-     * @param {Conf} db - The conf datastore in which to search.
      * @param {string} property - The name of the property to match.
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
@@ -220,9 +224,10 @@ class PersistentObject {
      *
      * @returns {Object[]}
      */
-    static findMatching(db, property, value, opts) {
+    static findMatching(property, value, opts) {
+        let db = Context.db(this.name); // in static method, this is class name
         let filterFunction = (obj) => { return obj[property] == value };
-        return PersistentObject.list(db, filterFunction, opts);
+        return this.list(filterFunction, opts);
     }
 
     /**
@@ -248,7 +253,6 @@ class PersistentObject {
      * let obj = persistentObject.findMatching('name', 'Homer',
      * {orderBy: 'createdAt', sortDirection: 'asc'});
      *
-     * @param {Conf} db - The conf datastore in which to search.
      * @param {string} property - The name of the property to match.
      * @param {string} value - The value of the property to match.
      * @param {Object} opts - Optional additional params.
@@ -258,11 +262,12 @@ class PersistentObject {
      *
      * @returns {Object}
      */
-    static firstMatching(db, property, value, opts) {
+    static firstMatching(property, value, opts) {
+        let db = Context.db(this.name); // in static method, this is class name
         let filterFunction = (obj) => { return obj[property] == value };
-        let mergedOpts = PersistentObject.mergeDefaultOpts(opts);
+        let mergedOpts = this.mergeDefaultOpts(opts);
         mergedOpts.limit = 1;
-        let matches = PersistentObject.list(db, filterFunction, mergedOpts);
+        let matches = this.list(filterFunction, mergedOpts);
         return matches[0] || null;
     }
 
@@ -281,7 +286,6 @@ class PersistentObject {
      * let opts = {limit: 10, offset: 0, orderBy: 'createdAt', sortDir: 'desc'};
      * let results = persistentObject.findMatching(nameAndAge, opts);
      *
-     * @param {Conf} db - The conf datastore in which to search.
      * @param {filterFunction} filterFunction - The name of the property to match.
      * @param {Object} opts - Optional additional params.
      * @param {number} opts.limit - Limit to this many results.
@@ -292,12 +296,13 @@ class PersistentObject {
      *
      * @returns {Object[]}
      */
-    static list(db, filterFunction, opts) {
-        opts = PersistentObject.mergeDefaultOpts(opts);
+    static list(filterFunction, opts) {
+        opts = this.mergeDefaultOpts(opts);
         if (!filterFunction) {
             filterFunction = () => { return true };
         }
-        let sortedList = PersistentObject.sort(db, opts.orderBy, opts.sortDirection);
+        let db = Context.db(this.name); // in static method, this is class name
+        let sortedList = this.sort(opts.orderBy, opts.sortDirection);
         // List of matched objects to return
         let matches = [];
         // Count of objects matched so far. We may skip some, due to opts.offset.
@@ -343,7 +348,6 @@ class PersistentObject {
      * let obj = persistentObject.first(nameAndAge,
      * {orderBy: 'createdAt', sortDirection: 'asc'});
      *
-     * @param {Conf} db - The conf datastore in which to search.
      * @param {filterFunction} filterFunction - The name of the property
      * to match.
      * @param {Object} opts - Optional additional params.
@@ -355,8 +359,9 @@ class PersistentObject {
      *
      * @returns {Object}
      */
-    static first(db, filterFunction, opts) {
-        let matches = PersistentObject.list(db, filterFunction, opts);
+    static first(filterFunction, opts = {}) {
+        opts.limit = 1;
+        let matches = this.list(filterFunction, opts);
         return matches[0] || null;
     }
 }

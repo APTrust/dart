@@ -270,6 +270,21 @@ class Util {
     }
 
     /**
+     * Returns a copy of string str with the first letter set to
+     * lowercase. Returns null if param str is null.
+     *
+     * @param {string}
+     *
+     * @returns {string}
+     */
+    static lcFirst(str) {
+        if (!str) {
+            return str;
+        }
+        return str.charAt(0).toLowerCase() + str.substr(1);
+    }
+
+    /**
 	  * Converts an absolute Windows path to a path with forward slashes suitable
 	  * for a BagIt file or tar file. Also strips off drive letters and share names.
       *

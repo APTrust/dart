@@ -8,7 +8,7 @@ const { Util } = require('../../core/util');
 class RemoteRepositoryForm extends Form{
 
     constructor(remoteRepository) {
-        super('remoteRepositoryForm', remoteRepository);
+        super('RemoteRepository', remoteRepository);
         this._init();
     }
 

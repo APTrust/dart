@@ -15,7 +15,6 @@ afterAll(() => {
 
 test('Constructor sets expected properties', () => {
     let obj = new InternalSetting({ name: 'name1', value: 'value1' });
-    expect(obj.type).toEqual('InternalSetting');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
     expect(obj.value).toEqual('value1');

@@ -6,7 +6,7 @@ const { Form } = require('./form');
 class AppSettingForm extends Form {
 
     constructor(appSetting) {
-        super('appSettingForm', appSetting);
+        super('AppSetting', appSetting);
         this._init();
     }
 

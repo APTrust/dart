@@ -15,7 +15,7 @@ class NewBagItProfileForm extends Form {
 
     constructor() {
         // Create an empty form from an empty object.
-        super('bagItProfileForm', {});
+        super('BagItProfile', {});
         this._init();
     }
 

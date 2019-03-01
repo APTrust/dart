@@ -7,7 +7,7 @@ const { PluginManager } = require('../../plugins/plugin_manager');
 class UploadTargetForm extends Form{
 
     constructor(uploadTarget) {
-        super('uploadTargetForm', uploadTarget);
+        super('UploadTarget', uploadTarget);
         this._init();
     }
 

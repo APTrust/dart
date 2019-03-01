@@ -219,7 +219,7 @@ class BaseController {
         }
         this.alertMessage = Context.y18n.__(
             "ObjectSaved_message",
-            Util.camelToTitle(obj.type),
+            Util.camelToTitle(obj.constructor.name),
             obj[this.nameProperty]);
         obj.save();
         return this.list();
@@ -251,12 +251,12 @@ class BaseController {
         let obj = this.model.find(this.params.get('id'));
         let confirmDeletionMessage = Context.y18n.__(
             "Confirm_deletion",
-            Util.camelToTitle(obj.type),
+            Util.camelToTitle(obj.constructor.name),
             obj[this.nameProperty]);
         if (confirm(confirmDeletionMessage)) {
             this.alertMessage =Context.y18n.__(
                 "ObjectDeleted_message",
-                Util.camelToTitle(obj.type),
+                Util.camelToTitle(obj.constructor.name),
                 obj[this.nameProperty]);
             obj.delete();
             return this.list();

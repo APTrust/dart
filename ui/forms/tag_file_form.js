@@ -14,7 +14,7 @@ class TagFileForm extends Form {
 
     constructor(tagFileName) {
         // On this form, we do include 'required'
-        super('tagFileForm', {});
+        super('TagFile', {});
         this._init(tagFileName);
     }
 

@@ -34,7 +34,7 @@ class BagItProfileForm extends Form {
             "type",
             "userCanDelete",
         ];
-        super('bagItProfileForm', bagItProfile, exclude);
+        super('BagItProfile', bagItProfile, exclude);
         this._init();
     }
 

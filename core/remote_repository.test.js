@@ -15,7 +15,6 @@ afterAll(() => {
 
 test('Constructor sets expected properties', () => {
     let obj = new RemoteRepository({name: 'name1'});
-    expect(obj.type).toEqual('RemoteRepository');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
     expect(obj.userCanDelete).toEqual(true);

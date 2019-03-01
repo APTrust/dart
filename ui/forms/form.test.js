@@ -20,13 +20,13 @@ test('Constructor initializes form fields', () => {
     let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
-    let form = new Form('appSettingForm', appSetting);
-    expect(form.formId).toEqual('appSettingForm');
+    let form = new Form('AppSetting', appSetting);
+    expect(form.formId).toEqual('AppSettingForm');
     expect(form.inlineForms).toEqual([]);
     expect(Object.keys(form.fields).length).toEqual(4);
 
     // These are on the default exclude list.
-    for (let name of ['errors', 'help', 'type', 'required']) {
+    for (let name of ['errors', 'help', 'required']) {
         expect(form.fields[name]).not.toBeDefined();
     }
 
@@ -50,19 +50,19 @@ test('Constructor initializes form fields with custom exclude', () => {
     let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
-    let form = new Form('appSettingForm', appSetting, []);
+    let form = new Form('AppSetting', appSetting, []);
 
     // We said exclude nothing this time, so we should
     // get fields for all properties.
-    expect(Object.keys(form.fields).length).toEqual(8);
-    for (let name of ['errors', 'help', 'type', 'required']) {
+    expect(Object.keys(form.fields).length).toEqual(7);
+    for (let name of ['errors', 'help', 'required']) {
         expect(form.fields[name]).toBeDefined();
     }
 });
 
 test('setErrors()', () => {
     let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
-    let form = new Form('appSettingForm', appSetting);
+    let form = new Form('AppSetting', appSetting);
     for (let name of ['id', 'name', 'value', 'userCanDelete']) {
         let field = form.fields[name];
         expect(field.error).not.toBeDefined();
@@ -98,14 +98,14 @@ test('castNewValueToType()', () => {
 
 test('parseFromDOM()', () => {
     let appSetting = new AppSetting();
-    let form = new Form('appSettingForm', appSetting);
+    let form = new Form('AppSetting', appSetting);
 
     document.body.innerHTML =
     '<form>' +
-    '  <input type="text" id="appSettingForm_name" value="Homer" />' +
-    '  <input type="text" id="appSettingForm_value" value="Simpson" />' +
-    '  <input type="hidden" id="appSettingForm_id" value="1234" />' +
-    '  <input type="hidden" id="appSettingForm_userCanDelete" value="false" />' +
+    '  <input type="text" id="AppSetting_name" value="Homer" />' +
+    '  <input type="text" id="AppSetting_value" value="Simpson" />' +
+    '  <input type="hidden" id="AppSetting_id" value="1234" />' +
+    '  <input type="hidden" id="AppSetting_userCanDelete" value="false" />' +
     '</form>';
 
     form.parseFromDOM();
@@ -135,7 +135,7 @@ test('_getLocalizedLabel()', () => {
 
 test('_setRequired()', () => {
     let appSetting = new AppSetting();
-    let form = new Form('appSettingForm', appSetting);
+    let form = new Form('AppSetting', appSetting);
     expect(form.fields.name.attrs.required).toEqual(true);
     expect(form.fields.value.attrs.required).not.toBeDefined();
 
@@ -152,7 +152,7 @@ test('_setFieldHelpText()', () => {
     // Special case for AppSetting
     let appSetting = new AppSetting();
     appSetting.help = 'I am what I am';
-    form = new Form('appSettingForm', appSetting);
+    form = new Form('AppSetting', appSetting);
     expect(form.fields.name.help).toEqual('I am what I am');
 
 });

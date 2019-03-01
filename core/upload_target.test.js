@@ -15,7 +15,6 @@ afterAll(() => {
 
 test('Constructor sets expected properties', () => {
     let obj = new UploadTarget({ name: 'name1'});
-    expect(obj.type).toEqual('UploadTarget');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
 });

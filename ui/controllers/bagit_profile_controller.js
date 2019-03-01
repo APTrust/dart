@@ -151,7 +151,7 @@ class BagItProfileController extends BaseController {
         }
         this.alertMessage = Context.y18n.__(
             "ObjectSaved_message",
-            Util.camelToTitle(profile.type),
+            Util.camelToTitle(profile.constructor.name),
             profile.name);
         profile.save();
         return this.list();

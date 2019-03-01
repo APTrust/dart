@@ -12,8 +12,9 @@ class Form {
      * This returns a new form object that DART's templates can render
      * as an HTML form.
      *
-     * @param {string} formId - This will become the id attribute of
-     * the HTML form tag.
+     * @param {string} objType - The name of the class this form will
+     * represent. For example, AppSetting, RemoteRepository, etc.
+     * These are generally subclasses of PersistentObject.
      *
      * @param {PersistentObject|object} obj - The object from which you want
      * to create a form. This class will generate the form fields for all
@@ -30,11 +31,12 @@ class Form {
      * exclude from the form. The form will not include fields for these
      * items. You don't need to include the 'id' or 'userCanDelete'
      * attributes in this list.
-     * @default ['errors', 'help', 'type', 'required']
+     * @default ['errors', 'help', 'required']
      *
      */
-    constructor(formId, obj, exclude = ['errors', 'help', 'type', 'required']) {
-        this.formId = formId;
+    constructor(objType, obj, exclude = ['errors', 'help', 'required']) {
+        this.objType = objType;
+        this.formId = Util.lcFirst(objType) + 'Form';
         this.obj = obj;
         if (typeof obj.errors === 'undefined') {
             obj.errors = {};
@@ -123,7 +125,7 @@ class Form {
      * @private
      */
     _getLocalizedLabel(fieldName) {
-        let objType = this.obj.type || this.obj.constructor.name;
+        let objType = this.obj.constructor.name;
         let labelKey = `${objType}_${fieldName}_label`;
         let labelText = Context.y18n.__(labelKey);
         if (labelText == labelKey) {
@@ -162,10 +164,10 @@ class Form {
      * @private
      */
     _setFieldHelpText(field) {
-        if (this.obj.type == 'AppSetting' && this.obj.help) {
+        if (this.obj.constructor.name == 'AppSetting' && this.obj.help) {
             field.help = this.obj.help;
         } else {
-            let helpKey = `${this.obj.type}_${field.name}_help`;
+            let helpKey = `${this.obj.constructor.name}_${field.name}_help`;
             let helpText = Context.y18n.__(helpKey);
             if (helpText && helpText != helpKey) {
                 field.help = helpText;

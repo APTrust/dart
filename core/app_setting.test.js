@@ -15,7 +15,6 @@ afterAll(() => {
 
 test('Constructor sets expected properties', () => {
     let obj = new AppSetting({ name: 'name1', value: 'value1' });
-    expect(obj.type).toEqual('AppSetting');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
     expect(obj.value).toEqual('value1');

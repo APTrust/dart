@@ -16,7 +16,6 @@ afterAll(() => {
 test('Constructor sets expected properties', () => {
     let list = makeObjects(1);
     let obj = list[0];
-    expect(obj.type).toEqual('ManifestEntry');
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(Util.looksLikeUUID(obj.jobId)).toEqual(true);
     expect(obj.origPath.startsWith('/path/to')).toEqual(true);

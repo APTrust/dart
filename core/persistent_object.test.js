@@ -6,37 +6,21 @@ const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
 beforeEach(() => {
-    TestUtil.deleteJsonFile('test1');
-    TestUtil.deleteJsonFile('test2');
-    TestUtil.deleteJsonFile('test3');
-    TestUtil.deleteJsonFile('test4');
-    TestUtil.deleteJsonFile('test5');
+    TestUtil.deleteJsonFile('PersistentObject');
 });
 
 afterAll(() => {
-    TestUtil.deleteJsonFile('test1');
-    TestUtil.deleteJsonFile('test2');
-    TestUtil.deleteJsonFile('test3');
-    TestUtil.deleteJsonFile('test4');
-    TestUtil.deleteJsonFile('test5');
-});
-
-test('Constructor throws error if type is missing or empty', () => {
-    expect(() => { new PersistentObject() }).toThrow(Error);
-    expect(() => { new PersistentObject(null) }).toThrow(Error);
-    expect(() => { new PersistentObject({}) }).toThrow(Error);
-    expect(() => { new PersistentObject({type: '  '}) }).toThrow(Error);
+    TestUtil.deleteJsonFile('PersistentObject');
 });
 
 test('Constructor sets expected properties', () => {
-    let obj = new PersistentObject({type: 'test1'});
-    expect(obj.type).toEqual('test1');
+    let obj = new PersistentObject();
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.required).toEqual(['id']);
 });
 
 test('validate() throws error because it must be implemented in derived class', () => {
-    let obj = new PersistentObject({type: 'test1'});
+    let obj = new PersistentObject();
     expect(obj.validate()).toEqual(true);
     obj.id = '';
     expect(obj.validate()).toEqual(false);
@@ -45,19 +29,19 @@ test('validate() throws error because it must be implemented in derived class', 
 
 test('Basic operations: save(), find(), delete()', () => {
     // Make sure we can save an object withouth error.
-    let obj = new PersistentObject({type: 'test1'});
+    let obj = new PersistentObject();
     expect(() => { obj.save() }).not.toThrow(Error);
     let saved = obj.save();
     expect(saved).toEqual(obj);
 
     // Make sure the Context created the db to store the object.
-    let db = Context.db(obj.type);
+    let db = Context.db(obj.constructor.name);
     expect(db).not.toBeNull();
-    expect(db.path.endsWith(path.join('.dart-test', 'data', 'test1.json'))).toEqual(true);
+    expect(db.path.endsWith(path.join('.dart-test', 'data', 'PersistentObject.json'))).toEqual(true);
     expect(fs.existsSync(db.path)).toEqual(true);
 
     // Make sure we can retrieve the saved object.
-    let foundObject = PersistentObject.find(db, obj.id);
+    let foundObject = PersistentObject.find(obj.id);
     expect(foundObject).not.toBeNull();
     expect(foundObject).not.toBeUndefined();
     expect(foundObject.id).toEqual(obj.id);
@@ -65,13 +49,13 @@ test('Basic operations: save(), find(), delete()', () => {
     // Make sure delete returns and deletes the object.
     let deletedObject = obj.delete();
     expect(deletedObject.id).toEqual(obj.id);
-    let refoundObject = PersistentObject.find(db, obj.id);
+    let refoundObject = PersistentObject.find(obj.id);
     expect(refoundObject).toBeUndefined();
 })
 
 test('userCanDelete == false should prevent deletion', () => {
     // Make sure we can save an object withouth error.
-    let obj = new PersistentObject({type: 'test1'});
+    let obj = new PersistentObject();
     obj.userCanDelete = false;
     expect(() => { obj.save() }).not.toThrow(Error);
     obj.save();
@@ -111,30 +95,30 @@ test('sort()', () => {
     expect(list.length).toEqual(10);
     let db = Context.db('test1');
 
-    let nameAsc = PersistentObject.sort(db, 'name', 'asc');
+    let nameAsc = PersistentObject.sort('name', 'asc');
     expect(nameAsc.length).toEqual(10);
     expect(nameAsc[0].name).toEqual('Object 1');
     expect(nameAsc[9].name).toEqual('Object 9');
 
-    let nameDesc = PersistentObject.sort(db, 'name', 'desc');
+    let nameDesc = PersistentObject.sort('name', 'desc');
     expect(nameDesc.length).toEqual(10);
     expect(nameDesc[0].name).toEqual('Object 9');
     expect(nameDesc[9].name).toEqual('Object 1');
 
-    let ageAsc = PersistentObject.sort(db, 'age', 'asc');
+    let ageAsc = PersistentObject.sort('age', 'asc');
     expect(ageAsc.length).toEqual(10);
     expect(ageAsc[0].age).toEqual(50);
     expect(ageAsc[9].age).toEqual(95);
 
-    let ageDesc = PersistentObject.sort(db, 'age', 'desc');
+    let ageDesc = PersistentObject.sort('age', 'desc');
     expect(ageDesc.length).toEqual(10);
     expect(ageDesc[0].age).toEqual(95);
     expect(ageDesc[9].age).toEqual(50);
 
-    let unsorted1 = PersistentObject.sort(db, null, 'desc');
+    let unsorted1 = PersistentObject.sort(null, 'desc');
     expect(unsorted1).toEqual(list);
 
-    let unsorted2 = PersistentObject.sort(db, '');
+    let unsorted2 = PersistentObject.sort('');
     expect(unsorted2).toEqual(list);
 });
 
@@ -143,7 +127,7 @@ test('findMatching()', () => {
     expect(list.length).toEqual(10);
     let db = Context.db('test2');
 
-    let matches = PersistentObject.findMatching(db, 'name', 'Object 1');
+    let matches = PersistentObject.findMatching('name', 'Object 1');
     expect(matches.length).toEqual(1);
     expect(matches[0].name).toEqual('Object 1');
 
@@ -157,7 +141,7 @@ test('findMatching()', () => {
         'orderBy': 'age',
         'sortDirection': 'desc'
     };
-    matches = PersistentObject.findMatching(db, 'name', 'Agent 99', opts);
+    matches = PersistentObject.findMatching('name', 'Agent 99', opts);
     expect(matches.length).toEqual(4);
     for(var m of matches) {
         expect(m.name).toEqual('Agent 99');
@@ -168,11 +152,11 @@ test('findMatching()', () => {
     expect(matches[3].age).toEqual(70);
 
     // No matches
-    matches = PersistentObject.findMatching(db, 'name', 'Schwartzenegger', opts);
+    matches = PersistentObject.findMatching('name', 'Schwartzenegger', opts);
     expect(matches.length).toEqual(0);
 
     // Match on field that doesn't exist.
-    matches = PersistentObject.findMatching(db, 'noProperty', 'Object 1', opts);
+    matches = PersistentObject.findMatching('noProperty', 'Object 1', opts);
     expect(matches.length).toEqual(0);
 });
 
@@ -181,14 +165,14 @@ test('firstMatching()', () => {
     expect(list.length).toEqual(10);
     let db = Context.db('test3');
 
-    let match = PersistentObject.firstMatching(db, 'name', 'Object 1');
+    let match = PersistentObject.firstMatching('name', 'Object 1');
     expect(match).not.toBeNull();
     expect(match.name).toEqual('Object 1');
 
     // We should find only one match, even if we give weird options.
     // That match should be the correct one, given offset and limit.
     let newList = list.map(obj => { obj.name = 'Agent 99'; obj.save(); });
-    match = PersistentObject.firstMatching(db, 'name', 'Agent 99');
+    match = PersistentObject.firstMatching('name', 'Agent 99');
     expect(match.name).toEqual('Agent 99');
     expect(match.age).toEqual(95);
 
@@ -201,16 +185,16 @@ test('firstMatching()', () => {
         'orderBy': 'age',
         'sortDirection': 'desc'
     };
-    match = PersistentObject.firstMatching(db, 'name', 'Agent 99', opts);
+    match = PersistentObject.firstMatching('name', 'Agent 99', opts);
     expect(match.name).toEqual('Agent 99');
     expect(match.age).toEqual(85);
 
     // No match for this one
-    match = PersistentObject.firstMatching(db, 'name', 'Object 1');
+    match = PersistentObject.firstMatching('name', 'Object 1');
     expect(match).toBeNull();
 
     // Property doesn't exist
-    match = PersistentObject.firstMatching(db, 'noProperty', 'Object 1');
+    match = PersistentObject.firstMatching('noProperty', 'Object 1');
     expect(match).toBeNull();
 });
 
@@ -228,7 +212,7 @@ test('list()', () => {
         'sortDirection': 'desc'
     };
 
-    let matches = PersistentObject.list(db, fn, opts);
+    let matches = PersistentObject.list(fn, opts);
     expect(matches.length).toEqual(4);
     expect(matches[0].age).toEqual(80);
     expect(matches[1].age).toEqual(75);
@@ -237,7 +221,7 @@ test('list()', () => {
 
     // Same query, different sort
     opts.sortDirection = 'asc';
-    matches = PersistentObject.list(db, fn, opts);
+    matches = PersistentObject.list(fn, opts);
     expect(matches.length).toEqual(4);
     expect(matches[0].age).toEqual(65);
     expect(matches[1].age).toEqual(70);
@@ -247,7 +231,7 @@ test('list()', () => {
     // Limit the results, still sorting asc
     opts.offset = 2;
     opts.limit = 2;
-    matches = PersistentObject.list(db, fn, opts);
+    matches = PersistentObject.list(fn, opts);
     expect(matches.length).toEqual(2);
     expect(matches[0].age).toEqual(75);
     expect(matches[1].age).toEqual(80);
@@ -267,13 +251,13 @@ test('first()', () => {
         'sortDirection': 'desc'
     };
 
-    let match = PersistentObject.first(db, fn, opts);
+    let match = PersistentObject.first(fn, opts);
     expect(match).not.toBeNull();
     expect(match.age).toEqual(80);
 
     // Same query, different sort
     opts.sortDirection = 'asc';
-    match = PersistentObject.first(db, fn, opts);
+    match = PersistentObject.first(fn, opts);
     expect(match).not.toBeNull();
     expect(match.age).toEqual(65);
 
@@ -285,7 +269,7 @@ test('first()', () => {
     opts.offset = 2;
     opts.limit = 2;
     opts.sortDirection = 'asc';
-    match = PersistentObject.first(db, fn, opts);
+    match = PersistentObject.first(fn, opts);
     expect(match).not.toBeNull();
     expect(match.age).toEqual(75);
 });
@@ -293,7 +277,7 @@ test('first()', () => {
 function makeObjects(type, howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {
-        let obj = new PersistentObject({type: type});
+        let obj = new PersistentObject();
         obj.name = `Object ${i + 1}`;
         obj.age = 100 - ((i + 1) * 5);
         obj.save();
