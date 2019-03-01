@@ -127,36 +127,23 @@ class PersistentObject {
         return this;
     }
 
-    // /**
-    //  * inflate converts a vanilla JavaScript object/hash into an object
-    //  * of the proper type. This works for most classes derived from
-    //  * PersistentObject, but some more complex classes will have to
-    //  * implement this individually in their find() method.
-    //  *
-    //  * @param {Object} data - A hash of data.
-    //  *
-    //  * @returns {PersistentObject} - An object of the correct type.
-    //  */
-    // static inflate(data) {
-    //     if (data == null || typeof data == 'undefined') {
-    //         return null;
-    //     }
-    //     let obj = new this();
-    //     Object.assign(obj, data);
-    //     return obj;
-    // }
-
     /**
      * find finds the object with the specified id in the datastore
      * and returns it. Returns undefined if the object is not in the datastore.
+     * Some more complex objects may have to override this method to correctly
+     * reconstruct the object from the hash representation.
      *
      * @param {string} id - The id (UUID) of the object you want to find.
      *
-     * @returns {Object}
+     * @returns {PersistentObject}
      */
     static find(id) {
         let db = Context.db(this.name); // in static method, this is class name
-        return db.get(id);
+        let data = db.get(id);
+        if (data) {
+            return Object.assign(new this(), data);
+        }
+        return undefined;
     }
 
     /**

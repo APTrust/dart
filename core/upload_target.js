@@ -133,23 +133,6 @@ class UploadTarget extends PersistentObject {
         }
         return Object.keys(this.errors).length == 0;
     }
-
-    /**
-     * find finds the object with the specified id in the datastore
-     * and returns it. Returns undefined if the object is not in the datastore.
-     *
-     * @param {string} id - The id (UUID) of the object you want to find.
-     *
-     * @returns {Object}
-     */
-    static find(id) {
-        let data = Context.db('UploadTarget').get(id);
-        if (data) {
-            return new UploadTarget(data);
-        }
-        return undefined;
-    }
-
 }
 
 // Get static methods from base class.

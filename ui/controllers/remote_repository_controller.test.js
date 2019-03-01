@@ -97,6 +97,7 @@ test('update()', () => {
 
     // Set up the form.
     let response = controller.edit();
+
     UITestUtil.setDocumentBody(response);
 
     // Change the form values.

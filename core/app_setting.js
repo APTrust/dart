@@ -67,22 +67,6 @@ class AppSetting extends PersistentObject {
     validate() {
         return super.validate();
     }
-
-    /**
-     * find finds the object with the specified id in the datastore
-     * and returns it. Returns undefined if the object is not in the datastore.
-     *
-     * @param {string} id - The id (UUID) of the object you want to find.
-     *
-     * @returns {AppSetting}
-     */
-    static find(id) {
-        let data = Context.db('AppSetting').get(id);
-        if (data) {
-            return new AppSetting(data);
-        }
-        return undefined;
-    }
 }
 
 // Copy static methods from base
