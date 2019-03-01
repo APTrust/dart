@@ -93,7 +93,7 @@ class Job extends PersistentObject {
         if (!name) {
             name = `Job of ${dateFormat(this.created, 'shortDate')} ${dateFormat(this.created, 'shortTime')}`;
         }
-        return name
+        return Util.truncateString(name, 40);
     }
 
     /**
