@@ -471,6 +471,12 @@ test('mergeTagValues()', () => {
     expect(profile.getTagsFromFile('bag-info.txt', 'New-Tag-2')[0].userValue).toEqual('434-555-1212');
 });
 
+test('inflateFrom()', () => {
+    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
+    let profile = BagItProfile.load(jsonFile);
+    let copy = BagItProfile.inflateFrom(profile);
+    expect(copy).toEqual(profile);
+});
 
 // ---------------------------------
 // Tests of PersistentObject methods
