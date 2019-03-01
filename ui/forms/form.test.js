@@ -21,7 +21,7 @@ test('Constructor initializes form fields', () => {
     appSetting.help = 'Help text';
     appSetting.errors['value'] = 'Value must be cherry.';
     let form = new Form('AppSetting', appSetting);
-    expect(form.formId).toEqual('AppSettingForm');
+    expect(form.formId).toEqual('appSettingForm');
     expect(form.inlineForms).toEqual([]);
     expect(Object.keys(form.fields).length).toEqual(4);
 
@@ -102,10 +102,10 @@ test('parseFromDOM()', () => {
 
     document.body.innerHTML =
     '<form>' +
-    '  <input type="text" id="AppSetting_name" value="Homer" />' +
-    '  <input type="text" id="AppSetting_value" value="Simpson" />' +
-    '  <input type="hidden" id="AppSetting_id" value="1234" />' +
-    '  <input type="hidden" id="AppSetting_userCanDelete" value="false" />' +
+    '  <input type="text" id="appSettingForm_name" value="Homer" />' +
+    '  <input type="text" id="appSettingForm_value" value="Simpson" />' +
+    '  <input type="hidden" id="appSettingForm_id" value="1234" />' +
+    '  <input type="hidden" id="appSettingForm_userCanDelete" value="false" />' +
     '</form>';
 
     form.parseFromDOM();
