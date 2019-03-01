@@ -668,57 +668,7 @@ class BagItProfile extends PersistentObject {
             }
         }
     }
-
-    /**
-     * This creates a new BagItProfile or a vanilla data object that
-     * contains the attributes of a BagItProfile. This is used by the
-     * find() method to inflate a JSON hash retrieved from the DB into
-     * a full-fledged BagItProfile object, and by the BagItProfileController
-     * when creating a new BagItProfile based on an existing BagItProfile.
-     *
-     * If you intend to clone an existing profile to create a new one, be
-     * sure to change the profile's id after cloning it. Otherwise, when you
-     * save the new (cloned) profile, it will overwrite the old one in the DB.
-     *
-     * @param {BagItProfile|object} otherProfile - The BagItProfile you want
-     * to copy, or a vanilla object that contains the same properties as a
-     * BagItProfile (such as BagItProfile JSON record retrieved from the
-     * DART database).
-     *
-     * @returns {BagItProfile}
-     */
-    static inflateFrom(otherProfile) {
-        let profile = new BagItProfile();
-        Object.assign(profile, otherProfile);
-        profile.bagItProfileInfo = new BagItProfileInfo();
-        Object.assign(profile.bagItProfileInfo, otherProfile.bagItProfileInfo);
-        for (let i=0; i < otherProfile.tags.length; i++) {
-            let tagDef = new TagDefinition();
-            Object.assign(tagDef, otherProfile.tags[i]);
-            profile.tags[i] = tagDef;
-        }
-        return profile;
-    }
-
-
-    /* ------- Implementation of PersistentObject methods -------- */
-
-    /**
-     * find finds the object with the specified id in the datastore
-     * and returns it. Returns undefined if the object is not in the datastore.
-     *
-     * @param {string} id - The id (UUID) of the object you want to find.
-     *
-     * @returns {Object}
-     */
-    static find(id) {
-        let data = Context.db('BagItProfile').get(id);
-        if (data) {
-            return BagItProfile.inflateFrom(data);
-        }
-        return undefined;
-    }
-};
+}
 
 // Copy static finder methods from PersistentObject
 Object.assign(BagItProfile, PersistentObject);

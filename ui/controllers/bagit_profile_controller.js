@@ -230,7 +230,8 @@ class BagItProfileController extends BaseController {
         form.parseFromDOM();
         if(form.obj.baseProfile) {
             let baseProfile = BagItProfile.find(form.obj.baseProfile);
-            newProfile = BagItProfile.inflateFrom(baseProfile);
+            newProfile = new BagItProfile();
+            Object.assign(newProfile, baseProfile);
             newProfile.id = Util.uuid4();
             newProfile.baseProfileId = baseProfile.id;
             newProfile.isBuiltIn = false;

@@ -30,7 +30,6 @@ class AppSetting extends PersistentObject {
      * @param {string} opts.value - The value of the setting.
      */
     constructor(opts = {}) {
-        opts.type = 'AppSetting';
         opts.required = ['name'];
         super(opts);
         /**

@@ -24,7 +24,7 @@ class Form {
      * in an empty object like so:
      *
      * <code>
-     * var myForm = new Form('myForm', {});
+     * var myForm = new Form('Object', {});
      * </code>.
      *
      * @param {Array<string>} exclude - A list of object attributes to

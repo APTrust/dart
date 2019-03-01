@@ -81,14 +81,14 @@
 <div class="bottom-buttons">
   {{#if (eq form.obj.isBuiltIn false) }}
   <div class="pull-left">
-    <a class="btn btn-danger" href="#{{ form.obj.constructor.name }}/destroy?id={{ form.fields.id.value }}" role="button">Delete Profile</a>
+    <a class="btn btn-danger" href="#{{ form.objType }}/destroy?id={{ form.fields.id.value }}" role="button">Delete Profile</a>
   </div>
   {{/if}}
   <div class="pull-right">
-    <a class="btn btn-primary" href="#{{ form.obj.constructor.name }}/update?id={{ form.fields.id.value }}" role="button">Save</a>
+    <a class="btn btn-primary" href="#{{ form.objType }}/update?id={{ form.fields.id.value }}" role="button">Save</a>
   </div>
   <div class="pull-right mr-5">
-    <a class="btn btn-secondary" href="#{{ form.obj.constructor.name }}/list" role="button">Cancel</a>
+    <a class="btn btn-secondary" href="#{{ form.objType }}/list" role="button">Cancel</a>
   </div>
 </div>
 
