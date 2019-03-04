@@ -186,3 +186,32 @@ test('uploadSucceeded()', () => {
     job.uploadOps[0].result.finish();
     expect(job.uploadSucceeded()).toBe(true);
 });
+
+test('inflateFrom()', () => {
+    let job = getJobWithOps();
+    let json = JSON.stringify(job);
+
+    let newJob = Job.inflateFrom(JSON.parse(json));
+
+    expect(newJob.createdAt).toEqual(job.createdAt.toISOString());
+    expect(typeof newJob.validate).toEqual('function');
+
+    // bagItProfile
+    expect(newJob.bagItProfile).not.toBeNull();
+    expect(newJob.bagItProfile.id).toEqual(job.bagItProfile.id);
+    expect(newJob.bagItProfile.firstMatchingTag('tagName', 'Title').userValue).toEqual('Title 1');
+
+    // packageOp
+    expect(newJob.packageOp).not.toBeNull();
+    expect(newJob.packageOp.outputPath).toEqual('path/to/my_bag.tar');
+    expect(typeof newJob.packageOp.validate).toEqual('function');
+
+    // validationOp
+    expect(newJob.validationOp).not.toBeNull();
+
+    // uploadOps
+    expect(newJob.uploadOps.length).toEqual(1);
+    expect(newJob.uploadOps[0]).not.toBeNull();
+    expect(newJob.uploadOps[0].sourceFiles).not.toEqual(['path/to/my/file.zip']);
+    expect(typeof newJob.uploadOps[0].validate).toEqual('function');
+});
