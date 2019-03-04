@@ -28,3 +28,24 @@ test('validate()', () => {
     expect(packOp2.errors['PackageOperation.outputPath']).toBeUndefined();
     expect(packOp2.errors['PackageOperation.sourceFiles']).toBeUndefined();
 });
+
+test('inflateFrom()', () => {
+    let data = {
+        packageName: 'bag',
+        outputPath: '/dev/null',
+        result: {
+            operation: 'lobotomy',
+            provider: 'the news media'
+        }
+    };
+    let op = PackageOperation.inflateFrom(data);
+
+    // Should copy data attributes
+    expect(op.packageName).toEqual(data.packageName);
+    expect(op.outputPath).toEqual(data.outputPath);
+    expect(op.result).not.toBeNull();
+    expect(op.result.operation).toEqual(data.result.operation);
+
+    // Methods should be defined
+    expect(typeof op.validate).toEqual('function');
+});
