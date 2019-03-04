@@ -17,8 +17,11 @@
   <tbody>
     {{#each items}}
     <tr class="clickable-row" data-url="#Job/edit?id={{ id }}">
-      <td>{{ name }}</td>
-      <td>{{ value }}</td>
+      <td>{{ title }}</td>
+      <td>{{ createdAt }}</td>
+      <td class="{{ pkgColor }}">{{ pkgDate }}</td>
+      <td class="{{ valColor }}">{{ valDate }}</td>
+      <td class="{{ uploadColor }}">{{ uploadDate }}</td>
     </tr>
     {{/each }}
   </tbody>

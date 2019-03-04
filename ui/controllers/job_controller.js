@@ -30,9 +30,43 @@ class JobController extends BaseController {
     //     return this.containerContent('Update Job');
     // }
 
-    // list() {
-    //     return this.containerContent('List Jobs');
-    // }
+    list() {
+        let listParams = this.paramsToHash();
+        listParams.orderBy = listParams.sortBy || this.defaultOrderBy;
+        listParams.sortDirection = listParams.sortOrder || this.defaultSortDirection;
+        let jobs = Job.list(null, listParams);
+        this.colorCodeJobs(jobs);
+        let data = {
+            alertMessage: this.alertMessage,
+            items: jobs
+        };
+        let html = this.listTemplate(data);
+        return this.containerContent(html);
+    }
+
+    /**
+     * This adds some custom display properties to each jobs hash
+     * so we can color-code the display.
+     */
+    colorCodeJobs(jobs) {
+        for(let job of jobs) {
+            job.pkgDate = '-';
+            job.valDate = '-';
+            job.uploadDate = '-';
+            if (job.packageAttempted()) {
+                job.pkgColor = (job.packageSucceeded() ? 'text-success' : 'text-danger');
+                job.pkgDate = dateFormat(job.packagedAt(), 'shortDate');
+            }
+            if (job.validateAttempted()) {
+                job.valColor = (job.validateSucceeded() ? 'text-success' : 'text-danger');
+                job.valDate = dateFormat(job.validatedAt(), 'shortDate');
+            }
+            if (job.uploadAttempted()) {
+                job.uploadColor = (job.uploadSucceeded() ? 'text-success' : 'text-danger');
+                job.uploadDate = dateFormat(job.uploadedAt(), 'shortDate');
+            }
+        }
+    }
 
     // destroy() {
     //     return this.containerContent('Destroy Job');
