@@ -127,3 +127,19 @@ test('succeeded()', () => {
     result.errors = [];
     expect(result.succeeded()).toBe(true);
 });
+
+test('inflateFrom()', () => {
+    let data = {
+        operation: 'abc',
+        provider: 'xyz'
+    };
+    let result = OperationResult.inflateFrom(data);
+
+    // Should copy data attributes
+    expect(result.operation).toEqual(data.operation);
+    expect(result.provider).toEqual(data.provider);
+
+    // Methods should be defined
+    expect(typeof result.lastError).toEqual('function');
+    expect(typeof result.succeeded).toEqual('function');
+});

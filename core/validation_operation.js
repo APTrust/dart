@@ -1,3 +1,5 @@
+const { OperationResult } = require('./operation_result');
+
 /**
  * ValidationOperation contains information describing which bag to validate
  * and which BagItProfile to use when validating it.
@@ -45,14 +47,12 @@ class ValidationOperation {
      */
     static inflateFrom(data) {
         let op = new ValidationOperation();
-        Object.assign(packageOp, data);
+        Object.assign(op, data);
         if (data.result) {
-            let result = new OperationResult();
-            Object.assign(result, data.result);
+            op.result = OperationResult.inflateFrom(data.result);
         }
         return op;
     }
-
 }
 
 module.exports.ValidationOperation = ValidationOperation;

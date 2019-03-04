@@ -191,6 +191,21 @@ class OperationResult {
         let hasErrors = this.errors.length > 0;
         return (attempted && completed && !hasErrors);
     }
+
+    /**
+     * This converts the JSON representation of an OperationResult to a
+     * full-fledged OperationResult object with all of the expected methods.
+     *
+     * @param {Object} data - A JavaScript hash.
+     *
+     * @returns {OperationResult}
+     */
+    static inflateFrom(data) {
+        let result = new OperationResult();
+        Object.assign(result, data);
+        return result;
+    }
+
 }
 
 module.exports.OperationResult = OperationResult;

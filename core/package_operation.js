@@ -1,3 +1,4 @@
+const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
 
 /**
@@ -108,10 +109,9 @@ class PackageOperation {
     static inflateFrom(data) {
         // let op = "pay attention" in Dutch.
         let op = new PackageOperation();
-        Object.assign(packageOp, data);
+        Object.assign(op, data);
         if (data.result) {
-            let result = new OperationResult();
-            Object.assign(result, data.result);
+            op.result = OperationResult.inflateFrom(data.result);
         }
         return op;
     }

@@ -1,3 +1,4 @@
+const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
 
 /**
@@ -85,7 +86,7 @@ class UploadOperation {
     }
 
     /**
-     * This converts the JSON representation of a UploadOperation to a
+     * This converts the JSON representation of an UploadOperation to a
      * full-fledged UploadOperation object with all of the expected methods.
      *
      * @param {Object} data - A JavaScript hash.
@@ -94,14 +95,12 @@ class UploadOperation {
      */
     static inflateFrom(data) {
         let op = new UploadOperation();
-        Object.assign(packageOp, data);
+        Object.assign(op, data);
         if (data.result) {
-            let result = new OperationResult();
-            Object.assign(result, data.result);
+            op.result = OperationResult.inflateFrom(data.result);
         }
         return op;
     }
-
 }
 
 module.exports.UploadOperation = UploadOperation;
