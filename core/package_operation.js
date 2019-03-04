@@ -96,6 +96,25 @@ class PackageOperation {
         }
         return Object.keys(this.errors).length == 0;
     }
+
+    /**
+     * This converts the JSON representation of a PackageOperation to a
+     * full-fledged PackageOperation object with all of the expected methods.
+     *
+     * @param {Object} data - A JavaScript hash.
+     *
+     * @returns {PackageOperation}
+     */
+    static inflateFrom(data) {
+        // let op = "pay attention" in Dutch.
+        let op = new PackageOperation();
+        Object.assign(packageOp, data);
+        if (data.result) {
+            let result = new OperationResult();
+            Object.assign(result, data.result);
+        }
+        return op;
+    }
 }
 
 module.exports.PackageOperation = PackageOperation;

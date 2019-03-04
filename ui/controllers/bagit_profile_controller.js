@@ -97,7 +97,8 @@ class BagItProfileController extends BaseController {
     /**
      * This method presents a form that asks if the user would like
      * to create a new BagItProfile from scratch or based on an
-     * existing BagItProfile.
+     * existing BagItProfile. The user has to go through this form
+     * before actually getting to the BagItProfile form.
      */
     new() {
         let form = new NewBagItProfileForm();

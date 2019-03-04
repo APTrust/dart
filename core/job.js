@@ -1,8 +1,12 @@
 const { AppSetting } = require('./app_setting');
+const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const dateFormat = require('dateformat');
+const { PackageOperation } = require('./package_operation');
 const path = require('path');
 const { PersistentObject } = require('./persistent_object');
+const { ValidationOperation } = require('./validation_operation');
+const { UploadOperation } = require('./upload_operation');
 const { Util } = require('./util');
 
 /**
@@ -271,6 +275,36 @@ class Job extends PersistentObject {
         }
         return Object.keys(this.errors).length == 0;
     }
+
+    /**
+     * This converts the JSON representation of a job as stored in the DB
+     * to a full-fledged Job object with all of the expected methods.
+     *
+     * @param {Object} data - A JavaScript hash.
+     *
+     * @returns {Job}
+     */
+    static inflateFrom(data) {
+        let job = new Job();
+        Object.assign(job, data);
+        if (data.bagItProfile) {
+            job.bagItProfile = BagItProfile.inflateFrom(data.bagItProfile);
+        }
+        if (data.packageOp) {
+            job.packageOp = PackageOperation.inflateFrom(data.packageOp);
+        }
+        if (data.validationOp) {
+            job.validationOp = ValidationOperation.inflateFrom(data.validationOp);
+        }
+        if (data.uploadOps) {
+            job.uploadOps = [];
+            for (let op of data.uploadOps) {
+                job.uploadOps.push(UploadOperation.inflateFrom(op));
+            }
+        }
+        return job;
+    }
+
 }
 
 // Get static methods from base.

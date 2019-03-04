@@ -213,5 +213,19 @@
   "Object_isUserAddedFile_label": "Object_isUserAddedFile_label",
   "Object_isUserAddedFile_help": "Object_isUserAddedFile_help",
   "Object_isUserAddedTag_label": "Object_isUserAddedTag_label",
-  "Object_isUserAddedTag_help": "Object_isUserAddedTag_help"
+  "Object_isUserAddedTag_help": "Object_isUserAddedTag_help",
+  "Job_id_label": "Job_id_label",
+  "Job_id_help": "Job_id_help",
+  "Job_userCanDelete_label": "Job_userCanDelete_label",
+  "Job_userCanDelete_help": "Job_userCanDelete_help",
+  "Job_bagItProfile_label": "Job_bagItProfile_label",
+  "Job_bagItProfile_help": "Job_bagItProfile_help",
+  "Job_packageOp_label": "Job_packageOp_label",
+  "Job_packageOp_help": "Job_packageOp_help",
+  "Job_validationOp_label": "Job_validationOp_label",
+  "Job_validationOp_help": "Job_validationOp_help",
+  "Job_uploadOps_label": "Job_uploadOps_label",
+  "Job_uploadOps_help": "Job_uploadOps_help",
+  "Job_createdAt_label": "Job_createdAt_label",
+  "Job_createdAt_help": "Job_createdAt_help"
 }

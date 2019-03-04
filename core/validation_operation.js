@@ -34,6 +34,25 @@ class ValidationOperation {
          */
         this.errors = {};
     }
+
+    /**
+     * This converts the JSON representation of a ValidationOperation to a
+     * full-fledged ValidationOperation object with all of the expected methods.
+     *
+     * @param {Object} data - A JavaScript hash.
+     *
+     * @returns {ValidationOperation}
+     */
+    static inflateFrom(data) {
+        let op = new ValidationOperation();
+        Object.assign(packageOp, data);
+        if (data.result) {
+            let result = new OperationResult();
+            Object.assign(result, data.result);
+        }
+        return op;
+    }
+
 }
 
 module.exports.ValidationOperation = ValidationOperation;

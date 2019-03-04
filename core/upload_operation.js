@@ -83,6 +83,25 @@ class UploadOperation {
         }
         return Object.keys(this.errors).length == 0;
     }
+
+    /**
+     * This converts the JSON representation of a UploadOperation to a
+     * full-fledged UploadOperation object with all of the expected methods.
+     *
+     * @param {Object} data - A JavaScript hash.
+     *
+     * @returns {UploadOperation}
+     */
+    static inflateFrom(data) {
+        let op = new UploadOperation();
+        Object.assign(packageOp, data);
+        if (data.result) {
+            let result = new OperationResult();
+            Object.assign(result, data.result);
+        }
+        return op;
+    }
+
 }
 
 module.exports.UploadOperation = UploadOperation;
