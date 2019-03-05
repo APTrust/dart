@@ -81,6 +81,24 @@ class JobFileUIHelper {
         $('#filesPanel').show();
         let row = this.getTableRow(filepath, type, fileCount, dirCount, byteCount);
         $(row).insertBefore('#fileTotals');
+        this.updateTotals(fileCount, dirCount, byteCount);
+    }
+
+    updateTotals(fileCount, dirCount, byteCount) {
+        this.updateTotal('#totalFileCount', fileCount);
+        this.updateTotal('#totalDirCount', dirCount);
+        this.updateTotal('#totalByteCount', byteCount);
+    }
+
+    updateTotal(elementId, amountToAdd) {
+        let element = $(elementId);
+        let newTotal = parseInt(element.data('total'), 10) + amountToAdd;
+        element.data('total', newTotal);
+        if (elementId == '#totalByteCount') {
+            element.text(Util.toHumanSize(newTotal));
+        } else {
+            element.text(newTotal);
+        }
     }
 
     getTableRow(filepath, type, fileCount, dirCount, byteCount) {
