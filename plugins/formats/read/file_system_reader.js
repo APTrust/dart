@@ -49,6 +49,14 @@ class FileSystemReader extends Plugin {
          * @type {number}
          */
         this.dirCount = 0;
+        /**
+         * byteCount keeps track of the total number of bytes in all
+         * files beneath the speficied directory. This value is valid
+         * only during list operations, not during read().
+         *
+         * @type {number}
+         */
+        this.byteCount = 0;
     }
 
     /**
@@ -86,6 +94,7 @@ class FileSystemReader extends Plugin {
         var stream = readdirp({ root: fsReader.pathToDirectory, entryType: "all" });
         fsReader.fileCount = 0;
         fsReader.dirCount = 0;
+        fsReader.byteCount = 0;
 
         // Undocumented because it doesn't conform to the TarReader
         // list of events, and we don't plan on using it.
@@ -200,6 +209,7 @@ class FileSystemReader extends Plugin {
         var stream = readdirp({ root: fsReader.pathToDirectory, entryType: "all" });
         fsReader.fileCount = 0;
         fsReader.dirCount = 0;
+        fsReader.byteCount = 0;
 
         // Undocumented because it doesn't conform to the TarReader
         // list of events, and we don't plan on using it.
@@ -245,6 +255,7 @@ class FileSystemReader extends Plugin {
             // to entry.path, which is relative.
             if (entry.stat.isFile()) {
                 fsReader.fileCount += 1;
+                fsReader.byteCount += entry.stat.size;
             } else if (entry.stat.isDirectory()) {
                 fsReader.dirCount += 1;
             }

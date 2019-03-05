@@ -35,6 +35,8 @@ test('FileSystemReader.read() emits expected events', done => {
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
         expect(fsReader.fileCount).toEqual(FILES_IN_TEST_DIR);
         expect(fsReader.dirCount).toEqual(DIRS_IN_TEST_DIR);
+        // No byteCount in read operations.
+        expect(fsReader.byteCount).toEqual(0);
         done();
     });
 
@@ -71,6 +73,10 @@ test('FileSystemReader.read() returns expected stats', done => {
 
     fsReader.on('end', function(fileCount) {
         expect(foundTestFile).toEqual(true);
+
+        // No byteCount in read operations.
+        expect(fsReader.byteCount).toEqual(0);
+
         done();
     });
 
@@ -96,6 +102,10 @@ test('FileSystemReader.list() emits expected events with correct stats', done =>
         expect(finishCount).toEqual(FILES_IN_TEST_DIR);
         expect(fsReader.fileCount).toEqual(FILES_IN_TEST_DIR);
         expect(fsReader.dirCount).toEqual(DIRS_IN_TEST_DIR);
+
+        // We should get actual, correct byteCount in a list() operation.
+        expect(fsReader.byteCount).toEqual(14403);
+
         done();
     });
 
