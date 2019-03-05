@@ -237,3 +237,22 @@ test('Util.lcFirst()', () => {
      expect(Util.lcFirst('')).toEqual('');
      expect(Util.lcFirst(null)).toBeNull();
 });
+
+test('Util.deleteFromArray()', () => {
+    let numbers = [1,2,3,4,5,6];
+
+    // 100 is not in array, so this should delete nothing.
+    Util.deleteFromArray(numbers, 100);
+    expect(numbers).toEqual([1,2,3,4,5,6]);
+
+    // Should delete
+    Util.deleteFromArray(numbers, 4);
+    expect(numbers).toEqual([1,2,3,5,6]);
+
+    let names = ['Homer', 'Marge', 'Bart', 'Lisa', 'Lenny', 'Carl'];
+    Util.deleteFromArray(names, 'Barney');
+    expect(names).toEqual(['Homer', 'Marge', 'Bart', 'Lisa', 'Lenny', 'Carl']);
+
+    Util.deleteFromArray(names, 'Lenny');
+    expect(names).toEqual(['Homer', 'Marge', 'Bart', 'Lisa', 'Carl']);
+});

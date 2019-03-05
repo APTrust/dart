@@ -368,6 +368,25 @@ class Util {
     };
 
     /**
+     * This deletes up to one item from an array, modifying the
+     * array in place. For example, Util.deleteFromArray(list, "butter")
+     * will delete the first instance of the word "butter" from the
+     * array, or will delete nothing if the array does not contain
+     * that word.
+     *
+     * @param {Array} array - A list of items.
+     *
+     * @param {string|number|boolean|Date} item - The item you want to
+     * delete.
+     */
+    static deleteFromArray(array, item) {
+        let index = array.indexOf(item);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+    }
+
+    /**
      * This function returns the basename of the given file path with
      * with the following extensions stripped off:
      *
