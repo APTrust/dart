@@ -1,3 +1,4 @@
+const { Context } = require('../../core/context');
 const fs = require('fs');
 const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
 const Templates = require('../common/templates');
@@ -21,6 +22,16 @@ class JobFileUIHelper {
             // When drag event is attached to document, use
             // e.dataTransfer.files instead of what's below.
             for (let f of e.originalEvent.dataTransfer.files) {
+                let containingItem = helper.findContainingItem(f.path);
+                if (containingItem) {
+                    let msg = Context.y18n.__(
+                        '%s has already been added to this package as part of %s',
+                        `${f.path}\n\n`,
+                        `\n\n${containingItem}`
+                    );
+                    alert(msg);
+                    continue;
+                }
                 helper.addFileToPackageSources(f.path);
                 helper.addItemToUI(f.path);
                 helper.job.save();
@@ -123,6 +134,17 @@ class JobFileUIHelper {
             this.job.packageOp.sourceFiles = [];
         }
         this.job.packageOp.sourceFiles.push(filepath);
+    }
+
+    findContainingItem(filepath) {
+        if (Array.isArray(this.job.packageOp.sourceFiles)) {
+            for (let item of this.job.packageOp.sourceFiles) {
+                if (filepath.startsWith(item)) {
+                    return item;
+                }
+            }
+        }
+        return null;
     }
 
     removeItemFromUI(filepath) {

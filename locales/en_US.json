@@ -228,5 +228,6 @@
   "Job_uploadOps_help": "Job_uploadOps_help",
   "Job_createdAt_label": "Job_createdAt_label",
   "Job_createdAt_help": "Job_createdAt_help",
-  "AppSetting_type_help": "AppSetting_type_help"
+  "AppSetting_type_help": "AppSetting_type_help",
+  "%s has already been added to this package as part of %s": "%s has already been added to this package as part of %s"
 }
