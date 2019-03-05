@@ -46,6 +46,13 @@ class JobFileUIHelper {
             $(e.currentTarget).removeClass('drop-zone-over');
             return false;
         });
+        $('#filesTable').on('click', 'td.delete-file', function(e) {
+            let filepath = $(e.currentTarget).data('filepath');
+            helper.removeItemFromUI(filepath);
+            Util.deleteFromArray(helper.job.packageOp.sourceFiles, filepath);
+            helper.job.save();
+            return false;
+        });
     }
 
     addItemsToUI() {
@@ -74,7 +81,6 @@ class JobFileUIHelper {
 
     addRow(filepath, type, fileCount, dirCount, byteCount) {
         $('#filesPanel').show();
-        $('#btnJobPackagingDiv').show();
         let row = this.getTableRow(filepath, type, fileCount, dirCount, byteCount);
         $(row).insertBefore('#fileTotals');
         this.updateTotals(fileCount, dirCount, byteCount);
@@ -118,6 +124,19 @@ class JobFileUIHelper {
         }
         this.job.packageOp.sourceFiles.push(filepath);
     }
+
+    removeItemFromUI(filepath) {
+        let row = $(`tr[data-filepath="${filepath}"]`)
+        let dirCount = -1 * parseInt(row.find('td.dirCount').text(), 10);
+        let fileCount = -1 * parseInt(row.find('td.fileCount').text(), 10);
+        let fileSize = -1 * parseInt(row.find('td.fileSize').text(), 10);
+        row.remove();
+        this.updateTotals(fileCount, dirCount, fileSize)
+        if ($('tr.filepath').length == 0) {
+            $('#filesPanel').hide();
+        }
+    }
+
 }
 
 module.exports.JobFileUIHelper = JobFileUIHelper;
