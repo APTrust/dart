@@ -1,3 +1,5 @@
+const fs = require('fs');
+const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
 
 class JobFileUIHelper {
     constructor(job) {
@@ -6,6 +8,7 @@ class JobFileUIHelper {
 
     initUI() {
         this.attachDragAndDropEvents();
+        this.addItemsToUI();
     }
 
     attachDragAndDropEvents() {
@@ -45,6 +48,29 @@ class JobFileUIHelper {
         });
     }
 
+    addItemsToUI() {
+        if (this.job.packageOp != null) {
+            var files = this.job.packageOp.sourceFiles.slice();
+            for(var filepath of files) {
+                this.addItemToUI(filepath);
+            }
+        }
+    }
+
+    addItemToUI(filepath) {
+        let stats = fs.statSync(filepath);
+        if (stats.isFile()) {
+            // Add row with file path, 1, 0, stats.size
+            console.log(`${filepath}, 1, 0, ${stats.size}`);
+        } else if (stats.isDirectory()) {
+            let fsReader = new FileSystemReader(filepath);
+            fsReader.on('end', function() {
+                // Add row with file path, fileCount, dirCount, byteCount
+                console.log(`${filepath}, ${fsReader.fileCount}, ${fsReader.dirCount}, ${fsReader.byteCount}`);
+            });
+            fsReader.list();
+        }
+    }
 }
 
 module.exports.JobFileUIHelper = JobFileUIHelper;
