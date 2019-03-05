@@ -29,6 +29,10 @@ $(function() {
             $('#modalContent').html(response.modalContent);
             $('#modal').modal('show');
         }
+
+        // Call the post-render event, if there is one.
+        DART.UI.Common.UIHelper.handlePostRender(location.href);
+
         // Clear the hash, so if user re-clicks a button, the
         // app will still respond.
         location.hash = '#!';
@@ -63,7 +67,7 @@ $(function() {
             // which should now be deactivated.
             $(e.relatedTarget).removeClass('active');
         }
-    })
+    });
 
     // Attach popover help tips to dynamically added elements
     var popOverSettings = {

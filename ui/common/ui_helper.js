@@ -33,6 +33,15 @@ class UIHelper {
         return controller[req.fn]();
     }
 
+    handlePostRender(href) {
+        let req = this.parseLocation(href);
+        let controller = new Controllers[req.controller](req.params);
+        if (typeof controller.postRenderCallback === 'function') {
+            return controller.postRenderCallback(req.fn);
+        }
+        return null;
+    }
+
 }
 
 module.exports.UIHelper = Object.freeze(new UIHelper());

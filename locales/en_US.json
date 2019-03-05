@@ -227,5 +227,6 @@
   "Job_uploadOps_label": "Job_uploadOps_label",
   "Job_uploadOps_help": "Job_uploadOps_help",
   "Job_createdAt_label": "Job_createdAt_label",
-  "Job_createdAt_help": "Job_createdAt_help"
+  "Job_createdAt_help": "Job_createdAt_help",
+  "AppSetting_type_help": "AppSetting_type_help"
 }
