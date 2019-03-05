@@ -14,14 +14,16 @@ class JobFileUIHelper {
     }
 
     attachDragAndDropEvents() {
+        let helper = this;
         $('#dropZone').on('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
             // When drag event is attached to document, use
             // e.dataTransfer.files instead of what's below.
             for (let f of e.originalEvent.dataTransfer.files) {
-                //jobFiles.addFile(f.path);
-                console.log(f.path);
+                helper.addFileToPackageSources(f.path);
+                helper.addItemToUI(f.path);
+                helper.job.save();
             }
             $(e.currentTarget).removeClass('drop-zone-over');
             return false;
@@ -105,6 +107,16 @@ class JobFileUIHelper {
             size: Util.toHumanSize(byteCount)
         }
         return Templates.jobFileRow(data);
+    }
+
+    addFileToPackageSources(filepath) {
+        if (this.job.packageOp == null) {
+            this.job.packageOp = new PackageOperation();
+        }
+        if (!Array.isArray(this.job.packageOp.sourceFiles)) {
+            this.job.packageOp.sourceFiles = [];
+        }
+        this.job.packageOp.sourceFiles.push(filepath);
     }
 }
 

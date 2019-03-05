@@ -3,7 +3,7 @@
   <td class="dirCount">{{dirCount}}</td>
   <td class="fileCount">{{fileCount}}</td>
   <td class="fileSize">{{size}}</td>
-  <td class="deleteCell"><span class="glyphicon glyphicon-remove clickable-row" aria-hidden="true"></td>
-    <td class="clickable-cell" data-url="#Job/deleteFile?id={{ job.id }}&filepath={{ filepath }}">
-    </td>
+  <td class="clickable-cell" data-url="#Job/deleteFile?id={{ job.id }}&filepath={{ filepath }}">
+    <i class="fas fa-times text-danger" title="Delete {{ filepath }}"></i>
+  </td>
 </tr>
