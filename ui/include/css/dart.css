@@ -97,6 +97,11 @@ hr.menu-divider {
     background-color: #e3f2fd;
 }
 
+.upload-icon-div {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
 .dashboard-job {
     border: 1px solid #dedede;
     border-radius: 10px;

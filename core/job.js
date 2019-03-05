@@ -94,7 +94,7 @@ class Job extends PersistentObject {
         }
         // If no title or filename, create a generic name.
         if (!name) {
-            name = `Job of ${dateFormat(this.created, 'shortDate')} ${dateFormat(this.created, 'shortTime')}`;
+            name = `Job of ${dateFormat(this.createdAt, 'shortDate')} ${dateFormat(this.createdAt, 'shortTime')}`;
         }
         return Util.truncateString(name, 40);
     }

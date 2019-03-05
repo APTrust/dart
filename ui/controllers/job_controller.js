@@ -16,7 +16,7 @@ class JobController extends BaseController {
 
         this.model = Job;
         this.formClass = JobForm;
-        this.formTemplate = Templates.jobForm;
+        //this.formTemplate = Templates.jobForm;
         this.listTemplate = Templates.jobList;
         this.nameProperty = 'name';
         this.defaultOrderBy = 'createdAt';
@@ -28,19 +28,19 @@ class JobController extends BaseController {
         job.save();
         this.params.set('id', job.id);
         console.log(job.id);
-        return this.edit();
+        return this.files();
     }
 
-    edit() {
+    files() {
         let job = Job.find(this.params.get('id'));
         let errors = '';  //this._getPageLevelErrors(profile);
         let data = {
             alertMessage: this.alertMessage,
-            jobId: job.id,
-            form: new JobForm(job)
+            job: job
         }
         this.alertMessage = null;
-        return this.formTemplate(data);
+        let html = Templates.jobFiles(data);
+        return this.containerContent(html);
     }
 
 
