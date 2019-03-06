@@ -1,3 +1,5 @@
+const { Context } = require('./context');
+const fs = require('fs');
 const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
 
@@ -96,6 +98,31 @@ class PackageOperation {
             this.errors['PackageOperation.sourceFiles'] = 'Specify at least one file or directory to package.';
         }
         return Object.keys(this.errors).length == 0;
+    }
+
+    /**
+     * This removes items from the sourceFiles array if they no longer
+     * exist on disk. We need to do that to prevent errors when the job
+     * runs, as well as rendering errors in the UI.
+     *
+     * This won't prune the list if the PackageOperation has already
+     * been completed, because in that case, we want a record of what
+     * the operation actually did package. It's also expected that some
+     * source files will be deleted after a job has run.
+     */
+    pruneSourceFilesUnlessJobCompleted() {
+        if (this.result && this.result.succeeded()) {
+            return;
+        }
+        // Iterate backwards, so the deletion doesn't throw off
+        // the iterator.
+        for (let i = this.sourceFiles.length; i > -1; i--) {
+            let filepath = this.sourceFiles[i];
+            if (!fs.existsSync(filepath)) {
+                Context.logger.info(`Removing ${filepath} from items to be packaged into ${this.packageName} because it no longer exists on the filesystem.`);
+                this.sourceFiles.splice(i, 1);
+            }
+        }
     }
 
     /**

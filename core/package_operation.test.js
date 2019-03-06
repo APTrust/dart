@@ -1,3 +1,4 @@
+const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
 
 test('Constructor sets expected properties', () => {
@@ -27,6 +28,37 @@ test('validate()', () => {
     expect(packOp2.errors['PackageOperation.packageName']).toBeUndefined();
     expect(packOp2.errors['PackageOperation.outputPath']).toBeUndefined();
     expect(packOp2.errors['PackageOperation.sourceFiles']).toBeUndefined();
+});
+
+test('pruneSourceFilesUnlessJobCompleted()', () => {
+    let sourceFiles = [
+        __filename,
+        __dirname,
+        'this/file/does/not/exist/98765.xyz'
+    ];
+    let packOp = new PackageOperation('bag_name', '/path/to/output.tar');
+    packOp.sourceFiles = sourceFiles.slice();
+    expect(packOp.sourceFiles).toEqual(sourceFiles);
+
+    packOp.pruneSourceFilesUnlessJobCompleted();
+    expect(packOp.sourceFiles.includes(__filename)).toBe(true);
+    expect(packOp.sourceFiles.includes(__dirname)).toBe(true);
+    expect(packOp.sourceFiles.includes('this/file/does/not/exist/98765.xyz')).toBe(false);
+    expect(packOp.sourceFiles.length).toEqual(2);
+
+    // Test again with completed operation.
+    packOp.sourceFiles = sourceFiles.slice();
+    expect(packOp.sourceFiles).toEqual(sourceFiles);
+
+    // Let the result say this operation succeeded.
+    packOp.result = new OperationResult('bagging', 'bagger');
+    packOp.result.start();
+    packOp.result.finish();
+
+    // Now the method should NOT prune anything because that
+    // would be altering the historical record.
+    packOp.pruneSourceFilesUnlessJobCompleted();
+    expect(packOp.sourceFiles).toEqual(sourceFiles);
 });
 
 test('inflateFrom()', () => {

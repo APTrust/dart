@@ -4,16 +4,32 @@ const FileSystemReader = require('../../plugins/formats/read/file_system_reader'
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
+/**
+ * JobFileUIHelper provides a number of methods to help with
+ * the part of the Job UI that allows users to add and remove
+ * files. (These are files to be packaged and/or uploaded when
+ * the job runs.)
+ *
+ * @param {Job} job - The job whose files you want to manipulate.
+ */
 class JobFileUIHelper {
+
     constructor(job) {
         this.job = job;
     }
 
+    /**
+     *
+     */
     initUI() {
         this.attachDragAndDropEvents();
+        this.attachDeleteEvents();
         this.addItemsToUI();
     }
 
+    /**
+     *
+     */
     attachDragAndDropEvents() {
         let helper = this;
         $('#dropZone').on('drop', function(e) {
@@ -57,6 +73,13 @@ class JobFileUIHelper {
             $(e.currentTarget).removeClass('drop-zone-over');
             return false;
         });
+    }
+
+    /**
+     *
+     */
+    attachDeleteEvents() {
+        let helper = this;
         $('#filesTable').on('click', 'td.delete-file', function(e) {
             let filepath = $(e.currentTarget).data('filepath');
             helper.removeItemFromUI(filepath);
@@ -66,6 +89,10 @@ class JobFileUIHelper {
         });
     }
 
+
+    /**
+     *
+     */
     addItemsToUI() {
         if (this.job.packageOp != null) {
             var files = this.job.packageOp.sourceFiles.slice();
@@ -75,9 +102,15 @@ class JobFileUIHelper {
         }
     }
 
+    /**
+     *
+     */
     addItemToUI(filepath) {
         let helper = this;
         let stats = fs.statSync(filepath);
+        if (!fs.existsSync(f.path)) {
+            continue;
+        }
         if (stats.isFile()) {
             this.addRow(filepath, 'file', 1, 0, stats.size);
         } else if (stats.isDirectory()) {
@@ -90,6 +123,9 @@ class JobFileUIHelper {
         }
     }
 
+    /**
+     *
+     */
     addRow(filepath, type, fileCount, dirCount, byteCount) {
         $('#filesPanel').show();
         let row = this.getTableRow(filepath, type, fileCount, dirCount, byteCount);
@@ -97,12 +133,18 @@ class JobFileUIHelper {
         this.updateTotals(fileCount, dirCount, byteCount);
     }
 
+    /**
+     *
+     */
     updateTotals(fileCount, dirCount, byteCount) {
         this.updateTotal('#totalFileCount', fileCount);
         this.updateTotal('#totalDirCount', dirCount);
         this.updateTotal('#totalByteCount', byteCount);
     }
 
+    /**
+     *
+     */
     updateTotal(elementId, amountToAdd) {
         let element = $(elementId);
         let newTotal = parseInt(element.data('total'), 10) + amountToAdd;
@@ -114,6 +156,9 @@ class JobFileUIHelper {
         }
     }
 
+    /**
+     *
+     */
     getTableRow(filepath, type, fileCount, dirCount, byteCount) {
         let iconType = (type == 'file' ? 'file' : 'folder-closed');
         let data = {
@@ -126,6 +171,9 @@ class JobFileUIHelper {
         return Templates.jobFileRow(data);
     }
 
+    /**
+     *
+     */
     addFileToPackageSources(filepath) {
         if (this.job.packageOp == null) {
             this.job.packageOp = new PackageOperation();
@@ -136,6 +184,9 @@ class JobFileUIHelper {
         this.job.packageOp.sourceFiles.push(filepath);
     }
 
+    /**
+     *
+     */
     findContainingItem(filepath) {
         if (Array.isArray(this.job.packageOp.sourceFiles)) {
             for (let item of this.job.packageOp.sourceFiles) {
@@ -147,6 +198,9 @@ class JobFileUIHelper {
         return null;
     }
 
+    /**
+     *
+     */
     removeItemFromUI(filepath) {
         let row = $(`tr[data-filepath="${filepath}"]`)
         let dirCount = -1 * parseInt(row.find('td.dirCount').text(), 10);
