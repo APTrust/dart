@@ -305,6 +305,25 @@ class Job extends PersistentObject {
         return job;
     }
 
+    /**
+     * find finds the Job with the specified id in the datastore
+     * and returns it. Returns undefined if the object is not in the datastore.
+     *
+     * This overrides the find() method of the PersistentObject to return
+     * a correctly constructed Job object.
+     *
+     * @param {string} id - The id (UUID) of the job you want to find.
+     *
+     * @returns {Job}
+     */
+    static find(id) {
+        let data = Context.db('Job').get(id);
+        if (data) {
+            return Job.inflateFrom(data);
+        }
+        return undefined;
+    }
+
 }
 
 // Get static methods from base.

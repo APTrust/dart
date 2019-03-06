@@ -215,3 +215,32 @@ test('inflateFrom()', () => {
     expect(newJob.uploadOps[0].sourceFiles).not.toEqual(['path/to/my/file.zip']);
     expect(typeof newJob.uploadOps[0].validate).toEqual('function');
 });
+
+test('find()', () => {
+    let job = getJobWithOps();
+    job.save();
+
+    // Make sure the Job's sub-objects are correctly converted
+    // to the proper types (with functions) after a find.
+    let retrievedJob = Job.find(job.id);
+
+    // bagItProfile
+    expect(retrievedJob.bagItProfile).not.toBeNull();
+    expect(retrievedJob.bagItProfile.id).toEqual(job.bagItProfile.id);
+    expect(retrievedJob.bagItProfile.firstMatchingTag('tagName', 'Title').userValue).toEqual('Title 1');
+
+    // packageOp
+    expect(retrievedJob.packageOp).not.toBeNull();
+    expect(retrievedJob.packageOp.outputPath).toEqual('path/to/my_bag.tar');
+    expect(typeof retrievedJob.packageOp.validate).toEqual('function');
+
+    // validationOp
+    expect(retrievedJob.validationOp).not.toBeNull();
+
+    // uploadOps
+    expect(retrievedJob.uploadOps.length).toEqual(1);
+    expect(retrievedJob.uploadOps[0]).not.toBeNull();
+    expect(retrievedJob.uploadOps[0].sourceFiles).not.toEqual(['path/to/my/file.zip']);
+    expect(typeof retrievedJob.uploadOps[0].validate).toEqual('function');
+
+});

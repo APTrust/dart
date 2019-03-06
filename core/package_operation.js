@@ -103,7 +103,8 @@ class PackageOperation {
     /**
      * This removes items from the sourceFiles array if they no longer
      * exist on disk. We need to do that to prevent errors when the job
-     * runs, as well as rendering errors in the UI.
+     * runs, as well as rendering errors in the UI. It logs items that
+     * it removes.
      *
      * This won't prune the list if the PackageOperation has already
      * been completed, because in that case, we want a record of what
