@@ -704,12 +704,15 @@ class BagItProfile extends PersistentObject {
     /* ------- Implementation of PersistentObject methods -------- */
 
     /**
-     * find finds the object with the specified id in the datastore
+     * find finds the BagItProfile with the specified id in the datastore
      * and returns it. Returns undefined if the object is not in the datastore.
      *
-     * @param {string} id - The id (UUID) of the object you want to find.
+     * This overrides the find() method of PersistentObject to return a
+     * correctly constructed BagItProfile object.
      *
-     * @returns {Object}
+     * @param {string} id - The id (UUID) of the BagItProfile you want to find.
+     *
+     * @returns {BagItProfile}
      */
     static find(id) {
         let data = Context.db('BagItProfile').get(id);
