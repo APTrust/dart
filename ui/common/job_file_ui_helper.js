@@ -95,6 +95,9 @@ class JobFileUIHelper {
      */
     addItemsToUI() {
         if (this.job.packageOp != null) {
+            // Do not try to process any files or directories that
+            // the user may have deleted.
+            this.job.packageOp.pruneSourceFilesUnlessJobCompleted();
             var files = this.job.packageOp.sourceFiles.slice();
             for(var filepath of files) {
                 this.addItemToUI(filepath);
@@ -108,9 +111,6 @@ class JobFileUIHelper {
     addItemToUI(filepath) {
         let helper = this;
         let stats = fs.statSync(filepath);
-        if (!fs.existsSync(f.path)) {
-            continue;
-        }
         if (stats.isFile()) {
             this.addRow(filepath, 'file', 1, 0, stats.size);
         } else if (stats.isDirectory()) {
