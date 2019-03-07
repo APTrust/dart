@@ -1,8 +1,7 @@
 os: osx
 sudo: false
 language: node_js
-node_js:
-    - "10.15"
+node_js: node
 cache:
   directories:
   - node_modules
@@ -16,7 +15,8 @@ before_install:
 install:
 - npm install --global npm@latest
 - rm -rf node_modules
-  #- npm install --no-optional
+- rm package-json.lock
+#- npm install --no-optional
 - npm install
 
 before_script:
