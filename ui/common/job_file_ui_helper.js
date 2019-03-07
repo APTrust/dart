@@ -257,6 +257,7 @@ class JobFileUIHelper {
             filepath: filepath,
             dirCount: dirCount,
             fileCount: fileCount,
+            byteCount: byteCount,
             size: Util.toHumanSize(byteCount)
         }
         return Templates.jobFileRow(data);
@@ -317,9 +318,7 @@ class JobFileUIHelper {
         let row = $(`tr[data-filepath="${filepath}"]`)
         let dirCount = -1 * parseInt(row.find('td.dirCount').text(), 10);
         let fileCount = -1 * parseInt(row.find('td.fileCount').text(), 10);
-        // TODO: Need data attr to track actual byte count,
-        // then subtract from that.
-        let fileSize = -1 * parseInt(row.find('td.fileSize').text(), 10);
+        let fileSize = -1 * parseInt(row.find('td.fileSize').data('bytes'), 10);
         row.remove();
         this.updateTotals(fileCount, dirCount, fileSize)
         if ($('tr.filepath').length == 0) {
