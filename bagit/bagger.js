@@ -28,7 +28,7 @@ const { Util } = require('../core/util');
  * // Assuming you have already created a Job object
  * var bagger = new Bagger(job);
  * bagger.on('error', function(err) {
- *    // Check the contents of job.packagingOperation.result.errors
+ *    // Check the contents of job.packageOperation.result.errors
  *    // for details of what went wrong.
  * });
  * bagger.on('fileAdded', function(bagItFile) {
@@ -93,13 +93,14 @@ class Bagger extends EventEmitter {
      * the job is valid.
      */
     validateJob() {
+        this.errors = {};
+        var packOp = this.job.packageOp;
         if (!this.job.validate()) {
-            packOp.errors.push("Job is not valid.");
-            for(var [key, value] of Object.keys(jobValidationResult.errors)) {
-                packOp.errors.push(`${key}: ${value}`);
+            packOp.result.errors.push("Job is not valid.");
+            for(var [key, value] of Object.entries(this.job.errors)) {
+                packOp.result.errors.push(`${key}: ${value}`);
             }
-            packOp.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-            packOp.succeeded = false;
+            packOp.result.finish();
             return false;
         }
         return true;
@@ -112,11 +113,11 @@ class Bagger extends EventEmitter {
      *
      */
     async create() {
-        var packOp = this.job.packagingOp;
+        var packOp = this.job.packageOp;
         this.emit('packageStart', `Starting to build ${packOp.packageName}`);
         packOp.result = new OperationResult('bagging', 'DART bagger');
         packOp.result.filepath = packOp.outputPath;
-        packOp.result.started = dateFormat(Date.now(), 'isoUtcDateTime');
+        packOp.result.start();
         if (!this.validateJob()) {
             return false;
         }
@@ -137,7 +138,7 @@ class Bagger extends EventEmitter {
          * @type {string}
          */
         this.formatWriter.on('error', function(err) {
-            packOp.errors.push(error);
+            packOp.result.errors.push(error);
             bagger.emit(err);
         });
         /**
@@ -163,7 +164,7 @@ class Bagger extends EventEmitter {
      * This adds payload files to the bag.
      */
     async _addPayloadFiles() {
-        var packOp = this.job.packagingOp;
+        var packOp = this.job.packageOp;
         for (var absPath of packOp.sourceFiles) {
             var relDestPath = this._getRelDestPath(absPath);
             var stats = fs.statSync(absPath);
@@ -249,7 +250,7 @@ class Bagger extends EventEmitter {
      */
     _addDirectory(absPath) {
         let bagger = this;
-        let packOp = this.job.packagingOp;
+        let packOp = this.job.packageOp;
         let fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         let fsReader = new fsReaderClass(absPath);
         fsReader.on('entry', function(entry) {
@@ -304,7 +305,7 @@ class Bagger extends EventEmitter {
             // Don't create another because it will overwrite our output file.
             return;
         }
-        var outputPath = this.job.packagingOp.outputPath;
+        var outputPath = this.job.packageOp.outputPath;
         var fileExtension = path.extname(outputPath);
         if (fileExtension === '') {
             fileExtension = 'directory';
@@ -382,9 +383,8 @@ class Bagger extends EventEmitter {
      * @private
      */
     _finish() {
-        var result = this.job.packagingOp.result;
-        result.completed = dateFormat(Date.now(), 'isoUtcDateTime');
-        result.succeeded = result.errors.length == 0;
+        var result = this.job.packageOp.result;
+        result.finish();
         if (fs.existsSync(result.filepath)) {
             let stat = fs.statSync(result.filepath);
             if (stat.isDirectory()) {
@@ -399,7 +399,7 @@ class Bagger extends EventEmitter {
          * @event Bagger#finish
          *
          * @description Emits an empty event indicating the bagger has
-         * completed its work. Check bagger.job.packagingOp.result
+         * completed its work. Check bagger.job.packageOp.result
          * for errors.
          *
          */

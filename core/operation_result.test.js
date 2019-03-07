@@ -39,7 +39,6 @@ test('reset()', () => {
     expect(result.completed).toBeNull();
     // No started/completed timestamps
     expect(result.succeeded()).toBe(false);
-    expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
     expect(result.remoteURL).toBeNull();
@@ -64,7 +63,6 @@ test('start()', () => {
     expect(result.completed).toBeNull();
     // No started/completed timestamps
     expect(result.succeeded()).toBe(false);
-    expect(result.filepath).toBeNull();
     expect(result.filesize).toEqual(0);
     expect(result.fileMtime).toBeNull();
     expect(result.remoteURL).toBeNull();

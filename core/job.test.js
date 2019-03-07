@@ -34,7 +34,8 @@ function setTag(profile, name, value) {
 test('Constructor sets expected properties', () => {
     let job = new Job();
     expect(job.bagItProfile).toBeNull();
-    expect(job.packageOp).toBeNull();
+    expect(job.packageOp).not.toBeNull();
+    expect(job.packageOp.constructor.name).toEqual('PackageOperation');
     expect(job.validationOp).toBeNull();
     expect(Array.isArray(job.uploadOps)).toEqual(true);
     expect(job.uploadOps.length).toEqual(0);

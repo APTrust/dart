@@ -28,7 +28,6 @@ class JobController extends BaseController {
         let job = new Job();
         job.save();
         this.params.set('id', job.id);
-        console.log(job.id);
         return this.files();
     }
 
@@ -43,7 +42,6 @@ class JobController extends BaseController {
         let html = Templates.jobFiles(data);
         return this.containerContent(html);
     }
-
 
     // update() {
     //     return this.containerContent('Update Job');
@@ -95,7 +93,7 @@ class JobController extends BaseController {
 
     postRenderCallback(fnName) {
         let job = Job.find(this.params.get('id'));
-        if (fnName == 'files') {
+        if (fnName == 'new' || fnName == 'files') {
             let helper = new JobFileUIHelper(job);
             helper.initUI();
         }

@@ -115,7 +115,6 @@ class OperationResult {
     reset() {
         this.started = null;
         this.completed = null;
-        this.filepath = null;
         this.filesize = 0;
         this.fileMtime = null;
         this.remoteURL = null;

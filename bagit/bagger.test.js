@@ -53,10 +53,10 @@ function cleanupTempFiles() {
 
 function getJob(...sources) {
     var job = new Job();
-    job.packagingOp = new PackageOperation('TestBag', tmpFile);
+    job.packageOp = new PackageOperation('TestBag', tmpFile);
 
     // Add the sources we want to pack into the bag
-    job.packagingOp.sourceFiles.push(...sources);
+    job.packageOp.sourceFiles.push(...sources);
 
     // Load the profile that describes how to create the bag.
     var profilesDir = path.join(__dirname, '..', 'test', 'profiles');
@@ -80,9 +80,9 @@ test('create() with one dir', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOp.result;
+        let result = bagger.job.packageOp.result;
         expect(result.errors.length).toEqual(0);
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toEqual(true);
         expect(result.started).not.toBeNull();
         expect(result.competed).not.toBeNull();
         expect(result.operation).toEqual('bagging');
@@ -100,9 +100,9 @@ test('create() with one file', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOp.result;
+        let result = bagger.job.packageOp.result;
         expect(result.errors.length).toEqual(0);
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
         // 2 manifests, 2 tag manifests, 3 tag files, 1 payload file
         expect(bagger.bagItFiles.length).toEqual(8);
@@ -112,8 +112,14 @@ test('create() with one file', done => {
     bagger.create();
 });
 
-// This test is unreliable. Usually completes in ~150ms,
-// but sometimes times out after 5 seconds.
+// This test times out consistently when run on Mac OSX
+// with command `npm test -- --runInBand` or
+// `npm test bagit/bagger.test.js -- --runInBand`.
+//
+// It passes consistently on Linux and when run on Mac
+// with command `npm test -- -t 'with multiple dirs and files'`
+//
+// WTF??
 test('create() with multiple dirs and files', done => {
     let utilDir = path.join(__dirname, '..', 'util');
     let bagsDir = path.join(__dirname, '..', 'test', 'bags');
@@ -121,9 +127,9 @@ test('create() with multiple dirs and files', done => {
     let bagger = new Bagger(job);
 
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOp.result;
+        let result = bagger.job.packageOp.result;
         expect(result.errors.length).toEqual(0);
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
 
         let validator = new Validator(tmpFile, job.bagItProfile);
@@ -146,6 +152,10 @@ test('create() with multiple dirs and files', done => {
 
             done();
         });
+        validator.on('error', function(err) {
+            // Report the error on the console.
+            expect(err).toBeNull();
+        });
         validator.validate();
     });
 
@@ -156,8 +166,8 @@ test('create() using FileSystemWriter', done => {
     let utilDir = path.join(__dirname, '..', 'util');
     let bagsDir = path.join(__dirname, '..', 'test', 'bags');
     let job = getJob(utilDir, __filename, bagsDir);
-    job.packagingOp.packageName = 'dart-bagger-test';
-    job.packagingOp.outputPath = tmpOutputDir;
+    job.packageOp.packageName = 'dart-bagger-test';
+    job.packageOp.outputPath = tmpOutputDir;
     job.bagItProfile.serialization = 'optional';
     let bagger = new Bagger(job);
 
@@ -165,9 +175,9 @@ test('create() using FileSystemWriter', done => {
         //console.log(bagItFile.relDestPath);
     });
     bagger.on('finish', function() {
-        let result = bagger.job.packagingOp.result;
+        let result = bagger.job.packageOp.result;
         expect(result.errors.length).toEqual(0);
-        expect(result.succeeded).toEqual(true);
+        expect(result.succeeded()).toEqual(true);
         expect(result.filesize).toBeGreaterThan(0);
 
         let validator = new Validator(tmpOutputDir, job.bagItProfile);

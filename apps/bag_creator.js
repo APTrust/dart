@@ -24,12 +24,12 @@ class BagCreator {
 
         var job = new Job();
         var bagName = Util.bagNameFromPath(this.opts.output)
-        job.packagingOp = new PackageOperation(bagName, this.opts.output);
+        job.packageOp = new PackageOperation(bagName, this.opts.output);
         if (typeof this.opts.source == 'string') {
-            job.packagingOp.sourceFiles.push(this.opts.source);
+            job.packageOp.sourceFiles.push(this.opts.source);
         } else {
             for (let source of this.opts.source) {
-                job.packagingOp.sourceFiles.push(source);
+                job.packageOp.sourceFiles.push(source);
             }
         }
         job.bagItProfile = BagItProfile.load(this.opts.profile);
@@ -49,7 +49,7 @@ class BagCreator {
         var promise = new Promise(function(resolve, reject) {
             // Finish never fires. Why? But promise resolves. How?
             bagger.on('finish', function() {
-                let result = bagger.job.packagingOp.result;
+                let result = bagger.job.packageOp.result;
                 if (result.error) {
                     creator.exitCode = CLI.EXIT_COMPLETED_WITH_ERRORS;
                     console.log(result.error);

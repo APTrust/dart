@@ -42,7 +42,7 @@ class PackageOperation {
         this.outputPath = outputPath;
         /**
          * A list of files DART will be packaging. Each entry in this list
-         * should be an absolute path.
+         * should be an absolute path to a file or directory.
          *
          * @type {Array<string>}
          */
@@ -113,6 +113,9 @@ class PackageOperation {
      */
     pruneSourceFilesUnlessJobCompleted() {
         if (this.result && this.result.succeeded()) {
+            return;
+        }
+        if (this.sourceFiles.length == 0) {
             return;
         }
         // Iterate backwards, so the deletion doesn't throw off

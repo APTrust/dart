@@ -57,10 +57,11 @@ class Job extends PersistentObject {
     constructor(opts = {}) {
         super(opts);
         this.bagItProfile = opts.bagItProfile || null;
-        this.packageOp = opts.packageOp || null;
+        this.packageOp = opts.packageOp || new PackageOperation();
         this.validationOp = opts.validationOp || null;
         this.uploadOps = opts.uploadOps || [];
         this.createdAt = opts.createdAt || new Date();
+        this.errors = {};
     }
 
     /**
@@ -76,7 +77,7 @@ class Job extends PersistentObject {
     title() {
         // Try to get the name of the file that was created or uploaded.
         var name = null;
-        if (this.packageOp) {
+        if (this.packageOp && this.packageOp.outputPath) {
             name = path.basename(this.packageOp.outputPath);
         }
         if (!name && this.uploadOps.length > 0 && this.uploadOps[0].sourceFiles.length > 0) {
@@ -250,17 +251,13 @@ class Job extends PersistentObject {
         super.validate();
         if (this.packageOp) {
             this.packageOp.validate();
-            for(let [key, value] of Object.entries(this.packageOp.errors)) {
-                this.errors[key] = value;
-            }
+            Object.assign(this.errors, this.packageOp.errors);
             // TODO: Require BagItProfile if packaging op is BagIt.
             // TODO: Mechanism for signifying this is a BagIt job (as opposed to just tar or zip)
         }
         if (this.validationOp) {
             this.validationOp.validate();
-            for(let [key, value] of Object.entries(this.validationOp.errors)) {
-                this.errors[key] = value;
-            }
+            Object.assign(this.errors, this.validationOp.errors);
             if (!this.bagItProfile) {
                 result.errors['Job.bagItProfile'] = 'Validation requires a BagItProfile.';
             }
@@ -268,9 +265,7 @@ class Job extends PersistentObject {
         var opNum = 0;
         for (var uploadOp of this.uploadOps) {
             uploadOp.validate();
-            for(let [key, value] of Object.entries(this.uploadOp.errors)) {
-                this.errors[key] = value;
-            }
+            Object.assign(this.errors, uploadOp.errors);
             opNum++;
         }
         return Object.keys(this.errors).length == 0;
