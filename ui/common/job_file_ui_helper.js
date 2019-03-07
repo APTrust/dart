@@ -19,7 +19,9 @@ class JobFileUIHelper {
     }
 
     /**
-     *
+     * This attaches required events to the Job files UI and
+     * adds the list of files and folders to be packaged to
+     * the UI.
      */
     initUI() {
         this.attachDragAndDropEvents();
@@ -28,7 +30,9 @@ class JobFileUIHelper {
     }
 
     /**
-     *
+     * This attaches drag and drop events, so users can add files
+     * and folders to the job by dragging them into the application
+     * window.
      */
     attachDragAndDropEvents() {
         let helper = this;
@@ -76,7 +80,10 @@ class JobFileUIHelper {
     }
 
     /**
-     *
+     * This attaches the deletion handler to the red X beside
+     * each file and folder. Clicking the red delete icon causes
+     * the filepath to be removed from the UI and from this Job's
+     * list of sourceFiles in {@link PackageOperation}.
      */
     attachDeleteEvents() {
         let helper = this;
@@ -91,22 +98,20 @@ class JobFileUIHelper {
 
 
     /**
-     *
+     * This adds files and folders to the display.
      */
     addItemsToUI() {
-        if (this.job.packageOp != null) {
-            // Do not try to process any files or directories that
-            // the user may have deleted.
-            this.job.packageOp.pruneSourceFilesUnlessJobCompleted();
-            var files = this.job.packageOp.sourceFiles.slice();
-            for(var filepath of files) {
-                this.addItemToUI(filepath);
-            }
+        // Do not try to process any files or directories that
+        // the user may have deleted.
+        this.job.packageOp.pruneSourceFilesUnlessJobCompleted();
+        var files = this.job.packageOp.sourceFiles.slice();
+        for(var filepath of files) {
+            this.addItemToUI(filepath);
         }
     }
 
     /**
-     *
+     * This adds a single file or folder to the UI.
      */
     addItemToUI(filepath) {
         let helper = this;
@@ -124,6 +129,33 @@ class JobFileUIHelper {
     }
 
     /**
+     * This adds one row to the table that lists which files and
+     * folders this job will package.
+     *
+     * @param {string} filepath - The absolute path to a file or folder
+     * that is to be packaged as part of this job.
+     *
+     * @param {string} type - The type of item that filepath represents.
+     * This should be either "file" or "directory".
+     *
+     * @param {number} fileCount - The number of files contained by the
+     * item in param filepath. For files, this will be 1. For directories,
+     * it will be the total number of files in the directory and all of
+     * its subdirectories. (This info is readily available from the
+     * {@link FileSystemReader} plugin.)
+     *
+     * @param {number} dirCount - The number of directories contained by
+     * the item in param filepath. For files, this will be 0. For directories,
+     * this will be 1 (for the directory itself) plus the total count of
+     * all directories within that directory and all of its subdirectories.
+     * (This info is readily available from the {@link FileSystemReader}
+     * plugin.)
+     *
+     * @param {number} byteCount - The total number of bytes contained by
+     * the item at filepath. For files, this will be the filesize. For
+     * directories, this will be the sum of bytes contained by all the files
+     * within the directory and all its subdirectories. (This info is readily
+     * available from the {@link FileSystemReader} plugin.)
      *
      */
     addRow(filepath, type, fileCount, dirCount, byteCount) {
@@ -134,6 +166,29 @@ class JobFileUIHelper {
     }
 
     /**
+     * Updates the total number of files, folders, and bytes to be
+     * packaged.
+     *
+     * @param {number} fileCount - The number of files contained by the
+     * item in param filepath. For files, this will be 1. For directories,
+     * it will be the total number of files in the directory and all of
+     * its subdirectories. (This info is readily available from the
+     * {@link FileSystemReader} plugin.) This number will be added to
+     * the total file count.
+     *
+     * @param {number} dirCount - The number of directories contained by
+     * the item in param filepath. For files, this will be 0. For directories,
+     * this will be 1 (for the directory itself) plus the total count of
+     * all directories within that directory and all of its subdirectories.
+     * (This info is readily available from the {@link FileSystemReader}
+     * plugin.) This number will be added to the total directory count.
+     *
+     * @param {number} byteCount - The total number of bytes contained by
+     * the item at filepath. For files, this will be the filesize. For
+     * directories, this will be the sum of bytes contained by all the files
+     * within the directory and all its subdirectories. (This info is readily
+     * available from the {@link FileSystemReader} plugin.) This number will
+     * be added to the total byte count.
      *
      */
     updateTotals(fileCount, dirCount, byteCount) {
@@ -143,7 +198,15 @@ class JobFileUIHelper {
     }
 
     /**
+     * Updates one of the total fields at the bottom of the list of
+     * files and filders.
      *
+     * @param {string} elementId - The id (css selector) of the element
+     * whose text should be updated.
+     *
+     * @param {number} amountToAdd - The number to add to the existing
+     * total already displayed in the cell. This will be negative in
+     * cases where you're removing files or folders.
      */
     updateTotal(elementId, amountToAdd) {
         let element = $(elementId);
@@ -157,7 +220,35 @@ class JobFileUIHelper {
     }
 
     /**
+     * Returns the HTML for a single table row in the files/folders
+     * display.
      *
+     * @param {string} filepath - The absolute path to a file or folder
+     * that is to be packaged as part of this job.
+     *
+     * @param {string} type - The type of item that filepath represents.
+     * This should be either "file" or "directory".
+     *
+     * @param {number} fileCount - The number of files contained by the
+     * item in param filepath. For files, this will be 1. For directories,
+     * it will be the total number of files in the directory and all of
+     * its subdirectories. (This info is readily available from the
+     * {@link FileSystemReader} plugin.)
+     *
+     * @param {number} dirCount - The number of directories contained by
+     * the item in param filepath. For files, this will be 0. For directories,
+     * this will be 1 (for the directory itself) plus the total count of
+     * all directories within that directory and all of its subdirectories.
+     * (This info is readily available from the {@link FileSystemReader}
+     * plugin.)
+     *
+     * @param {number} byteCount - The total number of bytes contained by
+     * the item at filepath. For files, this will be the filesize. For
+     * directories, this will be the sum of bytes contained by all the files
+     * within the directory and all its subdirectories. (This info is readily
+     * available from the {@link FileSystemReader} plugin.)
+     *
+     * @returns {string} A string of HTML representing a table row.
      */
     getTableRow(filepath, type, fileCount, dirCount, byteCount) {
         let iconType = (type == 'file' ? 'file' : 'folder-closed');
@@ -172,12 +263,15 @@ class JobFileUIHelper {
     }
 
     /**
+     * This adds a file or folder to the list of items that will be
+     * packaged in this job. The item is added to the sourceFiles
+     * list of the Job's {@link PackageOperation} attribute.
+     *
+     * @param {string} filepath - The absolute path to a file or folder
+     * that is to be packaged as part of this job.
      *
      */
     addFileToPackageSources(filepath) {
-        if (this.job.packageOp == null) {
-            this.job.packageOp = new PackageOperation();
-        }
         if (!Array.isArray(this.job.packageOp.sourceFiles)) {
             this.job.packageOp.sourceFiles = [];
         }
@@ -185,6 +279,18 @@ class JobFileUIHelper {
     }
 
     /**
+     * This checks the list of source files and folders to see if
+     * any of the items already set to be packaged contains the item
+     * that the user just dragged into the window. We make this check
+     * to avoid adding duplicate files or folders to the list of
+     * sources.
+     *
+     * @param {string} filepath - The absolute path to a file or folder
+     * that is to be packaged as part of this job.
+     *
+     * @return {string} - The path the already-added folder that contains
+     * filepath, or null if filepath's containing folder has not already
+     * been added to the list of source files.
      *
      */
     findContainingItem(filepath) {
@@ -199,6 +305,12 @@ class JobFileUIHelper {
     }
 
     /**
+     * This deletes a file or folder from the list of files and folders
+     * in the UI (but does not delete the item from the underlying
+     * {@link PackageOperation}).
+     *
+     * @param {string} filepath - The absolute path to a file or folder
+     * to be removed from the UI.
      *
      */
     removeItemFromUI(filepath) {
