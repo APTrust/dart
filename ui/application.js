@@ -18,7 +18,8 @@ $(function() {
             lastHref = location.hash = '#!';
             return;
         }
-        let response = DART.UI.Common.UIHelper.handleRequest(location.href);
+        let handler = DART.UI.Common.UIHelper.getHandler(location.href);
+        let response = handler.controller[handler.functionName]();
         if (response.container) {
             $('#nav').html(response.nav);
             $('#container').html(response.container);
@@ -30,8 +31,12 @@ $(function() {
             $('#modal').modal('show');
         }
 
-        // Call the post-render event, if there is one.
-        DART.UI.Common.UIHelper.handlePostRender(location.href);
+        // If there is a post-render event, passing in the name of
+        // the function that was called in the initial request above.
+        if (handler.postRenderCallback) {
+            let objContext = handler.controller;
+            handler.postRenderCallback.call(objContext, handler.functionName);
+        }
 
         // Clear the hash, so if user re-clicks a button, the
         // app will still respond.

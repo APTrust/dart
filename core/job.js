@@ -318,7 +318,6 @@ class Job extends PersistentObject {
         }
         return undefined;
     }
-
 }
 
 // Get static methods from base.

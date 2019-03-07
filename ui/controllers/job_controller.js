@@ -92,8 +92,8 @@ class JobController extends BaseController {
     // }
 
     postRenderCallback(fnName) {
-        let job = Job.find(this.params.get('id'));
         if (fnName == 'new' || fnName == 'files') {
+            let job = Job.find(this.params.get('id'));
             let helper = new JobFileUIHelper(job);
             helper.initUI();
         }

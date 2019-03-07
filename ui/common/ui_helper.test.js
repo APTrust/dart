@@ -30,30 +30,26 @@ test('parseLocation', () => {
 
 });
 
-test('handleRequest', () => {
-    let params = new url.URLSearchParams([
-        ['name', 'Bart'],
-        ['name', 'Lisa'],
-        ['sort', 'age'],
-        ['page', '1']
-    ]);
-    expect(AppSettingController).not.toHaveBeenCalled();
-    UIHelper.handleRequest('index.html#AppSetting/list?name=Bart&name=Lisa&sort=age&page=1');
-    expect(AppSettingController).toHaveBeenCalledTimes(1);
-    expect(AppSettingController).toHaveBeenCalledWith(params);
-    expect(AppSettingController.mock.instances[0].list).toHaveBeenCalledTimes(1);
-});
+// TODO: This test will need to be rewritten after Handler is rewritten.
 
-// -----------------------------------------------------------------
-// TODO: Move casting code, then activate & test this method.
-// -----------------------------------------------------------------
-// test('paramsToHash', () => {
-//     let hash = {
-//         offset: 1,
-//         limit: 3,
-//         orderBy: 'name',
-//         sortDirection: 'desc'
-//     };
-//     let params = new url.URLSearchParams(hash);
-//     expect(UIHelper.paramsToHash(params)).toEqual(hash);
+// test('handleRequest', () => {
+//     let params = new url.URLSearchParams([
+//         ['name', 'Bart'],
+//         ['name', 'Lisa'],
+//         ['sort', 'age'],
+//         ['page', '1']
+//     ]);
+//     expect(AppSettingController).not.toHaveBeenCalled();
+//     UIHelper.handleRequest('index.html#AppSetting/list?name=Bart&name=Lisa&sort=age&page=1');
+//     expect(AppSettingController).toHaveBeenCalledTimes(1);
+//     expect(AppSettingController).toHaveBeenCalledWith(params);
+//     expect(AppSettingController.mock.instances[0].list).toHaveBeenCalledTimes(1);
 // });
+
+test('handleRequest', () => {
+    let loc = '#Job/new';
+    let handler = UIHelper.getHandler(loc);
+    expect(handler.controller.constructor.name).toEqual('JobController');
+    expect(handler.functionName).toEqual('new');
+    expect(typeof handler.postRenderCallback).toEqual('function');
+});
