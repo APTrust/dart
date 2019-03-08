@@ -30,6 +30,7 @@
         "require-dir": "^1.2.0",
         "tar-stream": "^2.0.0",
         "tmp": "0.0.33",
+        "typescript": "^3.3.3333",
         "vue": "^2.6.7",
         "vue-template-compiler": "^2.6.7",
         "winston": "^3.2.1",
