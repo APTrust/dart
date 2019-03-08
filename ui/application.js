@@ -18,24 +18,14 @@ $(function() {
             lastHref = location.hash = '#!';
             return;
         }
-        let handler = DART.UI.Common.UIHelper.getHandler(location.href);
-        let response = handler.controller[handler.functionName]();
-        if (response.container) {
-            $('#nav').html(response.nav);
-            $('#container').html(response.container);
-            $('#modal').modal('hide');
-            lastHref = location.href;
-        } else if (response.modalContent) {
-            $('#modalTitle').html(response.modalTitle);
-            $('#modalContent').html(response.modalContent);
-            $('#modal').modal('show');
-        }
 
-        // If there is a post-render event, passing in the name of
-        // the function that was called in the initial request above.
-        if (handler.postRenderCallback) {
-            let objContext = handler.controller;
-            handler.postRenderCallback.call(objContext, handler.functionName);
+        // Handle the request. Update lastHref only if the request
+        // was NOT to display a modal, since modal requests do not
+        // change the underlying page.
+        let handler = new DART.UI.Common.RequestHandler(location.href);
+        handler.handleRequest();
+        if (!handler.isModalRequest) {
+            lastHref = location.href;
         }
 
         // Clear the hash, so if user re-clicks a button, the
