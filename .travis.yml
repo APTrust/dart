@@ -15,7 +15,8 @@ before_install:
 install:
 - npm install --global npm@latest
 - rm -rf node_modules
-  #- npm install --no-optional
+- rm package-lock.json
+#- npm install --no-optional
 - npm install
 
 before_script:
