@@ -110,6 +110,11 @@ class PackageOperation {
      * been completed, because in that case, we want a record of what
      * the operation actually did package. It's also expected that some
      * source files will be deleted after a job has run.
+     *
+     * Warning: The sourceFiles list should contain absolute paths.
+     * Relative paths may be trimmed even if they do exist, because
+     * the may have been added from a different working directory.
+     * Use absolute paths only.
      */
     pruneSourceFilesUnlessJobCompleted() {
         if (this.result && this.result.succeeded()) {

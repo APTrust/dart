@@ -1,3 +1,4 @@
+const $ = require('jquery');  // required for Jest tests
 const { Context } = require('../../core/context');
 const fs = require('fs');
 const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
