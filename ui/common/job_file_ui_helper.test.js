@@ -54,16 +54,27 @@ test('initUI', () => {
     expect(deleteListeners.click[0].selector).toEqual('td.delete-file');
 });
 
-test('addItemsToUI', () => {
+test('addItemsToUI()', done => {
     let job = getJobWithFiles();
     setHTML(job);
     let helper = new JobFileUIHelper(job);
-    helper.initUI();
-    helper.addItemsToUI();
+    helper.initUI(); // this calls addItemsToUI() internally
     setTimeout(function() {
         let html = $('#filesPanel').html();
         for (let filepath of job.packageOp.sourceFiles) {
             expect(html).toContain(filepath);
         }
+        let dirCount = $('#totalDirCount');
+        let fileCount = $('#totalFileCount');
+        let byteCount = $('#totalByteCount');
+        expect(parseInt(dirCount.text(), 10)).toBeGreaterThan(0);
+        expect(parseInt(fileCount.text(), 10)).toBeGreaterThan(0);
+        expect(byteCount.html()).toMatch(/K|MB/);
+        expect(parseInt(byteCount.data('total'), 10)).toBeGreaterThan(0);
+        done();
     }, 200);
 });
+
+// test('addRow() adds row and updates totals', () => {
+
+// });
