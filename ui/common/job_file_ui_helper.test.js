@@ -101,15 +101,45 @@ test('dropping a file adds it to the UI and job', done => {
         let html = $('#filesPanel').html();
         let rows = $('tr.filepath');
         let deleteCells = $('td.delete-file');
+
+        // Make sure files were added to the UI.
         expect(rows.length).toEqual(allFiles.length);
         expect(deleteCells.length).toEqual(allFiles.length);
         for (let filepath of allFiles) {
             expect(html).toMatch(filepath);
         }
+
+        // Make sure files were added to the job itself.
+        expect(job.packageOp.sourceFiles.length).toEqual(allFiles.length);
         done();
     }, 150);
 });
 
-test('deleting a file removes it from the UI and job', () => {
+test('deleting a file removes it from the UI and job', done => {
+    let job = getJobWithFiles();
+    setHTML(job);
+    let helper = new JobFileUIHelper(job);
+    helper.initUI();
+    let deleteEventHandler = $._data($('#filesTable')[0], "events").click[0].handler;
+    let mockEvent = {
+        currentTarget: $('td.delete-file')
+    }
+    let pathToDelete = $('td.delete-file').data('filepath');
+    deleteEventHandler(mockEvent);
 
+    setTimeout(function() {
+        let html = $('#filesPanel').html();
+        let rows = $('tr.filepath');
+        let deleteCells = $('td.delete-file');
+
+        // Make sure file was removed from the UI.
+        expect(rows.length).toEqual(2);
+        expect(deleteCells.length).toEqual(2);
+        expect(html).not.toMatch(pathToDelete);
+
+        // Make sure file/dir was deleted from the job.
+        // We started with 3, should now have two.
+        expect(job.packageOp.sourceFiles.length).toEqual(2);
+        done();
+    }, 50);
 });
