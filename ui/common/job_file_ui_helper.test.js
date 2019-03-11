@@ -43,12 +43,12 @@ test('initUI', () => {
     setHTML(job);
     let helper = new JobFileUIHelper(job);
     helper.initUI();
-    dropZoneEventListeners = $._data($('#dropZone')[0], "events");
+    let dropZoneEventListeners = $._data($('#dropZone')[0], "events");
     for (let event of ['dragover', 'dragend', 'dragleave', 'drop']) {
         expect(dropZoneEventListeners[event]).toBeDefined();
         expect(typeof dropZoneEventListeners[event][0].handler).toEqual('function');
     }
-    deleteListeners = $._data($('#filesTable')[0], "events");
+    let deleteListeners = $._data($('#filesTable')[0], "events");
     expect(deleteListeners).toBeDefined();
     expect(typeof deleteListeners.click[0].handler).toEqual('function');
     expect(deleteListeners.click[0].selector).toEqual('td.delete-file');
@@ -72,9 +72,44 @@ test('addItemsToUI()', done => {
         expect(byteCount.html()).toMatch(/K|MB/);
         expect(parseInt(byteCount.data('total'), 10)).toBeGreaterThan(0);
         done();
-    }, 200);
+    }, 200); // We have no event to wait for...
 });
 
-// test('addRow() adds row and updates totals', () => {
+test('dropping a file adds it to the UI and job', done => {
+    let job = getJobWithFiles();
+    setHTML(job);
+    let helper = new JobFileUIHelper(job);
+    helper.initUI();
+    let dropZoneEventListeners = $._data($('#dropZone')[0], "events");
+    let dropEventHandler = dropZoneEventListeners.drop[0].handler;
+    let mockEvent = {
+        originalEvent: {
+            dataTransfer: {
+                files: [
+                    { path: extraFile },
+                    { path: extraDir }
+                ]
+            }
+        },
+        preventDefault: function() {},
+        stopPropagation: function() {},
+    }
+    let allFiles = sourceFiles.concat([extraFile,extraDir]);
+    // Call the handler
+    dropEventHandler(mockEvent);
+    setTimeout(function() {
+        let html = $('#filesPanel').html();
+        let rows = $('tr.filepath');
+        let deleteCells = $('td.delete-file');
+        expect(rows.length).toEqual(allFiles.length);
+        expect(deleteCells.length).toEqual(allFiles.length);
+        for (let filepath of allFiles) {
+            expect(html).toMatch(filepath);
+        }
+        done();
+    }, 150);
+});
 
-// });
+test('deleting a file removes it from the UI and job', () => {
+
+});
