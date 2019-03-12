@@ -1,4 +1,6 @@
+const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
+const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
@@ -15,6 +17,11 @@ class JobPackageOpForm extends Form {
     }
 
     _init() {
+        this._listPackageFormats();
+        this._listBagItProfiles();
+    }
+
+    _listPackageFormats() {
         let formats = [
             {
                 id: 'None',
@@ -41,6 +48,27 @@ class JobPackageOpForm extends Form {
         );
     }
 
+    _listBagItProfiles() {
+        var selectedProfileId = this.obj.bagItProfile ? this.obj.bagItProfile.id : '';
+        var profiles = BagItProfile.list(null, {
+            limit: 0,
+            offset: 0,
+            orderBy: 'name',
+            sortDirection: 'asc'
+        });
+        this.fields['bagItProfile'] = new Field(
+            `${this.formId}_bagItProfile`,
+            'bagitProfile',
+            Context.y18n.__('BagIt Profile'),
+            null
+        );
+        this.fields['bagItProfile'].choices = Choice.makeList(
+            profiles,
+            selectedProfileId,
+            true
+        );
+
+    }
 }
 
 module.exports.JobPackageOpForm = JobPackageOpForm;

@@ -245,5 +245,6 @@
   "PackageOperation_skipFiles_label": "PackageOperation_skipFiles_label",
   "PackageOperation_skipFiles_help": "PackageOperation_skipFiles_help",
   "PackageOperation_pluginId_label": "PackageOperation_pluginId_label",
-  "PackageOperation_pluginId_help": "PackageOperation_pluginId_help"
+  "PackageOperation_pluginId_help": "PackageOperation_pluginId_help",
+  "BagIt Profile": "BagIt Profile"
 }
