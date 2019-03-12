@@ -12,8 +12,20 @@ const { PluginManager } = require('../../plugins/plugin_manager');
 class JobPackageOpForm extends Form {
 
     constructor(job) {
-        super('JobPackageOp', job.packageOp);
+        super('JobPackageOp', JobPackageOpForm.getCustomObject(job));
         this._init();
+        window.formy = this;
+    }
+
+    static getCustomObject(job) {
+        return {
+            packageFormat: job.packageFormat,
+            pluginId: job.pluginId,
+            bagItProfileId: job.bagItProfile ? job.bagItProfile.id : '',
+            outputPath: job.outputPath,
+            packageName: job.packageName,
+            id: job.id
+        }
     }
 
     _init() {
@@ -58,7 +70,7 @@ class JobPackageOpForm extends Form {
         });
         this.fields['bagItProfile'] = new Field(
             `${this.formId}_bagItProfile`,
-            'bagitProfile',
+            'bagItProfile',
             Context.y18n.__('BagIt Profile'),
             null
         );
@@ -67,8 +79,22 @@ class JobPackageOpForm extends Form {
             selectedProfileId,
             true
         );
-
     }
+
+    // parseFromDOM() {
+    //     super.parseFromDOM();
+    //     // Plugin Id is the value of the selected item.
+    //     // Format name is the name of the selected item.
+    //     // Not pretty from a dev perspective, but it simplifies
+    //     // things for the user.
+    //     let selectedPluginId = this.obj.packageFormat;
+    //     let formatName = $('#jobPackageOpForm_packageFormat option:selected').text();
+    //     this.obj.pluginId = selectedPluginId;
+    //     if (formatName) {
+    //         this.obj.packageFormat = formatName.trim();
+    //     }
+    // }
+
 }
 
 module.exports.JobPackageOpForm = JobPackageOpForm;

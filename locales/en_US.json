@@ -246,5 +246,13 @@
   "PackageOperation_skipFiles_help": "PackageOperation_skipFiles_help",
   "PackageOperation_pluginId_label": "PackageOperation_pluginId_label",
   "PackageOperation_pluginId_help": "PackageOperation_pluginId_help",
-  "BagIt Profile": "BagIt Profile"
+  "BagIt Profile": "BagIt Profile",
+  "Object_packageFormat_label": "Object_packageFormat_label",
+  "Object_packageFormat_help": "Object_packageFormat_help",
+  "Object_bagItProfileId_label": "Object_bagItProfileId_label",
+  "Object_bagItProfileId_help": "Object_bagItProfileId_help",
+  "Object_outputPath_label": "Object_outputPath_label",
+  "Object_outputPath_help": "Object_outputPath_help",
+  "Object_packageName_label": "Object_packageName_label",
+  "Object_packageName_help": "Object_packageName_help"
 }
