@@ -229,5 +229,21 @@
   "Job_createdAt_label": "Job_createdAt_label",
   "Job_createdAt_help": "Job_createdAt_help",
   "AppSetting_type_help": "AppSetting_type_help",
-  "%s has already been added to this package as part of %s": "%s has already been added to this package as part of %s"
+  "%s has already been added to this package as part of %s": "%s has already been added to this package as part of %s",
+  "PackageOperation_packageName_label": "PackageOperation_packageName_label",
+  "PackageOperation_packageName_help": "PackageOperation_packageName_help",
+  "PackageOperation_outputPath_label": "PackageOperation_outputPath_label",
+  "PackageOperation_outputPath_help": "PackageOperation_outputPath_help",
+  "PackageOperation_packageFormat_label": "PackageOperation_packageFormat_label",
+  "PackageOperation_packageFormat_help": "PackageOperation_packageFormat_help",
+  "PackageOperation_sourceFiles_label": "PackageOperation_sourceFiles_label",
+  "PackageOperation_sourceFiles_help": "PackageOperation_sourceFiles_help",
+  "PackageOperation_result_label": "PackageOperation_result_label",
+  "PackageOperation_result_help": "PackageOperation_result_help",
+  "PackageOperation_payloadSize_label": "PackageOperation_payloadSize_label",
+  "PackageOperation_payloadSize_help": "PackageOperation_payloadSize_help",
+  "PackageOperation_skipFiles_label": "PackageOperation_skipFiles_label",
+  "PackageOperation_skipFiles_help": "PackageOperation_skipFiles_help",
+  "PackageOperation_pluginId_label": "PackageOperation_pluginId_label",
+  "PackageOperation_pluginId_help": "PackageOperation_pluginId_help"
 }

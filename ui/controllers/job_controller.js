@@ -2,6 +2,7 @@ const { BaseController } = require('./base_controller');
 const { Job } = require('../../core/job');
 const { JobFileUIHelper } = require('../common/job_file_ui_helper');
 const { JobForm } = require('../forms/job_form');
+const { PackageOperationForm } = require('../forms/package_operation_form');
 const Templates = require('../common/templates');
 
 const typeMap = {
@@ -33,7 +34,7 @@ class JobController extends BaseController {
 
     files() {
         let job = Job.find(this.params.get('id'));
-        let errors = '';  //this._getPageLevelErrors(profile);
+        let errors = '';  //this._getPageLevelErrors(job);
         let data = {
             alertMessage: this.alertMessage,
             job: job
@@ -42,6 +43,21 @@ class JobController extends BaseController {
         let html = Templates.jobFiles(data);
         return this.containerContent(html);
     }
+
+    packaging() {
+        let job = Job.find(this.params.get('id'));
+        let errors = '';  //this._getPageLevelErrors(job);
+        let form = new PackageOperationForm(job.packageOp);
+        let data = {
+            alertMessage: this.alertMessage,
+            job: job,
+            form: form
+        }
+        this.alertMessage = null;
+        let html = Templates.jobPackaging(data);
+        return this.containerContent(html);
+    }
+
 
     // update() {
     //     return this.containerContent('Update Job');

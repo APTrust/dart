@@ -1,0 +1,13 @@
+<h2>Packaging</h2>
+
+<form method="post" action="#" id="{{ form.id }}">
+
+  {{> inputSelect field = form.fields.packageFormat }}
+
+  {{> inputText field = form.fields.outputPath }}
+
+  {{> inputText field = form.fields.packageName }}
+
+  {{> inputHidden field = form.fields.id }}
+
+</form>
