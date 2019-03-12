@@ -1,6 +1,7 @@
 const { Context } = require('./context');
 const fs = require('fs');
 const { OperationResult } = require('./operation_result');
+const { PluginManager } = require('../plugins/plugin_manager');
 const { Util } = require('./util');
 
 /**
@@ -40,6 +41,46 @@ class PackageOperation {
          * @type {string}
          */
         this.outputPath = outputPath;
+        /**
+         * The format of the output package. E.g. '.tar', 'directory', etc.
+         *
+         * DART allows a single plugin to write multiple formats,
+         * and several plugins may be able to write the same format.
+         * Therefore, packageFormat and packageWriter are specified
+         * separately.
+         *
+         * {@link PluginManager} will return a list of plugins that write
+         * various formats. Just call:
+         *
+         * <code>
+         * PluginManager.getModuleCollection('FormatWriter')
+         * </code>
+         *
+         * See also {@see packageWriter}
+         *
+         * @type <string>
+         */
+        this.packageFormat = null;
+        /**
+         * The id (UUID) of the plugin that will write the output package.
+         *
+         * DART allows a single plugin to write multiple formats,
+         * and several plugins may be able to write the same format.
+         * Therefore, packageFormat and packageWriter are specified
+         * separately.
+         *
+         * {@link PluginManager} will return a list of plugins that write
+         * various formats. Just call:
+         *
+         * <code>
+         * PluginManager.getModuleCollection('FormatWriter')
+         * </code>
+         *
+         * See also {@see packageWriter}
+         *
+         * @type <string>
+         */
+        this.pluginId = null;
         /**
          * A list of files DART will be packaging. Each entry in this list
          * should be an absolute path to a file or directory.
@@ -132,6 +173,25 @@ class PackageOperation {
                 this.sourceFiles.splice(i, 1);
             }
         }
+    }
+
+    /**
+     * This returns the class of the plugin that will write
+     * the package. Note that each time you call this, you'll
+     * get a new writer.
+     *
+     * If this PackageOperation has no pluginId, or an ID that does not
+     * match any known plugin, this returns null.
+     *
+     * @returns {Plugin}
+     */
+    getWriter() {
+        let writer = null;
+        if (this.pluginId) {
+            let writerClass = PluginManager.findById(this.pluginId);
+            writer = new writerClass(this.outputPath);
+        }
+        return writer;
     }
 
     /**

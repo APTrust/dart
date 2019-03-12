@@ -1,5 +1,6 @@
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
+const { PluginManager } = require('../plugins/plugin_manager');
 
 test('Constructor sets expected properties', () => {
     let packOp = new PackageOperation('bag_name', '/path/to/output.tar');
@@ -59,6 +60,18 @@ test('pruneSourceFilesUnlessJobCompleted()', () => {
     // would be altering the historical record.
     packOp.pruneSourceFilesUnlessJobCompleted();
     expect(packOp.sourceFiles).toEqual(sourceFiles);
+});
+
+test('getWriter()', () => {
+    let writers = PluginManager.canWrite('.tar');
+    let pluginDescription = writers[0].description();
+    let packOp = new PackageOperation('bag_name', '/path/to/output.tar');
+    packOp.packageFormat = '.tar';
+    packOp.pluginId = pluginDescription.id;
+    let packageWriter = packOp.getWriter();
+    expect(packageWriter).not.toBeNull();
+    expect(packageWriter.pathToTarFile).toEqual(packOp.outputPath);
+    expect(packageWriter.constructor.name).toEqual(pluginDescription.name);
 });
 
 test('inflateFrom()', () => {
