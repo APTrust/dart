@@ -4,6 +4,10 @@
 
   {{> inputSelect field = form.fields.packageFormat }}
 
+  <div id="jobProfileContainer" style="display: {{#if showProfileList}}block{{else}}none{{/if}};">
+    {{> inputSelect field = form.fields.bagItProfile }}
+  </div>
+
   {{> inputText field = form.fields.outputPath }}
 
   {{> inputText field = form.fields.packageName }}
