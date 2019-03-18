@@ -19,11 +19,11 @@ class JobPackageOpForm extends Form {
 
     static getCustomObject(job) {
         return {
-            packageFormat: job.packageFormat,
-            pluginId: job.pluginId,
+            packageFormat: job.packageOp.packageFormat,
+            pluginId: job.packageOp.pluginId,
             bagItProfileId: job.bagItProfile ? job.bagItProfile.id : '',
-            outputPath: job.outputPath,
-            packageName: job.packageName,
+            outputPath: job.packageOp.outputPath,
+            packageName: job.packageOp.packageName,
             id: job.id
         }
     }
@@ -55,7 +55,7 @@ class JobPackageOpForm extends Form {
         }
         this.fields['packageFormat'].choices = Choice.makeList(
             formats,
-            this.obj.packageFormat,
+            this.obj.pluginId,
             false
         );
     }
