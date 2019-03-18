@@ -32,8 +32,8 @@
         "tar-stream": "^2.0.1",
         "tmp": "0.0.33",
         "typescript": "^3.3.3333",
-        "vue": "^2.6.8",
-        "vue-template-compiler": "^2.6.8",
+        "vue": "^2.6.9",
+        "vue-template-compiler": "^2.6.9",
         "winston": "^3.2.1",
         "y18n": "^4.0.0"
     },
