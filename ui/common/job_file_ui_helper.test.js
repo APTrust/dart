@@ -72,7 +72,7 @@ test('addItemsToUI()', done => {
         expect(byteCount.html()).toMatch(/K|MB/);
         expect(parseInt(byteCount.data('total'), 10)).toBeGreaterThan(0);
         done();
-    }, 200); // We have no event to wait for...
+    }, 400); // We have no event to wait for...
 });
 
 test('dropping a file adds it to the UI and job', done => {
@@ -103,6 +103,7 @@ test('dropping a file adds it to the UI and job', done => {
         let deleteCells = $('td.delete-file');
 
         // Make sure files were added to the UI.
+        console.log(allFiles)
         expect(rows.length).toEqual(allFiles.length);
         expect(deleteCells.length).toEqual(allFiles.length);
         for (let filepath of allFiles) {
