@@ -25,6 +25,16 @@ var options = {
         maxFiles: 5,
         colorize: false,
     },
+    // The log file for Travis
+    travisLogFile: {
+        level: 'debug',
+        filename: path.join(__dirname, "logs", "dart.log"),
+        handleExceptions: true,
+        json: false,
+        maxsize: 5242880, // 5MB
+        maxFiles: 5,
+        colorize: false,
+    },
     // The log file for general users. Level info should record enough data
     // without being too verbose.
     userLogFile: {
@@ -51,7 +61,10 @@ var options = {
 // For the user environment, we log to the user log file.
 var transports;
 // For Jest tests, use the test log
-if (process.env.NODE_ENV=='test') {
+if (process.env.TRAVIS_OS_NAME) {
+    mkdirp(options.travisLogFile.filename);
+    transports = [ new winston.transports.File(options.travisLogFile) ];
+} else if (process.env.NODE_ENV=='test') {
     mkdirp(options.testLogFile.filename);
     transports = [ new winston.transports.File(options.testLogFile) ];
 } else {
