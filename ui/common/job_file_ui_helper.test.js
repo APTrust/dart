@@ -103,7 +103,6 @@ test('dropping a file adds it to the UI and job', done => {
         let deleteCells = $('td.delete-file');
 
         // Make sure files were added to the UI.
-        console.log(allFiles)
         expect(rows.length).toEqual(allFiles.length);
         expect(deleteCells.length).toEqual(allFiles.length);
         for (let filepath of allFiles) {
