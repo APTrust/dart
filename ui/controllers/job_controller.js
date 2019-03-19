@@ -102,12 +102,12 @@ class JobController extends BaseController {
 
     // User clicked Next button from packaging page.
     postPackaging() {
-        // this._updatePackaging(true);
-        // let job = Job.find(this.params.get('id'));
         let [job, form] = this._updatePackaging(true);
         if (form.hasErrors()) {
             // Errors. Stay on packaging screen.
             form.setErrors();
+            form._listPackageFormats();
+            form._listBagItProfiles();
             return this._renderPackagingForm(job, form);
         }
         else if (job.packageOp.packageFormat == 'BagIt') {
