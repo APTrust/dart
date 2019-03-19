@@ -96,8 +96,8 @@ class JobPackageOpForm extends Form {
  */
 class JobPackageOp {
     constructor(job) {
-        this.packageFormat = job.packageOp.packageFormat;
-        this.pluginId = job.packageOp.pluginId;
+        this.packageFormat = job.packageOp.packageFormat || 'BagIt';
+        this.pluginId = job.packageOp.pluginId || 'BagIt';
         this.bagItProfileId = job.bagItProfile ? job.bagItProfile.id : '';
         this.outputPath = job.packageOp.outputPath;
         this.packageName = job.packageOp.packageName;
