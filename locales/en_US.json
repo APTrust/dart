@@ -258,5 +258,7 @@
   "JobPackageOp_packageName_label": "Package Name",
   "JobPackageOp_packageName_help": "This should be the file or bag name of the package you are creating. For example, 'my_bag', 'PhotoCollection_1234', etc. This will become part of the file name, so avoid spaces and special punctuation characters.",
   "JobPackageOp_id_label": "JobPackageOp_id_label",
-  "JobPackageOp_id_help": "JobPackageOp_id_help"
+  "JobPackageOp_id_help": "JobPackageOp_id_help",
+  "When choosing BagIt format, you must choose a BagIt profile.": "When choosing BagIt format, you must choose a BagIt profile.",
+  "You must specify a package name.": "You must specify a package name."
 }

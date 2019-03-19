@@ -14,7 +14,6 @@ class JobPackageOpForm extends Form {
     constructor(job) {
         super('JobPackageOp', new JobPackageOp(job));
         this._init();
-        window.formy = this;
     }
 
     _init() {
@@ -50,40 +49,30 @@ class JobPackageOpForm extends Form {
     }
 
     _listBagItProfiles() {
-        var selectedProfileId = this.obj.bagItProfile ? this.obj.bagItProfile.id : '';
         var profiles = BagItProfile.list(null, {
             limit: 0,
             offset: 0,
             orderBy: 'name',
             sortDirection: 'asc'
         });
-        this.fields['bagItProfile'] = new Field(
-            `${this.formId}_bagItProfile`,
-            'bagItProfile',
-            Context.y18n.__('BagIt Profile'),
-            null
-        );
-        this.fields['bagItProfile'].choices = Choice.makeList(
+        this.fields['bagItProfileId'].choices = Choice.makeList(
             profiles,
-            selectedProfileId,
+            //selectedProfileId,
+            this.obj.bagItProfileId,
             true
         );
-        this.fields['bagItProfile'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
+        this.fields['bagItProfileId'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
     }
 
-    // parseFromDOM() {
-    //     super.parseFromDOM();
-    //     // Plugin Id is the value of the selected item.
-    //     // Format name is the name of the selected item.
-    //     // Not pretty from a dev perspective, but it simplifies
-    //     // things for the user.
-    //     let selectedPluginId = this.obj.packageFormat;
-    //     let formatName = $('#jobPackageOpForm_packageFormat option:selected').text();
-    //     this.obj.pluginId = selectedPluginId;
-    //     if (formatName) {
-    //         this.obj.packageFormat = formatName.trim();
-    //     }
-    // }
+    parseFromDOM() {
+        super.parseFromDOM();
+        let selectedPluginId = this.obj.packageFormat;
+        let formatName = $('#jobPackageOpForm_packageFormat option:selected').text();
+        this.obj.pluginId = selectedPluginId;
+        if (formatName) {
+            this.obj.packageFormat = formatName.trim();
+        }
+    }
 
 }
 

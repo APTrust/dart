@@ -59,15 +59,26 @@ class BaseController {
          */
         this.navSection = navSection;
         /**
-         * Controllers set this before redirecting, to make an alert message
-         * appear on the top of the destination page. For example, after
-         * successfully submitting a form, a controller typically redirects
-         * to the list page with an alert message at the top saying the data
-         * was saved.
+         * Controllers may optionally set this before redirecting,
+         * to make an alert message appear on the top of the destination
+         * page. For example, after successfully submitting a form, a
+         * controller typically redirects to the list page with an alert
+         * message at the top saying the data  was saved.
          *
          * @type {string}
          */
         this.alertMessage = null;
+
+        /**
+         * Controllers may optionally set this before redirecting to control
+         * the appearance of the optional alertMessage. The value can be any
+         * valid Bootstrap 4 alert class. The most common values will be
+         * "alert-success" and "alert-danger".
+         *
+         * @type {string}
+         * @default "alert-success"
+         */
+        this.alertCssClass = 'alert-success';
 
         // The following are all set by child classes.
         /**

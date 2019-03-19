@@ -1,4 +1,6 @@
+const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
+const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobFileUIHelper } = require('../common/job_file_ui_helper');
 const { JobPackagingUIHelper } = require('../common/job_packaging_ui_helper');
@@ -51,6 +53,7 @@ class JobController extends BaseController {
         let form = new JobPackageOpForm(job);
         let data = {
             alertMessage: this.alertMessage,
+            alertCssClass: this.alertCssClass,
             job: job,
             form: form
         }
@@ -59,6 +62,61 @@ class JobController extends BaseController {
         return this.containerContent(html);
     }
 
+    _updatePackaging(withValidation) {
+        this.alertMessage = '';
+        let job = Job.find(this.params.get('id'));
+        let form = new JobPackageOpForm(job);
+        form.parseFromDOM();
+        job.packageOp.packageFormat = form.obj.packageFormat;
+        job.packageOp.pluginId = form.obj.pluginId;
+        job.bagItProfile = BagItProfile.find(form.obj.bagItProfileId);
+        job.packageOp.outputPath = form.obj.outputPath;
+        job.packageOp.packageName = form.obj.packageName;
+        job.save();
+        if (withValidation) {
+            let errors = [];
+            if (job.packageOp.packageFormat == 'BagIt' && !job.bagItProfile) {
+                errors.push(Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile."));
+            }
+            if (!job.packageOp.outputPath) {
+                errors.push(Context.y18n.__("You must specify an output path."));
+            }
+            if (job.packageOp.packageName) {
+                errors.push(Context.y18n.__("You must specify a package name."));
+            }
+            if (errors.length) {
+                this.alertMessage = `<ul><li>${errors.join('</li><li>')}</li></ul>`;
+                this.alertCssClass = 'alert-danger';
+            }
+        }
+    }
+
+
+    // User clicked Back button from packaging page.
+    // Save work without validating.
+    backToFiles() {
+        console.log('backToFiles')
+        this._updatePackaging(false);
+        return this.packaging();
+    }
+
+    // User clicked Next button from packaging page.
+    postPackaging() {
+        console.log('postPackaging')
+        this._updatePackaging(true);
+        let job = Job.find(this.params.get('id'));
+        if (this.alertMessage) {
+            // Errors. Stay on packaging screen.
+            return this.packaging();
+        }
+        else if (job.packageOp.packageFormat == 'BagIt') {
+            alert('Next is bag metadata form');
+            return this.noContent();
+        } else {
+            alert('Next is upload form');
+            return this.noContent();
+        }
+    }
 
     // update() {
     //     return this.containerContent('Update Job');

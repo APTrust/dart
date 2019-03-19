@@ -199,12 +199,15 @@ class Form {
         this.changed = {};
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
-            // console.log(name);
             let formValue = $(`#${field.id}`).val();
-            if (Array.isArray(formValue)) {
-                formValue = formValue.map(val => val.trim());
-            } else {
-                formValue = formValue.trim();
+            try {
+                if (Array.isArray(formValue)) {
+                    formValue = formValue.map(val => val.trim());
+                } else {
+                    formValue = formValue.trim();
+                }
+            } catch (ex) {
+                console.error(`Error processing form field '${name}': ${ex.toString()}`);
             }
             let newValue = this.castNewValueToType(oldValue, formValue);
             if (oldValue !== newValue) {
