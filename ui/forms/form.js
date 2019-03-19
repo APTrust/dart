@@ -175,6 +175,17 @@ class Form {
         }
     }
 
+    /**
+     * Returns true if the form contains errors. Check this after
+     * calling {@link parseFromDOM} to see if there were any validation
+     * errors.
+     *
+     * @returns {boolean}
+     */
+    hasErrors() {
+        return this.obj.errors && Object.keys(this.obj.errors).length > 0;
+    }
+
 
     /**
      * This updates all of the values of Form.obj based on what the

@@ -81,6 +81,15 @@ test('setErrors()', () => {
     }
 });
 
+test('hasErrors()', () => {
+    let appSetting = new AppSetting({ name: 'fruit', value: 'apple' });
+    let form = new Form('AppSetting', appSetting);
+    expect(form.hasErrors()).toBe(false);
+    form.obj.errors['name'] = 'name error';
+    expect(form.hasErrors()).toBe(true);
+});
+
+
 test('castNewValueToType()', () => {
     let obj = {
         str: 'string 1',
