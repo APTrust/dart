@@ -12,20 +12,9 @@ const { PluginManager } = require('../../plugins/plugin_manager');
 class JobPackageOpForm extends Form {
 
     constructor(job) {
-        super('JobPackageOp', JobPackageOpForm.getCustomObject(job));
+        super('JobPackageOp', new JobPackageOp(job));
         this._init();
         window.formy = this;
-    }
-
-    static getCustomObject(job) {
-        return {
-            packageFormat: job.packageOp.packageFormat,
-            pluginId: job.packageOp.pluginId,
-            bagItProfileId: job.bagItProfile ? job.bagItProfile.id : '',
-            outputPath: job.packageOp.outputPath,
-            packageName: job.packageOp.packageName,
-            id: job.id
-        }
     }
 
     _init() {
@@ -79,6 +68,7 @@ class JobPackageOpForm extends Form {
             selectedProfileId,
             true
         );
+        this.fields['bagItProfile'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
     }
 
     // parseFromDOM() {
@@ -95,6 +85,24 @@ class JobPackageOpForm extends Form {
     //     }
     // }
 
+}
+
+/**
+ * This is a convenience class to summarize a subset of Job
+ * and PackageOperation data that appears on the the Job
+ * Packaging form. This object is not saved per se; its
+ * properties are copied to and from the Job and PackageOperation
+ * form.
+ */
+class JobPackageOp {
+    constructor(job) {
+        this.packageFormat = job.packageOp.packageFormat;
+        this.pluginId = job.packageOp.pluginId;
+        this.bagItProfileId = job.bagItProfile ? job.bagItProfile.id : '';
+        this.outputPath = job.packageOp.outputPath;
+        this.packageName = job.packageOp.packageName;
+        this.id = job.id;
+    }
 }
 
 module.exports.JobPackageOpForm = JobPackageOpForm;
