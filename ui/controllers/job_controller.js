@@ -26,6 +26,7 @@ class JobController extends BaseController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'createdAt';
         this.defaultSortDirection = 'desc';
+        this.errors = [];
     }
 
     new() {
@@ -37,7 +38,6 @@ class JobController extends BaseController {
 
     files() {
         let job = Job.find(this.params.get('id'));
-        let errors = '';  //this._getPageLevelErrors(job);
         let data = {
             alertMessage: this.alertMessage,
             job: job
@@ -52,7 +52,7 @@ class JobController extends BaseController {
         let errors = '';  //this._getPageLevelErrors(job);
         let form = new JobPackageOpForm(job);
         let data = {
-            alertMessage: this.alertMessage,
+            alertList: this.errors,
             alertCssClass: this.alertCssClass,
             job: job,
             form: form
@@ -63,7 +63,7 @@ class JobController extends BaseController {
     }
 
     _updatePackaging(withValidation) {
-        this.alertMessage = '';
+        this.errors = [];
         let job = Job.find(this.params.get('id'));
         let form = new JobPackageOpForm(job);
         form.parseFromDOM();
@@ -74,18 +74,16 @@ class JobController extends BaseController {
         job.packageOp.packageName = form.obj.packageName;
         job.save();
         if (withValidation) {
-            let errors = [];
             if (job.packageOp.packageFormat == 'BagIt' && !job.bagItProfile) {
-                errors.push(Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile."));
+                this.errors.push(Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile."));
             }
             if (!job.packageOp.outputPath) {
-                errors.push(Context.y18n.__("You must specify an output path."));
+                this.errors.push(Context.y18n.__("You must specify an output path."));
             }
             if (job.packageOp.packageName) {
-                errors.push(Context.y18n.__("You must specify a package name."));
+                this.errors.push(Context.y18n.__("You must specify a package name."));
             }
-            if (errors.length) {
-                this.alertMessage = `<ul><li>${errors.join('</li><li>')}</li></ul>`;
+            if (this.errors.length) {
                 this.alertCssClass = 'alert-danger';
             }
         }
@@ -95,17 +93,15 @@ class JobController extends BaseController {
     // User clicked Back button from packaging page.
     // Save work without validating.
     backToFiles() {
-        console.log('backToFiles')
         this._updatePackaging(false);
-        return this.packaging();
+        return this.files();
     }
 
     // User clicked Next button from packaging page.
     postPackaging() {
-        console.log('postPackaging')
         this._updatePackaging(true);
         let job = Job.find(this.params.get('id'));
-        if (this.alertMessage) {
+        if (this.errors.length > 0) {
             // Errors. Stay on packaging screen.
             return this.packaging();
         }
@@ -167,7 +163,7 @@ class JobController extends BaseController {
     // }
 
     postRenderCallback(fnName) {
-        if (fnName == 'new' || fnName == 'files') {
+        if (['new', 'files', 'backToFiles'].includes(fnName)) {
             let job = Job.find(this.params.get('id'));
             let helper = new JobFileUIHelper(job);
             helper.initUI();

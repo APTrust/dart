@@ -1,6 +1,14 @@
 {{#if message }}
 <div class="alert {{#if alertCssClass }}{{ alertCssClass }}{{else}}alert-success{{/if }}" role="alert">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-  {{ message }}
+  {{#if alertMessage }}
+  {{ alertMessage }}
+  {{else if alertList }}
+  <ul>
+    {{#each alertList }}
+    <li>{{ item }}</li>
+    {{/each}}
+  </ul>
+  {{/if}}
 </div>
 {{/if }}
