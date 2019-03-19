@@ -26,7 +26,6 @@ class JobController extends BaseController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'createdAt';
         this.defaultSortDirection = 'desc';
-        this.errors = [];
     }
 
     new() {
@@ -49,21 +48,20 @@ class JobController extends BaseController {
 
     packaging() {
         let job = Job.find(this.params.get('id'));
-        let errors = '';  //this._getPageLevelErrors(job);
         let form = new JobPackageOpForm(job);
+        return this._renderPackagingForm(job, form);
+    }
+
+    _renderPackagingForm(job, form) {
         let data = {
-            alertList: this.errors,
-            alertCssClass: this.alertCssClass,
             job: job,
             form: form
         }
-        this.alertMessage = null;
         let html = Templates.jobPackaging(data);
         return this.containerContent(html);
     }
 
-    _updatePackaging(withValidation) {
-        this.errors = [];
+    _parseJobPackagingForm() {
         let job = Job.find(this.params.get('id'));
         let form = new JobPackageOpForm(job);
         form.parseFromDOM();
@@ -72,21 +70,26 @@ class JobController extends BaseController {
         job.bagItProfile = BagItProfile.find(form.obj.bagItProfileId);
         job.packageOp.outputPath = form.obj.outputPath;
         job.packageOp.packageName = form.obj.packageName;
-        job.save();
+        return [job, form]
+    }
+
+    _updatePackaging(withValidation) {
+        let [job, form] = this._parseJobPackagingForm();
         if (withValidation) {
             if (job.packageOp.packageFormat == 'BagIt' && !job.bagItProfile) {
-                this.errors.push(Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile."));
+                form.obj.errors['bagItProfileId'] = Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile.");
             }
             if (!job.packageOp.outputPath) {
-                this.errors.push(Context.y18n.__("You must specify an output path."));
+                form.obj.errors['outputPath'] = Context.y18n.__("You must specify an output path.");
             }
-            if (job.packageOp.packageName) {
-                this.errors.push(Context.y18n.__("You must specify a package name."));
-            }
-            if (this.errors.length) {
-                this.alertCssClass = 'alert-danger';
+            if (!job.packageOp.packageName) {
+                form.obj.errors['packageName'] = Context.y18n.__("You must specify a package name.");
             }
         }
+        if(!withValidation || (withValidation && !form.hasErrors())) {
+            job.save();
+        }
+        return [job, form]
     }
 
 
@@ -99,11 +102,13 @@ class JobController extends BaseController {
 
     // User clicked Next button from packaging page.
     postPackaging() {
-        this._updatePackaging(true);
-        let job = Job.find(this.params.get('id'));
-        if (this.errors.length > 0) {
+        // this._updatePackaging(true);
+        // let job = Job.find(this.params.get('id'));
+        let [job, form] = this._updatePackaging(true);
+        if (form.hasErrors()) {
             // Errors. Stay on packaging screen.
-            return this.packaging();
+            form.setErrors();
+            return this._renderPackagingForm(job, form);
         }
         else if (job.packageOp.packageFormat == 'BagIt') {
             alert('Next is bag metadata form');

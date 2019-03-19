@@ -91,6 +91,7 @@ class JobPackageOp {
         this.outputPath = job.packageOp.outputPath;
         this.packageName = job.packageOp.packageName;
         this.id = job.id;
+        this.errors = {};
     }
 }
 

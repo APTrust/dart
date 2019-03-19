@@ -260,5 +260,6 @@
   "JobPackageOp_id_label": "JobPackageOp_id_label",
   "JobPackageOp_id_help": "JobPackageOp_id_help",
   "When choosing BagIt format, you must choose a BagIt profile.": "When choosing BagIt format, you must choose a BagIt profile.",
-  "You must specify a package name.": "You must specify a package name."
+  "You must specify a package name.": "You must specify a package name.",
+  "You must specify an output path.": "You must specify an output path."
 }
