@@ -256,7 +256,7 @@
   "JobPackageOp_outputPath_label": "Output Path",
   "JobPackageOp_outputPath_help": "Where should this job put local copies of the files it creates?",
   "JobPackageOp_packageName_label": "Package Name",
-  "JobPackageOp_packageName_help": "This should be the file or bag name of the package you are creating. For example, 'my_bag', 'photos', etc. This will become part of the file name, so avoid spaces and special characters.",
+  "JobPackageOp_packageName_help": "This should be the file or bag name of the package you are creating. For example, 'my_bag', 'PhotoCollection_1234', etc. This will become part of the file name, so avoid spaces and special punctuation characters.",
   "JobPackageOp_id_label": "JobPackageOp_id_label",
   "JobPackageOp_id_help": "JobPackageOp_id_help"
 }

@@ -17,7 +17,8 @@ function getJobWithOps() {
     setTag(job.bagItProfile, 'Description', 'Description 1');
 
     job.packageOp = new PackageOperation();
-    job.packageOp.outputPath = "path/to/my_bag.tar";
+    job.packageOp.packageName = "bag_of_photos";
+    job.packageOp.outputPath = "path/to/bags";
 
     job.uploadOps = [new UploadOperation()];
     job.uploadOps[0].sourceFiles = ["path/to/my_file.zip"];
@@ -58,7 +59,7 @@ test('title()', () => {
     let job = getJobWithOps();
 
     // Should use basename of package path, if available.
-    expect(job.title()).toEqual('my_bag.tar');
+    expect(job.title()).toEqual('bag_of_photos');
 
     // Else, fall back to path of last uploaded file.
     job.packageOp = null;
@@ -204,7 +205,7 @@ test('inflateFrom()', () => {
 
     // packageOp
     expect(newJob.packageOp).not.toBeNull();
-    expect(newJob.packageOp.outputPath).toEqual('path/to/my_bag.tar');
+    expect(newJob.packageOp.outputPath).toEqual('path/to/bags');
     expect(typeof newJob.packageOp.validate).toEqual('function');
 
     // validationOp
@@ -232,7 +233,7 @@ test('find()', () => {
 
     // packageOp
     expect(retrievedJob.packageOp).not.toBeNull();
-    expect(retrievedJob.packageOp.outputPath).toEqual('path/to/my_bag.tar');
+    expect(retrievedJob.packageOp.outputPath).toEqual('path/to/bags');
     expect(typeof retrievedJob.packageOp.validate).toEqual('function');
 
     // validationOp

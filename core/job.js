@@ -77,8 +77,8 @@ class Job extends PersistentObject {
     title() {
         // Try to get the name of the file that was created or uploaded.
         var name = null;
-        if (this.packageOp && this.packageOp.outputPath) {
-            name = path.basename(this.packageOp.outputPath);
+        if (!name && this.packageOp && this.packageOp.packageName) {
+            name = path.basename(this.packageOp.packageName);
         }
         if (!name && this.uploadOps.length > 0 && this.uploadOps[0].sourceFiles.length > 0) {
             name = path.basename(this.uploadOps[0].sourceFiles[0]);
