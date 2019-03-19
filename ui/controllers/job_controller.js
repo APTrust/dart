@@ -111,17 +111,21 @@ class JobController extends BaseController {
             return this._renderPackagingForm(job, form);
         }
         else if (job.packageOp.packageFormat == 'BagIt') {
-            alert('Next is bag metadata form');
-            return this.noContent();
+            return this.showMetadataForm(job);
         } else {
-            alert('Next is upload form');
-            return this.noContent();
+            return this.showUploadForm(job);
         }
     }
 
-    // update() {
-    //     return this.containerContent('Update Job');
-    // }
+    showMetadataForm(job) {
+        // Placeholder...
+        return this.containerContent(Templates.jobMetadata({ job: job }));
+    }
+
+    showUploadForm(job) {
+        // Placeholder...
+        return this.containerContent(Templates.jobUpload({ job: job }));
+    }
 
     list() {
         let listParams = this.paramsToHash();
