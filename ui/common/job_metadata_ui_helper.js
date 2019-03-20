@@ -21,8 +21,15 @@ class JobMetadataUIHelper {
      */
     initUI() {
         $("#btnToggleHidden").click(function() {
-            let btnText = Context.y18n.__();
+            let showAll = Context.y18n.__('Show All Tags');
+            let hideDefaults = Context.y18n.__('Hide Default Tags');
+            let currentText = $("#btnToggleHidden").text().trim();
             $('.form-group-hidden').toggle();
+            if (currentText == showAll) {
+                $("#btnToggleHidden").text(hideDefaults);
+            } else {
+                $("#btnToggleHidden").text(showAll);
+            }
         });
 
         $("#btnAddNewTag").click(function() {

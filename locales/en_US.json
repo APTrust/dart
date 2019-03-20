@@ -265,5 +265,6 @@
   "TagDefinition_wasAddedForJob_label": "TagDefinition_wasAddedForJob_label",
   "TagDefinition_wasAddedForJob_help": "TagDefinition_wasAddedForJob_help",
   "Show All Tags": "Show All Tags",
-  "Add New Tag": "Add New Tag"
+  "Add New Tag": "Add New Tag",
+  "Hide Default Tags": "Hide Default Tags"
 }

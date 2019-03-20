@@ -128,8 +128,9 @@ class JobController extends BaseController {
         let form = new JobTagsForm(job);
         this._postRenderHelper = new JobMetadataUIHelper(job);
         return this.containerContent(Templates.jobMetadata(
-            { job: job,
-              form: form
+            {
+                job: job,
+                form: form
             }
         ));
     }
@@ -185,20 +186,6 @@ class JobController extends BaseController {
     // }
 
     postRenderCallback(fnName) {
-        // if (['new', 'files', 'backToFiles'].includes(fnName)) {
-        //     let job = Job.find(this.params.get('id'));
-        //     let helper = new JobFileUIHelper(job);
-        //     helper.initUI();
-        // } else if (fnName == 'packaging') {
-        //     let job = Job.find(this.params.get('id'));
-        //     let helper = new JobPackagingUIHelper(job);
-        //     helper.initUI();
-        // } else if (fnName == 'showMetadataForm') {
-        //     let job = Job.find(this.params.get('id'));
-        //     let helper = new JobMetadataUIHelper(job);
-        //     helper.initUI();
-        // }
-
         if (this._postRenderHelper) {
             this._postRenderHelper.initUI();
         }
