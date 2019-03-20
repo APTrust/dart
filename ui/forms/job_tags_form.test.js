@@ -20,7 +20,7 @@ test('create()', () => {
         let tag = job.bagItProfile.firstMatchingTag('id', field.id);
         expect(field.label).toContain(field.name);
         expect(field.label).toContain(':');
-        if (tag.values) {
+        if (tag.values && tag.values.length > 0) {
             // Plus one because the UI shows an empty first option.
             expect(field.choices.length).toEqual(tag.values.length + 1);
         }
