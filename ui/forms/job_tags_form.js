@@ -63,6 +63,13 @@ class JobTagsForm extends Form {
         // the BagIt profile.
         field.wasAddedForJob = t.wasAddedForJob;
 
+        // Hide fields that have default values so they don't
+        // clutter the UI. User can show them with a click if
+        // they so choose.
+        if (t.defaultValue) {
+            field.hide = true;
+        }
+
         // Profit!
         return field;
     }

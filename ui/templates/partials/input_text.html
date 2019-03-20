@@ -1,4 +1,4 @@
-<div class="form-group">
+<div class="form-group" {{#if field.hide }}style="display:none;"{{/if}}>
   <label class="control-label {{#if field.help }}clickable{{/if}}" for="{{ field.id }}"
          {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{/if}} {{#if field.help}}<i class="fas fa-question-circle text-primary"></i>{{/if}}</label>
   <input type="text" id="{{ field.id }}" name="{{ field.name }}" value="{{ field.value }}"

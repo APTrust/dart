@@ -1,3 +1,27 @@
 <h2>Bag Metadata</h2>
 
-{{ job }}
+<form>
+  {{#each form.fields as |field| }}
+
+    {{#if field.choices }}
+
+      {{> inputSelect field = field }}
+
+    {{else if field.looksLikeDescriptionTag }}
+
+      {{> inputTextArea field = field }}
+
+    {{else if field.wasAddedForJob }}
+
+      <!-- Needs to be text with delete option. -->
+
+      {{> inputText field = field }}
+
+    {{else}}
+
+      {{> inputText field = field }}
+
+    {{/if}}
+
+  {{/each}}
+</form>
