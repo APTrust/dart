@@ -263,5 +263,7 @@
   "You must specify a package name.": "You must specify a package name.",
   "You must specify an output path.": "You must specify an output path.",
   "TagDefinition_wasAddedForJob_label": "TagDefinition_wasAddedForJob_label",
-  "TagDefinition_wasAddedForJob_help": "TagDefinition_wasAddedForJob_help"
+  "TagDefinition_wasAddedForJob_help": "TagDefinition_wasAddedForJob_help",
+  "Show All Tags": "Show All Tags",
+  "Add New Tag": "Add New Tag"
 }

@@ -3,6 +3,7 @@ const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobFileUIHelper } = require('../common/job_file_ui_helper');
+const { JobMetadataUIHelper } = require('../common/job_metadata_ui_helper');
 const { JobPackagingUIHelper } = require('../common/job_packaging_ui_helper');
 const { JobForm } = require('../forms/job_form');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
@@ -27,6 +28,8 @@ class JobController extends BaseController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'createdAt';
         this.defaultSortDirection = 'desc';
+
+        this._postRenderHelper = null;
     }
 
     new() {
@@ -38,6 +41,7 @@ class JobController extends BaseController {
 
     files() {
         let job = Job.find(this.params.get('id'));
+        this._postRenderHelper = new JobFileUIHelper(job);
         let data = {
             alertMessage: this.alertMessage,
             job: job
@@ -49,6 +53,7 @@ class JobController extends BaseController {
 
     packaging() {
         let job = Job.find(this.params.get('id'));
+        this._postRenderHelper = new JobPackagingUIHelper(job);
         let form = new JobPackageOpForm(job);
         return this._renderPackagingForm(job, form);
     }
@@ -86,6 +91,7 @@ class JobController extends BaseController {
             if (!job.packageOp.packageName) {
                 form.obj.errors['packageName'] = Context.y18n.__("You must specify a package name.");
             }
+            // TODO: Validate bag name.
         }
         if(!withValidation || (withValidation && !form.hasErrors())) {
             job.save();
@@ -120,6 +126,7 @@ class JobController extends BaseController {
 
     showMetadataForm(job) {
         let form = new JobTagsForm(job);
+        this._postRenderHelper = new JobMetadataUIHelper(job);
         return this.containerContent(Templates.jobMetadata(
             { job: job,
               form: form
@@ -146,6 +153,7 @@ class JobController extends BaseController {
         return this.containerContent(html);
     }
 
+    // TODO: Remove if not used
     /**
      * This adds some custom display properties to each jobs hash
      * so we can color-code the display.
@@ -177,14 +185,22 @@ class JobController extends BaseController {
     // }
 
     postRenderCallback(fnName) {
-        if (['new', 'files', 'backToFiles'].includes(fnName)) {
-            let job = Job.find(this.params.get('id'));
-            let helper = new JobFileUIHelper(job);
-            helper.initUI();
-        } else if (fnName == 'packaging') {
-            let job = Job.find(this.params.get('id'));
-            let helper = new JobPackagingUIHelper(job);
-            helper.initUI();
+        // if (['new', 'files', 'backToFiles'].includes(fnName)) {
+        //     let job = Job.find(this.params.get('id'));
+        //     let helper = new JobFileUIHelper(job);
+        //     helper.initUI();
+        // } else if (fnName == 'packaging') {
+        //     let job = Job.find(this.params.get('id'));
+        //     let helper = new JobPackagingUIHelper(job);
+        //     helper.initUI();
+        // } else if (fnName == 'showMetadataForm') {
+        //     let job = Job.find(this.params.get('id'));
+        //     let helper = new JobMetadataUIHelper(job);
+        //     helper.initUI();
+        // }
+
+        if (this._postRenderHelper) {
+            this._postRenderHelper.initUI();
         }
     }
 }

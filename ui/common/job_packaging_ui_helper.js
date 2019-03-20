@@ -21,10 +21,9 @@ class JobPackagingUIHelper {
      */
     initUI() {
         $("select[name=packageFormat]").change(this.onFormatChange());
-        // $("select[name=profile]").change(this.onProfileChange());
+
+        // TODO: Impelement bag name suggestion.
         // $(".suggest-name").click(this.onSuggestClick());
-        // $("#btnJobFiles").click(this.onJobFilesClick());
-        // $("#btnJobTagsOrStorage").click(this.onNextButtonClick());
     }
 
 

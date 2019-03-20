@@ -60,10 +60,6 @@ handlebars.registerHelper('eq', function(a, b) {
   return a === b;
 });
 
-handlebars.registerHelper('jobFormTagField', function(tag) {
-    return tag.toFieldForJobForm();
-});
-
 handlebars.registerHelper('resultSummary', function(result) {
     return result.summary();
 });

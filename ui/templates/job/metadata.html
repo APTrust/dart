@@ -1,27 +1,52 @@
 <h2>Bag Metadata</h2>
 
-<form>
-  {{#each form.fields as |field| }}
 
-    {{#if field.choices.length }}
+<div style="height: 50px;">
+  <div>
+    <div class="pull-right p-r-3">
+      <button type="button" class="btn btn-primary" id="btnToggleHidden" style="margin-left: 25px;">{{ translate 'Show All Tags' }}</a>
+    </div>
+    <div class="pull-right">
+      <button type="button" class="btn btn-primary" id="btnAddNewTag">{{ translate 'Add New Tag' }}</a>
+    </div>
+  </div>
+</div>
 
-      {{> inputSelect field = field }}
 
-    {{else if field.looksLikeDescriptionTag }}
+<div>
+  <form>
+    {{#each form.fields as |field| }}
 
-      {{> inputTextArea field = field }}
+      {{#if field.choices.length }}
 
-    {{else if field.wasAddedForJob }}
+        {{> inputSelect field = field }}
 
-      <!-- Needs to be text with delete option. -->
+      {{else if field.looksLikeDescriptionTag }}
 
-      {{> inputText field = field }}
+        {{> inputTextArea field = field }}
 
-    {{else}}
+      {{else if field.wasAddedForJob }}
 
-      {{> inputText field = field }}
+        <!-- Needs to be text with delete option. -->
 
-    {{/if}}
+        {{> inputText field = field }}
 
-  {{/each}}
-</form>
+      {{else}}
+
+        {{> inputText field = field }}
+
+      {{/if}}
+
+    {{/each}}
+  </form>
+</div>
+
+
+<div>
+  <div class="pull-left" id="btnBackDiv">
+    <a class="btn btn-primary" href="#" role="button">&lt;&lt; Back</a>
+  </div>
+  <div class="pull-right" id="btnNextDiv">
+    <a class="btn btn-primary" href="#" role="button">Next &gt;&gt;</a>
+  </div>
+</div>
