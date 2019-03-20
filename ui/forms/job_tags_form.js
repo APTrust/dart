@@ -37,7 +37,7 @@ class JobTagsForm extends Form {
         var label = `${t.tagFile}: ${t.tagName}`;
         var field = new Field(t.id, t.tagName, label, t.getValue());
         field.help = t.help;
-        if (t.values) {
+        if (t.values && t.values.length > 0) {
             field.choices = Choice.makeList(t.values, t.getValue(), true);
         }
         if (t.systemMustSet()) {
@@ -66,8 +66,8 @@ class JobTagsForm extends Form {
         // Hide fields that have default values so they don't
         // clutter the UI. User can show them with a click if
         // they so choose.
-        if (t.defaultValue) {
-            field.hide = true;
+        if (t.defaultValue || t.systemMustSet()) {
+            field.formGroupClass = 'form-group-hidden';
         }
 
         // Profit!

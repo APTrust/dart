@@ -3,7 +3,7 @@
 <form>
   {{#each form.fields as |field| }}
 
-    {{#if field.choices }}
+    {{#if field.choices.length }}
 
       {{> inputSelect field = field }}
 

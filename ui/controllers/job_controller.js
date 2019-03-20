@@ -6,6 +6,7 @@ const { JobFileUIHelper } = require('../common/job_file_ui_helper');
 const { JobPackagingUIHelper } = require('../common/job_packaging_ui_helper');
 const { JobForm } = require('../forms/job_form');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
+const { JobTagsForm } = require('../forms/job_tags_form');
 const Templates = require('../common/templates');
 
 const typeMap = {
@@ -118,8 +119,12 @@ class JobController extends BaseController {
     }
 
     showMetadataForm(job) {
-        // Placeholder...
-        return this.containerContent(Templates.jobMetadata({ job: job }));
+        let form = new JobTagsForm(job);
+        return this.containerContent(Templates.jobMetadata(
+            { job: job,
+              form: form
+            }
+        ));
     }
 
     showUploadForm(job) {

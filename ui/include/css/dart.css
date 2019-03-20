@@ -129,3 +129,11 @@ legend {
     width: auto;
     border-bottom: none;
 }
+
+/*
+   This is used to hide some form elements that can
+   clutter the screen. User can click to unhide them.
+*/
+.form-group-hidden {
+    display:none;
+}

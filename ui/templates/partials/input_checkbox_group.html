@@ -1,5 +1,5 @@
 {{#each field.choices }}
-<div class="form-check {{#each field.cssClasses }}{{ this }} {{/each }}"
+<div class="form-check {{#each field.cssClasses }}{{ this }}{{/each }}{{ field.formGroupClass }}"
      {{#each field.attrs }}{{ @key }}="{{ this }}"{{/each }}
      {{#if field.hide }}style="display:none;"{{/if}}>
   <label class="form-check-label">

@@ -9,6 +9,11 @@ class Field {
         this.cssClasses = [];
         this.attrs = {}
 
+        // Use 'form-group-hidden' to hide entire control,
+        // label, and other elements associated with the
+        // form input.
+        this.formGroupClass = null;
+
         // validator is a validation function that should return
         // true if the value is valid and false if not. It should
         // set a meaningful error message if the value is invalid.
