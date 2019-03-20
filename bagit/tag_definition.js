@@ -142,6 +142,13 @@ class TagDefinition {
           */
         this.isUserAddedTag = opts.isUserAddedTag === true ? true : false;
         /**
+         * wasAddedForJob will be true if the user added this custom tag
+         * from the jobs UI. This means it's a job-specific tag and the
+         * user should be able to delete it without breaking the bag's
+         * conformity to a profile.
+         */
+        this.wasAddedForJob = opts.wasAddedForJob === true ? true : false;
+        /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the
          * field is not valid.

@@ -8,7 +8,7 @@ class TagDefinitionForm extends Form {
 
     constructor(tagDefinition) {
         // On this form, we do include 'required'
-        super('TagDefinition', tagDefinition, ['errors', 'type']);
+        super('TagDefinition', tagDefinition, ['errors', 'type', 'wasAddedForJob']);
         this._init();
     }
 
