@@ -135,6 +135,12 @@ class JobController extends BaseController {
         ));
     }
 
+    _parseMetadataForm() {
+        let job = Job.find(this.params.get('id'));
+        let form = new JobTagsForm(job);
+        form.copyFormValuesToTags(job);
+    }
+
     showUploadForm(job) {
         // Placeholder...
         return this.containerContent(Templates.jobUpload({ job: job }));

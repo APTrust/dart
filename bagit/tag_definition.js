@@ -173,10 +173,15 @@ class TagDefinition {
         if (Util.isEmpty(this.tagName)) {
             this.errors['tagName'] = "You must specify a tag name.";
         }
-        if (!Util.isEmptyStringArray(this.values) && !Util.listContains(this.values, this.defaultValue)) {
+        if (!Util.isEmptyStringArray(this.values)) {
+            if (!Util.isEmpty(this.defaultValue) && !Util.listContains(this.values, this.defaultValue)) {
             this.errors['defaultValue'] = "The default value must be one of the allowed values.";
+            }
+            if (!Util.isEmpty(this.userValue) && !Util.listContains(this.values, this.userValue)) {
+                this.errors['userValue'] = "The value must be one of the allowed values.";
+            }
         }
-        return Object.keys(this.errors).length == 0;
+        return Object.keys(this.errors).length === 0;
     }
 
     /**

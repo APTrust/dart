@@ -35,6 +35,7 @@ test('validate()', () => {
     expect(result).toEqual(true);
 
     tagDef.values = ['honest', 'respectable', 'responsible'];
+    tagDef.defaultValue = 'not one of the allowed options';
     result = tagDef.validate();
     expect(result).toEqual(false);
     expect(Object.keys(tagDef.errors).length).toEqual(1);

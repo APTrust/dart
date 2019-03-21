@@ -4,6 +4,7 @@ const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
+const { Util } = require('../../core/util');
 
 /**
  * JobTagsForm can present and parse the form that allows
@@ -19,7 +20,7 @@ class JobTagsForm extends Form {
     _init(job) {
         for (let tagDef of job.bagItProfile.tags) {
             let field = this._tagDefToField(tagDef);
-            this.fields[field.name] = field;
+            this.fields[field.id] = field;
         }
     }
 
@@ -35,7 +36,7 @@ class JobTagsForm extends Form {
      */
     _tagDefToField(t) {
         var label = `${t.tagFile}: ${t.tagName}`;
-        var field = new Field(t.id, t.tagName, label, t.getValue());
+        var field = new Field(t.id, t.id, label, t.getValue());
         field.help = t.help;
         if (t.values && t.values.length > 0) {
             field.choices = Choice.makeList(t.values, t.getValue(), true);
@@ -48,6 +49,9 @@ class JobTagsForm extends Form {
         if (t.required && !t.emptyOk) {
             field.attrs['required'] = true;
             field.cssClasses.push('required');
+        }
+        if (t.errors && t.errors['userValue']) {
+            field.error = t.errors['userValue'];
         }
 
         // Add some extra properties to the Field object
@@ -72,6 +76,16 @@ class JobTagsForm extends Form {
 
         // Profit!
         return field;
+    }
+
+    copyFormValuesToTags(job) {
+        this.parseFromDOM();
+        for (let [tagId, userEnteredValue] of Object.entries(this.obj)) {
+            if (Util.looksLikeUUID(tagId)) {
+                let tag = job.bagItProfile.firstMatchingTag('id', tagId);
+                tag.userValue = userEnteredValue;
+            }
+        }
     }
 }
 
