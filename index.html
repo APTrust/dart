@@ -688,6 +688,26 @@
               
                 
                 <li><a
+                  href='#tagfileform'
+                  class="">
+                  TagFileForm
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#newbagitprofileform'
+                  class="">
+                  NewBagItProfileForm
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#bagitprofileform'
                   class=" toggle-sibling">
                   BagItProfileForm
@@ -717,26 +737,6 @@
                   
                   
                 </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#tagfileform'
-                  class="">
-                  TagFileForm
-                  
-                </a>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#newbagitprofileform'
-                  class="">
-                  NewBagItProfileForm
-                  
-                </a>
                 
                 </li>
               
@@ -2034,40 +2034,6 @@
               
                 
                 <li><a
-                  href='#manifestparser'
-                  class=" toggle-sibling">
-                  ManifestParser
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#manifestparserbagitfile'
-                        class='regular pre-open'>
-                        #bagItFile
-                      </a></li>
-                      
-                      <li><a
-                        href='#manifestparserstream'
-                        class='regular pre-open'>
-                        #stream
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
                   href='#tagfileparser'
                   class=" toggle-sibling">
                   TagFileParser
@@ -2094,6 +2060,40 @@
                       
                       <li><a
                         href='#tagfileparserstream'
+                        class='regular pre-open'>
+                        #stream
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#manifestparser'
+                  class=" toggle-sibling">
+                  ManifestParser
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#manifestparserbagitfile'
+                        class='regular pre-open'>
+                        #bagItFile
+                      </a></li>
+                      
+                      <li><a
+                        href='#manifestparserstream'
                         class='regular pre-open'>
                         #stream
                       </a></li>
@@ -3265,6 +3265,16 @@
               
                 
                 <li><a
+                  href='#'
+                  class="">
+                  
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
                   href='#packageoperation'
                   class=" toggle-sibling">
                   PackageOperation
@@ -3416,16 +3426,6 @@
                   
                   
                 </div>
-                
-                </li>
-              
-                
-                <li><a
-                  href='#'
-                  class="">
-                  
-                  
-                </a>
                 
                 </li>
               
@@ -3738,34 +3738,6 @@ have been written to the file system.
               
                 
                 <li><a
-                  href='#jobmetadatauihelper'
-                  class=" toggle-sibling">
-                  JobMetadataUIHelper
-                  <span class='icon'>▸</span>
-                </a>
-                
-                <div class='toggle-target display-none'>
-                  
-                  
-                    <ul class='list-reset py1-ul pl1'>
-                      <li class='h5'><span>Instance members</span></li>
-                      
-                      <li><a
-                        href='#jobmetadatauihelperinitui'
-                        class='regular pre-open'>
-                        #initUI
-                      </a></li>
-                      
-                    </ul>
-                  
-                  
-                  
-                </div>
-                
-                </li>
-              
-                
-                <li><a
                   href='#jobpackaginguihelper'
                   class=" toggle-sibling">
                   JobPackagingUIHelper
@@ -3780,6 +3752,34 @@ have been written to the file system.
                       
                       <li><a
                         href='#jobpackaginguihelperinitui'
+                        class='regular pre-open'>
+                        #initUI
+                      </a></li>
+                      
+                    </ul>
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#jobmetadatauihelper'
+                  class=" toggle-sibling">
+                  JobMetadataUIHelper
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  
+                    <ul class='list-reset py1-ul pl1'>
+                      <li class='h5'><span>Instance members</span></li>
+                      
+                      <li><a
+                        href='#jobmetadatauihelperinitui'
                         class='regular pre-open'>
                         #initUI
                       </a></li>
@@ -9209,6 +9209,136 @@ exists, it will be overwritten.</p>
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id='tagfileform'>
+      TagFileForm
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This form allows the user to create a new Tag File as part
+of a <a href="#bagitprofile">BagItProfile</a>. This is how users can specify that their
+<a href="#bagitprofile">BagItProfile</a> requires a tag file in addition to the standard
+bagit.txt and bag-info.txt.</p>
+
+    <div class='pre p1 fill-light mt0'>new TagFileForm(tagFileName: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
+  
+  
+    <p>
+      Extends
+      
+        <a href="#form">Form</a>
+      
+    </p>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>tagFileName</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
+	    The name of the new tag file.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='newbagitprofileform'>
+      NewBagItProfileForm
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>This form asks the user if they want to create a new <a href="#bagitprofile">BagItProfile</a>
+from scratch, or if they want to base their new profile on an existing
+profile. This form appears before the form that lets the user customize
+the new profile.</p>
+
+    <div class='pre p1 fill-light mt0'>new NewBagItProfileForm()</div>
+  
+  
+    <p>
+      Extends
+      
+        <a href="#form">Form</a>
+      
+    </p>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='bagitprofileform'>
       BagItProfileForm
     </h3>
@@ -9366,136 +9496,6 @@ properties on the BagItProfile object.</p>
     </div>
   
 </div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='tagfileform'>
-      TagFileForm
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>This form allows the user to create a new Tag File as part
-of a <a href="#bagitprofile">BagItProfile</a>. This is how users can specify that their
-<a href="#bagitprofile">BagItProfile</a> requires a tag file in addition to the standard
-bagit.txt and bag-info.txt.</p>
-
-    <div class='pre p1 fill-light mt0'>new TagFileForm(tagFileName: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</div>
-  
-  
-    <p>
-      Extends
-      
-        <a href="#form">Form</a>
-      
-    </p>
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>tagFileName</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
-	    The name of the new tag file.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
-    <h3 class='fl m0' id='newbagitprofileform'>
-      NewBagItProfileForm
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>This form asks the user if they want to create a new <a href="#bagitprofile">BagItProfile</a>
-from scratch, or if they want to base their new profile on an existing
-profile. This form appears before the form that lets the user customize
-the new profile.</p>
-
-    <div class='pre p1 fill-light mt0'>new NewBagItProfileForm()</div>
-  
-  
-    <p>
-      Extends
-      
-        <a href="#form">Form</a>
-      
-    </p>
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 
@@ -19839,224 +19839,6 @@ primarily in the UI.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='manifestparser'>
-      ManifestParser
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>ManifestParser parses text-based payload and tag manifests that
-conform to the BagIt spec. These files have the following format:</p>
-<p>924238a7018a567062c6527675fcf1c0  data/docs/index.html</p>
-<p>The first item on each line is a checksum and the second is the
-relative path (within the bag) of the file it was calculated from.
-The two items are separated by one or more spaces.</p>
-<p>This class has no methods. It simply responds to events on the stream
-you pipe into it. After parsing the stream, it stores the data it
-has parsed in bagItFile.keyValueCollection. Within that collection,
-you can use the first() method to look up the checksum for a file.</p>
-<p>You can attach your own callback to the ManifestParser.stream end
-event, if you want to do something with the BagItFile or (more likely)
-its keyValueCollection when parsing completes.</p>
-
-    <div class='pre p1 fill-light mt0'>new ManifestParser(bagItFile: <a href="#bagitfile">BagItFile</a>)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>bagItFile</span> <code class='quiet'>(<a href="#bagitfile">BagItFile</a>)</code>
-	    A BagItFile object. If the object
-does not already have a keyValueCollection, the parser will create
-one.
-<p>For more on the BagIt spec,
-see <a href="https://tools.ietf.org/html/draft-kunze-bagit-17">BagIt Spec</a></p>
-<p>For info about how to read the parsed data from the file, see <a href="#keyvaluecollection">KeyValueCollection</a></p>
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Example</div>
-    
-      
-      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Set up a BagItFile. Note the file itself is a payload manifest.</span>
-<span class="hljs-keyword">let</span> pathToManifest = <span class="hljs-string">"/path/to/bag-info.txt"</span>;
-<span class="hljs-keyword">let</span> stats = fs.statSync(pathToManifest);
-<span class="hljs-keyword">let</span> bagItFile = <span class="hljs-keyword">new</span> BagItFile(pathToManifest, <span class="hljs-string">"manifest-sha256.txt"</span>, stats);
-
-<span class="hljs-comment">// Open the BagItFile for reading</span>
-<span class="hljs-keyword">let</span> stream = fs.createReadStream(pathToManifest);
-
-<span class="hljs-comment">// Create a new ManifestParser to parse the BagItFile</span>
-<span class="hljs-keyword">let</span> manifestParser = <span class="hljs-keyword">new</span> ManifestParser(bagItFile);
-
-<span class="hljs-comment">// Optional: Hook up your callback to do something with</span>
-<span class="hljs-comment">// bagItFile when the parsing is done.</span>
-manifestParser.stream.on(<span class="hljs-string">'end'</span>, YOUR_CALLBACK_HERE);
-
-<span class="hljs-comment">// Required: Pipe your file reader into the parser.</span>
-stream.pipe(manifestParser.stream).on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{handleError(e)});</pre>
-    
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='manifestparserbagitfile'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>bagItFile</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>bagItFile is the file that will be parsed.
-When parsing is complete, bagItFile.keyValueCollection
-will be populated with relative file paths and
-the checksum digests that correspond to those paths.</p>
-
-    <div class='pre p1 fill-light mt0'>bagItFile</div>
-  
-    <p>
-      Type:
-      <a href="#bagitfile">BagItFile</a>
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-    <div class='border-bottom' id='manifestparserstream'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>stream</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>stream is a PassThrough stream that allows
-for data to be piped from a ReadStream into
-the parser. You can attach your own 'data' and
-'end' events to this stream, but the parser
-already does the parsing work for you.</p>
-
-    <div class='pre p1 fill-light mt0'>stream</div>
-  
-    <p>
-      Type:
-      stream.PassThrough
-    </p>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='tagfileparser'>
       TagFileParser
     </h3>
@@ -20254,6 +20036,224 @@ is ok to access as a read-only property.</p>
     </div>
   
     <div class='border-bottom' id='tagfileparserstream'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>stream</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>stream is a PassThrough stream that allows
+for data to be piped from a ReadStream into
+the parser. You can attach your own 'data' and
+'end' events to this stream, but the parser
+already does the parsing work for you.</p>
+
+    <div class='pre p1 fill-light mt0'>stream</div>
+  
+    <p>
+      Type:
+      stream.PassThrough
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='manifestparser'>
+      ManifestParser
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>ManifestParser parses text-based payload and tag manifests that
+conform to the BagIt spec. These files have the following format:</p>
+<p>924238a7018a567062c6527675fcf1c0  data/docs/index.html</p>
+<p>The first item on each line is a checksum and the second is the
+relative path (within the bag) of the file it was calculated from.
+The two items are separated by one or more spaces.</p>
+<p>This class has no methods. It simply responds to events on the stream
+you pipe into it. After parsing the stream, it stores the data it
+has parsed in bagItFile.keyValueCollection. Within that collection,
+you can use the first() method to look up the checksum for a file.</p>
+<p>You can attach your own callback to the ManifestParser.stream end
+event, if you want to do something with the BagItFile or (more likely)
+its keyValueCollection when parsing completes.</p>
+
+    <div class='pre p1 fill-light mt0'>new ManifestParser(bagItFile: <a href="#bagitfile">BagItFile</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>bagItFile</span> <code class='quiet'>(<a href="#bagitfile">BagItFile</a>)</code>
+	    A BagItFile object. If the object
+does not already have a keyValueCollection, the parser will create
+one.
+<p>For more on the BagIt spec,
+see <a href="https://tools.ietf.org/html/draft-kunze-bagit-17">BagIt Spec</a></p>
+<p>For info about how to read the parsed data from the file, see <a href="#keyvaluecollection">KeyValueCollection</a></p>
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-comment">// Set up a BagItFile. Note the file itself is a payload manifest.</span>
+<span class="hljs-keyword">let</span> pathToManifest = <span class="hljs-string">"/path/to/bag-info.txt"</span>;
+<span class="hljs-keyword">let</span> stats = fs.statSync(pathToManifest);
+<span class="hljs-keyword">let</span> bagItFile = <span class="hljs-keyword">new</span> BagItFile(pathToManifest, <span class="hljs-string">"manifest-sha256.txt"</span>, stats);
+
+<span class="hljs-comment">// Open the BagItFile for reading</span>
+<span class="hljs-keyword">let</span> stream = fs.createReadStream(pathToManifest);
+
+<span class="hljs-comment">// Create a new ManifestParser to parse the BagItFile</span>
+<span class="hljs-keyword">let</span> manifestParser = <span class="hljs-keyword">new</span> ManifestParser(bagItFile);
+
+<span class="hljs-comment">// Optional: Hook up your callback to do something with</span>
+<span class="hljs-comment">// bagItFile when the parsing is done.</span>
+manifestParser.stream.on(<span class="hljs-string">'end'</span>, YOUR_CALLBACK_HERE);
+
+<span class="hljs-comment">// Required: Pipe your file reader into the parser.</span>
+stream.pipe(manifestParser.stream).on(<span class="hljs-string">'error'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{handleError(e)});</pre>
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='manifestparserbagitfile'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>bagItFile</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>bagItFile is the file that will be parsed.
+When parsing is complete, bagItFile.keyValueCollection
+will be populated with relative file paths and
+the checksum digests that correspond to those paths.</p>
+
+    <div class='pre p1 fill-light mt0'>bagItFile</div>
+  
+    <p>
+      Type:
+      <a href="#bagitfile">BagItFile</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='manifestparserstream'>
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
@@ -29799,6 +29799,71 @@ the errors property for specific errors.</p>
   
   <div class='clearfix'>
     
+    <h3 class='fl m0' id=''>
+      
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>BagItProfileController provides methods to display and update
+<a href="#bagitprofile">BagItProfile</a> objects.</p>
+
+    <div class='pre p1 fill-light mt0'></div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>params</span> <code class='quiet'>(url.URLSearchParams)</code>
+	    Query parameters. The most
+important of these is "id", which specifies the id the BagItProfile
+to load.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
     <h3 class='fl m0' id='packageoperation'>
       PackageOperation
     </h3>
@@ -30925,71 +30990,6 @@ file or directory.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id=''>
-      
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>BagItProfileController provides methods to display and update
-<a href="#bagitprofile">BagItProfile</a> objects.</p>
-
-    <div class='pre p1 fill-light mt0'></div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>params</span> <code class='quiet'>(url.URLSearchParams)</code>
-	    Query parameters. The most
-important of these is "id", which specifies the id the BagItProfile
-to load.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='filestat'>
       FileStat
     </h3>
@@ -31651,11 +31651,9 @@ nothing left to read.</p>
   </div>
   
 
-  <p>The entry event of the read() method includes both info
-about a file in the directory and a <a href="ReadStream">ReadStream</a> object
-that allows you to read the contents of the entry, if it's a file.</p>
-<p>Note that you MUST read the stream to the end or call the stream's close()
-method before FileSystemReader.read() will move to the next tar entry.</p>
+  <p>The entry event of the list() method returns info
+about a file or directory, including its relative path and an
+fs.Stats object.</p>
 
     <div class='pre p1 fill-light mt0'>FileSystemReader#entry</div>
   
@@ -31683,14 +31681,6 @@ method before FileSystemReader.read() will move to the next tar entry.</p>
           <span class='code bold'>relPath</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
           : The relative path (within pathToDirectory)
 of the entry.
-
-          
-        </div>
-      
-        <div class='space-bottom0'>
-          <span class='code bold'>stream</span> <code class='quiet'>(ReadStream)</code>
-          : A stream from which you can read the
-contents of the entry.
 
           
         </div>
@@ -31737,9 +31727,11 @@ and other attributes.
   </div>
   
 
-  <p>The entry event of the list() method returns info
-about a file or directory, including its relative path and an
-fs.Stats object.</p>
+  <p>The entry event of the read() method includes both info
+about a file in the directory and a <a href="ReadStream">ReadStream</a> object
+that allows you to read the contents of the entry, if it's a file.</p>
+<p>Note that you MUST read the stream to the end or call the stream's close()
+method before FileSystemReader.read() will move to the next tar entry.</p>
 
     <div class='pre p1 fill-light mt0'>FileSystemReader#entry</div>
   
@@ -31767,6 +31759,14 @@ fs.Stats object.</p>
           <span class='code bold'>relPath</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
           : The relative path (within pathToDirectory)
 of the entry.
+
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <span class='code bold'>stream</span> <code class='quiet'>(ReadStream)</code>
+          : A stream from which you can read the
+contents of the entry.
 
           
         </div>
@@ -33236,124 +33236,6 @@ source or destination is missing, this will throw an exception.</p>
   
   <div class='clearfix'>
     
-    <h3 class='fl m0' id='jobmetadatauihelper'>
-      JobMetadataUIHelper
-    </h3>
-    
-    
-  </div>
-  
-
-  <p>JobMetadataUIHelper provides a number of methods to help with
-the part of the Job UI that allows users to define how their
-job should be packaged.</p>
-
-    <div class='pre p1 fill-light mt0'>new JobMetadataUIHelper(job: <a href="#job">Job</a>)</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Parameters</div>
-    <div class='prose'>
-      
-        <div class='space-bottom0'>
-          <div>
-            <span class='code bold'>job</span> <code class='quiet'>(<a href="#job">Job</a>)</code>
-	    The job whose files you want to manipulate.
-
-          </div>
-          
-        </div>
-      
-    </div>
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
-    <div class="clearfix">
-  
-    <div class='border-bottom' id='jobmetadatauihelperinitui'>
-      <div class="clearfix small pointer toggle-sibling">
-        <div class="py1 contain">
-            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>initUI()</span>
-        </div>
-      </div>
-      <div class="clearfix display-none toggle-target">
-        <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-
-  <p>This attaches required events to elements of the Job
-metadata UI.</p>
-
-    <div class='pre p1 fill-light mt0'>initUI()</div>
-  
-  
-
-  
-  
-  
-  
-  
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-</section>
-
-      </div>
-    </div>
-  
-</div>
-
-  
-
-  
-
-  
-</section>
-
-          
-        
-          
-          <section class='p2 mb2 clearfix bg-white minishadow'>
-
-  
-  <div class='clearfix'>
-    
     <h3 class='fl m0' id='jobpackaginguihelper'>
       JobPackagingUIHelper
     </h3>
@@ -33421,6 +33303,124 @@ job should be packaged.</p>
 
   <p>This attaches required events to elements of the Job
 packaging UI.</p>
+
+    <div class='pre p1 fill-light mt0'>initUI()</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='jobmetadatauihelper'>
+      JobMetadataUIHelper
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>JobMetadataUIHelper provides a number of methods to help with
+the part of the Job UI that allows users to define how their
+job should be packaged.</p>
+
+    <div class='pre p1 fill-light mt0'>new JobMetadataUIHelper(job: <a href="#job">Job</a>)</div>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>job</span> <code class='quiet'>(<a href="#job">Job</a>)</code>
+	    The job whose files you want to manipulate.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='jobmetadatauihelperinitui'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>initUI()</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>This attaches required events to elements of the Job
+metadata UI.</p>
 
     <div class='pre p1 fill-light mt0'>initUI()</div>
   
