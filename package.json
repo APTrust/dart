@@ -21,7 +21,7 @@
         "documentation": "^9.3.1",
         "electron-context-menu": "^0.11.0",
         "electron-log": "^3.0.1",
-        "electron-store": "^2.0.0",
+        "electron-store": "^3.0.0",
         "es6-error": "^4.1.1",
         "handlebars": "^4.1.1",
         "minio": "^7.0.5",
