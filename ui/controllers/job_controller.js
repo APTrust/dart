@@ -157,29 +157,43 @@ class JobController extends BaseController {
         return job;
     }
 
+    _validateMetadataForm() {
+        var job = this._parseMetadataForm();
+        let isValid = true;
+        for (let t of job.bagItProfile.tags) {
+            if (!t.validateForJob()) {
+                isValid = false;
+            }
+        }
+        return [job, isValid];
+    }
+
+    // This is too messy and confusing and needs to be refactored.
+    // job can come from too many different places. It should be clear.
     showUploadForm(job) {
-        if (this.params['referer'] == 'MetadataForm') {
+        if (this.params.get('referer') == 'MetadataForm') {
             let formIsValid = true;
             [job, formIsValid] = this._validateMetadataForm();
             job.save();
             if (!formIsValid) {
                 return this.showMetadataForm(job);
             }
+        }
+        return this.containerContent(Templates.jobUpload({ job: job }));
+    }
+
+
+    backFromUpload() {
+        let job = Job.find(this.params.get('id'));
+        // TODO: Validate upload form
+        if (job.packageOp.packageFormat == 'BagIt') {
+            return this.showMetadataForm(job);
         } else {
-            return this.containerContent(Templates.jobUpload({ job: job }));
+            return this.packaging(job);
         }
     }
 
-    _validateMetadataForm() {
-        var job = this._parseMetadataForm();
-        let isValid = true;
-        for (let t of job.bagItProfile.tags) {
-            if (!t.validate()) {
-                isValid = false;
-            }
-        }
-        return [job, isValid];
-    }
+
 
     list() {
         let listParams = this.paramsToHash();
