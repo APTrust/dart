@@ -63,9 +63,18 @@ class TagDefinitionController extends BaseController {
         let form = new TagDefinitionForm(tagDef);
         form.parseFromDOM();
 
-        // Special parsing for allowed values
-        let allowedVals = $('#tagDefinitionForm_values').val().split('\n');
-        tagDef.values = allowedVals.map(str => str.trim());
+        // Special parsing for allowed values. Do not create the values
+        // list if this field is empty, or you'll wind up with this:
+        // [""], which will cause other parts of the UI to render
+        // HTML select fields with no viable choices when they should
+        // render HTML text inputs instead.
+        let allowedVal = $('#tagDefinitionForm_values').val();
+        if (allowedVal != null && allowedVal.trim() != "") {
+            let allowedVals = $('#tagDefinitionForm_values').val().split('\n');
+            tagDef.values = allowedVals.map(str => str.trim());
+        } else {
+            tagDef.values = [];
+        }
 
         if (!form.obj.validate()) {
             form.setErrors();
