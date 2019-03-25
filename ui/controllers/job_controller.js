@@ -158,8 +158,27 @@ class JobController extends BaseController {
     }
 
     showUploadForm(job) {
-        // Placeholder...
-        return this.containerContent(Templates.jobUpload({ job: job }));
+        if (this.params['referer'] == 'MetadataForm') {
+            let formIsValid = true;
+            [job, formIsValid] = this._validateMetadataForm();
+            job.save();
+            if (!formIsValid) {
+                return this.showMetadataForm(job);
+            }
+        } else {
+            return this.containerContent(Templates.jobUpload({ job: job }));
+        }
+    }
+
+    _validateMetadataForm() {
+        var job = this._parseMetadataForm();
+        let isValid = true;
+        for (let t of job.bagItProfile.tags) {
+            if (!t.validate()) {
+                isValid = false;
+            }
+        }
+        return [job, isValid];
     }
 
     list() {
