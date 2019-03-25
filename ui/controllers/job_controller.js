@@ -53,11 +53,6 @@ class JobController extends BaseController {
 
     packaging() {
         let job = Job.find(this.params.get('id'));
-        // ---- DEBUG ----
-        // console.log('Job loaded by packaging()');
-        // console.log(job);
-        window.job = job;
-        // ---- DEBUG ----
         this._postRenderHelper = new JobPackagingUIHelper(job);
         let form = new JobPackageOpForm(job);
         return this._renderPackagingForm(job, form);
@@ -66,11 +61,6 @@ class JobController extends BaseController {
     backToPackaging() {
         let job = this._parseMetadataForm();
         job.save();
-        // ---- DEBUG ----
-        // console.log("Job saved by backToPackaging");
-        // console.log(job);
-        window.job = job;
-        // ---- DEBUG ----
         return this.packaging();
     }
 
@@ -96,7 +86,9 @@ class JobController extends BaseController {
         // moving backwards through the form, the profile may already
         // be saved with custom values. We don't want to overwrite it
         // by reloading it.
-        if (job.bagItProfile == null && form.obj.bagItProfileId) {
+        let needsProfile = job.bagItProfile == null && form.obj.bagItProfileId;
+        let selectedProfileChanged = job.bagItProfile && form.obj.bagItProfileId && form.obj.bagItProfileId != job.bagItProfile.id;
+        if (needsProfile || selectedProfileChanged) {
             job.bagItProfile = BagItProfile.find(form.obj.bagItProfileId);
         }
         return [job, form]
