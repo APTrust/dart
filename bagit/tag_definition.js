@@ -1,3 +1,4 @@
+const { Context } = require('../core/context');
 const { Util } = require('../core/util');
 
 /**
@@ -197,11 +198,9 @@ class TagDefinition {
         this.errors = {}
         var value = this.getValue();
         if (this.required && !this.emptyOk && Util.isEmpty(value)) {
-            //errors.push(`Tag ${this.tagName} in file ${this.tagFile} cannot be empty.`);
-            this.errors['userValue'] = "This tag requires a value.";
+            this.errors['userValue'] = Context.y18n.__("This tag requires a value.");
         } else if (this.values.length > 0 && !Util.listContains(this.values, value)) {
-            //errors.push(`Tag ${this.tagName} in file ${this.tagFile} has a value that is not on the list of allowed values.`);
-            this.errors['userValue'] = "The value is not in the list of allowed values.";
+            this.errors['userValue'] = Context.y18n.__("The value is not in the list of allowed values.");
         }
         //return errors;
         return Object.keys(this.errors).length === 0;

@@ -266,5 +266,6 @@
   "TagDefinition_wasAddedForJob_help": "TagDefinition_wasAddedForJob_help",
   "Show All Tags": "Show All Tags",
   "Add New Tag": "Add New Tag",
-  "Hide Default Tags": "Hide Default Tags"
+  "Hide Default Tags": "Hide Default Tags",
+  "The value is not in the list of allowed values.": "The value is not in the list of allowed values."
 }

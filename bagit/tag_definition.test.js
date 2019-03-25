@@ -59,8 +59,8 @@ test('validateForJob() permits legal empty tag value', () => {
     });
     tagDef.required = false;
     tagDef.emptyOk = true;
-    let errors = tagDef.validateForJob();
-    expect(errors.length).toEqual(0);
+    let isValid = tagDef.validateForJob();
+    expect(isValid).toBe(true);
 });
 
 
@@ -70,9 +70,9 @@ test('validateForJob() catches illegal empty tag values', () => {
         tagName: 'Source-Organization'
     });
     tagDef.values = ['honest', 'respectable', 'responsible'];
-    let errors = tagDef.validateForJob();
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Tag Source-Organization in file bag-info.txt has a value that is not on the list of allowed values.');
+    let isValid = tagDef.validateForJob();
+    expect(isValid).toBe(false);
+    expect(tagDef.errors['userValue']).toEqual('The value is not in the list of allowed values.');
 });
 
 test('validateForJob() catches illegal non-empty tag values', () => {
@@ -84,9 +84,9 @@ test('validateForJob() catches illegal non-empty tag values', () => {
     tagDef.emptyOk = false;
     tagDef.values = ['honest', 'respectable', 'responsible'];
     tagDef.userValue = 'xyz';
-    errors = tagDef.validateForJob();
-    expect(errors.length).toEqual(1);
-    expect(errors[0]).toEqual('Tag Source-Organization in file bag-info.txt has a value that is not on the list of allowed values.');
+    let isValid = tagDef.validateForJob();
+    expect(isValid).toBe(false);
+    expect(tagDef.errors['userValue']).toEqual('The value is not in the list of allowed values.');
 });
 
 test('systemMustSet() identifies which tags the system must set', () => {
