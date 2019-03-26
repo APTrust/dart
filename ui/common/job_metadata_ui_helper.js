@@ -1,3 +1,8 @@
+//////////////////////////////////////////////////////////
+//    TODO: DELETE AFTER REFACTORING JOBS CONTROLLER    //
+//////////////////////////////////////////////////////////
+
+
 const $ = require('jquery');  // required for Jest tests
 const { Context } = require('../../core/context');
 const { Util } = require('../../core/util');
