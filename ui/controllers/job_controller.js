@@ -119,7 +119,8 @@ class JobController extends BaseController {
     // Save work without validating.
     backToFiles() {
         this._updatePackaging(false);
-        return this.files();
+        //return this.files();
+        return this.redirect('JobFiles', 'show', this.params);
     }
 
     // User clicked Next button from packaging page.

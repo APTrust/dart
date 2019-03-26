@@ -23,14 +23,16 @@ $(function() {
         // was NOT to display a modal, since modal requests do not
         // change the underlying page.
         let handler = new DART.UI.Common.RequestHandler(location.href);
-        handler.handleRequest();
-        if (!handler.isModalRequest) {
-            lastHref = location.href;
-        }
+        let controllerRedirected = handler.handleRequest();
+        if (!controllerRedirected) {
+            if (!handler.isModalRequest) {
+                lastHref = location.href;
+            }
 
-        // Clear the hash, so if user re-clicks a button, the
-        // app will still respond.
-        location.hash = '#!';
+            // Clear the hash, so if user re-clicks a button, the
+            // app will still respond.
+            location.hash = '#!';
+        }
     });
 
     // Route clicks on table rows

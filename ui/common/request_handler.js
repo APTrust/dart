@@ -32,10 +32,18 @@ class RequestHandler {
         this.controllerInstance = new Controllers[this.controllerName](this.params);
     }
 
+    /**
+     * This handles a request when the URL hash changes, constructing the
+     * correct controller class and calling the right method.
+     *
+     * @returns {boolean} - True or false indicating whether the controller
+     * is redirecting to a new controller.
+     *
+     */
     handleRequest() {
         let response = this.controllerInstance[this.functionName]();
         if (this.controllerInstance.redirected) {
-            return;
+            return true;
         }
         if (response.container) {
             $('#nav').html(response.nav);
@@ -48,6 +56,7 @@ class RequestHandler {
             this.isModalRequest = true;
         }
         this.controllerInstance.postRenderCallback(this.functionName);
+        return false;
     }
 }
 
