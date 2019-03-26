@@ -267,5 +267,6 @@
   "Show All Tags": "Show All Tags",
   "Add New Tag": "Add New Tag",
   "Hide Default Tags": "Hide Default Tags",
-  "The value is not in the list of allowed values.": "The value is not in the list of allowed values."
+  "The value is not in the list of allowed values.": "The value is not in the list of allowed values.",
+  "This tag requires a value.": "This tag requires a value."
 }

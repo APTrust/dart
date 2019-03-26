@@ -81,13 +81,13 @@ class JobPackagingController extends BaseController {
 
     // User clicked Back button from packaging page.
     // Save work without validating.
-    backToFiles() {
+    back() {
         this._updatePackaging(false);
         return this.redirect('JobFiles', 'show', this.params);
     }
 
     // User clicked Next button from packaging page.
-    postPackaging() {
+    next() {
         let form = this._updatePackaging(true);
         if (form.hasErrors()) {
             // Errors. Stay on packaging screen.
@@ -97,7 +97,8 @@ class JobPackagingController extends BaseController {
             return this._renderPackagingForm(this.job, form);
         }
         else if (this.job.packageOp.packageFormat == 'BagIt') {
-            return this.showMetadataForm(this.job);
+            //return this.showMetadataForm(this.job);
+            return this.redirect('JobMetadata', 'show', this.params);
         } else {
             return this.showUploadForm(this.job);
         }
