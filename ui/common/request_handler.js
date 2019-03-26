@@ -34,6 +34,9 @@ class RequestHandler {
 
     handleRequest() {
         let response = this.controllerInstance[this.functionName]();
+        if (this.controllerInstance.redirected) {
+            return;
+        }
         if (response.container) {
             $('#nav').html(response.nav);
             $('#container').html(response.container);

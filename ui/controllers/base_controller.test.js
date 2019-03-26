@@ -68,3 +68,11 @@ test('noContent()', () => {
     let controller = new BaseController(params, "Settings");
     expect(controller.noContent()).toEqual({});
 });
+
+test('noContent()', () => {
+    let controller = new BaseController(params, "Settings");
+    let returnValue = controller.redirect('NewController', 'list', params);
+    expect(returnValue).toEqual({}); // same as noContent()
+    expect(controller.redirected).toBe(true);
+    expect(window.location.href).toEqual('http://localhost/#NewController/list?limit=10&offset=0&orderBy=name&sortDirection=desc&boolValue=true&url=https%3A%2F%2Fexample.com');
+});

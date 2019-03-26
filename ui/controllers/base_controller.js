@@ -123,6 +123,14 @@ class BaseController {
          * @type {string}
          */
         this.nameProperty;
+        /**
+         * This property will be set to true if the controller that was
+         * originally called redirected to a new controller.
+         *
+         * @type {boolean}
+         * @default false
+         */
+        this.redirected = false;
     }
 
     /**
@@ -191,6 +199,33 @@ class BaseController {
      */
     openExternal() {
         electron.shell.openExternal(this.params.get('url'));
+    }
+
+    /**
+     * This redirects to a new URL that will call the function fnName
+     * on the controller controllerName with the specified params.
+     * Use this only when redirecting to an entirely new controller.
+     *
+     * This changes the page URL, causing the {@link RequestHandler}
+     * to parse and route the new request.
+     *
+     * @example
+     * this.redirect('JobFiles', 'show', this.params);
+     *
+     * @param {string} controllerName - The name of the controller you
+     * want to redirect to.
+     *
+     * @param {string} fnName - The name of the function on the new
+     * controller that should process the request.
+     *
+     * @param {URLSearchParams} params - The URL query parameters to
+     * pass into the constructor of the controller you are redirecting to.
+     *
+     */
+    redirect(controllerName, fnName, params) {
+        this.redirected = true;
+        window.location.href = `#${controllerName}/${fnName}?${params.toString()}`;
+        return this.noContent();
     }
 
     /**
