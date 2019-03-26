@@ -275,6 +275,25 @@ class BaseController {
         return this.noContent();
     }
 
+    /**
+     * This is to be defined by derived classes as necessary.
+     * It does nothing in the base class, but derived classes
+     * can use it to attach event handlers to HTML elements
+     * that have just been rendered.
+     *
+     * @param {string} fnName - The name of the function that was
+     * called in the original request. The postRenderCallback may
+     * include logic to perform different actions based on what
+     * the user initially requested. For example, you may want to
+     * attach one set of event handlers after rendering
+     * Controller.new() and a different set after rendering
+     * Controller.update().
+     *
+     */
+    postRenderCallback(fnName) {
+
+    }
+
 }
 
 module.exports.BaseController = BaseController;

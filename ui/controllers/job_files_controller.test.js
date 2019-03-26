@@ -1,10 +1,11 @@
 const $ = require('jquery');
 const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
 const { Job } = require('../../core/job');
-const { JobFileUIHelper } = require('./job_file_ui_helper');
+const { JobFilesController } = require('./job_files_controller');
 const { PackageOperation } = require('../../core/package_operation');
 const path = require('path');
 const Templates = require('../common/templates');
+const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 
 const sourceFiles = [
@@ -16,11 +17,20 @@ const sourceFiles = [
 const extraFile = path.resolve(path.join(__dirname, '..', '..', 'test', 'profiles', 'invalid_profile.json'));
 const extraDir = path.resolve(path.join(__dirname, '..', '..', 'plugins'));
 
+beforeEach(() => {
+    TestUtil.deleteJsonFile('Job');
+});
+
+afterAll(() => {
+    TestUtil.deleteJsonFile('Job');
+});
+
 function getJobWithFiles() {
     let job = new Job();
     job.packageOp = new PackageOperation('bag.tar', 'tmp/bag.tar');
     job.packageOp.sourceFiles = sourceFiles.slice();
-    return job;
+    job.save();
+    return Job.find(job.id);
 }
 
 function setHTML(job) {
@@ -34,15 +44,17 @@ function setHTML(job) {
 
 test('constructor', () => {
     let job = getJobWithFiles();
-    let helper = new JobFileUIHelper(job);
-    expect(helper.job).toEqual(job);
+    let params = new URLSearchParams({ id: job.id });
+    let controller = new JobFilesController(params);
+    expect(controller.job).toEqual(job);
 });
 
-test('initUI', () => {
+test('postRenderCallback', () => {
     let job = getJobWithFiles();
     setHTML(job);
-    let helper = new JobFileUIHelper(job);
-    helper.initUI();
+    let params = new URLSearchParams({ id: job.id });
+    let controller = new JobFilesController(params);
+    controller.postRenderCallback();
     let dropZoneEventListeners = $._data($('#dropZone')[0], "events");
     for (let event of ['dragover', 'dragend', 'dragleave', 'drop']) {
         expect(dropZoneEventListeners[event]).toBeDefined();
@@ -57,8 +69,9 @@ test('initUI', () => {
 test('addItemsToUI()', done => {
     let job = getJobWithFiles();
     setHTML(job);
-    let helper = new JobFileUIHelper(job);
-    helper.initUI(); // this calls addItemsToUI() internally
+    let params = new URLSearchParams({ id: job.id });
+    let controller = new JobFilesController(params);
+    controller.postRenderCallback(); // this calls addItemsToUI() internally
     setTimeout(function() {
         let html = $('#filesPanel').html();
         for (let filepath of job.packageOp.sourceFiles) {
@@ -78,8 +91,9 @@ test('addItemsToUI()', done => {
 test('dropping a file adds it to the UI and job', done => {
     let job = getJobWithFiles();
     setHTML(job);
-    let helper = new JobFileUIHelper(job);
-    helper.initUI();
+    let params = new URLSearchParams({ id: job.id });
+    let controller = new JobFilesController(params);
+    controller.postRenderCallback();
     let dropZoneEventListeners = $._data($('#dropZone')[0], "events");
     let dropEventHandler = dropZoneEventListeners.drop[0].handler;
     let mockEvent = {
@@ -98,6 +112,8 @@ test('dropping a file adds it to the UI and job', done => {
     // Call the handler
     dropEventHandler(mockEvent);
     setTimeout(function() {
+        // Reload to get changes, else it seems Jest caches this.
+        job = Job.find(job.id);
         let html = $('#filesPanel').html();
         let rows = $('tr.filepath');
         let deleteCells = $('td.delete-file');
@@ -118,8 +134,9 @@ test('dropping a file adds it to the UI and job', done => {
 test('deleting a file removes it from the UI and job', done => {
     let job = getJobWithFiles();
     setHTML(job);
-    let helper = new JobFileUIHelper(job);
-    helper.initUI();
+    let params = new URLSearchParams({ id: job.id });
+    let controller = new JobFilesController(params);
+    controller.postRenderCallback();
     let deleteEventHandler = $._data($('#filesTable')[0], "events").click[0].handler;
     let mockEvent = {
         currentTarget: $('td.delete-file')
@@ -128,6 +145,8 @@ test('deleting a file removes it from the UI and job', done => {
     deleteEventHandler(mockEvent);
 
     setTimeout(function() {
+        // Reload to get changes, else it seems Jest caches this.
+        job = Job.find(job.id);
         let html = $('#filesPanel').html();
         let rows = $('tr.filepath');
         let deleteCells = $('td.delete-file');

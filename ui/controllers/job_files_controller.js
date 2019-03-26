@@ -1,30 +1,63 @@
-const $ = require('jquery');  // required for Jest tests
+const $ = require('jquery');
+const { BagItProfile } = require('../../bagit/bagit_profile');
+const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
-const fs = require('fs');
 const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
+const fs = require('fs');
+const { Job } = require('../../core/job');
+const { JobMetadataUIHelper } = require('../common/job_metadata_ui_helper');
+const { JobPackagingUIHelper } = require('../common/job_packaging_ui_helper');
+const { JobForm } = require('../forms/job_form');
+const { JobPackageOpForm } = require('../forms/job_package_op_form');
+const { JobTagsForm } = require('../forms/job_tags_form');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
-/**
- * JobFileUIHelper provides a number of methods to help with
- * the part of the Job UI that allows users to add and remove
- * files. (These are files to be packaged and/or uploaded when
- * the job runs.)
- *
- * @param {Job} job - The job whose files you want to manipulate.
- */
-class JobFileUIHelper {
+const typeMap = {
+    limit: 'number',
+    offset: 'number',
+}
 
-    constructor(job) {
-        this.job = job;
+/**
+ * The JobFilesController displays the Job files page, where
+ * users can drag and drop the files that a Job will package
+ * and/or uploade.
+ */
+class JobFilesController extends BaseController {
+
+    constructor(params) {
+        super(params, 'Jobs');
+        this.typeMap = typeMap;
+        this.model = Job;
+        this.listTemplate = Templates.jobList;
+        this.nameProperty = 'name';
+        this.defaultOrderBy = 'createdAt';
+        this.defaultSortDirection = 'desc';
+        this.job = Job.find(this.params.get('id'));
     }
+
+
+    /**
+     * This displays the Job files UI, where the user can drag
+     * and drop files.
+     */
+    show() {
+        let data = {
+            alertMessage: this.alertMessage,
+            job: this.job
+        }
+        this.alertMessage = null;
+        let html = Templates.jobFiles(data);
+        return this.containerContent(html);
+    }
+
 
     /**
      * This attaches required events to the Job files UI and
      * adds the list of files and folders to be packaged to
      * the UI.
      */
-    initUI() {
+    postRenderCallback(fnName) {
         this.attachDragAndDropEvents();
         this.attachDeleteEvents();
         this.addItemsToUI();
@@ -329,4 +362,4 @@ class JobFileUIHelper {
 
 }
 
-module.exports.JobFileUIHelper = JobFileUIHelper;
+module.exports.JobFilesController = JobFilesController;

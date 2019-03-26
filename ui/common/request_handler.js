@@ -44,9 +44,7 @@ class RequestHandler {
             $('#modal').modal('show');
             this.isModalRequest = true;
         }
-        if (typeof this.controllerInstance.postRenderCallback === 'function') {
-            this.controllerInstance.postRenderCallback(this.functionName);
-        }
+        this.controllerInstance.postRenderCallback(this.functionName);
     }
 }
 
