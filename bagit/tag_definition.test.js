@@ -89,6 +89,17 @@ test('validateForJob() catches illegal non-empty tag values', () => {
     expect(tagDef.errors['userValue']).toEqual('The value is not in the list of allowed values.');
 });
 
+test('validateForJob() does not try to validate system set values', () => {
+    let tagDef = new TagDefinition({
+        tagFile: 'bag-info.txt',
+        tagName: 'Payload-Oxum'
+    });
+    tagDef.required = true;
+    tagDef.emptyOk = false;
+    let isValid = tagDef.validateForJob();
+    expect(isValid).toBe(true);
+});
+
 test('systemMustSet() identifies which tags the system must set', () => {
     let yes = ['Bagging-Date', 'Bagging-Software',
                'Payload-Oxum', 'DPN-Object-ID',

@@ -194,15 +194,19 @@ class TagDefinition {
      * @returns {string[]} - A list of errors.
      */
     validateForJob() {
-        //var errors = [];
         this.errors = {}
+        // If the system must set this value, don't try to validate
+        // it in the Job UI, where it will have to be empty. The
+        // bagger will set it later, and we'll validate it after bagging.
+        if (this.systemMustSet()) {
+            return true;
+        }
         var value = this.getValue();
         if (this.required && !this.emptyOk && Util.isEmpty(value)) {
             this.errors['userValue'] = Context.y18n.__("This tag requires a value.");
         } else if (this.values.length > 0 && !Util.listContains(this.values, value)) {
             this.errors['userValue'] = Context.y18n.__("The value is not in the list of allowed values.");
         }
-        //return errors;
         return Object.keys(this.errors).length === 0;
     }
 
