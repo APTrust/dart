@@ -36,7 +36,8 @@ class JobController extends BaseController {
         let job = new Job();
         job.save();
         this.params.set('id', job.id);
-        return this.files();
+        //return this.files();
+        return this.redirect('JobFiles', 'show', this.params);
     }
 
     files() {
