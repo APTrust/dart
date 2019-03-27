@@ -2,10 +2,6 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
-const { JobFilesController } = require('./job_files_controller');
-const { JobForm } = require('../forms/job_form');
-const { JobPackageOpForm } = require('../forms/job_package_op_form');
-const { JobTagsForm } = require('../forms/job_tags_form');
 const Templates = require('../common/templates');
 
 const typeMap = {
