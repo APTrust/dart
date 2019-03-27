@@ -3,6 +3,8 @@ const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobTagsForm } = require('../forms/job_tags_form');
+const { TagDefinition } = require('../../bagit/tag_definition');
+const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const Templates = require('../common/templates');
 
 class JobMetadataController extends BaseController {
@@ -12,7 +14,6 @@ class JobMetadataController extends BaseController {
         this.model = Job;
         this.job = Job.find(this.params.get('id'));
     }
-
 
     show() {
         let form = new JobTagsForm(this.job);
@@ -33,6 +34,42 @@ class JobMetadataController extends BaseController {
             return this.show();
         }
         return this.redirect('JobUpload', 'show', this.params);
+    }
+
+    newTag(form) {
+        form = form || new TagDefinitionForm(new TagDefinition());
+        form.fields.userValue.label = Context.y18n.__("Value");
+        let title = "New Tag";
+        let body = Templates.jobNewTag({
+            form: form,
+            job: this.job
+        });
+        return this.modalContent(title, body);
+
+    }
+
+    saveNewTag() {
+        let form = new TagDefinitionForm(new TagDefinition());
+        form.parseFromDOM();
+        form.obj.errors = {};
+        if (form.obj.tagFile == '') {
+            form.obj.errors['tagFile'] = Context.y18n.__("Please specify a tag file.");
+        }
+        if (form.obj.tagName == '') {
+            form.obj.errors['tagName'] = Context.y18n.__("Please specify a tag name.");
+        }
+        if (form.obj.userValue == '') {
+            form.obj.errors['userValue'] = Context.y18n.__("Please specify a value for this tag.");
+        }
+        if (Object.keys(form.obj.errors).length > 0) {
+            form.setErrors();
+            return this.newTag(form);
+        }
+        let tagDef = form.obj;
+        tagDef.isUserAddedTag = true;
+        tagDef.wasAddedForJob = true;
+        this.job.bagItProfile.tags.push(tagDef);
+        return this.show();
     }
 
     _parseMetadataForm() {
@@ -62,10 +99,6 @@ class JobMetadataController extends BaseController {
             } else {
                 $("#btnToggleHidden").text(showAll);
             }
-        });
-
-        $("#btnAddNewTag").click(function() {
-            alert('This feature is coming soon.');
         });
     }
 }

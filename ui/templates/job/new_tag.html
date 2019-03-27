@@ -1,0 +1,16 @@
+<form method="post" action="#" id="{{ id }}">
+
+  {{> inputText field = form.fields.tagFile }}
+
+  {{> inputText field = form.fields.tagName }}
+
+  {{> inputText field = form.fields.userValue }}
+
+  {{> inputHidden field = form.fields.id }}
+
+  <div class="bottom-buttons">
+    <div class="pull-right">
+    <a class="btn btn-primary" href="#JobMetadata/saveNewTag?id={{ job.id }}" role="button">Save</a>
+    </div>
+  </div>
+</form>

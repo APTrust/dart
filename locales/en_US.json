@@ -268,5 +268,9 @@
   "Add New Tag": "Add New Tag",
   "Hide Default Tags": "Hide Default Tags",
   "The value is not in the list of allowed values.": "The value is not in the list of allowed values.",
-  "This tag requires a value.": "This tag requires a value."
+  "This tag requires a value.": "This tag requires a value.",
+  "Value": "Value",
+  "Please specify a tag file.": "Please specify a tag file.",
+  "Please specify a tag name.": "Please specify a tag name.",
+  "Please specify a value for this tag.": "Please specify a value for this tag."
 }
