@@ -30,6 +30,10 @@ class JobPackagingController extends BaseController {
 
     show() {
         let form = new JobPackageOpForm(this.job);
+        return this._renderPackagingForm(form);
+    }
+
+    _renderPackagingForm(form) {
         let data = {
             job: this.job,
             form: form
@@ -94,10 +98,9 @@ class JobPackagingController extends BaseController {
             form.setErrors();
             form._listPackageFormats();
             form._listBagItProfiles();
-            return this._renderPackagingForm(this.job, form);
+            return this._renderPackagingForm(form);
         }
         else if (this.job.packageOp.packageFormat == 'BagIt') {
-            //return this.showMetadataForm(this.job);
             return this.redirect('JobMetadata', 'show', this.params);
         } else {
             return this.showUploadForm(this.job);

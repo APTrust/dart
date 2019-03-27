@@ -36,13 +36,15 @@ class JobMetadataController extends BaseController {
     }
 
     back() {
+        this._parseMetadataForm();
         this.job.save();
         return this.redirect('JobPackaging', 'show', this.params);
     }
 
     next() {
+        let tagsAreValid = this._validateMetadataForm();
         this.job.save();
-        if(!this._validateMetadataForm()) {
+        if(!tagsAreValid) {
             return this.show();
         }
         return this.redirect('JobUpload', 'show', this.params);
