@@ -1,14 +1,8 @@
-//////////////////////////////////////////////////////////
-//    TODO: DELETE AFTER REFACTORING JOBS CONTROLLER    //
-//////////////////////////////////////////////////////////
-
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobFilesController } = require('./job_files_controller');
-const { JobMetadataUIHelper } = require('../common/job_metadata_ui_helper');
-const { JobPackagingUIHelper } = require('../common/job_packaging_ui_helper');
 const { JobForm } = require('../forms/job_form');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
 const { JobTagsForm } = require('../forms/job_tags_form');
