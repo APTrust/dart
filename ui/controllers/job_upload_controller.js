@@ -2,6 +2,7 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
+const { JobUploadForm } = require('../forms/job_upload_form');
 const Templates = require('../common/templates');
 
 class JobUploadController extends BaseController {
@@ -13,9 +14,9 @@ class JobUploadController extends BaseController {
     }
 
     show() {
-        //let form = new JobUploadForm(this.job);
-        //let data = { job: this.job, form: form };
-        let data = { job: this.job }
+        let form = new JobUploadForm(this.job);
+        console.log(form);
+        let data = { job: this.job, form: form };
         return this.containerContent(Templates.jobUpload(data));
     }
 

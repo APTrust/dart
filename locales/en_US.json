@@ -272,5 +272,9 @@
   "Value": "Value",
   "Please specify a tag file.": "Please specify a tag file.",
   "Please specify a tag name.": "Please specify a tag name.",
-  "Please specify a value for this tag.": "Please specify a value for this tag."
+  "Please specify a value for this tag.": "Please specify a value for this tag.",
+  "Object_targets_label": "Object_targets_label",
+  "Object_targets_help": "Object_targets_help",
+  "Object_uploadTargets_label": "Object_uploadTargets_label",
+  "Object_uploadTargets_help": "Object_uploadTargets_help"
 }

@@ -27,21 +27,28 @@ class UploadOperation {
          *
          * @type {string}
          */
-        this.destination = destination;
+        this.destination = destination || '';
         /**
          * The network protocol to use when uploading files. For example, 's3',
          * 'ftp', 'sftp', etc.
          *
          * @type {string}
          */
-        this.protocol = protocol;
+        this.protocol = protocol || '';
         /**
          * A list of files to upload. Each entry in this list should be an
          * absolute path.
          *
          * @type {Array<string>}
          */
-        this.sourceFiles = sourceFiles;
+        this.sourceFiles = sourceFiles || [];
+        /**
+         * The ID (UUID) of the {@link UploadTarget} to which we want to
+         * send files.
+         *
+         * @type {string}
+         */
+        this.uploadTargetId = '';
         /**
          * This describes the result of DART's attempt to upload the files.
          *
