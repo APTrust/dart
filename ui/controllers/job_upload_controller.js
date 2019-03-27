@@ -28,15 +28,18 @@ class JobUploadController extends BaseController {
 
 
     show() {
-        let form = new JobTagsForm(this.job);
-        let data = { job: this.job, form: form };
+        //let form = new JobUploadForm(this.job);
+        //let data = { job: this.job, form: form };
+        let data = { job: this.job }
         return this.containerContent(Templates.jobUpload(data));
     }
 
     back() {
         this.job.save();
-        // TODO: Back may be metadata or packaging
-        return this.redirect('JobMetadata', 'show', this.params);
+        if (this.job.packageOp.packageFormat == 'BagIt') {
+            return this.redirect('JobMetadata', 'show', this.params);
+        }
+        return this.redirect('JobPackaging', 'show', this.params);
     }
 
     next() {
