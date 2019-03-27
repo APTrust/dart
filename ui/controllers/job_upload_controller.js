@@ -4,24 +4,13 @@ const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
 
-const typeMap = {
-    limit: 'number',
-    offset: 'number',
-}
-
 class JobUploadController extends BaseController {
 
     constructor(params) {
         super(params, 'Jobs');
-        this.typeMap = typeMap;
         this.model = Job;
-        this.listTemplate = Templates.jobList;
-        this.nameProperty = 'name';
-        this.defaultOrderBy = 'createdAt';
-        this.defaultSortDirection = 'desc';
         this.job = Job.find(this.params.get('id'));
     }
-
 
     show() {
         //let form = new JobUploadForm(this.job);

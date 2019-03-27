@@ -5,21 +5,11 @@ const { Job } = require('../../core/job');
 const { JobTagsForm } = require('../forms/job_tags_form');
 const Templates = require('../common/templates');
 
-const typeMap = {
-    limit: 'number',
-    offset: 'number',
-}
-
 class JobMetadataController extends BaseController {
 
     constructor(params) {
         super(params, 'Jobs');
-        this.typeMap = typeMap;
         this.model = Job;
-        this.listTemplate = Templates.jobList;
-        this.nameProperty = 'name';
-        this.defaultOrderBy = 'createdAt';
-        this.defaultSortDirection = 'desc';
         this.job = Job.find(this.params.get('id'));
     }
 
