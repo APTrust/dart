@@ -69,6 +69,7 @@ class JobMetadataController extends BaseController {
         tagDef.isUserAddedTag = true;
         tagDef.wasAddedForJob = true;
         this.job.bagItProfile.tags.push(tagDef);
+        this.job.save();
         return this.show();
     }
 

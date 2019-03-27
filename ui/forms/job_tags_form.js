@@ -18,7 +18,7 @@ class JobTagsForm extends Form {
     }
 
     _init(job) {
-        for (let tagDef of job.bagItProfile.tags) {
+        for (let tagDef of job.bagItProfile.tags.sort(tagsByLabel)) {
             let field = this._tagDefToField(tagDef);
             this.fields[field.id] = field;
         }
@@ -87,6 +87,21 @@ class JobTagsForm extends Form {
             }
         }
     }
+}
+
+/**
+ * Sort tags by the label used in the Job metadata display.
+ */
+function tagsByLabel(a, b) {
+    let aLabel = `${a.tagFile}: ${a.tagName}`;
+    let bLabel = `${b.tagFile}: ${b.tagName}`;
+    if (aLabel < bLabel) {
+        return -1;
+    }
+    if (aLabel > bLabel) {
+        return 1;
+    }
+    return 0;
 }
 
 module.exports.JobTagsForm = JobTagsForm;
