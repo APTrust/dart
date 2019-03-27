@@ -1,9 +1,13 @@
-<p>Placeholder for upload form.</p>
+<h2>Upload Targets</h2>
 
-{{ job }}
+<form>
+
+  {{> inputCheckboxGroup field = form.fields.uploadTargets }}
+
+</form>
 
 
-<div>
+<div class="mt-3">
   <div class="pull-left" id="btnBackDiv">
     <a class="btn btn-primary" href="#JobUpload/back?id={{ job.id }}" role="button">&lt;&lt; Back</a>
   </div>

@@ -208,6 +208,7 @@ class Form {
             var $ = require('jquery');
         }
         this.changed = {};
+        // TODO: Parse checkbox groups. See JobUploadForm.copyFormValuesToJob()
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
             let formValue = $(`#${field.id}`).val();

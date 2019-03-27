@@ -15,12 +15,13 @@ class JobUploadController extends BaseController {
 
     show() {
         let form = new JobUploadForm(this.job);
-        console.log(form);
         let data = { job: this.job, form: form };
         return this.containerContent(Templates.jobUpload(data));
     }
 
     back() {
+        let form = new JobUploadForm(this.job);
+        form.copyFormValuesToJob(this.job);
         this.job.save();
         if (this.job.packageOp.packageFormat == 'BagIt') {
             return this.redirect('JobMetadata', 'show', this.params);
@@ -29,11 +30,10 @@ class JobUploadController extends BaseController {
     }
 
     next() {
-        // this.job.save();
-        // if(!this._validateUploadForm()) {
-        //     return this.show(job);
-        // }
-        // return this.redirect('JobUpload', 'show', this.params);
+        let form = new JobUploadForm(this.job);
+        form.copyFormValuesToJob(this.job);
+        this.job.save();
+        return this.redirect('JobRun', 'show', this.params);
     }
 
     postRenderCallback(fnName) {

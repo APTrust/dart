@@ -4,6 +4,7 @@ const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
+const { UploadOperation } = require('../../core/upload_operation');
 const { UploadTarget } = require('../../core/upload_target');
 const { Util } = require('../../core/util');
 
@@ -19,7 +20,6 @@ class JobUploadForm extends Form {
             sortDirection: 'asc'
         }
         let data = {
-            id: job.id,
             uploadTargets: UploadTarget.list(null, listOptions)
         }
         super('JobUpload', data);
@@ -37,8 +37,16 @@ class JobUploadForm extends Form {
     }
 
     copyFormValuesToJob(job) {
-        this.parseFromDOM();
-
+        //this.parseFromDOM();
+        this.obj.uploadTargets = $('input[name="uploadTargets"]:checked').each(cb => $(cb).value).get().map(cb => cb.value)
+        // This is a problem, because it deletes the upload result
+        // along with the upload target. Hmm...
+        job.uploadOps = [];
+        for (let targetId of this.obj.uploadTargets) {
+            let op = new UploadOperation();
+            op.uploadTargetId = targetId;
+            job.uploadOps.push(op);
+        }
     }
 }
 

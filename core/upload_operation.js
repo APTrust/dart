@@ -1,6 +1,10 @@
 const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
 
+////////////////////////////////////////////////////////////////////////////
+//   TODO: Use only uploadTargetId instead of destination and protocol?   //
+////////////////////////////////////////////////////////////////////////////
+
 /**
  * UploadOperation contains information describing a number of files
  * to be uploaded and where they should be sent.
