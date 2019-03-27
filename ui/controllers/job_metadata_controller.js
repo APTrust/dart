@@ -88,7 +88,14 @@ class JobMetadataController extends BaseController {
         return isValid;
     }
 
-    postRenderCallback(fnName) {
+    _attachTagFileAutocomplete() {
+        $('#tagDefinitionForm_tagFile').autocomplete({
+            source: this.job.bagItProfile.tagFileNames(),
+            minLength: 1
+        });
+    }
+
+    _attachToggleHiddenTags() {
         $("#btnToggleHidden").click(function() {
             let showAll = Context.y18n.__('Show All Tags');
             let hideDefaults = Context.y18n.__('Hide Default Tags');
@@ -100,6 +107,14 @@ class JobMetadataController extends BaseController {
                 $("#btnToggleHidden").text(showAll);
             }
         });
+    }
+
+    postRenderCallback(fnName) {
+        if (fnName == "newTag" || fnName == "saveNewTag") {
+            this._attachTagFileAutocomplete();
+        } else {
+            this._attachToggleHiddenTags();
+        }
     }
 }
 

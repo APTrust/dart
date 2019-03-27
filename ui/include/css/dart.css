@@ -137,3 +137,11 @@ legend {
 .form-group-hidden {
     display:none;
 }
+
+/*
+   This is required to make autocomplete suggestions
+   appear inside a modal dialog.
+ */
+ul.ui-autocomplete {
+    z-index: 9999;
+}
