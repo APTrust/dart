@@ -6,18 +6,37 @@
   <div class="col-10">{{ job.packageOp.packageName }}</div>
 </div>
 
+{{#if job.bagItProfile }}
 <div class="row">
-  <div class="col text-right font-weight-bold">Output Path</div>
-  <div class="col-10">{{ job.packageOp.outputPath }}</div>
+  <div class="col text-right font-weight-bold">BagIt Profile</div>
+  <div class="col-10">
+    {{ job.bagItProfile.name }} <br/>
+    {{ job.bagItProfile.description }}
+  </div>
+</div>
+{{/if }}
+
+<div class="row">
+  <div class="col text-right font-weight-bold">Payload Summary</div>
+  <div class="col-10">
+    {{ job.dirCount }} Directories <br/>
+    {{ job.fileCount }} Files <br/>
+    {{ toHumanSize job.byteCount }} <br/>
+  </div>
 </div>
 
 <div class="row">
-  <div class="col text-right font-weight-bold">Files</div>
+  <div class="col text-right font-weight-bold">Files to Package</div>
   <div class="col-10">
     {{#each job.packageOp.sourceFiles as |path| }}
       {{ path }} <br/>
     {{/each }}
   </div>
+</div>
+
+<div class="row">
+  <div class="col text-right font-weight-bold">Output Path</div>
+  <div class="col-10">{{ job.packageOp.outputPath }}</div>
 </div>
 
 {{/if}}
@@ -33,7 +52,7 @@
 </div>
 {{/if}}
 
-<div>
+<div class="mt-5">
   <div class="pull-left" id="btnBackDiv">
     <a class="btn btn-primary" href="#JobUpload/show?id={{ job.id }}" role="button">&lt;&lt; Back</a>
   </div>

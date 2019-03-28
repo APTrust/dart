@@ -22,7 +22,6 @@ class JobRunController extends BaseController {
             }
         }
         let data = { job: this.job, uploadTargets: uploadTargets }
-        console.log(data);
         return this.containerContent(Templates.jobRun(data));
     }
 
