@@ -58,7 +58,7 @@ class PackageOperation {
          *
          * See also {@see packageWriter}
          *
-         * @type <string>
+         * @type {string}
          */
         this.packageFormat = null;
         /**
@@ -78,7 +78,7 @@ class PackageOperation {
          *
          * See also {@see packageWriter}
          *
-         * @type <string>
+         * @type {string}
          */
         this.pluginId = null;
         /**

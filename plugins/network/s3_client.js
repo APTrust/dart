@@ -90,7 +90,6 @@ class S3Client extends Plugin {
      * @param {string} keyname - This name of the key (object) to download from
      * the S3 bucket.
      *
-     * @returns
      */
     download(filepath, keyname) {
         var s3Client = this;

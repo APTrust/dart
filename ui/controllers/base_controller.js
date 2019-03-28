@@ -42,12 +42,13 @@ class BaseController {
          * For example, a controller that lists a number of objects needs the
          * "limit" param to be converted from string "20" to number 20.
          *
+         * typeMap key is the param name and value is the data type.
+         *
          * The typeMap currently supports types "string", "boolean", and
          * "number" (no dates yet). Each controller sets its own typeMap
          * as necessary.
          *
-         * @type {object.<string, string>} Where key is the param name and
-         * value is the data type.
+         * @type {object.<string, string>}
          */
         this.typeMap = {};
         /**
