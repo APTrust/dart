@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      ManifestEntry - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,31 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        ManifestEntry
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        ManifestEntry
         
       </h2>
 
+      
+        <div class="class-description">
+          ManifestEntry objects record info about files that were bagged or
+otherwise packaged in a DART Job. DART records ManifestEntry records
+for payload files, but not for tag files.
+
+Note that if a job was run several times, a file can have several manifest
+entries, each with a timestamp indicating when it was packaged.
+        </div>
       
     
   </header>
@@ -110,25 +111,334 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#ManifestEntry">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="ManifestEntry">
+      <span class="type-signature"></span>new ManifestEntry<span class="signature">(opts)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Creates a new ManifestEntry
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>opts</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          Object containing properties to set.
+          
+            <h6>Properties</h6>
+            
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>id</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          A UUID in hex-string format. This is
+the object's unique identifier.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>userCanDelete</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      boolean
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          Indicates whether user is
+allowed to delete this record.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>jobId</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The id (UUID) of the job that packaged the
+files in this manifest.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>origPath</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The original path of the file, before it
+was bagged or otherwise packaged. This is usually an absolute path
+from the local filesystem or from an attached network share.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>pathInBag</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The relative path of the file within the
+bag or package. For bagged files, this will begin with 'data/'.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>algorithm</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The algorithm used to produce the checksums
+in this manifest. For example, 'md5', 'sha256', etc.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>digest</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The digest/checksum of the file.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +458,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +467,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line15">line 15</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +481,18 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
       
     </div>
 
@@ -213,7 +507,520 @@ SOFTWARE.
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="algorithm">
+  <span class="type-signature"></span>algorithm<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The algorithm used to produce the checksums in this manifest.
+For example, 'md5', 'sha256', etc.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line76">line 76</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="digest">
+  <span class="type-signature"></span>digest<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The digest/checksum of the file.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line83">line 83</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="jobId">
+  <span class="type-signature"></span>jobId<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The id (UUID) of the job that packaged the files in this manifest.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line51">line 51</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="origPath">
+  <span class="type-signature"></span>origPath<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The original path of the file, before it was bagged or otherwise
+packaged. This is usually an absolute path from the local filesystem
+or from an attached network share.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line60">line 60</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="pathInBag">
+  <span class="type-signature"></span>pathInBag<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The relative path of the file within the bag or package. For bagged
+files, this will begin with 'data/'.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line68">line 68</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="timestamp">
+  <span class="type-signature"></span>timestamp<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The date and time this manifest was created, in ISO datetime
+format. If a job was run multiple times, it can have multiple
+manifests, each with its own timestamp. The timestamp value
+shows when the job finished packaging the files. The packaging
+process would have started before this timestamp, and if the job
+included an upload step, the job itself would have completed
+after this timestamp.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line96">line 96</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#validate">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="validate">
+      <span class="type-signature"></span>validate<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    validate returns true or false, indicating whether this object
+contains complete and valid data. If it returns false, check
+the errors property for specific errors.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_manifest_entry.js.html">core/manifest_entry.js</a>, <a href="core_manifest_entry.js.html#line106">line 106</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     

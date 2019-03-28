@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      BagItProfileController - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,27 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        BagItProfileController
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        BagItProfileController
         
       </h2>
 
+      
+        <div class="class-description">
+          BagItProfileController provides methods to display and update
+<a href="BagItProfile.html">BagItProfile</a> objects.
+        </div>
       
     
   </header>
@@ -110,25 +107,96 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#BagItProfileController">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="BagItProfileController">
+      <span class="type-signature"></span>new BagItProfileController<span class="signature">(params)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>params</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      url.URLSearchParams
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          Query parameters. The most
+important of these is "id", which specifies the id the BagItProfile
+to load.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +216,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +225,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line30">line 30</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +239,18 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
       
     </div>
 
@@ -213,7 +265,1486 @@ SOFTWARE.
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="defaultOrderBy">
+  <span class="type-signature"></span>defaultOrderBy<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The property by which this controller sorts the list display.
+Here, it's the "name" property of the BagItProfile object.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line87">line 87</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="defaultSortDirection">
+  <span class="type-signature"></span>defaultSortDirection<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The default order in which to sort the list of BagItProfiles.
+Can be "asc" or "desc". This is set to "asc".
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line94">line 94</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="formClass">
+  <span class="type-signature"></span>formClass<span class="type-signature"> :<a href="Form.html">Form</a></span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is the name of the form class that can render a form for
+this controller's model. For this controller, it's
+<a href="BagItProfileForm.html">BagItProfileForm</a>
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line58">line 58</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="formTemplate">
+  <span class="type-signature"></span>formTemplate<span class="type-signature"> :handlebars.Template</span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is the template that renders this controller's form.
+Templates are properties of the Template object.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line65">line 65</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="listTemplate">
+  <span class="type-signature"></span>listTemplate<span class="type-signature"> :handlebars.Template</span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is the template that renders this controller's object list.
+Templates are properties of the Template object.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line72">line 72</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="model">
+  <span class="type-signature"></span>model<span class="type-signature"> :<a href="PersistentObject.html">PersistentObject</a>|object</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The model which the controller represents. In this case, it's
+the class <a href="BagItProfile.html">BagItProfile</a>.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line50">line 50</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="nameProperty">
+  <span class="type-signature"></span>nameProperty<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The name property of this template's model. This is used when
+ordering lists of objects by name. For the <a href="BagItProfile.html">BagItProfile</a>
+object, it's would "name".
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line80">line 80</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="typeMap">
+  <span class="type-signature"></span>typeMap<span class="type-signature"> :url.URLSearchParams</span>
+</h4>
+
+
+
+
+  <div class="description">
+    A url.URLSearchParams object containing parameters that
+the controller will need to render the display. For forms, the
+only required param is usually "id", which is the UUID of the
+object to be edited. For lists, this typically includes
+limit, offset, orderBy, and sortDirection.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line43">line 43</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#_getPageHTML">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="_getPageHTML">
+      <span class="type-signature"></span>_getPageHTML<span class="signature">(profile, opts)</span><span class="type-signature"> &rarr; {string}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This fills in the page-level data structure and passes it to
+the BagItProfileForm template. It returns the HTML rendered
+by the template.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>profile</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="BagItProfile.html">BagItProfile</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The BagItProfile whose properties
+should be displayed in the form.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>opts</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          Additional options to pass into the template
+context. These may include errors, errMessage, and alertMessage.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line174">line 174</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#create">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="create">
+      <span class="type-signature"></span>create<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This method creates a new BagItProfile, either from scratch
+or based on an existing profile that the user selected. It
+then redirects to the edit() method, so the user can customize
+the new profile.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line115">line 115</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#deleteTagDef">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="deleteTagDef">
+      <span class="type-signature"></span>deleteTagDef<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This deletes a TagDefinition from this BagItProfile, if the user
+confirms the deletion.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line293">line 293</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#edit">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="edit">
+      <span class="type-signature"></span>edit<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This presents the tabbed BagItProfile edit form that enables
+the user to customize a BagItProfile.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line126">line 126</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#getNewProfileFromBase">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="getNewProfileFromBase">
+      <span class="type-signature"></span>getNewProfileFromBase<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="BagItProfile.html">BagItProfile</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This returns an entirely new BagItProfile, or a new BagItProfile
+that is a copy of a base profile.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line228">line 228</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#new">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="new">
+      <span class="type-signature"></span>new<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This method presents a form that asks if the user would like
+to create a new BagItProfile from scratch or based on an
+existing BagItProfile. The user has to go through this form
+before actually getting to the BagItProfile form.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line103">line 103</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#newTagFile">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="newTagFile">
+      <span class="type-signature"></span>newTagFile<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This displays a modal dialog asking the user to name a new
+tag file to be added to this profile.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line252">line 252</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#newTagFileCreate">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="newTagFileCreate">
+      <span class="type-signature"></span>newTagFileCreate<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This creates a new tag file in the <a href="BagItProfile.html">BagItProfile</a> by adding
+a single new <a href="TagDefinition.html">TagDefinition</a> whose tagFile attribute
+matches the tag file name the user typed in.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line267">line 267</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#update">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="update">
+      <span class="type-signature"></span>update<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This is called when the user clicks the Save button on the
+BagItProfile edit form. It saves the profile, if the profile
+is valid, or re-displays the form with error message if the
+profile is not valid.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_bagit_profile_controller.js.html">ui/controllers/bagit_profile_controller.js</a>, <a href="ui_controllers_bagit_profile_controller.js.html#line141">line 141</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     

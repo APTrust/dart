@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      OperationResult - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,27 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        OperationResult
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        OperationResult
         
       </h2>
 
+      
+        <div class="class-description">
+          OperationResult contains information about the result of a job operation.
+Operations may include bagging, validation, uploading, etc.
+        </div>
       
     
   </header>
@@ -110,25 +107,128 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#OperationResult">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="OperationResult">
+      <span class="type-signature"></span>new OperationResult<span class="signature">(operation, provider)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Creates a new OperationResult.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>operation</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          The name of the operation that was attempted.
+          
+        </td>
+      </tr>
+
+    
+      <tr>
+        
+          <td class="name"><code>provider</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          The name of the plugin that attempted to
+perform the operation.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +248,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +257,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line9">line 9</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +271,18 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
       
     </div>
 
@@ -213,7 +297,1658 @@ SOFTWARE.
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="attempt">
+  <span class="type-signature"></span>attempt<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The number of times DART attempted this operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line68">line 68</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="completed">
+  <span class="type-signature"></span>completed<span class="type-signature"> :Date</span>
+</h4>
+
+
+
+
+  <div class="description">
+    Time at which DART completed this operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line80">line 80</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="errors">
+  <span class="type-signature"></span>errors<span class="type-signature"> :Array.&lt;string></span>
+</h4>
+
+
+
+
+  <div class="description">
+    Error messages describing what went wrong during the operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line107">line 107</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="fileMtime">
+  <span class="type-signature"></span>fileMtime<span class="type-signature"> :Date</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The modification timestamp of the file that packaged, stored, validated
+or otherwise operated on.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line53">line 53</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="filepath">
+  <span class="type-signature"></span>filepath<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The path to the file that packaged, stored, validated or otherwise
+operated on.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line39">line 39</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="filesize">
+  <span class="type-signature"></span>filesize<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The size of the file that packaged, stored, validated or otherwise
+operated on.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line46">line 46</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="info">
+  <span class="type-signature"></span>info<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    Informational message about the operation. This can be
+used for logging, debugging, or display.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line95">line 95</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="operation">
+  <span class="type-signature"></span>operation<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The name of the operation that was attempted. For example,
+'bagging', 'validation', 'upload', etc. Full list is yet
+to be determined.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line26">line 26</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="provider">
+  <span class="type-signature"></span>provider<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The name of the plugin that attempted to perform the operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line32">line 32</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="remoteChecksum">
+  <span class="type-signature"></span>remoteChecksum<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    remoteChecksum is the checksum returned by the remote
+storage service after upload, if applicable. For S3 storage,
+this will be the e-tag. For FTP transfers and bagging
+operations, this will remain null.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line62">line 62</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="remoteURL">
+  <span class="type-signature"></span>remoteURL<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The URL of the object or file in the remote storage service.
+This will be set only on upload operations. It describes
+where the file was uploaded.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line88">line 88</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="started">
+  <span class="type-signature"></span>started<span class="type-signature"> :Date</span>
+</h4>
+
+
+
+
+  <div class="description">
+    Time at which DART last attempted this operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line74">line 74</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="warning">
+  <span class="type-signature"></span>warning<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    Warning message about the operation.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line101">line 101</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#.inflateFrom">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id=".inflateFrom">
+      <span class="type-signature">(static) </span>inflateFrom<span class="signature">(data)</span><span class="type-signature"> &rarr; {<a href="OperationResult.html">OperationResult</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This converts the JSON representation of an OperationResult to a
+full-fledged OperationResult object with all of the expected methods.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>data</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          A JavaScript hash.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line202">line 202</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#finish">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="finish">
+      <span class="type-signature"></span>finish<span class="signature">(errorMessage)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Sets the completed attribute to the current datetime,
+and sets the errors attribute.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>errorMessage</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          An optional error message. If this is
+passed in, it will be appended the errors array.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line147">line 147</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#firstError">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="firstError">
+      <span class="type-signature"></span>firstError<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Returns the first error message in the result's errors array, or
+undefined if there are no errors. This is useful for handling
+error events emitted by plugins.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line161">line 161</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#lastError">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="lastError">
+      <span class="type-signature"></span>lastError<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Returns the last error message in the result's errors array, or
+undefined if there are no errors. This is useful for handling
+error events emitted by plugins.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line174">line 174</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#reset">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="reset">
+      <span class="type-signature"></span>reset<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This resets all of the properties of the OperationResult,
+except operation, provider, and attempt. DART calls
+this before it retries a failed operation.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line115">line 115</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#start">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="start">
+      <span class="type-signature"></span>start<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This resets all of the properties of the OperationResult,
+except operation, provider, and attempt, and sets the
+started attribute to the current datetime.
+It also increments the attempt attribute.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line134">line 134</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#succeeded">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="succeeded">
+      <span class="type-signature"></span>succeeded<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Returns true or false, indicating whether the operation succeeded.
+To have succeeded, the operation must have been attempted, must
+be completed, and must have no errors.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_operation_result.js.html">core/operation_result.js</a>, <a href="core_operation_result.js.html#line187">line 187</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     

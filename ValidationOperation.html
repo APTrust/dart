@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      ValidationOperation - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,27 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        ValidationOperation
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        ValidationOperation
         
       </h2>
 
+      
+        <div class="class-description">
+          ValidationOperation contains information describing which bag to validate
+and which BagItProfile to use when validating it.
+        </div>
       
     
   </header>
@@ -110,25 +107,99 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#ValidationOperation">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="ValidationOperation">
+      <span class="type-signature"></span>new ValidationOperation<span class="signature">(pathToBag)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Creates a new ValidationOperation.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>pathToBag</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          The absolute path to the bag DART should
+validate.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +219,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +228,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="core_validation_operation.js.html">core/validation_operation.js</a>, <a href="core_validation_operation.js.html#line8">line 8</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +242,18 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+
       
     </div>
 
@@ -213,7 +268,366 @@ SOFTWARE.
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="errors">
+  <span class="type-signature"></span>errors<span class="type-signature"> :Object.&lt;string, string></span>
+</h4>
+
+
+
+
+  <div class="description">
+    Contains information describing validation errors. Key is the
+name of the invalid field. Value is a description of why the
+field is not valid.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_validation_operation.js.html">core/validation_operation.js</a>, <a href="core_validation_operation.js.html#line37">line 37</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="pathToBag">
+  <span class="type-signature"></span>pathToBag<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The absolute path to the bag to validate. The path can point to a
+file or directory.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_validation_operation.js.html">core/validation_operation.js</a>, <a href="core_validation_operation.js.html#line23">line 23</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="result">
+  <span class="type-signature"></span>result<span class="type-signature"> :<a href="OperationResult.html">OperationResult</a></span>
+</h4>
+
+
+
+
+  <div class="description">
+    This describes the result of DART's attempt to validate the bag.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_validation_operation.js.html">core/validation_operation.js</a>, <a href="core_validation_operation.js.html#line29">line 29</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#.inflateFrom">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id=".inflateFrom">
+      <span class="type-signature">(static) </span>inflateFrom<span class="signature">(data)</span><span class="type-signature"> &rarr; {<a href="ValidationOperation.html">ValidationOperation</a>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This converts the JSON representation of a ValidationOperation to a
+full-fledged ValidationOperation object with all of the expected methods.
+  </div>
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>data</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      Object
+    </span>
+
+    
+
+
+          
+        </td>
+
+        
+
+        
+
+        <td class="description last">
+          A JavaScript hash.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_validation_operation.js.html">core/validation_operation.js</a>, <a href="core_validation_operation.js.html#line48">line 48</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     

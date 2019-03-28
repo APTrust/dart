@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      migrations/20190130T195730Z.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +51,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,151 +80,85 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        migrations/20190130T195730Z.js
+      </h1>
+    
 
     
       
-
-
-
-    
-
-      
-
-
-
-    
-
 
 <section>
-  <header>
-    
-      <h2>
-        
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
-        
+    <pre class="prettyprint source linenums"><code>const { BagItProfile } = require('../bagit/bagit_profile');
+const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
+const { InternalSetting } = require('../core/internal_setting');
+const path = require('path');
+const { TestUtil } = require('../core/test_util');
 
-        
+/**
+ * Migration 20190130T190816Z adds the built-in BagIt profiles for APTrust
+ * and DPN to the user's local BagItProfile database.
+ *
+ */
+function run() {
+    let migration = path.parse(__filename).name;
+    let migrationName = `Migration_${migration}`;
+    let record = InternalSetting.firstMatching('name', migrationName);
+    if (record &amp;&amp; record.value) {
+        Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
+        return;
+    }
+    Context.logger.info(`Starting migration ${migration}`);
 
-<dl class="details">
+    // This is the meat of the work...
+    loadBuiltInProfiles();
 
-  
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
+    Context.logger.info(`Finished ${migration}`);
+    let now = new Date().toISOString();
+    let migrationRecord = new InternalSetting({
+        name: migrationName,
+        value: now,
+        userCanDelete: false
+    });
+    migrationRecord.save();
+}
 
-  
+/**
+ * Load APTrust and DPN profiles in the local BagItProfile database
+ * if they are not already there.
+ *
+ */
+function loadBuiltInProfiles() {
+    let profiles = {
+        'APTrust': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['aptrust']),
+        'DPN': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['dpn'])
+    };
+    let jsonFiles = {
+        'APTrust': 'aptrust_bagit_profile_2.2.json',
+        'DPN': 'dpn_bagit_profile_2.1.json'
+    }
+    for (let [name, profile] of Object.entries(profiles)) {
+        if (!profile) {
+            let jsonFile = jsonFiles[name];
+            Context.logger.info(`Installing profile ${name} from ${jsonFile}`);
+            profile = TestUtil.loadProfile(jsonFile);
+            profile.isBuiltIn = true;
+            profile.userCanDelete = false;
+            profile.save();
+        } else {
+            Context.logger.info(`Profile ${name} is already installed`);
+        }
+    }
+}
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-        
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+module.exports.run = run;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>

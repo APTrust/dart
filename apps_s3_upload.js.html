@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      apps/s3_upload.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +51,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,151 +80,134 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        apps/s3_upload.js
+      </h1>
+    
 
     
       
-
-
-
-    
-
-      
-
-
-
-    
-
 
 <section>
-  <header>
-    
-      <h2>
-        
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
-        
+    <pre class="prettyprint source linenums"><code>const CLI = require('./cli_constants');
+const dateFormat = require('dateformat');
+const fs = require('fs');
+const { Job } = require('../core/job');
+const path = require('path');
+const { OperationResult } = require('../core/operation_result');
+const { PluginManager } = require('../plugins/plugin_manager');
+const { UploadTarget } = require('../core/upload_target');
+const { UploadOperation } = require('../core/upload_operation');
+const { Util } = require('../core/util');
 
-        
+class S3Upload {
 
-<dl class="details">
+    constructor(opts) {
+        this.opts = opts || {};
+        this.exitCode = CLI.EXIT_SUCCESS;
+    }
 
-  
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
+    run() {
+        this.validateOpts();
+        // 'let op' = 'pay attention' in Nederlands
+        let op = this.initOpRecord();
+        try {
 
-  
+        } catch (err) {
 
-  
+        }
+    }
 
-  
+    /**
+     * This validates the options passed in from the command line. If the
+     * source or destination is missing, this will throw an exception.
+     *
+     */
+    validateOpts() {
+        if (!this.opts.source || this.opts.source.length &lt; 1 || Util.isEmpty(this.opts.source[0])) {
+            throw 'Specify at least one file to upload.'
+        }
+        if (this.opts.source.length > 1) {
+            console.warn(`Multiple sources specified. Only ${this.opts.source[0]} will be uploaded.`);
+        }
+        if (!fs.existsSync(this.opts.source[0])) {
+            throw `File does not exist: ${this.opts.source[0]}.`
+        }
+        if (!this.opts.dest) {
+            throw 'Specify where you want to upload the file.'
+        }
+    }
 
-  
+    /**
+     * This returns a fully initialized {@link UploadOperation} record that
+     * will be used as a manifest to describe what work the uploader did and
+     * what the outcome was.
+     *
+     * @returns {UploadOperation}
+     */
+    initOpRecord() {
+        let stats = fs.statSync(this.opts.source[0]);
+        let provider = this.getProvider();
+        let uploadTarget = this.getUploadTarget();
+        let op = new UploadOperation(this.opts.dest, 's3', [this.opts.source[0]]);
+        op.result = new OperationResult('upload', provider.description().name);
+        // Be careful because start() calls reset() internally,
+        // clearing some of the attributes we set below. So call
+        // start() first, then set attrs.
+        // TODO: Smarter start()/reset() for this class?
+        op.result.start();
+        op.result.filepath = this.opts.source[0];
+        op.payloadSize = op.result.filesize = stats.size;
+        op.result.fileMtime = dateFormat(stats.mtime, 'isoUtcDateTime');
+        op.result.remoteURL = this.opts.dest;
+        return op;
+    }
 
-  
+    /**
+     * This returns the first network provider plugin that implements the
+     * S3 protocol. If it can't find a plugin for the S3 protocol, it throws
+     * an exception.
+     *
+     * @returns {Plugin}
+     */
+    getProvider() {
+        let providers = PluginManager.implementsProtocol('s3');
+        if (providers.length == 0) {
+            throw 'Cannot find a plugin that implements the s3 protocol.'
+        }
+        return providers[0];
+    }
 
-  
+    /**
+     * This returns the first UploadTarget record that implements the S3
+     * protocol and matches the hostname of the URL specified in this.opts.dest.
+     * It will return the UploadTarget whose bucket property exactly matches
+     * the URL's pathname, if there is such a service. Failing that, it will
+     * return the service whose bucket starts with the path name. Failing that,
+     * it will return the first service with the matching host and protocol.
+     *
+     * @returns {UploadTarget} or null.
+     */
+    getUploadTarget() {
+        let url = new URL(this.opts.dest);
+        let exact = (obj) => { return obj.protocol == 's3' &amp;&amp; obj.host == url.host &amp;&amp; obj.bucket == url.pathname };
+        let includes = (obj) => { return obj.protocol == 's3' &amp;&amp; obj.host == url.host &amp;&amp; !Util.isEmpty(obj.bucket) &amp;&amp; url.pathname.startsWith('/'+obj.bucket)};
+        let hostMatches = (obj) => { return obj.protocol == 's3' &amp;&amp; obj.host == url.host };
+        let uploadTarget = UploadTarget.first(exact) || UploadTarget.first(includes) || UploadTarget.first(hostMatches);
+        if (!uploadTarget) {
+            throw `Cannot find a UploadTarget record for ${url.host}.`;
+        }
+        return uploadTarget;
+    }
+}
 
-  
-
-  
-
-  
-
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-        
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+module.exports = S3Upload;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>

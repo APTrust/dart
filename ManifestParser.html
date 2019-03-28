@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      ManifestParser - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,42 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        ManifestParser
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        ManifestParser
         
       </h2>
 
+      
+        <div class="class-description">
+          ManifestParser parses text-based payload and tag manifests that
+conform to the BagIt spec. These files have the following format:
+
+924238a7018a567062c6527675fcf1c0  data/docs/index.html
+
+The first item on each line is a checksum and the second is the
+relative path (within the bag) of the file it was calculated from.
+The two items are separated by one or more spaces.
+
+This class has no methods. It simply responds to events on the stream
+you pipe into it. After parsing the stream, it stores the data it
+has parsed in bagItFile.keyValueCollection. Within that collection,
+you can use the first() method to look up the checksum for a file.
+
+You can attach your own callback to the ManifestParser.stream end
+event, if you want to do something with the BagItFile or (more likely)
+its keyValueCollection when parsing completes.
+        </div>
       
     
   </header>
@@ -110,25 +122,101 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#ManifestParser">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="ManifestParser">
+      <span class="type-signature"></span>new ManifestParser<span class="signature">(bagItFile)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>bagItFile</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="BagItFile.html">BagItFile</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          A BagItFile object. If the object
+does not already have a keyValueCollection, the parser will create
+one.
+
+For more on the BagIt spec,
+see <a href="https://tools.ietf.org/html/draft-kunze-bagit-17">BagIt Spec</a>
+
+For info about how to read the parsed data from the file, see <a href="KeyValueCollection.html">KeyValueCollection</a>
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +236,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +245,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="bagit_manifest_parser.js.html">bagit/manifest_parser.js</a>, <a href="bagit_manifest_parser.js.html#line57">line 57</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +259,48 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+  <div class="example-container">
+    <a class="link-icon" href="#ManifestParser-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="ManifestParser-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>// Set up a BagItFile. Note the file itself is a payload manifest.
+let pathToManifest = "/path/to/bag-info.txt";
+let stats = fs.statSync(pathToManifest);
+let bagItFile = new BagItFile(pathToManifest, "manifest-sha256.txt", stats);
+
+// Open the BagItFile for reading
+let stream = fs.createReadStream(pathToManifest);
+
+// Create a new ManifestParser to parse the BagItFile
+let manifestParser = new ManifestParser(bagItFile);
+
+// Optional: Hook up your callback to do something with
+// bagItFile when the parsing is done.
+manifestParser.stream.on('end', YOUR_CALLBACK_HERE);
+
+// Required: Pipe your file reader into the parser.
+stream.pipe(manifestParser.stream).on('error', function(e){handleError(e)});</code></pre>
+
+
+  </div>
+
+
       
     </div>
 
@@ -212,6 +314,151 @@ SOFTWARE.
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+
+<h4 class="name" id="bagItFile">
+  <span class="type-signature"></span>bagItFile<span class="type-signature"> :<a href="BagItFile.html">BagItFile</a></span>
+</h4>
+
+
+
+
+  <div class="description">
+    bagItFile is the file that will be parsed.
+When parsing is complete, bagItFile.keyValueCollection
+will be populated with relative file paths and
+the checksum digests that correspond to those paths.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_manifest_parser.js.html">bagit/manifest_parser.js</a>, <a href="bagit_manifest_parser.js.html#line67">line 67</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="stream">
+  <span class="type-signature"></span>stream<span class="type-signature"> :stream.PassThrough</span>
+</h4>
+
+
+
+
+  <div class="description">
+    stream is a PassThrough stream that allows
+for data to be piped from a ReadStream into
+the parser. You can attach your own 'data' and
+'end' events to this stream, but the parser
+already does the parsing work for you.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_manifest_parser.js.html">bagit/manifest_parser.js</a>, <a href="bagit_manifest_parser.js.html#line78">line 78</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
     
 
     

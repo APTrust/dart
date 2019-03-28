@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      Bagger - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +49,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,30 +78,26 @@
 
   <div id="main">
     
-
-    
-      
-
-
-
+      <h1 class="page-title">
+        Bagger
+      </h1>
     
 
-      
-
-
-
     
-
 
 <section>
   <header>
     
       <h2>
         
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
+        Bagger
         
       </h2>
 
+      
+        <div class="class-description">
+          Bagger creates a bag based on a BagItProfile.
+        </div>
       
     
   </header>
@@ -110,25 +106,101 @@
     <div class="container-overview">
       
         
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
+
+
+  
+    <h2>Constructor</h2>
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#Bagger">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="Bagger">
+      <span class="type-signature"></span>new Bagger<span class="signature">(job)</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+
+
+
+
+
+
+  <h5>Parameters:</h5>
+  
+
+<table class="params">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+      <tr>
+        
+          <td class="name"><code>job</code></td>
+        
+
+        <td class="type">
+          
+            
+    <span class="param-type">
+      <a href="Job.html">Job</a>
+    </span>
+
+    
+
+
+          
+        </td>
+
         
 
         
+
+        <td class="description last">
+          A job object that includes a
+<a href="PackageOperation.html">PackageOperation</a> describing a number of files to be
+packaged and a <a href="BagItProfile.html">BagItProfile</a> describing how to package them.
+
+Since bagging is basically a streaming operation, streaming data
+into a specified format, this class implements a subset of the
+Node.js stream events. The 'error' and 'finish' events are the
+primary ones to listen to.
+          
+        </td>
+      </tr>
+
+    
+  </tbody>
+</table>
+
+
+
+
 
 <dl class="details">
 
   
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
 
   
 
@@ -148,33 +220,6 @@
 
   
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
   
 
   
@@ -184,7 +229,7 @@ SOFTWARE.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line49">line 49</a>
         </li>
       </ul>
     </dd>
@@ -198,7 +243,50 @@ SOFTWARE.
 </dl>
 
 
-        
+
+
+
+
+
+
+
+
+
+
+
+  <div class="example-container">
+    <a class="link-icon" href="#Bagger-examples">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h5 id="Bagger-examples">Example</h5>
+    
+
+  <pre class="prettyprint"><code>// Assuming you have already created a Job object
+var bagger = new Bagger(job);
+bagger.on('error', function(err) {
+   // Check the contents of job.packageOperation.result.errors
+   // for details of what went wrong.
+});
+bagger.on('fileAdded', function(bagItFile) {
+   // Do something with the BagItFile, such as displaying
+   // a message saying it's been written into the bag.
+   // Don't alter the bagItFile object since it's still
+   // in use by the bagger.
+});
+bagger.on('finish', function() {
+    // Do whatever you want when the bag is complete.
+    // If needed, you can inspect the contents of the bagger.bagItFiles
+    // array. Manifests and tag files in the bagItFiles array
+    // will include the file contents. Payload files will not.
+});
+bagger.create();</code></pre>
+
+
+  </div>
+
+
       
     </div>
 
@@ -213,11 +301,855 @@ SOFTWARE.
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="bagItFiles">
+  <span class="type-signature"></span>bagItFiles<span class="type-signature"> :<a href="BagItFile.html">BagItFile</a></span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is a list of <a href="BagItFile.html">BagItFile</a> objects that were packed
+into the bag. This includes payload files, manifests, tag files
+and tag manifests.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line74">line 74</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="formatWriter">
+  <span class="type-signature"></span>formatWriter<span class="type-signature"> :object</span>
+</h4>
+
+
+
+
+  <div class="description">
+    The formatWriter is a plugin used to write the bag onto disk.
+For example, a bag being written into a directory on the file
+system will use the FileSystemWriter plugin. A bag being written
+to a tar file will use the TarWriter plugin, etc.
+
+The bagger chooses the formatWriter at runtime, based on
+heuristics such as the file extension of the output file.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line86">line 86</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="job">
+  <span class="type-signature"></span>job<span class="type-signature"> :<a href="Job.html">Job</a></span>
+</h4>
+
+
+
+
+  <div class="description">
+    The Job object contains information about what the bagger
+is supposed to bag, and according to what profile.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line58">line 58</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="tmpFiles">
+  <span class="type-signature"></span>tmpFiles<span class="type-signature"> :Array.&lt;string></span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is a list of absolute paths to temporary tag files and
+manifests. These go into the system temp directory during
+bagging, and the bagger deletes them when it's done.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line66">line 66</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+    
+
+    
+      <h3 class="subsection-title">Methods</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#_addPayloadFiles">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="_addPayloadFiles">
+      <span class="type-signature">(async) </span>_addPayloadFiles<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This adds payload files to the bag.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line166">line 166</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#create">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="create">
+      <span class="type-signature">(async) </span>create<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This creates the bag based in the BagItProfile and other info specified
+in the <a href="Job.html">Job</a> object. See the documentation for the <a href="Bagger.html">Bagger</a>
+class for an example of how to use this method.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line115">line 115</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#validateJob">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="validateJob">
+      <span class="type-signature"></span>validateJob<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This ensures the job is valid before the bagger tries to run it.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line95">line 95</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
 
     
 
+    
+      <h3 class="subsection-title">Events</h3>
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#event:error">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="event:error">
+      <span class="type-signature"></span>error<span class="type-signature"> :string</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Emits a string describing an error encountered
+during the bagging process. Processing may continue after
+some types of errors.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line131">line 131</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#event:fileAdded">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="event:fileAdded">
+      <span class="type-signature"></span>fileAdded<span class="type-signature"> :<a href="BagItFile.html">BagItFile</a></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Emits a <a href="BagItFile.html">BagItFile</a> object describing a
+file that was just written into the bag.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line144">line 144</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#event:finish">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="event:finish">
+      <span class="type-signature"></span>finish<span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    Emits an empty event indicating the bagger has
+completed its work. Check bagger.job.packageOp.result
+for errors.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_bagger.js.html">bagit/bagger.js</a>, <a href="bagit_bagger.js.html#line398">line 398</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
     
   </article>
 </section>

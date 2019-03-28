@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      core/context.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +51,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,151 +80,153 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        core/context.js
+      </h1>
+    
 
     
       
-
-
-
-    
-
-      
-
-
-
-    
-
 
 <section>
-  <header>
-    
-      <h2>
-        
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
-        
+    <pre class="prettyprint source linenums"><code>const { Config } = require('./config');
+const { JsonStore } = require('./json_store');
+const logger = require('../util/logger.js');
+const os = require('os');
+const osLocale = require('os-locale');
+const path = require('path');
 
-        
+const y18n = require('y18n')({
+    directory: path.join(__dirname, '..', 'locales'),
+    locale: osLocale.sync()
+});
 
-<dl class="details">
+/**
+ * GlobalContext is a single, globally available object that provides
+ * information and services to all components of the application.
+ */
+class GlobalContext {
+    /**
+     * Constructs a new GlobalContext. Don't call this yourself, as it's
+     * called when the module loads. You'll want to access pre-instantiated
+     * Context object that this module exports.
+     */
+    constructor() {
+        /**
+          * isTestEnv indicates whether we're currently running as part of
+          * a test suite. It will be true when process.env.NODE_ENV === 'test',
+          * which Jest sets by default when you run `npm test`.
+          *
+          * @type {boolean}
+          */
+        this.isTestEnv = process.env.NODE_ENV === 'test';
+        /**
+          * config is the current configuration, either user or test, based
+          * on whether isTestEnv is true.
+          *
+          * @type {Config}
+          */
+        this.config = this.isTestEnv ? Config.test : Config.user;
+        /**
+          * dataStores is a hash of the application data storage files.
+          * The key is the object name (type of object stored in the file),
+          * and the value is the queryable JsonStore object holding the data.
+          *
+          * @type {Object.&lt;string, JsonStore>}
+          */
+        this.dataStores = {};
 
-  
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
+        /**
+         * logger is an instance of the WinstonJS logger, the system-wide logging
+         * facility. See https://github.com/winstonjs/winston.
+         *
+         * @type {Object}
+         */
+        this.logger = logger;
 
-  
+        /**
+         * y18n allows us to translate/localize the UI.
+         *
+         * @type {Object}
+         */
+        this.y18n = y18n;
+    }
+    /**
+      * Returns the JsonStore with the specified name (class name),
+      * creating it first if necessary.
+      *
+      * @param {string} name - The name of the datastore. This can be a
+      * class name, so each object type has it's own JSON data file.
+     */
+    db(name) {
+        if (this.dataStores[name] == null) {
+            this.dataStores[name] = new JsonStore(this.config.dataDir, name);
+        }
+        return this.dataStores[name];
+    }
 
-  
+    /**
+     * Returns true if we're running in Electron dev mode rather than
+     * in compiled mode.
+     *
+     * @returns {boolean}
+     */
+    isElectronDevMode() {
+        return (process.execPath.includes('node_modules/electron') ||
+                process.execPath.includes('node_modules\electron'));
+    }
 
-  
+    /**
+      * Returns true or false, indicating whether or not we're
+      * currently running in Electron. This will be false in jest
+      * tests and when DART runs as a command-line tool.
+      *
+      * @returns {number}
+      */
+    electronIsRunning() {
+        return process &amp;&amp; process.versions &amp;&amp; process.versions.hasOwnProperty('electron');
+    }
 
-  
+    /**
+     * Returns a JavaScript object built from parsing this application's
+     * package.json file.
+     *
+     * @returns {Object}
+     */
+    getPackageInfo() {
+        var obj = null;
+        try {
+            obj = require('../package.json')
+        } catch (ex) {
+            this.logger.error(ex)
+        }
+        return obj;
+    }
 
-  
+    /**
+     * Returns the version of DART.
+     *
+     * @returns {string}
+     */
+    dartVersion() {
+        var pkg = this.getPackageInfo();
+        if (pkg == null) {
+            return "Cannot read version from package.json file.";
+        }
+        return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`
+    }
+}
 
-  
+const Context = new GlobalContext();
+Object.freeze(Context);
 
-  
-
-  
-
-  
-
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-        
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+module.exports.Context = Context;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>

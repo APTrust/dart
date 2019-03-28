@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      core/util.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +51,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,151 +80,466 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        core/util.js
+      </h1>
+    
 
     
       
-
-
-
-    
-
-      
-
-
-
-    
-
 
 <section>
-  <header>
-    
-      <h2>
-        
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
-        
+    <pre class="prettyprint source linenums"><code>const path = require('path');
+const fs = require('fs');
+const os = require('os');
+/**
+ * Util contains a number of static utility functions used throughout
+ * the DART application. It has no constructor. Simply call Util.&lt;method>(&lt;args>)
+ * to use any of its methods.
+ *
+ */
 
-        
+class Util {
 
-<dl class="details">
+    /**
+      * Returns a version 4 uuid string.
+      *
+      * Thanks https://gist.github.com/kaizhu256/4482069
+      * @returns {string }
+      */
+    static uuid4() {
+        var uuid = '', ii;
+        for (ii = 0; ii &lt; 32; ii += 1) {
+            switch (ii) {
+            case 8:
+            case 20:
+                uuid += '-';
+                uuid += (Math.random() * 16 | 0).toString(16);
+                break;
+            case 12:
+                uuid += '-';
+                uuid += '4';
+                break;
+            case 16:
+                uuid += '-';
+                uuid += (Math.random() * 4 | 8).toString(16);
+                break;
+            default:
+                uuid += (Math.random() * 16 | 0).toString(16);
+            }
+        }
+        return uuid;
+    }
 
-  
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
+    /**
+      * Returns the byte length of an utf8 string
+      *
+      * @param {string} str - The string to measure.
+      * @returns {number}
+      */
+    static unicodeByteLength(str) {
+        var s = str.length;
+        for (var i=str.length-1; i>=0; i--) {
+            var code = str.charCodeAt(i);
+            if (code > 0x7f &amp;&amp; code &lt;= 0x7ff) s++;
+            else if (code > 0x7ff &amp;&amp; code &lt;= 0xffff) s+=2;
+            if (code >= 0xDC00 &amp;&amp; code &lt;= 0xDFFF) i--; //trail surrogate
+        }
+        return s;
+    }
 
-  
+    /**
+      * Returns true if str matches the regex for hex-formatted uuid.
+      *
+      * @param {string} str - The string to test.
+      * @returns {boolean}
+      */
+    static looksLikeUUID(str) {
+        var regex = /^([a-f\d]{8}(-[a-f\d]{4}){3}-[a-f\d]{12}?)$/i;
+        return Util.stringMatchesRegex(str, regex);
+    }
 
-  
+    /**
+      * Returns true if str matches the regex for a URL beginning
+      * with http or https.
+      *
+      * @param {string} str - The string to test.
+      * @returns {boolean}
+      */
+    static looksLikeHypertextURL(str) {
+        let regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&amp;//=]*)/;
+        return Util.stringMatchesRegex(str, regex);
+    }
 
-  
+    static stringMatchesRegex(str, pattern) {
+        var match = null
+        try {
+            match = str.match(pattern);
+        } catch (ex) {
+            // null string or non-string
+        }
+        return match != null;
+    }
 
-  
+    /**
+      * Returns true if str is null or empty.
+      *
+      * @param {string} str - The string to check.
+      * @returns {boolean}
+      */
+    static isEmpty(str) {
+        return (str == null || ((typeof str) == "string" &amp;&amp; str.trim() == ""));
+    }
 
-  
+    /**
+      * Converts a camel case variable name to title-cased text.
+      * For example, myVarName is converted to My Var Name.
+      * This is useful for converting var names to labels in the UI.
+      *
+      * @param {string} str - The string to convert
+      * @returns {string}
+      */
+    static camelToTitle(str) {
+        var spaced = str.replace( /([A-Z])/g, " $1" );
+        return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+    }
 
-  
+    /**
+      * Returns true if array of strings is empty, or if all elements
+      * of the array are null or empty.
+      *
+      * @param {string[]} arr - The list of strings to check.
+      * @returns {boolean}
+      */
+    static isEmptyStringArray(arr) {
+        if(arr == null || arr.length == 0) {
+            return true;
+        }
+        for(let str of arr) {
+            if (!Util.isEmpty(str)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-  
+    /**
+      * Returns an array of strings, with all null and empty strings
+      * removed.
+      *
+      * @param {string[]} arr - The list of strings to filter.
+      * @returns {string[]} - The list of strings, minus null and empty entries.
+      */
+    static filterEmptyStrings(arr) {
+        if(arr == null || !Array.isArray(arr)) {
+            //console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
+            return [];
+        }
+        return arr.map(item => item? item.trim() : "").filter(item => item != "");
+    }
 
-  
+    /**
+      * Returns true if list contains item. The list should contain simple
+      * scalar values that can be compared with a simple equality test.
+      * This is similar to the builtin array.includes(), but includes some
+      * special handling for boolean values.
+      *
+      * @param {string[]|number[]|boolean[]} list - The list items to search.
+      * @param {string|number|boolean} item - The item to look for.
+      * @returns {boolean} True if the item is in the list.
+      */
+    static listContains(list, item) {
+        for (var i of list) {
+            if (i == item || Util.boolEqual(i, item)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-  
+    /**
+      * Returns a function suitable for sorting a list of objects
+      * in ascending or desdending order.
+      *
+      * @param {string} property - The name of the object property to sort on.
+      * @param {string} direction - 'desc' or 'asc' for descending or ascending.
+      * @returns {function} A function with params (a, b) where a and b are items to be compared.
+      */
+    static getSortFunction(property, direction) {
+        if (direction == 'desc') {
+            return function(a, b) {
+                // descending sort
+                if (a[property] &lt; b[property]) { return 1; }
+                if (a[property] > b[property]) { return -1; }
+                return 0;
+            };
+        } else {
+            return function(a, b) {
+                // ascending sort
+                if (a[property] &lt; b[property]) { return -1; }
+                if (a[property] > b[property]) { return 1; }
+                return 0;
+            }
+        }
+    }
 
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
+    /**
+      * Returns true if a and b are both non-null and both indicate
+      * the same truth value. E.g. true = "true" = "yes" and
+      * false = "false" = "no".
+      *
+      * @param {boolean|string} a - First value to compare.
+      * @param {boolean|string} b - Second value to compare.
+      * @returns {boolean} True if the two values indicate the same boolean value.
+      */
+    static boolEqual(a, b) {
+        var aValue = Util.boolValue(a);
+        var bValue = Util.boolValue(b);
+        return (aValue != null &amp;&amp; aValue == bValue);
+    }
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    /**
+      * Returns the boolean value of a string. "true" and "yes"
+      * are true. "false" and "no" are false. String is case-insensitive.
+      *
+      * @param {boolean|string} val - The value to examine.
+      *
+      * @returns {boolean} The boolean value of the string, or undefined
+      * if it can't be determined.
+      */
+    static boolValue(val) {
+        if (typeof val === 'boolean') {
+            return val;
+        }
+        var lcString = String(val).toLowerCase();
+        var trueValues = ['true', 'yes', '1'];
+        var falseValues = ['false', 'no', '0'];
+        var retValue;
+        if (trueValues.includes(lcString)) {
+            retValue = true;
+        } else if (falseValues.includes(lcString)) {
+            retValue = false;
+        }
+        return retValue;
+    }
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    /**
+     * toHumanSize returns a human-readable size for the given
+     * number of bytes. The return value is trucated at two
+     * decimal places. E.g. 2621440 converts to "2.50 MB"
+     *
+     * @param {number} bytes - The number of bytes to convert to human size.
+     * @returns {string} - A human-readable string, like "2.5 MB"
+     */
+    static toHumanSize(bytes) {
+        if (isNaN(bytes)) {
+            return 'Not a Number';
+        }
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        var hs = bytes;
+        for(var i=0; i &lt; sizes.length; i++) {
+            hs = bytes / (1024 ** i);
+            if (hs &lt; 1024) {
+                break;
+            }
+        }
+        return `${hs.toFixed(2)} ${sizes[i]}`;
+    }
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
-  
+    /**
+      * Truncates a string at len characters, and appends '..." to the end.
+      *
+      * @param {string} str - The string to truncate.
+      * @param {number} len - Truncate the string at len characters.
+      * @returns {string} - The truncated string, with three trailing dots.
+      */
+    static truncateString(str, len) {
+        if (Util.isEmpty(str) || str.length &lt;= len) {
+            return str;
+        }
+        return str.slice(0, len - 1) + '...';
+    }
 
-  
+    /**
+     * Returns a copy of string str with the first letter set to
+     * lowercase. Returns null if param str is null.
+     *
+     * @param {string}
+     *
+     * @returns {string}
+     */
+    static lcFirst(str) {
+        if (!str) {
+            return str;
+        }
+        return str.charAt(0).toLowerCase() + str.substr(1);
+    }
 
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
-        </li>
-      </ul>
-    </dd>
-  
+    /**
+	  * Converts an absolute Windows path to a path with forward slashes suitable
+	  * for a BagIt file or tar file. Also strips off drive letters and share names.
+      *
+      * @param {string} winPath - An absolute Windows path.
+      * @returns {string} - Path with drive and share removed, and slashes leaning
+      * the right way.
+      *
+      */
+	static normalizeWindowsPath(winPath) {
+		// Remove C:
+		winPath = winPath.replace(/^[A-Z]:/i, '');
+		// Remove \\share
+		winPath = winPath.replace(/^\\\\[^\\]+/, '');
+		// Backslash to forward slash
+		return winPath.replace(/\\/g, '/');
+	}
 
-  
+    /**
+     * walkSync recursively lists all files in a directory and its
+     * subdirectories and returns them in filelist. If you want to
+     * filter the list, include a callback filterFunction, which takes
+     * the filepath as its sole param (a string) and returns true or
+     * false to indicate whether to include the file in the list.
+     *
+     * The returned list is a list of hashes, and each hash has keys
+     * absPath: the absolute path to the file
+     * stats: a Node fs.Stats object with info about the file
+     * The returned list will not include links, only files.
+     *
+     * @param {string} dir - Path to directory.
+     * @param {filterFunction} filterFunction - A function to filter out items that should not go into filelist.
+     * @returns {string[]} A list of file paths under dir that pass the filter.
+    */
+    static walkSync(dir, filterFunction) {
+        var files = fs.readdirSync(dir);
+        var filelist = [];
+        filterFunction = filterFunction || function(file) { return true };
+        files.forEach(function(file) {
+            var absPath = path.join(dir, file);
+            if (!fs.existsSync(absPath)) {
+                //console.log(`Does not exist: ${absPath}`);
+                return;  // Symlinks give ENOENT error
+            }
+            var stats = fs.statSync(absPath);
+            if (stats.isDirectory()) {
+                filelist = Util.walkSync(absPath, filelist, filterFunction);
+            }
+            else if (stats.isFile() &amp;&amp; filterFunction(absPath)) {
+                filelist.push({
+                    absPath: absPath,
+                    stats: stats
+                });
+            }
+        });
+        return filelist;
+    };
 
-  
+    /**
+     * Recursively and synchronously deletes a directory and all its contents.
+     * This will throw an exception if you try to delete any path that's
+     * too close to the root of the file system (fewer than 8 characters
+     * or fewer than 3 slashes/backslashes).
+     *
+     * @param {string} dir - Path to the directory you want to delete.
+    */
+    static deleteRecursive(filepath) {
+        if (filepath.length &lt; 8 || filepath.split(path.sep).length &lt; 3) {
+            throw `${filepath} does not look safe to delete`;
+        }
+        if (fs.existsSync(filepath)) {
+            fs.readdirSync(filepath).forEach(function(file, index){
+                var curPath = path.join(filepath, file);
+                if (fs.lstatSync(curPath).isDirectory()) {
+                    Util.deleteRecursive(curPath);
+                } else {
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(filepath);
+        }
+    };
 
-  
-</dl>
+    /**
+     * This deletes up to one item from an array, modifying the
+     * array in place. For example, Util.deleteFromArray(list, "butter")
+     * will delete the first instance of the word "butter" from the
+     * array, or will delete nothing if the array does not contain
+     * that word.
+     *
+     * @param {Array} array - A list of items.
+     *
+     * @param {string|number|boolean|Date} item - The item you want to
+     * delete.
+     */
+    static deleteFromArray(array, item) {
+        let index = array.indexOf(item);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+    }
 
+    /**
+     * This function returns the basename of the given file path with
+     * with the following extensions stripped off:
+     *
+     * * .7z, .s7z
+     * * .bz, .bz2
+     * * .gz
+     * * .par, par2
+     * * .rar
+     * * .tar, .tar.gz, .tgz, .tar.Z
+     * * .zip, .zipx
+     *
+     * The point is to return the expected name of the bag, based
+     * on the file path. If the file's basename has an unrecognized
+     * extension or no extension, this will return the basename unaltered.
+     *
+     * @param {string} filepath - Path to the bag.
+    */
+    static bagNameFromPath(filepath) {
+        var bagName = path.basename(filepath);
+        return bagName.replace(/\.tar$|\.tar\.gz$|\.t?gz$|\.tar\.Z$|\.tar\.bz$|\.tar\.bz2$|\.bz$|\.bz2$|\.zip$|\.zipx$|\.rar$|\.7z$|\.s7z$|\.par$|\.par2$/, '');
+    }
 
-        
-      
-    </div>
+    /**
+     * This casts the string value str to type toType and returns
+     * the cast value. This is used primarily for converting values
+     * from HTML forms to correctly-typed JavaScript values.
+     *
+     * @example
+     * Util.cast('false', 'boolean') // returns false
+     * Util.cast('yes', 'boolean')   // returns true
+     * Util.cast('1', 'boolean')     // returns true
+     * Util.cast('3', 'number')      // returns 3
+     * Util.cast('3.14', 'number')   // returns 3.14
+     *
+     * @param {string} str - The string value to be cast.
+     *
+     * @param {string} toType - The type to which the string value
+     * should be cast. Currently supports only 'number' and 'boolean'.
+    */
+    static cast(str, toType) {
+        let castValue = str;
+        if (toType === 'boolean') {
+            castValue = Util.boolValue(str);
+        } else if (toType === 'number') {
+            if (str.indexOf('.') > -1) {
+                castValue = parseFloat(str);
+            } else {
+                castValue = parseInt(str);
+            }
+        }
+        return castValue;
+    }
 
-    
+}
 
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+module.exports.Util = Util;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>

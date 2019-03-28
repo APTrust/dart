@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      Home - Documentation
+      core/manifest_entry.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -49,14 +51,14 @@
 
   <div class="top-nav-wrapper">
     <ul>
-      <li  class="active" >
+      <li >
         <a href="index.html">
           
-          
-            <svg fill="#0095dd" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
               <path d="M0 0h24v24H0z" fill="none"/>
             </svg>
+          
           
         </a>
       </li>
@@ -78,151 +80,135 @@
 
   <div id="main">
     
+      <h1 class="page-title">
+        core/manifest_entry.js
+      </h1>
+    
 
     
       
-
-
-
-    
-
-      
-
-
-
-    
-
 
 <section>
-  <header>
-    
-      <h2>
-        
-        ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js
-        
-      </h2>
-
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-            <div class="description">
-              Kickass library to create and place poppers near their reference elements.
-            </div>
-        
+    <pre class="prettyprint source linenums"><code>const { Context } = require('./context');
+const dateFormat = require('dateformat');
+const { PersistentObject } = require('./persistent_object');
+const { Util } = require('./util');
 
-        
+/**
+ * ManifestEntry objects record info about files that were bagged or
+ * otherwise packaged in a DART Job. DART records ManifestEntry records
+ * for payload files, but not for tag files.
+ *
+ * Note that if a job was run several times, a file can have several manifest
+ * entries, each with a timestamp indicating when it was packaged.
+ *
+ */
+class ManifestEntry extends PersistentObject {
+    /**
+     * Creates a new ManifestEntry
+     *
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.jobId - The id (UUID) of the job that packaged the
+     * files in this manifest.
+     *
+     * @param {string} opts.origPath - The original path of the file, before it
+     * was bagged or otherwise packaged. This is usually an absolute path
+     * from the local filesystem or from an attached network share.
+     *
+     * @param {string} opts.pathInBag - The relative path of the file within the
+     * bag or package. For bagged files, this will begin with 'data/'.
+     *
+     * @param {string} opts.algorithm - The algorithm used to produce the checksums
+     * in this manifest. For example, 'md5', 'sha256', etc.
+     *
+     * @param {string} opts.digest - The digest/checksum of the file.
+     */
+    constructor(opts = {}) {
+        opts.required = ['jobId', 'origPath', 'pathInBag', 'algorithm', 'digest'];
+        super(opts);
 
-<dl class="details">
+        /**
+          * The id (UUID) of the job that packaged the files in this manifest.
+          *
+          * @type {string}
+          */
+        this.jobId = opts.jobId || null;
 
-  
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version">
-      <ul class="dummy">
-        <li>
-          1.12.9
-        </li>
-      </ul>
-    </dd>
-  
+        /**
+          * The original path of the file, before it was bagged or otherwise
+          * packaged. This is usually an absolute path from the local filesystem
+          * or from an attached network share.
+          *
+          * @type {string}
+          */
+        this.origPath = opts.origPath || "";
 
-  
+        /**
+          * The relative path of the file within the bag or package. For bagged
+          * files, this will begin with 'data/'.
+          *
+          * @type {string}
+          */
+        this.pathInBag = opts.pathInBag || "";
 
-  
+        /**
+          * The algorithm used to produce the checksums in this manifest.
+          * For example, 'md5', 'sha256', etc.
+          *
+          * @type {string}
+          */
+        this.algorithm = opts.algorithm || "";
 
-  
+        /**
+          * The digest/checksum of the file.
+          *
+          * @type {string}
+          */
+        this.digest = opts.digest || "";
 
-  
+        /**
+          * The date and time this manifest was created, in ISO datetime
+          * format. If a job was run multiple times, it can have multiple
+          * manifests, each with its own timestamp. The timestamp value
+          * shows when the job finished packaging the files. The packaging
+          * process would have started before this timestamp, and if the job
+          * included an upload step, the job itself would have completed
+          * after this timestamp.
+          *
+          * @type {string}
+          */
+        this.timestamp = dateFormat(Date.now(), 'isoUtcDateTime');
+    }
 
-  
+    /**
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
+     *
+     * @returns {boolean}
+     */
+    validate() {
+        return super.validate();
+    }
 
-  
+}
 
-  
+Object.assign(ManifestEntry, PersistentObject);
 
-  
-
-  
-
-  
-    <dt class="tag-license">License:</dt>
-    <dd class="tag-license">
-      <ul class="dummy">
-        <li>
-          Copyright (c) 2016 Federico Zivolo and contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html">ui/include/bootstrap-4.0.0/js/bootstrap.bundle.js</a>, <a href="ui_include_bootstrap-4.0.0_js_bootstrap.bundle.js.html#line1397">line 1397</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-        
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+module.exports.ManifestEntry = ManifestEntry;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
