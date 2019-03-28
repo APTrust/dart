@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobMetadataController } = require('./job_metadata_controller');
 const { PackageOperation } = require('../../core/package_operation');
@@ -25,6 +26,56 @@ function getJobWithProfile() {
     return job;
 }
 
+function clearAllTagRequirements(tags) {
+    for (let tag of tags) {
+        tag.required = false;
+        tag.emptyOk = true;
+        tag.values = [];
+    }
+}
+
+function getController() {
+    let job = getJobWithProfile();
+    let params = new URLSearchParams({ id: job.id });
+    return new JobMetadataController(params);
+}
+
+function assertFormContainsAllTags(tags) {
+    for (let tag of tags) {
+        expect($(`#${tag.id}`).length).toEqual(1);
+    }
+}
+
+function setAllFormValues(tags, prefix) {
+    for (let tag of tags) {
+        $(`#${tag.id}`).val(`${prefix}_${tag.tagName}`);
+    }
+}
+
+function testFormValuesAreSaved(fnName) {
+    let controller = getController();
+    clearAllTagRequirements(controller.job.bagItProfile.tags);
+    setAllFormValues(controller.job.bagItProfile.tags, 'ABC');
+    if (fnName == 'next') {
+        controller.next();
+    } else if (fnName == 'back') {
+        controller.back();
+    } else {
+        throw "Whatchu talkin' bout, Willis?"
+    }
+    let job = Job.find(controller.job.id);
+    // Setting items with a list of allowed values is a little
+    // harder. We can come back to this later if need be.
+    let listItems = ['Access', 'Storage-Option', 'BagIt-Version',
+                     'Tag-File-Character-Encoding']
+    for (let tag of job.bagItProfile.tags) {
+        if (!listItems.includes(tag.tagName)) {
+            //console.log(`${tag.tagName} = ${tag.getValue()}`)
+            expect(tag.getValue()).toMatch(/^ABC/);
+        }
+    }
+}
+
 test('constructor', () => {
     let job = getJobWithProfile();
     let params = new URLSearchParams({ id: job.id });
@@ -34,13 +85,89 @@ test('constructor', () => {
 });
 
 test('show', () => {
-    let job = getJobWithProfile();
-    let params = new URLSearchParams({ id: job.id });
-    let controller = new JobMetadataController(params);
+    let controller = getController();
     UITestUtil.setDocumentBody(controller.show())
+    assertFormContainsAllTags(controller.job.bagItProfile.tags);
+});
 
-    // Make sure form includes fields for each tag.
-    for (let tag of job.bagItProfile.tags) {
-        expect($(`#${tag.id}`).length).toEqual(1);
-    }
+test('back', () => {
+    let controller = getController();
+    controller.job.save = jest.fn()
+
+    let response = controller.back();
+    expect(controller.job.save).toHaveBeenCalled();
+
+    // Redirect has no content...
+    expect(response).toEqual({});
+
+    // ...and it should send us here
+    expect(window.location.href).toMatch('#JobPackaging/show');
+});
+
+test('back saves form values', () => {
+    testFormValuesAreSaved('back');
+});
+
+test('next does not move forward if tags are invalid', () => {
+    let controller = getController();
+    controller.job.save = jest.fn()
+
+    let response = controller.next();
+
+    expect(controller.job.save).toHaveBeenCalled();
+
+    // Some tag values are missing, so the controller
+    // should present the form with errors instead of
+    // letting us move forward. Make sure the whole
+    // form is still present.
+    assertFormContainsAllTags(controller.job.bagItProfile.tags);
+
+    // Spot check for presence of an error message.
+    expect(response.container).toMatch(Context.y18n.__('This tag requires a value.'));
+});
+
+test('next does move forward if tags are valid', () => {
+    let controller = getController();
+    controller.job.save = jest.fn()
+
+    // Alter tag definitions so none are required.
+    // That lets us submit a valid empty form.
+    clearAllTagRequirements(controller.job.bagItProfile.tags);
+
+    let response = controller.next();
+    expect(controller.job.save).toHaveBeenCalled();
+
+    // Redirect has no content...
+    expect(response).toEqual({});
+
+    // ...and it should send us here
+    expect(window.location.href).toMatch('#JobUpload/show');
+});
+
+test('next saves form values', () => {
+    testFormValuesAreSaved('next');
+});
+
+test('newTag', () => {
+    let controller = getController();
+    UITestUtil.setDocumentBody(controller.newTag());
+    expect($('#tagDefinitionForm_tagFile').length).toEqual(1);
+    expect($('#tagDefinitionForm_tagName').length).toEqual(1);
+    expect($('#tagDefinitionForm_userValue').length).toEqual(1);
+});
+
+test('saveNewTag rejects empty fields', () => {
+    let controller = getController();
+    let response = controller.saveNewTag();
+    UITestUtil.setDocumentBody(response);
+    expect($('#tagDefinitionForm_tagFile').length).toEqual(1);
+    expect($('#tagDefinitionForm_tagName').length).toEqual(1);
+    expect($('#tagDefinitionForm_userValue').length).toEqual(1);
+    expect(response.modalContent).toMatch(Context.y18n.__('Please specify a tag file.'));
+    expect(response.modalContent).toMatch(Context.y18n.__('Please specify a tag name.'));
+    expect(response.modalContent).toMatch(Context.y18n.__('Please specify a value for this tag.'));
+});
+
+test('postRenderCallback', () => {
+
 });
