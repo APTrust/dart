@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
-set -x
+#set -x
 echo "Generating documentation..."
-find . -type f -name "*.js" -not -path "*/node_modules/*" -not -path "*/docs/*" -not -path "*/apps/bin" -not -path "*/ui/include/*" | xargs ./node_modules/.bin/documentation build -f html -o docs --sort-order alpha
+./node_modules/.bin/jsdoc -t node_modules/braintree-jsdoc-template/ -d docs -r apps/ bagit/ core/ migrations/ plugins/ ui/ util/
 echo "New doc is in docs/index.html"
 
 #echo "Hello, Travis! You there?"

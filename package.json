@@ -16,9 +16,9 @@
         "ajv": "^6.10.0",
         "archiver": "^3.0.0",
         "asar": "^1.0.0",
+        "braintree-jsdoc-template": "^3.3.0",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
-        "documentation": "^9.3.1",
         "electron-context-menu": "^0.11.0",
         "electron-log": "^3.0.1",
         "electron-store": "^3.0.0",
@@ -42,7 +42,8 @@
         "electron": "^4.1.1",
         "electron-builder": "^20.39.0",
         "electron-toolkit": "^1.0.24",
-        "jest": "^24.5.0"
+        "jest": "^24.5.0",
+        "jsdoc": "^3.5.5"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
