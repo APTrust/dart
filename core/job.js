@@ -62,6 +62,49 @@ class Job extends PersistentObject {
         this.uploadOps = opts.uploadOps || [];
         this.createdAt = opts.createdAt || new Date();
         this.errors = {};
+
+        /**
+         * The total number of files to be packaged and/or uploaded
+         * by this job. This value is set when building a Job through
+         * the DART UI, but it may not be set by the command-line tools.
+         * If DART does not set this value, it remains at the default
+         * of -1.
+         *
+         * @type {number}
+         * @default -1
+         */
+        this.fileCount = -1;
+
+        /**
+         * The total number of directories to be packaged and/or uploaded
+         * by this job. This value is set when building a Job through
+         * the DART UI, but it may not be set by the command-line tools.
+         * If DART does not set this value, it remains at the default
+         * of -1.
+         *
+         * @type {number}
+         * @default -1
+         */
+        this.dirCount = -1;
+
+        /**
+         * The total number of bytes in the payload to be packaged
+         * and/or uploaded by this job. This number may not match
+         * to total size of the bag the job produces because the bag
+         * may include additiaonal manifests and tag files, and it may
+         * be serialized to a format like tar that makes it slightly
+         * larger, or to a format like zip or gzip that makes it
+         * smaller.
+         *
+         * This value is set when building a Job through the DART UI,
+         * but it may not be set by the command-line tools.
+         * If DART does not set this value, it remains at the default
+         * of -1.
+         *
+         * @type {number}
+         * @default -1
+         */
+        this.byteCount = -1;
     }
 
     /**
