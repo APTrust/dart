@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
@@ -6,6 +7,7 @@ const { JobTagsForm } = require('../forms/job_tags_form');
 const { TagDefinition } = require('../../bagit/tag_definition');
 const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const Templates = require('../common/templates');
+
 
 /**
  * The JobMetadataController presents the page that allows users

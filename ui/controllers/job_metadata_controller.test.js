@@ -168,6 +168,42 @@ test('saveNewTag rejects empty fields', () => {
     expect(response.modalContent).toMatch(Context.y18n.__('Please specify a value for this tag.'));
 });
 
-test('postRenderCallback', () => {
+test('saveNewTag saves valid new tag', () => {
+    let controller = getController();
+    UITestUtil.setDocumentBody(controller.newTag());
+    $('#tagDefinitionForm_tagFile').val('custom-tag-file.txt');
+    $('#tagDefinitionForm_tagName').val('Custom-Tag');
+    $('#tagDefinitionForm_userValue').val('Custom value');
+    UITestUtil.setDocumentBody(controller.saveNewTag());
 
+    let newTag = controller.job.bagItProfile.firstMatchingTag('tagName', 'Custom-Tag')
+    expect(newTag).toBeDefined();
+    expect(newTag).not.toBeNull();
+
+    // Should show the full metadata form with all tags.
+    assertFormContainsAllTags(controller.job.bagItProfile.tags);
+
+    // Make sure the new tag was actually saved with the Job.
+    let job = Job.find(controller.job.id);
+    let savedTag = job.bagItProfile.firstMatchingTag('tagName', 'Custom-Tag')
+    expect(savedTag).toBeDefined();
+    expect(savedTag).not.toBeNull();
+});
+
+// Can't test this because of problems loading jQueryUI as an npm package.
+//
+// test('postRenderCallback for new tag form', () => {
+//     let controller = getController();
+//     UITestUtil.setDocumentBody(controller.newTag());
+//     controller.postRenderCallback('newTag');
+//     // TODO: Check this ->
+//     // console.log($._data($('#tagDefinitionForm_tagFile'), "events"));
+// });
+
+test('postRenderCallback attaches toggle function to button on show()', () => {
+    let controller = getController();
+    UITestUtil.setDocumentBody(controller.show());
+    controller.postRenderCallback('show');
+    let toggleFunction = $._data($('#btnToggleHidden')[0], "events").click[0].handler;
+    expect(typeof toggleFunction).toEqual('function');
 });
