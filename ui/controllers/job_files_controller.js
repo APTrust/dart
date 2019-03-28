@@ -13,6 +13,13 @@ const { Util } = require('../../core/util');
  * The JobFilesController displays the Job files page, where
  * users can drag and drop the files that a Job will package
  * and/or uploade.
+ *
+ * @param {URLSearchParams} params - The URL search params parsed
+ * from the URL used to reach this page. This should contain at
+ * least the Job Id.
+ *
+ * @param {string} params.id - The id of the Job being worked
+ * on. Job.id is a UUID string.
  */
 class JobFilesController extends BaseController {
 

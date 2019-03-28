@@ -9,6 +9,19 @@ const typeMap = {
     offset: 'number',
 }
 
+/**
+ * The JobController handles processing to list all jobs
+ * and create new jobs. The process of defining which files
+ * are part of Job, how files should be packaged, and where
+ * the should be uploaded are handled by other controllers.
+ *
+ * @param {URLSearchParams} params - The URL search params parsed
+ * from the URL used to reach this page. This should contain at
+ * least the Job Id.
+ *
+ * @param {string} params.id - The id of the Job being worked
+ * on. Job.id is a UUID string.
+ */
 class JobController extends BaseController {
 
     constructor(params) {
@@ -22,6 +35,9 @@ class JobController extends BaseController {
         this.defaultSortDirection = 'desc';
     }
 
+    /**
+     * This method creates a new Job.
+     */
     new() {
         let job = new Job();
         job.save();
@@ -30,6 +46,9 @@ class JobController extends BaseController {
     }
 
 
+    /**
+     * Lists all Jobs in the local Jobs database.
+     */
     list() {
         let listParams = this.paramsToHash();
         listParams.orderBy = listParams.sortBy || this.defaultOrderBy;

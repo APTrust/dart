@@ -5,6 +5,17 @@ const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
 const { UploadTarget } = require('../../core/upload_target');
 
+/**
+ * The JobRunController displays the page where users review
+ * and run a Job.
+ *
+ * @param {URLSearchParams} params - The URL search params parsed
+ * from the URL used to reach this page. This should contain at
+ * least the Job Id.
+ *
+ * @param {string} params.id - The id of the Job being worked
+ * on. Job.id is a UUID string.
+ */
 class JobRunController extends BaseController {
 
     constructor(params) {
@@ -13,6 +24,9 @@ class JobRunController extends BaseController {
         this.job = Job.find(this.params.get('id'));
     }
 
+    /**
+     * Displays a summary of the Job and the "Run Job" button.
+     */
     show() {
         let uploadTargets = [];
         for (let op of this.job.uploadOps) {
@@ -25,14 +39,9 @@ class JobRunController extends BaseController {
         return this.containerContent(Templates.jobRun(data));
     }
 
-    back() {
-        this.job.save();
-        if (this.job.packageOp.packageFormat == 'BagIt') {
-            return this.redirect('JobMetadata', 'show', this.params);
-        }
-        return this.redirect('JobPackaging', 'show', this.params);
-    }
-
+    /**
+     * Runs the Job in a separate process.
+     */
     run() {
         // Grey this out while job is running.
         // Run job in separate process, so user can

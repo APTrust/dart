@@ -5,6 +5,17 @@ const { Job } = require('../../core/job');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
 const Templates = require('../common/templates');
 
+/**
+ * The JobPackaingController presents the page that allows users
+ * to define how a Job's files should be packaged.
+ *
+ * @param {URLSearchParams} params - The URL search params parsed
+ * from the URL used to reach this page. This should contain at
+ * least the Job Id.
+ *
+ * @param {string} params.id - The id of the Job being worked
+ * on. Job.id is a UUID string.
+ */
 class JobPackagingController extends BaseController {
 
     constructor(params) {
@@ -13,11 +24,19 @@ class JobPackagingController extends BaseController {
         this.job = Job.find(this.params.get('id'));
     }
 
+    /**
+     * This displays a form where users can choose how this
+     * Job's files should be packaged.
+     */
     show() {
         let form = new JobPackageOpForm(this.job);
         return this._renderPackagingForm(form);
     }
 
+    /**
+     * This renders the form that allows users to choose how
+     * this job's files should be packaged.
+     */
     _renderPackagingForm(form) {
         let data = {
             job: this.job,
@@ -27,6 +46,10 @@ class JobPackagingController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * This parses form input from the user and assigns the
+     * values to the Job's {@link PackagingOperation}.
+     */
     _parseJobPackagingForm() {
         let form = new JobPackageOpForm(this.job);
         form.parseFromDOM();
@@ -47,6 +70,17 @@ class JobPackagingController extends BaseController {
         return form;
     }
 
+    /**
+     * This saves changes to the Job's {@link PackagingOperation},
+     * optionally validating those changes first. If the withValidation
+     * parameter is true and the changes are not valid, this will not
+     * save the changes.
+     *
+     * @param {boolean} withValidation - If this is true, this method
+     * will validate the user's changes before trying to save them, and
+     * it will not save invalid changes. If false, this saves the users
+     * changes without validating them.
+     */
     _updatePackaging(withValidation) {
         let form = this._parseJobPackagingForm();
         if (withValidation) {
@@ -67,15 +101,21 @@ class JobPackagingController extends BaseController {
         return form
     }
 
-
-    // User clicked Back button from packaging page.
-    // Save work without validating.
+    /**
+     * This handles the click on the Back button, sending the user
+     * back to the Job files page.
+     */
     back() {
         this._updatePackaging(false);
         return this.redirect('JobFiles', 'show', this.params);
     }
 
-    // User clicked Next button from packaging page.
+    /**
+     * This handles the Next button click, sending the user forward to
+     * the Job metadata page if the the Job includes a bagging step.
+     * If the Job does not include bagging, this sends the user ahead
+     * to the Job upload page.
+     */
     next() {
         let form = this._updatePackaging(true);
         if (form.hasErrors()) {
@@ -92,11 +132,19 @@ class JobPackagingController extends BaseController {
         }
     }
 
-
+    /**
+     * The postRenderCallback attaches event handlers to elements
+     * that this controller has just rendered.
+     */
     postRenderCallback(fnName) {
         $("select[name=packageFormat]").change(this.onFormatChange());
     }
 
+    /**
+     * This function shows or hides a list of BagIt profiles, based
+     * on whether this job includes a bagging step. For jobs that
+     * include bagging, the user must speficy a BagIt profile.
+     */
     onFormatChange() {
         return function() {
             var format = $("select[name=packageFormat]").val();
