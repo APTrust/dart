@@ -1,7 +1,37 @@
-<p>Placeholder for review and run form.</p>
+<h2>Review and Run</h2>
 
-{{ job }}
+{{#if job.packageOp }}
+<div class="row">
+  <div class="col text-right font-weight-bold">Package Name</div>
+  <div class="col-10">{{ job.packageOp.packageName }}</div>
+</div>
 
+<div class="row">
+  <div class="col text-right font-weight-bold">Output Path</div>
+  <div class="col-10">{{ job.packageOp.outputPath }}</div>
+</div>
+
+<div class="row">
+  <div class="col text-right font-weight-bold">Files</div>
+  <div class="col-10">
+    {{#each job.packageOp.sourceFiles as |path| }}
+      {{ path }} <br/>
+    {{/each }}
+  </div>
+</div>
+
+{{/if}}
+
+{{#if uploadTargets.length }}
+<div class="row">
+  <div class="col text-right font-weight-bold">Upload To</div>
+  <div class="col-10">
+    {{#each uploadTargets as |target| }}
+      {{ target }} <br/>
+    {{/each }}
+  </div>
+</div>
+{{/if}}
 
 <div>
   <div class="pull-left" id="btnBackDiv">

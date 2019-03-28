@@ -3,6 +3,7 @@ const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
+const { UploadTarget } = require('../../core/upload_target');
 
 class JobRunController extends BaseController {
 
@@ -13,9 +14,15 @@ class JobRunController extends BaseController {
     }
 
     show() {
-        //let form = new JobRunForm(this.job);
-        //let data = { job: this.job, form: form };
-        let data = { job: this.job }
+        let uploadTargets = [];
+        for (let op of this.job.uploadOps) {
+            let target = UploadTarget.find(op.uploadTargetId);
+            if (target) {
+                uploadTargets.push(target.name);
+            }
+        }
+        let data = { job: this.job, uploadTargets: uploadTargets }
+        console.log(data);
         return this.containerContent(Templates.jobRun(data));
     }
 
