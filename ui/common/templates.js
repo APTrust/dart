@@ -3,6 +3,8 @@ const dateFormat = require('dateformat');
 const fs = require('fs');
 const handlebars = require('handlebars')
 const path = require('path');
+const { Util } = require('../../core/util');
+
 const templateDir = path.join(__dirname, "..", "templates");
 
 function readFile(...args) {
@@ -72,6 +74,10 @@ handlebars.registerHelper('translate', function(message) {
 
 handlebars.registerHelper('formatDate', function(date, format) {
     return dateFormat(date, format);
+});
+
+handlebars.registerHelper('toHumanSize', function(number) {
+    return Util.toHumanSize(number);
 });
 
 module.exports.about = about;
