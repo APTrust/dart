@@ -77,6 +77,8 @@ test('addItemsToUI()', done => {
         for (let filepath of job.packageOp.sourceFiles) {
             expect(html).toContain(filepath);
         }
+
+        // Make sure totals are updated.
         let dirCount = $('#totalDirCount');
         let fileCount = $('#totalFileCount');
         let byteCount = $('#totalByteCount');
@@ -84,6 +86,12 @@ test('addItemsToUI()', done => {
         expect(parseInt(fileCount.text(), 10)).toBeGreaterThan(0);
         expect(byteCount.html()).toMatch(/K|MB/);
         expect(parseInt(byteCount.data('total'), 10)).toBeGreaterThan(0);
+
+        // Make sure Job attrs are updated.
+        expect(controller.job.dirCount).toBeGreaterThan(0);
+        expect(controller.job.fileCount).toBeGreaterThan(0);
+        expect(controller.job.byteCount).toBeGreaterThan(0);
+
         done();
     }, 400); // We have no event to wait for...
 });

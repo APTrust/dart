@@ -55,14 +55,14 @@ class JobFilesController extends BaseController {
      * window.
      */
     attachDragAndDropEvents() {
-        let helper = this;
+        let controller = this;
         $('#dropZone').on('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
             // When drag event is attached to document, use
             // e.dataTransfer.files instead of what's below.
             for (let f of e.originalEvent.dataTransfer.files) {
-                let containingItem = helper.findContainingItem(f.path);
+                let containingItem = controller.findContainingItem(f.path);
                 if (containingItem) {
                     let msg = Context.y18n.__(
                         '%s has already been added to this package as part of %s',
@@ -72,9 +72,9 @@ class JobFilesController extends BaseController {
                     alert(msg);
                     continue;
                 }
-                helper.addFileToPackageSources(f.path);
-                helper.addItemToUI(f.path);
-                helper.job.save();
+                controller.addFileToPackageSources(f.path);
+                controller.addItemToUI(f.path);
+                controller.job.save();
             }
             $(e.currentTarget).removeClass('drop-zone-over');
             return false;
@@ -106,12 +106,12 @@ class JobFilesController extends BaseController {
      * list of sourceFiles in {@link PackageOperation}.
      */
     attachDeleteEvents() {
-        let helper = this;
+        let controller = this;
         $('#filesTable').on('click', 'td.delete-file', function(e) {
             let filepath = $(e.currentTarget).data('filepath');
-            helper.removeItemFromUI(filepath);
-            Util.deleteFromArray(helper.job.packageOp.sourceFiles, filepath);
-            helper.job.save();
+            controller.removeItemFromUI(filepath);
+            Util.deleteFromArray(controller.job.packageOp.sourceFiles, filepath);
+            controller.job.save();
             return false;
         });
     }
@@ -134,14 +134,14 @@ class JobFilesController extends BaseController {
      * This adds a single file or folder to the UI.
      */
     addItemToUI(filepath) {
-        let helper = this;
+        let controller = this;
         let stats = fs.statSync(filepath);
         if (stats.isFile()) {
             this.addRow(filepath, 'file', 1, 0, stats.size);
         } else if (stats.isDirectory()) {
             let fsReader = new FileSystemReader(filepath);
             fsReader.on('end', function() {
-                helper.addRow(filepath, 'directory', fsReader.fileCount,
+                controller.addRow(filepath, 'directory', fsReader.fileCount,
                               fsReader.dirCount, fsReader.byteCount);
             });
             fsReader.list();
@@ -212,14 +212,17 @@ class JobFilesController extends BaseController {
      *
      */
     updateTotals(fileCount, dirCount, byteCount) {
-        this.updateTotal('#totalFileCount', fileCount);
-        this.updateTotal('#totalDirCount', dirCount);
-        this.updateTotal('#totalByteCount', byteCount);
+        let filesTotal = this.updateTotal('#totalFileCount', fileCount);
+        let dirTotal = this.updateTotal('#totalDirCount', dirCount);
+        let byteTotal = this.updateTotal('#totalByteCount', byteCount);
+        this.job.fileCount = filesTotal;
+        this.job.dirCount = dirTotal;
+        this.job.byteCount = byteTotal;
     }
 
     /**
      * Updates one of the total fields at the bottom of the list of
-     * files and filders.
+     * files and folders, and returns the calculated total.
      *
      * @param {string} elementId - The id (css selector) of the element
      * whose text should be updated.
@@ -227,6 +230,8 @@ class JobFilesController extends BaseController {
      * @param {number} amountToAdd - The number to add to the existing
      * total already displayed in the cell. This will be negative in
      * cases where you're removing files or folders.
+     *
+     * @returns {number} The total value displayed in the field.
      */
     updateTotal(elementId, amountToAdd) {
         let element = $(elementId);
@@ -237,6 +242,7 @@ class JobFilesController extends BaseController {
         } else {
             element.text(newTotal);
         }
+        return newTotal;
     }
 
     /**
