@@ -36,7 +36,7 @@ test('new', () => {
     expect(job).not.toBeNull();
 });
 
-test('constructor', () => {
+test('list', () => {
     let ids = [];
     for (let i = 0; i < 3; i++) {
         let job = new Job();

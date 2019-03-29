@@ -42,7 +42,7 @@ class Job extends PersistentObject {
      * @param {BagItProfile} opts.bagItProfile - A BagItProfile object.
      * This is required only for bagging and validation jobs.
      *
-     * @param {PackagingOperation} opts.packageOp - An object describing
+     * @param {PackageOperation} opts.packageOp - An object describing
      * what this job is supposed to package. The is relevant only to
      * jobs that involving bagging or other forms of packaging.
      *

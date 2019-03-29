@@ -48,7 +48,7 @@ class JobPackagingController extends BaseController {
 
     /**
      * This parses form input from the user and assigns the
-     * values to the Job's {@link PackagingOperation}.
+     * values to the Job's {@link PackageOperation}.
      */
     _parseJobPackagingForm() {
         let form = new JobPackageOpForm(this.job);
@@ -71,7 +71,7 @@ class JobPackagingController extends BaseController {
     }
 
     /**
-     * This saves changes to the Job's {@link PackagingOperation},
+     * This saves changes to the Job's {@link PackageOperation},
      * optionally validating those changes first. If the withValidation
      * parameter is true and the changes are not valid, this will not
      * save the changes.
