@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
@@ -57,7 +58,6 @@ class JobPackageOpForm extends Form {
         });
         this.fields['bagItProfileId'].choices = Choice.makeList(
             profiles,
-            //selectedProfileId,
             this.obj.bagItProfileId,
             true
         );

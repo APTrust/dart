@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
@@ -62,10 +63,13 @@ class JobPackagingController extends BaseController {
         // moving backwards through the form, the profile may already
         // be saved with custom values. We don't want to overwrite it
         // by reloading it.
-        let needsProfile = this.job.bagItProfile == null && form.obj.bagItProfileId;
-        let selectedProfileChanged = this.job.bagItProfile && form.obj.bagItProfileId && form.obj.bagItProfileId != this.job.bagItProfile.id;
+        let needsProfile = (this.job.bagItProfile == null && form.obj.bagItProfileId);
+        let selectedProfileChanged = (this.job.bagItProfile && form.obj.bagItProfileId && form.obj.bagItProfileId != this.job.bagItProfile.id);
+        let profileShouldBeRemoved = (this.job.bagItProfile && !form.obj.bagItProfileId)
         if (needsProfile || selectedProfileChanged) {
             this.job.bagItProfile = BagItProfile.find(form.obj.bagItProfileId);
+        } else if (profileShouldBeRemoved) {
+            this.job.bagItProfile = null;
         }
         return form;
     }
