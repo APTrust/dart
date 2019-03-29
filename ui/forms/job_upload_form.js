@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');

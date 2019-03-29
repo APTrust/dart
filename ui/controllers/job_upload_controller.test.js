@@ -48,6 +48,27 @@ function getController() {
     return new JobUploadController(params);
 }
 
+function uncheckFirstBox() {
+    let cb = $("input[name='uploadTargets']")
+    $(cb[0]).prop('checked', false);
+}
+
+function testUncheckIsSaved(controller, methodToCall) {
+    let secondTargetId = controller.job.uploadOps[1].uploadTargetId;
+    UITestUtil.setDocumentBody(controller.show());
+    uncheckFirstBox();
+    if (methodToCall == 'back') {
+        controller.back();
+    } else if (methodToCall == 'next') {
+        controller.next();
+    } else {
+        throw "Homey don't play that game."
+    }
+    let job = Job.find(controller.job.id);
+    expect(job.uploadOps.length).toEqual(1);
+    expect(job.uploadOps[0].uploadTargetId).toEqual(secondTargetId);
+}
+
 test('constructor', () => {
     let controller = getController();
     expect(controller.model).toEqual(Job);
@@ -78,4 +99,24 @@ test('show', () => {
     expect($(cb[0]).val()).toEqual(ops[0].uploadTargetId);
     expect($(cb[0]).is(":checked")).toBe(true);
     expect($(cb[1]).is(":checked")).toBe(false);
+});
+
+test('back saves Job and redirects correctly when format is BagIt', () => {
+    let controller = getController();
+    controller.job.packageOp = new PackageOperation();
+    controller.job.packageOp.packageFormat = 'BagIt';
+    testUncheckIsSaved(controller, 'back');
+    expect(location.href).toMatch('#JobMetadata/show');
+});
+
+test('back saves Job and redirects correctly when format is not BagIt', () => {
+    let controller = getController();
+    testUncheckIsSaved(controller, 'back');
+    expect(location.href).toMatch('#JobPackaging/show');
+});
+
+test('next saves Job and redirects correctly', () => {
+    let controller = getController();
+    testUncheckIsSaved(controller, 'next');
+    expect(location.href).toMatch('#JobRun/show');
 });
