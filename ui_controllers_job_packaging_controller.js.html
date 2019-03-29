@@ -90,7 +90,8 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { BagItProfile } = require('../../bagit/bagit_profile');
+    <pre class="prettyprint source linenums"><code>const $ = require('jquery');
+const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
@@ -140,7 +141,7 @@ class JobPackagingController extends BaseController {
 
     /**
      * This parses form input from the user and assigns the
-     * values to the Job's {@link PackagingOperation}.
+     * values to the Job's {@link PackageOperation}.
      */
     _parseJobPackagingForm() {
         let form = new JobPackageOpForm(this.job);
@@ -154,16 +155,19 @@ class JobPackagingController extends BaseController {
         // moving backwards through the form, the profile may already
         // be saved with custom values. We don't want to overwrite it
         // by reloading it.
-        let needsProfile = this.job.bagItProfile == null &amp;&amp; form.obj.bagItProfileId;
-        let selectedProfileChanged = this.job.bagItProfile &amp;&amp; form.obj.bagItProfileId &amp;&amp; form.obj.bagItProfileId != this.job.bagItProfile.id;
+        let needsProfile = (this.job.bagItProfile == null &amp;&amp; form.obj.bagItProfileId);
+        let selectedProfileChanged = (this.job.bagItProfile &amp;&amp; form.obj.bagItProfileId &amp;&amp; form.obj.bagItProfileId != this.job.bagItProfile.id);
+        let profileShouldBeRemoved = (this.job.bagItProfile &amp;&amp; !form.obj.bagItProfileId)
         if (needsProfile || selectedProfileChanged) {
             this.job.bagItProfile = BagItProfile.find(form.obj.bagItProfileId);
+        } else if (profileShouldBeRemoved) {
+            this.job.bagItProfile = null;
         }
         return form;
     }
 
     /**
-     * This saves changes to the Job's {@link PackagingOperation},
+     * This saves changes to the Job's {@link PackageOperation},
      * optionally validating those changes first. If the withValidation
      * parameter is true and the changes are not valid, this will not
      * save the changes.
