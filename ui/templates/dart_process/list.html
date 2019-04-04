@@ -1,0 +1,23 @@
+{{> bannerAlert message = alertMessage }}
+
+<h2>Processes</h2>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Process Id</th>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items}}
+    <tr class="clickable-row" data-url="#Process/show?id={{ id }}">
+      <td>{{ pid }}</td>
+      <td>{{ name }}</td>
+      <td>{{ status }}</td>
+    </tr>
+    {{/each }}
+  </tbody>
+</table>
+
+{{> tableBottomLinks }}

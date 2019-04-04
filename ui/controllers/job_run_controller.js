@@ -1,7 +1,10 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
+const { DartProcess } = require('../../core/dart_process');
+const fs = require('fs');
 const { Job } = require('../../core/job');
+const { spawn } = require('child_process');
 const Templates = require('../common/templates');
 const { UploadTarget } = require('../../core/upload_target');
 
@@ -46,7 +49,22 @@ class JobRunController extends BaseController {
         // Grey this out while job is running.
         // Run job in separate process, so user can
         // navigate to other screens without disrupting it.
-        alert("Here we go...");
+        let tmpFile = '/Users/apd4n/tmp/dart/job.json'
+        fs.writeFileSync(tmpFile, JSON.stringify(this.job));
+        let childProcess = spawn(
+            process.argv0,
+            ['--', '--headless', '--job', tmpFile]
+        );
+        // TODO: Need to wire up events.
+        let dartProcess = new DartProcess(
+            this.job.title(),
+            tmpFile,
+            childProcess.pid
+        );
+        dartProcess.save();
+        Context.childProcesses[dartProcess.id] = childProcess;
+        let params = new URLSearchParams({ id: dartProcess.id });
+        return this.redirect('DartProcess', 'show', params);
     }
 
     postRenderCallback(fnName) {

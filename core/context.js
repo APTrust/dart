@@ -59,6 +59,20 @@ class GlobalContext {
          * @type {Object}
          */
         this.y18n = y18n;
+
+        /**
+         * This object contains info about child processes spawned by the
+         * current DART process. While the persistent {@link DartProcess}
+         * object stores info in a local DB about all child processes DART
+         * has spawned, this hash includes information about running
+         * child processes only.
+         *
+         * This objects keys are UUIDs. Each key is the UUID of a
+         * {@link DartProcess} object. The values are live Node.js Process
+         * objects. If a DartProcess.id key is not in the hash of
+         * childProcesses, it is not currently running.
+         */
+        this.childProcesses = {};
     }
     /**
       * Returns the JsonStore with the specified name (class name),

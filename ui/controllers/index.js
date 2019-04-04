@@ -1,6 +1,7 @@
 const { AboutController } = require('./about_controller');
 const { AppSettingController } = require('./app_setting_controller');
 const { BagItProfileController } = require('./bagit_profile_controller');
+const { DartProcessController } = require('./dart_process_controller');
 const { DashboardController } = require('./dashboard_controller');
 const { HelpController } = require('./help_controller');
 const { InternalSettingController } = require('./internal_setting_controller');
@@ -20,6 +21,7 @@ const { UploadTargetController } = require('./upload_target_controller');
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
 module.exports.BagItProfileController = BagItProfileController;
+module.exports.DartProcessController = DartProcessController;
 module.exports.DashboardController = DashboardController;
 module.exports.HelpController = HelpController;
 module.exports.InternalSettingController = InternalSettingController;
