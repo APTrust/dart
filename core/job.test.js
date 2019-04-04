@@ -2,9 +2,10 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const { Job } = require('./job');
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
+const path = require('path');
 const { UploadOperation } = require('./upload_operation');
 const { ValidationOperation } = require('./validation_operation');
-const path = require('path');
+
 
 function getJobWithOps() {
     let job = new Job();
@@ -216,6 +217,14 @@ test('inflateFrom()', () => {
     expect(newJob.uploadOps[0]).not.toBeNull();
     expect(newJob.uploadOps[0].sourceFiles).not.toEqual(['path/to/my/file.zip']);
     expect(typeof newJob.uploadOps[0].validate).toEqual('function');
+});
+
+test('inflateFromFile()', () => {
+    let pathToFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_001.json');
+    let job = Job.inflateFromFile(pathToFile);
+    expect(job.bagItProfile.id).toEqual('24a1e6ac-f1f4-4ec5-b020-b97887e32284');
+    expect(job.packageOp.sourceFiles.length).toEqual(4);
+    expect(job.uploadOps[0].uploadTargetId).toEqual('e712265a-45ee-41be-b3b0-c4a8c7929e00');
 });
 
 test('find()', () => {

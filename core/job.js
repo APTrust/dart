@@ -2,6 +2,7 @@ const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const dateFormat = require('dateformat');
+const fs = require('fs');
 const { PackageOperation } = require('./package_operation');
 const path = require('path');
 const { PersistentObject } = require('./persistent_object');
@@ -341,6 +342,19 @@ class Job extends PersistentObject {
             }
         }
         return job;
+    }
+
+    /**
+     * This converts the JSON data in the file at pathToFile into a
+     * Job object.
+     *
+     * @param {string} pathToFile - The path to the JSON file.
+     *
+     * @returns {Job}
+     */
+    static inflateFromFile(pathToFile) {
+        let data = JSON.parse(fs.readFileSync(pathToFile, 'utf8'));
+        return Job.inflateFrom(data);
     }
 
     /**
