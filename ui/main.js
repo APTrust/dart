@@ -14,16 +14,15 @@ let win
 
 function run(opts) {
     // Create the browser window.
-    if(opts.headless) {
-        console.log(`Running DART in command-line mode with pid ${process.pid}`);
-        console.log(opts.job);
+    if(opts.job) {
+        console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     }
     win = new BrowserWindow({
         width: 1200,
         height: 900,
         webPreferences: { nodeIntegration: true },
         icon: path.join(__dirname, 'include/img/dart.png'),
-        show: opts.headless ? false : true
+        show: opts.job ? false : true
     });
 
     // and load the index.html of the app.
@@ -51,9 +50,10 @@ function run(opts) {
 app.on('ready', function() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
-        boolean: ['d', 'debug', 'h', 'help', 'headless'],
-        default: { D: false, debug: false, h: false, help: false, headless: false},
-        alias: { D: ['debug'], v: ['version'], h: ['help']}
+        boolean: ['d', 'debug', 'h', 'help', 'v', 'version'],
+        default: { d: false, debug: false, h: false, help: false,
+                   v: false, version:false},
+        alias: { d: ['debug'], v: ['version'], h: ['help'], j: ['job']}
     });
     run(opts);
 });

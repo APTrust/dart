@@ -135,7 +135,88 @@ const Constants =  {
      *
      * @type {RegExp}
      */
-    RE_DOT_KEEP_FILE: new RegExp('\/\.keep$|\\\.keep$', 'i')
+    RE_DOT_KEEP_FILE: new RegExp('\/\.keep$|\\\.keep$', 'i'),
+    /**
+     * This exit code indicates a process completed successfully,
+     * with no errors.
+     *
+     * @type {number}
+     */
+    EXIT_SUCCESS: 0,
+    /**
+     * This exit code indicates a process ran to completion, but one
+     * or more errors occurred along the way.
+     *
+     * @type {number}
+     */
+    EXIT_COMPLETED_WITH_ERRORS: 1,
+    /**
+     * This exit code indicates a process did not complete
+     * due to invalid parameters.
+     *
+     * @type {number}
+     */
+    EXIT_INVALID_PARAMS: 2,
+    /**
+     * This exit code indicates a process exited before completion
+     * due to a runtime error.
+     *
+     * @type {number}
+     */
+    EXIT_RUNTIME_ERROR: 3,
+    /**
+     * This type of error indicates that something in the Job
+     * description was not valid.
+     *
+     * @type {string}
+     */
+    ERR_JOB_VALIDATION: 'JobValidation',
+    /**
+     * This type of error indicates that a bag was not valid, usually
+     * because it did not conform a specific BagIt profile.
+     *
+     * @type {string}
+     */
+    ERR_BAG_VALIDATION: 'BagValidation',
+    /**
+     * This type of error indicates that a BagIt profile was not
+     * valid. DART cannot validate a bag against an invalid profile.
+     *
+     * @type {string}
+     */
+    ERR_PROFILE_VALIDATION: 'ProfileValidation',
+    /**
+     * This type of error indicates that something went wrong during
+     * the bagging step of a job. For example, a source file was missing,
+     * the user did not have permission to write to the output directory,
+     * the system ran out of disk space, etc.
+     *
+     * @type {string}
+     */
+    ERR_PACKAGING: 'Packaging',
+    /**
+     * This type of error indicates that something went wrong during
+     * the upload process. For example, a network connection was interrupted
+     * credentials to log into the remote system were invalid, or the
+     * user did not have sufficient permission to write to the remote
+     * system.
+     *
+     * @type {string}
+     */
+    ERR_UPLOAD: 'Upload',
+    /**
+     * This is a list of valid error types. These types describe why a
+     * job failed at runtime.
+     *
+     * @type {Array<string>}
+     */
+    ERR_TYPES: [
+        'JobValidation',
+        'BagValidation',
+        'ProfileValidation',
+        'Packaging',
+        'Upload'
+    ]
 };
 
 Object.freeze(Constants);

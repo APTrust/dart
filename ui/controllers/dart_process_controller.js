@@ -30,7 +30,6 @@ class DartProcessController extends BaseController {
      * Displays a summary of the process.
      */
     show() {
-
         let data = {
             dartProcess: this.dartProcess,
             childProcess: Context.childProcesses[this.dartProcess.id]
