@@ -1,4 +1,5 @@
 const {app, BrowserWindow} = require('electron');
+const { JobRunner } = require('../workers/job_runner');
 const minimist = require('minimist');
 const path = require('path');
 const process = require('process');
@@ -42,6 +43,20 @@ function run(opts) {
         // when you should delete the corresponding element.
         win = null
     })
+
+    if (opts.job) {
+        runJob(opts);
+    }
+}
+
+async function runJob(opts) {
+    let jobRunner = new JobRunner(opts.job);
+    try {
+        await jobRunner.run();
+    } catch (ex) {
+        console.log(ex)
+    }
+    process.exit(0);
 }
 
 // This method will be called when Electron has finished

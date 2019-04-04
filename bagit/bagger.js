@@ -119,6 +119,7 @@ class Bagger extends EventEmitter {
         packOp.result.filepath = packOp.outputPath;
         packOp.result.start();
         if (!this.validateJob()) {
+            console.log(this.job.packageOp);
             return false;
         }
         try {
