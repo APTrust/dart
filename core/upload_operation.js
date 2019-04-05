@@ -59,6 +59,12 @@ class UploadOperation {
          * @type {OperationResult}
          */
         this.result = null;
+
+        // -------------------------------
+        // TODO: Change result to results.
+        // -------------------------------
+        this.results = [];
+
         /**
          * The total size, in bytes, of the files to be uploaded.
          *

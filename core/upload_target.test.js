@@ -43,6 +43,23 @@ test('validate()', () => {
     expect(obj.validate()).toEqual(true);
 });
 
+test('url()', () => {
+    let obj = new UploadTarget();
+    obj.protocol = 's3';
+    obj.host = 's3.amazonaws.com';
+    obj.port = 0;
+    obj.bucket = 'aptrust.test.test.edu';
+    expect(obj.url()).toEqual('s3://s3.amazonaws.com/aptrust.test.test.edu/');
+    expect(obj.url('bag.tar')).toEqual('s3://s3.amazonaws.com/aptrust.test.test.edu/bag.tar');
+
+    obj.protocol = 'ftp';
+    obj.host = 'example.com';
+    obj.port = 5678;
+    obj.bucket = 'uploads';
+    expect(obj.url()).toEqual('ftp://example.com:5678/uploads/');
+    expect(obj.url('bag.tar')).toEqual('ftp://example.com:5678/uploads/bag.tar');
+});
+
 test('find()', () => {
     let objs = makeObjects(3);
     let obj = objs[1];

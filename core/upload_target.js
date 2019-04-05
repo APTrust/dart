@@ -120,6 +120,17 @@ class UploadTarget extends PersistentObject {
     }
 
     /**
+     * Returns the url to which files will be uploaded.
+     *
+     * @returns {string}
+     */
+    url(filename = '') {
+        // TODO: Branch for protocols that construct URLs differently.
+        let portString = this.port ? `:${this.port}` : '';
+        return `${this.protocol}://${this.host}${portString}/${this.bucket}/${filename}`
+    }
+
+    /**
      * validate returns true or false, indicating whether this object
      * contains complete and valid data. If it returns false, check
      * the errors property for specific errors.

@@ -1,6 +1,7 @@
 const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const { Job } = require('../core/job');
+const { Uploader } = require('./uploader');
 const { ValidationOperation } = require('../core/validation_operation');
 
 class JobRunner {
@@ -18,12 +19,11 @@ class JobRunner {
             this.job.save();
         }
 
-        // this.job.validationOp = new ValidationOperation('/Users/apd4n/tmp/dart/example.edu.tagsample_good.tar');
-
         if (this.job.validationOp) {
             let bagValidator = new BagValidator(this.job);
             await bagValidator.run();
         }
+
     }
 }
 
