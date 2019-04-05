@@ -4,10 +4,21 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/waprqft4knhb5ktb/branch/master?svg=true)](https://ci.appveyor.com/project/cdahlhausen/dart/branch/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8b51be47cf6ed6aaa698/maintainability)](https://codeclimate.com/github/APTrust/dart/maintainability)
 
-DART is the Digital Artefact Routing Tool: a GUI and command-line tool for
-creating archival packages and sending them across a network to a remote
-repository. You'll find a working prototype of the GUI application in the
-[dart-prototype repository](https://github.com/APTrust/dart-prototype).
+In 2018, APTrust opened its services to depositors at smaller institutions
+that did not have the technical resources to package and upload digital
+materials into a remote repository.
+
+APTrust created DART, the Digital Archivist's Resource Tool, to provide a
+simple drag-and-drop application for non-technical users to package and
+upload materials.
+
+While the prototype worked well for our initial depositors, APTrust has a
+broader vision for DART to serve a wider community. The next iteration of
+DART, which should be available in the summer of 2019, will be able to
+package digital assets in a number of formats and upload them to any number
+of repositories. DART will support custom plugins that allow developers
+to quickly customize and extend its features to serve the needs of their
+own organizations and communities.
 
 While the prototype was a proof of concept, and was used successfully in
 production by a number of organizations, its underlying code was not suitable
@@ -15,6 +26,12 @@ for long-term maintenance.
 
 This repository contains refactored code which is meant to be the foundation
 of a viable community-supported project.
+
+The upcoming version of DART will include both an intuitive drag-and-drop
+UI and scriptable command-line tool for creating archival packages and sending
+them across a network to a remote repository. You'll find a working prototype
+of the GUI application in the
+[dart-prototype repository](https://github.com/APTrust/dart-prototype).
 
 ## DART Core Features
 
