@@ -192,12 +192,17 @@ class TarReader extends Plugin {
             stream.on('end', function() {
                 if (header.type === "file") {
                     tarReader.fileCount += 1;
-                } if (header.type === "directory") {
+                } else if (header.type === "directory") {
                     tarReader.dirCount += 1;
                 }
                 next();
             });
-            stream.pipe(new PassThrough());
+
+            // This works around
+            // https://github.com/mafintosh/tar-stream/issues/64
+            let pt = new PassThrough();
+            stream.pipe(pt);
+            pt.resume();
         });
 
 
