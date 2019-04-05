@@ -112,7 +112,7 @@ class ManifestParser {
                 if (i < lastIndex) {
                     var fixityValue = line.split(spaces, 1)[0];
                     var filename = line.replace(fixityValue, '').trim();
-                    Context.logger.debug(`"${filename}" = "${fixityValue}"`);
+                    //Context.logger.debug(`"${filename}" = "${fixityValue}"`);
                     parser.bagItFile.keyValueCollection.add(filename, fixityValue);
                 }
             }
@@ -120,7 +120,7 @@ class ManifestParser {
 
         // Handle end of stream
         parser.stream.on('end', function() {
-            Context.logger.debug(`Finished parsing manifest ${parser.bagItFile.absPath}`);
+            //Context.logger.debug(`Finished parsing manifest ${parser.bagItFile.absPath}`);
         });
     }
 }

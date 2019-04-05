@@ -8,7 +8,7 @@ class BagValidator {
 
     constructor(job) {
         this.job = job;
-        this.debug = true;
+        this.debug = false;
         this.exitCode = Constants.EXIT_SUCCESS;
     }
 

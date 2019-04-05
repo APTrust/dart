@@ -304,7 +304,6 @@ class Validator extends EventEmitter {
         var validator = this;
         var reader = this.getNewReader();
         reader.on('error', function(err) {
-            console.log(err);
             validator.emit('error', err);
         });
         reader.on('entry', function (entry) {
@@ -312,7 +311,6 @@ class Validator extends EventEmitter {
                 validator.bagRoot = entry.relPath.split(/\//)[0];
             }
             var relPath = validator._cleanEntryRelPath(entry.relPath);
-            console.log(entry.relPath);
             if (relPath.match(Constants.RE_MANIFEST) || relPath.match(Constants.RE_TAG_MANIFEST)) {
                 var algorithm = relPath.split('-')[1].split('.')[0];
                 if (!validator.manifestAlgorithmsFoundInBag.includes(algorithm)) {
@@ -321,7 +319,6 @@ class Validator extends EventEmitter {
             }
         });
         reader.on('end', function() {
-            console.log('Reached end of scan');
             validator._readBag();
         });
 
@@ -544,7 +541,7 @@ class Validator extends EventEmitter {
         var bagItFile = new BagItFile(absPath, relPath, entry.fileStat);
         this.files[relPath] = bagItFile;
         var fileType = BagItFile.getFileType(relPath);
-        Context.logger.info(`Validator added ${relPath} as ${fileType}`);
+        //Context.logger.info(`Validator added ${relPath} as ${fileType}`);
         return bagItFile;
     }
 
@@ -618,7 +615,7 @@ class Validator extends EventEmitter {
             readStream.pipe(p);
         }
         readStream.resume();
-        Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
+        //Context.logger.info(`Validator is running checksums for ${bagItFile.relDestPath}`);
     }
 
     /**
@@ -712,7 +709,7 @@ class Validator extends EventEmitter {
      *
      */
     _validateTopLevelDirs() {
-        Context.logger.info(`Validator: Validating top-level directories in ${this.pathToBag}`);
+        //Context.logger.info(`Validator: Validating top-level directories in ${this.pathToBag}`);
         var exceptions = ['data']; // data dir is always required
         for (var f of this.profile.tagFileNames()) {
             var requiredTagDir = f.split('/', 1);
@@ -742,7 +739,7 @@ class Validator extends EventEmitter {
      *
      */
     _validateTopLevelFiles() {
-        Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
+        //Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
         if (!this.profile.allowMiscTopLevelFiles) {
             var expected = this._expectedTopLevelFiles();
             for (var name of this.topLevelFiles) {
@@ -789,7 +786,7 @@ class Validator extends EventEmitter {
      *
      */
     _validateRequiredManifests(manifestType) {
-        Context.logger.info(`Validator: Validating ${manifestType}s`);
+        //Context.logger.info(`Validator: Validating ${manifestType}s`);
         var manifestList = this.profile.manifestsRequired;
         if (manifestType === Constants.TAG_MANIFEST) {
             manifestList = this.profile.tagManifestsRequired;
@@ -821,9 +818,9 @@ class Validator extends EventEmitter {
         if (manifestType === Constants.TAG_MANIFEST) {
             manifests = this.tagManifests();
         }
-        Context.logger.info(`Validator: Validating ${manifests.length} ${manifestType}s`);
+        //Context.logger.info(`Validator: Validating ${manifests.length} ${manifestType}s`);
         for(var manifest of Object.values(manifests)) {
-            Context.logger.info(`Validator: Validating ${manifest.relDestPath}`);
+            //Context.logger.info(`Validator: Validating ${manifest.relDestPath}`);
             var basename = path.basename(manifest.relDestPath, '.txt');
             var algorithm = basename.split('-')[1];
             for (var filename of manifest.keyValueCollection.keys()) {
@@ -851,7 +848,7 @@ class Validator extends EventEmitter {
      *
      */
     _validateNoExtraneousPayloadFiles() {
-        Context.logger.info(`Validator: Looking for extraneous payload files in ${this.pathToBag}`);
+        //Context.logger.info(`Validator: Looking for extraneous payload files in ${this.pathToBag}`);
         for(var manifest of this.payloadManifests()) {
             for (var f of this.payloadFiles()) {
                 if (!manifest.keyValueCollection.first(f.relDestPath)) {
@@ -872,10 +869,10 @@ class Validator extends EventEmitter {
      *
      */
     _validateTags() {
-        Context.logger.info(`Validator: Validating tags in ${this.pathToBag}`);
+        //Context.logger.info(`Validator: Validating tags in ${this.pathToBag}`);
         var requiredTags = this.profile.tagsGroupedByFile();
         for (var filename of Object.keys(requiredTags)) {
-            Context.logger.info(`Validator: Validating tags in ${filename}`);
+            //Context.logger.info(`Validator: Validating tags in ${filename}`);
             var tagFile = this.files[filename];
             if (tagFile === undefined) {
                 this.errors.push(`Required tag file ${filename} is missing`);
@@ -942,7 +939,7 @@ class Validator extends EventEmitter {
      *
      */
     _validatePayloadOxum() {
-        Context.logger.info(`Validator: Validating Payload-Oxum in ${this.pathToBag}`);
+        //Context.logger.info(`Validator: Validating Payload-Oxum in ${this.pathToBag}`);
         let found = false;
         let bagInfo = this.files["bag-info.txt"];
         if (bagInfo && bagInfo.keyValueCollection) {

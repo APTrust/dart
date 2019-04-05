@@ -123,14 +123,14 @@ class TagFileParser {
                     var index = line.indexOf(":");
                     tag = line.slice(0, index).trim();
                     value = line.slice(index + 1).trim();
-                    Context.logger.debug(`"${tag}" = "${value}"`);
+                    //Context.logger.debug(`"${tag}" = "${value}"`);
                 }
             }
             // Add the tag from the last line of the file, if there was one.
             if (tag) {
                 parser.bagItFile.keyValueCollection.add(tag, value);
             }
-            Context.logger.debug(`Finished parsing tag file ${parser.bagItFile.absPath}`);
+            //Context.logger.debug(`Finished parsing tag file ${parser.bagItFile.absPath}`);
         });
     }
 }
