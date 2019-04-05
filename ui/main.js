@@ -13,17 +13,13 @@ require('electron-context-menu')();
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-function run(opts) {
+function runWithUI(opts) {
     // Create the browser window.
-    if(opts.job) {
-        console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
-    }
     win = new BrowserWindow({
         width: 1200,
         height: 900,
         webPreferences: { nodeIntegration: true },
-        icon: path.join(__dirname, 'include/img/dart.png'),
-        show: opts.job ? false : true
+        icon: path.join(__dirname, 'include/img/dart.png')
     });
 
     // and load the index.html of the app.
@@ -43,13 +39,10 @@ function run(opts) {
         // when you should delete the corresponding element.
         win = null
     })
-
-    if (opts.job) {
-        runJob(opts);
-    }
 }
 
-async function runJob(opts) {
+async function runWithoutUI(opts) {
+    console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let jobRunner = new JobRunner(opts.job);
     try {
         await jobRunner.run();
@@ -70,7 +63,11 @@ app.on('ready', function() {
                    v: false, version:false},
         alias: { d: ['debug'], v: ['version'], h: ['help'], j: ['job']}
     });
-    run(opts);
+    if (opts.job) {
+        runWithoutUI(opts);
+    } else {
+        runWithUI(opts);
+    }
 });
 
 // Quit when all windows are closed.
