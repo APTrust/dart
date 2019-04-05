@@ -165,6 +165,13 @@ const Constants =  {
      */
     EXIT_RUNTIME_ERROR: 3,
     /**
+     * Exit codes defines a list of valid exit codes. The codes are
+     * defined in the Constants.EXIT_* constants.
+     *
+     * @type {Array<string>}
+     */
+    EXIT_CODES: [0,1,2,3],
+    /**
      * This type of error indicates that something in the Job
      * description was not valid.
      *

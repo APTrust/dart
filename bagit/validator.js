@@ -303,12 +303,16 @@ class Validator extends EventEmitter {
     _scanBag() {
         var validator = this;
         var reader = this.getNewReader();
-        reader.on('error', function(err) { validator.emit('error', err) });
+        reader.on('error', function(err) {
+            console.log(err);
+            validator.emit('error', err);
+        });
         reader.on('entry', function (entry) {
             if (validator.bagRoot == null && validator.readingFromTar()) {
                 validator.bagRoot = entry.relPath.split(/\//)[0];
             }
             var relPath = validator._cleanEntryRelPath(entry.relPath);
+            console.log(entry.relPath);
             if (relPath.match(Constants.RE_MANIFEST) || relPath.match(Constants.RE_TAG_MANIFEST)) {
                 var algorithm = relPath.split('-')[1].split('.')[0];
                 if (!validator.manifestAlgorithmsFoundInBag.includes(algorithm)) {
@@ -316,7 +320,10 @@ class Validator extends EventEmitter {
                 }
             }
         });
-        reader.on('end', function() { validator._readBag() });
+        reader.on('end', function() {
+            console.log('Reached end of scan');
+            validator._readBag();
+        });
 
         // List the contents of the bag.
         reader.list();

@@ -439,7 +439,6 @@ class Util {
         }
         return castValue;
     }
-
 }
 
 module.exports.Util = Util;
