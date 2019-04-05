@@ -14,7 +14,7 @@ function getOpts() {
 
 test('Constructor sets expected defaults', () => {
     let obj = new FileStat()
-    expect(obj.size).toEqual(-1);
+    expect(obj.size).toEqual(0);
     expect(obj.mode).toEqual(0o400);
     expect(obj.uid).toEqual(0);
     expect(obj.gid).toEqual(0);

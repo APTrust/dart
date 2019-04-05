@@ -33,7 +33,7 @@ test('TarReader.read() emits expected events', done => {
 
 var expectedStats = {
     "example.edu.sample_good/":{
-        "size":-1,
+        "size":0,
         "mode":493,
         "uid":502,
         "gid":20,
@@ -65,7 +65,7 @@ var expectedStats = {
         "type":"file"
     },
     "example.edu.sample_good/data/":{
-        "size":-1,
+        "size":0,
         "mode":493,
         "uid":502,
         "gid":20,

@@ -32,7 +32,7 @@ class FileStat {
           * @type {number}
           * @default 0
           */
-        this.size = opts.size || -1;
+        this.size = opts.size || 0;
         /**
           * The file mode.
           *
