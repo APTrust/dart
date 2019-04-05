@@ -3,7 +3,7 @@ dart-cli - DART command line interface.
 
   Validate BagIt packages according to a BagIt profile.
 
-  Usage: dart-cli -- -c <cmd> -p path/to/bagit/profile.json [-v] path/to/bag
+  Usage: dart-cli -c <cmd> -p path/to/bagit/profile.json [-v] path/to/bag
 
   *** Note the double dashes before the first option in the command line. ***
 
