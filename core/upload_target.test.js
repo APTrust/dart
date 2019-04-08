@@ -125,6 +125,18 @@ test('first()', () => {
     expect(match.host).toEqual("Host 3");
 });
 
+
+test('getValue()', () => {
+    let target = new UploadTarget({ name: 'example'});
+    target.login = 'user@example.com';
+    expect(target.getValue('login')).toEqual('user@example.com');
+
+    // PATH is common to Windows, Mac, Linux
+    target.login = 'env:PATH';
+    expect(target.getValue('login')).toEqual(process.env.PATH);
+});
+
+
 function makeObjects(howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {

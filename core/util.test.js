@@ -257,8 +257,12 @@ test('Util.deleteFromArray()', () => {
     expect(names).toEqual(['Homer', 'Marge', 'Bart', 'Lisa', 'Carl']);
 });
 
+test('Util.looksLikeEnvSetting()', () => {
+    expect(Util.looksLikeEnvSetting('env:HOSTNAME')).toBe(true);
+    expect(Util.looksLikeEnvSetting('example.com')).toBe(false);
+});
+
 test('Util.getEnvSetting()', () => {
-    expect(Util.getEnvSetting('env:HOSTNAME')).toEqual(process.env.HOSTNAME);
-    expect(Util.getEnvSetting('env:USER')).toEqual(process.env.USER);
+    expect(Util.getEnvSetting('env:PATH')).toEqual(process.env.PATH);
     expect(Util.getEnvSetting('invalid_var')).toBeUndefined();
 });

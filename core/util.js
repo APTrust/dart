@@ -441,6 +441,18 @@ class Util {
     }
 
     /**
+     * This returns true if settingValue begins with "env:".
+     *
+     * @param {string} settingValue - The value of the setting.
+     *
+     * @returns {boolean}
+     */
+    static looksLikeEnvSetting(settingValue) {
+        return settingValue.startsWith('env:');
+    }
+
+
+    /**
      * This returns the value of an environment variable, if
      * the variable is available. Certain variables, such as
      * the login credentials used in the {@link UploadTarget}
