@@ -1,26 +1,23 @@
-//const CLI = require('./cli_constants');
-const dateFormat = require('dateformat');
+const { Constants } = require('../core/constants');
 const fs = require('fs');
-//const { Job } = require('../core/job');
 const path = require('path');
 const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
-//const { UploadTarget } = require('../core/upload_target');
-//const { UploadOperation } = require('../core/upload_operation');
+const { UploadTarget } = require('../core/upload_target');
 const { Util } = require('../core/util');
 
 class Uploader {
 
     constructor(job) {
         this.job = job;
-        this.exitCode = CLI.EXIT_SUCCESS;
+        this.exitCode = Constants.EXIT_SUCCESS;
     }
 
     run() {
-        this.validateOpts();
+        this.validateParams();
         let promises = [];
         for (let op of this.job.uploadOps) {
-            promises.concat(this.doUpload(op));
+            promises = promises.concat(this.doUpload(op));
         }
         return Promise.all(promises)
     }
@@ -30,13 +27,18 @@ class Uploader {
         if (!uploadTarget) {
             throw 'Cannot find UploadTarget record'
         }
-        let provider = this.getProvider(uploadTarget.protocol);
+        let providerClass = this.getProvider(uploadTarget.protocol);
         let promises = [];
         for (let filepath of uploadOp.sourceFiles) {
             // this.initOperationResult(uploadOp, provider, uploadTarget, filepath);
+            let provider = new providerClass(uploadTarget);
             var promise = new Promise(function(resolve, reject) {
+                provider.on('start', function(result) {
+                    console.log('Upload started');
+                });
                 provider.on('finish', function(result) {
                     uploadOp.result = result;
+                    console.log('Finished');
                     resolve(result);
                 });
                 provider.on('error', function(result) {
@@ -45,6 +47,7 @@ class Uploader {
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
                     uploadOp.result = result;
+                    console.log('Error');
                     resolve(result);
                 });
                 provider.on('warning', function(xferResult) {
@@ -57,27 +60,12 @@ class Uploader {
         return promises;
     }
 
-    // initOperationResult(op, provider, target, filepath) {
-    //     let stats = fs.statSynch(filepath);
-    //     let result = new OperationResult('upload', provider.description().name);
-    //     op.results.push(result);
-    //     // Be careful because start() calls reset() internally,
-    //     // clearing some of the attributes we set below. So call
-    //     // start() first, then set attrs.
-    //     // TODO: Smarter start()/reset() for this class?
-    //     result.start();
-    //     result.filepath = filepath;
-    //     result.filesize = stats.size;
-    //     result.fileMtime = dateFormat(stats.mtime, 'isoUtcDateTime');
-    //     result.remoteURL = target.url(filepath);
-    // }
-
     validateParams() {
         for (let op of this.job.uploadOps) {
             if (Util.isEmpty(op.uploadTargetId)) {
                 throw 'Specify where you want to upload the file.'
             }
-            if (!op.sourceFiles || Util.isEmptyStringArray(op.source)) {
+            if (!op.sourceFiles || Util.isEmptyStringArray(op.sourceFiles)) {
                 throw 'Specify at least one file to upload.'
             }
             for (let f of op.sourceFiles) {

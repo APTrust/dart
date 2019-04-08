@@ -31,12 +31,19 @@ class JobRunner {
 
         if (this.job.uploadOps.length > 0) {
             let uploader = new Uploader(this.job);
-            await uploader.run();
+            await uploader.run()
+            console.log(this.job.uploadOps);
 
             // TODO: Check the results array of each uploadOp.
             // TODO: Retry those that failed due to non-fatal error.
         }
 
+        // TODO: Exit with whatever code the last worker set.
+
+        // TEMPORARY HACK to avoid electron lifecycle error.
+        setTimeout(function() {
+            process.exit(0);
+        }, 1000);
     }
 }
 
