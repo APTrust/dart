@@ -58,6 +58,12 @@ class S3Upload {
         let stats = fs.statSync(this.opts.source[0]);
         let provider = this.getProvider();
         let uploadTarget = this.getUploadTarget();
+
+        // ----------------------------------------------------------
+        // TODO: This UploadOperation constructor has changed.
+        // If we plan on keeping this code, update the command-line
+        // params and the constructor params below.
+        // ----------------------------------------------------------
         let op = new UploadOperation(this.opts.dest, 's3', [this.opts.source[0]]);
         op.result = new OperationResult('upload', provider.description().name);
         // Be careful because start() calls reset() internally,

@@ -75,7 +75,7 @@ class S3Client extends Plugin {
             this._upload(xfer);
         } catch (err) {
             xfer.result.finish(err.toString());
-            this.emit('finish', xfer.result);
+            this.emit('error', xfer.result);
         }
     }
 
@@ -215,7 +215,7 @@ class S3Client extends Plugin {
             });
         } catch (err) {
             xfer.result.finish(err.toString());
-            s3Client.emit('finish', xfer.result);
+            s3Client.emit('error', xfer.result);
         }
     }
 
@@ -261,7 +261,7 @@ class S3Client extends Plugin {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt}. Will try again in 1.5 seconds.`;
+            xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt} while attempting to send ${xfer.result.filepath} to ${s3Client.uploadTarget.host}. Will try again in 1.5 seconds.`;
             this.emit('warning', xfer.result);
             setTimeout(function() { s3Client._upload(xfer) }, 1500);
         } else {

@@ -1,9 +1,6 @@
+const { Context } = require('./context');
 const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
-
-////////////////////////////////////////////////////////////////////////////
-//   TODO: Use only uploadTargetId instead of destination and protocol?   //
-////////////////////////////////////////////////////////////////////////////
 
 /**
  * UploadOperation contains information describing a number of files
@@ -14,31 +11,21 @@ class UploadOperation {
     /**
      * Creates a new UploadOperation.
      *
-     * @param {string} destination - The destination to which files should
-     * be uploaded. This should be a URL or hostname.
-     *
-     * @param {string} protocol - The network protocol to use when uploading
-     * files. For example, 's3', 'ftp', 'sftp', etc.
+     * @param {string} uploadTargetId - The id of the {@link UploadTarget}
+     * to which we'll be sending files.
      *
      * @param {string} sourceFiles - A list of files to upload. Each entry
      * in this list should be an absolute path.
      *
      */
-    constructor(destination, protocol, sourceFiles) {
+    constructor(uploadTargetId, sourceFiles) {
         /**
-         * The destination to which sourceFiles should be uploaded. This should
-         * be a URL or hostname.
+         * The ID (UUID) of the {@link UploadTarget} to which we want to
+         * send files.
          *
          * @type {string}
          */
-        this.destination = destination || '';
-        /**
-         * The network protocol to use when uploading files. For example, 's3',
-         * 'ftp', 'sftp', etc.
-         *
-         * @type {string}
-         */
-        this.protocol = protocol || '';
+        this.uploadTargetId = uploadTargetId;
         /**
          * A list of files to upload. Each entry in this list should be an
          * absolute path.
@@ -46,13 +33,6 @@ class UploadOperation {
          * @type {Array<string>}
          */
         this.sourceFiles = sourceFiles || [];
-        /**
-         * The ID (UUID) of the {@link UploadTarget} to which we want to
-         * send files.
-         *
-         * @type {string}
-         */
-        this.uploadTargetId = '';
         /**
          * This describes the result of DART's attempt to upload the files.
          *
@@ -84,14 +64,11 @@ class UploadOperation {
      */
     validate() {
         this.errors = {};
-        if (typeof this.destination != 'string' || Util.isEmpty(this.destination)) {
-            this.errors['UploadOperation.destination'] = 'Destination is required.';
-        }
-        if (typeof this.protocol != 'string' || Util.isEmpty(this.protocol)) {
-            this.errors['UploadOperation.protocol'] = 'Protocol is required.';
+        if (!Util.looksLikeUUID(this.uploadTargetId)) {
+            this.errors['UploadOperation.uploadTargetId'] = Context.y18n.__('You must specify an upload target.');
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
-            this.errors['UploadOperation.sourceFiles'] = 'Specify at least one file or directory to upload.';
+            this.errors['UploadOperation.sourceFiles'] = Context.y18n.__('Specify at least one file or directory to upload.');
         }
         return Object.keys(this.errors).length == 0;
     }

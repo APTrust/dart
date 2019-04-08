@@ -276,5 +276,7 @@
   "Object_targets_label": "Object_targets_label",
   "Object_targets_help": "Object_targets_help",
   "Object_uploadTargets_label": "Object_uploadTargets_label",
-  "Object_uploadTargets_help": "Object_uploadTargets_help"
+  "Object_uploadTargets_help": "Object_uploadTargets_help",
+  "You must specify an upload target.": "You must specify an upload target.",
+  "Specify at least one file or directory to upload.": "Specify at least one file or directory to upload."
 }

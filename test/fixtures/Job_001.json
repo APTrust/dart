@@ -332,7 +332,7 @@
 		},
 		"packageOp": {
 			"packageName": "BagOfPhotos",
-			"outputPath": "/Users/apd4n/tmp/dart/bag.tar",
+			"outputPath": "/Users/apd4n/tmp/dart/test.edu.dart2_bag.tar",
 			"packageFormat": "BagIt",
 			"pluginId": "BagIt",
 			"sourceFiles": [
@@ -349,11 +349,9 @@
 		"validationOp": null,
 		"uploadOps": [
 			{
-				"destination": "https://s3.example.com/my_bucket",
-				"protocol": "s3",
-				"sourceFiles": ["/Users/apd4n/tmp/dart/bag.tar"],
+				"sourceFiles": ["/Users/apd4n/tmp/dart/test.edu.dart2_bag.tar"],
 				"uploadTargetId": "e712265a-45ee-41be-b3b0-c4a8c7929e00",
-				"result": null,
+				"results": [],
 				"payloadSize": 0,
 				"errors": {}
 			}

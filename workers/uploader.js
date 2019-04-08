@@ -18,9 +18,11 @@ class Uploader {
 
     run() {
         this.validateOpts();
+        let promises = [];
         for (let op of this.job.uploadOps) {
-            this.doUpload(op);
+            promises.concat(this.doUpload(op));
         }
+        return Promise.all(promises)
     }
 
     doUpload(uploadOp) {
@@ -29,29 +31,46 @@ class Uploader {
             throw 'Cannot find UploadTarget record'
         }
         let provider = this.getProvider(uploadTarget.protocol);
+        let promises = [];
         for (let filepath of uploadOp.sourceFiles) {
-            this.initOperationResult(uploadOp, provider, uploadTarget, filepath);
-
-            // START HERE
-            // TODO: This emits a finish event.
+            // this.initOperationResult(uploadOp, provider, uploadTarget, filepath);
+            var promise = new Promise(function(resolve, reject) {
+                provider.on('finish', function(result) {
+                    uploadOp.result = result;
+                    resolve(result);
+                });
+                provider.on('error', function(result) {
+                    // Reject causes the entire Promise.all chain
+                    // to fail. We want to let other pending promises
+                    // complete instead of stopping the chain. We will
+                    // handle retries elsewhere.
+                    uploadOp.result = result;
+                    resolve(result);
+                });
+                provider.on('warning', function(xferResult) {
+                    Context.logger.warning(xferResult.warning);
+                });
+            });
+            promises.push(promise);
             provider.upload(filepath, path.basename(filepath));
         }
+        return promises;
     }
 
-    initOperationResult(op, provider, target, filepath) {
-        let stats = fs.statSynch(filepath);
-        let result = new OperationResult('upload', provider.description().name);
-        op.results.push(result);
-        // Be careful because start() calls reset() internally,
-        // clearing some of the attributes we set below. So call
-        // start() first, then set attrs.
-        // TODO: Smarter start()/reset() for this class?
-        result.start();
-        result.filepath = filepath;
-        result.filesize = stats.size;
-        result.fileMtime = dateFormat(stats.mtime, 'isoUtcDateTime');
-        result.remoteURL = target.url(filepath);
-    }
+    // initOperationResult(op, provider, target, filepath) {
+    //     let stats = fs.statSynch(filepath);
+    //     let result = new OperationResult('upload', provider.description().name);
+    //     op.results.push(result);
+    //     // Be careful because start() calls reset() internally,
+    //     // clearing some of the attributes we set below. So call
+    //     // start() first, then set attrs.
+    //     // TODO: Smarter start()/reset() for this class?
+    //     result.start();
+    //     result.filepath = filepath;
+    //     result.filesize = stats.size;
+    //     result.fileMtime = dateFormat(stats.mtime, 'isoUtcDateTime');
+    //     result.remoteURL = target.url(filepath);
+    // }
 
     validateParams() {
         for (let op of this.job.uploadOps) {

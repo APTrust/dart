@@ -15,6 +15,9 @@ class JobRunner {
         if (this.job.packageOp && this.job.packageOp.packageFormat == 'BagIt') {
             let bagCreator = new BagCreator(this.job);
             await bagCreator.run();
+
+            // TODO: Check result and stop if error.
+
             this.job.validationOp = new ValidationOperation(this.job.packageOp.outputPath);
             this.job.save();
         }
@@ -22,6 +25,16 @@ class JobRunner {
         if (this.job.validationOp) {
             let bagValidator = new BagValidator(this.job);
             await bagValidator.run();
+
+            // TODO: Check result and stop if error.
+        }
+
+        if (this.job.uploadOps.length > 0) {
+            let uploader = new Uploader(this.job);
+            await uploader.run();
+
+            // TODO: Check the results array of each uploadOp.
+            // TODO: Retry those that failed due to non-fatal error.
         }
 
     }
