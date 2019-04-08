@@ -38,13 +38,22 @@ class UploadTarget extends PersistentObject {
      * to upload material.
      *
      * @param {string} opts.login - The user name or AWS Access Key ID to use
-     * when authenticating with the remote service.
+     * when authenticating with the remote service. To avoid storing sensitive
+     * info in DART's data files, you can specify an environment variable
+     * here by using "env:VAR_NAME". When performing upload operations, DART
+     * will substitute the value of the environment variable "VAR_NAME".
      *
      * @param {string} opts.password - The password or AWS Secret Access Key
-     * to use when authenticating with the remote service.
+     * to use when authenticating with the remote service. You can specify
+     * an environment variable here by using "env:VAR_NAME". When performing
+     * upload operations, DART will substitute the value of the environment
+     * variable "VAR_NAME".
      *
      * @param {string} opts.loginExtra - Optional additional information to
-     * pass to the remote service during the authentication process.
+     * pass to the remote service during the authentication process. You can
+     * specify an environment variable here by using "env:VAR_NAME". When
+     * performing upload operations, DART will substitute the value of the
+     * environment variable "VAR_NAME".
      *
      */
     constructor(opts = {}) {
@@ -95,14 +104,20 @@ class UploadTarget extends PersistentObject {
         this.bucket = opts.bucket || "";
         /**
           * login is the name to use when logging in to the remote server.
-          * For s3 connections, it's the Access Key Id.
+          * For s3 connections, it's the Access Key Id. You can use an
+          * environment variable in this field by specifying "env:VAR_NAME".
+          * DART will look up the environment variable at runtime, and its
+          * value will not be stored with DART's data.
           *
           * @type {string}
           */
         this.login = opts.login || "";
         /**
           * password is the password required to connect to the remote server.
-          * For S3, it's the secret key (aka AWS Secret Access Key).
+          * For S3, it's the secret key (aka AWS Secret Access Key). You can use
+          * an environment variable in this field by specifying "env:VAR_NAME".
+          * DART will look up the environment variable at runtime, and its
+          * value will not be stored with DART's data.
           *
           * @type {string}
           */
@@ -112,7 +127,9 @@ class UploadTarget extends PersistentObject {
           * connect to remote services. What the plugin does with this bit of info
           * is its own business. For example, a plugin that requires the path to
           * a local private key file can ask the user to enter the path to that
-          * file here.
+          * file here. You can use an environment variable in this field by
+          * specifying a value like "env:VAR_NAME". DART will look up the environment
+          * variable at runtime, and its value will not be stored with DART's data.
           *
           * @type {string}
           */

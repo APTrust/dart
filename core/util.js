@@ -439,6 +439,26 @@ class Util {
         }
         return castValue;
     }
+
+    /**
+     * This returns the value of an environment variable, if
+     * the variable is available. Certain variables, such as
+     * the login credentials used in the {@link UploadTarget}
+     * class may be stored more safely as environment variables
+     * outside of the DART database. Those variables follow the
+     * pattern env:VAR_NAME.
+     *
+     * If you pass env:VAR_NAME to this function, it will return
+     * the value of the environment variable VAR_NAME.
+     *
+     * @param {string} str - A string in the format env:VAR_NAME.
+     *
+     * @returns {string}
+     */
+    static getEnvSetting(str) {
+        let [prefix, varname] = str.split(':');
+        return process.env[varname];
+    }
 }
 
 module.exports.Util = Util;

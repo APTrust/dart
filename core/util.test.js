@@ -256,3 +256,9 @@ test('Util.deleteFromArray()', () => {
     Util.deleteFromArray(names, 'Lenny');
     expect(names).toEqual(['Homer', 'Marge', 'Bart', 'Lisa', 'Carl']);
 });
+
+test('Util.getEnvSetting()', () => {
+    expect(Util.getEnvSetting('env:HOSTNAME')).toEqual(process.env.HOSTNAME);
+    expect(Util.getEnvSetting('env:USER')).toEqual(process.env.USER);
+    expect(Util.getEnvSetting('invalid_var')).toBeUndefined();
+});
