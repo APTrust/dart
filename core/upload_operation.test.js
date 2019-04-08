@@ -6,7 +6,7 @@ test('Constructor sets expected properties', () => {
     expect(uploadOp.protocol).toEqual('s3');
     expect(Array.isArray(uploadOp.sourceFiles)).toEqual(true);
     expect(uploadOp.sourceFiles.length).toEqual(2);
-    expect(uploadOp.result).toBeNull();
+    expect(uploadOp.results.length).toEqual(0);
     expect(uploadOp.payloadSize).toEqual(0);
 });
 
