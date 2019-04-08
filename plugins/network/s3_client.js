@@ -279,8 +279,8 @@ class S3Client extends Plugin {
         var minioClient = new Minio.Client({
             endPoint:  this.uploadTarget.host,
             port: this.uploadTarget.port || 443,
-            accessKey: this.uploadTarget.login,
-            secretKey: this.uploadTarget.password
+            accessKey: this.uploadTarget.getValue('login'),
+            secretKey: this.uploadTarget.getValue('password')
         });
         // TODO: This is too specialized to go in a general-use client.
         // Where should this go?
