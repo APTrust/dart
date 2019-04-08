@@ -27,7 +27,7 @@
         "minio": "^7.0.5",
         "nexe": "^3.0.3",
         "os-locale": "^3.1.0",
-        "popper.js": "^1.14.7",
+        "popper.js": "^1.15.0",
         "readdirp": "^2.2.1",
         "require-dir": "^1.2.0",
         "tar-stream": "^2.0.1",
