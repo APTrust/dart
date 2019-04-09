@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      plugins/repository/aptrust.js - Documentation
+      core/job_error.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        plugins/repository/aptrust.js
+        core/job_error.js
       </h1>
     
 
@@ -90,43 +90,62 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { Plugin } = require('../plugin');
+    <pre class="prettyprint source linenums"><code>const { Constants } = require('./constants');
 
 /**
- * APTrustClient provides methods for querying an APTrust repository
- * that conform to the DART repository interface.
+ * Job error describes an error that occurred while trying to run
+ * a job.
  *
+ * @param {string} msg - The error message to print to stderr.
+ * This message will be automatically translated before printing.
  *
+ * @param {string} errType - The type of error. Types are listed in
+ * {@link Constants.ERR_TYPES}.
+ *
+ * @param {number} exitCode - The code to exit with (because,
+ * remember, this method causes the process to exit). Exit codes
+ * are defined in {@link Constants.EXIT_CODES}.
  */
-class APTrustClient extends Plugin {
-    /**
-     *
-     */
-    constructor() {
-        super();
+class JobError {
+    constructor(message, errorType, exitCode) {
+        this.message = message;
+        if (!Constants.ERR_TYPES.includes(errorType)) {
+            throw `Unknown error type ${errorType}`;
+        }
+        this.type = type;
+        if (!Constants.EXIT_CODES.includes(exitCode)) {
+            throw `Unknown exit code ${exitCode}`;
+        }
+        this.exitCode = exitCode;
     }
-
     /**
-     * Returns a {@link PluginDefinition} object describing this plugin.
-     *
-     * @returns {PluginDefinition}
+     * This method prints an error to the process's stdout stream
+     * The error message will be translated before printing. The output
+     * is in JSON format, so it can be parsed by scripts or applications
+     * that invoke DART command-line tools.
      */
-    static description() {
-        return {
-            id: 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd',
-            name: 'APTrustClient',
-            description: 'APTrust repository client. This allows DART to talk to the APTrust demo and/or production repository.',
-            version: '0.1',
-            readsFormats: [],
-            writesFormats: [],
-            implementsProtocols: [],
-            talksToRepository: ['aptrust'],
-            setsUp: []
-        };
+    print() {
+        process.stderr.write(JSON.stringify({error: this}));
+    }
+    /**
+     * This method prints an error to the process's stdout stream
+     * and exits with the specified code. The error message will
+     * be translated before printing. The output is in JSON format,
+     * so it can be parsed by scripts or applications that invoke DART
+     * command-line tools.
+     *
+     * This method is intended only for use in command-line applications
+     * and sub-processes spawned from the main UI. You should not call
+     * this from the main UI process because it will cause the main
+     * application to exit.
+     */
+    exit() {
+        this.print();
+        process.exit(exitCode);
     }
 }
 
-module.exports = APTrustClient;
+module.exports.JobError = JobError;
 </code></pre>
   </article>
 </section>

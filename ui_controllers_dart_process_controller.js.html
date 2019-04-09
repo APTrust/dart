@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      plugins/repository/aptrust.js - Documentation
+      ui/controllers/dart_process_controller.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        plugins/repository/aptrust.js
+        ui/controllers/dart_process_controller.js
       </h1>
     
 
@@ -90,43 +90,48 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { Plugin } = require('../plugin');
+    <pre class="prettyprint source linenums"><code>const { BaseController } = require('./base_controller');
+const { Context } = require('../../core/context');
+const { DartProcess } = require('../../core/dart_process');
+const Templates = require('../common/templates');
 
 /**
- * APTrustClient provides methods for querying an APTrust repository
- * that conform to the DART repository interface.
+ * The DartProcessController displays information about the DART child
+ * processes used to package, validate, and/or upload files.
  *
+ * @param {URLSearchParams} params - The URL search params parsed
+ * from the URL used to reach this page. This should contain at
+ * least the DartProcess Id.
  *
+ * @param {string} params.id - The id of the DartProcess to display.
+ * DartProcess.id is a UUID string.
  */
-class APTrustClient extends Plugin {
-    /**
-     *
-     */
-    constructor() {
-        super();
+class DartProcessController extends BaseController {
+
+    constructor(params) {
+        super(params, 'Jobs');
+        this.model = DartProcess;
+        this.listTemplate = Templates.dartProcessList;
+        this.nameProperty = 'name';
+        this.defaultOrderBy = 'startedAt';
+        this.defaultSortDirection = 'desc';
+        this.dartProcess = DartProcess.find(this.params.get('id'));
     }
 
     /**
-     * Returns a {@link PluginDefinition} object describing this plugin.
-     *
-     * @returns {PluginDefinition}
+     * Displays a summary of the process.
      */
-    static description() {
-        return {
-            id: 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd',
-            name: 'APTrustClient',
-            description: 'APTrust repository client. This allows DART to talk to the APTrust demo and/or production repository.',
-            version: '0.1',
-            readsFormats: [],
-            writesFormats: [],
-            implementsProtocols: [],
-            talksToRepository: ['aptrust'],
-            setsUp: []
+    show() {
+        let data = {
+            dartProcess: this.dartProcess,
+            childProcess: Context.childProcesses[this.dartProcess.id]
         };
+        return this.containerContent(Templates.dartProcessShow(data));
     }
+
 }
 
-module.exports = APTrustClient;
+module.exports.DartProcessController = DartProcessController;
 </code></pre>
   </article>
 </section>
