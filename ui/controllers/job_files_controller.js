@@ -348,7 +348,7 @@ class JobFilesController extends BaseController {
      *
      */
     removeItemFromUI(filepath) {
-        let row = $(`tr[data-filepath="${filepath}"]`)
+        let row = $(`tr[data-filepath="${Util.escapeBackslashes(filepath)}"]`)
         let dirCount = -1 * parseInt(row.find('td.dirCount').text(), 10);
         let fileCount = -1 * parseInt(row.find('td.fileCount').text(), 10);
         let fileSize = -1 * parseInt(row.find('td.fileSize').data('bytes'), 10);
