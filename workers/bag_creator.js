@@ -37,7 +37,6 @@ class BagCreator {
                 if (result.error) {
                     new JobError(result.error, Constants.ERR_PACKAGING, Constants.EXIT_COMPLETED_WITH_ERRORS).exit();
                 } else {
-                    // TODO: Validate the bag.
                     console.log(`Bag created at ${creator.job.packageOp.outputPath}`);
                     Util.writeJson('stdout', {
                         op: 'Completed',
