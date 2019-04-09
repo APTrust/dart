@@ -285,6 +285,17 @@ class Util {
     }
 
     /**
+     * Replaces backslashes in Windows paths with double backslashes.
+     *
+     * @param {string} winPath - A Windows path.
+     *
+     * @returns {string}
+     */
+    static escapeBackslashes(winPath) {
+        return winPath.replace(/\\/g, '\\\\')
+    }
+
+    /**
 	  * Converts an absolute Windows path to a path with forward slashes suitable
 	  * for a BagIt file or tar file. Also strips off drive letters and share names.
       *

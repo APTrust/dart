@@ -140,6 +140,10 @@ test('Util.truncateString()', () => {
     expect(Util.truncateString(original, 500)).toEqual(original);
 });
 
+test('Util.escapeBackslashes()', () => {
+    expect(Util.escapeBackslashes("C:\\Users\\sally")).toEqual("C:\\\\Users\\\\sally");
+});
+
 test('Util.windowsToBagItPath()', () => {
     expect(Util.normalizeWindowsPath("C:\\Users\\sally")).toEqual("/Users/sally");
     expect(Util.normalizeWindowsPath("\\remote\\sally")).toEqual("/remote/sally");
