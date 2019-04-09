@@ -270,3 +270,10 @@ test('Util.getEnvSetting()', () => {
     expect(Util.getEnvSetting('env:PATH')).toEqual(process.env.PATH);
     expect(Util.getEnvSetting('invalid_var')).toBeUndefined();
 });
+
+test('Util.getEnvSetting()', () => {
+    let data = { msg: 'Sample message' };
+    expect(() => { Util.writeJson('stderr', data) }).not.toThrow();
+    expect(() => { Util.writeJson('stdout', data) }).not.toThrow();
+    expect(() => { Util.writeJson('nonstandard', data) }).toThrow();
+});

@@ -2,6 +2,7 @@ const { Bagger } = require('../bagit/bagger');
 const { Constants } = require('../core/constants');
 const { Job } = require('../core/job');
 const { JobError } = require('../core/job_error');
+const { Util } = require('../core/util');
 
 class BagCreator {
 
@@ -14,7 +15,7 @@ class BagCreator {
         var creator = this;
         var bagger = new Bagger(this.job);
         bagger.on('packageStart', function(message) {
-            process.stdout.write({
+            Util.writeJson('stdout', {
                 op: 'PackageStart',
                 message: message
             });
@@ -24,7 +25,7 @@ class BagCreator {
         });
         bagger.on('fileAdded', function(bagItFile) {
             console.log(`Added ${bagItFile.relDestPath}`);
-            process.stdout.write({
+            Util.writeJson('stdout', {
                 op: 'FileAdded',
                 message: bagItFile.relDestPath
             });
@@ -38,7 +39,7 @@ class BagCreator {
                 } else {
                     // TODO: Validate the bag.
                     console.log(`Bag created at ${creator.job.packageOp.outputPath}`);
-                    process.stdout.write({
+                    Util.writeJson('stdout', {
                         op: 'Completed',
                         message: `Bag created at ${creator.job.packageOp.outputPath}`
                     });
