@@ -287,7 +287,7 @@ class JobFilesController extends BaseController {
         let iconType = (type == 'file' ? 'file' : 'folder-closed');
         let data = {
             iconType: iconType,
-            filepath: Util.escapeBackslashes(filepath),
+            filepath: filepath,
             dirCount: dirCount,
             fileCount: fileCount,
             byteCount: byteCount,
