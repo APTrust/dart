@@ -28,11 +28,24 @@ test('validate()', () => {
     expect(uploadOp1.errors['UploadOperation.sourceFiles']).toEqual(Context.y18n.__('Specify at least one file or directory to upload.'));
     expect(uploadOp1.errors['UploadOperation.uploadTargetId']).toEqual(Context.y18n.__('You must specify an upload target.'));
 
-    let uploadOp2 = newUploadOp()
+    let uploadOp2 = newUploadOp();
+    uploadOp2.sourceFiles = [__filename];
     let result2 = uploadOp2.validate();
     expect(result2).toEqual(true);
     expect(uploadOp2.errors['UploadOperation.uploadTargetId']).toBeUndefined();
     expect(uploadOp2.errors['UploadOperation.sourceFiles']).toBeUndefined();
+});
+
+test('validate() warns on missing files', () => {
+    let uploadOp = new UploadOperation();
+    uploadOp.uploadTargetId = '00000000-0000-0000-0000-000000000000';
+    uploadOp.sourceFiles = [
+        '1__/file/does/not/exist',
+        '2__/file/does/not/exist'
+    ];
+    let result = uploadOp.validate();
+    expect(result).toEqual(false);
+    expect(uploadOp.errors['UploadOperation.sourceFiles']).toEqual(Context.y18n.__('The following files are missing: %s', uploadOp.sourceFiles.join('; ')));
 });
 
 test('inflateFrom()', () => {

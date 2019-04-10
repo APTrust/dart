@@ -1,4 +1,5 @@
 const { Context } = require('./context');
+const fs = require('fs');
 const { OperationResult } = require('./operation_result');
 const { Util } = require('./util');
 
@@ -69,6 +70,15 @@ class UploadOperation {
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
             this.errors['UploadOperation.sourceFiles'] = Context.y18n.__('Specify at least one file or directory to upload.');
+        }
+        let missingFiles = [];
+        for (let sourceFile of this.sourceFiles) {
+            if (!fs.existsSync(sourceFile)) {
+                missingFiles.push(sourceFile);
+            }
+        }
+        if (missingFiles.length > 0) {
+            this.errors['UploadOperation.sourceFiles'] = Context.y18n.__('The following files are missing: %s', missingFiles.join('; '));
         }
         return Object.keys(this.errors).length == 0;
     }
