@@ -1,5 +1,9 @@
 const { Constants } = require('./constants');
 
+//---------------------------------------------------------------------//
+// TODO: Delete this class in favor of JobStatus.
+//---------------------------------------------------------------------//
+
 /**
  * Job error describes an error that occurred while trying to run
  * a job.

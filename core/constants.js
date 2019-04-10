@@ -223,7 +223,37 @@ const Constants =  {
         'ProfileValidation',
         'Packaging',
         'Upload'
-    ]
+    ],
+    /**
+     * This describes the status of an operation that is currently
+     * in progress. An operation is a component of a job, such as
+     * packaging, validation, or uploading.
+     *
+     * @type {string}
+     */
+    OP_IN_PROGRESS: 'In Progress',
+    /**
+     * This describes the status of an operation that has completed
+     * successfully. An operation is a component of a job, such as
+     * packaging, validation, or uploading.
+     *
+     * @type {string}
+     */
+    OP_SUCCEEDED: 'Succeeded',
+    /**
+     * This describes the status of an operation that has failed.
+     * An operation is a component of a job, such as
+     * packaging, validation, or uploading.
+     *
+     * @type {string}
+     */
+    OP_FAILED: 'Failed',
+    /**
+     * This is the list of valid operation statuses.
+     *
+     * @type {string}
+     */
+    OP_STATUSES: ['In Progress', 'Succeeded', 'Failed']
 };
 
 Object.freeze(Constants);

@@ -53,7 +53,7 @@ class JobRunController extends BaseController {
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
         let childProcess = spawn(
             process.argv0,
-            ['--', '--headless', '--job', tmpFile]
+            ['--', '--job', tmpFile]
         );
         // TODO: Need to wire up events.
         let dartProcess = new DartProcess(

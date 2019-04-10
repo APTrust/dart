@@ -62,6 +62,15 @@ class Job extends PersistentObject {
         this.validationOp = opts.validationOp || null;
         this.uploadOps = opts.uploadOps || [];
         this.createdAt = opts.createdAt || new Date();
+
+        /**
+         * This hash will contain descriptions of job validation errors
+         * after you call job.validate(). This does NOT contain information
+         * about errors that occurred while running the job. For those, see
+         * the result propertype (type {@link OperationResult}) of the
+         * job's {@link PackageOperation}, {@link ValidationOperation},
+         * or {@link UploadOperation}.
+         */
         this.errors = {};
 
         /**

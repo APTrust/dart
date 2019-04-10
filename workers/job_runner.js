@@ -1,8 +1,10 @@
 const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
+const { Context } = require('../core/context');
 const { Job } = require('../core/job');
 const { Uploader } = require('./uploader');
 const { ValidationOperation } = require('../core/validation_operation');
+const { Util } = require('../core/util');
 
 class JobRunner {
     constructor(pathToFile) {
@@ -44,6 +46,25 @@ class JobRunner {
         setTimeout(function() {
             process.exit(0);
         }, 1000);
+    }
+
+    printJobStart() {
+        Util.writeJson('stdout', {
+            op: 'JobStart',
+            message: Context.y18n.__('Job started')
+        });
+    }
+
+    printJobComplete() {
+        let message = Context.y18n.__('Job completed successfully');
+        let succeeded = true;
+        if (this.job) {
+
+        }
+        Util.writeJson('stdout', {
+            op: 'JobComplete',
+            message: message
+        });
     }
 }
 
