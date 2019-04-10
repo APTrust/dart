@@ -26,8 +26,8 @@ before_script:
 script:
 - npm test -- --runInBand
 - electron-builder . --publish never -m --linux deb tar.gz
-- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-osx -t mac-x64-10.13.0
-- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-linux -t linux-x64
+#- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-osx -t mac-x64-10.13.0
+#- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-linux -t linux-x64
 - "./jsdoc.sh"
 
 notifications:

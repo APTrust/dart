@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# A.D. April 10, 2019
+#
+# We may be getting rid of nexe, since we can use the electron binary
+# for command-line operations as well as for the UI.
+
 echo 'Building dart-cli'
 
 ./node_modules/.bin/nexe -i apps/dart-cli.js -r locales/*.json -o apps/bin/dart-cli -t mac-x64-10.13.0
