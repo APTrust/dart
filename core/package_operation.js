@@ -138,6 +138,15 @@ class PackageOperation {
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
             this.errors['PackageOperation.sourceFiles'] = 'Specify at least one file or directory to package.';
         }
+        let missingFiles = [];
+        for (let sourceFile of this.sourceFiles) {
+            if (!fs.existsSync(sourceFile)) {
+                missingFiles.push(sourceFile);
+            }
+        }
+        if (missingFiles.length > 0) {
+            this.errors['PackageOperation.sourceFiles'] = Context.y18n.__('The following files are missing: %s', missingFiles.join('; '));
+        }
         return Object.keys(this.errors).length == 0;
     }
 

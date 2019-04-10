@@ -278,5 +278,7 @@
   "Object_uploadTargets_label": "Object_uploadTargets_label",
   "Object_uploadTargets_help": "Object_uploadTargets_help",
   "You must specify an upload target.": "You must specify an upload target.",
-  "Specify at least one file or directory to upload.": "Specify at least one file or directory to upload."
+  "Specify at least one file or directory to upload.": "Specify at least one file or directory to upload.",
+  "The following files are missing: %s": "The following files are missing: %s",
+  "The following source files are missing: %s": "The following source files are missing: %s"
 }

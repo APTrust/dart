@@ -1,3 +1,4 @@
+const { Context } = require('./context');
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
 const { PluginManager } = require('../plugins/plugin_manager');
@@ -23,12 +24,24 @@ test('validate()', () => {
     expect(packOp1.errors['PackageOperation.sourceFiles']).toEqual('Specify at least one file or directory to package.');
 
     let packOp2 = new PackageOperation('bag_name', '/path/to/output.tar');
-    packOp2.sourceFiles.push('/path/to/something/you/want/to/bag');
+    packOp2.sourceFiles = [__filename];
     let result2 = packOp2.validate();
     expect(result2).toEqual(true);
     expect(packOp2.errors['PackageOperation.packageName']).toBeUndefined();
     expect(packOp2.errors['PackageOperation.outputPath']).toBeUndefined();
     expect(packOp2.errors['PackageOperation.sourceFiles']).toBeUndefined();
+});
+
+test('validate() warns on missing files', () => {
+    let packageOp = new PackageOperation();
+    packageOp.uploadTargetId = '00000000-0000-0000-0000-000000000000';
+    packageOp.sourceFiles = [
+        '1__/file/does/not/exist',
+        '2__/file/does/not/exist'
+    ];
+    let result = packageOp.validate();
+    expect(result).toEqual(false);
+    expect(packageOp.errors['PackageOperation.sourceFiles']).toEqual(Context.y18n.__('The following files are missing: %s', packageOp.sourceFiles.join('; ')));
 });
 
 test('pruneSourceFilesUnlessJobCompleted()', () => {
