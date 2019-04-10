@@ -87,15 +87,16 @@ class Bagger extends EventEmitter {
     }
 
     /**
-     * This ensures the job is valid before the bagger tries to run it.
+     * This ensures the packaging operation is valid before the bagger
+     * tries to run it.
      *
      * @returns {boolean} - True or false, indicating whether or not
      * the job is valid.
      */
-    validateJob() {
+    validatePackagingOperation() {
         this.errors = {};
         var packOp = this.job.packageOp;
-        if (!this.job.validate()) {
+        if (!packOp.validate()) {
             packOp.result.errors.push("Job is not valid.");
             for(var [key, value] of Object.entries(this.job.errors)) {
                 packOp.result.errors.push(`${key}: ${value}`);
@@ -118,7 +119,7 @@ class Bagger extends EventEmitter {
         packOp.result = new OperationResult('bagging', 'DART bagger');
         packOp.result.filepath = packOp.outputPath;
         packOp.result.start();
-        if (!this.validateJob()) {
+        if (!this.validatePackagingOperation()) {
             console.log(this.job.packageOp);
             return false;
         }
