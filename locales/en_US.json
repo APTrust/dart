@@ -283,5 +283,8 @@
   "The following source files are missing: %s": "The following source files are missing: %s",
   "You must specify the path to the bag you want to validate.": "You must specify the path to the bag you want to validate.",
   "The bag to be validated does not exist at %s": "The bag to be validated does not exist at %s",
-  "Bag created": "Bag created"
+  "Bag created": "Bag created",
+  "Bag is valid": "Bag is valid",
+  "Upload started": "Upload started",
+  "Upload completed": "Upload completed"
 }

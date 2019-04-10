@@ -34,7 +34,6 @@ class JobRunner {
         if (this.job.uploadOps.length > 0) {
             let uploader = new Uploader(this.job);
             await uploader.run()
-            console.log(this.job.uploadOps);
 
             // TODO: Check the results array of each uploadOp.
             // TODO: Retry those that failed due to non-fatal error.

@@ -1,64 +1,59 @@
-//const { BagItProfile } = require('../bagit/bagit_profile');
-//const CLI = require('./cli_constants');
 const { Constants } = require('../core/constants');
 const dateFormat = require('dateformat');
 const { Validator } = require('../bagit/validator');
+const { Worker } = require('./worker');
 
-class BagValidator {
+class BagValidator extends Worker {
 
     constructor(job) {
+        super('validate');
         this.job = job;
-        this.debug = false;
-        this.exitCode = Constants.EXIT_SUCCESS;
     }
 
     run() {
-        this.validateParams();
+        let errors = this.validateParams();
+        if (errors.length > 0) {
+            return this.validationError();
+        }
+
         var bagValidator = this;
         return new Promise(function(resolve, reject) {
             let validator = new Validator(
                 bagValidator.job.validationOp.pathToBag,
                 bagValidator.job.bagItProfile);
             validator.on('error', function(err) {
-                bagValidator.exitCode = Constants.EXIT_RUNTIME_ERROR;
+                if (typeof err == 'string') {
+                    bagValidator.runtimeError('validate', [err], null);
+                } else {
+                    bagValidator.runtimeError('validate', null, err);
+                }
                 resolve(validator);
             });
             validator.on('end', function() {
                 if (validator.errors.length > 0) {
-                    bagValidator.exitCode = Constants.EXIT_COMPLETED_WITH_ERRORS;
-                    console.log("Bag has the following errors:");
-                    for (let e of validator.errors) {
-                        console.log(`    ${e}`);
-                    }
+                    bagValidator.completedWithError('validation', validator.errors);
                 } else {
-                    console.log('Bag is valid.');
+                    bagValidator.completedSuccess('Bag is valid');
                 }
                 resolve(validator);
             });
-            if (bagValidator.debug) {
-                validator.on('task', function(taskDesc) {
-                    let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
-                    let msg = taskDesc.msg || '';
-                    console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path} ${msg}`);
-                });
-            }
+            validator.on('task', function(taskDesc) {
+                // let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
+                // let msg = taskDesc.msg || '';
+                // console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path} ${msg}`);
+                bagValidator.info(taskDesc.op, Constants.OP_IN_PROGRESS, taskDesc.path, false);
+            });
             validator.validate();
         });
     }
 
     validateParams() {
+        this.job.validationOp.validate();
+        let errors = Object.values(this.job.validationOp.errors);
         if (!this.job.bagItProfile) {
-            let msg = "Cannot validate bag because job has no BagItProfile.";
-            new JobError(msg,
-                         Constants.ERR_JOB_VALIDATION,
-                         Constants.EXIT_INVALID_PARAMS).exit();
+            errors.push("Cannot validate bag because job has no BagItProfile.");
         }
-        if (!this.job.validationOp || !this.job.validationOp.pathToBag) {
-            let msg = "Cannot validate bag: path to bag is missing.";
-            new JobError(msg,
-                         Constants.ERR_JOB_VALIDATION,
-                         Constants.EXIT_INVALID_PARAMS).exit();
-        }
+        return errors;
     }
 }
 

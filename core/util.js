@@ -481,24 +481,6 @@ class Util {
         let [prefix, varname] = str.split(':');
         return process.env[varname];
     }
-
-    /**
-     * Write data in JSON format to stderr or stdout.
-     *
-     * @param {string} stream - The name of the stream to write to.
-     * this must be either 'stdout' or 'stderr'.
-     *
-     * @param {object} data - The data to write.
-     */
-    static writeJson(stream, data) {
-        if (stream == 'stdout') {
-            process.stdout.write(JSON.stringify(data));
-        } else if (stream == 'stderr') {
-            process.stderr.write(JSON.stringify(data));
-        } else {
-            throw Context.y18n.__("Invalid stream name: %s", stream);
-        }
-    }
 }
 
 module.exports.Util = Util;

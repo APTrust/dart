@@ -5,16 +5,20 @@ const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { UploadTarget } = require('../core/upload_target');
 const { Util } = require('../core/util');
+const { Worker } = require('./worker');
 
-class Uploader {
+class Uploader extends Worker {
 
     constructor(job) {
+        super('upload')
         this.job = job;
-        this.exitCode = Constants.EXIT_SUCCESS;
     }
 
     run() {
-        this.validateParams();
+        let errors = this.validateParams();
+        if (errors.length > 0) {
+            return this.validationError(errors);
+        }
         let promises = [];
         for (let op of this.job.uploadOps) {
             promises = promises.concat(this.doUpload(op));
@@ -25,20 +29,27 @@ class Uploader {
     doUpload(uploadOp) {
         let uploadTarget = UploadTarget.find(uploadOp.uploadTargetId);
         if (!uploadTarget) {
-            throw 'Cannot find UploadTarget record'
+            return this.runtimeError('preUpload', ['Cannot find UploadTarget record'], null);
         }
         let providerClass = this.getProvider(uploadTarget.protocol);
         let promises = [];
+        let uploader = this;
         for (let filepath of uploadOp.sourceFiles) {
             // this.initOperationResult(uploadOp, provider, uploadTarget, filepath);
             let provider = new providerClass(uploadTarget);
             var promise = new Promise(function(resolve, reject) {
                 provider.on('start', function(result) {
-                    console.log('Upload started');
+                    //console.log('Upload started');
+                    uploader.info('start', Constants.OP_IN_PROGRESS, 'Upload started', true);
                 });
                 provider.on('finish', function(result) {
                     uploadOp.result = result;
-                    console.log('Finished');
+                    //console.log('Finished');
+                    if (result.errors.length > 0) {
+                        uploader.completedWithError('upload', result.errors);
+                    } else {
+                        uploader.completedSuccess('Upload completed');
+                    }
                     resolve(result);
                 });
                 provider.on('error', function(result) {
@@ -47,11 +58,14 @@ class Uploader {
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
                     uploadOp.result = result;
-                    console.log('Error');
+                    //console.log('Error');
+                    uploader.runtimeError('upload', result.errors);
                     resolve(result);
                 });
                 provider.on('warning', function(xferResult) {
-                    Context.logger.warning(xferResult.warning);
+                    //Context.logger.warning(xferResult.warning);
+                    uploader.info('upload', Constants.OP_IN_PROGRESS,
+                                  xferResult.warning, false);
                 });
             });
             promises.push(promise);
@@ -61,19 +75,21 @@ class Uploader {
     }
 
     validateParams() {
+        let errors = [];
         for (let op of this.job.uploadOps) {
             if (Util.isEmpty(op.uploadTargetId)) {
-                throw 'Specify where you want to upload the file.'
+                errors.push(Context.y18n.__('Specify where you want to upload the file.'));
             }
             if (!op.sourceFiles || Util.isEmptyStringArray(op.sourceFiles)) {
-                throw 'Specify at least one file to upload.'
+                errors.push(Context.y18n.__('Specify at least one file to upload.'));
             }
             for (let f of op.sourceFiles) {
                 if (!fs.existsSync(f)) {
-                    throw `File to be uploaded does not exist: ${f}.`
+                    errors.push(Context.y18n.__(`File to be uploaded does not exist: ${f}.`));
                 }
             }
         }
+        return errors;
     }
 
     /**

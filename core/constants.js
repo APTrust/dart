@@ -172,59 +172,6 @@ const Constants =  {
      */
     EXIT_CODES: [0,1,2,3],
     /**
-     * This type of error indicates that something in the Job
-     * description was not valid.
-     *
-     * @type {string}
-     */
-    ERR_JOB_VALIDATION: 'JobValidation',
-    /**
-     * This type of error indicates that a bag was not valid, usually
-     * because it did not conform a specific BagIt profile.
-     *
-     * @type {string}
-     */
-    ERR_BAG_VALIDATION: 'BagValidation',
-    /**
-     * This type of error indicates that a BagIt profile was not
-     * valid. DART cannot validate a bag against an invalid profile.
-     *
-     * @type {string}
-     */
-    ERR_PROFILE_VALIDATION: 'ProfileValidation',
-    /**
-     * This type of error indicates that something went wrong during
-     * the bagging step of a job. For example, a source file was missing,
-     * the user did not have permission to write to the output directory,
-     * the system ran out of disk space, etc.
-     *
-     * @type {string}
-     */
-    ERR_PACKAGING: 'Packaging',
-    /**
-     * This type of error indicates that something went wrong during
-     * the upload process. For example, a network connection was interrupted
-     * credentials to log into the remote system were invalid, or the
-     * user did not have sufficient permission to write to the remote
-     * system.
-     *
-     * @type {string}
-     */
-    ERR_UPLOAD: 'Upload',
-    /**
-     * This is a list of valid error types. These types describe why a
-     * job failed at runtime.
-     *
-     * @type {Array<string>}
-     */
-    ERR_TYPES: [
-        'JobValidation',
-        'BagValidation',
-        'ProfileValidation',
-        'Packaging',
-        'Upload'
-    ],
-    /**
      * This describes the status of an operation that is currently
      * in progress. An operation is a component of a job, such as
      * packaging, validation, or uploading.
