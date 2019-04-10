@@ -72,6 +72,10 @@ class DartProcess extends PersistentObject {
          */
         this.capturedOutput = "";
     }
+
+    getProcess() {
+        return Context.childProcesses[this.id];
+    }
 }
 
 // Copy static methods from base

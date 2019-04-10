@@ -76,15 +76,15 @@ class JobController extends BaseController {
             job.uploadDate = '-';
             if (job.packageAttempted()) {
                 job.pkgColor = (job.packageSucceeded() ? 'text-success' : 'text-danger');
-                job.pkgDate = dateFormat(job.packagedAt(), 'shortDate');
+                job.pkgDate = `${dateFormat(job.packagedAt(), 'shortDate')} ${dateFormat(job.packagedAt(), 'shortTime')}`;
             }
             if (job.validationAttempted()) {
-                job.valColor = (job.validateSucceeded() ? 'text-success' : 'text-danger');
-                job.valDate = dateFormat(job.validatedAt(), 'shortDate');
+                job.valColor = (job.validationSucceeded() ? 'text-success' : 'text-danger');
+                job.valDate = `${dateFormat(job.validatedAt(), 'shortDate')} ${dateFormat(job.validatedAt(), 'shortTime')}`;
             }
             if (job.uploadAttempted()) {
                 job.uploadColor = (job.uploadSucceeded() ? 'text-success' : 'text-danger');
-                job.uploadDate = dateFormat(job.uploadedAt(), 'shortDate');
+                job.uploadDate = `${dateFormat(job.uploadedAt(), 'shortDate')} ${dateFormat(job.uploadedAt(), 'shortTime')}`;
             }
             jobs[i] = job;
         }

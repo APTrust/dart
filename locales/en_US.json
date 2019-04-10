@@ -286,5 +286,6 @@
   "Bag created": "Bag created",
   "Bag is valid": "Bag is valid",
   "Upload started": "Upload started",
-  "Upload completed": "Upload completed"
+  "Upload completed": "Upload completed",
+  "No jobs are currently running": "No jobs are currently running"
 }

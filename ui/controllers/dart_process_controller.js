@@ -29,12 +29,21 @@ class DartProcessController extends BaseController {
     /**
      * Displays a summary of the process.
      */
-    show() {
+    list() {
         let data = {
-            dartProcess: this.dartProcess,
-            childProcess: Context.childProcesses[this.dartProcess.id]
+            items: this.getRunningProcesses()
         };
-        return this.containerContent(Templates.dartProcessShow(data));
+        return this.containerContent(Templates.dartProcessList(data));
+    }
+
+    getRunningProcesses() {
+        let idsOfRunningProcs = Object.keys(Context.childProcesses);
+        let opts = {
+            orderBy: this.defaultOrderBy,
+            sortDirection: this.defaultSortDirection
+        };
+        let filterFn = (obj) => { idsOfRunningProcs.includes(obj.id) };
+        return DartProcess.list(filterFn, opts);
     }
 
 }

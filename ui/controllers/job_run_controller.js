@@ -51,10 +51,25 @@ class JobRunController extends BaseController {
         // navigate to other screens without disrupting it.
         let tmpFile = '/Users/apd4n/tmp/dart/job.json'
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
+
+        // Need to change npm command outside of dev env.
         let childProcess = spawn(
-            process.argv0,
-            ['--', '--job', tmpFile]
+            "npm",
+            ['start', '--', '--job', tmpFile]
         );
+
+        childProcess.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+
+        childProcess.stderr.on('data', (data) => {
+            console.log(`stderr: ${data}`);
+        });
+
+        childProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+
         // TODO: Need to wire up events.
         let dartProcess = new DartProcess(
             this.job.title(),
@@ -63,8 +78,8 @@ class JobRunController extends BaseController {
         );
         dartProcess.save();
         Context.childProcesses[dartProcess.id] = childProcess;
-        let params = new URLSearchParams({ id: dartProcess.id });
-        return this.redirect('DartProcess', 'show', params);
+        let params = new URLSearchParams();
+        return this.redirect('DartProcess', 'list', params);
     }
 
     postRenderCallback(fnName) {
