@@ -1,4 +1,7 @@
+const { Context } = require('./context');
+const fs = require('fs');
 const { OperationResult } = require('./operation_result');
+const { Util } = require('./util');
 
 /**
  * ValidationOperation contains information describing which bag to validate
@@ -36,6 +39,24 @@ class ValidationOperation {
          */
         this.errors = {};
     }
+
+    /**
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
+     *
+     * @returns {boolean}
+     */
+    validate() {
+        this.errors = {};
+        if (Util.isEmpty(this.pathToBag)) {
+            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('You must specify the path to the bag you want to validate.');
+        } else if (!fs.existsSync(this.pathToBag)) {
+            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('The bag to be validated does not exist at %s', this.pathToBag);
+        }
+        return Object.keys(this.errors).length == 0;
+    }
+
 
     /**
      * This converts the JSON representation of a ValidationOperation to a
