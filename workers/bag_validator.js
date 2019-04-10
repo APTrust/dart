@@ -38,9 +38,6 @@ class BagValidator extends Worker {
                 resolve(validator);
             });
             validator.on('task', function(taskDesc) {
-                // let ts = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.l");
-                // let msg = taskDesc.msg || '';
-                // console.log(`  [debug] [${ts}] ${taskDesc.op} ${taskDesc.path} ${msg}`);
                 bagValidator.info(taskDesc.op, Constants.OP_IN_PROGRESS, taskDesc.path, false);
             });
             validator.validate();

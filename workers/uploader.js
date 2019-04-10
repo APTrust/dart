@@ -35,16 +35,13 @@ class Uploader extends Worker {
         let promises = [];
         let uploader = this;
         for (let filepath of uploadOp.sourceFiles) {
-            // this.initOperationResult(uploadOp, provider, uploadTarget, filepath);
             let provider = new providerClass(uploadTarget);
             var promise = new Promise(function(resolve, reject) {
                 provider.on('start', function(result) {
-                    //console.log('Upload started');
                     uploader.info('start', Constants.OP_IN_PROGRESS, 'Upload started', true);
                 });
                 provider.on('finish', function(result) {
                     uploadOp.result = result;
-                    //console.log('Finished');
                     if (result.errors.length > 0) {
                         uploader.completedWithError('upload', result.errors);
                     } else {
@@ -58,12 +55,10 @@ class Uploader extends Worker {
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
                     uploadOp.result = result;
-                    //console.log('Error');
                     uploader.runtimeError('upload', result.errors);
                     resolve(result);
                 });
                 provider.on('warning', function(xferResult) {
-                    //Context.logger.warning(xferResult.warning);
                     uploader.info('upload', Constants.OP_IN_PROGRESS,
                                   xferResult.warning, false);
                 });
