@@ -67,29 +67,56 @@ class JobRunController extends BaseController {
         );
         this.dartProcess.save();
         this.initRunningJobDisplay();
-        Context.childProcesses[this.dartProcess.id] = childProcess;
+        Context.childProcesses[this.dartProcess.id] = this.childProcess;
         //let params = new URLSearchParams();
         //return this.redirect('DartProcess', 'list', params);
     }
 
     initRunningJobDisplay(dartProcess, childProcess) {
+        this.showDivs();
         let controller = this;
-        let html = Templates.partials['dartProcess']({ item: this.dartProcess });
-        $('#dartProcessContainer').html(html);
-        //let element = $(`#${this.dartProcess.id} p.status`);
+        let capturedErrorOutput = [];
+
         this.childProcess.stdout.on('data', (str) => {
             console.log(`stdout: ${str}`);
-            //element.text(str);
             controller.renderChildProcOutput(str);
         });
 
         this.childProcess.stderr.on('data', (str) => {
-            console.log(`stderr: ${str}`);
+            capturedErrorOutput.push(str);
         });
 
         this.childProcess.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
+            this.dartProcess.completedAt = new Date().toISOString();
+            this.dartProcess.exitCode = code;
+            if (capturedErrorOutput.length > 0) {
+                this.dartProcess.capturedOutput = capturedErrorOutput.join("\n");
+            }
+            let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
+            let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
+            if (code == 0) {
+                detailDiv.html(Context.y18n.__('Job completed successfully.'));
+            } else {
+                detailDiv.html(Context.y18n.__('Job did not complete due to errors.'));
+            }
+            // TODO: Optionally delete bag file/folder
         });
+    }
+
+    showDivs() {
+        let processDiv = $('#dartProcessContainer');
+        let html = Templates.partials['dartProcess']({ item: this.dartProcess });
+        processDiv.html(html);
+        if (this.job.packageOp && this.job.packageOp.outputPath) {
+            $(`#${this.dartProcess.id} div.packageInfo`).show();
+            if (this.job.packageOp.packageFormat == 'BagIt') {
+                $(`#${this.dartProcess.id} div.validationInfo`).show();
+            }
+        }
+        if (this.job.uploadOps.length > 0) {
+            $(`#${this.dartProcess.id} div.uploadInfo`).show();
+        }
+        processDiv.show();
     }
 
     renderChildProcOutput(str) {
@@ -112,35 +139,37 @@ class JobRunController extends BaseController {
     }
 
     renderPackageInfo(data) {
-        let element = $(`#${this.dartProcess.id} p.packageInfo`);
+        let detailDiv = $(`#${this.dartProcess.id} div.packageInfo div.detail`);
+        let iconDiv = $(`#${this.dartProcess.id} div.packageInfo div.resultIcon`);
         if (data.action == 'fileAdded') {
-            element.text(Context.y18n.__('Added file %', data.msg));
+            detailDiv.text(Context.y18n.__('Added file %', data.msg));
         } else if (data.action == 'completed') {
             // TODO: Check status, add checkmark or X
-            element.text(data.msg);
+            detailDiv.text(data.msg);
         } else {
-            element.text(data.msg);
+            detailDiv.text(data.msg);
         }
     }
 
     renderValidationInfo(data) {
-        let element = $(`#${this.dartProcess.id} p.validationInfo`);
+        let detailDiv = $(`#${this.dartProcess.id} div.validationInfo div.detail`);
+        let iconDiv = $(`#${this.dartProcess.id} div.validationInfo div.resultIcon`);
         if (data.action == 'checksum') {
-            element.text(Context.y18n.__('Validating %', data.msg));
+            detailDiv.text(Context.y18n.__('Validating %', data.msg));
         } else if (data.action == 'completed') {
             // TODO: Check status, add checkmark or X
-            element.text(data.msg);
+            detailDiv.text(data.msg);
         }
     }
 
     renderUploadInfo(data) {
-        let element = $(`#${this.dartProcess.id} p.uploadInfo`);
+        let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
+        let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
         if (data.action == 'start') {
-            // TODO: Should say where we're uploading to.
-            element.text(data.msg);
+            detailDiv.text(data.msg);
         } else if (data.action == 'completed') {
             // TODO: Check status, add checkmark or X
-            element.text(data.msg);
+            detailDiv.text(data.msg);
         }
     }
 

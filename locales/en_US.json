@@ -289,5 +289,6 @@
   "Upload completed": "Upload completed",
   "No jobs are currently running": "No jobs are currently running",
   "Added file %": "Added file %",
-  "Validating %": "Validating %"
+  "Validating %": "Validating %",
+  "Job completed successfully.": "Job completed successfully."
 }

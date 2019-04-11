@@ -38,14 +38,17 @@ class Uploader extends Worker {
             let provider = new providerClass(uploadTarget);
             var promise = new Promise(function(resolve, reject) {
                 provider.on('start', function(result) {
-                    uploader.info('start', Constants.OP_IN_PROGRESS, 'Upload started', true);
+                    uploader.info('start',
+                                  Constants.OP_IN_PROGRESS,
+                                  uploadTarget.url(path.basename(filepath)),
+                                  false);
                 });
                 provider.on('finish', function(result) {
                     uploadOp.result = result;
                     if (result.errors.length > 0) {
                         uploader.completedWithError('upload', result.errors);
                     } else {
-                        uploader.completedSuccess('Upload completed');
+                        uploader.completedSuccess(uploadTarget.url(path.basename(filepath)), false);
                     }
                     resolve(result);
                 });

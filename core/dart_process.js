@@ -53,6 +53,13 @@ class DartProcess extends PersistentObject {
          */
         this.startedAt = new Date().toISOString();
         /**
+         * The date/time at which the job completed. This timestamp
+         * is in ISO datetime format.
+         *
+         * @type {string}
+         */
+        this.completedAt = null;
+        /**
          * The exit code of the process that ran this job.
          * A null value indicates the process has not or did not
          * complete. Zero indicates success, while non-zero numbers
