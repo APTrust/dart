@@ -120,7 +120,7 @@ class JobRunController extends BaseController {
     renderChildProcOutput(str) {
         let data = null;
         try { data = JSON.parse(str) }
-        catch { return }
+        catch (ex) { return }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
