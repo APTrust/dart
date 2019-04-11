@@ -109,7 +109,7 @@ class S3Client extends Plugin {
         var xfer = this._initXferRecord('upload', filepath, keyname);
         try {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
-                xfer.result.errors.push(`${filepath} is not a file`);
+                xfer.result.finish(`${filepath} is not a file`);
                 this.emit('error', xfer.result);
                 return;
             }
@@ -141,7 +141,7 @@ class S3Client extends Plugin {
         // TODO: Build in retries?
         minioClient.fGetObject(xfer.bucket, xfer.key, xfer.localPath, function(err) {
             if (err) {
-                xfer.result.errors.push(err.toString());
+                xfer.result.finish(err.toString());
                 s3Client.emit('error', xfer.result);
                 xfer.result.finish(err.toString());
             } else {
@@ -236,7 +236,6 @@ class S3Client extends Plugin {
         xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
         this.emit('start', xfer.result)
         try {
-            xfer.attemptNumber += 1;
             minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
                 if (err) {
                     s3Client._handleError(err, xfer);
@@ -305,7 +304,10 @@ class S3Client extends Plugin {
             // Log a warning, wait 5 seconds, then try again.
             xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt} while attempting to send ${xfer.result.filepath} to ${s3Client.uploadTarget.host}. Will try again in 1.5 seconds.`;
             this.emit('warning', xfer.result);
-            setTimeout(function() { s3Client._upload(xfer) }, 1500);
+            setTimeout(function() {
+                xfer.result.attempt += 1;
+                s3Client._upload(xfer);
+            }, 1500);
         } else {
             xfer.result.finish(err.toString());
             this.emit('finish', xfer.result);

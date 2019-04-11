@@ -73,6 +73,7 @@ class JobRunController extends BaseController {
         Context.childProcesses[this.dartProcess.id] = this.childProcess;
         //let params = new URLSearchParams();
         //return this.redirect('DartProcess', 'list', params);
+        return this.noContent();
     }
 
     initRunningJobDisplay(dartProcess, childProcess) {
@@ -182,6 +183,9 @@ class JobRunController extends BaseController {
     }
 
     renderOutcome(code) {
+        // We have to reload this, because the child process updated
+        // the job's record in the database.
+        this.job = Job.find(this.job.id);
         let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
         if (code == 0) {

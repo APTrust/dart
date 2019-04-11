@@ -44,7 +44,7 @@ class Uploader extends Worker {
                                   false);
                 });
                 provider.on('finish', function(result) {
-                    uploadOp.result = result;
+                    uploadOp.results.push(result);
                     if (result.errors.length > 0) {
                         uploader.completedWithError(result.errors);
                     } else {
@@ -57,7 +57,7 @@ class Uploader extends Worker {
                     // to fail. We want to let other pending promises
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
-                    uploadOp.result = result;
+                    uploadOp.results.push(result);
                     uploader.runtimeError('upload', result.errors);
                     resolve(result);
                 });
