@@ -6,6 +6,7 @@ const { Context } = require('../../core/context');
 const { DartProcess } = require('../../core/dart_process');
 const fs = require('fs');
 const { Job } = require('../../core/job');
+const { JobRunner } = require('../../workers/job_runner');
 const { spawn } = require('child_process');
 const Templates = require('../common/templates');
 const { UIConstants } = require('../common/ui_constants');
@@ -80,7 +81,7 @@ class JobRunController extends BaseController {
         let capturedErrorOutput = [];
 
         this.childProcess.stdout.on('data', (str) => {
-            console.log(`stdout: ${str}`);
+            console.log(`${str}`);
             controller.renderChildProcOutput(str);
         });
 

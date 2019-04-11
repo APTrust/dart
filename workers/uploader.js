@@ -46,7 +46,7 @@ class Uploader extends Worker {
                 provider.on('finish', function(result) {
                     uploadOp.result = result;
                     if (result.errors.length > 0) {
-                        uploader.completedWithError('upload', result.errors);
+                        uploader.completedWithError(result.errors);
                     } else {
                         uploader.completedSuccess(uploadTarget.url(path.basename(filepath)), false);
                     }

@@ -38,7 +38,7 @@ class BagValidator extends Worker {
                 bagValidator.job.validationOp.result.finish();
                 if (validator.errors.length > 0) {
                     bagValidator.job.validationOp.result.errors = validator.errors;
-                    bagValidator.completedWithError('validation', validator.errors);
+                    bagValidator.completedWithError(validator.errors);
                 } else {
                     bagValidator.completedSuccess('Bag is valid');
                 }

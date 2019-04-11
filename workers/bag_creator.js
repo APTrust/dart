@@ -35,7 +35,7 @@ class BagCreator extends Worker {
             bagger.on('finish', function() {
                 let result = bagger.job.packageOp.result;
                 if (result.errors.length > 0) {
-                    creator.completedWithError('bagging', result.errors);
+                    creator.completedWithError(result.errors);
                 } else {
                     creator.completedSuccess('Bag created');
                 }

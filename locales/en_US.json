@@ -290,5 +290,6 @@
   "No jobs are currently running": "No jobs are currently running",
   "Job completed successfully.": "Job completed successfully.",
   "Added file %s": "Added file %s",
-  "Validating %s": "Validating %s"
+  "Validating %s": "Validating %s",
+  "Operation completed with errors.": "Operation completed with errors."
 }

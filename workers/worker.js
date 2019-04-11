@@ -48,9 +48,9 @@ class Worker {
      * Print a message to stdout saying the operation completed with
      * errors.
      */
-    completedWithError(action, errors) {
+    completedWithError(errors) {
         this.exitCode = Constants.EXIT_COMPLETED_WITH_ERRORS;
-        return this._err(action, errors, null, 'Operation completed with errors.');
+        return this._err('completed', errors, null, 'Operation completed with errors.');
     }
 
 
