@@ -1,12 +1,14 @@
 const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { DartProcess } = require('../../core/dart_process');
 const fs = require('fs');
 const { Job } = require('../../core/job');
 const { spawn } = require('child_process');
 const Templates = require('../common/templates');
+const { UIConstants } = require('../common/ui_constants');
 const { UploadTarget } = require('../../core/upload_target');
 
 /**
@@ -92,13 +94,7 @@ class JobRunController extends BaseController {
             if (capturedErrorOutput.length > 0) {
                 this.dartProcess.capturedOutput = capturedErrorOutput.join("\n");
             }
-            let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
-            let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
-            if (code == 0) {
-                detailDiv.html(Context.y18n.__('Job completed successfully.'));
-            } else {
-                detailDiv.html(Context.y18n.__('Job did not complete due to errors.'));
-            }
+            this.renderOutcome(code);
             // TODO: Optionally delete bag file/folder
         });
     }
@@ -142,10 +138,13 @@ class JobRunController extends BaseController {
         let detailDiv = $(`#${this.dartProcess.id} div.packageInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.packageInfo div.resultIcon`);
         if (data.action == 'fileAdded') {
-            detailDiv.text(Context.y18n.__('Added file %', data.msg));
+            detailDiv.text(Context.y18n.__('Added file %s', data.msg));
         } else if (data.action == 'completed') {
-            // TODO: Check status, add checkmark or X
-            detailDiv.text(data.msg);
+            if (data.status == Constants.OP_SUCCEEDED) {
+                this.markSuccess(detailDiv, iconDiv, data.msg);
+            } else {
+                this.markFailed(detailDiv, iconDiv, data.msg);
+            }
         } else {
             detailDiv.text(data.msg);
         }
@@ -155,22 +154,50 @@ class JobRunController extends BaseController {
         let detailDiv = $(`#${this.dartProcess.id} div.validationInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.validationInfo div.resultIcon`);
         if (data.action == 'checksum') {
-            detailDiv.text(Context.y18n.__('Validating %', data.msg));
+            detailDiv.text(Context.y18n.__('Validating %s', data.msg));
         } else if (data.action == 'completed') {
-            // TODO: Check status, add checkmark or X
-            detailDiv.text(data.msg);
+            if (data.status == Constants.OP_SUCCEEDED) {
+                this.markSuccess(detailDiv, iconDiv, data.msg);
+            } else {
+                this.markFailed(detailDiv, iconDiv, data.msg);
+            }
         }
     }
 
     renderUploadInfo(data) {
         let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
+        let completed = [];
         if (data.action == 'start') {
             detailDiv.text(data.msg);
         } else if (data.action == 'completed') {
-            // TODO: Check status, add checkmark or X
-            detailDiv.text(data.msg);
+            if (data.status == Constants.OP_SUCCEEDED) {
+                completed.push(data.msg);
+                this.markSuccess(detailDiv, iconDiv, completed.join("<br/>\n"));
+            } else {
+                this.markFailed(detailDiv, iconDiv, data.errors.join("<br/>\n"));
+            }
         }
+    }
+
+    renderOutcome(code) {
+        let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
+        let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
+        if (code == 0) {
+            this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
+        } else {
+            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.dartProcess.capturedOutput);
+        }
+    }
+
+    markSuccess(detailDiv, iconDiv, message) {
+        detailDiv.html(message);
+        iconDiv.html(UIConstants.GREEN_SMILEY);
+    }
+
+    markFailed(detailDiv, iconDiv, message) {
+        detailDiv.html(message);
+        iconDiv.html(UIConstants.RED_ANGRY_FACE);
     }
 
     postRenderCallback(fnName) {
