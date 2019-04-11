@@ -7,6 +7,47 @@ const { S3Transfer } = require('./s3_transfer');
 const MAX_ATTEMPTS = 10;
 
 /**
+ * This is a subset of the list of S3 errors at
+ * https://docs.aws.amazon.com/AmazonS3/latest/API/ErrorResponses.html#ErrorCodeList.
+ *
+ * These errors apply to PUT/POST requests (uploads) and should be
+ * considered fatal, causing the S3Client to stop attempting the
+ * current upload job.
+ *
+ * While the S3Client does retry on transient network errors, it will
+ * not retry on fatal errors that will be just as fatal in the next
+ * attempt. For example, an InvalidAccessKeyId error indicates that
+ * we're using bad credentials and we should not retry with the same
+ * bad credentials.
+ */
+const FATAL_UPLOAD_ERRORS = [
+    'AccessDenied',
+    'AccountProblem',
+    'AllAccessDisabled',
+    'EntityTooSmall',
+    'EntityTooLarge',
+    'InvalidAccessKeyId',
+    'InvalidArgument',
+    'InvalidBucketName',
+    'InvalidEncryptionAlgorithmError',
+    'InvalidLocationConstraint',
+    'InvalidObjectState',
+    'InvalidPayer',
+    'InvalidSecurity',
+    'InvalidStorageClass',
+    'InvalidURI',
+    'KeyTooLongError',
+    'MaxMessageLengthExceeded',
+    'MaxPostPreDataLengthExceededError',
+    'MetadataTooLarge',
+    'MethodNotAllowed',
+    'NoSuchBucket',
+    'NotImplemented',
+    'NotSignedUp',
+    'PreconditionFailed'
+];
+
+/**
  * S3Client provides access to S3 REST services that conforms to the
  * DART network client interface.
  *
@@ -195,6 +236,7 @@ class S3Client extends Plugin {
         xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
         this.emit('start', xfer.result)
         try {
+            xfer.attemptNumber += 1;
             minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
                 if (err) {
                     s3Client._handleError(err, xfer);
@@ -257,7 +299,7 @@ class S3Client extends Plugin {
      */
     _handleError(err, xfer) {
         var s3Client = this;
-        if (xfer.result.attempt < MAX_ATTEMPTS) {
+        if (xfer.result.attempt < MAX_ATTEMPTS && !FATAL_UPLOAD_ERRORS.includes(err.code)) {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
