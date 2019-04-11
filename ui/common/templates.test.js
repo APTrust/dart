@@ -66,6 +66,7 @@ test('All partials are defined', () => {
     let expectedPartialNames = [
         'bannerAlert',
         'customTag',
+        'dartProcess',
         'formButtons',
         'inputCheckboxGroup',
         'inputHidden',

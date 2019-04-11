@@ -3,14 +3,10 @@
 <h2>Processes</h2>
 
 {{#if items}}
-  {{#each items}}
-    <div class="row mb-3">
-      <p>{{ pid }}</p>
-      <p>{{ name }}</p>
-      <p>{{ status }}</p>
-    </div>
+  {{#each items as |item| }}
+    {{> dartProcess item = item }}
   {{/each }}
-{{ else }}
+  {{ else }}
     <div class="row mb-3">
       <p>{{ translate 'No jobs are currently running' }}</p>
     </div>

@@ -48,6 +48,7 @@ var uploadTargetList = handlebars.compile(readFile('upload_target', 'list.html')
 handlebars.registerPartial({
     bannerAlert: readFile(path.join('partials', 'banner_alert.html')),
     customTag: readFile(path.join('partials', 'custom_tag.html')),
+    dartProcess: readFile(path.join('partials', 'dart_process.html')),
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
@@ -80,6 +81,11 @@ handlebars.registerHelper('formatDate', function(date, format) {
 handlebars.registerHelper('toHumanSize', function(number) {
     return Util.toHumanSize(number);
 });
+
+// Pre-compile partials so they can be called from within JS.
+for(let [name, template] of Object.entries(handlebars.partials)) {
+    handlebars.partials[name] = handlebars.compile(template);
+}
 
 module.exports.about = about;
 module.exports.appSettingForm = appSettingForm;

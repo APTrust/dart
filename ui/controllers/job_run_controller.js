@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
@@ -25,6 +26,8 @@ class JobRunController extends BaseController {
         super(params, 'Jobs');
         this.model = Job;
         this.job = Job.find(this.params.get('id'));
+        this.dartProcess = null;
+        this.childProcess = null;
     }
 
     /**
@@ -53,33 +56,71 @@ class JobRunController extends BaseController {
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
 
         // Need to change npm command outside of dev env.
-        let childProcess = spawn(
+        this.childProcess = spawn(
             "npm",
             ['start', '--', '--job', tmpFile]
         );
-
-        childProcess.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-        });
-
-        childProcess.stderr.on('data', (data) => {
-            console.log(`stderr: ${data}`);
-        });
-
-        childProcess.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
-        });
-
-        // TODO: Need to wire up events.
-        let dartProcess = new DartProcess(
+        this.dartProcess = new DartProcess(
             this.job.title(),
             tmpFile,
-            childProcess.pid
+            this.childProcess.pid
         );
-        dartProcess.save();
+        this.dartProcess.save();
+        this.initRunningJobDisplay();
         Context.childProcesses[dartProcess.id] = childProcess;
-        let params = new URLSearchParams();
-        return this.redirect('DartProcess', 'list', params);
+        //let params = new URLSearchParams();
+        //return this.redirect('DartProcess', 'list', params);
+    }
+
+    initRunningJobDisplay(dartProcess, childProcess) {
+        let controller = this;
+        let html = Templates.partials['dartProcess']({ item: this.dartProcess });
+        $('#dartProcessContainer').html(html);
+        let element = $(`#${dartProcess.id} p.status`);
+        this.childProcess.stdout.on('data', (str) => {
+            console.log(`stdout: ${str}`);
+            element.text(str);
+            controller.renderChildProcOutput(str);
+        });
+
+        this.childProcess.stderr.on('data', (str) => {
+            console.log(`stderr: ${str}`);
+        });
+
+        this.childProcess.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+    }
+
+    renderChildProcOutput(str) {
+        let data = null;
+        try { data = JSON.parse(str) }
+        catch { return }
+        switch (data.op) {
+        case 'package':
+            this.renderPackageInfo(data);
+            break;
+        case 'validate':
+            this.renderValidationInfo(data);
+            break;
+        case 'upload':
+            this.renderUploadInfo(data);
+            break;
+        default:
+            return;
+        }
+    }
+
+    renderPackageInfo(data) {
+        let element = $(`#${dartProcess.id} p.packageInfo`);
+    }
+
+    renderValidationInfo(data) {
+        let element = $(`#${dartProcess.id} p.validationInfo`);
+    }
+
+    renderUploadInfo(data) {
+        let element = $(`#${dartProcess.id} p.uploadInfo`);
     }
 
     postRenderCallback(fnName) {
