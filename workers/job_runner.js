@@ -18,7 +18,7 @@ class JobRunner {
             this.job.save();
 
             // DEBUG
-            console.log(this.job.packageOp.result);
+            // console.log(this.job.packageOp.result);
 
             if (bagCreator.exitCode != Constants.EXIT_SUCCESS) {
                 this.exit(bagCreator.exitCode);
@@ -35,7 +35,7 @@ class JobRunner {
             this.job.save();
 
             // DEBUG
-            console.log(this.job.validationOp.result);
+            // console.log(this.job.validationOp.result);
 
             if (bagValidator.exitCode != Constants.EXIT_SUCCESS) {
                 this.exit(bagValidator.exitCode);
@@ -49,9 +49,9 @@ class JobRunner {
             this.job.save();
 
             // DEBUG
-            for (let uploadOp of this.job.uploadOps) {
-                console.log(uploadOp);
-            }
+            // for (let uploadOp of this.job.uploadOps) {
+            //     console.log(uploadOp);
+            // }
 
             if (uploader.exitCode != Constants.EXIT_SUCCESS) {
                 this.exit(uploader.exitCode);
@@ -66,9 +66,9 @@ class JobRunner {
     // User will upload either package sourcefiles or package output.
     assignUploadSources() {
         let packOp = this.job.packageOp;
-        console.log("Has packOp");
+        //console.log("Has packOp");
         for (let uploadOp of this.job.uploadOps) {
-            console.log("Has uploadOp");
+            //console.log("Has uploadOp");
             if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
                 uploadOp.sourceFiles.push(packOp.outputPath);
             }

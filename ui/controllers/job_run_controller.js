@@ -67,7 +67,7 @@ class JobRunController extends BaseController {
         );
         this.dartProcess.save();
         this.initRunningJobDisplay();
-        Context.childProcesses[dartProcess.id] = childProcess;
+        Context.childProcesses[this.dartProcess.id] = childProcess;
         //let params = new URLSearchParams();
         //return this.redirect('DartProcess', 'list', params);
     }
@@ -76,10 +76,10 @@ class JobRunController extends BaseController {
         let controller = this;
         let html = Templates.partials['dartProcess']({ item: this.dartProcess });
         $('#dartProcessContainer').html(html);
-        let element = $(`#${dartProcess.id} p.status`);
+        //let element = $(`#${this.dartProcess.id} p.status`);
         this.childProcess.stdout.on('data', (str) => {
             console.log(`stdout: ${str}`);
-            element.text(str);
+            //element.text(str);
             controller.renderChildProcOutput(str);
         });
 
@@ -112,15 +112,36 @@ class JobRunController extends BaseController {
     }
 
     renderPackageInfo(data) {
-        let element = $(`#${dartProcess.id} p.packageInfo`);
+        let element = $(`#${this.dartProcess.id} p.packageInfo`);
+        if (data.action == 'fileAdded') {
+            element.text(Context.y18n.__('Added file %', data.msg));
+        } else if (data.action == 'completed') {
+            // TODO: Check status, add checkmark or X
+            element.text(data.msg);
+        } else {
+            element.text(data.msg);
+        }
     }
 
     renderValidationInfo(data) {
-        let element = $(`#${dartProcess.id} p.validationInfo`);
+        let element = $(`#${this.dartProcess.id} p.validationInfo`);
+        if (data.action == 'checksum') {
+            element.text(Context.y18n.__('Validating %', data.msg));
+        } else if (data.action == 'completed') {
+            // TODO: Check status, add checkmark or X
+            element.text(data.msg);
+        }
     }
 
     renderUploadInfo(data) {
-        let element = $(`#${dartProcess.id} p.uploadInfo`);
+        let element = $(`#${this.dartProcess.id} p.uploadInfo`);
+        if (data.action == 'start') {
+            // TODO: Should say where we're uploading to.
+            element.text(data.msg);
+        } else if (data.action == 'completed') {
+            // TODO: Check status, add checkmark or X
+            element.text(data.msg);
+        }
     }
 
     postRenderCallback(fnName) {

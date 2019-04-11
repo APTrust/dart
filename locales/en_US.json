@@ -287,5 +287,7 @@
   "Bag is valid": "Bag is valid",
   "Upload started": "Upload started",
   "Upload completed": "Upload completed",
-  "No jobs are currently running": "No jobs are currently running"
+  "No jobs are currently running": "No jobs are currently running",
+  "Added file %": "Added file %",
+  "Validating %": "Validating %"
 }
