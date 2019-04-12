@@ -21,7 +21,7 @@ class JobRunner {
             // console.log(this.job.packageOp.result);
 
             if (bagCreator.exitCode != Constants.EXIT_SUCCESS) {
-                this.exit(bagCreator.exitCode);
+                return bagCreator.exitCode;
             }
             this.job.validationOp = new ValidationOperation(this.job.packageOp.outputPath);
         }
@@ -38,7 +38,7 @@ class JobRunner {
             // console.log(this.job.validationOp.result);
 
             if (bagValidator.exitCode != Constants.EXIT_SUCCESS) {
-                this.exit(bagValidator.exitCode);
+                return bagValidator.exitCode;
             }
         }
 
@@ -54,11 +54,11 @@ class JobRunner {
             // }
 
             if (uploader.exitCode != Constants.EXIT_SUCCESS) {
-                this.exit(uploader.exitCode);
+                return uploader.exitCode;
             }
             // TODO: Retry those that failed due to non-fatal error.
         }
-        this.exit(Constants.EXIT_SUCCESS);
+        return Constants.EXIT_SUCCESS;
     }
 
 
@@ -75,12 +75,12 @@ class JobRunner {
         }
     }
 
-    exit(exitCode) {
-        // TEMPORARY HACK to avoid electron lifecycle error.
-        setTimeout(function() {
-            process.exit(exitCode);
-        }, 1000);
-    }
+    // exit(exitCode) {
+    //     // TEMPORARY HACK to avoid electron lifecycle error.
+    //     //setTimeout(function() {
+    //         process.exit(exitCode);
+    //     //}, 1000);
+    // }
 
 }
 

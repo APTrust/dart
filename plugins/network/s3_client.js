@@ -144,6 +144,7 @@ class S3Client extends Plugin {
                 xfer.result.finish(err.toString());
                 s3Client.emit('error', xfer.result);
                 xfer.result.finish(err.toString());
+                return;
             } else {
                 xfer.localStat = fs.statSync(filepath);
                 xfer.result.filesize = xfer.localStat.size;

@@ -1,4 +1,5 @@
 const {app, BrowserWindow} = require('electron');
+const { Constants } = require('../core/constants');
 const { JobRunner } = require('../workers/job_runner');
 const minimist = require('minimist');
 const path = require('path');
@@ -44,12 +45,14 @@ function runWithUI(opts) {
 async function runWithoutUI(opts) {
     console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let jobRunner = new JobRunner(opts.job);
+    let exitCode = Constants.EXIT_SUCCESS;
     try {
-        await jobRunner.run();
+        exitCode = await jobRunner.run();
     } catch (ex) {
-        console.log(ex)
+        exitCode = Constants.EXIT_RUNTIME_ERROR;
+        process.stderr.write(ex)
     }
-    process.exit(0);
+    process.exit(exitCode);
 }
 
 // This method will be called when Electron has finished

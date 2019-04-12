@@ -11,6 +11,7 @@ const { spawn } = require('child_process');
 const Templates = require('../common/templates');
 const { UIConstants } = require('../common/ui_constants');
 const { UploadTarget } = require('../../core/upload_target');
+const { Util } = require('../../core/util');
 
 /**
  * The JobRunController displays the page where users review
@@ -86,9 +87,25 @@ class JobRunController extends BaseController {
             controller.renderChildProcOutput(str);
         });
 
+        // Pass through anything that's not the NPM lifecycle error.
+        let gotNpmError = false;
+        let gotLifecycleError = false;
         this.childProcess.stderr.on('data', (str) => {
+            if (gotNpmError && gotLifecycleError) {
+                return;
+            }
+            str = str.toString();
+            if (str.startsWith('npm')) {
+                gotNpmError = true;
+                return;
+            }
+            if (str.includes('ELIFECYCLE')) {
+                gotLifecycleError = true;
+                return;
+            }
             console.log(`ERROR - ${str}`);
             capturedErrorOutput.push(str);
+            controller.renderChildProcOutput(str);
         });
 
         this.childProcess.on('close', (code) => {
@@ -179,7 +196,8 @@ class JobRunController extends BaseController {
                 completed.push(data.msg);
                 this.markSuccess(detailDiv, iconDiv, completed.join("<br/>\n"));
             } else {
-                this.markFailed(detailDiv, iconDiv, data.errors.join("<br/>\n"));
+                this.markFailed(detailDiv, iconDiv, detailDiv.html());
+                //this.markFailed(detailDiv, iconDiv, data.errors.join("<br/>\n"));
             }
         }
     }

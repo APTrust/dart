@@ -58,8 +58,9 @@ class Uploader extends Worker {
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
                     uploadOp.results.push(result);
-                    uploader.runtimeError('upload', result.errors);
+                    uploader.runtimeError('completed', result.errors);
                     resolve(result);
+                    provider = null;
                 });
                 provider.on('warning', function(xferResult) {
                     uploader.info('upload', Constants.OP_IN_PROGRESS,

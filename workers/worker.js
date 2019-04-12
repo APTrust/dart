@@ -62,7 +62,7 @@ class Worker {
             Constants.OP_FAILED,
             errors
         );
-        this.writeJson('stdout', jobStatus);
+        this.writeJson('stderr', jobStatus);
         return false;
     }
 
