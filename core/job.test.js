@@ -183,10 +183,10 @@ test('uploadAttempted()', () => {
 test('uploadSucceeded()', () => {
     let job = getJobWithOps();
     expect(job.uploadSucceeded()).toBe(false);
-    job.uploadOps[0].result = new OperationResult('upload', '---');
-    job.uploadOps[0].result.start();
+    job.uploadOps[0].results = [new OperationResult('upload', '---')];
+    job.uploadOps[0].results[0].start();
     expect(job.uploadSucceeded()).toBe(false);
-    job.uploadOps[0].result.finish();
+    job.uploadOps[0].results[0].finish();
     expect(job.uploadSucceeded()).toBe(true);
 });
 

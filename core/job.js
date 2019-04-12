@@ -280,11 +280,11 @@ class Job extends PersistentObject {
         let allSucceeded = true;
         if (this.uploadOps) {
             for (let op of this.uploadOps) {
-                if (op.result) {
-                    if (op.result.attempt > 0) {
+                for (let result of op.results) {
+                    if (result.attempt > 0) {
                         anyAttempted = true;
                     }
-                    if (!op.result.succeeded()) {
+                    if (!result.succeeded()) {
                         allSucceeded = false;
                     }
                 }
