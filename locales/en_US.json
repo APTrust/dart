@@ -293,5 +293,6 @@
   "Validating %s": "Validating %s",
   "Operation completed with errors.": "Operation completed with errors.",
   "Runtime error.": "Runtime error.",
-  "Job did not complete due to errors.": "Job did not complete due to errors."
+  "Job did not complete due to errors.": "Job did not complete due to errors.",
+  "Upload error": "Upload error"
 }

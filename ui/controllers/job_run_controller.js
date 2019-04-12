@@ -32,6 +32,7 @@ class JobRunController extends BaseController {
         this.job = Job.find(this.params.get('id'));
         this.dartProcess = null;
         this.childProcess = null;
+        this.lastErrorOutput = null;
     }
 
     /**
@@ -140,6 +141,9 @@ class JobRunController extends BaseController {
         let data = null;
         try { data = JSON.parse(str) }
         catch (ex) { return }
+        if (data.errors && data.errors.length) {
+            this.lastErrorOutput = data;
+        }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
@@ -197,7 +201,6 @@ class JobRunController extends BaseController {
                 this.markSuccess(detailDiv, iconDiv, completed.join("<br/>\n"));
             } else {
                 this.markFailed(detailDiv, iconDiv, detailDiv.html());
-                //this.markFailed(detailDiv, iconDiv, data.errors.join("<br/>\n"));
             }
         }
     }
@@ -212,7 +215,7 @@ class JobRunController extends BaseController {
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.dartProcess.capturedOutput);
+            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.formatOutcomeError());
         }
     }
 
@@ -224,6 +227,13 @@ class JobRunController extends BaseController {
     markFailed(detailDiv, iconDiv, message) {
         detailDiv.html(message);
         iconDiv.html(UIConstants.RED_ANGRY_FACE);
+    }
+
+    formatOutcomeError() {
+        let data = this.lastErrorOutput;
+        let msgStart = Context.y18n.__(
+            Constants.JOB_ERROR_MESSAGES[data.op]);
+        return `${msgStart}. <br/>${data.errors.join("<br/>\n")}`;
     }
 
     postRenderCallback(fnName) {

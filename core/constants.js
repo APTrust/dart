@@ -200,7 +200,17 @@ const Constants =  {
      *
      * @type {string}
      */
-    OP_STATUSES: ['In Progress', 'Succeeded', 'Failed']
+    OP_STATUSES: ['In Progress', 'Succeeded', 'Failed'],
+    /**
+     * This hash maps job operations to user-friendly error descriptions.
+     *
+     * @type {object<string><string>}
+     */
+    JOB_ERROR_MESSAGES: {
+        'package': 'Packaging error',
+        'validate': 'Validation error',
+        'upload': 'Upload error'
+    }
 };
 
 Object.freeze(Constants);
