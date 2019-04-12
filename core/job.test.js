@@ -175,8 +175,8 @@ test('validationSucceeded()', () => {
 test('uploadAttempted()', () => {
     let job = getJobWithOps();
     expect(job.uploadAttempted()).toBe(false);
-    job.uploadOps[0].result = new OperationResult('upload', '---');
-    job.uploadOps[0].result.start();
+    job.uploadOps[0].results = [new OperationResult('upload', '---')];
+    job.uploadOps[0].results[0].start();
     expect(job.uploadAttempted()).toBe(true);
 });
 
