@@ -166,6 +166,7 @@ class JobRunController extends BaseController {
         let detailDiv = $(`#${this.dartProcess.id} div.packageInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.packageInfo div.resultIcon`);
         if (data.action == 'fileAdded') {
+            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
@@ -182,6 +183,7 @@ class JobRunController extends BaseController {
         let detailDiv = $(`#${this.dartProcess.id} div.validationInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.validationInfo div.resultIcon`);
         if (data.action == 'checksum') {
+            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
@@ -196,6 +198,7 @@ class JobRunController extends BaseController {
         let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
         if (data.action == 'start') {
+            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(data.msg);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
