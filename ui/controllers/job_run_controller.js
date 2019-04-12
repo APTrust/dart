@@ -33,6 +33,7 @@ class JobRunController extends BaseController {
         this.dartProcess = null;
         this.childProcess = null;
         this.lastErrorOutput = null;
+        this.completedUploads = [];
     }
 
     /**
@@ -84,7 +85,7 @@ class JobRunController extends BaseController {
         let capturedErrorOutput = [];
 
         this.childProcess.stdout.on('data', (str) => {
-            console.log(`INFO - ${str}`);
+            //console.log(`INFO - ${str}`);
             controller.renderChildProcOutput(str);
         });
 
@@ -104,13 +105,13 @@ class JobRunController extends BaseController {
                 gotLifecycleError = true;
                 return;
             }
-            console.log(`ERROR - ${str}`);
+            //console.log(`ERROR - ${str}`);
             capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);
         });
 
         this.childProcess.on('close', (code) => {
-            console.log(`Exited with error code ${code}`);
+            console.log(`Exited with code ${code}`);
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
             if (capturedErrorOutput.length > 0) {
@@ -141,6 +142,8 @@ class JobRunController extends BaseController {
         let data = null;
         try { data = JSON.parse(str) }
         catch (ex) { return }
+        // TODO: Find a better solution... probably outside of
+        // this class. For example, use the Job.xxxSucceeded() methods.
         if (data.errors && data.errors.length) {
             this.lastErrorOutput = data;
         }
@@ -192,24 +195,25 @@ class JobRunController extends BaseController {
     renderUploadInfo(data) {
         let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
-        let completed = [];
         if (data.action == 'start') {
             detailDiv.text(data.msg);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
-                completed.push(data.msg);
-                this.markSuccess(detailDiv, iconDiv, completed.join("<br/>\n"));
+                this.completedUploads.push(data.msg);
+                this.markSuccess(detailDiv, iconDiv, this.completedUploads.join("<br/>\n"));
             } else {
                 this.markFailed(detailDiv, iconDiv, detailDiv.html());
             }
         }
     }
 
+    // TODO: This has a problem. If we're doing a series of uploads and one
+    // fails and it's not the LAST one, this reports a successful outcome.
+    // It should report an error.
     renderOutcome(code) {
         // We have to reload this, because the child process updated
         // the job's record in the database.
         this.job = Job.find(this.job.id);
-        window.job = this.job; // DEBUG
         let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
         if (code == 0) {

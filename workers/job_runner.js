@@ -16,10 +16,6 @@ class JobRunner {
             let bagCreator = new BagCreator(this.job);
             await bagCreator.run();
             this.job.save();
-
-            // DEBUG
-            // console.log(this.job.packageOp.result);
-
             if (bagCreator.exitCode != Constants.EXIT_SUCCESS) {
                 return bagCreator.exitCode;
             }
@@ -33,10 +29,6 @@ class JobRunner {
             let bagValidator = new BagValidator(this.job);
             await bagValidator.run();
             this.job.save();
-
-            // DEBUG
-            // console.log(this.job.validationOp.result);
-
             if (bagValidator.exitCode != Constants.EXIT_SUCCESS) {
                 return bagValidator.exitCode;
             }
@@ -47,12 +39,6 @@ class JobRunner {
             let uploader = new Uploader(this.job);
             await uploader.run()
             this.job.save();
-
-            // DEBUG
-            // for (let uploadOp of this.job.uploadOps) {
-            //     console.log(uploadOp);
-            // }
-
             if (uploader.exitCode != Constants.EXIT_SUCCESS) {
                 return uploader.exitCode;
             }
@@ -74,14 +60,6 @@ class JobRunner {
             }
         }
     }
-
-    // exit(exitCode) {
-    //     // TEMPORARY HACK to avoid electron lifecycle error.
-    //     //setTimeout(function() {
-    //         process.exit(exitCode);
-    //     //}, 1000);
-    // }
-
 }
 
 module.exports.JobRunner = JobRunner;
