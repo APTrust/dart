@@ -82,15 +82,17 @@ class JobRunController extends BaseController {
         let capturedErrorOutput = [];
 
         this.childProcess.stdout.on('data', (str) => {
-            console.log(`${str}`);
+            console.log(`INFO - ${str}`);
             controller.renderChildProcOutput(str);
         });
 
         this.childProcess.stderr.on('data', (str) => {
+            console.log(`ERROR - ${str}`);
             capturedErrorOutput.push(str);
         });
 
         this.childProcess.on('close', (code) => {
+            console.log(`Exited with error code ${code}`);
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
             if (capturedErrorOutput.length > 0) {
@@ -186,6 +188,7 @@ class JobRunController extends BaseController {
         // We have to reload this, because the child process updated
         // the job's record in the database.
         this.job = Job.find(this.job.id);
+        window.job = this.job; // DEBUG
         let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
         let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
         if (code == 0) {

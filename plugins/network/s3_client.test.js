@@ -86,7 +86,7 @@ test('_handleError() sets failure result after too many retries', done => {
     // Set this to exceed max attempts, so _handleError doesn't retry.
     xfer.result.attempt = 1000;
 
-    client.on('finish', function(result) {
+    client.on('error', function(result) {
         expect(result.completed).not.toBeNull();
         expect(result.succeeded()).toBe(false);
         expect(result.errors).toContain('Oops!');

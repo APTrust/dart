@@ -30,6 +30,14 @@ function getUploadTarget(name, proto, host) {
     return target;
 }
 
+function getUploadOp(name, proto, host) {
+    let target = getUploadTarget(name, proto, host);
+    let op = new UploadOperation();
+    op.sourceFiles = ['/dev/null'];
+    op.uploadTargetId = target.id;
+    return op;
+}
+
 function getJob() {
     var job = new Job();
     job.packageOp = new PackageOperation('TestBag', '/dev/null');
@@ -42,8 +50,8 @@ function getJob() {
     job.fileCount = 12;
     job.byteCount = 237174;
     job.uploadOps = [
-        getUploadTarget('target1', 's3', 'target1.com'),
-        getUploadTarget('target2', 's3', 'target2.com')
+        getUploadOp('target1', 's3', 'target1.com'),
+        getUploadOp('target2', 's3', 'target2.com')
     ];
     job.bagItProfile = BagItProfile.load(path.join(__dirname, '..', '..', 'test', 'profiles', 'multi_manifest.json'));
     job.save();
