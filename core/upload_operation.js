@@ -94,8 +94,8 @@ class UploadOperation {
     static inflateFrom(data) {
         let op = new UploadOperation();
         Object.assign(op, data);
-        if (data.result) {
-            op.result = OperationResult.inflateFrom(data.result);
+        for (let i=0; i < data.results.length; i++) {
+            op.results[i] = OperationResult.inflateFrom(data.results[i]);
         }
         return op;
     }
