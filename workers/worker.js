@@ -53,14 +53,33 @@ class Worker {
         return this._err('completed', errors, null, 'Operation completed with errors.');
     }
 
-
+    /**
+     * Prints a JobStatus object containing an error message to STDOUT.
+     * Note that this forces the status to FAILED. This always returns
+     * false.
+     *
+     * @param {string} action - The action that the process is currently
+     * carrying out.
+     *
+     * @param {Array<string>} errors - A list of error messages. This can
+     * be empty if you pass an exception instead.
+     *
+     * @param {Error} exception - The exception that occurred during
+     * processing. This can be (and usually is) null.
+     *
+     * @param {string} message - A message to display to the user.
+     *
+     * @returns {boolean}
+     * @private
+     */
     _err(action, errors, exception, message) {
         let jobStatus = new JobStatus(
             this.operation,
             action,
             Context.y18n.__(message),
             Constants.OP_FAILED,
-            errors
+            errors,
+            exception
         );
         this.writeJson('stderr', jobStatus);
         return false;
@@ -75,11 +94,17 @@ class Worker {
      * @param {object} data - The data to write.
      */
     writeJson(stream, data) {
-        let jsonStr = JSON.stringify(data) + "\n";
+        let jsonStr = JSON.stringify(data);
+        if (data.exception) {
+            let exStr = JSON.stringify(
+                data.exception,
+                Object.getOwnPropertyNames(data.exception))
+            jsonStr = jsonStr.replace('"exception":{}', `"exception":${exStr}`);
+        }
         if (stream == 'stdout') {
-            process.stdout.write(jsonStr);
+            console.log(jsonStr);
         } else if (stream == 'stderr') {
-            process.stderr.write(jsonStr);
+            console.error(jsonStr);
         } else {
             throw Context.y18n.__("Invalid stream name: %s", stream);
         }
