@@ -7,6 +7,19 @@ const { UploadTarget } = require('../core/upload_target');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
 
+/**
+ * The Uploader performs the upload operations for a job.
+ * It catches events from the underlying network plugin,
+ * wraps them in {@link JobStatus} objects, and writes them
+ * to STDOUT and STDERR to communicate with the parent process.
+ *
+ * param {Job} - The job to run. The job object must contain at
+ * at least one {@link UploadOperation}, or the upload will do
+ * nothing.
+ *
+ * @param {Job}
+ *
+ */
 class Uploader extends Worker {
 
     constructor(job) {
@@ -14,6 +27,13 @@ class Uploader extends Worker {
         this.job = job;
     }
 
+    /**
+     * This runs all of the job's upload operations.
+     * It returns an array of promises. This runs all uploads
+     * in parallel.
+     *
+     * @returns {Array<Promise>}
+     */
     run() {
         let errors = this.validateParams();
         if (errors.length > 0) {
@@ -26,6 +46,17 @@ class Uploader extends Worker {
         return Promise.all(promises)
     }
 
+    /**
+     * doUpload initiates a single upload operation and returns
+     * an array of promises. If a single operation includes multiple
+     * source files, it will upload them in parallel. This returns
+     * one promise per source file.
+     *
+     * @param {UploadOperation} - An upload operation containing one
+     * or more source files.
+     *
+     * @returns {Array<Promise>}
+     */
     doUpload(uploadOp) {
         let uploadTarget = UploadTarget.find(uploadOp.uploadTargetId);
         if (!uploadTarget) {
@@ -73,6 +104,14 @@ class Uploader extends Worker {
         return promises;
     }
 
+    /**
+     * This checks to ensure that the {@link UploadOperation} includes a
+     * target and at least one source file. It also ensures that the
+     * specified source files exist. It returns an array of strings decribing
+     * the validation errors.
+     *
+     * @return {Array<string>}
+     */
     validateParams() {
         let errors = [];
         for (let op of this.job.uploadOps) {

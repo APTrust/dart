@@ -4,6 +4,18 @@ const { Job } = require('../core/job');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
 
+/**
+ * BagCreator assembles a bag by copying source files into a
+ * bagging directory, writing manifests and tag manifests. This
+ * is a thin wrapper around {@link Bagger}. It catches events
+ * from the underlying bagger, wraps them in {@link JobStatus}
+ * objects, and writes them to STDOUT and STDERR to communicate
+ * with the parent process.
+ *
+ * param {Job} - The job to run. The job object must contain a
+ * {@link BagItProfile} and a {@link PackageOperation} to be
+ * valid.
+ */
 class BagCreator extends Worker {
 
     constructor(job) {
@@ -11,6 +23,12 @@ class BagCreator extends Worker {
         this.job = job;
     }
 
+    /**
+     * This runs the job's package operation, creating the bag. It returns
+     * a promise.
+     *
+     * @returns {Promise}
+     */
     run() {
         if (!this.job.packageOp.validate()) {
             return this.validationError(Object.values(this.job.packageOp.errors));

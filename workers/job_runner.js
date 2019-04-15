@@ -7,10 +7,22 @@ const { Uploader } = require('./uploader');
 const { ValidationOperation } = require('../core/validation_operation');
 const { Util } = require('../core/util');
 
+/**
+ * JobRunner runs a {@link Job} in a child process.
+ *
+ * @param {string} pathToFile - The path to the JSON file that contains
+ * a description of the Job.
+ */
 class JobRunner {
     constructor(pathToFile) {
         this.job = Job.inflateFromFile(pathToFile);
     }
+    /**
+     * This runs the job, exiting on the first fatal error and returning
+     * a code that will be the process's exit code. For a list of valid
+     * exit codes, see {@link Constants.EXIT_CODES}.
+     *
+     */
     async run() {
         if (this.job.packageOp && this.job.packageOp.packageFormat == 'BagIt') {
             let bagCreator = new BagCreator(this.job);
@@ -48,9 +60,16 @@ class JobRunner {
     }
 
 
-    // TODO: Assign this in UI when user chooses an upload target?
-    // User will upload either package sourcefiles or package output.
+    /**
+     * This adds the output path of a newly created bag to the sourceFiles
+     * property of an {@link UploadOperation}. The JobRunner does this after
+     * it has successfully created a new bag.
+     *
+     * @private
+     */
     assignUploadSources() {
+        // TODO: Assign this in UI when user chooses an upload target?
+        // User will upload either package sourcefiles or package output.
         let packOp = this.job.packageOp;
         //console.log("Has packOp");
         for (let uploadOp of this.job.uploadOps) {
