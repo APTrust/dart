@@ -34,6 +34,7 @@ class JobRunController extends BaseController {
         this.childProcess = null;
         this.capturedErrorOutput = [];
         this.completedUploads = [];
+        this.reachedEndOfOutput = false;
     }
 
     /**
@@ -87,6 +88,16 @@ class JobRunController extends BaseController {
 
         this.childProcess.stderr.on('data', (str) => {
             str = str.toString();
+            let endMarker = Context.y18n.__(Constants.END_OF_ERROR_OUTPUT);
+            if (str.includes(endMarker)) {
+                this.reachedEndOfOutput = true;
+                controller.capturedErrorOutput.push(str.replace(endMarker, ''));
+            }
+            // Node appends output to STDERR on unexpected runtime errors.
+            // We don't need to show this to the user, so stop capturing it.
+            if (this.reachedEndOfOutput) {
+                return;
+            }
             console.log(str);
             controller.capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);

@@ -298,5 +298,6 @@
   "Invalid stream name: %s": "Invalid stream name: %s",
   "Operation has invalid parameters.": "Operation has invalid parameters.",
   "Test Message": "Test Message",
-  "Job exited with error code %s": "Job exited with error code %s"
+  "Job exited with error code %s": "Job exited with error code %s",
+  "End of DART error output": "End of DART error output"
 }

@@ -45,14 +45,7 @@ function runWithUI(opts) {
 async function runWithoutUI(opts) {
     console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);
-    let exitCode = Constants.EXIT_SUCCESS;
-    try {
-        exitCode = await jobRunner.run();
-    } catch (ex) {
-        process.stderr.write(ex.message);
-        process.stderr.write(ex.stack)
-        exitCode = Constants.EXIT_RUNTIME_ERROR;
-    }
+    let exitCode = await jobRunner.run();
     process.exit(exitCode);
 }
 

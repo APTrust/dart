@@ -30,15 +30,28 @@ class JobRunner {
      *
      */
     async run() {
-        let returnCode = await this.createPackage();
-        if (returnCode == Constants.EXIT_SUCCESS) {
-            returnCode = await this.validatePackage();
+        let returnCode = Constants.EXIT_SUCCESS;
+        try {
+            returnCode = await this.createPackage();
+            if (returnCode == Constants.EXIT_SUCCESS) {
+                returnCode = await this.validatePackage();
+            }
+            if (returnCode == Constants.EXIT_SUCCESS) {
+                returnCode = await this.uploadFiles();
+            }
+            this.removeJobFile();
+            return Constants.EXIT_SUCCESS;
+        } catch (ex) {
+            // Caller collects messages from STDERR.
+            if (ex instanceof Error) {
+                process.stderr.write(ex.stack + "\n")
+            } else {
+                process.stderr.write(ex.toString() + "\n");
+            }
+            process.stderr.write(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT));
+            returnCode = Constants.EXIT_RUNTIME_ERROR;
         }
-        if (returnCode == Constants.EXIT_SUCCESS) {
-            returnCode = await this.uploadFiles();
-        }
-        this.removeJobFile();
-        return Constants.EXIT_SUCCESS;
+        return returnCode;
     }
 
     /**

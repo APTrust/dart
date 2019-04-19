@@ -210,7 +210,15 @@ const Constants =  {
         'package': 'Packaging error',
         'validate': 'Validation error',
         'upload': 'Upload error'
-    }
+    },
+    /**
+     * This is a marker that the {@link JobRunner} will print to STDERR
+     * when it has finished reporting error messages. Messages found on
+     * STDERR after this marker were printed by the Node.js runtime. We
+     * don't always want to capture this Node output, especially in the
+     * UI, where it is both uninformative and confusing to the user.
+     */
+    END_OF_ERROR_OUTPUT: 'End of DART error output'
 };
 
 Object.freeze(Constants);
