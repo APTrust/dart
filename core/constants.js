@@ -158,8 +158,8 @@ const Constants =  {
      */
     EXIT_INVALID_PARAMS: 2,
     /**
-     * This exit code indicates a process exited before completion
-     * due to a runtime error.
+     * This exit code indicates that the process did not complete
+     * due to an unexpected runtime error.
      *
      * @type {number}
      */

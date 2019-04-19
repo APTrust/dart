@@ -273,6 +273,6 @@ test('Util.getEnvSetting()', () => {
 
 test('Util.tmpFilePath()', () => {
     let path = Util.tmpFilePath();
-    expect(path).toMatch(new RegExp(`^${os.tmpDir()}`));
+    expect(path).toMatch(new RegExp(`^${os.tmpdir()}`));
     expect(path).toMatch(/[a-f0-9]{8}_\d{13}$/);
 });

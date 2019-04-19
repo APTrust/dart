@@ -64,7 +64,7 @@ class JobRunController extends BaseController {
         // Need to change npm command outside of dev env.
         this.childProcess = spawn(
             "npm",
-            ['start', '--', '--job', tmpFile]
+            ['start', '--', '--job', tmpFile, '--deleteJobFile']
         );
         this.dartProcess = new DartProcess(
             this.job.title(),
@@ -91,7 +91,9 @@ class JobRunController extends BaseController {
         let gotNpmError = false;
         let gotLifecycleError = false;
         this.childProcess.stderr.on('data', (str) => {
+            //console.log(`ERROR - ${str}`);
             if (gotNpmError && gotLifecycleError) {
+                this.nodeLifecycleError = true;
                 return;
             }
             str = str.toString();
@@ -103,13 +105,12 @@ class JobRunController extends BaseController {
                 gotLifecycleError = true;
                 return;
             }
-            //console.log(`ERROR - ${str}`);
             capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);
         });
 
         this.childProcess.on('close', (code) => {
-            console.log(`Exited with code ${code}`);
+            //console.log(`Exited with code ${code}`);
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
             if (capturedErrorOutput.length > 0) {
@@ -235,10 +236,12 @@ class JobRunController extends BaseController {
     }
 
     formatOutcomeError() {
-        let data = this.lastErrorOutput;
-        let msgStart = Context.y18n.__(
-            Constants.JOB_ERROR_MESSAGES[data.op]);
-        return `${msgStart}. <br/>${data.errors.join("<br/>\n")}`;
+        let job = Job.find(this.job.id);
+        //let msgStart = Context.y18n.__(
+        //    Constants.JOB_ERROR_MESSAGES[data.op]);
+        //return `${msgStart}. <br/>${data.errors.join("<br/>\n")}`;
+        console.log(job);
+        return "Job failed";
     }
 
     postRenderCallback(fnName) {
