@@ -2,6 +2,7 @@ const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const { Uploader } = require('./uploader');
 const { ValidationOperation } = require('../core/validation_operation');
@@ -12,9 +13,14 @@ const { Util } = require('../core/util');
  *
  * @param {string} pathToFile - The path to the JSON file that contains
  * a description of the Job.
+ *
+ * @param {boolean} deleteJobFile - If true, the JobRunner will delete
+ * the job file on completion. This defaults to false.
  */
 class JobRunner {
-    constructor(pathToFile) {
+    constructor(pathToFile, deleteJobFile = false) {
+        this.jobFilePath = pathToFile;
+        this.deleteJobFile = deleteJobFile;
         this.job = Job.inflateFromFile(pathToFile);
     }
     /**
@@ -29,6 +35,7 @@ class JobRunner {
             await bagCreator.run();
             this.job.save();
             if (bagCreator.exitCode != Constants.EXIT_SUCCESS) {
+                this.removeJobFile();
                 return bagCreator.exitCode;
             }
             this.job.validationOp = new ValidationOperation(this.job.packageOp.outputPath);
@@ -42,6 +49,7 @@ class JobRunner {
             await bagValidator.run();
             this.job.save();
             if (bagValidator.exitCode != Constants.EXIT_SUCCESS) {
+                this.removeJobFile();
                 return bagValidator.exitCode;
             }
         }
@@ -52,10 +60,12 @@ class JobRunner {
             await uploader.run()
             this.job.save();
             if (uploader.exitCode != Constants.EXIT_SUCCESS) {
+                this.removeJobFile();
                 return uploader.exitCode;
             }
             // TODO: Retry those that failed due to non-fatal error.
         }
+        this.removeJobFile();
         return Constants.EXIT_SUCCESS;
     }
 
@@ -71,12 +81,21 @@ class JobRunner {
         // TODO: Assign this in UI when user chooses an upload target?
         // User will upload either package sourcefiles or package output.
         let packOp = this.job.packageOp;
-        //console.log("Has packOp");
         for (let uploadOp of this.job.uploadOps) {
-            //console.log("Has uploadOp");
             if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
                 uploadOp.sourceFiles.push(packOp.outputPath);
             }
+        }
+    }
+
+    /**
+     * This deletes the job file when the run is complete, but only if
+     * the caller specified that the job file should be deleted.
+     *
+     */
+    removeJobFile() {
+        if (this.deleteJobFile) {
+            fs.unlinkSync(this.jobFilePath);
         }
     }
 }

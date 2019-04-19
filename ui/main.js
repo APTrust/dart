@@ -44,13 +44,14 @@ function runWithUI(opts) {
 
 async function runWithoutUI(opts) {
     console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
-    let jobRunner = new JobRunner(opts.job);
+    let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);
     let exitCode = Constants.EXIT_SUCCESS;
     try {
         exitCode = await jobRunner.run();
     } catch (ex) {
+        process.stderr.write('Unhandled exception in job runner.\n');
+        process.stderr.write(ex.stack)
         exitCode = Constants.EXIT_RUNTIME_ERROR;
-        process.stderr.write(ex)
     }
     process.exit(exitCode);
 }
@@ -61,10 +62,12 @@ async function runWithoutUI(opts) {
 app.on('ready', function() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
-        boolean: ['d', 'debug', 'h', 'help', 'v', 'version'],
-        default: { d: false, debug: false, h: false, help: false,
-                   v: false, version:false},
-        alias: { d: ['debug'], v: ['version'], h: ['help'], j: ['job']}
+        boolean: ['D', 'debug', 'h', 'help', 'v', 'version',
+                  'd', 'deleteJobFile'],
+        default: { D: false, debug: false, h: false, help: false,
+                   v: false, version:false, d: false, deleteJobFile: false},
+        alias: { D: ['debug'], v: ['version'], h: ['help'], j: ['job'],
+                 d: ['deleteJobFile']}
     });
     if (opts.job) {
         runWithoutUI(opts);
