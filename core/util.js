@@ -481,6 +481,24 @@ class Util {
         let [prefix, varname] = str.split(':');
         return process.env[varname];
     }
+
+    /**
+     * Returns a path to a temp file, without actually creating
+     * the file.
+     *
+     * @returns {string}
+     *
+     */
+    static tmpFilePath() {
+        let dartTmpDir = path.join(os.tmpdir(), 'DART');
+        if (!fs.existsSync(dartTmpDir)) {
+            fs.mkdirSync(dartTmpDir);
+        }
+        let prefix = Util.uuid4().split('-')[0];
+        let suffix = Date.now().toString();
+        let filename = `${prefix}_${suffix}`;
+        return path.join(dartTmpDir, filename);
+    }
 }
 
 module.exports.Util = Util;

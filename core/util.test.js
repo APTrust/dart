@@ -270,3 +270,9 @@ test('Util.getEnvSetting()', () => {
     expect(Util.getEnvSetting('env:PATH')).toEqual(process.env.PATH);
     expect(Util.getEnvSetting('invalid_var')).toBeUndefined();
 });
+
+test('Util.tmpFilePath()', () => {
+    let path = Util.tmpFilePath();
+    expect(path).toMatch(new RegExp(`^${os.tmpDir()}`));
+    expect(path).toMatch(/[a-f0-9]{8}_\d{13}$/);
+});

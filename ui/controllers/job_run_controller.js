@@ -58,7 +58,7 @@ class JobRunController extends BaseController {
         // Grey this out while job is running.
         // Run job in separate process, so user can
         // navigate to other screens without disrupting it.
-        let tmpFile = '/Users/apd4n/tmp/dart/job.json'
+        let tmpFile = Util.tmpFilePath();
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
 
         // Need to change npm command outside of dev env.
@@ -74,8 +74,6 @@ class JobRunController extends BaseController {
         this.dartProcess.save();
         this.initRunningJobDisplay();
         Context.childProcesses[this.dartProcess.id] = this.childProcess;
-        //let params = new URLSearchParams();
-        //return this.redirect('DartProcess', 'list', params);
         return this.noContent();
     }
 
