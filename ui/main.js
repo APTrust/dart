@@ -49,7 +49,7 @@ async function runWithoutUI(opts) {
     try {
         exitCode = await jobRunner.run();
     } catch (ex) {
-        process.stderr.write('Unhandled exception in job runner.\n');
+        process.stderr.write(ex.message);
         process.stderr.write(ex.stack)
         exitCode = Constants.EXIT_RUNTIME_ERROR;
     }

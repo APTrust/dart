@@ -23,49 +23,68 @@ class JobRunner {
         this.deleteJobFile = deleteJobFile;
         this.job = Job.inflateFromFile(pathToFile);
     }
+
     /**
-     * This runs the job, exiting on the first fatal error and returning
-     * a code that will be the process's exit code. For a list of valid
-     * exit codes, see {@link Constants.EXIT_CODES}.
+     * This runs the job and returns a the process's exit code. For a list
+     * of valid exit codes, see {@link Constants.EXIT_CODES}.
      *
      */
     async run() {
+        let returnCode = await this.createPackage();
+        if (returnCode == Constants.EXIT_SUCCESS) {
+            returnCode = await this.validatePackage();
+        }
+        if (returnCode == Constants.EXIT_SUCCESS) {
+            returnCode = await this.uploadFiles();
+        }
+        this.removeJobFile();
+        return Constants.EXIT_SUCCESS;
+    }
+
+    /**
+     * This creates the package, which may be a bag, a zip file, a tar
+     * file, etc.
+     */
+    async createPackage() {
+        // TODO: If job.packageOp && format isn't BagIt,
+        // run a suitable packaging plugin.
         if (this.job.packageOp && this.job.packageOp.packageFormat == 'BagIt') {
             let bagCreator = new BagCreator(this.job);
             await bagCreator.run();
             this.job.save();
-            if (bagCreator.exitCode != Constants.EXIT_SUCCESS) {
-                this.removeJobFile();
-                return bagCreator.exitCode;
+            if (bagCreator.exitCode == Constants.EXIT_SUCCESS) {
+                this.job.validationOp = new ValidationOperation(this.job.packageOp.outputPath);
             }
-            this.job.validationOp = new ValidationOperation(this.job.packageOp.outputPath);
+            return bagCreator.exitCode;
         }
+        return Constants.EXIT_SUCCESS;
+    }
 
-        // TODO: If job.packageOp && format isn't BagIt,
-        // run a suitable packaging plugin.
-
+    /**
+     * This validates the package. Currently, it only validates BagIt bags.
+     */
+    async validatePackage() {
         if (this.job.validationOp) {
             let bagValidator = new BagValidator(this.job);
             await bagValidator.run();
             this.job.save();
-            if (bagValidator.exitCode != Constants.EXIT_SUCCESS) {
-                this.removeJobFile();
-                return bagValidator.exitCode;
-            }
+            return bagValidator.exitCode;
         }
+        return Constants.EXIT_SUCCESS;
+    }
 
+    /**
+     * This uploads files to each of the specified {@link UploadTarget}.
+     */
+    async uploadFiles() {
+        // TODO: Retry those that failed due to non-fatal error.
         if (this.job.uploadOps.length > 0) {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
             await uploader.run()
             this.job.save();
-            if (uploader.exitCode != Constants.EXIT_SUCCESS) {
-                this.removeJobFile();
-                return uploader.exitCode;
-            }
-            // TODO: Retry those that failed due to non-fatal error.
+            return uploader.exitCode;
         }
-        this.removeJobFile();
         return Constants.EXIT_SUCCESS;
     }
 

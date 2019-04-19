@@ -32,7 +32,7 @@ class JobRunController extends BaseController {
         this.job = Job.find(this.params.get('id'));
         this.dartProcess = null;
         this.childProcess = null;
-        this.lastErrorOutput = null;
+        this.capturedErrorOutput = [];
         this.completedUploads = [];
     }
 
@@ -80,32 +80,15 @@ class JobRunController extends BaseController {
     initRunningJobDisplay(dartProcess, childProcess) {
         this.showDivs();
         let controller = this;
-        let capturedErrorOutput = [];
-
         this.childProcess.stdout.on('data', (str) => {
             //console.log(`INFO - ${str}`);
             controller.renderChildProcOutput(str);
         });
 
-        // Pass through anything that's not the NPM lifecycle error.
-        let gotNpmError = false;
-        let gotLifecycleError = false;
         this.childProcess.stderr.on('data', (str) => {
-            //console.log(`ERROR - ${str}`);
-            if (gotNpmError && gotLifecycleError) {
-                this.nodeLifecycleError = true;
-                return;
-            }
             str = str.toString();
-            if (str.startsWith('npm')) {
-                gotNpmError = true;
-                return;
-            }
-            if (str.includes('ELIFECYCLE')) {
-                gotLifecycleError = true;
-                return;
-            }
-            capturedErrorOutput.push(str);
+            console.log(str);
+            controller.capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);
         });
 
@@ -113,11 +96,10 @@ class JobRunController extends BaseController {
             //console.log(`Exited with code ${code}`);
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
-            if (capturedErrorOutput.length > 0) {
-                this.dartProcess.capturedOutput = capturedErrorOutput.join("\n");
+            if (controller.capturedErrorOutput.length > 0) {
+                this.dartProcess.capturedOutput = this.capturedErrorOutput.join("\n");
             }
             this.renderOutcome(code);
-            // TODO: Optionally delete bag file/folder
         });
     }
 
@@ -141,11 +123,6 @@ class JobRunController extends BaseController {
         let data = null;
         try { data = JSON.parse(str) }
         catch (ex) { return }
-        // TODO: Find a better solution... probably outside of
-        // this class. For example, use the Job.xxxSucceeded() methods.
-        if (data.errors && data.errors.length) {
-            this.lastErrorOutput = data;
-        }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
@@ -221,7 +198,7 @@ class JobRunController extends BaseController {
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.formatOutcomeError());
+            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.capturedErrorOutput.join("<br/>"));
         }
     }
 
@@ -233,15 +210,6 @@ class JobRunController extends BaseController {
     markFailed(detailDiv, iconDiv, message) {
         detailDiv.html(message);
         iconDiv.html(UIConstants.RED_ANGRY_FACE);
-    }
-
-    formatOutcomeError() {
-        let job = Job.find(this.job.id);
-        //let msgStart = Context.y18n.__(
-        //    Constants.JOB_ERROR_MESSAGES[data.op]);
-        //return `${msgStart}. <br/>${data.errors.join("<br/>\n")}`;
-        console.log(job);
-        return "Job failed";
     }
 
     postRenderCallback(fnName) {
