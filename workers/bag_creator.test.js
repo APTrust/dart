@@ -10,29 +10,44 @@ const { Util } = require('../core/util');
 // the bagger automatically creates a tar file.
 let tmpBagFile = Util.tmpFilePath() + ".tar";
 
-let originalWriteFunction = process.stdout.write;
-let capturedOutput = '';
+// Generial ISO datetime pattern
+let ISOPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z/
+
+let originalWriteFunction = console.log;
+
+let jestOutput = '';
+let workerOutput = [];
 
 beforeEach(() => {
-    capturedOutput = '';
-    process.stdout.write = jest.fn(data => {
-        // Filter JSON output from the BagCreator,
-        // but capture any other output for display
-        // later.
-        if (!data.toString().includes('{"op":"package",')) {
-            capturedOutput += data;
-        }
-    });
+    captureOutput();
     deleteTmpBagFile();
 })
 
 afterEach(() => {
-    process.stdout.write = originalWriteFunction;
-    if (capturedOutput.length > 0) {
-        console.log(capturedOutput);
-    }
+    relayOutput();
     deleteTmpBagFile();
 })
+
+// Filter JSON output from the BagCreator,
+// but capture any other output for display later.
+function captureOutput() {
+    jestOutput = '';
+    workerOutput = [];
+    console.log = jest.fn(data => {
+        if (data.toString().includes('{"op":"package",')) {
+            workerOutput.push(data);
+        } else {
+            jestOutput += data;
+        }
+    });
+}
+
+function relayOutput() {
+    console.log = originalWriteFunction;
+    if (jestOutput.length > 0) {
+        console.log(jestOutput);
+    }
+}
 
 function deleteTmpBagFile() {
     try { fs.unlinkSync(tmpBagFile); }
@@ -59,23 +74,49 @@ test('Constructor sets expected properties', () => {
     expect(bagCreator.job.id).toEqual(job.id);
 });
 
-test('run() creates a bag and sets OperationResult', done => {
+test('run()', done => {
     let job = getJob();
     let bagCreator = new BagCreator(job);
 
     bagCreator.run().then(function() {
+
+        // Ensure bag was created
         expect(fs.existsSync(tmpBagFile)).toBe(true);
         let stats = fs.statSync(tmpBagFile);
         expect(stats.size).toBeGreaterThan(1000);
-        //console.log(job.packageOp);
+
+        // Ensure BagCreator set the result object
         expect(job.packageOp.result).not.toBeNull();
         expect(job.packageOp.result.operation).toEqual('bagging');
         expect(job.packageOp.result.provider).toEqual('DART bagger');
         expect(job.packageOp.result.filepath).toEqual(tmpBagFile);
         expect(job.packageOp.result.filesize).toEqual(stats.size);
         expect(job.packageOp.result.attempt).toEqual(1);
-        expect(job.packageOp.result.started).toBeGreaterThan(0);
-        expect(job.packageOp.result.completed).toBeGreaterThan(0);
+        expect(job.packageOp.result.started).toMatch(ISOPattern);
+        expect(job.packageOp.result.completed).toMatch(ISOPattern);
+
+        // Ensure we got expected output on stdout
+        let startCount = 0;
+        let fileAddedCount = 0;
+        let completedCount = 0;
+        for (let line of workerOutput) {
+            let data = JSON.parse(line);
+            switch (data.action) {
+            case 'start':
+                startCount++;
+                break;
+            case 'fileAdded':
+                fileAddedCount++;
+                break;
+            case 'completed':
+                completedCount++;
+                break;
+            }
+        }
+        expect(startCount).toEqual(1);
+        expect(fileAddedCount).toBeGreaterThan(5);
+        expect(completedCount).toEqual(1);
+
         done();
     });
 });

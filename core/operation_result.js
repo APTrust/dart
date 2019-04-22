@@ -133,7 +133,7 @@ class OperationResult {
      */
     start() {
         this.reset();
-        this.started = Date.now();
+        this.started = new Date().toISOString();
         this.attempt += 1;
     }
 
@@ -145,7 +145,7 @@ class OperationResult {
      * passed in, it will be appended the errors array.
      */
     finish(errorMessage) {
-        this.completed = Date.now();
+        this.completed = new Date().toISOString();
         if (errorMessage) {
             this.errors.push(errorMessage);
         }
