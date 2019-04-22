@@ -6,6 +6,14 @@ const { Plugin } = require('../../plugin');
 const readdirp = require('readdirp');
 
 /**
+ * These are the options we pass to readdirp.
+ */
+const OPTS = {
+    entryType: "all",
+    alwaysStat: true
+};
+
+/**
   * FileSystemReader provides methods for listing and reading the contents
   * of directories on a locally mounted file system. This is used by the bag
   * validator to validate unserialized (i.e. untarred, unzipped, etc.) bags.
@@ -91,7 +99,7 @@ class FileSystemReader extends Plugin {
       */
     read() {
         var fsReader = this;
-        var stream = readdirp({ root: fsReader.pathToDirectory, entryType: "all" });
+        var stream = readdirp(fsReader.pathToDirectory, OPTS);
         fsReader.fileCount = 0;
         fsReader.dirCount = 0;
         fsReader.byteCount = 0;
@@ -177,23 +185,16 @@ class FileSystemReader extends Plugin {
 
 
             var readable = null;
-            //stream.pause();
-            if (entry.stat.isFile()) {
+            if (entry.stats.isFile()) {
                 fsReader.fileCount += 1;
                 readable = fs.createReadStream(entry.fullPath);
             } else {
                 readable = new DummyReader();
-                if (entry.stat.isDirectory()) {
+                if (entry.stats.isDirectory()) {
                     fsReader.dirCount += 1;
                 }
             }
-            // readable.on('error', function() {
-            //     stream.resume();
-            // });
-            // readable.on('close', function() {
-            //     stream.resume();
-            // });
-            fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stat, stream: readable });
+            fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stats, stream: readable });
         });
     }
 
@@ -206,7 +207,7 @@ class FileSystemReader extends Plugin {
       */
     list() {
         var fsReader = this;
-        var stream = readdirp({ root: fsReader.pathToDirectory, entryType: "all" });
+        var stream = readdirp(fsReader.pathToDirectory, OPTS);
         fsReader.fileCount = 0;
         fsReader.dirCount = 0;
         fsReader.byteCount = 0;
@@ -253,13 +254,13 @@ class FileSystemReader extends Plugin {
             // TarReader emits. Caller can get full path
             // by prepending FileSystemReader.pathToDirectory
             // to entry.path, which is relative.
-            if (entry.stat.isFile()) {
+            if (entry.stats.isFile()) {
                 fsReader.fileCount += 1;
-                fsReader.byteCount += entry.stat.size;
-            } else if (entry.stat.isDirectory()) {
+                fsReader.byteCount += entry.stats.size;
+            } else if (entry.stats.isDirectory()) {
                 fsReader.dirCount += 1;
             }
-            fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stat });
+            fsReader.emit('entry', { relPath: entry.path, fileStat: entry.stats });
         });
     }
 }
