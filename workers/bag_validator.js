@@ -31,13 +31,18 @@ class BagValidator extends Worker {
      * @returns {Promise}
      */
     run() {
+        var bagValidator = this;
+
+        // Return a failed promise if we get invalid params.
         let errors = this.validateParams();
         if (errors.length > 0) {
-            return this.validationError();
+            return new Promise(function(resolve, reject) {
+                reject(bagValidator.validationError(errors));
+            });
         }
+
         this.initOpResult();
 
-        var bagValidator = this;
         return new Promise(function(resolve, reject) {
             let validator = new Validator(
                 bagValidator.job.validationOp.pathToBag,
@@ -77,7 +82,7 @@ class BagValidator extends Worker {
      */
     initOpResult() {
         if (this.job.validationOp.result == null) {
-            this.job.validationOp.result = new OperationResult('Validation', 'DART BagIt validator');
+            this.job.validationOp.result = new OperationResult('validation', 'DART BagIt validator');
         }
         let result = this.job.validationOp.result;
         result.filepath = this.job.validationOp.pathToBag;

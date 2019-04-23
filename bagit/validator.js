@@ -273,6 +273,9 @@ class Validator extends EventEmitter {
             this.emit('end')
             return;
         }
+
+        this.emit('task', new TaskDescription(this.pathToBag, 'start'))
+
         // Scan the bag for manifests. When that completes, it will
         // call _readBag() to read the contents.
         this._scanBag();

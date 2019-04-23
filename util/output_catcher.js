@@ -57,7 +57,7 @@ class OutputCatcher {
         this.subjectOutput = [];
         this.jestOutput = [];
         console.log = jest.fn(data => {
-            if (data.match(this.filter)) {
+            if (data.toString().match(this.filter)) {
                 this.subjectOutput.push(data);
             } else {
                 this.jestOutput.push(data);

@@ -145,7 +145,7 @@ test('Validator emits expected events for tarred APTrust bag', done => {
         done();
     });
     validator.on('end', function(taskDesc) {
-        expect(taskCount).toEqual(17);
+        expect(taskCount).toEqual(18);
         done();
     });
 
@@ -188,7 +188,7 @@ test('Validator emits expected events for untarred APTrust bag', done => {
         done();
     });
     validator.on('end', function(taskDesc) {
-        expect(taskCount).toEqual(17);
+        expect(taskCount).toEqual(18);
         done();
     });
 
@@ -207,7 +207,7 @@ test('Validator accepts valid DPN bag', done => {
         done();
     });
     validator.on('end', function(taskDesc) {
-        expect(taskCount).toEqual(21);
+        expect(taskCount).toEqual(22);
         done();
     });
 
