@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      core/validation_operation.js - Documentation
+      util/output_catcher.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        core/validation_operation.js
+        util/output_catcher.js
       </h1>
     
 
@@ -90,85 +90,87 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { Context } = require('./context');
-const fs = require('fs');
-const { OperationResult } = require('./operation_result');
-const { Util } = require('./util');
-
-/**
- * ValidationOperation contains information describing which bag to validate
- * and which BagItProfile to use when validating it.
+    <pre class="prettyprint source linenums"><code>/**
+ * This class captures data written to STDOUT during tests
+ * and divides it into jestOutput and subjectOutput. The jestOutput,
+ * including messages about failed tests, can then be flushed to the user
+ * while the subject output can be suppressed or examined.
  *
+ * This class is primarily useful for running tests on subject methods
+ * that produce a lot of STDOUT output that should not pollute Jest's
+ * test output.
+ *
+ * @param {string|RegExp} filter - A string or regular expression to
+ * identify output from the test subject. Any output matching this string
+ * or regex will be considered subjectOutput. Any output not matching
+ * will be considered to have come from Jest.
  */
-class ValidationOperation {
-    /**
-     * Creates a new ValidationOperation.
-     *
-     * @param {string} pathToBag - The absolute path to the bag DART should
-     * validate.
-     *
-     */
-    constructor(pathToBag) {
+class OutputCatcher {
+    constructor(filter) {
         /**
-         * The absolute path to the bag to validate. The path can point to a
-         * file or directory.
+         * A string or RegExp to match to identify output from the
+         * test subject.
          *
-         * @type {string}
+         * @type {string|RegExp}
          */
-        this.pathToBag = pathToBag;
+        this.filter = filter;
         /**
-         * This describes the result of DART's attempt to validate the bag.
+         * This maintains a reference to the original console.log function,
+         * so when we're done capturing output, we can replace the Jest
+         * mock function with console.log.
          *
-         * @type {OperationResult}
+         * @type {function}
          */
-        this.result = null;
+        this.consoleLog = console.log;
         /**
-         * Contains information describing validation errors. Key is the
-         * name of the invalid field. Value is a description of why the
-         * field is not valid.
+         * An array of lines captured from STDOUT that match the filter
+         * string/RegExp. This output is presumed to have come from the
+         * subject of the test, not from Jest.
          *
-         * @type {Object&lt;string, string>}
+         * @type {Array&lt;string>}
          */
-        this.errors = {};
+        this.subjectOutput = [];
+        /**
+         * An array of lines captured from STDOUT that DO NOT match the filter
+         * string/RegExp. This output is presumed to have come from Jest.
+         *
+         * @type {Array&lt;string>}
+         */
+        this.jestOutput = [];
     }
 
     /**
-     * validate returns true or false, indicating whether this object
-     * contains complete and valid data. If it returns false, check
-     * the errors property for specific errors.
+     * Call this to begin capturing output from STDOUT. All output matching
+     * the filter will be captured in the subjectOutput array. All other
+     * output will go into the jestOutput array.
      *
-     * @returns {boolean}
      */
-    validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.pathToBag)) {
-            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('You must specify the path to the bag you want to validate.');
-        } else if (!fs.existsSync(this.pathToBag)) {
-            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('The bag to be validated does not exist at %s', this.pathToBag);
+    captureOutput() {
+        this.subjectOutput = [];
+        this.jestOutput = [];
+        console.log = jest.fn(data => {
+            if (data.toString().match(this.filter)) {
+                this.subjectOutput.push(data);
+            } else {
+                this.jestOutput.push(data);
+            }
+        });
+    }
+
+    /**
+     * Call this to stop capturing STDOUT and to relay all captured Jest
+     * messages to the console.
+     */
+    relayJestOutput() {
+        console.log = this.consoleLog;
+        if (this.jestOutput.length > 0) {
+            console.log(this.jestOutput.join("\n"));
         }
-        return Object.keys(this.errors).length == 0;
     }
 
-
-    /**
-     * This converts the JSON representation of a ValidationOperation to a
-     * full-fledged ValidationOperation object with all of the expected methods.
-     *
-     * @param {Object} data - A JavaScript hash.
-     *
-     * @returns {ValidationOperation}
-     */
-    static inflateFrom(data) {
-        let op = new ValidationOperation();
-        Object.assign(op, data);
-        if (data.result) {
-            op.result = OperationResult.inflateFrom(data.result);
-        }
-        return op;
-    }
 }
 
-module.exports.ValidationOperation = ValidationOperation;
+module.exports.OutputCatcher = OutputCatcher;
 </code></pre>
   </article>
 </section>

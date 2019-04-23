@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      core/validation_operation.js - Documentation
+      util/upload_test_helper.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        core/validation_operation.js
+        util/upload_test_helper.js
       </h1>
     
 
@@ -90,85 +90,47 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { Context } = require('./context');
-const fs = require('fs');
-const { OperationResult } = require('./operation_result');
-const { Util } = require('./util');
+    <pre class="prettyprint source linenums"><code>const { UploadTarget } = require('../core/upload_target');
 
 /**
- * ValidationOperation contains information describing which bag to validate
- * and which BagItProfile to use when validating it.
- *
+ * This class provides some helper methods for tests that perform
+ * uploads.
  */
-class ValidationOperation {
-    /**
-     * Creates a new ValidationOperation.
-     *
-     * @param {string} pathToBag - The absolute path to the bag DART should
-     * validate.
-     *
-     */
-    constructor(pathToBag) {
-        /**
-         * The absolute path to the bag to validate. The path can point to a
-         * file or directory.
-         *
-         * @type {string}
-         */
-        this.pathToBag = pathToBag;
-        /**
-         * This describes the result of DART's attempt to validate the bag.
-         *
-         * @type {OperationResult}
-         */
-        this.result = null;
-        /**
-         * Contains information describing validation errors. Key is the
-         * name of the invalid field. Value is a description of why the
-         * field is not valid.
-         *
-         * @type {Object&lt;string, string>}
-         */
-        this.errors = {};
+class UploadTestHelper {
+
+    constructor() {
+
     }
 
     /**
-     * validate returns true or false, indicating whether this object
-     * contains complete and valid data. If it returns false, check
-     * the errors property for specific errors.
+     * This returns an UploadTarget object that points to one of APTrust's
+     * test buckets.
+     *
+     * @returns {UploadTarget}
+     */
+    getUploadTarget() {
+        let target = new UploadTarget({ name: 'unittest_' + Date.now().toString() });
+        target.protocol = 's3';
+        target.host = 's3.amazonaws.com';
+        target.bucket = 'aptrust.dart.test';
+        target.login = 'env:AWS_ACCESS_KEY_ID';
+        target.password = 'env:AWS_SECRET_ACCESS_KEY';
+        return target;
+    }
+
+    /**
+     * This returns true if the environment variables AWS_ACCESS_KEY_ID
+     * and AWS_SECRET_ACCESS_KEY appear to be set.
      *
      * @returns {boolean}
      */
-    validate() {
-        this.errors = {};
-        if (Util.isEmpty(this.pathToBag)) {
-            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('You must specify the path to the bag you want to validate.');
-        } else if (!fs.existsSync(this.pathToBag)) {
-            this.errors['ValidationOperation.pathToBag'] = Context.y18n.__('The bag to be validated does not exist at %s', this.pathToBag);
-        }
-        return Object.keys(this.errors).length == 0;
+    envHasS3Credentials() {
+        return (typeof process.env.AWS_ACCESS_KEY_ID != 'undefined' &amp;&amp; process.env.AWS_SECRET_ACCESS_KEY != 'undefined');
     }
 
-
-    /**
-     * This converts the JSON representation of a ValidationOperation to a
-     * full-fledged ValidationOperation object with all of the expected methods.
-     *
-     * @param {Object} data - A JavaScript hash.
-     *
-     * @returns {ValidationOperation}
-     */
-    static inflateFrom(data) {
-        let op = new ValidationOperation();
-        Object.assign(op, data);
-        if (data.result) {
-            op.result = OperationResult.inflateFrom(data.result);
-        }
-        return op;
-    }
 }
 
-module.exports.ValidationOperation = ValidationOperation;
+module.exports.UploadTestHelper = UploadTestHelper;
 </code></pre>
   </article>
 </section>
