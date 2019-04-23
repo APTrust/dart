@@ -204,7 +204,7 @@ const Constants =  {
     /**
      * This hash maps job operations to user-friendly error descriptions.
      *
-     * @type {object<string><string>}
+     * @type {Object<string, string>}
      */
     JOB_ERROR_MESSAGES: {
         'package': 'Packaging error',
