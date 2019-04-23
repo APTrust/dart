@@ -18,3 +18,7 @@ test('loadProfile', () => {
         expect(profile.description.startsWith(desc)).toEqual(true);
     }
 });
+
+test('ISODatePattern', () => {
+    expect('2019-04-22T10:17:33.000Z').toMatch(TestUtil.ISODatePattern);
+});

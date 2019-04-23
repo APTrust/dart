@@ -44,7 +44,6 @@ class TestUtil {
         return BagItProfile.load(profilePath);
     }
 
-
 }
 
 /**
