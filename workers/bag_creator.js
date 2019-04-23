@@ -30,10 +30,13 @@ class BagCreator extends Worker {
      * @returns {Promise}
      */
     run() {
-        if (!this.job.packageOp.validate()) {
-            return this.validationError(Object.values(this.job.packageOp.errors));
-        }
         var creator = this;
+        if (!this.job.packageOp.validate()) {
+            return new Promise(function(resolve, reject) {
+                let errors = Object.values(creator.job.packageOp.errors);
+                reject(creator.validationError(errors));
+            });
+        }
         var bagger = new Bagger(this.job);
         bagger.on('packageStart', function(message) {
             creator.info('start', Constants.OP_IN_PROGRESS, message, false);
