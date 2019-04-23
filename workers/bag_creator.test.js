@@ -4,6 +4,7 @@ const { Context } = require('../core/context');
 const fs = require('fs');
 const { Job } = require('../core/job');
 const path = require('path');
+const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
 
 // Note that if job.packageOp.outputPath ends with .tar,
@@ -11,7 +12,7 @@ const { Util } = require('../core/util');
 let tmpBagFile = Util.tmpFilePath() + ".tar";
 
 // Generial ISO datetime pattern
-let ISOPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z/
+// let ISOPattern = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d+Z/
 
 let originalWriteFunction = console.log;
 
@@ -92,8 +93,8 @@ test('run()', done => {
         expect(job.packageOp.result.filepath).toEqual(tmpBagFile);
         expect(job.packageOp.result.filesize).toEqual(stats.size);
         expect(job.packageOp.result.attempt).toEqual(1);
-        expect(job.packageOp.result.started).toMatch(ISOPattern);
-        expect(job.packageOp.result.completed).toMatch(ISOPattern);
+        expect(job.packageOp.result.started).toMatch(TestUtil.ISODatePattern);
+        expect(job.packageOp.result.completed).toMatch(TestUtil.ISODatePattern);
 
         // Ensure we got expected output on stdout
         let startCount = 0;
