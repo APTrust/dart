@@ -1,6 +1,5 @@
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
-//const fs = require('fs');
 const { Job } = require('../core/job');
 const { OutputCatcher } = require('../util/output_catcher');
 const path = require('path');
@@ -52,7 +51,7 @@ test('Constructor sets expected properties', () => {
     expect(uploader.job.id).toEqual(job.id);
 });
 
-test('run()', done => {
+test('run() using S3 client', done => {
 
     if (!helper.envHasS3Credentials()) {
         console.log('Skipping S3 upload test for workers/Uploader: no credentials in ENV.');
