@@ -4,18 +4,9 @@ const os = require('os');
 const path = require('path');
 const S3Client = require('./s3_client');
 const { UploadTarget } = require('../../core/upload_target');
+const { UploadTestHelper } = require('../../util/upload_test_helper');
 
-function getUploadTarget() {
-    var ss = new UploadTarget({ name: 'unittest' });
-    ss.protocol = 's3';
-    ss.host = 's3.amazonaws.com';
-    ss.bucket = 'aptrust.dart.test';
-    return ss;
-}
-
-function envHasS3Credentials() {
-    return (typeof process.env.AWS_ACCESS_KEY_ID != 'undefined' && process.env.AWS_SECRET_ACCESS_KEY != 'undefined');
-}
+let helper = new UploadTestHelper();
 
 test('Description', () => {
     var desc = S3Client.description();
@@ -24,13 +15,13 @@ test('Description', () => {
 });
 
 test('Constructor sets expected properties', () => {
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     var client = new S3Client(uploadTarget);
     expect(client.uploadTarget).toEqual(uploadTarget);
 });
 
 test('_initXferRecord', () => {
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     var client = new S3Client(uploadTarget);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
     expect(xfer).not.toBeNull();
@@ -63,7 +54,7 @@ test('_initXferRecord', () => {
 });
 
 test('_handleError() retries if it has not exceeded MAX_ATTEMPTS', done => {
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     var client = new S3Client(uploadTarget);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
 
@@ -79,7 +70,7 @@ test('_handleError() retries if it has not exceeded MAX_ATTEMPTS', done => {
 });
 
 test('_handleError() sets failure result after too many retries', done => {
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     var client = new S3Client(uploadTarget);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
 
@@ -97,10 +88,10 @@ test('_handleError() sets failure result after too many retries', done => {
 });
 
 test('_getClient()', () => {
-    if (!envHasS3Credentials()) {
+    if (!helper.envHasS3Credentials()) {
         return;
     }
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
     uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
     var client = new S3Client(uploadTarget);
@@ -110,12 +101,12 @@ test('_getClient()', () => {
 });
 
 test('upload()', done => {
-    if (!envHasS3Credentials()) {
-        console.log('Skipping S3 upload test: no credentials in ENV.');
+    if (!helper.envHasS3Credentials()) {
+        console.log('Skipping S3 upload test for S3Client: no credentials in ENV.');
         done();
         return;
     }
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
     uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
     var client = new S3Client(uploadTarget);
@@ -143,11 +134,11 @@ test('upload()', done => {
 });
 
 test('download()', done => {
-    if (!envHasS3Credentials()) {
+    if (!helper.envHasS3Credentials()) {
         done();
         return;
     }
-    var uploadTarget = getUploadTarget();
+    var uploadTarget = helper.getUploadTarget();
     uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
     uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
     var client = new S3Client(uploadTarget);

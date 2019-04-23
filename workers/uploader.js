@@ -35,9 +35,12 @@ class Uploader extends Worker {
      * @returns {Array<Promise>}
      */
     run() {
+        let uploader = this;
         let errors = this.validateParams();
         if (errors.length > 0) {
-            return this.validationError(errors);
+            return [new Promise(function(resolve, reject) {
+                reject(uploader.validationError(errors));
+            })];
         }
         let promises = [];
         for (let op of this.job.uploadOps) {

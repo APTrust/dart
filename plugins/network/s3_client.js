@@ -211,6 +211,8 @@ class S3Client extends Plugin {
         if (operation === 'upload') {
             xfer.localStat = fs.lstatSync(filepath);
             xfer.result.filesize = xfer.localStat.size;
+            xfer.result.filepath = filepath;
+            xfer.result.fileMtime = xfer.localStat.mtime;
         }
         if (operation === 'download') {
             xfer.result.remoteURL = xfer.getRemoteUrl();
