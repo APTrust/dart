@@ -273,6 +273,9 @@ test('Util.getEnvSetting()', () => {
 
 test('Util.tmpFilePath()', () => {
     let path = Util.tmpFilePath();
-    expect(path).toMatch(new RegExp(`^${os.tmpdir()}`));
+    // Make this work on Windows in addition to sane,
+    // well-designed operating systems.
+    let tmpDir = Util.escapeBackslashes(os.tmpdir());
+    expect(path).toMatch(new RegExp(`^${tmpDir}`));
     expect(path).toMatch(/[a-f0-9]{8}_\d{13}$/);
 });
