@@ -129,12 +129,18 @@ function checkOutputCounts() {
     }
 
     // 4 operations: 1 bagging, 1 validation, 2 uploads
+    let totalOperations = 4;
+
+    if (!helper.envHasS3Credentials()) {
+        totalOperations = 2; // because no uploads
+    }
+
     // 16 files in bag.
-    expect(counts.start).toEqual(4);
+    expect(counts.start).toEqual(totalOperations);
     expect(counts.fileAdded).toEqual(16);
     expect(counts.add).toEqual(16);
     expect(counts.checksum).toEqual(16);
-    expect(counts.completed).toEqual(4);
+    expect(counts.completed).toEqual(totalOperations);
 }
 
 test('Constructor sets expected properties', () => {
