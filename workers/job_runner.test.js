@@ -4,6 +4,7 @@ const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobRunner } = require('./job_runner');
 const { OutputCatcher } = require('../util/output_catcher');
+const os = require('os');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { UploadOperation } = require('../core/upload_operation');
@@ -33,7 +34,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-    outputCatcher.relayJestOutput();
+   outputCatcher.relayJestOutput();
     deleteTmpBagFile();
 })
 
@@ -172,3 +173,52 @@ test('run() completes when all job operations are valid', done => {
         done();
     });
 });
+
+
+// -------------------------------------------------------------------------
+// TODO: This fails because async.queue inside of FileSystemWriter
+// is not handling errors correctly.
+// -------------------------------------------------------------------------
+
+// test('run() fails gracefully if package fails', done => {
+
+//     // Can't figure out how to do this safely on Windows yet.
+//     // 'nul' does not seem to work like /dev/null
+//     if (os.platform() === 'win32') {
+//         return
+//     }
+
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+
+//     // Force failure by writing to an output file that doesn't exist.
+//     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
+
+//     jobRunner.run().then(function(returnCode) {
+
+//         console.log(job);
+
+//         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
+
+//         // Ensure bag was created
+//         expect(fs.existsSync(tmpBagFile)).toBe(true);
+//         let stats = fs.statSync(tmpBagFile);
+//         expect(stats.size).toBeGreaterThan(1000);
+
+//         checkBagCreatorResults(jobRunner.job, stats);
+//         checkValidatorResults(jobRunner.job);
+//         if (helper.envHasS3Credentials()) {
+//             checkUploadResults(jobRunner.job);
+//         }
+//         checkOutputCounts();
+
+//         // We set deleteJobFile to true in the constructor,
+//         // so make sure it's deleted.
+//         expect(fs.existsSync(tmpJobFile)).toBe(false);
+
+//         done();
+//     }).catch(function (error) {
+//         console.log('Caught exception');
+//         console.log(error);
+//     });
+// });

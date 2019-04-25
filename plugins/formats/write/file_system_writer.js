@@ -46,6 +46,11 @@ class FileSystemWriter extends Plugin {
         this._queue.drain = function () {
             fsWriter.emit('finish');
         }
+
+        // TODO: This never fires, even when there is an error.
+        this._queue.error = function(err, task) {
+            console.log(err);
+        }
     }
 
     /**
