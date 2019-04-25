@@ -57,10 +57,11 @@ class OutputCatcher {
         this.subjectOutput = [];
         this.jestOutput = [];
         console.log = jest.fn(data => {
-            if (data.toString().match(this.filter)) {
-                this.subjectOutput.push(data);
+            var str = data.toString()
+            if (str.match(this.filter)) {
+                this.subjectOutput.push(str);
             } else {
-                this.jestOutput.push(data);
+                this.jestOutput.push(str);
             }
         });
     }
