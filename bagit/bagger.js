@@ -139,7 +139,7 @@ class Bagger extends EventEmitter {
          * @type {string}
          */
         this.formatWriter.on('error', function(err) {
-            packOp.result.errors.push(error);
+            packOp.result.errors.push(err);
             bagger.emit(err);
         });
         /**
