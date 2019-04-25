@@ -161,7 +161,8 @@ class TarWriter extends Plugin {
          * @event TarWriter#finish
          *
          * This event fires after all files have been written to the underlying
-         * tar file.
+         * tar file. This is an unreliable marker of actual completion, because
+         * it fires every time the queue drains.
          *
          */
         this._queue.drain = function () {
