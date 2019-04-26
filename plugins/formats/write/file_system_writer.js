@@ -145,7 +145,7 @@ function writeIntoArchive(data, done) {
     }
 }
 
-function _writeIntoArchive(data) {
+function _writeIntoArchive(data, done) {
     if (!fs.existsSync(path.dirname(data.dest))) {
         mkdirp.sync(path.dirname(data.dest), { mode: 0o755 });
     }
