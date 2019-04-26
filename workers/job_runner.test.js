@@ -34,7 +34,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-   outputCatcher.relayJestOutput();
+    outputCatcher.relayJestOutput();
     deleteTmpBagFile();
 })
 
@@ -181,50 +181,40 @@ test('run() completes when all job operations are valid', done => {
 });
 
 
-// -------------------------------------------------------------------------
-// TODO: This fails because async.queue inside of FileSystemWriter
-// is not handling errors correctly.
-// -------------------------------------------------------------------------
+test('run() fails gracefully if package fails', done => {
 
-// test('run() fails gracefully if package fails', done => {
+    // Can't figure out how to do this safely on Windows yet.
+    // 'nul' does not seem to work like /dev/null
+    if (os.platform() === 'win32') {
+        return
+    }
 
-//     // Can't figure out how to do this safely on Windows yet.
-//     // 'nul' does not seem to work like /dev/null
-//     if (os.platform() === 'win32') {
-//         return
-//     }
+    writeJobFile();
+    let jobRunner = new JobRunner(tmpJobFile, true);
 
-//     writeJobFile();
-//     let jobRunner = new JobRunner(tmpJobFile, true);
+    // Force failure by writing to an output file that doesn't exist.
+    jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
 
-//     // Force failure by writing to an output file that doesn't exist.
-//     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
+    jobRunner.run().then(function(returnCode) {
 
-//     jobRunner.run().then(function(returnCode) {
+        let result = jobRunner.job.packageOp.result;
 
-//         console.log(job);
+        // Make sure we got the correct exit code.
+        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
 
-//         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
+        // Make sure the packageOp result captured the error.
+        expect(result.hasErrors()).toBe(true);
+        expect(result.firstError()).toMatch('FileSystemWriter:');
 
-//         // Ensure bag was created
-//         expect(fs.existsSync(tmpBagFile)).toBe(true);
-//         let stats = fs.statSync(tmpBagFile);
-//         expect(stats.size).toBeGreaterThan(1000);
+        // Make sure the job runner stopped after this error
+        // and did not attempt the validation or upload ops
+        // (since there's no package to validate or upload).
+        expect(jobRunner.job.validationOp.result).toBeNull();
 
-//         checkBagCreatorResults(jobRunner.job, stats);
-//         checkValidatorResults(jobRunner.job);
-//         if (helper.envHasS3Credentials()) {
-//             checkUploadResults(jobRunner.job);
-//         }
-//         checkOutputCounts();
+        for (let uploadOp of jobRunner.job.uploadOps) {
+            expect(uploadOp.results.length).toEqual(0);
+        }
 
-//         // We set deleteJobFile to true in the constructor,
-//         // so make sure it's deleted.
-//         expect(fs.existsSync(tmpJobFile)).toBe(false);
-
-//         done();
-//     }).catch(function (error) {
-//         console.log('Caught exception');
-//         console.log(error);
-//     });
-// });
+        done();
+    });
+});

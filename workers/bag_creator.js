@@ -41,13 +41,6 @@ class BagCreator extends Worker {
         bagger.on('packageStart', function(message) {
             creator.info('start', Constants.OP_IN_PROGRESS, message, false);
         });
-        bagger.on('error', function(err) {
-            if (typeof err == 'string') {
-                creator.runtimeError('fileAdded', [err], null);
-            } else {
-                creator.runtimeError('fileAdded', null, err);
-            }
-        });
         bagger.on('fileAdded', function(bagItFile) {
             creator.info('fileAdded', Constants.OP_IN_PROGRESS, bagItFile.relDestPath, false);
         });
@@ -62,6 +55,16 @@ class BagCreator extends Worker {
                 }
                 resolve(result);
             });
+            bagger.on('error', function(err) {
+                let result = bagger.job.packageOp.result;
+                if (typeof err == 'string') {
+                    creator.runtimeError('fileAdded', [err], null);
+                } else {
+                    creator.runtimeError('fileAdded', null, err);
+                }
+                reject(result);
+        });
+
         });
         bagger.create();
         return promise;
