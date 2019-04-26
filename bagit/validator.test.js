@@ -1,4 +1,5 @@
 const { BagItProfile } = require('./bagit_profile');
+const { Context } = require('../core/context');
 const FileSystemReader = require('../plugins/formats/read/file_system_reader');
 const path = require('path');
 const TarReader = require('../plugins/formats/read/tar_reader');
@@ -121,12 +122,15 @@ function getValidator(profileName, bagDir, bagName) {
     return new Validator(bagPath, profile);
 }
 
-test('Validator does not throw if bag does not exist', done => {
+test('Validator emits error if bag does not exist', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "BagDoesNotExist.tar");
-    validator.on('end', function(taskDesc) {
+    validator.on('error', function(message) {
+        expect(message).toMatch(Context.y18n.__('File does not exist at'));
         expect(validator.errors.length).toEqual(1);
-        expect(validator.errors[0]).toMatch(/^File does not exist at/);
+        expect(validator.errors[0]).toMatch(Context.y18n.__('File does not exist at'));
         expect(validator.errors[0]).toMatch(/BagDoesNotExist.tar$/);
+    });
+    validator.on('end', function() {
         done();
     });
     expect(function() { validator.validate() }).not.toThrow();

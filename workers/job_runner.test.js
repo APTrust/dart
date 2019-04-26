@@ -10,6 +10,7 @@ const { TestUtil } = require('../core/test_util');
 const { UploadOperation } = require('../core/upload_operation');
 const { UploadTestHelper } = require('../util/upload_test_helper');
 const { Util } = require('../core/util');
+const { ValidationOperation } = require('../core/validation_operation');
 
 // Create a tarred bag here.
 let tmpBagFile = Util.tmpFilePath() + ".tar";
@@ -252,6 +253,54 @@ test('run() fails gracefully if package fails (tarred bag, cannot write in direc
 
     jobRunner.run().then(function(returnCode) {
         testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+        done();
+    });
+});
+
+test('run() fails gracefully if bag is in character device', done => {
+    writeJobFile();
+    let pathThatDoesNotExist = Util.escapeBackslashes('/dev/null/xyz/bag.tar');
+    let jobRunner = new JobRunner(tmpJobFile, true);
+    jobRunner.job.packageOp = null;
+    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+    jobRunner.run().then(function(returnCode) {
+        let result = jobRunner.job.validationOp.result;
+        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+        expect(result.errors.length).toBeGreaterThan(0);
+        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
+        done();
+    });
+});
+
+test('run() fails gracefully if bag file does not exist', done => {
+    writeJobFile();
+    let pathThatDoesNotExist = Util.escapeBackslashes('bag_does_not_exist.tar');
+    let jobRunner = new JobRunner(tmpJobFile, true);
+    jobRunner.job.packageOp = null;
+    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+    jobRunner.run().then(function(returnCode) {
+        let result = jobRunner.job.validationOp.result;
+        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+        expect(result.errors.length).toBeGreaterThan(0);
+        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
+        done();
+    });
+});
+
+test('run() fails gracefully if bag directory does not exist', done => {
+    writeJobFile();
+    let pathThatDoesNotExist = Util.escapeBackslashes('dir/does/not/exist');
+    let jobRunner = new JobRunner(tmpJobFile, true);
+    jobRunner.job.packageOp = null;
+    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+    jobRunner.run().then(function(returnCode) {
+        let result = jobRunner.job.validationOp.result;
+        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+        expect(result.errors.length).toBeGreaterThan(0);
+        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
         done();
     });
 });

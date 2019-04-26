@@ -239,7 +239,7 @@ class Validator extends EventEmitter {
         }
         var plugins = PluginManager.canRead(fileExtension);
         if (!plugins) {
-            throw `No plugins know how to read ${this.pathToBag}`
+            throw new Error(`No plugins know how to read ${this.pathToBag}`);
         }
         // plugins[0] is a reader plugin (a class) with a constructor
         // that takes pathToBag as its sole param.
@@ -261,7 +261,9 @@ class Validator extends EventEmitter {
     validate() {
         this.emit('validateStart', `Validating ${this.pathToBag}`);
         if (!fs.existsSync(this.pathToBag)) {
-            this.errors.push(`File does not exist at ${this.pathToBag}`);
+            let msg = Context.y18n.__('File does not exist at %s', this.pathToBag);
+            this.errors.push(msg);
+            this.emit('error', msg);
             this.emit('end');
             return;
         }

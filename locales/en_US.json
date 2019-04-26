@@ -301,5 +301,9 @@
   "Job exited with error code %s": "Job exited with error code %s",
   "End of DART error output": "End of DART error output",
   "You do not have write permissions on output directory %s.": "You do not have write permissions on output directory %s.",
-  "Cannot write to output path '%s' because it is not a directory.": "Cannot write to output path '%s' because it is not a directory."
+  "Cannot write to output path '%s' because it is not a directory.": "Cannot write to output path '%s' because it is not a directory.",
+  "Error gathering info about bag: %s": "Error gathering info about bag: %s",
+  "Error gathering info about bag": "Error gathering info about bag",
+  "File does not exist at %s": "File does not exist at %s",
+  "File does not exist at": "File does not exist at"
 }

@@ -1,4 +1,5 @@
 const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
 const dateFormat = require('dateformat');
 const fs = require('fs');
 const { OperationResult } = require('../core/operation_result');
@@ -32,16 +33,16 @@ class BagValidator extends Worker {
      */
     run() {
         var bagValidator = this;
+        this.initOpResult();
 
         // Return a failed promise if we get invalid params.
         let errors = this.validateParams();
         if (errors.length > 0) {
             return new Promise(function(resolve, reject) {
-                reject(bagValidator.validationError(errors));
+                bagValidator.job.validationOp.result.finish(errors);
+                reject(bagValidator.job.validationOp.result);
             });
         }
-
-        this.initOpResult();
 
         return new Promise(function(resolve, reject) {
             let validator = new Validator(
@@ -55,7 +56,7 @@ class BagValidator extends Worker {
                     bagValidator.job.validationOp.result.finish(err.toString());
                     bagValidator.runtimeError('validate', null, err);
                 }
-                resolve(validator);
+                reject(bagValidator.job.validationOp.result);
             });
             validator.on('end', function() {
                 bagValidator.job.validationOp.result.finish();
@@ -65,7 +66,7 @@ class BagValidator extends Worker {
                 } else {
                     bagValidator.completedSuccess('Bag is valid');
                 }
-                resolve(validator);
+                resolve(bagValidator.job.validationOp.result);
             });
             validator.on('task', function(taskDesc) {
                 bagValidator.info(taskDesc.op, Constants.OP_IN_PROGRESS, taskDesc.path, false);
@@ -86,13 +87,16 @@ class BagValidator extends Worker {
         }
         let result = this.job.validationOp.result;
         result.filepath = this.job.validationOp.pathToBag;
-
-        let stats = fs.statSync(this.job.validationOp.pathToBag);
-        if (stats.isFile()) {
-            result.filesize = stats.size;
-            result.fileMtime = stats.mtime;
-        }
         result.start();
+        try {
+            let stats = fs.statSync(this.job.validationOp.pathToBag);
+            if (stats.isFile()) {
+                result.filesize = stats.size;
+                result.fileMtime = stats.mtime;
+            }
+        } catch (ex) {
+            result.finish(Context.y18n.__('Error gathering info about bag: %s', ex.message));
+        }
     }
 
     /**
