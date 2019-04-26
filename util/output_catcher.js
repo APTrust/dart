@@ -31,6 +31,14 @@ class OutputCatcher {
          */
         this.consoleLog = console.log;
         /**
+         * This maintains a reference to the original console.error function,
+         * so when we're done capturing output, we can replace the Jest
+         * mock function with console.log.
+         *
+         * @type {function}
+         */
+        this.consoleError = console.error;
+        /**
          * An array of lines captured from STDOUT that match the filter
          * string/RegExp. This output is presumed to have come from the
          * subject of the test, not from Jest.
@@ -39,12 +47,27 @@ class OutputCatcher {
          */
         this.subjectOutput = [];
         /**
+         * An array of lines captured from STDERR that match the filter
+         * string/RegExp. This output is presumed to have come from the
+         * subject of the test, not from Jest.
+         *
+         * @type {Array<string>}
+         */
+        this.subjectError = [];
+        /**
          * An array of lines captured from STDOUT that DO NOT match the filter
          * string/RegExp. This output is presumed to have come from Jest.
          *
          * @type {Array<string>}
          */
         this.jestOutput = [];
+        /**
+         * An array of lines captured from STDERR that DO NOT match the filter
+         * string/RegExp. This output is presumed to have come from Jest.
+         *
+         * @type {Array<string>}
+         */
+        this.jestError = [];
     }
 
     /**
@@ -64,6 +87,14 @@ class OutputCatcher {
                 this.jestOutput.push(str);
             }
         });
+        console.error = jest.fn(data => {
+            var str = data.toString()
+            if (str.match(this.filter)) {
+                this.subjectError.push(str);
+            } else {
+                this.jestError.push(str);
+            }
+        });
     }
 
     /**
@@ -72,8 +103,12 @@ class OutputCatcher {
      */
     relayJestOutput() {
         console.log = this.consoleLog;
+        console.error = this.consoleError;
         if (this.jestOutput.length > 0) {
             console.log(this.jestOutput.join("\n"));
+        }
+        if (this.jestError.length > 0) {
+            console.error(this.jestError.join("\n"));
         }
     }
 
