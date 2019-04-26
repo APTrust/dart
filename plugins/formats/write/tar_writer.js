@@ -1,4 +1,5 @@
 const async = require('async');
+const { Context } = require('../../../core/context');
 const EventEmitter = require('events');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -75,6 +76,15 @@ class TarWriter extends Plugin {
          */
         this._queue.drain = function () {
             tarWriter.emit('finish');
+        }
+
+        this._queue.error = function(err, task) {
+            if (err) {
+                tarWriter._queue.pause();  // stop processing
+                tarWriter._queue.kill();   // empty the queue & remove drain fn
+                tarWriter.emit('error', `TarWriter: ${err.message}`);
+                tarWriter.emit('finish');
+            }
         }
     }
 
@@ -154,10 +164,17 @@ class TarWriter extends Plugin {
          * @type {BagItFile}
          *
          */
+        let packer = null;
+        try {
+            packer = this._getTarPacker()
+        } catch (err) {
+            this._queue.error(err);
+            return;
+        }
         var data = {
             bagItFile: bagItFile,
             header: header,
-            tar: this._getTarPacker(),
+            tar: packer,
             hashes: cryptoHashes,
             endFn: () => tarWriter.emit('fileAdded', bagItFile)
         };
@@ -190,12 +207,23 @@ class TarWriter extends Plugin {
     _getTarOutputWriter() {
         if (this._tarOutputWriter == null) {
             if (!this.pathToTarFile.endsWith(".tar")) {
-                throw `pathToTarFile '${this.pathToTarFile}' must have .tar extension`;
+                throw new Error(Context.y18n.__(`pathToTarFile '%s' must have .tar extension`, this.pathToTarFile));
             }
             var dir = path.dirname(this.pathToTarFile);
+            var stats = fs.statSync(dir);
+            if (!stats.isDirectory()) {
+                // This one came up while writing unit tests.
+                // If path incudes /dev/null or other character devices,
+                // the checks below will not handle the problem correctly.
+                throw new Error(Context.y18n.__("Cannot write to output path '%s' because it is not a directory.", dir));
+            }
             if (!fs.existsSync(dir)) {
                 mkdirp.sync(dir, { mode: 0o755 });
+            } else {
+                // This throws an exception if the user can't write to dir.
+                fs.accessSync(dir, fs.constants.W_OK);
             }
+
             var options = {
                 mode: 0o644,
                 autoClose: false
@@ -220,15 +248,20 @@ class TarWriter extends Plugin {
  * @private
  */
 function writeIntoArchive(data, done) {
-    var reader = fs.createReadStream(data.bagItFile.absSourcePath);
-    var writer = data.tar.entry(data.header, done);
-    writer.on('finish', data.endFn);
-    reader.pause();
-    for (var h of data.hashes) {
-        reader.pipe(h)
+    try {
+        var reader = fs.createReadStream(data.bagItFile.absSourcePath);
+        var writer = data.tar.entry(data.header, done);
+        writer.on('finish', data.endFn);
+        reader.pause();
+        for (var h of data.hashes) {
+            reader.pipe(h)
+        }
+        reader.pipe(writer);
+        reader.resume();
+    } catch (err) {
+        done(err, data);
     }
-    reader.pipe(writer);
-    reader.resume();
 }
+
 
 module.exports = TarWriter;
