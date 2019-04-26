@@ -304,3 +304,10 @@ test('run() fails gracefully if bag directory does not exist', done => {
         done();
     });
 });
+
+// TODO: Test with missing BagItProfile
+// TODO: Test with invalid BagItProfile
+// TODO: Test with missing serialization
+// TODO: Test with illegal serialization
+// TODO: Test with upload failure (1 of 1 targets fails)
+// TODO: Test with upload failure (1 of 2 targets fails)
