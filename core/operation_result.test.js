@@ -141,3 +141,17 @@ test('inflateFrom()', () => {
     expect(typeof result.lastError).toEqual('function');
     expect(typeof result.succeeded).toEqual('function');
 });
+
+test('firstError()', () => {
+    let result = new OperationResult('bagging', 'bagger');
+    expect(result.firstError()).not.toBeDefined();
+    result.errors = ['Err1', 'Err2'];
+    expect(result.firstError()).toEqual('Err1');
+})
+
+test('hasErrors()', () => {
+    let result = new OperationResult('bagging', 'bagger');
+    expect(result.hasErrors()).toBe(false);
+    result.errors = ['Err1'];
+    expect(result.hasErrors()).toBe(true);
+})

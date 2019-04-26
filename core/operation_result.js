@@ -152,6 +152,15 @@ class OperationResult {
     }
 
     /**
+     * Returns true if any errors occurred.
+     *
+     * @returns {boolean}
+     */
+    hasErrors() {
+        return this.errors.length > 0;
+    }
+
+    /**
      * Returns the first error message in the result's errors array, or
      * undefined if there are no errors. This is useful for handling
      * error events emitted by plugins.
