@@ -141,7 +141,6 @@ class Util {
       */
     static filterEmptyStrings(arr) {
         if(arr == null || !Array.isArray(arr)) {
-            //console.log(`filterEmpties: param arr is not an array. Value: ${arr}`)
             return [];
         }
         return arr.map(item => item? item.trim() : "").filter(item => item != "");
@@ -336,7 +335,6 @@ class Util {
         files.forEach(function(file) {
             var absPath = path.join(dir, file);
             if (!fs.existsSync(absPath)) {
-                //console.log(`Does not exist: ${absPath}`);
                 return;  // Symlinks give ENOENT error
             }
             var stats = fs.statSync(absPath);

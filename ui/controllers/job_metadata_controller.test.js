@@ -70,7 +70,6 @@ function testFormValuesAreSaved(fnName) {
                      'Tag-File-Character-Encoding']
     for (let tag of job.bagItProfile.tags) {
         if (!listItems.includes(tag.tagName)) {
-            //console.log(`${tag.tagName} = ${tag.getValue()}`)
             expect(tag.getValue()).toMatch(/^ABC/);
         }
     }

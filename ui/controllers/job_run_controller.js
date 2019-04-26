@@ -82,7 +82,6 @@ class JobRunController extends BaseController {
         this.showDivs();
         let controller = this;
         this.childProcess.stdout.on('data', (str) => {
-            //console.log(`INFO - ${str}`);
             controller.renderChildProcOutput(str);
         });
 
@@ -98,13 +97,11 @@ class JobRunController extends BaseController {
             if (this.reachedEndOfOutput) {
                 return;
             }
-            console.log(str);
             controller.capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);
         });
 
         this.childProcess.on('close', (code) => {
-            //console.log(`Exited with code ${code}`);
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
             if (controller.capturedErrorOutput.length > 0) {

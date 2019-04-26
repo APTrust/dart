@@ -171,9 +171,6 @@ test('create() using FileSystemWriter', done => {
     job.bagItProfile.serialization = 'optional';
     let bagger = new Bagger(job);
 
-    bagger.on('fileAdded', function(bagItFile) {
-        //console.log(bagItFile.relDestPath);
-    });
     bagger.on('finish', function() {
         let result = bagger.job.packageOp.result;
         expect(result.errors.length).toEqual(0);
