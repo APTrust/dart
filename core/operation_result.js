@@ -141,13 +141,16 @@ class OperationResult {
      * Sets the completed attribute to the current datetime,
      * and sets the errors attribute.
      *
-     * @param {string} errorMessage - An optional error message. If this is
-     * passed in, it will be appended the errors array.
+     * @param {string|Array<string>} errors - An optional error message
+     * or array of error messages. If this is passed in, it will be
+     * appended the errors array.
      */
-    finish(errorMessage) {
+    finish(errors) {
         this.completed = new Date().toISOString();
-        if (errorMessage) {
-            this.errors.push(errorMessage);
+        if (typeof errors == 'string') {
+            this.errors.push(errors);
+        } else if (Array.isArray(errors)) {
+            this.errors = this.errors.concat(errors);
         }
     }
 

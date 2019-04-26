@@ -86,6 +86,13 @@ test('finish()', () => {
     expect(result.succeeded()).toBe(false);
     expect(result.errors.length).toEqual(1);
     expect(result.errors).toContain('No friggin way, Mister Lahey!');
+
+    // Should be able to finish with an array of errors.
+    // Add three new ones to the one above.
+    result.finish(['No friggin way, Mister Lahey!',
+                   'Step away from the cat, Bubbles.',
+                   'Take those grow lights out of my trailer, Ricky.']);
+    expect(result.errors.length).toEqual(4);
 });
 
 test('first and last error', () => {
