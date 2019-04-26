@@ -143,6 +143,26 @@ function checkOutputCounts() {
     expect(counts.completed).toEqual(totalOperations);
 }
 
+function testFailedPackage(jobRunner, returnCode, errorPrefix) {
+    let result = jobRunner.job.packageOp.result;
+
+    // Make sure we got the correct exit code.
+    expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+
+    // Make sure the packageOp result captured the error.
+    expect(result.hasErrors()).toBe(true);
+    expect(result.firstError()).toMatch(errorPrefix);
+
+    // Make sure the job runner stopped after this error
+    // and did not attempt the validation or upload ops
+    // (since there's no package to validate or upload).
+    expect(jobRunner.job.validationOp.result).toBeNull();
+
+    for (let uploadOp of jobRunner.job.uploadOps) {
+        expect(uploadOp.results.length).toEqual(0);
+    }
+}
+
 test('Constructor sets expected properties', () => {
     writeJobFile();
     let jobRunner = new JobRunner(tmpJobFile, true);
@@ -181,8 +201,7 @@ test('run() completes when all job operations are valid', done => {
 });
 
 
-test('run() fails gracefully if package fails', done => {
-
+test('run() fails gracefully if package fails (untarred bag)', done => {
     // Can't figure out how to do this safely on Windows yet.
     // 'nul' does not seem to work like /dev/null
     if (os.platform() === 'win32') {
@@ -196,25 +215,43 @@ test('run() fails gracefully if package fails', done => {
     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
 
     jobRunner.run().then(function(returnCode) {
+        testFailedPackage(jobRunner, returnCode, 'FileSystemWriter:');
+        done();
+    });
+});
 
-        let result = jobRunner.job.packageOp.result;
+test('run() fails gracefully if package fails (tarred bag, cannot create directory)', done => {
+    // Windoze!!
+    if (os.platform() === 'win32') {
+        return
+    }
 
-        // Make sure we got the correct exit code.
-        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+    writeJobFile();
+    let jobRunner = new JobRunner(tmpJobFile, true);
 
-        // Make sure the packageOp result captured the error.
-        expect(result.hasErrors()).toBe(true);
-        expect(result.firstError()).toMatch('FileSystemWriter:');
+    // Force failure by writing to an output file that doesn't exist.
+    jobRunner.job.packageOp.outputPath = '/dev/null/xyz/file_does_not_exist.tar';
 
-        // Make sure the job runner stopped after this error
-        // and did not attempt the validation or upload ops
-        // (since there's no package to validate or upload).
-        expect(jobRunner.job.validationOp.result).toBeNull();
+    jobRunner.run().then(function(returnCode) {
+        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+        done();
+    });
+});
 
-        for (let uploadOp of jobRunner.job.uploadOps) {
-            expect(uploadOp.results.length).toEqual(0);
-        }
+test('run() fails gracefully if package fails (tarred bag, cannot write in directory)', done => {
+    // Windoze!!
+    if (os.platform() === 'win32') {
+        return
+    }
 
+    writeJobFile();
+    let jobRunner = new JobRunner(tmpJobFile, true);
+
+    // Force failure by writing to an output file that doesn't exist.
+    jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist.tar';
+
+    jobRunner.run().then(function(returnCode) {
+        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
         done();
     });
 });

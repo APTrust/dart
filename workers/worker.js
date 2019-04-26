@@ -106,7 +106,7 @@ class Worker {
         } else if (stream == 'stderr') {
             console.error(jsonStr);
         } else {
-            throw Context.y18n.__("Invalid stream name: %s", stream);
+            throw new Error(Context.y18n.__("Invalid stream name: %s", stream));
         }
     }
 

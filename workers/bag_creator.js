@@ -63,8 +63,7 @@ class BagCreator extends Worker {
                     creator.runtimeError('fileAdded', null, err);
                 }
                 reject(result);
-        });
-
+            });
         });
         bagger.create();
         return promise;
