@@ -140,7 +140,8 @@ class Bagger extends EventEmitter {
          */
         this.formatWriter.on('error', function(err) {
             packOp.result.errors.push(err);
-            bagger.emit(err);
+            packOp.result.finish();
+            bagger.emit('error', err);
         });
         /**
          * @event Bagger#fileAdded
@@ -155,9 +156,16 @@ class Bagger extends EventEmitter {
         });
 
         await this._addPayloadFiles();
-        await this._addTagFiles();
-        await this._addManifests();
-        await this._addTagManifests();
+
+        if (!packOp.result.hasErrors()) {
+            await this._addTagFiles();
+        }
+        if (!packOp.result.hasErrors()) {
+            await this._addManifests();
+        }
+        if (!packOp.result.hasErrors()) {
+            await this._addTagManifests();
+        }
 
         // Either Node.js streams say they are finished before
         // the final chunk of the final buffer is written to disk
