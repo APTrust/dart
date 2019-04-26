@@ -4,6 +4,7 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const fs = require('fs');
 const { Job } = require('../core/job');
+const { OperationResult } = require('../core/operation_result');
 const { Uploader } = require('./uploader');
 const { ValidationOperation } = require('../core/validation_operation');
 const { Util } = require('../core/util');
@@ -44,11 +45,15 @@ class JobRunner {
         } catch (ex) {
             // Caller collects messages from STDERR.
             if (ex instanceof Error) {
-                process.stderr.write(ex.stack + "\n")
+                console.error(ex.stack);
+            } else if (ex instanceof OperationResult && Context.isTestEnv) {
+                // These come from rejected promises.
+                // The output clutters Jest test output,
+                // so suppress in test, but allow in dev/production.
             } else {
-                process.stderr.write(ex.toString() + "\n");
+                console.error(JSON.stringify(ex))
             }
-            process.stderr.write(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT));
+            console.error(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT));
             returnCode = Constants.EXIT_RUNTIME_ERROR;
         }
         return returnCode;

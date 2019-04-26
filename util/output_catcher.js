@@ -1,3 +1,6 @@
+const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
+
 /**
  * This class captures data written to STDOUT during tests
  * and divides it into jestOutput and subjectOutput. The jestOutput,
@@ -80,21 +83,29 @@ class OutputCatcher {
         this.subjectOutput = [];
         this.jestOutput = [];
         console.log = jest.fn(data => {
-            var str = data.toString()
-            if (str.match(this.filter)) {
-                this.subjectOutput.push(str);
-            } else {
-                this.jestOutput.push(str);
-            }
+            this._capture(data, 'stdout');
         });
         console.error = jest.fn(data => {
-            var str = data.toString()
-            if (str.match(this.filter)) {
-                this.subjectError.push(str);
-            } else {
-                this.jestError.push(str);
-            }
+            this._capture(data, 'stderr');
         });
+    }
+
+    /**
+     * Captures output and assigns it to the right collection.
+     * Ignores output that matches {@link Constants.END_OF_ERROR_OUTPUT}.
+     *
+     * @private
+     */
+    _capture(data, stream) {
+        var str = data.toString()
+        if (str.match(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT))) {
+            return;
+        }
+        if (str.match(this.filter)) {
+            stream == 'error' ? this.subjectError.push(str) : this.subjectOutput.push(str);
+        } else {
+            stream == 'error' ? this.jestError.push(str) : this.jestOutput.push(str);
+        }
     }
 
     /**
