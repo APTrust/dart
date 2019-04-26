@@ -119,15 +119,20 @@ class Bagger extends EventEmitter {
         packOp.result = new OperationResult('bagging', 'DART bagger');
         packOp.result.filepath = packOp.outputPath;
         packOp.result.start();
+
         if (!this.validatePackagingOperation()) {
+            this._finish();
             return false;
         }
+
         try {
             this._initWriter();
         } catch (ex) {
             packOp.result.errors.push(ex.toString());
+            this._finish();
             return false;
         }
+
         var bagger = this;
         /**
          * @event Bagger#error
