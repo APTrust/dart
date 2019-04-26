@@ -47,9 +47,13 @@ class FileSystemWriter extends Plugin {
             fsWriter.emit('finish');
         }
 
-        // TODO: This never fires, even when there is an error.
         this._queue.error = function(err, task) {
-            console.log(err);
+            if (err) {
+                fsWriter._queue.pause();  // stop processing
+                fsWriter._queue.kill();   // empty the queue & remove drain fn
+                fsWriter.emit('error', `FileSystemWriter: ${err.message}`);
+                fsWriter.emit('finish');
+            }
         }
     }
 
@@ -134,6 +138,14 @@ class FileSystemWriter extends Plugin {
  * @private
  */
 function writeIntoArchive(data, done) {
+    try {
+        _writeIntoArchive(data, done);
+    } catch (err) {
+        done(err, data);
+    }
+}
+
+function _writeIntoArchive(data) {
     if (!fs.existsSync(path.dirname(data.dest))) {
         mkdirp.sync(path.dirname(data.dest), { mode: 0o755 });
     }
