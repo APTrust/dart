@@ -398,9 +398,10 @@ class S3Client extends Plugin {
             // Log a warning, wait 5 seconds, then try again.
             xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt} while attempting to send ${xfer.result.filepath} to ${this.uploadTarget.host}. Will try again in 1.5 seconds.`;
             this.emit('warning', xfer.result);
+            let s3Client = this;
             setTimeout(function() {
                 xfer.result.attempt += 1;
-                this._upload(xfer);
+                s3Client._upload(xfer);
             }, 1500);
         } else {
             xfer.result.finish(err.toString());
