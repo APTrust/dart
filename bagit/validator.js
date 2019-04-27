@@ -268,7 +268,8 @@ class Validator extends EventEmitter {
             return;
         }
         if (!this._validateProfile()) {
-            this.emit('end')
+            this.emit('error', this.errors.join(' '));
+            this.emit('end');
             return;
         }
         if (!this._validateSerialization()) {
@@ -474,7 +475,7 @@ class Validator extends EventEmitter {
      */
     _validateProfile() {
         if (this.profile == null) {
-            this.errors.push("Cannot validate bag because BagItProfile is missing.");
+            this.errors.push(Context.y18n.__("Cannot validate bag because BagItProfile is missing."));
             return false;
         }
         if (!this.profile.validate()) {

@@ -21,6 +21,11 @@ let tmpJobFile = Util.tmpFilePath() + ".json";
 // Job Id from fixture Job_003.json, which we load below.
 let jobId = "96d21b19-82ba-4de3-842c-ff961877e8de";
 
+// This test bag is known to be valid according
+// to the APTrust BagIt profile.
+let pathToValidTestBag = path.join(__dirname, '..', 'test', 'bags', 'aptrust', 'example.edu.sample_good.tar');
+
+
 // Capture JobRunner output
 let filterPattern = '{"op":';
 let outputCatcher = new OutputCatcher(filterPattern);
@@ -136,11 +141,11 @@ function checkOutputCounts() {
         totalOperations = 2; // because no uploads
     }
 
-    // 16 files in bag.
+    // 16+ files in bag.
     expect(counts.start).toEqual(totalOperations);
-    expect(counts.fileAdded).toEqual(16);
-    expect(counts.add).toEqual(16);
-    expect(counts.checksum).toEqual(16);
+    expect(counts.fileAdded).toBeGreaterThan(15);
+    expect(counts.add).toBeGreaterThan(15);
+    expect(counts.checksum).toBeGreaterThan(15);
     expect(counts.completed).toEqual(totalOperations);
 }
 
@@ -306,6 +311,22 @@ test('run() fails gracefully if bag directory does not exist', done => {
 });
 
 // TODO: Test with missing BagItProfile
+test('run() fails gracefully if BagItProfile is missing', done => {
+    writeJobFile();
+    let jobRunner = new JobRunner(tmpJobFile, true);
+    jobRunner.job.packageOp = null;
+    jobRunner.job.bagItProfile = null;
+    jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
+
+    jobRunner.run().then(function(returnCode) {
+        let result = jobRunner.job.validationOp.result;
+        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+        expect(result.errors.length).toBeGreaterThan(0);
+        expect(result.errors.join('')).toContain(Context.y18n.__("Cannot validate bag because job has no BagItProfile."));
+        done();
+    });
+});
+
 // TODO: Test with invalid BagItProfile
 // TODO: Test with missing serialization
 // TODO: Test with illegal serialization
