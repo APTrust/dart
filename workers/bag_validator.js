@@ -114,7 +114,9 @@ class BagValidator extends Worker {
         if (!this.job.bagItProfile) {
             errors.push("Cannot validate bag because job has no BagItProfile.");
         } else if (!this.job.bagItProfile.validate()) {
-            errors = errors.concat(this.job.bagItProfile.errors);
+            for (let err of Object.values(this.job.bagItProfile.errors)) {
+                errors.push(err);
+            }
         }
         return errors;
     }

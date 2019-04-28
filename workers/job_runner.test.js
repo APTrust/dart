@@ -169,165 +169,179 @@ function testFailedPackage(jobRunner, returnCode, errorPrefix) {
     }
 }
 
-test('Constructor sets expected properties', () => {
+// test('Constructor sets expected properties', () => {
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     expect(jobRunner.jobFilePath).toEqual(tmpJobFile);
+//     expect(jobRunner.deleteJobFile).toBe(true);
+//     expect(jobRunner.job).not.toBeNull();
+//     expect(jobRunner.job.id).toEqual(jobId);
+// });
+
+// test('run() completes when all job operations are valid', done => {
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+
+//     jobRunner.run().then(function(returnCode) {
+
+//         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
+
+//         // Ensure bag was created
+//         expect(fs.existsSync(tmpBagFile)).toBe(true);
+//         let stats = fs.statSync(tmpBagFile);
+//         expect(stats.size).toBeGreaterThan(1000);
+
+//         checkBagCreatorResults(jobRunner.job, stats);
+//         checkValidatorResults(jobRunner.job);
+//         if (helper.envHasS3Credentials()) {
+//             checkUploadResults(jobRunner.job);
+//         }
+//         checkOutputCounts();
+
+//         // We set deleteJobFile to true in the constructor,
+//         // so make sure it's deleted.
+//         expect(fs.existsSync(tmpJobFile)).toBe(false);
+
+//         done();
+//     });
+// });
+
+
+// test('run() fails gracefully if package fails (untarred bag)', done => {
+//     // Can't figure out how to do this safely on Windows yet.
+//     // 'nul' does not seem to work like /dev/null
+//     if (os.platform() === 'win32') {
+//         return
+//     }
+
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+
+//     // Force failure by writing to an output file that doesn't exist.
+//     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
+
+//     jobRunner.run().then(function(returnCode) {
+//         testFailedPackage(jobRunner, returnCode, 'FileSystemWriter:');
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if package fails (tarred bag, cannot create directory)', done => {
+//     // Windoze!!
+//     if (os.platform() === 'win32') {
+//         return
+//     }
+
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+
+//     // Force failure by writing to an output file that doesn't exist.
+//     jobRunner.job.packageOp.outputPath = '/dev/null/xyz/file_does_not_exist.tar';
+
+//     jobRunner.run().then(function(returnCode) {
+//         testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if package fails (tarred bag, cannot write in directory)', done => {
+//     // Windoze!!
+//     if (os.platform() === 'win32') {
+//         return
+//     }
+
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+
+//     // Force failure by writing to an output file that doesn't exist.
+//     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist.tar';
+
+//     jobRunner.run().then(function(returnCode) {
+//         testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if bag is in character device', done => {
+//     writeJobFile();
+//     let pathThatDoesNotExist = Util.escapeBackslashes('/dev/null/xyz/bag.tar');
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     jobRunner.job.packageOp = null;
+//     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+//     jobRunner.run().then(function(returnCode) {
+//         let result = jobRunner.job.validationOp.result;
+//         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+//         expect(result.errors.length).toBeGreaterThan(0);
+//         expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if bag file does not exist', done => {
+//     writeJobFile();
+//     let pathThatDoesNotExist = Util.escapeBackslashes('bag_does_not_exist.tar');
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     jobRunner.job.packageOp = null;
+//     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+//     jobRunner.run().then(function(returnCode) {
+//         let result = jobRunner.job.validationOp.result;
+//         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+//         expect(result.errors.length).toBeGreaterThan(0);
+//         expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if bag directory does not exist', done => {
+//     writeJobFile();
+//     let pathThatDoesNotExist = Util.escapeBackslashes('dir/does/not/exist');
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     jobRunner.job.packageOp = null;
+//     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
+
+//     jobRunner.run().then(function(returnCode) {
+//         let result = jobRunner.job.validationOp.result;
+//         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+//         expect(result.errors.length).toBeGreaterThan(0);
+//         expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
+//         done();
+//     });
+// });
+
+// test('run() fails gracefully if BagItProfile is missing', done => {
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     jobRunner.job.packageOp = null;
+//     jobRunner.job.bagItProfile = null;
+//     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
+
+//     jobRunner.run().then(function(returnCode) {
+//         let result = jobRunner.job.validationOp.result;
+//         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+//         expect(result.errors.length).toBeGreaterThan(0);
+//         expect(result.errors.join('')).toContain(Context.y18n.__("Cannot validate bag because job has no BagItProfile."));
+//         done();
+//     });
+// });
+
+test('run() fails gracefully if BagItProfile is invalid', done => {
     writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-    expect(jobRunner.jobFilePath).toEqual(tmpJobFile);
-    expect(jobRunner.deleteJobFile).toBe(true);
-    expect(jobRunner.job).not.toBeNull();
-    expect(jobRunner.job.id).toEqual(jobId);
-});
-
-test('run() completes when all job operations are valid', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-
-    jobRunner.run().then(function(returnCode) {
-
-        expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
-
-        // Ensure bag was created
-        expect(fs.existsSync(tmpBagFile)).toBe(true);
-        let stats = fs.statSync(tmpBagFile);
-        expect(stats.size).toBeGreaterThan(1000);
-
-        checkBagCreatorResults(jobRunner.job, stats);
-        checkValidatorResults(jobRunner.job);
-        if (helper.envHasS3Credentials()) {
-            checkUploadResults(jobRunner.job);
-        }
-        checkOutputCounts();
-
-        // We set deleteJobFile to true in the constructor,
-        // so make sure it's deleted.
-        expect(fs.existsSync(tmpJobFile)).toBe(false);
-
-        done();
-    });
-});
-
-
-test('run() fails gracefully if package fails (untarred bag)', done => {
-    // Can't figure out how to do this safely on Windows yet.
-    // 'nul' does not seem to work like /dev/null
-    if (os.platform() === 'win32') {
-        return
-    }
-
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-
-    // Force failure by writing to an output file that doesn't exist.
-    jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
-
-    jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'FileSystemWriter:');
-        done();
-    });
-});
-
-test('run() fails gracefully if package fails (tarred bag, cannot create directory)', done => {
-    // Windoze!!
-    if (os.platform() === 'win32') {
-        return
-    }
-
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-
-    // Force failure by writing to an output file that doesn't exist.
-    jobRunner.job.packageOp.outputPath = '/dev/null/xyz/file_does_not_exist.tar';
-
-    jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
-        done();
-    });
-});
-
-test('run() fails gracefully if package fails (tarred bag, cannot write in directory)', done => {
-    // Windoze!!
-    if (os.platform() === 'win32') {
-        return
-    }
-
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-
-    // Force failure by writing to an output file that doesn't exist.
-    jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist.tar';
-
-    jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
-        done();
-    });
-});
-
-test('run() fails gracefully if bag is in character device', done => {
-    writeJobFile();
-    let pathThatDoesNotExist = Util.escapeBackslashes('/dev/null/xyz/bag.tar');
     let jobRunner = new JobRunner(tmpJobFile, true);
     jobRunner.job.packageOp = null;
-    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
-
-    jobRunner.run().then(function(returnCode) {
-        let result = jobRunner.job.validationOp.result;
-        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
-        expect(result.errors.length).toBeGreaterThan(0);
-        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
-        done();
-    });
-});
-
-test('run() fails gracefully if bag file does not exist', done => {
-    writeJobFile();
-    let pathThatDoesNotExist = Util.escapeBackslashes('bag_does_not_exist.tar');
-    let jobRunner = new JobRunner(tmpJobFile, true);
-    jobRunner.job.packageOp = null;
-    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
-
-    jobRunner.run().then(function(returnCode) {
-        let result = jobRunner.job.validationOp.result;
-        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
-        expect(result.errors.length).toBeGreaterThan(0);
-        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
-        done();
-    });
-});
-
-test('run() fails gracefully if bag directory does not exist', done => {
-    writeJobFile();
-    let pathThatDoesNotExist = Util.escapeBackslashes('dir/does/not/exist');
-    let jobRunner = new JobRunner(tmpJobFile, true);
-    jobRunner.job.packageOp = null;
-    jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
-
-    jobRunner.run().then(function(returnCode) {
-        let result = jobRunner.job.validationOp.result;
-        expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
-        expect(result.errors.length).toBeGreaterThan(0);
-        expect(result.errors.join('')).toContain(Context.y18n.__('Error gathering info about bag'));
-        done();
-    });
-});
-
-// TODO: Test with missing BagItProfile
-test('run() fails gracefully if BagItProfile is missing', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-    jobRunner.job.packageOp = null;
-    jobRunner.job.bagItProfile = null;
+    jobRunner.job.bagItProfile.tags = []; // no tag defs = invalid
     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
 
     jobRunner.run().then(function(returnCode) {
         let result = jobRunner.job.validationOp.result;
         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
         expect(result.errors.length).toBeGreaterThan(0);
-        expect(result.errors.join('')).toContain(Context.y18n.__("Cannot validate bag because job has no BagItProfile."));
+        expect(result.errors.join('')).toContain(Context.y18n.__('Profile lacks requirements for bagit.txt tag file.'));
         done();
     });
 });
 
-// TODO: Test with invalid BagItProfile
 // TODO: Test with missing serialization
 // TODO: Test with illegal serialization
 // TODO: Test with upload failure (1 of 1 targets fails)

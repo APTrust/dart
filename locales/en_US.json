@@ -306,5 +306,7 @@
   "Error gathering info about bag": "Error gathering info about bag",
   "File does not exist at %s": "File does not exist at %s",
   "File does not exist at": "File does not exist at",
-  "Cannot validate bag because job has no BagItProfile.": "Cannot validate bag because job has no BagItProfile."
+  "Cannot validate bag because job has no BagItProfile.": "Cannot validate bag because job has no BagItProfile.",
+  "Profile lacks requirements for bagit.txt tag file.": "Profile lacks requirements for bagit.txt tag file.",
+  "\nProfile lacks requirements for bag-info.txt tag file.": "\nProfile lacks requirements for bag-info.txt tag file."
 }
