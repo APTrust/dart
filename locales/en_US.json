@@ -308,5 +308,12 @@
   "File does not exist at": "File does not exist at",
   "Cannot validate bag because job has no BagItProfile.": "Cannot validate bag because job has no BagItProfile.",
   "Profile lacks requirements for bagit.txt tag file.": "Profile lacks requirements for bagit.txt tag file.",
-  "\nProfile lacks requirements for bag-info.txt tag file.": "\nProfile lacks requirements for bag-info.txt tag file."
+  "\nProfile lacks requirements for bag-info.txt tag file.": "\nProfile lacks requirements for bag-info.txt tag file.",
+  "Profile says bag must be serialized, but it is a directory.": "Profile says bag must be serialized, but it is a directory.",
+  "Bag has extension %s, but profile says it must be serialized as of one of the following types: %s.": "Bag has extension %s, but profile says it must be serialized as of one of the following types: %s.",
+  "Profile must accept at least one BagIt version.": "Profile must accept at least one BagIt version.",
+  "Profile must require at least one manifest.": "Profile must require at least one manifest.",
+  "Serialization must be one of: %s.": "Serialization must be one of: %s.",
+  "When serialization is allowed, you must specify at least one serialization format.": "When serialization is allowed, you must specify at least one serialization format.",
+  "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar.": "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar."
 }

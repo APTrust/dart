@@ -273,6 +273,7 @@ class Validator extends EventEmitter {
             return;
         }
         if (!this._validateSerialization()) {
+            this.emit('error', this.errors.join(' '));
             this.emit('end')
             return;
         }
@@ -422,12 +423,12 @@ class Validator extends EventEmitter {
             var bagIsDirectory = fs.statSync(this.pathToBag).isDirectory();
             if (this.profile.serialization == 'required') {
                 if (bagIsDirectory) {
-                    this.errors.push("Profile says bag must be serialized, but it is a directory.");
+                    this.errors.push(Context.y18n.__("Profile says bag must be serialized, but it is a directory."));
                     validFormat = false;
                 }
             } else if (this.profile.serialization == 'forbidden') {
                 if (!bagIsDirectory) {
-                    this.errors.push("Profile says bag must not be serialized, but bag is not a directory.");
+                    this.errors.push(Context.y18n.__("Profile says bag must not be serialized, but bag is not a directory."));
                     validFormat = false;
                     checkSerializationFormat = false;
                 }
@@ -435,7 +436,7 @@ class Validator extends EventEmitter {
             if (!bagIsDirectory && checkSerializationFormat) {
                 if (!this._validateSerializationFormat()) {
                     var ext = path.extname(this.pathToBag);
-                    this.errors.push(`Bag has extension '${ext}', but profile says it must be serialized as of one of the following types: ${this.profile.acceptSerialization.join(', ')}.`);
+                    this.errors.push(Context.y18n.__("Bag has extension %s, but profile says it must be serialized as of one of the following types: %s.", ext, this.profile.acceptSerialization.join(', ')));
                     validFormat = false;
                 }
             }

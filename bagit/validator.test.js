@@ -359,11 +359,11 @@ test('Validator identifies wrong folder name', done => {
 
 test('Validator rejects unserialized bag if profile says it must be serialized', done => {
     let validator = getValidator("aptrust_bagit_profile_2.2.json", "aptrust", "example.edu.sample_good");
-    let expected = ["Profile says bag must be serialized, but it is a directory."];
+    let expected = [Context.y18n.__("Profile says bag must be serialized, but it is a directory.")];
 
     validator.on('error', function(err) {
         // Force failure & stop test.
-        expect(err).toBeNull();
+        expect(err).not.toBeNull();
         done();
     });
     validator.on('end', function(taskDesc) {

@@ -1,4 +1,5 @@
 const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
 const fs = require('fs');
 const path = require('path');
 const { OperationResult } = require('../core/operation_result');
@@ -126,7 +127,7 @@ class Uploader extends Worker {
             }
             for (let f of op.sourceFiles) {
                 if (!fs.existsSync(f)) {
-                    errors.push(Context.y18n.__(`File to be uploaded does not exist: ${f}.`));
+                    errors.push(Context.y18n.__(`File to be uploaded does not exist: %s.`, f));
                 }
             }
         }
