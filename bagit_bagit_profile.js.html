@@ -346,26 +346,27 @@ class BagItProfile extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
+        this.errors = {};
         super.validate();
         if (Util.isEmptyStringArray(this.acceptBagItVersion)) {
-            this.errors["acceptBagItVersion"] = "Profile must accept at least one BagIt version.";
+            this.errors["acceptBagItVersion"] = Context.y18n.__("Profile must accept at least one BagIt version.");
         }
         if (Util.isEmptyStringArray(this.manifestsRequired)) {
-            this.errors["manifestsRequired"] = "Profile must require at least one manifest.";
+            this.errors["manifestsRequired"] = Context.y18n.__("Profile must require at least one manifest.");
         }
         if (!this.hasTagFile("bagit.txt")) {
-            this.errors["tags"] = "Profile lacks requirements for bagit.txt tag file.";
+            this.errors["tags"] = Context.y18n.__("Profile lacks requirements for bagit.txt tag file.");
         }
         if (!this.hasTagFile("bag-info.txt")) {
             this.errors["tags"] = this.errors["tags"] || '';
-            this.errors["tags"] += "\nProfile lacks requirements for bag-info.txt tag file.";
+            this.errors["tags"] += Context.y18n.__("\nProfile lacks requirements for bag-info.txt tag file.");
         }
         if (!Util.listContains(Constants.REQUIREMENT_OPTIONS, this.serialization)) {
-            this.errors["serialization"] = `Serialization must be one of: ${Constants.REQUIREMENT_OPTIONS.join(', ')}.`;
+            this.errors["serialization"] = Context.y18n.__("Serialization must be one of: %s.", Constants.REQUIREMENT_OPTIONS.join(', '));
         }
         if ((this.serialization == 'required' || this.serialzation == 'optional') &amp;&amp;
             Util.isEmptyStringArray(this.acceptSerialization)) {
-            this.errors["acceptSerialization"] = "When serialization is allowed, you must specify at least one serialization format.";
+            this.errors["acceptSerialization"] = Context.y18n.__("When serialization is allowed, you must specify at least one serialization format.");
         }
         return Object.keys(this.errors).length == 0;
     }
