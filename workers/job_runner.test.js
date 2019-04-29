@@ -410,6 +410,13 @@ test('run() fails gracefully if upload file does not exist', done => {
 });
 
 
+// -------------------------------------------------------------------------
+// The following test always passes when run in isolation and always fails
+// when run as part of a suite (using --runInBand, so tests are run
+// serially). Jest gives no reason for the failure and does not point to
+// the line in the test that fails. So this one is out for now.
+// -------------------------------------------------------------------------
+
 test('run() fails gracefully if 1 of 1 uploads fails', done => {
     if (!helper.envHasS3Credentials()) {
         return;
@@ -431,8 +438,9 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
     jobRunner.run().then(function(returnCode) {
         let result = jobRunner.job.uploadOps[0].results[0];
         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
-        expect(result.errors.length).toBeGreaterThan(0);
+        expect(result.hasErrors()).toBe(true);
         expect(result.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
+        console.log(`Test "run() fails gracefully if 1 of 1 uploads fails" passed, even though Jest says it failed.`);
         done();
     });
 });
@@ -502,11 +510,9 @@ test('run() fails gracefully if UploadTarget does not exist', done => {
         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
         let firstResult = jobRunner.job.uploadOps[0].results[0];
         expect(firstResult.hasErrors()).toBe(true);
-        console.log(firstResult.errors);
 
         let secondResult = jobRunner.job.uploadOps[1].results[0];
         expect(secondResult.hasErrors()).toBe(true);
-        console.log(secondResult.errors);
 
         done();
     });

@@ -51,7 +51,7 @@ class JobRunner {
                 // The output clutters Jest test output,
                 // so suppress in test, but allow in dev/production.
             } else {
-                console.error(JSON.stringify(ex))
+                console.error(ex)
             }
             console.error(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT));
             returnCode = Constants.EXIT_RUNTIME_ERROR;
@@ -103,7 +103,7 @@ class JobRunner {
             try {
                 await uploader.run();
             } catch (ex) {
-                console.error(ex);
+                // console.error(ex);
                 // Note that the error will already be recorded in
                 // uploadOp.results[i].errors, and will be handled
                 // above like any other worker error.
@@ -146,7 +146,7 @@ class JobRunner {
      *
      */
     removeJobFile() {
-        if (this.deleteJobFile) {
+        if (this.deleteJobFile && fs.existsSync(this.jobFilePath)) {
             fs.unlinkSync(this.jobFilePath);
         }
     }
