@@ -5,7 +5,21 @@ const { Util } = require('../core/util');
 
 class Worker {
     constructor(operation) {
+        /**
+         * The name of the operation being performed. Can be
+         * package, validate, or upload.
+         *
+         * @type {string}
+         */
         this.operation = operation;
+        /**
+         * The worker's exit code. See {@link Constants.EXIT_CODES}.
+         * For upload operations, ignore this and check the result of
+         * all returned promises instead, because each upload operation
+         * resets the worker's exit code. [This needs a proper fix.]
+         *
+         * @type {number}
+         */
         this.exitCode = Constants.EXIT_SUCCESS;
     }
 

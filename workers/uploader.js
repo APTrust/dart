@@ -47,7 +47,7 @@ class Uploader extends Worker {
         for (let op of this.job.uploadOps) {
             promises = promises.concat(this.doUpload(op));
         }
-        return Promise.all(promises)
+        return Promise.all(promises);
     }
 
     /**
@@ -55,6 +55,10 @@ class Uploader extends Worker {
      * an array of promises. If a single operation includes multiple
      * source files, it will upload them in parallel. This returns
      * one promise per source file.
+     *
+     * Because each upload resets the exitCode, the caller should
+     * ignore the final exitCode and check the results of all of the
+     * promises instead. [This needs a more elegant fix.]
      *
      * @param {UploadOperation} - An upload operation containing one
      * or more source files.

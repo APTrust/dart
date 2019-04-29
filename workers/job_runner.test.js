@@ -405,9 +405,38 @@ function testFailedPackage(jobRunner, returnCode, errorPrefix) {
 // });
 
 
-// TODO: Test with upload failure (1 of 1 targets fails)
-//
-test('run() fails gracefully if 1 of 1 uploads fails', done => {
+// test('run() fails gracefully if 1 of 1 uploads fails', done => {
+//     if (!helper.envHasS3Credentials()) {
+//         return;
+//     }
+//     writeJobFile();
+//     let jobRunner = new JobRunner(tmpJobFile, true);
+//     jobRunner.job.packageOp = null;
+//     jobRunner.job.validationOp = null;
+
+//     // Have just one upload and point it toward an invalid target
+//     let badTarget = helper.getUploadTarget();
+//     badTarget.login = 'BogusAWSKey';
+//     badTarget.password = 'BadKeyForTesting';
+//     badTarget.save();
+//     jobRunner.job.uploadOps = [
+//             new UploadOperation(badTarget.id, [__filename])
+//     ];
+
+//     jobRunner.run().then(function(returnCode) {
+//         let result = jobRunner.job.uploadOps[0].results[0];
+//         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
+//         expect(result.errors.length).toBeGreaterThan(0);
+//         expect(result.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
+//         done();
+//     });
+// });
+
+
+test('run() fails gracefully if 1 of 2 uploads fails', done => {
+    if (!helper.envHasS3Credentials()) {
+        return;
+    }
     writeJobFile();
     let jobRunner = new JobRunner(tmpJobFile, true);
     jobRunner.job.packageOp = null;
@@ -418,18 +447,36 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
     badTarget.login = 'BogusAWSKey';
     badTarget.password = 'BadKeyForTesting';
     badTarget.save();
-    jobRunner.job.uploadOps = [
-            new UploadOperation(badTarget.id, [__filename])
-    ];
+
+    // uploadOps[0] is using a valid upload target,
+    // so just set the source to a file that exists.
+    // This operation should succeed.
+    jobRunner.job.uploadOps[0].sourceFiles[0] = __filename
+
+    // This operation should fail with bad S3 credentials.
+    jobRunner.job.uploadOps[1] = new UploadOperation(badTarget.id, [__filename]);
+
+    // Add one more operation, which should complete even
+    // after op #2 fails.
+    let goodTarget = helper.getUploadTarget();
+    goodTarget.save();
+    jobRunner.job.uploadOps.push(new UploadOperation(goodTarget.id, [__filename]));
 
     jobRunner.run().then(function(returnCode) {
-        let result = jobRunner.job.uploadOps[0].results[0];
         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
-        expect(result.errors.length).toBeGreaterThan(0);
-        expect(result.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
+
+        let firstResult = jobRunner.job.uploadOps[0].results[0];
+        expect(firstResult.errors.length).toEqual(0);
+
+        let secondResult = jobRunner.job.uploadOps[1].results[0];
+        expect(secondResult.errors.length).toBeGreaterThan(0);
+        expect(secondResult.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
+
+        let thirdResult = jobRunner.job.uploadOps[2].results[0];
+        expect(firstResult.errors.length).toEqual(0);
+
         done();
     });
 });
 
-
-// TODO: Test with upload failure (1 of 2 targets fails)
+// TODO: Test with non-existent upload target.

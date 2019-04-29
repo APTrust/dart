@@ -96,19 +96,29 @@ class JobRunner {
      */
     async uploadFiles() {
         // TODO: Retry those that failed due to non-fatal error.
+        let returnCode = Constants.EXIT_SUCCESS;
         if (this.job.uploadOps.length > 0) {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
             try {
                 await uploader.run();
             } catch (ex) {
-                // Swallow rejected promise errors. They'll be handled above
-                // by checking returnCode and uploadOp.result.errors.
+                console.error(ex);
+                // Note that the error will already be recorded in
+                // uploadOp.results[i].errors, and will be handled
+                // above like any other worker error.
+            }
+            for (let op of this.job.uploadOps) {
+                for (let result of op.results) {
+                    if (result.hasErrors()) {
+                        returnCode = Constants.EXIT_RUNTIME_ERROR;
+                    }
+                }
             }
             this.job.save();
-            return uploader.exitCode;
+            return returnCode;
         }
-        return Constants.EXIT_SUCCESS;
+        return returnCode;
     }
 
 
