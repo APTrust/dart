@@ -319,5 +319,7 @@
   "File to be uploaded does not exist: %s.": "File to be uploaded does not exist: %s.",
   "S3Error: The AWS Access Key Id you provided does not exist in our records.": "S3Error: The AWS Access Key Id you provided does not exist in our records.",
   "Specify where you want to upload the file.": "Specify where you want to upload the file.",
-  "Specify at least one file to upload.": "Specify at least one file to upload."
+  "Specify at least one file to upload.": "Specify at least one file to upload.",
+  "Cannot find UploadTarget record": "Cannot find UploadTarget record",
+  "File to be uploaded does not exist": "File to be uploaded does not exist"
 }

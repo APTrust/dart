@@ -8,6 +8,8 @@ const { UploadTarget } = require('../core/upload_target');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
 
+// This implementation is convoluted and messy...
+
 /**
  * The Uploader performs the upload operations for a job.
  * It catches events from the underlying network plugin,
@@ -66,13 +68,19 @@ class Uploader extends Worker {
      * @returns {Array<Promise>}
      */
     doUpload(uploadOp) {
+        let uploader = this;
         let uploadTarget = UploadTarget.find(uploadOp.uploadTargetId);
         if (!uploadTarget) {
-            return this.runtimeError('preUpload', ['Cannot find UploadTarget record'], null);
+            uploadOp.results[0] = new OperationResult('upload', 'none');
+            uploadOp.results[0].start();
+            uploadOp.results[0].finish(Context.y18n.__('Cannot find UploadTarget record'));
+            return new Promise(function(resolve, reject) {
+                reject(uploader.validationError(uploadOp.results[0].errors));
+            });
+
         }
         let providerClass = this.getProvider(uploadTarget.protocol);
         let promises = [];
-        let uploader = this;
         for (let filepath of uploadOp.sourceFiles) {
             let provider = new providerClass(uploadTarget);
             var promise = new Promise(function(resolve, reject) {
