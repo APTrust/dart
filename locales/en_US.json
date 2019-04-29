@@ -315,5 +315,7 @@
   "Profile must require at least one manifest.": "Profile must require at least one manifest.",
   "Serialization must be one of: %s.": "Serialization must be one of: %s.",
   "When serialization is allowed, you must specify at least one serialization format.": "When serialization is allowed, you must specify at least one serialization format.",
-  "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar.": "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar."
+  "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar.": "Bag has extension .zip, but profile says it must be serialized as of one of the following types: application/tar.",
+  "File to be uploaded does not exist: %s.": "File to be uploaded does not exist: %s.",
+  "S3Error: The AWS Access Key Id you provided does not exist in our records.": "S3Error: The AWS Access Key Id you provided does not exist in our records."
 }

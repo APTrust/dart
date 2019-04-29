@@ -119,16 +119,32 @@ class Uploader extends Worker {
     validateParams() {
         let errors = [];
         for (let op of this.job.uploadOps) {
+            let opErrors = []
             if (Util.isEmpty(op.uploadTargetId)) {
-                errors.push(Context.y18n.__('Specify where you want to upload the file.'));
+                opErrors.push(Context.y18n.__('Specify where you want to upload the file.'));
             }
             if (!op.sourceFiles || Util.isEmptyStringArray(op.sourceFiles)) {
-                errors.push(Context.y18n.__('Specify at least one file to upload.'));
+                opErrors.push(Context.y18n.__('Specify at least one file to upload.'));
             }
             for (let f of op.sourceFiles) {
                 if (!fs.existsSync(f)) {
-                    errors.push(Context.y18n.__(`File to be uploaded does not exist: %s.`, f));
+                    opErrors.push(Context.y18n.__(`File to be uploaded does not exist: %s.`, f));
                 }
+            }
+            if (opErrors.length > 0) {
+                let providerDesc = 'Unknown upload provider';
+                try {
+                    let uploadTarget = UploadTarget.find(op.uploadTargetId);
+                    let providerClass = this.getProvider(uploadTarget.protocol)
+                    providerDesc = providerClass.description().name;
+                } catch (err) {
+                    providerDesc += ` ${err.message}`;
+                }
+                let result = new OperationResult('upload', providerDesc);
+                result.start();
+                result.finish(opErrors.join(' '));
+                op.results.push(result);
+                errors = errors.concat(opErrors);
             }
         }
         return errors;

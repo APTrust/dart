@@ -41,7 +41,7 @@ class JobRunner {
                 returnCode = await this.uploadFiles();
             }
             this.removeJobFile();
-            return Constants.EXIT_SUCCESS;
+            return returnCode;
         } catch (ex) {
             // Caller collects messages from STDERR.
             if (ex instanceof Error) {
@@ -99,7 +99,12 @@ class JobRunner {
         if (this.job.uploadOps.length > 0) {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
-            await uploader.run()
+            try {
+                await uploader.run();
+            } catch (ex) {
+                // Swallow rejected promise errors. They'll be handled above
+                // by checking returnCode and uploadOp.result.errors.
+            }
             this.job.save();
             return uploader.exitCode;
         }

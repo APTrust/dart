@@ -101,7 +101,7 @@ class S3Client extends Plugin {
      */
     upload(filepath, keyname) {
         if (!filepath) {
-            throw 'Param filepath is required for upload.';
+            throw new Error('Param filepath is required for upload.');
         }
         if (!keyname) {
             keyname = path.basename(filepath);
@@ -109,7 +109,7 @@ class S3Client extends Plugin {
         var xfer = this._initXferRecord('upload', filepath, keyname);
         try {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
-                xfer.result.finish(`${filepath} is not a file`);
+                xfer.result.finish(Context.y18n.__('%s is not a file', filepath));
                 this.emit('error', xfer.result);
                 return;
             }
