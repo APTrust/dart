@@ -390,6 +390,10 @@ test('run() fails gracefully if serialization is wrong format', done => {
 
 
 test('run() fails gracefully if upload file does not exist', done => {
+    if (!helper.envHasS3Credentials()) {
+        done();
+        return;
+    }
     writeJobFile();
     let jobRunner = new JobRunner(tmpJobFile, true);
     jobRunner.job.packageOp = null;
@@ -419,6 +423,7 @@ test('run() fails gracefully if upload file does not exist', done => {
 
 test('run() fails gracefully if 1 of 1 uploads fails', done => {
     if (!helper.envHasS3Credentials()) {
+        done();
         return;
     }
     writeJobFile();
@@ -448,6 +453,7 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
 
 test('run() fails gracefully if 1 of 3 uploads fails', done => {
     if (!helper.envHasS3Credentials()) {
+        done();
         return;
     }
     writeJobFile();
