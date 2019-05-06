@@ -15,7 +15,7 @@
     "dependencies": {
         "ajv": "^6.10.0",
         "archiver": "^3.0.0",
-        "asar": "^2.0.0",
+        "asar": "^2.0.1",
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
