@@ -27,7 +27,7 @@ let pathToValidTestBag = path.join(__dirname, '..', 'test', 'bags', 'aptrust', '
 
 
 // Capture JobRunner output
-let filterPattern = '{"op":';
+let filterPattern = /^\s*{"op":/;
 let outputCatcher = new OutputCatcher(filterPattern);
 
 let helper = new UploadTestHelper();
@@ -211,6 +211,7 @@ test('run() fails gracefully if package fails (untarred bag)', done => {
     // Can't figure out how to do this safely on Windows yet.
     // 'nul' does not seem to work like /dev/null
     if (os.platform() === 'win32') {
+        done();
         return
     }
 
@@ -229,6 +230,7 @@ test('run() fails gracefully if package fails (untarred bag)', done => {
 test('run() fails gracefully if package fails (tarred bag, cannot create directory)', done => {
     // Windoze!!
     if (os.platform() === 'win32') {
+        done();
         return
     }
 
@@ -247,6 +249,7 @@ test('run() fails gracefully if package fails (tarred bag, cannot create directo
 test('run() fails gracefully if package fails (tarred bag, cannot write in directory)', done => {
     // Windoze!!
     if (os.platform() === 'win32') {
+        done();
         return
     }
 
