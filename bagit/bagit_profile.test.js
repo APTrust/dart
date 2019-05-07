@@ -33,7 +33,7 @@ test('Constructor sets initial properties', () => {
     expect(profile.bagItProfileInfo).not.toBeNull();
     expect(profile.manifestsRequired).toEqual(['sha256']);
     expect(profile.tagManifestsRequired).toEqual([]);
-    expect(profile.tags.length).toEqual(16);
+    expect(profile.tags.length).toEqual(17);
     expect(profile.serialization).toEqual('optional');
     expect(profile.baseProfileId).toEqual(null);
     expect(profile.isBuiltIn).toEqual(false);
@@ -70,10 +70,10 @@ test('findMatchingTags()', () => {
     expect(tags[1].tagFile).toEqual('custom-tag-file.txt');
 
     tags = profile.findMatchingTags('tagFile', 'bag-info.txt');
-    expect(tags.length).toEqual(14);
+    expect(tags.length).toEqual(15);
 
     tags = profile.findMatchingTags('defaultValue', '');
-    expect(tags.length).toEqual(15);  // BagIt-Version and Tag-File-Character-Encoding have values
+    expect(tags.length).toEqual(16);  // BagIt-Version and Tag-File-Character-Encoding have values
 
     tags = profile.findMatchingTags('fakeProperty', 'fakeValue');
     expect(tags.length).toEqual(0);
@@ -204,7 +204,7 @@ test('tagsGroupedByFile()', () => {
     let profile = new BagItProfile();
     let files = profile.tagsGroupedByFile();
     expect(files['bagit.txt'].length).toEqual(2);
-    expect(files['bag-info.txt'].length).toEqual(14);
+    expect(files['bag-info.txt'].length).toEqual(15);
 });
 
 test('getTagFileContents()', () => {
@@ -214,6 +214,7 @@ test('getTagFileContents()', () => {
     profile.getTagsFromFile('bag-info.txt', 'Bag-Count')[0].userValue = '1';
     profile.getTagsFromFile('bag-info.txt', 'Bag-Size')[0].userValue = '10887';
     profile.getTagsFromFile('bag-info.txt', 'Bagging-Date')[0].userValue = '2018-08-20';
+    profile.getTagsFromFile('bag-info.txt', 'Bagging-Software')[0].userValue = 'DART v2.0';
     profile.getTagsFromFile('bag-info.txt', 'Contact-Email')[0].userValue = 'bagger@aptrust.org';
     profile.getTagsFromFile('bag-info.txt', 'Contact-Name')[0].userValue = 'Bagger Vance';
     profile.getTagsFromFile('bag-info.txt', 'Contact-Phone')[0].userValue = '434-555-1212';
@@ -225,7 +226,7 @@ test('getTagFileContents()', () => {
     profile.getTagsFromFile('bag-info.txt', 'Payload-Oxum')[0].userValue = '10232.4';
     profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0].userValue = 'Academic Preservation Trust';
     let bagItContents = "BagIt-Version: 0.97\nTag-File-Character-Encoding: UTF-8\n";
-    let bagInfoContents = "Bag-Count: 1\nBag-Group-Identifier: Stuff Collection\nBag-Size: 10887\nBagging-Date: 2018-08-20\nContact-Email: bagger@aptrust.org\nContact-Name: Bagger Vance\nContact-Phone: 434-555-1212\nExternal-Description: Bag of Stuff\nExternal-Identifier: MYLB/NDA\nInternal-Sender-Description: Bag of miscellaneous junk\nInternal-Sender-Identifier: NMOT\nOrganization-Address: 1234 Main St., Charlottesville, VA 22903\nPayload-Oxum: 10232.4\nSource-Organization: Academic Preservation Trust\n";
+    let bagInfoContents = "Bag-Count: 1\nBag-Group-Identifier: Stuff Collection\nBag-Size: 10887\nBagging-Date: 2018-08-20\nBagging-Software: DART v2.0\nContact-Email: bagger@aptrust.org\nContact-Name: Bagger Vance\nContact-Phone: 434-555-1212\nExternal-Description: Bag of Stuff\nExternal-Identifier: MYLB/NDA\nInternal-Sender-Description: Bag of miscellaneous junk\nInternal-Sender-Identifier: NMOT\nOrganization-Address: 1234 Main St., Charlottesville, VA 22903\nPayload-Oxum: 10232.4\nSource-Organization: Academic Preservation Trust\n";
     expect(profile.getTagFileContents('bagit.txt')).toEqual(bagItContents);
     expect(profile.getTagFileContents('bag-info.txt')).toEqual(bagInfoContents);
 });

@@ -223,6 +223,7 @@ class BagItProfile extends PersistentObject {
             'Bag-Group-Identifier',
             'Bag-Size',
             'Bagging-Date',
+            'Bagging-Software',
             'Contact-Email',
             'Contact-Name',
             'Contact-Phone',
