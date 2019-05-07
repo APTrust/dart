@@ -372,7 +372,31 @@ class Util {
                     fs.unlinkSync(curPath);
                 }
             });
-            fs.rmdirSync(filepath);
+            // Delete the directory that the code above just emptied out,
+            // and ignore errors on Windows that come from synchronous
+            // delete calls not actually deleting files when they say they do.
+            // This problem is described in this bug report:
+            //
+            // https://github.com/nodejs/node-v0.x-archive/issues/3051
+            //
+            // On Windows, Node's unlinkSync function merely marks a file
+            // to be deleted and then returns without deleting it, if the
+            // file has an open read handle. This causes the rmdirSync call
+            // below to throw an exception saying the directory isn't empty.
+            //
+            // Well screw that. When a synchronous function says it's done,
+            // it should be done. The worst side-effect of ignoring Window's
+            // stupidity in the catch block is that the user will end up
+            // with some unneeded empty directories.
+			try {
+				fs.rmdirSync(filepath);
+			} catch (err) {
+				if (os.platform == 'win32') {
+				    // Windows == Loserville
+				} else {
+					console.log(err);
+				}
+			}
         }
     };
 

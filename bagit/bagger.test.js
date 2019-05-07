@@ -11,45 +11,19 @@ const { Util } = require('../core/util');
 var tmpFile = path.join(os.tmpdir(), 'TestBag.tar');
 var tmpOutputDir = path.join(os.tmpdir(), 'dart-bagger-test');
 
-beforeAll(() => {
-	cleanupTempFiles();
-});
-
 afterEach(() => {
+    // Skip deletion on Windows because
     // https://github.com/nodejs/node-v0.x-archive/issues/3051
-    // On Windows Node's unlinkSync function merely marks a file
-    // to be deleted and then returns without deleting it, if the
-    // file has an open read handle. Combine this with the fact
-    // that Node's implicit auto-closing of file handles happens
-    // at unspecified times, and we have a problem. On Windows,
-    // it appears as a permission error when a new test tries to
-    // open a file that the prior test deleted. The file isn't
-    // really deleted. So... we hack in a little sleep time for
-    // windows to catch up. Ideally, we'd explicitly close the
-    // file handles that the bagger and validator use, but that's
-    // tricky, given that they have so many pipes and events
-    // attached.
-    if (os.platform() === 'win32') {
-	    sleepyCleanup();
-    } else {
-	    cleanupTempFiles();
-    }
+	if (os.platform != 'win32') {
+		if (fs.existsSync(tmpFile)) {
+			fs.unlinkSync(tmpFile)
+		}
+	}
 });
 
-async function sleepyCleanup() {
-	await takeANapAndThenCleanUp();
-}
-
-function takeANapAndThenCleanUp() {
-	return new Promise(resolve => setTimeout(cleanupTempFiles, 500));
-}
-
-function cleanupTempFiles() {
-    if (fs.existsSync(tmpFile)) {
-        fs.unlinkSync(tmpFile);
-    }
-    Util.deleteRecursive(tmpOutputDir);
-}
+afterAll(() => {
+	Util.deleteRecursive(tmpOutputDir);
+});
 
 function getJob(...sources) {
     var job = new Job();
