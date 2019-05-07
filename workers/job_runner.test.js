@@ -391,7 +391,6 @@ test('run() fails gracefully if serialization is wrong format', done => {
     });
 });
 
-
 test('run() fails gracefully if upload file does not exist', done => {
     if (!helper.envHasS3Credentials()) {
         done();
@@ -415,14 +414,6 @@ test('run() fails gracefully if upload file does not exist', done => {
         done();
     });
 });
-
-
-// -------------------------------------------------------------------------
-// The following test always passes when run in isolation and always fails
-// when run as part of a suite (using --runInBand, so tests are run
-// serially). Jest gives no reason for the failure and does not point to
-// the line in the test that fails. So this one is out for now.
-// -------------------------------------------------------------------------
 
 test('run() fails gracefully if 1 of 1 uploads fails', done => {
     if (!helper.envHasS3Credentials()) {
@@ -448,7 +439,6 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
         expect(returnCode).toEqual(Constants.EXIT_RUNTIME_ERROR);
         expect(result.hasErrors()).toBe(true);
         expect(result.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
-        console.log(`Test "run() fails gracefully if 1 of 1 uploads fails" passed, even though Jest says it failed.`);
         done();
     });
 });
