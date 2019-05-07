@@ -101,23 +101,3 @@ After every commit the documentation is rebuilt and published at
 
 After running that, check the index.html file in the docs directory, which the
 command will create if it doesn't already exist.
-
-## Building Apps with Nexe
-
-The [nexe npm package](https://www.npmjs.com/package/nexe) builds Node.js
-scripts into standalone executables. DART executables are in the apps
-directory. You can compile them with the command below. Be sure to run this from
-the top-level directory, or the executable will be broken due to bad internal
-paths.
-
-```
-./build-cli.sh
-```
-
-Note that all of the DART command line tools will be built into a single
-executable called `dart-cli`. This is in part because nexe binaries are large
-(over 40 MB) and include only about 200k-800k of JavaScript. Better to
-distribute one 40 MB binary than ten.
-
-The other advantage to having a single binary is that when we update core DART
-code, we have to redistribute only one binary instead of ten.
