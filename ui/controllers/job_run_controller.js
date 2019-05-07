@@ -83,6 +83,9 @@ class JobRunController extends BaseController {
         let controller = this;
         this.childProcess.stdout.on('data', (str) => {
             controller.renderChildProcOutput(str);
+
+            // TODO: Add a debug flag that turns this on.
+            console.log(str.toString());
         });
 
         this.childProcess.stderr.on('data', (str) => {
@@ -99,6 +102,9 @@ class JobRunController extends BaseController {
             }
             controller.capturedErrorOutput.push(str);
             controller.renderChildProcOutput(str);
+
+            // TODO: Add a debug flag that turns this on.
+            console.error(str.toString());
         });
 
         this.childProcess.on('close', (code) => {
