@@ -372,20 +372,27 @@ class Bagger extends EventEmitter {
     _setBagInfoAutoValues() {
         var profile = this.job.bagItProfile;
         var baggingDate = profile.firstMatchingTag('tagName', 'Bagging-Date');
-        baggingDate.userValue = dateFormat(Date.now(), 'isoUtcDateTime');
+        if (baggingDate) {
+            baggingDate.userValue = dateFormat(Date.now(), 'isoUtcDateTime');
+        }
+
         var baggingSoftware = profile.firstMatchingTag('tagName', 'Bagging-Software');
-        baggingSoftware.userValue = Context.dartVersion();
+        if (baggingSoftware) {
+            baggingSoftware.userValue = Context.dartVersion();
+        }
 
         var fileCount = 0;
         var byteCount = 0;
         var payloadOxum = profile.firstMatchingTag('tagName', 'Payload-Oxum');
-        for (let f of this.bagItFiles) {
-            if (f.isPayloadFile()) {
-                fileCount += 1;
-                byteCount += f.size;
+        if (payloadOxum) {
+            for (let f of this.bagItFiles) {
+                if (f.isPayloadFile()) {
+                    fileCount += 1;
+                    byteCount += f.size;
+                }
             }
+            payloadOxum.userValue = `${byteCount}.${fileCount}`;
         }
-        payloadOxum.userValue = `${byteCount}.${fileCount}`;
     }
 
     /**
