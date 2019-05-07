@@ -81,7 +81,6 @@ class JobFilesController extends BaseController {
                 }
                 controller.addFileToPackageSources(f.path);
                 controller.addItemToUI(f.path);
-                controller.job.save();
             }
             $(e.currentTarget).removeClass('drop-zone-over');
             return false;
@@ -148,8 +147,9 @@ class JobFilesController extends BaseController {
         } else if (stats.isDirectory()) {
             let fsReader = new FileSystemReader(filepath);
             fsReader.on('end', function() {
+                // Add 1 to dirCount, because item itself is a directory.
                 controller.addRow(filepath, 'directory', fsReader.fileCount,
-                              fsReader.dirCount, fsReader.byteCount);
+                              fsReader.dirCount + 1, fsReader.byteCount);
             });
             fsReader.list();
         }
@@ -225,6 +225,7 @@ class JobFilesController extends BaseController {
         this.job.fileCount = filesTotal;
         this.job.dirCount = dirTotal;
         this.job.byteCount = byteTotal;
+        this.job.save();
     }
 
     /**
