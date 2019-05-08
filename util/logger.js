@@ -84,4 +84,12 @@ var logger = winston.createLogger({
     exitOnError: false
 });
 
+logger.pathToLogFile = function() {
+    for (let transport of logger.transports) {
+        if (transport.constructor.name === 'File') {
+            return path.join(transport.dirname, transport.filename);
+        }
+    }
+}
+
 module.exports = logger;
