@@ -5,7 +5,9 @@ const path = require('path');
 const { Tail } = require('tail');
 const url = require('url');
 
-const BrowserWindow = electron.remote.BrowserWindow;
+// In Jest tests, electron.remote will not be defined.
+// Otherwise it will.
+const BrowserWindow = electron.remote ? electron.remote.BrowserWindow : electron.BrowserWindow;
 var logWindow = null;
 
 class LogController extends BaseController {
