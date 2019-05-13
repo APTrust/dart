@@ -7,7 +7,7 @@ jest.mock('../controllers/app_setting_controller');
 AppSettingController.prototype.list = jest.fn().mockReturnValue({nav:'', container:''});
 
 beforeEach(() => {
-  AppSettingController.mockClear();
+    AppSettingController.mockClear();
 });
 
 test('constructor', () => {

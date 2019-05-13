@@ -1,32 +1,50 @@
-const $ = require('jquery');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
-const readLastLines = require('read-last-lines');
+const electron = require('electron');
+const path = require('path');
 const { Tail } = require('tail');
-const Templates = require('../common/templates');
+const url = require('url');
+
+const BrowserWindow = electron.remote.BrowserWindow;
+var logWindow = null;
 
 class LogController extends BaseController {
 
     constructor(params) {
         super(params, 'Help');
-        this.logfile = Context.logger.pathToLogFile();
     }
 
     show() {
-        let data = { logfile: this.logfile };
-        return this.containerContent(Templates.logShow(data));
+        if (logWindow == null) {
+            logWindow = new BrowserWindow({
+                width: 800,
+                height: 600,
+                webPreferences: {
+                    nodeIntegration: true
+                }
+            });
+            let logUrl = url.format({
+                pathname: path.join(__dirname, '..', 'log_window.html'),
+                protocol: 'file:',
+                slashes: true
+            });
+            logWindow.loadURL(logUrl);
+            logWindow.on('closed', () => { logWindow = null });
+            logWindow.show();
+            logWindow.webContents.on('did-finish-load', () => {
+                logWindow.webContents.send('loadfile', Context.logger.pathToLogFile());
+            });
+            return this.noContent();
+        }
     }
 
     postRenderCallback(fnName) {
-        let tail = new Tail(this.logfile);
-        readLastLines.read(this.logfile, 100)
-            .then((lines) => $('#logDiv').text(lines))
-            .then(() => {
-                tail.on("line", function(data) {
-                    $('#logDiv').append(data);
-                });
+        if (logWindow) {
+            let tail = new Tail(Context.logger.pathToLogFile());
+            tail.on("line", function(data) {
+                logWindow.webContents.send('append', data + "\n");
             });
-
+        }
     }
 }
 
