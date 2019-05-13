@@ -3,11 +3,8 @@ const mkdirp = require('mkdirp');
 const path = require('path');
 const winston = require('winston');
 
-const consoleFormat = winston.format.printf(function(info) {
-    if (info.level.includes('error')) {
-        return `${new Date().toISOString()} - ${info.level}: ${info.message}\n`;
-    }
-    return `${new Date().toISOString()} - ${info.level}: ${JSON.stringify(info.message, null, 4)}\n`;
+const logFormat = winston.format.printf(function(info) {
+    return `${new Date().toISOString()} - ${info.level}: ${JSON.stringify(info.message)}`;
 });
 
 
@@ -19,6 +16,7 @@ var options = {
     testLogFile: {
         level: 'debug',
         filename: path.join(Config.test.logDir, "dart.log"),
+        format: logFormat,
         handleExceptions: true,
         json: false,
         maxsize: 5242880, // 5MB
@@ -29,6 +27,7 @@ var options = {
     travisLogFile: {
         level: 'debug',
         filename: path.join(__dirname, "logs", "dart.log"),
+        format: logFormat,
         handleExceptions: true,
         json: false,
         maxsize: 5242880, // 5MB
@@ -40,6 +39,7 @@ var options = {
     userLogFile: {
         level: 'info',
         filename: path.join(Config.user.logDir, "dart.log"),
+        format: logFormat,
         handleExceptions: true,
         json: false,
         maxsize: 5242880, // 5MB
@@ -51,7 +51,7 @@ var options = {
     console: {
         level: 'debug',
         handleExceptions: true,
-        format: winston.format.combine(winston.format.colorize(), consoleFormat),
+        format: winston.format.combine(winston.format.colorize(), logFormat),
         json: false,
         colorize: true,
     },
@@ -62,20 +62,14 @@ var options = {
 var transports;
 // For Jest tests, use the test log
 if (process.env.TRAVIS_OS_NAME) {
-    mkdirp(options.travisLogFile.filename);
+    mkdirp(path.dirname(options.travisLogFile.filename));
     transports = [ new winston.transports.File(options.travisLogFile) ];
 } else if (process.env.NODE_ENV=='test') {
-    mkdirp(options.testLogFile.filename);
+    mkdirp(path.dirname(options.testLogFile.filename));
     transports = [ new winston.transports.File(options.testLogFile) ];
 } else {
-    mkdirp(options.userLogFile.filename);
+    mkdirp(path.dirname(options.userLogFile.filename));
     transports = [ new winston.transports.File(options.userLogFile) ];
-}
-// If we're running with "npm start" using the local node Electron,
-// we're in dev mode. Log to the console so we can see what's
-// happening.
-if (process.execPath.includes(path.join('node_modules', 'electron'))) {
-    transports.push(new winston.transports.Console(options.console));
 }
 
 // instantiate a new Winston Logger with the settings defined above

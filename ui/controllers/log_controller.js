@@ -9,16 +9,17 @@ class LogController extends BaseController {
 
     constructor(params) {
         super(params, 'Help');
+        this.logfile = Context.logger.pathToLogFile();
     }
 
     show() {
-        return this.containerContent(Templates.logShow());
+        let data = { logfile: this.logfile };
+        return this.containerContent(Templates.logShow(data));
     }
 
-
     postRenderCallback(fnName) {
-        let tail = new Tail(Context.logger.pathToLogFile());
-        readLastLines.read(Context.logger.pathToLogFile(), 100)
+        let tail = new Tail(this.logfile);
+        readLastLines.read(this.logfile, 100)
             .then((lines) => $('#logDiv').text(lines))
             .then(() => {
                 tail.on("line", function(data) {

@@ -31,6 +31,7 @@ class Worker {
             msg,
             status
         );
+        Context.logger.info(jobStatus);
         this.writeJson('stdout', jobStatus);
         return true;
     }
@@ -95,6 +96,7 @@ class Worker {
             errors,
             exception
         );
+        Context.logger.error(jobStatus);
         this.writeJson('stderr', jobStatus);
         return false;
     }

@@ -83,9 +83,6 @@ class JobRunController extends BaseController {
         let controller = this;
         this.childProcess.stdout.on('data', (str) => {
             controller.renderChildProcOutput(str);
-
-            // TODO: Add a debug flag that turns this on.
-            console.log(str.toString());
         });
 
         this.childProcess.stderr.on('data', (str) => {
@@ -134,9 +131,19 @@ class JobRunController extends BaseController {
     }
 
     renderChildProcOutput(str) {
-        let data = null;
+        let data = {
+            op:"",
+            action:"",
+            msg: "",
+            status:"",
+            errors:[],
+            exception:null
+        };
         try { data = JSON.parse(str) }
-        catch (ex) { return }
+        catch (ex) {
+            // do we still need try/catch here?
+            data.msg = str;
+        }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
