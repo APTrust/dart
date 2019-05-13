@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      JsonStore - Documentation
+      core/op_summary.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -79,241 +81,101 @@
   <div id="main">
     
       <h1 class="page-title">
-        JsonStore
+        core/op_summary.js
       </h1>
     
 
     
+      
 
 <section>
-  <header>
-    
-      <h2>
-        
-        JsonStore
-        
-      </h2>
-
-      
-        <div class="class-description">
-          JsonStore allows us to save, update, retrieve, and delete objects
-from a plain-text JSON file.
-
-This class extends the simple conf library from
-https://github.com/sindresorhus/conf and exposes its methods.
-
-To get system standard user data directories for the dataDir param,
-see https://github.com/sindresorhus/env-paths
-        </div>
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-
-
-  
-    <h2>Constructor</h2>
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#JsonStore">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="JsonStore">
-      <span class="type-signature"></span>new JsonStore<span class="signature">(dataDir, name)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    Creates a new JsonStore
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>dataDir</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          Path to the directory in which to store data.
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>name</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          The name of the file to store data in. This should
-match the class name of the type of object you're storing. The file name
-will have a .json extension appended automatically.
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="core_json_store.js.html">core/json_store.js</a>, <a href="core_json_store.js.html#line27">line 27</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+    <pre class="prettyprint source linenums"><code>/**
+ * OpSummary contains summary information about an operation. This
+ * class is used for logging and for passing info from child processes
+ * back to the parent via stdout and stderr.
+ */
+class OpSummary {
+    constructor(opts = {}) {
+        /**
+         * The name of the operation being performed. For example,
+         * packaging, upload, etc.
+         *
+         * @type {string}
+         */
+        this.op = opts.op || null;
+        /**
+         * The name of the action being performed. An operation can
+         * have a number of actions.
+         *
+         * @type {string}
+         */
+        this.action = opts.action || null;
+        /**
+         * An automatically-assigned ISO timestamp.
+         *
+         */
+        this.ts = new Date().toISOString();
+        /**
+         * The message to log or to relay to the user.
+         *
+         * @type {string}
+         */
+        this.msg = opts.msg || null;
+        /**
+         * The status of the operation. See {@link Constants.OP_STATUSES}.
+         *
+         * @type {string}
+         */
+        this.status = opts.status || null;
+        /**
+         * This is a list of user-friendly error messages, each in
+         * string format.
+         *
+         * @type {Array&lt;string>}
+         */
+        this.errors = opts.errors || [];
+        /**
+         * The stack trace from an error object.
+         * This is mainly for debugging.
+         *
+         * @type {string}
+         */
+        this.stack = opts.stack || null;
+    }
+
+    /**
+     * Convert the object to JSON, omitting empty fields to save
+     * space in the logs and overhead in IPC.
+     *
+     */
+    toJSON() {
+        var result = {};
+        for (var x in this) {
+            if (this[x] != null &amp;&amp; this[x] != []) {
+                result[x] = this[x];
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Converts JSON representation of OpSummary back to object.
+     */
+    static inflateFrom(data) {
+        let summary = new OpSummary();
+        Object.assign(summary, data);
+        return summary;
+    }
+
+}
+
+module.exports.OpSummary = OpSummary;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
