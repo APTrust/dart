@@ -67,6 +67,9 @@ class JobRunController extends BaseController {
             "npm",
             ['start', '--', '--job', tmpFile, '--deleteJobFile']
         );
+
+        // TODO: Do we still need this? It's job is to keep
+        // track of running jobs for the UI.
         this.dartProcess = new DartProcess(
             this.job.title(),
             tmpFile,
