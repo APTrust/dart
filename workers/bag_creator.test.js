@@ -3,7 +3,6 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const fs = require('fs');
 const { Job } = require('../core/job');
-const { OutputCatcher } = require('../util/output_catcher');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
@@ -11,21 +10,6 @@ const { Util } = require('../core/util');
 // Note that if job.packageOp.outputPath ends with .tar,
 // the bagger automatically creates a tar file.
 let tmpBagFile = Util.tmpFilePath() + ".tar";
-
-// All output from the BagCreator starts with this:
-let bagCreatorOutputFilter = '{"op":"package",';
-let outputCatcher = new OutputCatcher(bagCreatorOutputFilter);
-
-beforeEach(() => {
-    outputCatcher.captureOutput();
-    deleteTmpBagFile();
-})
-
-afterEach(() => {
-    outputCatcher.relayJestOutput();
-    deleteTmpBagFile();
-})
-
 
 function deleteTmpBagFile() {
     try { fs.unlinkSync(tmpBagFile); }
@@ -72,29 +56,6 @@ test('run()', done => {
         expect(job.packageOp.result.attempt).toEqual(1);
         expect(job.packageOp.result.started).toMatch(TestUtil.ISODatePattern);
         expect(job.packageOp.result.completed).toMatch(TestUtil.ISODatePattern);
-
-        // Ensure we got expected output on stdout
-        let startCount = 0;
-        let fileAddedCount = 0;
-        let completedCount = 0;
-        for (let line of outputCatcher.subjectOutput) {
-            let data = JSON.parse(line);
-            switch (data.action) {
-            case 'start':
-                startCount++;
-                break;
-            case 'fileAdded':
-                fileAddedCount++;
-                break;
-            case 'completed':
-                completedCount++;
-                break;
-            }
-        }
-        expect(startCount).toEqual(1);
-        expect(fileAddedCount).toBeGreaterThan(5);
-        expect(completedCount).toEqual(1);
-
         done();
     });
 });

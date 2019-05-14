@@ -1,7 +1,6 @@
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const { Job } = require('../core/job');
-const { OutputCatcher } = require('../util/output_catcher');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { Uploader } = require('./uploader');
@@ -14,20 +13,6 @@ let bagFile1 = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
                          'example.edu.tagsample_good.tar');
 let bagFile2 = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
                          'example.edu.sample_good.tar');
-
-// All output from the Uploader starts with this:
-let outputFilter = '{"op":"upload",';
-let outputCatcher = new OutputCatcher(outputFilter);
-
-beforeEach(() => {
-    outputCatcher.captureOutput();
-    TestUtil.deleteJsonFile('UploadTarget');
-});
-
-afterEach(() => {
-    outputCatcher.relayJestOutput();
-    TestUtil.deleteJsonFile('UploadTarget');
-});
 
 function getJob() {
     let uploadTarget = helper.getUploadTarget();
@@ -85,24 +70,6 @@ test('run() using S3 client', done => {
                 expect(result.errors.length).toEqual(0);
             }
         }
-
-        // Ensure we got expected output on stdout
-        let startCount = 0;
-        let completedCount = 0;
-        for (let line of outputCatcher.subjectOutput) {
-            let data = JSON.parse(line);
-            switch (data.action) {
-            case 'start':
-                startCount++;
-                break;
-            case 'completed':
-                completedCount++;
-                break;
-            }
-        }
-        expect(startCount).toEqual(4);
-        expect(completedCount).toEqual(4);
-
         done();
     });
 });

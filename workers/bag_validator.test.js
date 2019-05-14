@@ -3,7 +3,6 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const fs = require('fs');
 const { Job } = require('../core/job');
-const { OutputCatcher } = require('../util/output_catcher');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
@@ -11,19 +10,6 @@ const { ValidationOperation } = require('../core/validation_operation');
 
 let pathToBagFile = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
                               'example.edu.tagsample_good.tar');
-
-// All output from the BagValidator starts with this:
-let outputFilter = '{"op":"validate",';
-let outputCatcher = new OutputCatcher(outputFilter);
-
-beforeEach(() => {
-    outputCatcher.captureOutput();
-})
-
-afterEach(() => {
-    outputCatcher.relayJestOutput();
-})
-
 
 function getJob() {
     let job = new Job();
@@ -53,34 +39,6 @@ test('run()', done => {
         expect(job.validationOp.result.attempt).toEqual(1);
         expect(job.validationOp.result.started).toMatch(TestUtil.ISODatePattern);
         expect(job.validationOp.result.completed).toMatch(TestUtil.ISODatePattern);
-
-        // Ensure we got expected output on stdout
-        let startCount = 0;
-        let addCount = 0;
-        let checksumCount = 0;
-        let completedCount = 0;
-        for (let line of outputCatcher.subjectOutput) {
-            let data = JSON.parse(line);
-            switch (data.action) {
-            case 'start':
-                startCount++;
-                break;
-            case 'add':
-                addCount++;
-                break;
-            case 'checksum':
-                checksumCount++;
-                break;
-            case 'completed':
-                completedCount++;
-                break;
-            }
-        }
-        expect(startCount).toEqual(1);
-        expect(addCount).toEqual(16);
-        expect(checksumCount).toEqual(16);
-        expect(completedCount).toEqual(1);
-
         done();
     });
 });
