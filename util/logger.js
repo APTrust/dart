@@ -4,7 +4,7 @@ const path = require('path');
 const winston = require('winston');
 
 const logFormat = winston.format.printf(function(info) {
-    return `${new Date().toISOString()} - ${info.level}: ${JSON.stringify(info.message)}`;
+    return `${new Date().toISOString()} - ${info.level}: ${info.message}`;
 });
 
 
