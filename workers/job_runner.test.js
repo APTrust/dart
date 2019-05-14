@@ -3,7 +3,6 @@ const { Context } = require('../core/context');
 const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobRunner } = require('./job_runner');
-const { OutputCatcher } = require('../util/output_catcher');
 const os = require('os');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
@@ -25,25 +24,8 @@ let jobId = "96d21b19-82ba-4de3-842c-ff961877e8de";
 // to the APTrust BagIt profile.
 let pathToValidTestBag = path.join(__dirname, '..', 'test', 'bags', 'aptrust', 'example.edu.sample_good.tar');
 
-
-// Capture JobRunner output
-let filterPattern = /^\s*{"op":/;
-let outputCatcher = new OutputCatcher(filterPattern);
-
 let helper = new UploadTestHelper();
-
 let skipMessagePrinted = false;
-
-beforeEach(() => {
-    outputCatcher.captureOutput();
-    deleteTmpBagFile();
-})
-
-afterEach(() => {
-    outputCatcher.relayJestOutput();
-    deleteTmpBagFile();
-})
-
 
 function deleteTmpBagFile() {
     try { fs.unlinkSync(tmpBagFile); }
@@ -123,32 +105,6 @@ function checkUploadResults(job) {
     }
 }
 
-function checkOutputCounts() {
-    let counts = {};
-    for (let line of outputCatcher.subjectOutput) {
-        let data = JSON.parse(line);
-        if (!counts[data.action]) {
-            counts[data.action] = 1;
-        } else {
-            counts[data.action] += 1;
-        }
-    }
-
-    // 4 operations: 1 bagging, 1 validation, 2 uploads
-    let totalOperations = 4;
-
-    if (!helper.envHasS3Credentials()) {
-        totalOperations = 2; // because no uploads
-    }
-
-    // 16+ files in bag.
-    expect(counts.start).toEqual(totalOperations);
-    expect(counts.fileAdded).toBeGreaterThan(15);
-    expect(counts.add).toBeGreaterThan(15);
-    expect(counts.checksum).toBeGreaterThan(15);
-    expect(counts.completed).toEqual(totalOperations);
-}
-
 function testFailedPackage(jobRunner, returnCode, errorPrefix) {
     let result = jobRunner.job.packageOp.result;
 
@@ -196,7 +152,6 @@ test('run() completes when all job operations are valid', done => {
         if (helper.envHasS3Credentials()) {
             checkUploadResults(jobRunner.job);
         }
-        checkOutputCounts();
 
         // We set deleteJobFile to true in the constructor,
         // so make sure it's deleted.
@@ -400,6 +355,7 @@ test('run() fails gracefully if upload file does not exist', done => {
     let jobRunner = new JobRunner(tmpJobFile, true);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
+    jobRunner.job.uploadOps[0].sourceFiles[0] += 'FileDoesNotExist';
 
     jobRunner.run().then(function(returnCode) {
         let result = jobRunner.job.uploadOps[0].results[0];

@@ -53,7 +53,6 @@ class JobRunner {
             } else {
                 console.error(ex)
             }
-            console.error(Context.y18n.__(Constants.END_OF_ERROR_OUTPUT));
             returnCode = Constants.EXIT_RUNTIME_ERROR;
         }
         return returnCode;
