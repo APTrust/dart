@@ -210,6 +210,25 @@ class S3Client extends Plugin {
             xfer.result.finish(err.toString());
             this.emit('error', xfer.result);
         }
+        // --------------------------------------------------------------
+        // TODO: Progress bar. See https://trello.com/c/GkXdln8N
+        //
+        // As long as xfer.result.completed == null, check periodically
+        // to get the size the parts uploaded so far. We would do this
+        // only on large files (> 20 GB or 50GB) that take a long time
+        // to upload. For those, call Minio's listIncompleteUploads()
+        // function with the exact bucket name and object key name being
+        // uploaded. That returns a readable stream whose data event
+        // should emit one object (because the bucket/key name is unique)
+        // with a .size attribute.
+        //
+        // Check listIncompleteUploads() every 1-5 minutes, based on the
+        // size of the file being sent. Stop when xfer.result.completed
+        // is no longer null. Display something like this to the user:
+        //
+        // Uploaded 29.8 GB of 387 GB as of 3:15:22 PM (2.5 MB / minute)
+        //
+        // --------------------------------------------------------------
     }
 
     /**
