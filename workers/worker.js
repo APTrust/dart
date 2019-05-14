@@ -111,16 +111,13 @@ class Worker {
      * with the message. See {@link JobRunner}.
      *
      * If our worker is running as the parent process, the message
-     * goes to STDERR if it contains an exception, or to STDOUT
+     * goes to STDERR if it contains errors or exceptions, or to STDOUT
      * otherwise.
-     *
-     * Some messages to STDOUT may contain a list of errors, but note
-     * that these will always be expected, non-fatal errors, such as
-     * bag validation errors, transient network errors, etc.
      *
      */
     _emitStatusMessage(jobStatus) {
-        let writeFn = jobStatus.exception ? console.error : console.log;
+        let hasErrors = jobStatus.errors.length > 0|| jobStatus.exception != null;
+        let writeFn = hasErrors ? console.error : console.log;
         if (process.send && !Context.isTestEnv) {
             process.send(jobStatus);
         } else {

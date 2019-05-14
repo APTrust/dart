@@ -321,5 +321,6 @@
   "Specify where you want to upload the file.": "Specify where you want to upload the file.",
   "Specify at least one file to upload.": "Specify at least one file to upload.",
   "Cannot find UploadTarget record": "Cannot find UploadTarget record",
-  "File to be uploaded does not exist": "File to be uploaded does not exist"
+  "File to be uploaded does not exist": "File to be uploaded does not exist",
+  "One or more unexpected errors occurred.": "One or more unexpected errors occurred."
 }
