@@ -106,29 +106,18 @@ class Worker extends EventEmitter {
 
     /**
      * This emits a status message through an appropriate channel.
-     *
-     * If our worker is running as a child process (usually of the
-     * main Electron GUI), the message is sent via process.send()
-     * to the parent. The parent process determines how to deal
-     * with the message. See {@link JobRunner}.
-     *
-     * If our worker is running as the parent process, the message
-     * goes to STDERR if it contains errors or exceptions, or to STDOUT
-     * otherwise.
+     * If this process is the child of another Node process, this uses
+     * process.send(). Otherwise, it emits a 'message' event. Either way,
+     * the listener can attach to on('message') and expect to get a
+     * {@link JobStatus} object.
      *
      */
     _emitStatusMessage(jobStatus) {
-        let hasErrors = jobStatus.errors.length > 0|| jobStatus.exception != null;
-        let writeFn = hasErrors ? console.error : console.log;
         Context.logger.info(typeof process.send);
         if (typeof process.send == 'function') {
-            Context.logger.info('Using send');
             process.send(jobStatus);
-            //this.emit('message', jobStatus);
         } else {
-            Context.logger.info('Using emit');
             this.emit('message', jobStatus);
-            //writeFn(JSON.stringify(jobStatus));
         }
     }
 

@@ -33,7 +33,6 @@ class JobRunController extends BaseController {
         this.job = Job.find(this.params.get('id'));
         this.dartProcess = null;
         this.childProcess = null;
-        //this.capturedErrorOutput = [];
         this.completedUploads = [];
         this.reachedEndOfOutput = false;
     }
@@ -65,19 +64,10 @@ class JobRunController extends BaseController {
 
         // Need to change npm command outside of dev env.
         let modulePath = path.join(__dirname, '..', '..', 'run.js');
-        console.log(modulePath);
-        console.log(process.execPath);
-        try {
-            this.childProcess = fork(
-                //"npm",
+        this.childProcess = fork(
                 modulePath,
-                //['start', '--', '--job', tmpFile, '--deleteJobFile']
                 ['--job', tmpFile, '--deleteJobFile']
-            );
-        } catch (ex) {
-            console.error(ex);
-            return;
-        }
+        );
 
         // TODO: Do we still need this? It's job is to keep
         // track of running jobs for the UI.
@@ -100,35 +90,9 @@ class JobRunController extends BaseController {
             controller.renderChildProcOutput(data);
         });
 
-        // this.childProcess.stdout.on('data', (str) => {
-        //     controller.renderChildProcOutput(str);
-        // });
-
-        // this.childProcess.stderr.on('data', (str) => {
-        //     str = str.toString();
-        //     let endMarker = Context.y18n.__(Constants.END_OF_ERROR_OUTPUT);
-        //     if (str.includes(endMarker)) {
-        //         this.reachedEndOfOutput = true;
-        //         controller.capturedErrorOutput.push(str.replace(endMarker, ''));
-        //     }
-        //     // Node appends output to STDERR on unexpected runtime errors.
-        //     // We don't need to show this to the user, so stop capturing it.
-        //     if (this.reachedEndOfOutput) {
-        //         return;
-        //     }
-        //     controller.capturedErrorOutput.push(str);
-        //     controller.renderChildProcOutput(str);
-
-        //     // TODO: Add a debug flag that turns this on.
-        //     console.error(str.toString());
-        // });
-
         this.childProcess.on('close', (code) => {
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
-            // if (controller.capturedErrorOutput.length > 0) {
-            //     this.dartProcess.capturedOutput = this.capturedErrorOutput.join("\n");
-            // }
             this.renderOutcome(code);
         });
     }
@@ -150,19 +114,6 @@ class JobRunController extends BaseController {
     }
 
     renderChildProcOutput(data) {
-        // let data = {
-        //     op:"",
-        //     action:"",
-        //     msg: "",
-        //     status:"",
-        //     errors:[],
-        //     exception:null
-        // };
-        // try { data = JSON.parse(str) }
-        // catch (ex) {
-        //     // do we still need try/catch here?
-        //     data.msg = str;
-        // }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
@@ -238,7 +189,6 @@ class JobRunController extends BaseController {
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            //this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.capturedErrorOutput.join("<br/>"));
             this.markFailed(detailDiv, iconDiv, Context.y18n.__(
                 'Job did not complete due to errors.'));
         }
