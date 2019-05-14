@@ -30,20 +30,6 @@ test('Constructor sets expected properties', () => {
     expect(worker.exitCode).toEqual(Constants.EXIT_SUCCESS);
 });
 
-test('writeJson()', () => {
-    let worker = new Worker('bagging');
-
-    let data1 = { one: 1, two: 2 }
-    worker.writeJson('stdout', data1);
-    expect(spy.stdout).toHaveBeenCalledTimes(1)
-    expect(spy.stdout.mock.calls[0][0]).toContain(JSON.stringify(data1));
-
-    let data2 = { three: 3, four: 4 }
-    worker.writeJson('stderr', data2);
-    expect(spy.stderr).toHaveBeenCalledTimes(1)
-    expect(spy.stderr.mock.calls[0][0]).toEqual(JSON.stringify(data2));
-});
-
 test('info()', () => {
     let expected = getLocalizedOutput('{"op":"bagging","action":"fileAdded","msg":"Test Message","status":"In Progress","errors":[],"exception":null}', 'Test Message');
     let worker = new Worker('bagging');
@@ -69,7 +55,7 @@ test('validationError', () => {
 });
 
 test('runtimeError', () => {
-    let expected = getLocalizedOutput('{"op":"bagging","action":"fileAdded","msg":"Runtime error.","status":"Failed","errors":["One or more unexpected errors occurred."],"exception":{"stack":"Error:', 'Runtime error.');
+    let expected = getLocalizedOutput('{"op":"bagging","action":"fileAdded","msg":"Runtime error.","status":"Failed","errors":["One or more unexpected errors occurred."],"exception":{}}', "One or more unexpected errors occurred.");
     let ex = new Error('Oops!', 'source.js', 28);
     let worker = new Worker('bagging');
     worker.runtimeError('fileAdded', ['One or more unexpected errors occurred.'], ex);

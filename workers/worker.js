@@ -31,8 +31,8 @@ class Worker {
             msg,
             status
         );
-        Context.logger.info(jobStatus);
-        this.writeJson('stdout', jobStatus);
+        Context.logger.info(`${this.operation}/${action} - ${msg}`);
+        this._emitStatusMessage(jobStatus);
         return true;
     }
 
@@ -96,33 +96,35 @@ class Worker {
             errors,
             exception
         );
-        Context.logger.error(jobStatus);
-        this.writeJson('stderr', jobStatus);
+        Context.logger.error(`${this.operation}/${action} - ${message}`);
+        this._emitStatusMessage(jobStatus);
         return false;
     }
 
+
     /**
-     * Write data in JSON format to stderr or stdout.
+     * This emits a status message through an appropriate channel.
      *
-     * @param {string} stream - The name of the stream to write to.
-     * this must be either 'stdout' or 'stderr'.
+     * If our worker is running as a child process (usually of the
+     * main Electron GUI), the message is sent via process.send()
+     * to the parent. The parent process determines how to deal
+     * with the message. See {@link JobRunner}.
      *
-     * @param {object} data - The data to write.
+     * If our worker is running as the parent process, the message
+     * goes to STDERR if it contains an exception, or to STDOUT
+     * otherwise.
+     *
+     * Some messages to STDOUT may contain a list of errors, but note
+     * that these will always be expected, non-fatal errors, such as
+     * bag validation errors, transient network errors, etc.
+     *
      */
-    writeJson(stream, data) {
-        let jsonStr = JSON.stringify(data);
-        if (data.exception) {
-            let exStr = JSON.stringify(
-                data.exception,
-                Object.getOwnPropertyNames(data.exception))
-            jsonStr = jsonStr.replace('"exception":{}', `"exception":${exStr}`);
-        }
-        if (stream == 'stdout') {
-            console.log(jsonStr);
-        } else if (stream == 'stderr') {
-            console.error(jsonStr);
+    _emitStatusMessage(jobStatus) {
+        let writeFn = jobStatus.exception ? console.error : console.log;
+        if (process.send && !Context.isTestEnv) {
+            process.send(jobStatus);
         } else {
-            throw new Error(Context.y18n.__("Invalid stream name: %s", stream));
+            writeFn(JSON.stringify(jobStatus));
         }
     }
 
