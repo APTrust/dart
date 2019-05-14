@@ -4,10 +4,11 @@ const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { DartProcess } = require('../../core/dart_process');
+const { fork } = require('child_process');
 const fs = require('fs');
 const { Job } = require('../../core/job');
 const { JobRunner } = require('../../workers/job_runner');
-const { spawn } = require('child_process');
+const path = require('path');
 const Templates = require('../common/templates');
 const { UIConstants } = require('../common/ui_constants');
 const { UploadTarget } = require('../../core/upload_target');
@@ -32,7 +33,7 @@ class JobRunController extends BaseController {
         this.job = Job.find(this.params.get('id'));
         this.dartProcess = null;
         this.childProcess = null;
-        this.capturedErrorOutput = [];
+        //this.capturedErrorOutput = [];
         this.completedUploads = [];
         this.reachedEndOfOutput = false;
     }
@@ -63,10 +64,20 @@ class JobRunController extends BaseController {
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
 
         // Need to change npm command outside of dev env.
-        this.childProcess = spawn(
-            "npm",
-            ['start', '--', '--job', tmpFile, '--deleteJobFile']
-        );
+        let modulePath = path.join(__dirname, '..', '..', 'run.js');
+        console.log(modulePath);
+        console.log(process.execPath);
+        try {
+            this.childProcess = fork(
+                //"npm",
+                modulePath,
+                //['start', '--', '--job', tmpFile, '--deleteJobFile']
+                ['--job', tmpFile, '--deleteJobFile']
+            );
+        } catch (ex) {
+            console.error(ex);
+            return;
+        }
 
         // TODO: Do we still need this? It's job is to keep
         // track of running jobs for the UI.
@@ -84,35 +95,40 @@ class JobRunController extends BaseController {
     initRunningJobDisplay(dartProcess, childProcess) {
         this.showDivs();
         let controller = this;
-        this.childProcess.stdout.on('data', (str) => {
-            controller.renderChildProcOutput(str);
+
+        this.childProcess.on('message', (data) => {
+            controller.renderChildProcOutput(data);
         });
 
-        this.childProcess.stderr.on('data', (str) => {
-            str = str.toString();
-            let endMarker = Context.y18n.__(Constants.END_OF_ERROR_OUTPUT);
-            if (str.includes(endMarker)) {
-                this.reachedEndOfOutput = true;
-                controller.capturedErrorOutput.push(str.replace(endMarker, ''));
-            }
-            // Node appends output to STDERR on unexpected runtime errors.
-            // We don't need to show this to the user, so stop capturing it.
-            if (this.reachedEndOfOutput) {
-                return;
-            }
-            controller.capturedErrorOutput.push(str);
-            controller.renderChildProcOutput(str);
+        // this.childProcess.stdout.on('data', (str) => {
+        //     controller.renderChildProcOutput(str);
+        // });
 
-            // TODO: Add a debug flag that turns this on.
-            console.error(str.toString());
-        });
+        // this.childProcess.stderr.on('data', (str) => {
+        //     str = str.toString();
+        //     let endMarker = Context.y18n.__(Constants.END_OF_ERROR_OUTPUT);
+        //     if (str.includes(endMarker)) {
+        //         this.reachedEndOfOutput = true;
+        //         controller.capturedErrorOutput.push(str.replace(endMarker, ''));
+        //     }
+        //     // Node appends output to STDERR on unexpected runtime errors.
+        //     // We don't need to show this to the user, so stop capturing it.
+        //     if (this.reachedEndOfOutput) {
+        //         return;
+        //     }
+        //     controller.capturedErrorOutput.push(str);
+        //     controller.renderChildProcOutput(str);
+
+        //     // TODO: Add a debug flag that turns this on.
+        //     console.error(str.toString());
+        // });
 
         this.childProcess.on('close', (code) => {
             this.dartProcess.completedAt = new Date().toISOString();
             this.dartProcess.exitCode = code;
-            if (controller.capturedErrorOutput.length > 0) {
-                this.dartProcess.capturedOutput = this.capturedErrorOutput.join("\n");
-            }
+            // if (controller.capturedErrorOutput.length > 0) {
+            //     this.dartProcess.capturedOutput = this.capturedErrorOutput.join("\n");
+            // }
             this.renderOutcome(code);
         });
     }
@@ -133,20 +149,20 @@ class JobRunController extends BaseController {
         processDiv.show();
     }
 
-    renderChildProcOutput(str) {
-        let data = {
-            op:"",
-            action:"",
-            msg: "",
-            status:"",
-            errors:[],
-            exception:null
-        };
-        try { data = JSON.parse(str) }
-        catch (ex) {
-            // do we still need try/catch here?
-            data.msg = str;
-        }
+    renderChildProcOutput(data) {
+        // let data = {
+        //     op:"",
+        //     action:"",
+        //     msg: "",
+        //     status:"",
+        //     errors:[],
+        //     exception:null
+        // };
+        // try { data = JSON.parse(str) }
+        // catch (ex) {
+        //     // do we still need try/catch here?
+        //     data.msg = str;
+        // }
         switch (data.op) {
         case 'package':
             this.renderPackageInfo(data);
@@ -222,7 +238,9 @@ class JobRunController extends BaseController {
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.capturedErrorOutput.join("<br/>"));
+            //this.markFailed(detailDiv, iconDiv, Context.y18n.__('Job did not complete due to errors.') + "<br/>" + this.capturedErrorOutput.join("<br/>"));
+            this.markFailed(detailDiv, iconDiv, Context.y18n.__(
+                'Job did not complete due to errors.'));
         }
     }
 

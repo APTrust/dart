@@ -42,6 +42,10 @@ function runWithUI(opts) {
     })
 }
 
+// TODO: De-dupe copied code in run.js.
+// If possible, make run.js the entry point, and have it call
+// this and load Electron only if necessary.
+
 async function runWithoutUI(opts) {
     console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);

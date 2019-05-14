@@ -1,10 +1,12 @@
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const EventEmitter = require('events');
 const { JobStatus } = require('../core/job_status');
 const { Util } = require('../core/util');
 
-class Worker {
+class Worker extends EventEmitter {
     constructor(operation) {
+        super();
         /**
          * The name of the operation being performed. Can be
          * package, validate, or upload.
@@ -118,10 +120,15 @@ class Worker {
     _emitStatusMessage(jobStatus) {
         let hasErrors = jobStatus.errors.length > 0|| jobStatus.exception != null;
         let writeFn = hasErrors ? console.error : console.log;
-        if (process.send && !Context.isTestEnv) {
+        Context.logger.info(typeof process.send);
+        if (typeof process.send == 'function') {
+            Context.logger.info('Using send');
             process.send(jobStatus);
+            //this.emit('message', jobStatus);
         } else {
-            writeFn(JSON.stringify(jobStatus));
+            Context.logger.info('Using emit');
+            this.emit('message', jobStatus);
+            //writeFn(JSON.stringify(jobStatus));
         }
     }
 
