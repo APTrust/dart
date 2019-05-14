@@ -113,8 +113,9 @@ class Worker extends EventEmitter {
      *
      */
     _emitStatusMessage(jobStatus) {
-        Context.logger.info(typeof process.send);
-        if (typeof process.send == 'function') {
+        // Jest tests run as subprocesses, but test function is not
+        // the parent process & cannot receive, so use emit for Jest.
+        if (typeof process.send == 'function' && !Context.isTestEnv) {
             process.send(jobStatus);
         } else {
             this.emit('message', jobStatus);

@@ -1,3 +1,4 @@
+const { Constants } = require('./core/constants');
 const { JobRunner } = require('./workers/job_runner');
 const minimist = require('minimist');
 const process = require('process');
@@ -18,7 +19,7 @@ function run() {
     });
     if (!opts.job) {
         console.error('Param --job is required.');
-        return -1;
+        return Constants.EXIT_INVALID_PARAMS;
     } else {
         return runWithoutUI(opts);
     }
