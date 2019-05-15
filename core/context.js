@@ -119,7 +119,7 @@ class GlobalContext {
     getPackageInfo() {
         var obj = null;
         try {
-            obj = require('../package.json')
+            obj = require('../package.json');
         } catch (ex) {
             this.logger.error(ex)
         }
@@ -136,7 +136,7 @@ class GlobalContext {
         if (pkg == null) {
             return "Cannot read version from package.json file.";
         }
-        return `${pkg.name} ${pkg.version} (Electron ${pkg.build.electronVersion} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`
+        return `${pkg.name} ${pkg.version} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`
     }
 }
 
