@@ -88,6 +88,38 @@ transformations with the following command:
 git config --local core.autocrlf false
 ```
 
+## Building
+
+To build the DART application into a standalone binary, run this command from
+the top-level directory of the project.
+
+```
+./node_modules/.bin/electron-builder
+```
+
+The binary will appear in the /dist folder. For example, when building
+on a Mac, it will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
+
+You can run the binary directly from there.
+
+## Running in Command-Line Mode
+
+DART runs in command-line mode if you specify a job file on the command line.
+Note the double dashes before the --job option.
+
+```
+dist/mac/DART.app/Contents/MacOS/DART -- --job ~/tmp/dart/job.json
+```
+
+A job file contains a JSON description of a job, including any or all of
+the following operations:
+
+* packaging (which is currently limited to producing BagIt bags)
+* validation (which is currently limited validating BagIt bags)
+* uploads to one or more remote endpoints (currently limited to S3)
+
+The ability to export a Job JSON file will be coming soon.
+
 ## Documentation
 After every commit the documentation is rebuilt and published at
 
