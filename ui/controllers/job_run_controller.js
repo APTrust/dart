@@ -63,7 +63,7 @@ class JobRunController extends BaseController {
         fs.writeFileSync(tmpFile, JSON.stringify(this.job));
 
         // Need to change npm command outside of dev env.
-        let modulePath = path.join(__dirname, '..', '..', 'run.js');
+        let modulePath = path.join(__dirname, '..', '..', 'main.js');
         this.childProcess = fork(
                 modulePath,
                 ['--job', tmpFile, '--deleteJobFile']

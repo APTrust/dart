@@ -4,13 +4,14 @@ const { JobRunner } = require('./workers/job_runner');
 const minimist = require('minimist');
 const process = require('process');
 
-// Run a job without the UI.
-
-// TODO: De-dupe from main.js.
-
+// Electron wants these vars to be global, so we defined them here.
+// They will be assigned only if we're running in GUI mode.
 let win;
 let app;
 
+// This runs the app in either CLI or GUI mode.
+// We don't load the heavyweight Electron requirements unless
+// we're running in GUI mode.
 function run() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
@@ -24,12 +25,14 @@ function run() {
     if (opts.job) {
         return runWithoutUI(opts);
     } else {
+        // GUI mode. Hoist win and app to global namespace.
         let ui = require('./ui/main');
         win = ui.win;
         app = ui.app;
     }
 }
 
+// Run in command-line mode.
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);

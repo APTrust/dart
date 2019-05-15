@@ -1,8 +1,4 @@
 const {app, BrowserWindow} = require('electron');
-//const contextMenu = require('electron-context-menu');
-//const { Constants } = require('../core/constants');
-//const { JobRunner } = require('../workers/job_runner');
-//const minimist = require('minimist');
 const path = require('path');
 const process = require('process');
 const url = require('url');
@@ -58,7 +54,11 @@ app.on('activate', () => {
     }
 });
 
+// Create the main window when the app is ready.
 app.on('ready', createWindow);
 
+
+// Export these two vars. The top-level main.js script will
+// assign their values to global vars, which Electron requires.
 module.exports.win = win;
 module.exports.app = app;
