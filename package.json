@@ -2,7 +2,7 @@
     "name": "DART",
     "version": "2.0.0",
     "description": "DART is the Digital Archivist's Resource Tool for packaging and shipping digital matierials.",
-    "main": "ui/main.js",
+    "main": "run.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/APTrust/dart.git"

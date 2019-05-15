@@ -1,20 +1,17 @@
 const {app, BrowserWindow} = require('electron');
-const { Constants } = require('../core/constants');
-const { JobRunner } = require('../workers/job_runner');
-const minimist = require('minimist');
+//const contextMenu = require('electron-context-menu');
+//const { Constants } = require('../core/constants');
+//const { JobRunner } = require('../workers/job_runner');
+//const minimist = require('minimist');
 const path = require('path');
 const process = require('process');
 const url = require('url');
-
-// For development, include the context menu that provides
-// the Inspect Element feature.
-require('electron-context-menu')();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-function runWithUI(opts) {
+function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
         width: 1200,
@@ -30,6 +27,8 @@ function runWithUI(opts) {
         slashes: true
     }))
 
+    //contextMenu();
+
     // Open the DevTools.
     // win.webContents.openDevTools()
 
@@ -41,37 +40,6 @@ function runWithUI(opts) {
         win = null
     })
 }
-
-// TODO: De-dupe copied code in run.js.
-// If possible, make run.js the entry point, and have it call
-// this and load Electron only if necessary.
-
-async function runWithoutUI(opts) {
-    console.log(`DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
-    let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);
-    let exitCode = await jobRunner.run();
-    process.exit(exitCode);
-}
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', function() {
-    let opts = minimist(process.argv.slice(2), {
-        string: ['j', 'job'],
-        boolean: ['D', 'debug', 'h', 'help', 'v', 'version',
-                  'd', 'deleteJobFile'],
-        default: { D: false, debug: false, h: false, help: false,
-                   v: false, version:false, d: false, deleteJobFile: false},
-        alias: { D: ['debug'], v: ['version'], h: ['help'], j: ['job'],
-                 d: ['deleteJobFile']}
-    });
-    if (opts.job) {
-        runWithoutUI(opts);
-    } else {
-        runWithUI(opts);
-    }
-});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -89,3 +57,8 @@ app.on('activate', () => {
         createWindow()
     }
 });
+
+app.on('ready', createWindow);
+
+module.exports.win = win;
+module.exports.app = app;
