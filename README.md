@@ -1,7 +1,7 @@
 # APTrust DART
 
 [![Build Status](https://travis-ci.org/APTrust/dart.svg?branch=master)](https://travis-ci.org/APTrust/dart)
-[![Build status](https://ci.appveyor.com/api/projects/status/waprqft4knhb5ktb/branch/master?svg=true)](https://ci.appveyor.com/project/cdahlhausen/dart/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/i5d8hrlan9kph5np?svg=true)](https://ci.appveyor.com/project/aptrust/dart/branch/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8b51be47cf6ed6aaa698/maintainability)](https://codeclimate.com/github/APTrust/dart/maintainability)
 
 In 2018, APTrust opened its services to depositors at smaller institutions
