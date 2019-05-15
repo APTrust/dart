@@ -42,11 +42,5 @@ async function runWithoutUI(opts) {
     //return exitCode;
 }
 
+// And away we go...
 run();
-
-// if (typeof module != 'undefined' && !module.parent) {
-//     // this is the main module
-//     run();
-// } else {
-//     // we were required from somewhere else
-// }
