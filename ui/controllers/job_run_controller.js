@@ -189,8 +189,24 @@ class JobRunController extends BaseController {
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            this.markFailed(detailDiv, iconDiv, Context.y18n.__(
-                'Job did not complete due to errors.'));
+            let job = Job.find(this.job.id);
+            let msg = Context.y18n.__('Job did not complete due to errors.')
+            Context.logger.error(msg);
+            this.logFailedOps(job);
+            msg += `<br/>${job.getRunErrors().join("<br/>")}`
+            this.markFailed(detailDiv, iconDiv, msg.replace(/\n/g, '<br/>'));
+        }
+    }
+
+    logFailedOps(job) {
+        if (job.packageOp) {
+            Context.logger.error(JSON.stringify(job.packageOp));
+        }
+        if (job.validationOp) {
+            Context.logger.error(JSON.stringify(job.validationOp));
+        }
+        if (job.uploadOps && job.uploadOps.length > 0) {
+            Context.logger.error(JSON.stringify(job.uploadOps));
         }
     }
 
