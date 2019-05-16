@@ -255,3 +255,34 @@ test('find()', () => {
     expect(typeof retrievedJob.uploadOps[0].validate).toEqual('function');
 
 });
+
+test('getRunErrors()', () => {
+    let job = getJobWithOps();
+    job.uploadOps.push(new UploadOperation());
+    job.uploadOps[0].results = [new OperationResult(), new OperationResult()];
+    job.uploadOps[1].results = [new OperationResult(), new OperationResult()];
+    job.packageOp.result = new OperationResult();
+    job.validationOp.result = new OperationResult();
+    expect(job.getRunErrors()).toEqual([]);
+
+    job.packageOp.result.errors = ['package err 1', 'package err 2'];
+    job.validationOp.result.errors = ['val err 1', 'val err 2'];
+    job.uploadOps[0].results[0].errors = ['upload err 1.1', 'upload err 1.2'];
+    job.uploadOps[0].results[1].errors = ['upload err 2.1', 'upload err 2.2'];
+    job.uploadOps[1].results[0].errors = ['upload err 3.1', 'upload err 3.2'];
+    job.uploadOps[1].results[1].errors = ['upload err 4.1', 'upload err 4.2'];
+    expect(job.getRunErrors()).toEqual([
+        'package err 1',
+        'package err 2',
+        'val err 1',
+        'val err 2',
+        'upload err 1.1',
+        'upload err 1.2',
+        'upload err 2.1',
+        'upload err 2.2',
+        'upload err 3.1',
+        'upload err 3.2',
+        'upload err 4.1',
+        'upload err 4.2'
+    ]);
+});

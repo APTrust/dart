@@ -325,6 +325,29 @@ class Job extends PersistentObject {
     }
 
     /**
+     * Returns a list of errors from all of this job's operations.
+     *
+     * @returns {Array<string>}
+     */
+    getRunErrors() {
+        let errs = [];
+        if (this.packageOp && this.packageOp.result) {
+            errs = errs.concat(this.packageOp.result.errors);
+        }
+        if (this.validationOp && this.validationOp.result) {
+            errs = errs.concat(this.validationOp.result.errors);
+        }
+        if (this.uploadOps && this.uploadOps.length > 0) {
+            for (let op of this.uploadOps) {
+                for (let result of op.results) {
+                    errs = errs.concat(result.errors);
+                }
+            }
+        }
+        return errs;
+    }
+
+    /**
      * This converts the JSON representation of a job as stored in the DB
      * to a full-fledged Job object with all of the expected methods.
      *
