@@ -198,7 +198,10 @@
                 "Standard",
                 "Glacier-OH",
                 "Glacier-OR",
-                "Glacier-VA"
+                "Glacier-VA",
+                "Glacier-Deep-OH",
+                "Glacier-Deep-OR",
+                "Glacier-Deep-VA"
             ],
             "defaultValue": "Standard",
             "userValue": "",
