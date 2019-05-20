@@ -1,17 +1,17 @@
-const { UploadTarget } = require('../../core/upload_target');
-const { UploadTargetForm } = require('./upload_target_form');
+const { StorageService } = require('../../core/storage_service');
+const { StorageServiceForm } = require('./storage_service_form');
 
 test('create()', () => {
-    let target = new UploadTarget({ name: 'APTrust Demo' });
-    target.description = 'APTrust demo ingest bucket';
-    target.protocol = 's3';
-    target.host = 'https://s3.example.com';
-    target.port = 434;
-    target.bucket = 'the.chum.bucket';
-    target.login = 'plankton';
-    target.password = 'krabs';
-    target.loginExtra = 'patrick';
-    let form = new UploadTargetForm(target);
+    let ss = new StorageService({ name: 'APTrust Demo' });
+    ss.description = 'APTrust demo ingest bucket';
+    ss.protocol = 's3';
+    ss.host = 'https://s3.example.com';
+    ss.port = 434;
+    ss.bucket = 'the.chum.bucket';
+    ss.login = 'plankton';
+    ss.password = 'krabs';
+    ss.loginExtra = 'patrick';
+    let form = new StorageServiceForm(ss);
 
     // Fields for all properties listed above, plus id & userCanDelete.
     expect(Object.keys(form.fields).length).toEqual(11);
@@ -21,7 +21,7 @@ test('create()', () => {
     for (let propName of props) {
         expect(form.fields[propName]).toBeDefined();
         expect(form.fields[propName].name).toEqual(propName);
-        expect(form.fields[propName].value).toEqual(target[propName]);
+        expect(form.fields[propName].value).toEqual(ss[propName]);
     }
 
     let choices = form.fields.protocol.choices;
@@ -29,7 +29,7 @@ test('create()', () => {
     for (let choice of choices) {
         expect(choice.value).toBeDefined();
         expect(choice.label).toBeDefined();
-        if (choice.value === target.protocol) {
+        if (choice.value === ss.protocol) {
             expect(choice.selected).toBe(true);
         } else {
             expect(choice.selected).toBe(false);

@@ -11,7 +11,7 @@ const { JobRunner } = require('../../workers/job_runner');
 const path = require('path');
 const Templates = require('../common/templates');
 const { UIConstants } = require('../common/ui_constants');
-const { UploadTarget } = require('../../core/upload_target');
+const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
 
 /**
@@ -43,7 +43,7 @@ class JobRunController extends BaseController {
     show() {
         let uploadTargets = [];
         for (let op of this.job.uploadOps) {
-            let target = UploadTarget.find(op.uploadTargetId);
+            let target = StorageService.find(op.storageServiceId);
             if (target) {
                 uploadTargets.push(target.name);
             }

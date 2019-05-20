@@ -15,15 +15,15 @@ let bagFile2 = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
                          'example.edu.sample_good.tar');
 
 function getJob() {
-    let uploadTarget = helper.getUploadTarget();
-    uploadTarget.save();
+    let ss = helper.getStorageService();
+    ss.save();
     let job = new Job();
 
     // Do two uploads to the same place, just to make sure
     // uploader handles multiple targets.
     job.uploadOps = [
-        new UploadOperation(uploadTarget.id, [bagFile1, bagFile2]),
-        new UploadOperation(uploadTarget.id, [bagFile1, bagFile2])
+        new UploadOperation(ss.id, [bagFile1, bagFile2]),
+        new UploadOperation(ss.id, [bagFile1, bagFile2])
     ];
     return job;
 }

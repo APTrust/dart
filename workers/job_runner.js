@@ -91,7 +91,7 @@ class JobRunner {
     }
 
     /**
-     * This uploads files to each of the specified {@link UploadTarget}.
+     * This uploads files to each of the specified {@link StorageService}.
      */
     async uploadFiles() {
         // TODO: Retry those that failed due to non-fatal error.

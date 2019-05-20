@@ -52,8 +52,8 @@ test('All templates are defined', () => {
         // "setupQuestion",
         "tagDefinitionForm",
         "tagFileForm",
-        "uploadTargetForm",
-        "uploadTargetList",
+        "storageServiceForm",
+        "storageServiceList",
         // "uploadOrRebag",
     ];
     for (let name of expectedTemplateNames) {

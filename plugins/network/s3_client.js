@@ -56,14 +56,14 @@ class S3Client extends Plugin {
     /**
      * Creates a new S3Client.
      *
-     * @param {UploadTarget} uploadTarget - A UploadTarget record that
+     * @param {StorageService} storageService - A StorageService record that
      * includes information about how to connect to a remote S3 service.
      * This record includes the host URL, default bucket, and connection
      * credentials.
      */
-    constructor(uploadTarget) {
+    constructor(storageService) {
         super();
-        this.uploadTarget = uploadTarget;
+        this.storageService = storageService;
     }
 
     /**
@@ -87,7 +87,7 @@ class S3Client extends Plugin {
 
     /**
      * Uploads a file to the remote bucket. The name of the remote bucket is
-     * determined by the {@link UploadTarget} passed in to this class'
+     * determined by the {@link StorageService} passed in to this class'
      * constructor.
      *
      * @param {string} filepath - The path to the local file to be uploaded
@@ -141,7 +141,7 @@ class S3Client extends Plugin {
 
     /**
      * Downloads a file fron the remote bucket. The name of the remote bucket is
-     * determined by the {@link UploadTarget} passed in to this class'
+     * determined by the {@link StorageService} passed in to this class'
      * constructor.
      *
      * @param {string} filepath - The local path to which we should save the
@@ -180,7 +180,7 @@ class S3Client extends Plugin {
     list() {
         throw 'S3Client.list() is not yet implemented.';
         // var minioClient = this.getClient();
-        // var stream = minioClient.listObjects(this.uploadTarget.bucket, '', false);
+        // var stream = minioClient.listObjects(this.storageService.bucket, '', false);
         // stream.on('data', function(obj) { console.log(obj) } )
         // stream.on('error', function(err) { console.log("Error: " + err) } )
     }
@@ -221,10 +221,10 @@ class S3Client extends Plugin {
      */
     _initXferRecord(operation, filepath, key) {
         var xfer = new S3Transfer(operation, S3Client.description().name);
-        xfer.host = this.uploadTarget.host;
-        xfer.port = this.uploadTarget.port;
+        xfer.host = this.storageService.host;
+        xfer.port = this.storageService.port;
         xfer.localPath = filepath;
-        xfer.bucket = this.uploadTarget.bucket;
+        xfer.bucket = this.storageService.bucket;
         xfer.key = key;
         xfer.result.start();
         if (operation === 'upload') {
@@ -323,7 +323,7 @@ class S3Client extends Plugin {
             // ECONNRESET: Connection reset by peer is common on large uploads.
             // Minio client is smart enough to pick up where it left off.
             // Log a warning, wait 5 seconds, then try again.
-            xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt} while attempting to send ${xfer.result.filepath} to ${this.uploadTarget.host}. Will try again in 1.5 seconds.`;
+            xfer.result.warning = `Got error ${err.code} (request id ${err.requestid}) on attempt number ${xfer.result.attempt} while attempting to send ${xfer.result.filepath} to ${this.storageService.host}. Will try again in 1.5 seconds.`;
             this.emit('warning', xfer.result);
             let s3Client = this;
             setTimeout(function() {
@@ -343,14 +343,14 @@ class S3Client extends Plugin {
      */
     _getClient() {
         var minioClient = new Minio.Client({
-            endPoint:  this.uploadTarget.host,
-            port: this.uploadTarget.port || 443,
-            accessKey: this.uploadTarget.getValue('login'),
-            secretKey: this.uploadTarget.getValue('password')
+            endPoint:  this.storageService.host,
+            port: this.storageService.port || 443,
+            accessKey: this.storageService.getValue('login'),
+            secretKey: this.storageService.getValue('password')
         });
         // TODO: This is too specialized to go in a general-use client.
         // Where should this go?
-        if (this.uploadTarget.host == 's3.amazonaws.com' && this.uploadTarget.bucket.startsWith('aptrust.')) {
+        if (this.storageService.host == 's3.amazonaws.com' && this.storageService.bucket.startsWith('aptrust.')) {
             minioClient.region = 'us-east-1';
         }
         return minioClient;

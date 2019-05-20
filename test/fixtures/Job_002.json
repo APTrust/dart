@@ -350,7 +350,7 @@
 		"uploadOps": [
 			{
 				"sourceFiles": ["C:\\Users\\adiamond\\tmp\\test.edu.dart2_bag2.tar"],
-				"uploadTargetId": "ae44f641-5b50-4865-b346-45fa4b4e0ac6",
+				"storageServiceId": "ae44f641-5b50-4865-b346-45fa4b4e0ac6",
 				"results": [],
 				"payloadSize": 0,
 				"errors": {}

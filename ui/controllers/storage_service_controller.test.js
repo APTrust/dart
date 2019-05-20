@@ -1,6 +1,6 @@
 const $ = require('jquery');
-const { UploadTarget } = require('../../core/upload_target');
-const { UploadTargetController } = require('./upload_target_controller');
+const { StorageService } = require('../../core/storage_service');
+const { StorageServiceController } = require('./storage_service_controller');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const url = require('url');
@@ -10,46 +10,46 @@ const formFields = [
     'port', 'bucket', 'login', 'password', 'loginExtra',
     'userCanDelete'];
 
-const targetName = "Unit Test Target";
+const ssName = "Unit Test Storage Service";
 const params = new url.URLSearchParams({
-    name: targetName,
+    name: ssName,
 });
 
 beforeEach(() => {
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
 afterAll(() => {
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
-function createTarget(name) {
-    let target = new UploadTarget({ name: name });
-    target.description = 'Test Description';
-    target.host = 'example.com';
-    target.protocol = 's3';
-    target.port = 999;
-    target.bucket = 'root';
-    target.login = 'jo@example.com';
-    target.password = 'secret';
-    target.loginExtra = '1234';
-    target.save();
-    return target;
+function createStorageService(name) {
+    let ss = new StorageService({ name: name });
+    ss.description = 'Test Description';
+    ss.host = 'example.com';
+    ss.protocol = 's3';
+    ss.port = 999;
+    ss.bucket = 'root';
+    ss.login = 'jo@example.com';
+    ss.password = 'secret';
+    ss.loginExtra = '1234';
+    ss.save();
+    return ss;
 }
 
 function confirmHeading() {
-    expect($('h2:contains("Upload Target")').length).toEqual(1);
+    expect($('h2:contains("Storage Service")').length).toEqual(1);
     expect($('form').length).toEqual(1);
 }
 
 function confirmSaveButton() {
     let saveButton = $('a:contains("Save")').first();
     expect(saveButton).toBeDefined();
-    expect(saveButton.attr('href')).toContain('#UploadTarget/update');
+    expect(saveButton.attr('href')).toContain('#StorageService/update');
 }
 
 test('Constructor sets expected properties', () => {
-    let controller = new UploadTargetController(params);
+    let controller = new StorageServiceController(params);
     expect(controller.params).toEqual(params);
     expect(controller.navSection).toEqual("Settings");
     expect(controller.typeMap).toEqual({
@@ -60,7 +60,7 @@ test('Constructor sets expected properties', () => {
 });
 
 test('new()', () => {
-    let controller = new UploadTargetController();
+    let controller = new StorageServiceController();
     let response = controller.new();
     UITestUtil.setDocumentBody(response);
     let navLinkClass = UITestUtil.getNavItemCssClass("Settings");
@@ -70,15 +70,15 @@ test('new()', () => {
     confirmSaveButton();
 
     for(let field of formFields) {
-        let selector = `#uploadTargetForm_${field}`;
+        let selector = `#storageServiceForm_${field}`;
         expect($(selector).length).toEqual(1);
     }
 });
 
 test('edit()', () => {
-    let target = createTarget(targetName);
-    let idParams = new url.URLSearchParams({ id: target.id });
-    let controller = new UploadTargetController(idParams);
+    let ss = createStorageService(ssName);
+    let idParams = new url.URLSearchParams({ id: ss.id });
+    let controller = new StorageServiceController(idParams);
     let response = controller.edit();
     UITestUtil.setDocumentBody(response);
 
@@ -86,15 +86,15 @@ test('edit()', () => {
     confirmSaveButton();
 
     for(let field of formFields) {
-        let selector = `#uploadTargetForm_${field}`;
-        expect($(selector).val()).toEqual(target[field].toString());
+        let selector = `#storageServiceForm_${field}`;
+        expect($(selector).val()).toEqual(ss[field].toString());
     }
 });
 
 test('update()', () => {
-    let target = createTarget(targetName);
-    let idParams = new url.URLSearchParams({ id: target.id });
-    let controller = new UploadTargetController(idParams);
+    let ss = createStorageService(ssName);
+    let idParams = new url.URLSearchParams({ id: ss.id });
+    let controller = new StorageServiceController(idParams);
 
     // Set up the form.
     let response = controller.edit();
@@ -102,7 +102,7 @@ test('update()', () => {
 
     // Change the form values.
     for(let field of formFields) {
-        let selector = `#uploadTargetForm_${field}`;
+        let selector = `#storageServiceForm_${field}`;
         if (field == 'port') {
             $(selector).val('1234');
         } else if (!['id', 'userCanDelete', 'protocol'].includes(field)) {
@@ -114,22 +114,22 @@ test('update()', () => {
     response = controller.update();
 
     // Make sure values were saved to DB.
-    target = UploadTarget.find(target.id);
+    ss = StorageService.find(ss.id);
     for(let field of formFields) {
         if (field == 'port') {
-            expect(target[field]).toEqual(1234);
+            expect(ss[field]).toEqual(1234);
         } else if (!['id', 'userCanDelete', 'protocol'].includes(field)) {
-            expect(target[field]).toEqual('new.value');
+            expect(ss[field]).toEqual('new.value');
         }
     }
 });
 
 test('list()', () => {
-    let target1 = createTarget('Name 1');
-    let target2 = createTarget('Name 2');
-    let target3 = createTarget('Name 3');
-    let target4 = createTarget('Name 4');
-    let target5 = createTarget('Name 5');
+    let ss1 = createStorageService('Name 1');
+    let ss2 = createStorageService('Name 2');
+    let ss3 = createStorageService('Name 3');
+    let ss4 = createStorageService('Name 4');
+    let ss5 = createStorageService('Name 5');
 
     let listParams = new url.URLSearchParams({
         offset: 1,
@@ -137,7 +137,7 @@ test('list()', () => {
         orderBy: 'name',
         sortDirection: 'desc'
     });
-    let controller = new UploadTargetController(listParams);
+    let controller = new StorageServiceController(listParams);
     let response = controller.list();
     UITestUtil.setDocumentBody(response);
 
@@ -153,14 +153,14 @@ test('destroy() deletes the object when you say yes', () => {
     // Mock window.confirm to return true
     window.confirm = jest.fn(() => true)
 
-    let target = createTarget(targetName);
-    let idParams = new url.URLSearchParams({ id: target.id });
-    let controller = new UploadTargetController(idParams);
+    let ss = createStorageService(ssName);
+    let idParams = new url.URLSearchParams({ id: ss.id });
+    let controller = new StorageServiceController(idParams);
 
-    expect(UploadTarget.find(target.id)).toBeDefined();
+    expect(StorageService.find(ss.id)).toBeDefined();
 
     let deleteResponse = controller.destroy();
-    expect(UploadTarget.find(target.id)).not.toBeDefined();
+    expect(StorageService.find(ss.id)).not.toBeDefined();
 
     // Confirm that destroy returns the user to the list.
     let listResponse = controller.list();
@@ -172,16 +172,16 @@ test('destroy() does not delete the object when you say no', () => {
     // Mock window.confirm to return false
     window.confirm = jest.fn(() => false)
 
-    let target = createTarget(targetName);
-    let idParams = new url.URLSearchParams({ id: target.id });
-    let controller = new UploadTargetController(idParams);
+    let ss = createStorageService(ssName);
+    let idParams = new url.URLSearchParams({ id: ss.id });
+    let controller = new StorageServiceController(idParams);
 
-    expect(UploadTarget.find(target.id)).toBeDefined();
+    expect(StorageService.find(ss.id)).toBeDefined();
 
     let deleteResponse = controller.destroy();
 
     // Object should still be there.
-    expect(UploadTarget.find(target.id)).toBeDefined();
+    expect(StorageService.find(ss.id)).toBeDefined();
 
     // And the response should be empty.
     expect(deleteResponse).toEqual({});

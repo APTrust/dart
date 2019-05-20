@@ -3,13 +3,13 @@ const { PersistentObject } = require('./persistent_object');
 const { Util } = require('./util');
 
 /**
- * UploadTarget describes any remote service (s3, ftp, etc.) to which
+ * StorageService describes any remote service (s3, ftp, etc.) to which
  * we can upload data. This object contains the information required to
  * connect to the remote service (hostname, login name, password, etc.).
  */
-class UploadTarget extends PersistentObject {
+class StorageService extends PersistentObject {
     /**
-     * Creates a new UploadTarget.
+     * Creates a new StorageService.
      *
      * @param {object} opts - Object containing properties to set.
      *
@@ -19,12 +19,12 @@ class UploadTarget extends PersistentObject {
      * @param {boolean} opts.userCanDelete - Indicates whether user is
      * allowed to delete this record.
      *
-     * @param {string} opts.name - The name of the remote upload target. This
+     * @param {string} opts.name - The name of the remote storage service. This
      * can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
      * 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
      *
      * @param {string} opts.description - A user-friendly description of
-     * the upload target.
+     * the storage service.
      *
      * @param {string} opts.protocol - The protocol to use when connecting
      * to the remote repo ('s3', 'sftp', etc.).
@@ -60,14 +60,14 @@ class UploadTarget extends PersistentObject {
         opts.required = ["name", "protocol", "host"];
         super(opts);
         /**
-          * name is the name of this upload target. It should be meaningful
+          * name is the name of this storage service. It should be meaningful
           * to the user.
           *
           * @type {string}
           */
         this.name = opts.name || "";
         /**
-          * A description of this upload target. It should be meaningful
+          * A description of this storage service. It should be meaningful
           * to the user.
           *
           * @type {string}
@@ -171,11 +171,11 @@ class UploadTarget extends PersistentObject {
      *
      * @example
      *
-     * uploadTarget.login = "user@example.com";
-     * uploadTarget.getValue("login");  // returns "user@example.com"
+     * storageService.login = "user@example.com";
+     * storageService.getValue("login");  // returns "user@example.com"
      *
-     * uploadTarget.login = "env:USER";
-     * uploadTarget.getValue("login");  // returns the value of process.env.USER
+     * storageService.login = "env:USER";
+     * storageService.getValue("login");  // returns the value of process.env.USER
      *
      * @param {string} propertyName - The name of the property whose value
      * you want to get.
@@ -190,6 +190,6 @@ class UploadTarget extends PersistentObject {
 }
 
 // Get static methods from base class.
-Object.assign(UploadTarget, PersistentObject);
+Object.assign(StorageService, PersistentObject);
 
-module.exports.UploadTarget = UploadTarget;
+module.exports.StorageService = StorageService;

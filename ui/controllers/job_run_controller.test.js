@@ -4,37 +4,37 @@ const { Job } = require('../../core/job');
 const { JobRunController } = require('./job_run_controller');
 const { PackageOperation } = require('../../core/package_operation');
 const path = require('path');
+const { StorageService } = require('../../core/storage_service');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const { UploadOperation } = require('../../core/upload_operation');
-const { UploadTarget } = require('../../core/upload_target');
 const { Util } = require('../../core/util');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('Job');
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
 afterAll(() => {
     TestUtil.deleteJsonFile('Job');
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
-function getUploadTarget(name, proto, host) {
-    let target = new UploadTarget({
+function getStorageService(name, proto, host) {
+    let ss = new StorageService({
         name: name,
         protocol: proto,
         host: host
     });
-    target.save();
-    return target;
+    ss.save();
+    return ss;
 }
 
 function getUploadOp(name, proto, host) {
-    let target = getUploadTarget(name, proto, host);
+    let ss = getStorageService(name, proto, host);
     let op = new UploadOperation();
     op.sourceFiles = ['/dev/null'];
-    op.uploadTargetId = target.id;
+    op.storageServiceId = ss.id;
     return op;
 }
 

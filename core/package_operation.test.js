@@ -34,7 +34,7 @@ test('validate()', () => {
 
 test('validate() warns on missing files', () => {
     let packageOp = new PackageOperation();
-    packageOp.uploadTargetId = '00000000-0000-0000-0000-000000000000';
+    packageOp.storageServiceId = '00000000-0000-0000-0000-000000000000';
     packageOp.sourceFiles = [
         '1__/file/does/not/exist',
         '2__/file/does/not/exist'

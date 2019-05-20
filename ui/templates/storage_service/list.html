@@ -1,8 +1,8 @@
 {{> bannerAlert message = alertMessage }}
 
-<h1>Upload Targets</h1>
+<h1>Storage Services</h1>
 <div class="pull-right mt-1 mb-3">
-  <a class="btn btn-primary" href="#UploadTarget/new" role="button">New</a>
+  <a class="btn btn-primary" href="#StorageService/new" role="button">New</a>
 </div>
 <table class="table table-hover">
   <thead class="thead-inverse">
@@ -15,7 +15,7 @@
   </thead>
   <tbody>
     {{#each items}}
-    <tr class="clickable-row" data-url="#UploadTarget/edit?id={{ id }}">
+    <tr class="clickable-row" data-url="#StorageService/edit?id={{ id }}">
       <td>{{ name }}</td>
       <td>{{ description }}</td>
       <td>{{ protocol }}</td>

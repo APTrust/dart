@@ -1,14 +1,14 @@
 const { Context } = require('./context');
+const { StorageService } = require('./storage_service');
 const { UploadOperation } = require('./upload_operation');
-const { UploadTarget } = require('./upload_target');
 
 function newUploadOp() {
-    let target = new UploadTarget({
-        name: 'Sample Target',
+    let ss = new StorageService({
+        name: 'Sample Storage Service',
         protocol: 's3'
     });
-    target.save();
-    return new UploadOperation(target.id, ['/src/file1.txt', '/src/file2.txt']);
+    ss.save();
+    return new UploadOperation(ss.id, ['/src/file1.txt', '/src/file2.txt']);
 }
 
 test('Constructor sets expected properties', () => {
@@ -26,19 +26,19 @@ test('validate()', () => {
     let result1 = uploadOp1.validate();
     expect(result1).toEqual(false);
     expect(uploadOp1.errors['UploadOperation.sourceFiles']).toEqual(Context.y18n.__('Specify at least one file or directory to upload.'));
-    expect(uploadOp1.errors['UploadOperation.uploadTargetId']).toEqual(Context.y18n.__('You must specify an upload target.'));
+    expect(uploadOp1.errors['UploadOperation.storageServiceId']).toEqual(Context.y18n.__('You must specify a storage service.'));
 
     let uploadOp2 = newUploadOp();
     uploadOp2.sourceFiles = [__filename];
     let result2 = uploadOp2.validate();
     expect(result2).toEqual(true);
-    expect(uploadOp2.errors['UploadOperation.uploadTargetId']).toBeUndefined();
+    expect(uploadOp2.errors['UploadOperation.storageServiceId']).toBeUndefined();
     expect(uploadOp2.errors['UploadOperation.sourceFiles']).toBeUndefined();
 });
 
 test('validate() warns on missing files', () => {
     let uploadOp = new UploadOperation();
-    uploadOp.uploadTargetId = '00000000-0000-0000-0000-000000000000';
+    uploadOp.storageServiceId = '00000000-0000-0000-0000-000000000000';
     uploadOp.sourceFiles = [
         '1__/file/does/not/exist',
         '2__/file/does/not/exist'
@@ -51,7 +51,7 @@ test('validate() warns on missing files', () => {
 test('inflateFrom()', () => {
     let uuid = '54298a7e-5a73-4b28-a512-227f477ff09f';
     let data = {
-        uploadTargetId: uuid,
+        storageServiceId: uuid,
         results: [{
             operation: 'lobotomy',
             provider: 'the news media'
@@ -60,7 +60,7 @@ test('inflateFrom()', () => {
     let op = UploadOperation.inflateFrom(data);
 
     // Should copy data attributes
-    expect(op.uploadTargetId).toEqual(uuid);
+    expect(op.storageServiceId).toEqual(uuid);
     expect(op.results.length).toEqual(1);
     expect(op.results[0].operation).toEqual(data.results[0].operation);
 

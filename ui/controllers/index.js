@@ -15,8 +15,8 @@ const { LogController } = require('./log_controller');
 const { ManifestController } = require('./manifest_controller');
 const { RemoteRepositoryController } = require('./remote_repository_controller');
 const { SetupController } = require('./setup_controller');
+const { StorageServiceController } = require('./storage_service_controller');
 const { TagDefinitionController } = require('./tag_definition_controller');
-const { UploadTargetController } = require('./upload_target_controller');
 
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
@@ -35,5 +35,5 @@ module.exports.LogController = LogController;
 module.exports.ManifestController = ManifestController;
 module.exports.RemoteRepositoryController = RemoteRepositoryController;
 module.exports.SetupController = SetupController;
+module.exports.StorageServiceController = StorageServiceController;
 module.exports.TagDefinitionController = TagDefinitionController;
-module.exports.UploadTargetController = UploadTargetController;

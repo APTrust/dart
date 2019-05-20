@@ -33,8 +33,8 @@ function deleteTmpBagFile() {
 }
 
 function writeJobFile() {
-    let uploadTarget = helper.getUploadTarget();
-    uploadTarget.save();
+    let ss = helper.getStorageService();
+    ss.save();
     let jobFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_003.json');
     let job = Job.inflateFromFile(jobFile);
     job.packageOp.outputPath = tmpBagFile;
@@ -46,8 +46,8 @@ function writeJobFile() {
 
     if (helper.envHasS3Credentials()) {
         job.uploadOps = [
-            new UploadOperation(uploadTarget.id, [tmpBagFile]),
-            new UploadOperation(uploadTarget.id, [tmpBagFile])
+            new UploadOperation(ss.id, [tmpBagFile]),
+            new UploadOperation(ss.id, [tmpBagFile])
         ];
     } else {
         job.uploadOps = [];
@@ -382,7 +382,7 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
     jobRunner.job.validationOp = null;
 
     // Have just one upload and point it toward an invalid target
-    let badTarget = helper.getUploadTarget();
+    let badTarget = helper.getStorageService();
     badTarget.login = 'BogusAWSKey';
     badTarget.password = 'BadKeyForTesting';
     badTarget.save();
@@ -411,7 +411,7 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
     jobRunner.job.validationOp = null;
 
     // Create an upload target with bad credentials.
-    let badTarget = helper.getUploadTarget();
+    let badTarget = helper.getStorageService();
     badTarget.login = 'BogusAWSKey';
     badTarget.password = 'BadKeyForTesting';
     badTarget.save();
@@ -426,7 +426,7 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
 
     // Add one more operation, which should complete even
     // after op #2 fails.
-    let goodTarget = helper.getUploadTarget();
+    let goodTarget = helper.getStorageService();
     goodTarget.save();
     jobRunner.job.uploadOps.push(new UploadOperation(goodTarget.id, [__filename]));
 
@@ -448,9 +448,9 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
 });
 
 // Test with non-existent upload target. This can happen if
-// user saves a job with an UploadTarget, then deletes the
-// UploadTarget, then tries to run the job.
-test('run() fails gracefully if UploadTarget does not exist', done => {
+// user saves a job with an StorageService, then deletes the
+// StorageService, then tries to run the job.
+test('run() fails gracefully if StorageService does not exist', done => {
     writeJobFile();
     let jobRunner = new JobRunner(tmpJobFile, true);
     jobRunner.job.packageOp = null;

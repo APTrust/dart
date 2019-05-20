@@ -1,13 +1,13 @@
-const { UploadTarget } = require('../../core/upload_target');
+const { StorageService } = require('../../core/storage_service');
 const { Choice } = require('./choice');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
 
-class UploadTargetForm extends Form{
+class StorageServiceForm extends Form{
 
-    constructor(uploadTarget) {
-        super('UploadTarget', uploadTarget);
+    constructor(storageService) {
+        super('StorageService', storageService);
         this._init();
     }
 
@@ -28,4 +28,4 @@ class UploadTargetForm extends Form{
 
 }
 
-module.exports.UploadTargetForm = UploadTargetForm;
+module.exports.StorageServiceForm = StorageServiceForm;

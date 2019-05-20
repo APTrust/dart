@@ -12,21 +12,21 @@ class UploadOperation {
     /**
      * Creates a new UploadOperation.
      *
-     * @param {string} uploadTargetId - The id of the {@link UploadTarget}
+     * @param {string} storageServiceId - The id of the {@link StorageService}
      * to which we'll be sending files.
      *
      * @param {string} sourceFiles - A list of files to upload. Each entry
      * in this list should be an absolute path.
      *
      */
-    constructor(uploadTargetId, sourceFiles) {
+    constructor(storageServiceId, sourceFiles) {
         /**
-         * The ID (UUID) of the {@link UploadTarget} to which we want to
+         * The ID (UUID) of the {@link StorageService} to which we want to
          * send files.
          *
          * @type {string}
          */
-        this.uploadTargetId = uploadTargetId;
+        this.storageServiceId = storageServiceId;
         /**
          * A list of files to upload. Each entry in this list should be an
          * absolute path.
@@ -65,8 +65,8 @@ class UploadOperation {
      */
     validate() {
         this.errors = {};
-        if (!Util.looksLikeUUID(this.uploadTargetId)) {
-            this.errors['UploadOperation.uploadTargetId'] = Context.y18n.__('You must specify an upload target.');
+        if (!Util.looksLikeUUID(this.storageServiceId)) {
+            this.errors['UploadOperation.storageServiceId'] = Context.y18n.__('You must specify a storage service.');
         }
         if (!Array.isArray(this.sourceFiles) || Util.isEmptyStringArray(this.sourceFiles)) {
             this.errors['UploadOperation.sourceFiles'] = Context.y18n.__('Specify at least one file or directory to upload.');

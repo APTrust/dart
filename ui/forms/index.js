@@ -6,7 +6,7 @@ const { Form } = require('./form');
 const { NewBagItProfileForm } = require('./new_bagit_profile_form');
 const { RemoteRepositoryForm } = require('./remote_repository_form');
 const { TagDefinitionForm } = require('./tag_definition_form');
-const { UploadTargetForm } = require('./upload_target_form');
+const { StorageServiceForm } = require('./storage_service_form');
 
 module.exports.AppSettingForm = AppSettingForm;
 module.exports.BagItProfileForm = BagItProfileForm;
@@ -16,4 +16,4 @@ module.exports.Form = Form;
 module.exports.NewBagItProfileForm = NewBagItProfileForm;
 module.exports.RemoteRepositoryForm = RemoteRepositoryForm;
 module.exports.TagDefinitionForm = TagDefinitionForm;
-module.exports.UploadTargetForm = UploadTargetForm;
+module.exports.StorageServiceForm = StorageServiceForm;

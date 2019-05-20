@@ -1,4 +1,4 @@
-const { UploadTarget } = require('../core/upload_target');
+const { StorageService } = require('../core/storage_service');
 
 /**
  * This class provides some helper methods for tests that perform
@@ -11,19 +11,19 @@ class UploadTestHelper {
     }
 
     /**
-     * This returns an UploadTarget object that points to one of APTrust's
+     * This returns an StorageService object that points to one of APTrust's
      * test buckets.
      *
-     * @returns {UploadTarget}
+     * @returns {StorageService}
      */
-    getUploadTarget() {
-        let target = new UploadTarget({ name: 'unittest_' + Date.now().toString() });
-        target.protocol = 's3';
-        target.host = 's3.amazonaws.com';
-        target.bucket = 'aptrust.dart.test';
-        target.login = 'env:AWS_ACCESS_KEY_ID';
-        target.password = 'env:AWS_SECRET_ACCESS_KEY';
-        return target;
+    getStorageService() {
+        let ss = new StorageService({ name: 'unittest_' + Date.now().toString() });
+        ss.protocol = 's3';
+        ss.host = 's3.amazonaws.com';
+        ss.bucket = 'aptrust.dart.test';
+        ss.login = 'env:AWS_ACCESS_KEY_ID';
+        ss.password = 'env:AWS_SECRET_ACCESS_KEY';
+        return ss;
     }
 
     /**

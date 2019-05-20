@@ -350,7 +350,7 @@
 		"uploadOps": [
 			{
 				"sourceFiles": ["/Users/apd4n/tmp/dart/test.edu.dart2_bag.tar"],
-				"uploadTargetId": "e712265a-45ee-41be-b3b0-c4a8c7929e00",
+				"storageServiceId": "e712265a-45ee-41be-b3b0-c4a8c7929e00",
 				"results": [],
 				"payloadSize": 0,
 				"errors": {}

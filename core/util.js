@@ -487,7 +487,7 @@ class Util {
     /**
      * This returns the value of an environment variable, if
      * the variable is available. Certain variables, such as
-     * the login credentials used in the {@link UploadTarget}
+     * the login credentials used in the {@link StorageService}
      * class may be stored more safely as environment variables
      * outside of the DART database. Those variables follow the
      * pattern env:VAR_NAME.

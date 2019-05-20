@@ -224,7 +224,7 @@ test('inflateFromFile()', () => {
     let job = Job.inflateFromFile(pathToFile);
     expect(job.bagItProfile.id).toEqual('24a1e6ac-f1f4-4ec5-b020-b97887e32284');
     expect(job.packageOp.sourceFiles.length).toEqual(4);
-    expect(job.uploadOps[0].uploadTargetId).toEqual('e712265a-45ee-41be-b3b0-c4a8c7929e00');
+    expect(job.uploadOps[0].storageServiceId).toEqual('e712265a-45ee-41be-b3b0-c4a8c7929e00');
 });
 
 test('find()', () => {

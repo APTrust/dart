@@ -5,7 +5,7 @@ const { Context } = require('../../core/context');
 const os = require('os');
 const path = require('path');
 const { Plugin } = require('../plugin');
-const { UploadTarget } = require('../../core/upload_target');
+const { StorageService } = require('../../core/storage_service');
 
 // Help messages for our setup questions.
 const OrgNameHelp = Context.y18n.__("Enter the name of your organization. This name will be written into the Source-Organization field of the bag-info.txt file of each APTrust bag you create. Examples: 'University of Virginia', 'University of Virginia School of Law'.");
@@ -117,12 +117,12 @@ class APTrustSetup extends Plugin {
     }
 
     // Install upload targets required by APTrust.
-    installUploadTargets() {
-        if (!UploadTarget.find()) {
+    installStorageServices() {
+        if (!StorageService.find()) {
             builtinServices.APTrustDemoService.save();
             installed.push("APTrust Demo Storage");
         }
-        if (!UploadTarget.find()) {
+        if (!StorageService.find()) {
             builtinServices.APTrustProdService.save();
             installed.push("APTrust Production Storage");
         }

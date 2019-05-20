@@ -3,7 +3,7 @@ const Minio = require('minio');
 const os = require('os');
 const path = require('path');
 const S3Client = require('./s3_client');
-const { UploadTarget } = require('../../core/upload_target');
+const { StorageService } = require('../../core/storage_service');
 const { UploadTestHelper } = require('../../util/upload_test_helper');
 
 let helper = new UploadTestHelper();
@@ -15,20 +15,20 @@ test('Description', () => {
 });
 
 test('Constructor sets expected properties', () => {
-    var uploadTarget = helper.getUploadTarget();
-    var client = new S3Client(uploadTarget);
-    expect(client.uploadTarget).toEqual(uploadTarget);
+    var ss = helper.getStorageService();
+    var client = new S3Client(ss);
+    expect(client.storageService).toEqual(ss);
 });
 
 test('_initXferRecord', () => {
-    var uploadTarget = helper.getUploadTarget();
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    var client = new S3Client(ss);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
     expect(xfer).not.toBeNull();
-    expect(xfer.host).toEqual(uploadTarget.host);
-    expect(xfer.port).toEqual(uploadTarget.port);
+    expect(xfer.host).toEqual(ss.host);
+    expect(xfer.port).toEqual(ss.port);
     expect(xfer.localPath).toEqual(__filename);
-    expect(xfer.bucket).toEqual(uploadTarget.bucket);
+    expect(xfer.bucket).toEqual(ss.bucket);
     expect(xfer.key).toEqual('s3_client.test.js');
     expect(xfer.result).not.toBeNull();
     expect(xfer.result.attempt).toEqual(1);
@@ -38,10 +38,10 @@ test('_initXferRecord', () => {
 
     xfer = client._initXferRecord('download', __filename, 's3_client.test.js');
     expect(xfer).not.toBeNull();
-    expect(xfer.host).toEqual(uploadTarget.host);
-    expect(xfer.port).toEqual(uploadTarget.port);
+    expect(xfer.host).toEqual(ss.host);
+    expect(xfer.port).toEqual(ss.port);
     expect(xfer.localPath).toEqual(__filename);
-    expect(xfer.bucket).toEqual(uploadTarget.bucket);
+    expect(xfer.bucket).toEqual(ss.bucket);
     expect(xfer.key).toEqual('s3_client.test.js');
     expect(xfer.result).not.toBeNull();
     expect(xfer.result.attempt).toEqual(1);
@@ -54,8 +54,8 @@ test('_initXferRecord', () => {
 });
 
 test('_handleError() retries if it has not exceeded MAX_ATTEMPTS', done => {
-    var uploadTarget = helper.getUploadTarget();
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    var client = new S3Client(ss);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
 
     // Set this to MAX_ATTEMPTS - 1, so _handleError retries.
@@ -70,8 +70,8 @@ test('_handleError() retries if it has not exceeded MAX_ATTEMPTS', done => {
 });
 
 test('_handleError() sets failure result after too many retries', done => {
-    var uploadTarget = helper.getUploadTarget();
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    var client = new S3Client(ss);
     var xfer = client._initXferRecord('upload', __filename, 's3_client.test.js');
 
     // Set this to exceed max attempts, so _handleError doesn't retry.
@@ -91,10 +91,10 @@ test('_getClient()', () => {
     if (!helper.envHasS3Credentials()) {
         return;
     }
-    var uploadTarget = helper.getUploadTarget();
-    uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
-    uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    ss.login = process.env.AWS_ACCESS_KEY_ID;
+    ss.password = process.env.AWS_SECRET_ACCESS_KEY;
+    var client = new S3Client(ss);
     var minioClient = client._getClient();
     expect(minioClient).not.toBeNull();
     expect(minioClient instanceof Minio.Client).toEqual(true);
@@ -106,10 +106,10 @@ test('upload()', done => {
         done();
         return;
     }
-    var uploadTarget = helper.getUploadTarget();
-    uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
-    uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    ss.login = process.env.AWS_ACCESS_KEY_ID;
+    ss.password = process.env.AWS_SECRET_ACCESS_KEY;
+    var client = new S3Client(ss);
 
     var startCalled = false;
     client.on('start', function(result) {
@@ -138,10 +138,10 @@ test('download()', done => {
         done();
         return;
     }
-    var uploadTarget = helper.getUploadTarget();
-    uploadTarget.login = process.env.AWS_ACCESS_KEY_ID;
-    uploadTarget.password = process.env.AWS_SECRET_ACCESS_KEY;
-    var client = new S3Client(uploadTarget);
+    var ss = helper.getStorageService();
+    ss.login = process.env.AWS_ACCESS_KEY_ID;
+    ss.password = process.env.AWS_SECRET_ACCESS_KEY;
+    var client = new S3Client(ss);
 
     let tmpFile = path.join(os.tmpdir(), 'DartUnitTestFile.js_' + Date.now());
 

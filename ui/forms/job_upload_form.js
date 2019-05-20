@@ -5,8 +5,8 @@ const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
+const { StorageService } = require('../../core/storage_service');
 const { UploadOperation } = require('../../core/upload_operation');
-const { UploadTarget } = require('../../core/upload_target');
 const { Util } = require('../../core/util');
 
 /**
@@ -21,7 +21,7 @@ class JobUploadForm extends Form {
             sortDirection: 'asc'
         }
         let data = {
-            uploadTargets: UploadTarget.list(null, listOptions)
+            uploadTargets: StorageService.list(null, listOptions)
         }
         super('JobUpload', data);
         this.allTargets = data.uploadTargets;
@@ -29,7 +29,7 @@ class JobUploadForm extends Form {
     }
 
     _init(job) {
-        let selectedTargets = job.uploadOps.map(op => op.uploadTargetId).filter(id => id != '');
+        let selectedTargets = job.uploadOps.map(op => op.storageServiceId).filter(id => id != '');
         this.fields['uploadTargets'].choices = Choice.makeList(
             this.allTargets,
             selectedTargets,
@@ -45,7 +45,7 @@ class JobUploadForm extends Form {
         job.uploadOps = [];
         for (let targetId of this.obj.uploadTargets) {
             let op = new UploadOperation();
-            op.uploadTargetId = targetId;
+            op.storageServiceId = targetId;
             job.uploadOps.push(op);
         }
     }

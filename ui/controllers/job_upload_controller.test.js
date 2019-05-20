@@ -4,24 +4,24 @@ const { Job } = require('../../core/job');
 const { JobUploadController } = require('./job_upload_controller');
 const { PackageOperation } = require('../../core/package_operation');
 const path = require('path');
+const { StorageService } = require('../../core/storage_service');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const { UploadOperation } = require('../../core/upload_operation');
-const { UploadTarget } = require('../../core/upload_target');
 const { Util } = require('../../core/util');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('Job');
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
 afterAll(() => {
     TestUtil.deleteJsonFile('Job');
-    TestUtil.deleteJsonFile('UploadTarget');
+    TestUtil.deleteJsonFile('StorageService');
 });
 
-function getUploadTarget(name, proto, host) {
-    let target = new UploadTarget({
+function getStorageService(name, proto, host) {
+    let target = new StorageService({
         name: name,
         protocol: proto,
         host: host
@@ -36,8 +36,8 @@ function getJob() {
         new UploadOperation(),
         new UploadOperation()
     ];
-    job.uploadOps[0].uploadTargetId = getUploadTarget('target1', 's3', 'target1.com').id;
-    job.uploadOps[1].uploadTargetId = getUploadTarget('target2', 's3', 'target2.com').id;
+    job.uploadOps[0].storageServiceId = getStorageService('target1', 's3', 'target1.com').id;
+    job.uploadOps[1].storageServiceId = getStorageService('target2', 's3', 'target2.com').id;
     job.save();
     return job;
 }
@@ -54,7 +54,7 @@ function uncheckFirstBox() {
 }
 
 function testUncheckIsSaved(controller, methodToCall) {
-    let secondTargetId = controller.job.uploadOps[1].uploadTargetId;
+    let secondTargetId = controller.job.uploadOps[1].storageServiceId;
     UITestUtil.setDocumentBody(controller.show());
     uncheckFirstBox();
     if (methodToCall == 'back') {
@@ -66,7 +66,7 @@ function testUncheckIsSaved(controller, methodToCall) {
     }
     let job = Job.find(controller.job.id);
     expect(job.uploadOps.length).toEqual(1);
-    expect(job.uploadOps[0].uploadTargetId).toEqual(secondTargetId);
+    expect(job.uploadOps[0].storageServiceId).toEqual(secondTargetId);
 }
 
 test('constructor', () => {
@@ -82,9 +82,9 @@ test('show', () => {
     // Make sure the checksboxes show
     let ops = controller.job.uploadOps;
     let cb = $("input[name='uploadTargets']")
-    expect($(cb[0]).val()).toEqual(ops[0].uploadTargetId);
+    expect($(cb[0]).val()).toEqual(ops[0].storageServiceId);
     expect($(cb[0]).is(":checked")).toBe(true);
-    expect($(cb[1]).val()).toEqual(ops[1].uploadTargetId);
+    expect($(cb[1]).val()).toEqual(ops[1].storageServiceId);
     expect($(cb[1]).is(":checked")).toBe(true);
 
     // Remove one upload op from the job. We should
@@ -96,7 +96,7 @@ test('show', () => {
     ops = controller.job.uploadOps;
     cb = $("input[name='uploadTargets']")
     expect(cb.length).toEqual(2);
-    expect($(cb[0]).val()).toEqual(ops[0].uploadTargetId);
+    expect($(cb[0]).val()).toEqual(ops[0].storageServiceId);
     expect($(cb[0]).is(":checked")).toBe(true);
     expect($(cb[1]).is(":checked")).toBe(false);
 });

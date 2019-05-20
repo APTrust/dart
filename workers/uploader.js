@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
-const { UploadTarget } = require('../core/upload_target');
+const { StorageService } = require('../core/storage_service');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
 
@@ -69,25 +69,25 @@ class Uploader extends Worker {
      */
     doUpload(uploadOp) {
         let uploader = this;
-        let uploadTarget = UploadTarget.find(uploadOp.uploadTargetId);
-        if (!uploadTarget) {
+        let ss = StorageService.find(uploadOp.storageServiceId);
+        if (!ss) {
             uploadOp.results[0] = new OperationResult('upload', 'none');
             uploadOp.results[0].start();
-            uploadOp.results[0].finish(Context.y18n.__('Cannot find UploadTarget record'));
+            uploadOp.results[0].finish(Context.y18n.__('Cannot find StorageService record'));
             return new Promise(function(resolve, reject) {
                 reject(uploader.validationError(uploadOp.results[0].errors));
             });
 
         }
-        let providerClass = this.getProvider(uploadTarget.protocol);
+        let providerClass = this.getProvider(ss.protocol);
         let promises = [];
         for (let filepath of uploadOp.sourceFiles) {
-            let provider = new providerClass(uploadTarget);
+            let provider = new providerClass(ss);
             var promise = new Promise(function(resolve, reject) {
                 provider.on('start', function(result) {
                     uploader.info('start',
                                   Constants.OP_IN_PROGRESS,
-                                  uploadTarget.url(path.basename(filepath)),
+                                  ss.url(path.basename(filepath)),
                                   false);
                 });
                 provider.on('finish', function(result) {
@@ -95,7 +95,7 @@ class Uploader extends Worker {
                     if (result.errors.length > 0) {
                         uploader.completedWithError(result.errors);
                     } else {
-                        uploader.completedSuccess(uploadTarget.url(path.basename(filepath)), false);
+                        uploader.completedSuccess(ss.url(path.basename(filepath)), false);
                     }
                     resolve(result);
                 });
@@ -132,7 +132,7 @@ class Uploader extends Worker {
         let errors = [];
         for (let op of this.job.uploadOps) {
             let opErrors = []
-            if (Util.isEmpty(op.uploadTargetId)) {
+            if (Util.isEmpty(op.storageServiceId)) {
                 opErrors.push(Context.y18n.__('Specify where you want to upload the file.'));
             }
             if (!op.sourceFiles || Util.isEmptyStringArray(op.sourceFiles)) {
@@ -146,8 +146,8 @@ class Uploader extends Worker {
             if (opErrors.length > 0) {
                 let providerDesc = 'Unknown upload provider';
                 try {
-                    let uploadTarget = UploadTarget.find(op.uploadTargetId);
-                    let providerClass = this.getProvider(uploadTarget.protocol)
+                    let ss = StorageService.find(op.storageServiceId);
+                    let providerClass = this.getProvider(ss.protocol)
                     providerDesc = providerClass.description().name;
                 } catch (err) {
                     providerDesc += ` ${err.message}`;
