@@ -20,8 +20,9 @@ class JobUploadForm extends Form {
             orderBy: 'name',
             sortDirection: 'asc'
         }
+        let filterFn = function(ss) { return ss.allowsUpload };
         let data = {
-            uploadTargets: StorageService.list(null, listOptions)
+            uploadTargets: StorageService.list(filterFn, listOptions)
         }
         super('JobUpload', data);
         this.allTargets = data.uploadTargets;

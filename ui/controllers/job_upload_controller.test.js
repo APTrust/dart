@@ -21,13 +21,14 @@ afterAll(() => {
 });
 
 function getStorageService(name, proto, host) {
-    let target = new StorageService({
+    let ss = new StorageService({
         name: name,
         protocol: proto,
-        host: host
+        host: host,
+        allowsUpload: true
     });
-    target.save();
-    return target;
+    ss.save();
+    return ss;
 }
 
 function getJob() {

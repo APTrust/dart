@@ -16,7 +16,7 @@ test('create()', () => {
     let form = new StorageServiceForm(ss);
 
     // Fields for all properties listed above, plus id & userCanDelete.
-    expect(Object.keys(form.fields).length).toEqual(11);
+    expect(Object.keys(form.fields).length).toEqual(13);
 
     let props = ['id', 'name', 'description', 'protocol', 'host', 'port',
                  'bucket', 'allowsUpload', 'allowsDownload', 'login',
