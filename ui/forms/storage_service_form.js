@@ -1,8 +1,9 @@
-const { StorageService } = require('../../core/storage_service');
+const { Constants } = require('../../core/constants');
 const { Choice } = require('./choice');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
+const { StorageService } = require('../../core/storage_service');
 
 class StorageServiceForm extends Form{
 
@@ -24,7 +25,16 @@ class StorageServiceForm extends Form{
             this.obj.protocol,
             true
         );
-    }
+        this.fields['allowsUpload'].choices = Choice.makeList(
+            Constants.YES_NO,
+            this.obj.allowsUpload,
+            true
+        );
+        this.fields['allowsDownload'].choices = Choice.makeList(
+            Constants.YES_NO,
+            this.obj.allowsDownload,
+            true
+        );    }
 
 }
 

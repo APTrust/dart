@@ -8,6 +8,8 @@ test('create()', () => {
     ss.host = 'https://s3.example.com';
     ss.port = 434;
     ss.bucket = 'the.chum.bucket';
+    ss.allowsUpload = true;
+    ss.allowsDownload = false;
     ss.login = 'plankton';
     ss.password = 'krabs';
     ss.loginExtra = 'patrick';
@@ -17,7 +19,8 @@ test('create()', () => {
     expect(Object.keys(form.fields).length).toEqual(11);
 
     let props = ['id', 'name', 'description', 'protocol', 'host', 'port',
-                'bucket', 'login', 'password', 'loginExtra', 'userCanDelete'];
+                 'bucket', 'allowsUpload', 'allowsDownload', 'login',
+                 'password', 'loginExtra', 'userCanDelete'];
     for (let propName of props) {
         expect(form.fields[propName]).toBeDefined();
         expect(form.fields[propName].name).toEqual(propName);

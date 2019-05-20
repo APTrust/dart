@@ -335,5 +335,9 @@
   "StorageService_password_help": "StorageService_password_help",
   "StorageService_loginExtra_label": "StorageService_loginExtra_label",
   "StorageService_loginExtra_help": "StorageService_loginExtra_help",
-  "Cannot find StorageService record": "Cannot find StorageService record"
+  "Cannot find StorageService record": "Cannot find StorageService record",
+  "StorageService_allowsUpload_label": "StorageService_allowsUpload_label",
+  "StorageService_allowsUpload_help": "StorageService_allowsUpload_help",
+  "StorageService_allowsDownload_label": "StorageService_allowsDownload_label",
+  "StorageService_allowsDownload_help": "StorageService_allowsDownload_help"
 }

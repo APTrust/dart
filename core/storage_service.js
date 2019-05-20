@@ -134,6 +134,22 @@ class StorageService extends PersistentObject {
           * @type {string}
           */
         this.loginExtra = opts.loginExtra || "";
+        /**
+         * This describes whether the storage service allows users to
+         * write data/files into it.
+         *
+         * @type {boolean}
+         * @default true
+         */
+        this.allowsUpload = opts.allowsUpload || true;
+        /**
+         * This describes whether the storage service allows users to
+         * read data/files from it.
+         *
+         * @type {boolean}
+         * @default true
+         */
+        this.allowsDownload = opts.allowsDownload || true;
     }
 
     /**

@@ -17,6 +17,8 @@ test('Constructor sets expected properties', () => {
     let obj = new StorageService({ name: 'name1'});
     expect(Util.looksLikeUUID(obj.id)).toEqual(true);
     expect(obj.name).toEqual('name1');
+    expect(obj.allowsUpload).toBe(true);
+    expect(obj.allowsDownload).toBe(true);
 });
 
 
