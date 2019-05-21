@@ -2,9 +2,12 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const { InternalSetting } = require('../../core/internal_setting');
 const os = require('os');
 const path = require('path');
 const { Plugin } = require('../plugin');
+const { PluginManager } = require('../plugin_manager');
+const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
 
 // Help messages for our setup questions.
@@ -28,6 +31,8 @@ const APT_RECEIVE_PROD = 'b250bdfb-298d-4dc2-9816-3a5001604376';
 const APT_RESTORE_DEMO = '12c7c92f-daf6-448e-83f0-310f2df40874';
 const APT_RESTORE_PROD = 'dccf4a42-2281-4e93-aaaf-fb94e9458a0e';
 
+const APT_DEMO_API_ID = "214db814-bd73-49d4-b988-4d7a5ad0d313";
+const APT_PROD_API_ID = "f95edae2-dff5-4ea7-bd3e-9546246d46e9";
 
 // Regex patterns for validation.
 const domainNamePattern = /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i;
@@ -120,6 +125,21 @@ class APTrustSetup extends Plugin {
         this._setCompletionTimestamp();
     }
 
+    /**
+     * This sets up the questions the user will have to answer.
+     * Questions will be presented one at a time in the order they
+     * were added.
+     *
+     */
+    _initFields() {
+        // TODO: SetupQuestion should descend from Field.
+        // It may include a setInitialValue callback and
+        // it should include a postAnswer callback to copy
+        // the value into the field of some object.
+        // Both setInitialValue and postAnswer could take
+        // params objectType (class name of PersistentObject),
+        // objectId (UUID), and propertyName (to assign the value to).
+    }
 
     /**
      * This installs a number of AppSettings required by APTrust.
@@ -153,16 +173,24 @@ class APTrustSetup extends Plugin {
     _installBagItProfiles() {
         let aptrustId = Constants.BUILTIN_PROFILE_IDS['aptrust'];
         let dpnId = Constants.BUILTIN_PROFILE_IDS['dpn'];
+        let builtinDir = path.join('..', '..', 'builtin');
         if (!BagItProfile.find(aptrustId)) {
-            let profile = BagItProfile.load(path.join('..', '..', 'builtin', 'aptrust_bagit_profile_2.2.json'));
-            profile.save();
-            Context.logger.info(Context.y18n.__("APTrust Setup installed APTrust BagIt profile"));
+            this._installProfile('APTrust v2.2', path.join(builtinDir, 'aptrust_bagit_profile_2.2.json'));
         }
         if (!BagItProfile.find(dpnId)) {
-            let profile = BagItProfile.load(path.join('..', '..', 'builtin', 'dpn_bagit_profile_2.1.json'));
-            profile.save();
-            Context.logger.info(Context.y18n.__("APTrust Setup installed DPN BagIt profile"));
+            this._installProfile('DPN v2.1', path.join(builtinDir, 'dpn_bagit_profile_2.1.json'));
         }
+    }
+
+    /**
+     * This installs a BagItProfile.
+     *
+     * @private
+     */
+    _installProfile(profileName, pathToFile) {
+        let profile = BagItProfile.load(pathToFile);
+        profile.save();
+        Context.logger.info(Context.y18n.__("APTrust Setup installed BagItProfile %s", profileName));
     }
 
     /**
@@ -249,7 +277,42 @@ class APTrustSetup extends Plugin {
      * @private
      */
     _installRemoteRepositories() {
+        let aptrustRepoPlugin = PluginManager.talksTo('aptrust')[0];
+        if (!aptrustRepoPlugin) {
+            throw new Error(Context.y18n.__("Cannot find plugin for %s", "aptrust"));
+        }
+        let pluginId = aptrustRepoPlugin.description().id;
+        if(!RemoteRepository.find(APT_DEMO_API_ID)) {
+            this._createRemoteRepo({
+                id: APT_DEMO_REPO_ID,
+                name: 'APTrust Demo Repository',
+                uri: 'https://demo.aptrust.org',
+                userId: '',
+                apiToken: '',
+                pluginId: pluginId
+            });
+        }
+        if(!RemoteRepository.find(APT_PROD_API_ID)) {
+            this._createRemoteRepo({
+                id: APT_PROD_REPO_ID,
+                name: 'APTrust Production Repository',
+                uri: 'https://repo.aptrust.org',
+                userId: '',
+                apiToken: '',
+                pluginId: pluginId
+            });
+        }
+    }
 
+    /**
+     * Creates a RemoteRepository record.
+     *
+     * @private
+     */
+    _createRemoteRepo(opts) {
+        let repo = new RemoteRepository(opts);
+        repo.save();
+        Context.logger.info(Context.y18n.__("APTrust Setup created repo record: %s", opts.name));
     }
 
     /**
