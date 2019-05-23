@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Util } = require('../../core/util');
@@ -67,7 +68,7 @@ const { Util } = require('../../core/util');
  */
 class SetupQuestion extends Field {
     constructor(opts) {
-        let rand = Math.random().toString().replace(/^0\./, '');
+        let rand = 'setup_' + Math.random().toString().replace(/^0\./, '');
         super(rand, rand, opts.question, opts.initialValue)
         this.dataType = opts.dataType || 'string';
         this.choices = opts.choices || [];
@@ -86,8 +87,9 @@ class SetupQuestion extends Field {
      * @returns {string|number|boolean}
      */
     readUserInput() {
-        let formValue = formValue = $(`#${field.id}`).val().trim();
-        return Util.cast(formValue, this.dataType);
+        let field = this;
+        let formValue = $(`#${field.id}`).val() || '';
+        return Util.cast(formValue.trim(), this.dataType);
     }
 
     /**
@@ -116,7 +118,7 @@ class SetupQuestion extends Field {
      */
     static getRequiredValidator() {
         return function(value) {
-            !Util.isEmpty(value);
+            return !Util.isEmpty(value);
         }
     }
 
@@ -163,11 +165,19 @@ class SetupQuestion extends Field {
      */
     static getIntRangeValidator(min, max, emptyOk = false) {
         return function(value) {
-            var intValue = parseInt(value, 10);
+            if (emptyOk && Util.isEmpty(value)) {
+                return true;
+            }
+            let intValue = NaN;
+            if (typeof value === 'string') {
+                intValue = parseInt(value, 10);
+            } else if (typeof value === 'number') {
+                intValue = Math.floor(value);
+            }
             if (isNaN(intValue)) {
                 return false
             }
-            return emptyOk && Util.isEmpty(value) || (intValue >= min && intValue <= max);
+            return intValue >= min && intValue <= max;
         }
     }
 }
