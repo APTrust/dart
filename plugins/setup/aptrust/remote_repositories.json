@@ -1,0 +1,18 @@
+[
+    {
+        "id": "214db814-bd73-49d4-b988-4d7a5ad0d313",
+        "name": "APTrust Demo Repository",
+        "uri": "https://demo.aptrust.org",
+        "userId": "",
+        "apiToken": "",
+        "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    },
+    {
+        "id":  "f95edae2-dff5-4ea7-bd3e-9546246d46e9",
+        "name": "APTrust Production Repository",
+        "uri": "https://repo.aptrust.org",
+        "userId": "",
+        "apiToken": "",
+        "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    }
+]

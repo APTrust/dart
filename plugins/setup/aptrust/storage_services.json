@@ -1,0 +1,50 @@
+[
+	{
+        "id": "31b0846e-46f6-4925-bdba-1d3c1a0b2b73",
+        "name": "APTrust Demo Receiving Bucket",
+        "description": "Receiving bucket for ingest to the APTrust Demo repository",
+        "protocol": "s3",
+        "host": "s3.amazonaws.com",
+        "bucket": "aptrust.receiving.test.yourdomain.edu",
+        "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+        "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+        "allowsUpload": true,
+        "allowsDownload": false
+    },
+    {
+        "id": "b250bdfb-298d-4dc2-9816-3a5001604376",
+        "name": "APTrust Production Receiving Bucket",
+        "description": "Receiving bucket for ingest to the APTrust Production repository",
+        "protocol": "s3",
+        "host": "s3.amazonaws.com",
+        "bucket": "aptrust.receiving.yourdomain.edu",
+        "login": "env:AWS_ACCESS_KEY_ID_PROD",
+        "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+        "allowsUpload": true,
+        "allowsDownload": false
+    },
+    {
+        "id": "12c7c92f-daf6-448e-83f0-310f2df40874",
+        "name": "APTrust Demo Restoration Bucket",
+        "description": "Restoration bucket for the APTrust Demo repository",
+        "protocol": "s3",
+        "host": "s3.amazonaws.com",
+        "bucket": "aptrust.restore.test.yourdomain.edu",
+        "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+        "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+        "allowsUpload": false,
+        "allowsDownload": true
+    },
+    {
+        "id": "dccf4a42-2281-4e93-aaaf-fb94e9458a0e",
+        "name": "APTrust Production Restoration Bucket",
+        "description": "Restoration bucket the APTrust Production repository",
+        "protocol": "s3",
+        "host": "s3.amazonaws.com",
+        "bucket": "aptrust.restore.yourdomain.edu",
+        "login": "env:AWS_ACCESS_KEY_ID_PROD",
+        "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+        "allowsUpload": false,
+        "allowsDownload": true
+    }
+]
