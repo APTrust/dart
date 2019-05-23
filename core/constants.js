@@ -212,13 +212,48 @@ const Constants =  {
         'upload': 'Upload error'
     },
     /**
-     * This is a marker that the {@link JobRunner} will print to STDERR
-     * when it has finished reporting error messages. Messages found on
-     * STDERR after this marker were printed by the Node.js runtime. We
-     * don't always want to capture this Node output, especially in the
-     * UI, where it is both uninformative and confusing to the user.
+     * Regular expression to match domain names.
+     *
+     * @type {RegExp}
      */
-    END_OF_ERROR_OUTPUT: 'End of DART error output'
+    RE_DOMAIN: /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/i,
+    /**
+     * Regular expression to match valid IPV4 addresses.
+     * Thank you O'Reilly regex cookbook.
+     *
+     * @type {RegExp}
+     */
+    RE_IPV4: /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+
+    /**
+     * Regular expression pattern to match valid file paths on
+     * POSIX systems.
+     *
+     * @type {RegExp}
+     */
+    RE_FILE_PATH_POSIX: /^(\/?[^\/\0]+\/?)+$/i,
+    /**
+     * Regular expression pattern to match valid file paths on
+     * Windows systems.
+     *
+     * @type {RegExp}
+     */
+    RE_FILE_PATH_WINDOWS: /^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i,
+    /**
+     * Regular expression pattern to match valid file paths on
+     * POSIX and Windows systems.
+     *
+     * @type {RegExp}
+     */
+    RE_FILE_PATH_ANY_OS: /^(\/?[^\/\0]+\/?)+$|^(?:[a-z]:|\\\\[a-z0-9_.$-]+\\[a-z0-9_.$-]+)\\(?:[^\\\/:*?"<>|\r\n]+\\)*[^\\\/:*?"<>|\r\n]*$/i,
+    /**
+     * This regular expression pattern matches valid email addresses.
+     * Thank you, StackOverflow.
+     *
+     * @type {RegExp}
+     */
+    RE_EMAIL: /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+
 };
 
 Object.freeze(Constants);
