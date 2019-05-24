@@ -43,7 +43,7 @@ const { Util } = require('../../core/util');
  * {@link SetupQuestion.getIntRangeValidator}. You can also write your own
  * custom validation function.
  *
- * @param {string} opts.onValideResponse - A function to call when the user
+ * @param {string} opts.onValidResponse - A function to call when the user
  * has supplied a valid response. This function will be called before DART
  * moves on to the next SetupQuestion. Typically, you'll want this function
  * to copy the user's response into some peristent setting. This function takes
@@ -185,6 +185,10 @@ class SetupQuestion extends Field {
             return intValue >= min && intValue <= max;
         }
     }
+
+    // TODO: Add getValue(objType, objId, property) and
+    // setValue(objType, objId, property, value). These may belong
+    // in the Util class instead of in this class.
 }
 
 module.exports.SetupQuestion = SetupQuestion;

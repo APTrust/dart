@@ -4,9 +4,7 @@
  *
  */
 class DPNSetup extends Plugin {
-    /**
-     *
-     */
+
     constructor() {
         super(__dirname);
     }
@@ -26,7 +24,7 @@ class DPNSetup extends Plugin {
             writesFormats: [],
             implementsProtocols: [],
             talksToRepository: [],
-            setsUp: ['aptrust']
+            setsUp: ['dpn']
         };
     }
 }

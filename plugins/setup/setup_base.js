@@ -19,7 +19,7 @@ const settingsFiles = {
 
 const startMessageFile = "start_message.html";
 const endMessageFile = "end_message.html";
-const questionsFile = "questions.json";
+const questionsFile = "questions.js";
 
 
 /**
@@ -29,7 +29,7 @@ const questionsFile = "questions.json";
  * A setup module will typically install a number of settings with
  * missing information. The DART SetupController will copy settings
  * from your plugin's settings directory, then it will read your
- * questions.json file, walking the user through one question at a time
+ * questions.js file, walking the user through one question at a time
  * to fill in missing attributes of the settings it just installed.
  *
  * For example, your Setup plugin may install a StorageService record
@@ -47,7 +47,7 @@ const questionsFile = "questions.json";
  * * plugins/setup/my_setup/bagit_profiles.json
  * * plugins/setup/my_setup/end_message.html
  * * plugins/setup/my_setup/internal_settings.json
- * * plugins/setup/my_setup/questions.json
+ * * plugins/setup/my_setup/questions.js
  * * plugins/setup/my_setup/remote_repositories.json
  * * plugins/setup/my_setup/start_message.html
  * * plugins/setup/my_setup/storage_services.json
@@ -58,7 +58,7 @@ const questionsFile = "questions.json";
  * 2. Install all settings from the files app_setting.json,
  *    bagit_profiles.json, internal_settings.json, remote_repositories.json,
  *    and storage_services.json.
- * 3. Present the questions in questions.json one by one.
+ * 3. Present the questions in questions.js one by one.
  * 4. Display the contents of end_message.json to the user.
  *
  * @param {string} settingsDir - The path to the directory that contains
@@ -142,7 +142,7 @@ class SetupBase extends Plugin {
      * * plugins/setup/<your setup plugin>/app_settings.json
      * * plugins/setup/<your setup plugin>/bagit_profiles.json
      * * plugins/setup/<your setup plugin>/internal_settings.json
-     * * plugins/setup/<your setup plugin>/questions.json
+     * * plugins/setup/<your setup plugin>/questions.js
      * * plugins/setup/<your setup plugin>/remote_repositories.json
      * * plugins/setup/<your setup plugin>/storage_services.json
      *
