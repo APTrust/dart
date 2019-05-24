@@ -27,9 +27,8 @@ const outputPath = '/dev/null';
 const profileId = Constants.BUILTIN_PROFILE_IDS.aptrust;
 
 function loadProfileIntoDB() {
-    let profile = BagItProfile.load(
-        path.join(__dirname, '..', '..', 'builtin', 'aptrust_bagit_profile_2.2.json'));
-    profile.save();
+    let profiles = TestUtil.loadProfilesFromSetup('aptrust');
+    profiles[0].save();
 }
 
 function getJobWithPackageOp() {

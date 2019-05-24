@@ -37,8 +37,8 @@ const infoFields = [
 ];
 
 function preloadProfiles() {
-    let aptProfile = TestUtil.loadProfile('aptrust_bagit_profile_2.2.json');
-    let dpnProfile = TestUtil.loadProfile('dpn_bagit_profile_2.1.json');
+    let aptProfile = TestUtil.loadProfilesFromSetup('aptrust')[0];
+    let dpnProfile = TestUtil.loadProfilesFromSetup('dpn')[0];
     let invalidProfile = TestUtil.loadProfile('invalid_profile.json');
     aptProfile.save();
     dpnProfile.save();

@@ -44,14 +44,14 @@ function loadBuiltInProfiles() {
         'DPN': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['dpn'])
     };
     let jsonFiles = {
-        'APTrust': 'aptrust_bagit_profile_2.2.json',
-        'DPN': 'dpn_bagit_profile_2.1.json'
+        'APTrust': 'aptrust',
+        'DPN': 'dpn'
     }
     for (let [name, profile] of Object.entries(profiles)) {
         if (!profile) {
             let jsonFile = jsonFiles[name];
             Context.logger.info(`Installing profile ${name} from ${jsonFile}`);
-            profile = TestUtil.loadProfile(jsonFile);
+            profile = TestUtil.loadProfilesFromSetup(jsonFile)[0];
             profile.isBuiltIn = true;
             profile.userCanDelete = false;
             profile.save();

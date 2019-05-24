@@ -3,14 +3,15 @@ const { Job } = require('./job');
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
 const path = require('path');
+const { TestUtil } = require('./test_util');
 const { UploadOperation } = require('./upload_operation');
 const { ValidationOperation } = require('./validation_operation');
 
 
 function getJobWithOps() {
     let job = new Job();
-    var profilesDir = path.join(__dirname, '..', 'builtin');
-    job.bagItProfile = BagItProfile.load(path.join(profilesDir, 'aptrust_bagit_profile_2.2.json'));
+    let profiles = TestUtil.loadProfilesFromSetup('aptrust');
+    job.bagItProfile = profiles[0];
 
     setTag(job.bagItProfile, 'Title', 'Title 1');
     setTag(job.bagItProfile, 'Internal-Sender-Identifier', 'Internal-Sender-Identifier 1');

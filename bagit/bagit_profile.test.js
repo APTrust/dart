@@ -287,8 +287,10 @@ test('mustBeTarred()', () => {
 });
 
 test('fromJson()', () => {
-    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
-    let jsonString = fs.readFileSync(jsonFile);
+    let jsonFile = path.join(__dirname, '..', 'plugins', 'setup', 'aptrust', 'bagit_profiles.json');
+    let jsonString = fs.readFileSync(jsonFile).toString();
+    // Remove array brackets so this is not a JSON array.
+    jsonString = jsonString.replace(/^\s*\[/, '').replace(/\]\s*$/, '');
     let profile = BagItProfile.fromJson(jsonString);
     expect(profile).not.toBeNull();
 
@@ -304,14 +306,14 @@ test('fromJson()', () => {
 });
 
 test('load()', () => {
-    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
+    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'multi_manifest.json');
     let profile = BagItProfile.load(jsonFile);
     expect(profile).not.toBeNull();
 
     // Check some basics.
-    expect(profile.id).toEqual(Constants.BUILTIN_PROFILE_IDS['aptrust']);
+    expect(profile.id).toEqual('28f48fcc-064d-4acf-bb5b-ea6ad5c6264d');
     expect(profile.name).toEqual('APTrust');
-    expect(profile.description).toEqual('APTrust 2.2 default BagIt profile.');
+    expect(profile.description).toEqual('Modified version of APTrust 2.2 BagIt profile that includes two required manifest and tag manifest algorithms. This profile is for testing, not for production.');
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
@@ -473,7 +475,8 @@ test('mergeTagValues()', () => {
 });
 
 test('inflateFrom()', () => {
-    let jsonFile = path.join(__dirname, '..', 'builtin', 'aptrust_bagit_profile_2.2.json');
+    let jsonFile = path.join(__dirname, '..', 'test', 'profiles', 'multi_manifest.json');
+
     let profile = BagItProfile.load(jsonFile);
     let copy = BagItProfile.inflateFrom(profile);
     expect(copy).toEqual(profile);

@@ -13,7 +13,7 @@ let pathToBagFile = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
 
 function getJob() {
     let job = new Job();
-    job.bagItProfile = TestUtil.loadProfile('aptrust_bagit_profile_2.2.json');
+    job.bagItProfile = TestUtil.loadProfilesFromSetup('aptrust')[0];
     job.validationOp = new ValidationOperation(pathToBagFile);
     return job;
 }

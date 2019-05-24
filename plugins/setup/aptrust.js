@@ -28,7 +28,6 @@ const PharosProdAPIKeyHelp = Context.y18n.__("Enter your API key for the APTrust
  * APTrustSetup provides a walk-through setup for DART users
  * to create a basic APTrust environment.
  *
- *
  */
 class APTrustSetup extends Plugin {
     /**
