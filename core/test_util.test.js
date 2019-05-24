@@ -7,8 +7,6 @@ test('TestUtil.deleteJsonFile does not blow up when file is missing', () => {
 
 test('loadProfile', () => {
     let profiles = {
-        'aptrust_bagit_profile_2.2.json': 'APTrust 2.2 default BagIt profile',
-        'dpn_bagit_profile_2.1.json': 'Digital Preservation Network',
         'invalid_profile.json': 'This profile is not valid.',
         'multi_manifest.json': 'Modified version of APTrust 2.2',
     };
@@ -17,6 +15,16 @@ test('loadProfile', () => {
         expect(profile).toBeDefined();
         expect(profile.description.startsWith(desc)).toEqual(true);
     }
+});
+
+test('loadProfilesFromSetup', () => {
+    let aptrust = TestUtil.loadProfilesFromSetup('aptrust');
+    expect(aptrust.length).toEqual(1);
+    expect(aptrust[0].name).toEqual("APTrust");
+    expect(aptrust[0].tags.length).toEqual(14);
+    expect(function() {
+        TestUti.loadProfilesFromSetup('dir_does_not_exist');
+    }).toThrow();
 });
 
 test('ISODatePattern', () => {

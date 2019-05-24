@@ -25,8 +25,7 @@ class TestUtil {
     }
 
     /**
-     * This loads a BagItProfile from the builtin directory or from
-     * the test/profiles directory.
+     * This loads a BagItProfile from the test/profiles directory.
      *
      * @param {string} filename - The file name of the BagIt profile to
      * load. For example, "my_profile.json".
@@ -34,14 +33,31 @@ class TestUtil {
      * @returns {BagItProfile}
      */
     static loadProfile(filename) {
-        let builtInDir = path.join(__dirname, "..", "builtin");
-        let profilePath = path.join(builtInDir, filename);
-        if (!fs.existsSync(profilePath)) {
-            let testDir = path.join(__dirname, "..", "test");
-            profilePath = path.join(testDir, "profiles", filename);
-
-        }
+        let testDir = path.join(__dirname, "..", "test");
+        let profilePath = path.join(testDir, "profiles", filename);
         return BagItProfile.load(profilePath);
+    }
+
+    /**
+     * This loads a BagItProfile from the builtin directory or from
+     * the test/profiles directory. Throws an exception if the path does
+     * not exist or cannot be read.
+     *
+     * @param {string} dirname - The name of the directory beneath
+     * plugins/setup from which to load. For example, if dirname is
+     * 'aptrust', this will load the bagit_profiles.json file from
+     * plugins/setup/aptrust
+     *
+     * @returns {Array<BagItProfile>}
+     */
+    static loadProfilesFromSetup(dirname) {
+        let profilePath = path.join(__dirname, "..", "plugins", "setup", dirname, "bagit_profiles.json");
+        let data = JSON.parse(fs.readFileSync(profilePath));
+        let profiles = [];
+        for (let obj of data) {
+            profiles.push(BagItProfile.inflateFrom(obj));
+        }
+        return profiles;
     }
 
 }
