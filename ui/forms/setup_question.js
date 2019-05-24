@@ -22,9 +22,13 @@ const { Util } = require('../../core/util');
  * @param {string} opts.error - An error message to display if the user's
  * response is invalid.
  *
- * @param {string} [opts.choices] - An array of choices for the user to select
- * from. This parameter is optional. If supplied, the Setup page will display
- * a select list instead of a text input.
+ * @param {string} [opts.heading] - An optional heading to display above
+ * the question.
+ *
+ * @param {Array<Choice>} [opts.choices] - An array of {@link Choice}
+ * objects for the user to select from. This parameter is optional. If
+ * supplied, the Setup page will display a select list instead of a text
+ * input. See {@link Choice.makeList}.
  *
  * @param {string} [opts.dataType] - The type to which the user's response
  * should be cast. Valid values are 'number' and 'boolean'. If the dataType
@@ -70,6 +74,7 @@ class SetupQuestion extends Field {
     constructor(opts) {
         let rand = 'setup_' + Math.random().toString().replace(/^0\./, '');
         super(rand, rand, opts.question, opts.initialValue)
+        this.heading = opts.heading;
         this.dataType = opts.dataType || 'string';
         this.choices = opts.choices || [];
         this.error = opts.error || Context.y18n.__("The response is not valid.");

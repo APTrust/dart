@@ -5,6 +5,7 @@ const { UITestUtil } = require('../common/ui_test_util');
 
 const opts1 = {
     question: 'What time is it?',
+    heading: 'Question 1',
     initialValue: '10:00',
     error: 'I asked you what time it is.',
     choices: ['9:00', '10:00', '11:00'],
@@ -17,6 +18,7 @@ const opts1 = {
 test('Constructor sets expected fields', () => {
     let q = new SetupQuestion(opts1);
     expect(q.label).toEqual(opts1.question);
+    expect(q.heading).toEqual(opts1.heading);
     expect(q.value).toEqual(opts1.initialValue);
     expect(q.error).toEqual(opts1.error);
     expect(q.choices).toEqual(opts1.choices);
