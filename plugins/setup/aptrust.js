@@ -35,9 +35,7 @@ class APTrustSetup extends Plugin {
      *
      */
     constructor() {
-        super();
-        this.fields = [];
-        this._initFields();
+        super(__dirname);
     }
 
     /**
@@ -58,119 +56,6 @@ class APTrustSetup extends Plugin {
             setsUp: ['aptrust']
         };
     }
-
-    /**
-     * This message will appear before the user sees the first of the setup
-     * questions.
-     *
-     * @returns {string}
-     */
-    startMessage() {
-        return Context.y18n.__("The APTrust setup process will install required APTrust settings, and will ask you to answer a series of %s questions. If you are an APTrust member and you have questions or run into problems, contact us at %s for assistance. Click Next to continue.", $this.fields.length, "<a href='mailto:help@aptrust.org'>help@aptrust.org</a>");
-    }
-
-    /**
-     * This message will appear when the user completes the setup process.
-     *
-     * @returns {string}
-     */
-    endMessage() {
-        return Context.y18n.__("APTrust setup is complete. See the Help link in the menu above for information on how to add or change the settings, or select Job from the menu above to create a new job.");
-    }
-
-    /**
-     * The setup runner calls this after startMessage(). Use this to
-     * run any code you want before the user starts answering the series
-     * of setup questions. If this code throws any exceptions, they will
-     * be displayed to the user.
-     *
-     * APTrust uses this method to install custom AppSettings, BagIt Profiles,
-     * InternalSettings, RemoteRepositories, and StorageServices.
-     *
-     * Internally, this method can install items in any order it pleases.
-     */
-    preQuestionCallback() {
-        this._installAppSettings();
-        this._installBagItProfiles();
-        this._installRemoteRepositories();
-        this._installStorageServices();
-        this._installInternalSettings();
-    }
-
-    /**
-     * The setup runner calls this after the user has answered all
-     * questions and before the endMessage() appears.
-     *
-     */
-    postQuestionCallback() {
-        this._setCompletionTimestamp();
-    }
-
-    /**
-     * This sets up the questions the user will have to answer.
-     * Questions will be presented one at a time in the order they
-     * were added.
-     *
-     */
-    _initFields() {
-        // Load setup questions from JSON?
-    }
-
-
-    /**
-     * This installs a number of BagIt profiles required by APTrust.
-     * See {@link BagItProfile}.
-     *
-     * @private
-     */
-    _installBagItProfiles() {
-        let aptrustId = Constants.BUILTIN_PROFILE_IDS['aptrust'];
-        let dpnId = Constants.BUILTIN_PROFILE_IDS['dpn'];
-        let builtinDir = path.join('..', '..', 'builtin');
-        if (!BagItProfile.find(aptrustId)) {
-            this._installProfile('APTrust v2.2', path.join(builtinDir, 'aptrust_bagit_profile_2.2.json'));
-        }
-        if (!BagItProfile.find(dpnId)) {
-            this._installProfile('DPN v2.1', path.join(builtinDir, 'dpn_bagit_profile_2.1.json'));
-        }
-    }
-
-    /**
-     * This installs a BagItProfile.
-     *
-     * @private
-     */
-    _installProfile(profileName, pathToFile) {
-        let profile = BagItProfile.load(pathToFile);
-        profile.save();
-        Context.logger.info(Context.y18n.__("APTrust Setup installed BagItProfile %s", profileName));
-    }
-
-    /**
-     * This installs InternalSettings required by APTrust.
-     * Users cannot edit InternalSettings. See {@link InternalSetting}.
-     *
-     * @private
-     */
-    _installInternalSettings() {
-        // No required internal settings for APTrust.
-    }
-
-    /**
-     * This creates or updates an internal setting describing when the
-     * APTrust setup plugin was last run.
-     *
-     * @private
-     */
-    _setCompletionTimestamp() {
-        let aptSetupRecord = InternalSetting.firstMatching('name', 'APTrust Setup');
-        if (!aptSetupRecord) {
-            aptSetupRecord = new InternalSetting({ name: 'APTrust Setup' });
-        }
-        aptSetupRecord.value = new Date().toISOString();
-        aptSetupRecord.save();
-    }
-
 }
 
 module.exports = APTrustSetup;
