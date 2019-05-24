@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      ui/controllers/job_run_controller.js - Documentation
+      plugins/setup/setup_base.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        ui/controllers/job_run_controller.js
+        plugins/setup/setup_base.js
       </h1>
     
 
@@ -90,234 +90,267 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const $ = require('jquery');
+    <pre class="prettyprint source linenums"><code>const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
-const { BaseController } = require('./base_controller');
-const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
-const { DartProcess } = require('../../core/dart_process');
-const { fork } = require('child_process');
 const fs = require('fs');
-const { Job } = require('../../core/job');
-const { JobRunner } = require('../../workers/job_runner');
+const { InternalSetting } = require('../../core/internal_setting');
 const path = require('path');
-const Templates = require('../common/templates');
-const { UIConstants } = require('../common/ui_constants');
+const { Plugin } = require('../plugin');
+const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
-const { Util } = require('../../core/util');
+
+
+const settingsFiles = {
+    'app_settings.json': AppSetting,
+    'bagit_profiles.json': BagItProfile,
+    'internal_settings.json': InternalSetting,
+    'remote_repositories.json': RemoteRepository,
+    'storage_services.json': StorageService
+};
+
+const startMessageFile = "start_message.html";
+const endMessageFile = "end_message.html";
+const questionsFile = "questions.js";
+
 
 /**
- * The JobRunController displays the page where users review
- * and run a Job.
+ * SetupBase is the base class for all Setup plugins. The purpose
+ * of a Setup plugin is to install and configure required settings.
  *
- * @param {URLSearchParams} params - The URL search params parsed
- * from the URL used to reach this page. This should contain at
- * least the Job Id.
+ * A setup module will typically install a number of settings with
+ * missing information. The DART SetupController will copy settings
+ * from your plugin's settings directory, then it will read your
+ * questions.js file, walking the user through one question at a time
+ * to fill in missing attributes of the settings it just installed.
  *
- * @param {string} params.id - The id of the Job being worked
- * on. Job.id is a UUID string.
+ * For example, your Setup plugin may install a StorageService record
+ * that already has the URL, protocol, port, and default bucket/folder
+ * name filled in. The Setup questions may then ask the user for their
+ * personal credentials to connect to that service.
+ *
+ * Your setup JSON and HTML files should be in a directory beneath
+ * plugins/setup that has the same name as your setup module.
+ *
+ * For example, if your setup module is plugins/setup/my_setup.js, the
+ * HTML and JSON files for your setup should be:
+ *
+ * * plugins/setup/my_setup/app_settings.json
+ * * plugins/setup/my_setup/bagit_profiles.json
+ * * plugins/setup/my_setup/end_message.html
+ * * plugins/setup/my_setup/internal_settings.json
+ * * plugins/setup/my_setup/questions.js
+ * * plugins/setup/my_setup/remote_repositories.json
+ * * plugins/setup/my_setup/start_message.html
+ * * plugins/setup/my_setup/storage_services.json
+ *
+ * The Setup controller will do the following:
+ *
+ * 1. Display the contents of start_message.html to the user.
+ * 2. Install all settings from the files app_setting.json,
+ *    bagit_profiles.json, internal_settings.json, remote_repositories.json,
+ *    and storage_services.json.
+ * 3. Present the questions in questions.js one by one.
+ * 4. Display the contents of end_message.json to the user.
+ *
+ * @param {string} settingsDir - The path to the directory that contains
+ * the settings you want to install and/or the questions you want the
+ * user to answer. Your Setup plugin should call super(__dirname) so the
+ * setup module knows where to find the settings you want to install.
+ *
+ * @example
+ *
+ * class MySetup extends Setup {
+ *
+ *    constructor() {
+ *        super(__dirname)
+ *    }
+ *
+ *    static description() {
+ *       return {
+ *           id: '00000000-0000-0000-0000-000000000000',
+ *           name: 'MySetup',
+ *           description: Context.y18n.__('My setup module.'),
+ *           version: '1.0',
+ *           readsFormats: [],
+ *           writesFormats: [],
+ *           implementsProtocols: [],
+ *           talksToRepository: [],
+ *           setsUp: ['myrepo']
+ *       };
+ *   }
+ * }
+ *
+ * module.exports.MySetup = MySetup;
+ *
+ *
  */
-class JobRunController extends BaseController {
-
-    constructor(params) {
-        super(params, 'Jobs');
-        this.model = Job;
-        this.job = Job.find(this.params.get('id'));
-        this.dartProcess = null;
-        this.childProcess = null;
-        this.completedUploads = [];
-        this.reachedEndOfOutput = false;
+class SetupBase extends Plugin {
+    constructor(settingsDir) {
+        super();
+        this.settingsDir = settingsDir;
     }
 
     /**
-     * Displays a summary of the Job and the "Run Job" button.
+     * Returns the contents of start_message.html or end_message.html
+     * as a string. Returns undefined if the file to be read from does
+     * not exist.
+     *
+     * @param {string} which - Speficies which file to read, 'start' or
+     * 'end'. Throws an exception if which is not 'start' or 'end'.
+     *
+     * @returns {string}
      */
-    show() {
-        let uploadTargets = [];
-        for (let op of this.job.uploadOps) {
-            let target = StorageService.find(op.storageServiceId);
-            if (target) {
-                uploadTargets.push(target.name);
-            }
+    getMessage(which) {
+        let pathToFile = this._getPathToMessageFile(which);
+        if (fs.existsSync(pathToFile)) {
+            return fs.readFileSync(pathToFile);
         }
-        let data = { job: this.job, uploadTargets: uploadTargets }
-        return this.containerContent(Templates.jobRun(data));
     }
 
     /**
-     * Runs the Job in a separate process.
+     * Returns the path to your setup module's start_message or end_message
+     * HTML file.
+     *
+     * @param {string} which - Speficies which file to read, 'start' or
+     * 'end'. Throws an exception if which is not 'start' or 'end'.
+     *
+     * @returns {string}
      */
-    run() {
-        // Grey this out while job is running.
-        // Run job in separate process, so user can
-        // navigate to other screens without disrupting it.
-        let tmpFile = Util.tmpFilePath();
-        fs.writeFileSync(tmpFile, JSON.stringify(this.job));
-
-        // Need to change npm command outside of dev env.
-        let modulePath = path.join(__dirname, '..', '..', 'main.js');
-        this.childProcess = fork(
-                modulePath,
-                ['--job', tmpFile, '--deleteJobFile']
-        );
-
-        // TODO: Do we still need this? It's job is to keep
-        // track of running jobs for the UI.
-        this.dartProcess = new DartProcess(
-            this.job.title(),
-            tmpFile,
-            this.childProcess.pid
-        );
-        this.dartProcess.save();
-        this.initRunningJobDisplay();
-        Context.childProcesses[this.dartProcess.id] = this.childProcess;
-        return this.noContent();
-    }
-
-    initRunningJobDisplay(dartProcess, childProcess) {
-        this.showDivs();
-        let controller = this;
-
-        this.childProcess.on('message', (data) => {
-            controller.renderChildProcOutput(data);
-        });
-
-        this.childProcess.on('close', (code) => {
-            this.dartProcess.completedAt = new Date().toISOString();
-            this.dartProcess.exitCode = code;
-            this.renderOutcome(code);
-        });
-    }
-
-    showDivs() {
-        let processDiv = $('#dartProcessContainer');
-        let html = Templates.partials['dartProcess']({ item: this.dartProcess });
-        processDiv.html(html);
-        if (this.job.packageOp &amp;&amp; this.job.packageOp.outputPath) {
-            $(`#${this.dartProcess.id} div.packageInfo`).show();
-            if (this.job.packageOp.packageFormat == 'BagIt') {
-                $(`#${this.dartProcess.id} div.validationInfo`).show();
-            }
-        }
-        if (this.job.uploadOps.length > 0) {
-            $(`#${this.dartProcess.id} div.uploadInfo`).show();
-        }
-        processDiv.show();
-    }
-
-    renderChildProcOutput(data) {
-        switch (data.op) {
-        case 'package':
-            this.renderPackageInfo(data);
-            break;
-        case 'validate':
-            this.renderValidationInfo(data);
-            break;
-        case 'upload':
-            this.renderUploadInfo(data);
-            break;
-        default:
-            return;
-        }
-    }
-
-    renderPackageInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.packageInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.packageInfo div.resultIcon`);
-        if (data.action == 'fileAdded') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
-            detailDiv.text(Context.y18n.__('Added file %s', data.msg));
-        } else if (data.action == 'completed') {
-            if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, iconDiv, data.msg);
-            } else {
-                this.markFailed(detailDiv, iconDiv, data.msg);
-            }
+    _getPathToMessageFile(which) {
+        if (which == 'start') {
+            return path.join(this.settingsDir, startMessageFile);
+        } else if (which == 'end') {
+            return path.join(this.settingsDir, endMessageFile);
         } else {
-            detailDiv.text(data.msg);
+            throw new Error(Context.y18n.__("Cannot find message file %s", which));
         }
     }
 
-    renderValidationInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.validationInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.validationInfo div.resultIcon`);
-        if (data.action == 'checksum') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
-            detailDiv.text(Context.y18n.__('Validating %s', data.msg));
-        } else if (data.action == 'completed') {
-            if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, iconDiv, data.msg);
+    /**
+     * Installs settings from the following files, ignoring any files that do
+     * not exist:
+     *
+     * * plugins/setup/&lt;your setup plugin>/app_settings.json
+     * * plugins/setup/&lt;your setup plugin>/bagit_profiles.json
+     * * plugins/setup/&lt;your setup plugin>/internal_settings.json
+     * * plugins/setup/&lt;your setup plugin>/questions.js
+     * * plugins/setup/&lt;your setup plugin>/remote_repositories.json
+     * * plugins/setup/&lt;your setup plugin>/storage_services.json
+     *
+     */
+    installSettings() {
+        for (let [file, objType] of Object.entries(settingsFiles)) {
+            let pathToFile = path.join(this.settingsDir, file);
+            if (fs.existsSync(pathToFile)) {
+                Context.logger.info(Context.y18n.__(
+                    "Installing settings from file %s", pathToFile));
+                this._installSettingsFromFile(pathToFile, objType);
             } else {
-                this.markFailed(detailDiv, iconDiv, data.msg);
+                Context.logger.info(Context.y18n.__(
+                    "Skipping file %s because it does not exist", pathToFile));
             }
         }
     }
 
-    renderUploadInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
-        if (data.action == 'start') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
-            detailDiv.text(data.msg);
-        } else if (data.action == 'completed') {
-            if (data.status == Constants.OP_SUCCEEDED) {
-                this.completedUploads.push(data.msg);
-                this.markSuccess(detailDiv, iconDiv, this.completedUploads.join("&lt;br/>\n"));
+    /**
+     * Installs settings of the specified type from a single file.
+     *
+     * @param {string} pathToFile - Path to the JSON file containing the
+     * settings you want to install.
+     *
+     * @param {object} objType - The class of the object to create. For
+     * example, {@link AppSetting}, {@link BagItProfile}, etc.
+     *
+     * @private
+     *
+     */
+    _installSettingsFromFile(pathToFile, objType) {
+        let data = JSON.parse(fs.readFileSync(pathToFile));
+        for (let record of data) {
+            if (!objType.find(record.id)) {
+                this._installObject(record, objType);
             } else {
-                this.markFailed(detailDiv, iconDiv, detailDiv.html());
+                Context.logger.info(Context.y18n.__("Skipping installation of %s %s because it is already installed.", objType.toString(), record.name || record.id));
             }
         }
     }
 
-    // TODO: This has a problem. If we're doing a series of uploads and one
-    // fails and it's not the LAST one, this reports a successful outcome.
-    // It should report an error.
-    renderOutcome(code) {
-        // We have to reload this, because the child process updated
-        // the job's record in the database.
-        this.job = Job.find(this.job.id);
-        let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
-        if (code == 0) {
-            this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
+    /**
+     * Installs a single setting/object read from a JSON file.
+     *
+     * @param {object} record - A JavaScript object parsed from the JSON
+     * in a settings file.
+     *
+     * @param {object} objType - The class of the object to create. For
+     * example, {@link AppSetting}, {@link BagItProfile}, etc.
+     *
+     * @private
+     *
+     */
+    _installObject(record, objType) {
+        let obj;
+        if (objType === BagItProfile) {
+            obj = BagItProfile.inflateFrom(record);
         } else {
-            let job = Job.find(this.job.id);
-            let msg = Context.y18n.__('Job did not complete due to errors.')
-            Context.logger.error(msg);
-            this.logFailedOps(job);
-            msg += `&lt;br/>${job.getRunErrors().join("&lt;br/>")}`
-            this.markFailed(detailDiv, iconDiv, msg.replace(/\n/g, '&lt;br/>'));
+            let opts = this._getDefaultConstructorArgsForType(objType);
+            obj = new objType(opts);
+            Object.assign(obj, record);
+        }
+        obj.save();
+        Context.logger.info(Context.y18n.__("Installed %s %s", objType.toString(), record.name || record.id));
+    }
+
+    /**
+     * Returns the default/required constructor params for an object.
+     * This applies to objects descended from {@link PersistentObject}.
+     *
+     * @param {object} objType - The class of the object. For
+     * example, {@link AppSetting}, {@link BagItProfile}, etc.
+     *
+     * @returns {object}
+     * @private
+     *
+     */
+    _getDefaultConstructorArgsForType(objType) {
+        let opts = { name: 'Unnamed Object' };
+        if (objType === StorageService) {
+            opts['protocol'] = 's3';
+            opts['port'] = 0;
+        }
+        return opts;
+    }
+
+    /**
+     * This parses the questions from the question.json file (if it exists)
+     * and returns them as a list of {@link SetupQuestion} objects.
+     *
+     * @returns {Array&lt;SetupQuestion>}
+     */
+    getQuestions() {
+        let pathToFile = path.join(this.settingsDir, questionsFile);
+        if (fs.existsSync(pathToFile)) {
+            return JSON.parse(fs.readFileSync(pathToFile));
         }
     }
 
-    logFailedOps(job) {
-        if (job.packageOp) {
-            Context.logger.error(JSON.stringify(job.packageOp));
+    /**
+     * This creates or updates an {@link InternalSetting} describing when the
+     * setup plugin was last run. Each time you run the setup plugin,
+     * this will overwrite the timestamp.
+     *
+     */
+    setCompletionTimestamp() {
+        let className = this.constructor.name;
+        let record = InternalSetting.firstMatching('name', className);
+        if (!record) {
+            record = new InternalSetting({ name: className });
         }
-        if (job.validationOp) {
-            Context.logger.error(JSON.stringify(job.validationOp));
-        }
-        if (job.uploadOps &amp;&amp; job.uploadOps.length > 0) {
-            Context.logger.error(JSON.stringify(job.uploadOps));
-        }
+        record.value = new Date().toISOString();
+        record.save();
     }
 
-    markSuccess(detailDiv, iconDiv, message) {
-        detailDiv.html(message);
-        iconDiv.html(UIConstants.GREEN_SMILEY);
-    }
-
-    markFailed(detailDiv, iconDiv, message) {
-        detailDiv.html(message);
-        iconDiv.html(UIConstants.RED_ANGRY_FACE);
-    }
-
-    postRenderCallback(fnName) {
-
-    }
 }
-
-module.exports.JobRunController = JobRunController;
 </code></pre>
   </article>
 </section>
