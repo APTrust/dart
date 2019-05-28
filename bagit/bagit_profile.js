@@ -195,7 +195,6 @@ class BagItProfile extends PersistentObject {
                 tagName: 'BagIt-Version'
             });
             version.required = true;
-            version.emptyOk = false;
             version.values = Constants.BAGIT_VERSIONS;
             version.defaultValue = "0.97";
             version.help = "Which version of the BagIt specification describes this bag's format?";
@@ -207,7 +206,6 @@ class BagItProfile extends PersistentObject {
                 tagName: 'Tag-File-Character-Encoding'
             });
             encoding.required = true;
-            encoding.emptyOk = false;
             encoding.defaultValue = "UTF-8";
             encoding.help = "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)";
             this.tags.push(version);
@@ -241,7 +239,6 @@ class BagItProfile extends PersistentObject {
                     tagName: tagName
                 });
                 t.required = false;
-                t.emptyOk = true;
                 this.tags.push(t);
             }
         }

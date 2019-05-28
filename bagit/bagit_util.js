@@ -71,7 +71,6 @@ class BagItUtil {
                     tagName: tagName
                 });
                 tagDef.required = originalDef["required"] || false;
-                tagDef.emptyOk = originalDef["emptyOk"] || false;
                 tagDef.values = originalDef["values"] || [];
                 tagDef.defaultValue = originalDef["defaultValue"] || null;
                 if (Array.isArray(originalDef["values"]) && originalDef["values"].length == 1) {

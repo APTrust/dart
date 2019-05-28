@@ -47,24 +47,12 @@ class TagDefinition {
           */
         this.tagName = opts.tagName;
         /**
-          * True if this tag must be present in the tag file.
-          * Some tags may be present but empty.
-          *
-          * @see {@link emptyOk}
+          * True if this tag requires a value.
           *
           * @type {boolean}
           * @default false
           */
         this.required = opts.required === true ? true : false;
-        /**
-          * True it's OK for this tag to be empty.
-          *
-          * @see {@link required}
-          *
-          * @type {boolean}
-          * @default false
-          */
-        this.emptyOk = opts.emptyOk === true ? true : false;
         /**
           * A list of valid values for this tag. If this list
           * is empty, then any values are valid. If it is not
@@ -202,7 +190,7 @@ class TagDefinition {
             return true;
         }
         var value = this.getValue();
-        if (this.required && !this.emptyOk && Util.isEmpty(value)) {
+        if (this.required && Util.isEmpty(value)) {
             this.errors['userValue'] = Context.y18n.__("This tag requires a value.");
         } else if (this.values.length > 0 && !Util.listContains(this.values, value)) {
             this.errors['userValue'] = Context.y18n.__("The value is not in the list of allowed values.");

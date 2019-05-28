@@ -10,7 +10,6 @@ test('Constructor sets initial properties', () => {
     expect(tagDef.tagFile).toEqual('bag-info.txt');
     expect(tagDef.tagName).toEqual('Source-Organization');
     expect(tagDef.required).toEqual(false);
-    expect(tagDef.emptyOk).toEqual(false);
     expect(tagDef.values).toEqual([]);
     expect(tagDef.userValue).toEqual('');
     expect(tagDef.help).toEqual('');
@@ -58,7 +57,6 @@ test('validateForJob() permits legal empty tag value', () => {
         tagName: 'Source-Organization'
     });
     tagDef.required = false;
-    tagDef.emptyOk = true;
     let isValid = tagDef.validateForJob();
     expect(isValid).toBe(true);
 });
@@ -81,7 +79,6 @@ test('validateForJob() catches illegal non-empty tag values', () => {
         tagName: 'Source-Organization'
     });
     tagDef.required = true;
-    tagDef.emptyOk = false;
     tagDef.values = ['honest', 'respectable', 'responsible'];
     tagDef.userValue = 'xyz';
     let isValid = tagDef.validateForJob();
@@ -95,7 +92,6 @@ test('validateForJob() does not try to validate system set values', () => {
         tagName: 'Payload-Oxum'
     });
     tagDef.required = true;
-    tagDef.emptyOk = false;
     let isValid = tagDef.validateForJob();
     expect(isValid).toBe(true);
 });

@@ -920,10 +920,7 @@ class Validator extends EventEmitter {
                 continue;
             }
             for (var value of parsedTagValues) {
-                if (value == '' && tagDef.emptyOk) {
-                    continue;
-                }
-                if (value == '' && !tagDef.emptyOk) {
+                if (tagDef.required && value == '') {
                     this.errors.push(`Value for tag '${tagDef.tagName}' in ${filename} is missing.`);
                     continue;
                 }

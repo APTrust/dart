@@ -223,7 +223,15 @@ test('Validator accepts valid DPN bag', done => {
 
 test('Validator rejects bad DPN bag', done => {
     let validator = getValidator("dpn", "dpn", "020c8edd-d043-4204-a6b8-26b6fb8bda5d.tar");
-    let expected = ["File 'data/Users/diamond/go/src/golang.org/x/net/html/atom/gen.go' in manifest-sha256.txt is missing from bag.", "Bad sha256 digest for 'dpn-tags/dpn-info.txt': manifest says '935e01c6f9ecf565c67c32760a9cec966d2f24bf2654533394d44924e19ecda2', file digest is 'cfab0747e203bc0d419d331b6fca48b66c8a5f045738fbf4608d2424ff28823e'."];
+    let expected = [
+        "File 'data/Users/diamond/go/src/golang.org/x/net/html/atom/gen.go' in manifest-sha256.txt is missing from bag.",
+        "Bad sha256 digest for 'dpn-tags/dpn-info.txt': manifest says '935e01c6f9ecf565c67c32760a9cec966d2f24bf2654533394d44924e19ecda2', file digest is 'cfab0747e203bc0d419d331b6fca48b66c8a5f045738fbf4608d2424ff28823e'.",
+        "Value for tag 'Ingest-Node-Address' in dpn-tags/dpn-info.txt is missing.",
+        "Value for tag 'Ingest-Node-Contact-Email' in dpn-tags/dpn-info.txt is missing.",
+        "Value for tag 'Ingest-Node-Contact-Name' in dpn-tags/dpn-info.txt is missing.",
+        "Value for tag 'Interpretive-Object-ID' in dpn-tags/dpn-info.txt is missing.",
+        "Value for tag 'Rights-Object-ID' in dpn-tags/dpn-info.txt is missing."
+    ];
     validator.on('error', function(err) {
         // Force failure & stop test.
         expect(err).toBeNull();

@@ -46,7 +46,7 @@ class JobTagsForm extends Form {
                 " The system will set this field's value when it creates the bag.";
             field.attrs['disabled'] = true;
         }
-        if (t.required && !t.emptyOk) {
+        if (t.required) {
             field.attrs['required'] = true;
             field.cssClasses.push('required');
         }

@@ -10,7 +10,7 @@ test('create()', () => {
         help: 'Who sent this?'
     });
     let expectedFields = [
-        'id', 'tagFile', 'tagName', 'required', 'emptyOk',
+        'id', 'tagFile', 'tagName', 'required',
         'values', 'defaultValue', 'userValue', 'isBuiltIn',
         'isUserAddedFile', 'isUserAddedTag', 'help'
     ];

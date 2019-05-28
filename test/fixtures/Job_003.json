@@ -36,7 +36,6 @@
         "tags": [
             {
                 "defaultValue": null,
-                "emptyOk": false,
                 "errors": {},
                 "help": "Access rights for this bag describe who can see that it exists in the repository.",
                 "id": "60ef466a-6d9c-4825-92cf-e472fb05f3d4",
@@ -56,7 +55,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "The description of the bag that you want to appear in the APTrust registry.",
                 "id": "d94d1d47-49cb-4569-8d27-d9ebbf25c9b2",
@@ -72,7 +70,6 @@
             },
             {
                 "defaultValue": "Standard",
-                "emptyOk": false,
                 "errors": {},
                 "help": "How do you want this bag to be stored in APTrust? Standard = S3/Virginia + Glacier/Oregon. Glacier-OH = Glacier-only storage in Ohio. Glacier-OR = Glacier-only storage in Oregon. Glacier-VA = Glacier-only storage in Virginia. Standard storage includes regular 90-day fixity checks. Glacier-only storage is less expensive but excludes fixity checks. File in Glacier-only storage may take up to 24 hours longer to restore and excessive Glacier retrieval may incur additional fees.",
                 "id": "53075007-e6cf-4a18-9b34-caa605ed593f",
@@ -93,7 +90,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": false,
                 "errors": {},
                 "help": "The title or name of that describes this bag's contents.",
                 "id": "9b7344ae-9d06-4444-9d8a-dda7e5c2b8dc",
@@ -109,7 +105,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags.",
                 "id": "117e46d8-096f-41f1-8c94-7d9202b9477b",
@@ -125,7 +120,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "Identifies the logical group or collection to which a bag belongs. Several bags may share the same Bag-Group-Identifier to indicate that they are part of the same logical grouping.",
                 "id": "32e69005-4495-452f-8b3d-bef545fca583",
@@ -141,7 +135,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "The date this bag was created. The bagging software should set this automatically.",
                 "id": "41b75504-e54d-49a1-aad4-c8a4921d15ce",
@@ -157,7 +150,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "The name of the software that created this bag. The bagging software should set this automatically.",
                 "id": "4d9e682c-4236-4adf-aaf2-c9d7666e3062",
@@ -173,7 +165,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "A description of the bag's contents for the sender's internal use. This description will appear in the APTrust registry if you do not set the Description tag in the aptrust-info.txt file.",
                 "id": "917fc560-5bd1-4a5b-acb6-b7a4ce749252",
@@ -189,7 +180,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "A unique identifier for this bag inside your organization.",
                 "id": "018c0706-5597-4406-a705-205c608d827f",
@@ -205,7 +195,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": true,
                 "errors": {},
                 "help": "The number of files and bytes in this bag's payload. This should be calculated and set by the bagging software.",
                 "id": "de2c8f3e-fadb-4811-88a2-83aafa44fb50",
@@ -221,7 +210,6 @@
             },
             {
                 "defaultValue": null,
-                "emptyOk": false,
                 "errors": {},
                 "help": "The name of the organization that produced this bag, or is responsible for its contents.",
                 "id": "567451b6-1f30-4bda-b66b-9a657426d5e5",
@@ -237,7 +225,6 @@
             },
             {
                 "defaultValue": "0.97",
-                "emptyOk": false,
                 "errors": {},
                 "help": "Which version of the BagIt specification describes this bag's format?",
                 "id": "39b8ac8a-8e3d-47c3-9cda-5edd0d4ad1fb",
@@ -256,7 +243,6 @@
             },
             {
                 "defaultValue": "UTF-8",
-                "emptyOk": false,
                 "errors": {},
                 "help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)",
                 "id": "2a914ea2-ee3b-4c53-96e1-4f93f641338b",
@@ -274,7 +260,6 @@
             },
             {
                 "defaultValue": "",
-                "emptyOk": false,
                 "errors": {},
                 "help": "",
                 "id": "65a3f41f-afcf-448a-81d0-1b67efb9599d",
@@ -290,7 +275,6 @@
             },
             {
                 "defaultValue": "",
-                "emptyOk": false,
                 "errors": {},
                 "help": "",
                 "id": "32cd5ecd-5c75-4197-a165-1667cec8f6d0",
@@ -306,7 +290,6 @@
             },
             {
                 "defaultValue": "",
-                "emptyOk": false,
                 "errors": {},
                 "help": "",
                 "id": "d2aed1de-ada0-4c57-8bee-eff600ed5a91",

@@ -29,7 +29,6 @@ function getJobWithProfile() {
 function clearAllTagRequirements(tags) {
     for (let tag of tags) {
         tag.required = false;
-        tag.emptyOk = true;
         tag.values = [];
     }
 }

@@ -29,11 +29,6 @@ class TagDefinitionForm extends Form {
             Constants.YES_NO,
             this.obj.required,
             false);
-
-        this.fields['emptyOk'].choices = Choice.makeList(
-            Constants.YES_NO,
-            this.obj.emptyOk,
-            false);
     }
 
 }
