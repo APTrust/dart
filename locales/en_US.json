@@ -334,5 +334,7 @@
   "StorageService_allowsUpload_label": "StorageService_allowsUpload_label",
   "StorageService_allowsUpload_help": "StorageService_allowsUpload_help",
   "StorageService_allowsDownload_label": "StorageService_allowsDownload_label",
-  "StorageService_allowsDownload_help": "StorageService_allowsDownload_help"
+  "StorageService_allowsDownload_help": "StorageService_allowsDownload_help",
+  "TagDefinition_emptyOk_label": "TagDefinition_emptyOk_label",
+  "TagDefinition_emptyOk_help": "TagDefinition_emptyOk_help"
 }
