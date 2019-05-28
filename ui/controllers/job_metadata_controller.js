@@ -161,8 +161,14 @@ class JobMetadataController extends BaseController {
             $('.form-group-hidden').toggle();
             if (currentText == showAll) {
                 $("#btnToggleHidden").text(hideDefaults);
+                $('.what-is-showing i').text(
+                    Context.y18n.__('Showing all tags.')
+                );
             } else {
                 $("#btnToggleHidden").text(showAll);
+                $('.what-is-showing i').text(
+                    Context.y18n.__('Tags with default values are not showing.')
+                );
             }
         });
     }

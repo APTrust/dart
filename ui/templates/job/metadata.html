@@ -15,29 +15,47 @@
 
 <div>
   <form>
-    {{#each form.fields as |field| }}
 
-      {{#if field.choices.length }}
+    {{#each form.sortedTagFileNames as |filename|}}
 
-        {{> inputSelect field = field }}
+    <div class="card mb-3">
+      <div class="card-header">
+        <a data-toggle="collapse" href="#{{filename}}" aria-expanded="true" aria-controls="{{ filename }}">{{ filename }}</a>
+        <div class="what-is-showing pull-right text-muted">
+          <i>{{ translate "Tags with default values are not showing." }}</i>
+        </div>
+      </div>
+      <div class="card-body collapse show" id={{ filename }}>
 
-      {{else if field.looksLikeDescriptionTag }}
+        {{#each (lookup ../form.tagFileNames filename) as |field| }}
 
-        {{> inputTextArea field = field }}
+          {{#if field.choices.length }}
 
-      {{else if field.wasAddedForJob }}
+            {{> inputSelect field = field }}
 
-        <!-- Needs to be text with delete option. -->
+          {{else if field.looksLikeDescriptionTag }}
 
-        {{> inputText field = field }}
+            {{> inputTextArea field = field }}
 
-      {{else}}
+          {{else if field.wasAddedForJob }}
 
-        {{> inputText field = field }}
+            <!-- Needs to be text with delete option. -->
 
-      {{/if}}
+            {{> inputText field = field }}
+
+          {{else}}
+
+            {{> inputText field = field }}
+
+        {{/if}}
+
+        {{/each}}
+
+      </div>
+    </div>
 
     {{/each}}
+
   </form>
 </div>
 

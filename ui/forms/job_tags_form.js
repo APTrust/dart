@@ -14,14 +14,21 @@ class JobTagsForm extends Form {
 
     constructor(job) {
         super('JobTags', {});
+        this.tagFileNames = {};
+        this.sortedTagFileNames = [];
         this._init(job);
     }
 
     _init(job) {
-        for (let tagDef of job.bagItProfile.tags.sort(tagsByLabel)) {
+        for (let tagDef of job.bagItProfile.tags.sort(tagsByFileAndName)) {
             let field = this._tagDefToField(tagDef);
             this.fields[field.id] = field;
+            if (!this.tagFileNames[tagDef.tagFile]) {
+                this.tagFileNames[tagDef.tagFile] = [];
+            }
+            this.tagFileNames[tagDef.tagFile].push(field);
         }
+        this.sortedTagFileNames = Object.keys(this.tagFileNames).sort();
     }
 
     /**
@@ -35,8 +42,7 @@ class JobTagsForm extends Form {
      * @returns {Field}
      */
     _tagDefToField(t) {
-        var label = `${t.tagFile}: ${t.tagName}`;
-        var field = new Field(t.id, t.id, label, t.getValue());
+        var field = new Field(t.id, t.id, t.tagName, t.getValue());
         field.help = t.help;
         if (t.values && t.values.length > 0) {
             field.choices = Choice.makeList(t.values, t.getValue(), true);
@@ -92,7 +98,7 @@ class JobTagsForm extends Form {
 /**
  * Sort tags by the label used in the Job metadata display.
  */
-function tagsByLabel(a, b) {
+function tagsByFileAndName(a, b) {
     let aLabel = `${a.tagFile}: ${a.tagName}`;
     let bLabel = `${b.tagFile}: ${b.tagName}`;
     if (aLabel < bLabel) {
