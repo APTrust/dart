@@ -23,6 +23,10 @@ class TagDefinitionForm extends Form {
         // seperate lines of the textarea on the form.
         if (this.fields.values.value && Array.isArray(this.fields.values.value)) {
             this.fields['values'].value = this.fields['values'].value.join("\n").trim();
+            this.fields['defaultValue'].choices = Choice.makeList(
+                this.obj.values,
+                this.obj.defaultValue,
+                true);
         }
 
         this.fields['required'].choices = Choice.makeList(
