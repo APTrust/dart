@@ -22,8 +22,6 @@ test('create()', () => {
     for (let [name, field] of Object.entries(form.fields)) {
         let tag = job.bagItProfile.firstMatchingTag('id', field.id);
         expect(field.label).toContain(tag.tagName);
-        expect(field.label).toContain(':');
-        expect(field.label).toContain(tag.tagFile);
         if (tag.values && tag.values.length > 0) {
             // Plus one because the UI shows an empty first option.
             expect(field.choices.length).toEqual(tag.values.length + 1);
