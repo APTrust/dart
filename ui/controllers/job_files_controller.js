@@ -26,6 +26,7 @@ class JobFilesController extends BaseController {
     constructor(params) {
         super(params, 'Jobs');
         this.model = Job;
+        this.nameProperty = 'title';
         this.job = Job.find(this.params.get('id'));
     }
 

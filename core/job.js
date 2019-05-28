@@ -127,7 +127,7 @@ class Job extends PersistentObject {
      *
      * @returns {string}
      */
-    title() {
+    get title() {
         // Try to get the name of the file that was created or uploaded.
         var name = null;
         if (!name && this.packageOp && this.packageOp.packageName) {

@@ -57,33 +57,33 @@ test('validate()', () => {
     expect(job.errors['PackageOperation.sourceFiles']).toBeDefined();
 });
 
-test('title()', () => {
+test('title', () => {
     let job = getJobWithOps();
 
     // Should use basename of package path, if available.
-    expect(job.title()).toEqual('bag_of_photos');
+    expect(job.title).toEqual('bag_of_photos');
 
     // Else, fall back to path of last uploaded file.
     job.packageOp = null;
-    expect(job.title()).toEqual('my_file.zip');
+    expect(job.title).toEqual('my_file.zip');
 
     // Fall back to Title, then other tag values
     job.uploadOps = [];
-    expect(job.title()).toEqual('Title 1');
+    expect(job.title).toEqual('Title 1');
 
     setTag(job.bagItProfile, 'Title', '');
-    expect(job.title()).toEqual('Internal-Sender-Identifier 1');
+    expect(job.title).toEqual('Internal-Sender-Identifier 1');
 
     setTag(job.bagItProfile, 'Internal-Sender-Identifier', '');
-    expect(job.title()).toEqual('Internal-Sender-Description 1');
+    expect(job.title).toEqual('Internal-Sender-Description 1');
 
     setTag(job.bagItProfile, 'Internal-Sender-Description', '');
-    expect(job.title()).toEqual('Description 1');
+    expect(job.title).toEqual('Description 1');
 
     // If no tags, return a generic name.
     setTag(job.bagItProfile, 'Description', '');
-    expect(job.title().startsWith('Job of')).toBe(true);
-    expect(job.title().length).toBeGreaterThan(20);
+    expect(job.title.startsWith('Job of')).toBe(true);
+    expect(job.title.length).toBeGreaterThan(20);
 });
 
 test('packagedAt()', () => {

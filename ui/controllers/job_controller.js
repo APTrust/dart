@@ -31,7 +31,7 @@ class JobController extends BaseController {
 
         this.model = Job;
         this.listTemplate = Templates.jobList;
-        this.nameProperty = 'name';
+        this.nameProperty = 'title';
         this.defaultOrderBy = 'createdAt';
         this.defaultSortDirection = 'desc';
     }
