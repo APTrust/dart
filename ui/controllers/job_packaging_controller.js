@@ -1,9 +1,11 @@
 const $ = require('jquery');
+const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
+const path = require('path');
 const Templates = require('../common/templates');
 
 /**
@@ -142,6 +144,7 @@ class JobPackagingController extends BaseController {
      */
     postRenderCallback(fnName) {
         $("select[name=packageFormat]").change(this.onFormatChange());
+        $('#jobPackageOpForm_packageName').on('keyup', this.onPackageNameKeyUp());
     }
 
     /**
@@ -157,6 +160,23 @@ class JobPackagingController extends BaseController {
             } else {
                 $('#jobProfileContainer').hide();
             }
+        }
+    }
+
+    /**
+     * Returns a function that sets the output path to a sane value
+     * when the user changes the package name. The bag will be written
+     * to this output path.
+     */
+    onPackageNameKeyUp() {
+        let job = this.job;
+        return function(e) {
+            let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
+            let packageName = $('#jobPackageOpForm_packageName').val();
+            if (job.bagItProfile) {
+                packageName += job.bagItProfile.preferredSerialization();
+            }
+            $('#jobPackageOpForm_outputPath').val(path.join(baggingDir, packageName));
         }
     }
 }
