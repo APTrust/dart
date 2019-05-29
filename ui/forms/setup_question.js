@@ -24,9 +24,10 @@ const { Util } = require('../../core/util');
  *
  * @param {string} opts.question - The question to ask the user.
  *
- * @param {string} opts.initialValue - The initial value for this question.
- * This value will appear in the text box, or as the selected value in the
- * select list when the page loads.
+ * @param {object} opts.mapsToProperty - An object that describes where the
+ * initial value for this question should come from and where it should be
+ * saved. See {@link SetupQuestion#mapsToProperty}, which includes a full
+ * description and examples.
  *
  * @param {string} opts.error - An error message to display if the user's
  * response is invalid.
@@ -34,10 +35,10 @@ const { Util } = require('../../core/util');
  * @param {string} [opts.heading] - An optional heading to display above
  * the question.
  *
- * @param {Array<Choice>} [opts.choices] - An array of {@link Choice}
- * objects for the user to select from. This parameter is optional. If
- * supplied, the Setup page will display a select list instead of a text
- * input. See {@link Choice.makeList}.
+ * @param {Array<string>} [opts.options] - An optional list of allowed
+ * values. If specified, the user will see an HTML select list instead of
+ * a text input. The select list will contain these values and an empty
+ * option.
  *
  * @param {string} [opts.dataType] - The type to which the user's response
  * should be cast. Valid values are 'number' and 'boolean'. If the dataType
@@ -52,25 +53,97 @@ const { Util } = require('../../core/util');
  * {@link SetupQuestion.getIntRangeValidator}. You can also write your own
  * custom validation function.
  *
- *
- *
  */
 class SetupQuestion extends Field {
     constructor(opts) {
         let rand = 'setup_' + Math.random().toString().replace(/^0\./, '');
         super(rand, rand, opts.question, opts.initialValue)
+        /**
+         * The heading that will appear above the question on the
+         * page that displays the question to the user.
+         *
+         * @type {string}
+         */
         this.heading = opts.heading;
+        /**
+         * The data type to which the user's response should be cast.
+         * Can be 'string', 'number', or 'boolean'.
+         *
+         * @type {string}
+         * @default 'string'
+         */
         this.dataType = opts.dataType || 'string';
-        this.choices = opts.choices || [];
+        /**
+         * The error message to display if the user provides an invalid
+         * response to the question.
+         *
+         * @type {string}
+         */
         this.error = opts.error || Context.y18n.__("The response is not valid.");
+        /**
+         * A function to validate the user's response. It should return true
+         * for valid responses, false otherwise.
+         *
+         * @type {function}
+         */
         this.validator = opts.validator || function (val) { return true };
+        /**
+         * An object that defines what setting value or BagItProfile tag
+         * value the question maps to. When the question appears, it will
+         * take its initial value from the specified setting/property, or
+         * from the specified BagItProfile tag value. When the user provides
+         * a valid response, the value of that response will be assigned to
+         * the setting/property or tag value.
+         *
+         * @example
+         *
+         * // Map this question to the value property of an AppSetting
+         * opts.mapsToProperty = {
+         *    type: 'AppSetting',
+         *    id: 'e8a7556f-ba6b-413f-9e8a-1682a5134ebb',
+         *    property: 'value'
+         * }
+         *
+         * // Map this question to the password property of a StorageService
+         * opts.mapsToProperty = {
+         *    type: 'StorageService',
+         *    id: 'c329c0e9-8d0c-4a8b-b7e7-45ff084a90c1',
+         *    property: 'password'
+         * }
+         *
+         * // Map this property to the Source-Organization tag in the
+         * // bag-info.txt file of a BagItProfile
+         * opts.mapsToProperty = {
+         *    type: 'BagItProfile',
+         *    id: '271b9309-2c85-4821-aeb2-7ae209c7aaa8',
+         *    tagFile: 'bag-info.txt',
+         *    tagName: 'Source-Organization'
+         * }
+         *
+         * @type {object}
+         */
         this.mapsToProperty = opts.mapsToProperty;
+        /**
+         * An optional list of allowed values to choose from. These will
+         * be converted into a list of Choice objects in the base
+         * {@link Field} class.
+         *
+         * @type {Array<string>}
+         */
+        this.options;
 
         if (Array.isArray(opts.options)) {
             this.options = opts.options;
         }
     }
 
+    /**
+     * Given a list list of strings, this builds the list of
+     * {@Link Choice} objects that will appear as options in the
+     * HTML select list.
+     *
+     * @para {Array<string>} options
+     */
     set options(options) {
         this.setInitialValue();
         this.choices = Choice.makeList(options, this.value, true);
@@ -78,7 +151,8 @@ class SetupQuestion extends Field {
 
     /**
      * This returns the value that the user entered in the form input
-     * field.
+     * field. The returned value will be cast to
+     * @{link SetupQuestion#dataType}.
      *
      * @returns {string|number|boolean}
      */
@@ -105,6 +179,13 @@ class SetupQuestion extends Field {
         return false;
     }
 
+    /**
+     * This sets the initial value in the HTML text input or select list.
+     * The value of the setting comes from the value of the property of an
+     * AppSetting, InternalSetting, RemoteRepository, StorageService, or
+     * BagItProfile, as specified in  {@link SetupQuestion#mapsToProperty}
+     *
+     */
     setInitialValue() {
         let obj = this._getMappedObject();
         if (this.mapsToProperty.tagFile && this.mapsToProperty.tagName) {
@@ -118,6 +199,13 @@ class SetupQuestion extends Field {
         }
     }
 
+    /**
+     * This returns an object of type AppSetting, InternalSetting,
+     * RemoteRepository, StorageService, or
+     * BagItProfile, as specified in  {@link SetupQuestion#mapsToProperty}
+     *
+     * @private
+     */
     _getMappedObject() {
         let obj;
         Context.logger.debug(`Looking for ${this.mapsToProperty.type} with id ${this.mapsToProperty.id}`);
@@ -146,6 +234,13 @@ class SetupQuestion extends Field {
         return obj;
     }
 
+    /**
+     * This saves the value the user entered into the HTML text input or
+     * select list. The value is saved to the property of an
+     * AppSetting, InternalSetting, RemoteRepository, StorageService, or
+     * BagItProfile, as specified in {@link SetupQuestion#mapsToProperty}
+     *
+     */
     saveValue() {
         let obj = this._getMappedObject();
         if (this.mapsToProperty.tagFile && this.mapsToProperty.tagName) {
