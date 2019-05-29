@@ -23,11 +23,11 @@ function run() {
                  d: ['deleteJobFile']}
     });
     if (opts.job) {
-        process.env.DART_MODE = 'cli';
+        process.DART_MODE = 'cli';
         return runWithoutUI(opts);
     } else {
         // GUI mode. Hoist win and app to global namespace.
-        process.env.DART_MODE = 'gui';
+        process.DART_MODE = 'gui';
         let ui = require('./ui/main');
         win = ui.win;
         app = ui.app;

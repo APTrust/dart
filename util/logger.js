@@ -74,7 +74,7 @@ if (process.env.TRAVIS_OS_NAME) {
 
 // In dev mode, log to the console as well. This makes our life
 // a lot easier.
-if (process.env.NODE_ENV=='dev' && process.env.DART_MODE == 'gui') {
+if (process.env.NODE_ENV=='dev' && process.DART_MODE == 'gui') {
     let { ConsoleForElectron } = require('winston-console-for-electron');
     transports.push(new ConsoleForElectron({
         level: 'debug',
