@@ -30,6 +30,22 @@ class GlobalContext {
           */
         this.isTestEnv = process.env.NODE_ENV === 'test';
         /**
+          * isDevEnv indicates whether we're currently running in a development
+          * environment. For this to work, the package.json file needs the
+          * following entry in "scripts":
+          *
+          * @example
+          * "scripts": {
+          *     ...
+          *     "start": "NODE_ENV=dev electron .",
+          *     ...
+          * }
+          *
+          *
+          * @type {boolean}
+          */
+        this.isDevEnv = process.env.NODE_ENV === 'dev';
+        /**
           * config is the current configuration, either user or test, based
           * on whether isTestEnv is true.
           *

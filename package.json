@@ -38,6 +38,7 @@
         "vue": "^2.6.10",
         "vue-template-compiler": "^2.6.10",
         "winston": "^3.2.1",
+        "winston-console-for-electron": "0.0.6",
         "y18n": "^4.0.0"
     },
     "devDependencies": {
@@ -50,7 +51,7 @@
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
-        "start": "electron .",
+        "start": "NODE_ENV=dev electron .",
         "release": "build",
         "test": "jest"
     },

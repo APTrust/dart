@@ -1,4 +1,5 @@
 const {app, BrowserWindow} = require('electron');
+const contextMenu = require('electron-context-menu');
 const path = require('path');
 const process = require('process');
 const url = require('url');
@@ -23,7 +24,7 @@ function createWindow() {
         slashes: true
     }))
 
-    //contextMenu();
+    contextMenu({ showInspectElement: true });
 
     // Open the DevTools.
     // win.webContents.openDevTools()

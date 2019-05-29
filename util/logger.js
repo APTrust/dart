@@ -72,6 +72,18 @@ if (process.env.TRAVIS_OS_NAME) {
     transports = [ new winston.transports.File(options.userLogFile) ];
 }
 
+// In dev mode, log to the console as well. This makes our life
+// a lot easier.
+if (process.env.NODE_ENV=='dev' && process.env.DART_MODE == 'gui') {
+    let { ConsoleForElectron } = require('winston-console-for-electron');
+    transports.push(new ConsoleForElectron({
+        level: 'debug',
+        handleExceptions: true,
+        format: logFormat,
+        colorize: true
+    }));
+}
+
 // instantiate a new Winston Logger with the settings defined above
 var logger = winston.createLogger({
     transports: transports,
