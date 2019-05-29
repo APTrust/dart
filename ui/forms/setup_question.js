@@ -1,7 +1,16 @@
 const $ = require('jquery');
+const { AppSetting } = require('../../core/app_setting');
+const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Choice } = require('../../ui/forms/choice');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Field } = require('./field');
+const { InternalSetting } = require('../../core/internal_setting');
+const os = require('os');
+const { RemoteRepository } = require('../../core/remote_repository');
+const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
+
 
 /**
  * SetupQuestion is a question to be asked by a setup module. DART presents
@@ -43,31 +52,7 @@ const { Util } = require('../../core/util');
  * {@link SetupQuestion.getIntRangeValidator}. You can also write your own
  * custom validation function.
  *
- * @param {string} opts.onValidResponse - A function to call when the user
- * has supplied a valid response. This function will be called before DART
- * moves on to the next SetupQuestion. Typically, you'll want this function
- * to copy the user's response into some peristent setting. This function takes
- * the user-entered value as its only parameter. The SetupQuestion constructor
- * will blow up if you don't give it an onValidResponse handler.
  *
- * @example
- *
- * // Create a question that asks for a domain name and copies the value
- * // into an AppSetting.
- *
- * let appSetting = AppSetting.firstMatching("My Domain Name") || new AppSetting({ name: "My Domain Name" });
- * let validator = SetupQuestion.getPatternValidator(Constants.RE_DOMAIN);
- * let onValidResponse = function(value) {
- *     appSetting.value = value;
- *     appSetting.save();
- * }
- * let q = new SetupQuestion({
- *     question: "What is your organization's domain name?",
- *     initialValue: appSetting.value,
- *     error: "Please enter a valid domain name.",
- *     validator: validator,
- *     onValidResponse: onValidResponse
- * });
  *
  */
 class SetupQuestion extends Field {
@@ -79,10 +64,16 @@ class SetupQuestion extends Field {
         this.choices = opts.choices || [];
         this.error = opts.error || Context.y18n.__("The response is not valid.");
         this.validator = opts.validator || function (val) { return true };
-        this.onValidResponse = opts.onValidResponse;
-        if (typeof this.onValidResponse != 'function') {
-            throw new Error(Context.y18n.__("%s should be a function", "onValidResponse"));
+        this.mapsToProperty = opts.mapsToProperty;
+
+        if (Array.isArray(opts.options)) {
+            this.options = opts.options;
         }
+    }
+
+    set options(options) {
+        this.setInitialValue();
+        this.choices = Choice.makeList(options, this.value, true);
     }
 
     /**
@@ -99,8 +90,8 @@ class SetupQuestion extends Field {
 
     /**
      * This reads the value the user input on the form. If the input
-     * is valid, this calls the onValidResponse callback. If the input
-     * was invalid, this returns false.
+     * is valid, assigns the value of the input to the property or
+     * profile tag to which this question is mapped.
      *
      * @returns {boolean}
      */
@@ -108,10 +99,62 @@ class SetupQuestion extends Field {
         let value = this.readUserInput();
         if (this.validator(value)) {
             this.value = value;
-            this.onValidResponse(value);
+            this.saveValue();
             return true;
         }
         return false;
+    }
+
+    setInitialValue() {
+        let obj = this._getMappedObject();
+        if (this.mapsToProperty.tagFile && this.mapsToProperty.tagName) {
+            let tags = obj.getTagsFromFile(this.mapsToProperty.tagFile, this.mapsToProperty.tagName);
+            if (!tags || tags.length == 0) {
+                throw new Error(Context.y18n.__('BagIt Profile has no tags where tag file = %s and tag name = %s', this.mapsToProperty.tagFile, this.mapsToProperty.tagName));
+            }
+            this.value = tags[0].getValue();
+        } else {
+            this.value = obj[this.mapsToProperty.property];
+        }
+    }
+
+    _getMappedObject() {
+        let obj;
+        Context.logger.debug(`Looking for ${this.mapsToProperty.type} with id ${this.mapsToProperty.id}`);
+        switch(this.mapsToProperty.type) {
+        case 'AppSetting':
+            obj = AppSetting.find(this.mapsToProperty.id);
+            break;
+        case 'BagItProfile':
+            obj = BagItProfile.find(this.mapsToProperty.id);
+            break;
+        case 'InternalSetting':
+            obj = AppSetting.find(this.mapsToProperty.id);
+            break;
+        case 'RemoteRepository':
+            obj = RemoteRepository.find(this.mapsToProperty.id);
+            break;
+        case 'StorageService':
+            obj = StorageService.find(this.mapsToProperty.id);
+            break;
+        default:
+            throw new Error(Context.y18n.__("Unknown type: %s"), this.mapsToProperty.type);
+        }
+        if(!obj) {
+            throw new Error(Context.y18n.__('Could not find object of type %s with id %s', this.mapsToProperty.type, this.mapsToProperty.id));
+        }
+        return obj;
+    }
+
+    saveValue() {
+        let obj = this._getMappedObject();
+        if (this.mapsToProperty.tagFile && this.mapsToProperty.tagName) {
+            let tags = obj.getTagsFromFile(this.mapsToProperty.tagFile, this.mapsToProperty.tagName);
+            tags[0].userValue = this.value;
+        } else {
+            obj[this.mapsToProperty.property] = this.value;
+        }
+        obj.save();
     }
 
     /**
@@ -185,10 +228,6 @@ class SetupQuestion extends Field {
             return intValue >= min && intValue <= max;
         }
     }
-
-    // TODO: Add getValue(objType, objId, property) and
-    // setValue(objType, objId, property, value). These may belong
-    // in the Util class instead of in this class.
 }
 
 module.exports.SetupQuestion = SetupQuestion;

@@ -47,7 +47,7 @@ const questionsFile = "questions.js";
  * * plugins/setup/my_setup/bagit_profiles.json
  * * plugins/setup/my_setup/end_message.html
  * * plugins/setup/my_setup/internal_settings.json
- * * plugins/setup/my_setup/questions.js
+ * * plugins/setup/my_setup/questions.json
  * * plugins/setup/my_setup/remote_repositories.json
  * * plugins/setup/my_setup/start_message.html
  * * plugins/setup/my_setup/storage_services.json
