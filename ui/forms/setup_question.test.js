@@ -10,10 +10,13 @@ const { UITestUtil } = require('../common/ui_test_util');
 const settingId = 'cfecb3ae-55f1-44cf-88ea-d33a5fcfe6b3';
 const profileId = 'bf782457-72a4-498f-9bf2-6bc21bfc71e3';
 
+const settingValue = '10:00';
+const tagValue = 'default organization';
+
 beforeAll(() => {
     let appSetting = new AppSetting({
         name: 'test name',
-        value: '10:00'
+        value: settingValue
     });
     appSetting.id = settingId;
     appSetting.save();
@@ -22,7 +25,7 @@ beforeAll(() => {
         __dirname, '..', '..', 'test', 'profiles', 'multi_manifest.json'));
     profile.id = profileId;
     let tag = profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0];
-    tag.defaultValue = 'default organization';
+    tag.defaultValue = tagValue;
     profile.save();
 });
 
@@ -31,11 +34,23 @@ afterAll(() => {
     BagItProfile.find(profileId).delete();
 });
 
-const opts1 = {
+// Need --runInBand to ensure this works.
+afterEach(() => {
+    let setting = AppSetting.find(settingId);
+    setting.value = settingValue;
+    setting.save();
+
+    let profile = BagItProfile.find(profileId);
+    let tag = profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0];
+    tag.defaultValue = tagValue;
+    profile.save();
+});
+
+const settingOpts = {
     question: 'What time is it?',
     heading: 'Question 1',
     error: 'I asked you what time it is.',
-    options: ['9:00', '10:00', '11:00'],
+    options: ['9:00', settingValue, '11:00'],
     validator: function(value) {
         return value == '11:00';
     },
@@ -46,7 +61,7 @@ const opts1 = {
     }
 }
 
-const opts2 = {
+const tagOpts = {
     question: "Where's Waldo?",
     heading: 'Question 2',
     error: 'Nothing will come of nothing. Speak again.',
@@ -61,25 +76,24 @@ const opts2 = {
     }
 }
 
-
 test('Constructor sets expected fields', () => {
-    let q = new SetupQuestion(opts1);
-    expect(q.label).toEqual(opts1.question);
-    expect(q.heading).toEqual(opts1.heading);
-    expect(q.value).toEqual('10:00');
-    expect(q.error).toEqual(opts1.error);
-    expect(q.choices).toEqual(Choice.makeList(opts1.options, '10:00', true));
-    expect(q.validator).toEqual(opts1.validator);
+    let q = new SetupQuestion(settingOpts);
+    expect(q.label).toEqual(settingOpts.question);
+    expect(q.heading).toEqual(settingOpts.heading);
+    expect(q.value).toEqual(settingValue);
+    expect(q.error).toEqual(settingOpts.error);
+    expect(q.choices).toEqual(Choice.makeList(settingOpts.options, settingValue, true));
+    expect(q.validator).toEqual(settingOpts.validator);
 });
 
 test('readUserInput()', () => {
-    let q = new SetupQuestion(opts1);
+    let q = new SetupQuestion(settingOpts);
     let html = Templates.partials['inputText']({
         field: q
     })
 
     UITestUtil.setDocumentBody({ container: html});
-    expect(q.readUserInput()).toEqual('10:00');
+    expect(q.readUserInput()).toEqual(settingValue);
 
     $(`#${q.id}`).val('12345678');
     expect(q.readUserInput()).toEqual('12345678');
@@ -97,16 +111,47 @@ test('readUserInput()', () => {
 
 });
 
+test('setInitialValue sets value from setting', () => {
+    let q = new SetupQuestion(settingOpts);
+    q.setInitialValue()
+    expect(q.value).toBe(settingValue);
+});
+
+test('setInitialValue sets value from BagItProfile tag', () => {
+    let q = new SetupQuestion(tagOpts);
+    q.setInitialValue()
+    expect(q.value).toBe(tagValue);
+});
+
 test('processResponse returns false if invalid', () => {
-    let q = new SetupQuestion(opts1);
+    let q = new SetupQuestion(settingOpts);
     q.readUserInput = jest.fn(() => { return '12:00' });
     expect(q.processResponse()).toBe(false);
 });
 
 test('processResponse returns true if valid', () => {
-    let q = new SetupQuestion(opts1);
+    let q = new SetupQuestion(settingOpts);
     q.readUserInput = jest.fn(() => { return '11:00' });
     expect(q.processResponse()).toBe(true);
+});
+
+test('processResponse sets property if valid', () => {
+    let q = new SetupQuestion(settingOpts);
+    q.readUserInput = jest.fn(() => { return '11:00' });
+    expect(q.processResponse()).toBe(true);
+
+    let setting = AppSetting.find(settingId);
+    expect(setting.value).toEqual('11:00');
+});
+
+test('processResponse sets tag value if valid', () => {
+    let q = new SetupQuestion(tagOpts);
+    q.readUserInput = jest.fn(() => { return 'Example Org' });
+    expect(q.processResponse()).toBe(true);
+
+    let profile = BagItProfile.find(profileId);
+    let tag = profile.getTagsFromFile('bag-info.txt', 'Source-Organization')[0];
+    expect(tag.getValue()).toEqual('Example Org');
 });
 
 test('getRequiredValidator()', () => {
