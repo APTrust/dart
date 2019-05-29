@@ -5,6 +5,7 @@ const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
 const { KeyValueCollection } = require('./key_value_collection');
+const mkdirp = require('mkdirp');
 const { OperationResult } = require('../core/operation_result');
 const os = require('os');
 const path = require('path');
@@ -332,9 +333,14 @@ class Bagger extends EventEmitter {
             return;
         }
         var outputPath = this.job.packageOp.outputPath;
+        var parentDir = path.dirname(outputPath);
         var fileExtension = path.extname(outputPath);
         if (fileExtension === '') {
             fileExtension = 'directory';
+            parentDir = outputPath;
+        }
+        if (!fs.existsSync(outputPath)) {
+            mkdirp.sync(parentDir, { mode: 0o755 });
         }
         var plugins = PluginManager.canWrite(fileExtension);
         if (!plugins) {
