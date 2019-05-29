@@ -36,7 +36,7 @@ const Questions = [
             ['Consortia', 'Institution', 'Restricted'],
             '', // TODO: getValue()
             false
-        );
+        ),
         initialValue: "TODO: write getValue, as in setup_question.js",
         onValidResponse: "TODO: write setValue, as in setup_question.js"
     })

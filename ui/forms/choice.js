@@ -31,7 +31,7 @@ class Choice {
      * and the value will be set to object.id. (This is because all
      * PersistentObjects in DART include a name and id.)
      *
-     * @param {string|Array{string}} selected - The item or items
+     * @param {string|Array<string>} selected - The item or items
      * in the Choice list to be pre-selected when the HTML element
      * renders. If this is a string, the first Choice whose value
      * matches will be selected. If this is an array, all Choices whose
