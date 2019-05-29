@@ -123,6 +123,7 @@ class Bagger extends EventEmitter {
 
         if (!this.validatePackagingOperation()) {
             this._finish();
+            this.emit('error', Context.y18n.__('Validation error in packaging operation.'));
             return false;
         }
 
@@ -131,6 +132,7 @@ class Bagger extends EventEmitter {
         } catch (ex) {
             packOp.result.errors.push(ex.toString());
             this._finish();
+            this.emit('error', ex.toString());
             return false;
         }
 

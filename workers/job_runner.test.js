@@ -177,7 +177,7 @@ test('run() fails gracefully if package fails (untarred bag)', done => {
     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
 
     jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'FileSystemWriter:');
+        testFailedPackage(jobRunner, returnCode, 'Error: ENOTDIR');
         done();
     });
 });
@@ -196,7 +196,7 @@ test('run() fails gracefully if package fails (tarred bag, cannot create directo
     jobRunner.job.packageOp.outputPath = '/dev/null/xyz/file_does_not_exist.tar';
 
     jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+        testFailedPackage(jobRunner, returnCode, 'Error: ENOTDIR');
         done();
     });
 });
@@ -215,7 +215,7 @@ test('run() fails gracefully if package fails (tarred bag, cannot write in direc
     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist.tar';
 
     jobRunner.run().then(function(returnCode) {
-        testFailedPackage(jobRunner, returnCode, 'TarWriter:');
+        testFailedPackage(jobRunner, returnCode, 'Error: EEXIST');
         done();
     });
 });
