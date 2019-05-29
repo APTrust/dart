@@ -26,7 +26,7 @@ test('Constructor sets initial properties', () => {
     expect(profile.description).toEqual('Profile for testing');
 
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
-    expect(profile.acceptSerialization).toEqual(['tar']);
+    expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.allowFetchTxt).toEqual(false);
     expect(profile.allowMiscTopLevelFiles).toEqual(false);
     expect(profile.allowMiscDirectories).toEqual(false);
@@ -480,6 +480,28 @@ test('inflateFrom()', () => {
     let profile = BagItProfile.load(jsonFile);
     let copy = BagItProfile.inflateFrom(profile);
     expect(copy).toEqual(profile);
+});
+
+test('preferredSerialization()', () => {
+    let profile = new BagItProfile();
+    profile.acceptSerialization = [
+        'application/tar',
+        'application/zip'
+    ];
+    profile.serialization = 'required';
+    expect(profile.preferredSerialization()).toEqual('.tar')
+
+    profile.acceptSerialization = [
+        'application/zip',
+        'application/tar'
+    ];
+    expect(profile.preferredSerialization()).toEqual('.zip');
+
+    profile.serialization = 'optional';
+    expect(profile.preferredSerialization()).toEqual('.zip');
+
+    profile.serialization = 'forbidden';
+    expect(profile.preferredSerialization()).toEqual('');
 });
 
 // ---------------------------------

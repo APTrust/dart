@@ -91,7 +91,8 @@ const Constants =  {
     RE_TAG_MANIFEST: new RegExp('^tagmanifest-(\\w+)\\.txt$'),
     /**
      * This maps serialization formats found in BagItProfiles
-     * to file extensions.
+     * to file extension patterns. We can use this to identify
+     * the file mime type by examining a file's extension.
      *
      * @type {Object<string, RegExp>}
      */
@@ -100,8 +101,23 @@ const Constants =  {
         "application/tar": new RegExp("\.tar$"),
         "application/zip": new RegExp("\.zip$"),
         "application/gzip": new RegExp("\.gzip$|\.gz$"),
-        "application/x-rar": new RegExp("\.rar$"),
+        "application/x-rar-compressed": new RegExp("\.rar$"),
         "application/tar+gzip": new RegExp("\.tgz$|\.tar\.gz$")
+    },
+    /**
+     * This maps serialization formats found in BagItProfiles
+     * to file extensions. The bagger and other classes can use
+     * this to assign a file extension based on a given mime type.
+     *
+     * @type {Object<string, string>}
+     */
+    SERIALIZATION_EXTENSIONS: {
+        "application/x-7z-compressed": ".7z",
+        "application/tar": ".tar",
+        "application/zip": ".zip",
+        "application/gzip": ".gz",
+        "application/x-rar-compressed": ".rar",
+        "application/tar+gzip": ".tar.gz"
     },
     /**
      * This maps serialization formats found in BagItProfiles

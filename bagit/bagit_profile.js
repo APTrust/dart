@@ -60,12 +60,13 @@ class BagItProfile extends PersistentObject {
         /**
           * A list of BagIt sserialization formats that are valid
           * for bags that conform to this profile. These may include
-          * 'tar', 'zip', 'rar', etc.
+          * 'application/tar', 'application/zip',
+          * 'application/x-rar-compressed', etc.
           *
           * @type {string[]}
           * @default ['tar']
           */
-        this.acceptSerialization = ['tar'];
+        this.acceptSerialization = ['application/tar'];
         /**
           * This describes whether bags conforming to this profile
           * may have a fetch.txt file.
@@ -666,6 +667,23 @@ class BagItProfile extends PersistentObject {
                 this.tags.push(t);
             }
         }
+    }
+
+    /**
+     * This returns the file extension of the first allowed serialization
+     * in the {@see acceptSerialization} list, if it is defined and
+     * serialization is not forbidden. Otherwise, this returns an empty
+     * string.
+     *
+     * @ returns {string}
+     *
+     */
+    preferredSerialization() {
+        if (this.serialization != 'forbidden' && this.acceptSerialization.length > 0) {
+            let mimeType = this.acceptSerialization[0];
+            return Constants.SERIALIZATION_EXTENSIONS[mimeType];
+        }
+        return '';
     }
 
     /**
