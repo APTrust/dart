@@ -5,8 +5,8 @@
         "mapsToProperty": {
             "type": "BagItProfile",
             "id": "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca",
-            "tagFile": 'bag-info.txt',
-            "tagName": 'Source-Organization'
+            "tagFile": "bag-info.txt",
+            "tagName": "Source-Organization"
         }
     },
     {
@@ -33,7 +33,7 @@
         "validation": {
             "required": true,
             "pattern": "RE_FILE_PATH_ANY_OS"
-        }
+        },
         "error": "Please enter a valid file path."
     },
     {
@@ -43,8 +43,8 @@
         "mapsToProperty": {
             "type": "BagItProfile",
             "id": "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca",
-            "tagFile": 'aptrust-info.txt',
-            "tagName": 'Access'
+            "tagFile": "aptrust-info.txt",
+            "tagName": "Access"
         },
         "validation": {
             "required": true
@@ -135,5 +135,3 @@
         }
     }
 ]
-
-module.exports.Questions = Questions;
