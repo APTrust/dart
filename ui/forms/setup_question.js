@@ -103,6 +103,34 @@ class SetupQuestion extends Field {
          *
          * @example
          *
+         * // Create a validator that requires an answer and will accept
+         * // any answer (no min, max, or pattern).
+         * opts.validator = {
+         *     required: true
+         * }
+         *
+         * // Validator that does not require a response, but if given, the
+         * // response must be an email address. Note that RE_EMAIL comes
+         * // from the Constants module.
+         * opts.validator = {
+         *     pattern: 'RE_EMAIL'
+         * }
+         *
+         * // Validator that requires a string of 4 or more hex digits.
+         * // The string pattern will be converted to a RegExp.
+         * opts.validator = {
+         *     required: true,
+         *     pattern: '[a-fA-F0-9]{4,}'
+         * }
+         *
+         * // Validator requiring a number between 1 and 100 inclusive.
+         * opts.validator = {
+         *     required: true,
+         *     min: 1,
+         *     max: 100
+         * }
+         *
+         *
          * @type {object}
          */
         this.validation = opts.validation;
