@@ -358,7 +358,7 @@ class SetupQuestion extends Field {
     _ensureMinMax() {
         if (this.looksLikeNumericValidation()) {
             if (typeof this.validation.min != 'number') {
-                this.validation.min = Number.MIN_SAFE_INTEGER
+                this.validation.min = Number.MIN_SAFE_INTEGER;
             }
             if (typeof this.validation.max != 'number') {
                 this.validation.max = Number.MAX_SAFE_INTEGER;
