@@ -45,13 +45,9 @@ const { Util } = require('../../core/util');
  * is string you don't need to include this param, as values are strings
  * by default.
  *
- * @param {string} [opts.validator] - An optional function to validate the
- * user's response. This function takes one param, the value that the user
- * entered, and returns true or false to indicate whether it's valid. See
- * {@link SetupQuestion.getRequiredValidator},
- * {@link SetupQuestion.getPatternValidator}, and
- * {@link SetupQuestion.getIntRangeValidator}. You can also write your own
- * custom validation function.
+ * @param {string} [opts.validation] - An object describing how to validate
+ * the user's response to this question. See {@link SetupQuestion#validation}
+ * for more info.
  *
  */
 class SetupQuestion extends Field {
@@ -81,12 +77,35 @@ class SetupQuestion extends Field {
          */
         this.error = opts.error || Context.y18n.__("The response is not valid.");
         /**
-         * A function to validate the user's response. It should return true
-         * for valid responses, false otherwise.
+         * An object that describes how this question should be validated.
+         * The object has the following properties.
          *
-         * @type {function}
+         *
+         * required: Set this to true if the user must respond. Default is
+         * false.
+         *
+         * pattern: A regular expression pattern against which to validate the
+         * user's response. You can set this to a quoted pattern like "/\\w+/"
+         * or use one of the values defined in Constants, such as:
+         *
+         * - {@link Constants.RE_DOMAIN}
+         * - {@link Constants.RE_EMAIL}
+         * - {@link Constants.RE_FILE_PATH_POSIX}
+         * - {@link Constants.RE_FILE_PATH_WINDOWS}
+         * - {@link Constants.RE_FILE_PATH_ANY_OS}
+         * - {@link Constants.RE_IPV4}
+         *
+         * min: If the response should be numeric, this specifies that it must
+         * be greater than or equal to this value.
+         *
+         * max: If the response should be numeric, this specifies that it must
+         * be less than or equal to this value.
+         *
+         * @example
+         *
+         * @type {object}
          */
-        this.validator = opts.validator || function (val) { return true };
+        this.validation = opts.validation;
         /**
          * An object that defines what setting value or BagItProfile tag
          * value the question maps to. When the question appears, it will
@@ -170,9 +189,8 @@ class SetupQuestion extends Field {
      * @returns {boolean}
      */
     processResponse() {
-        let value = this.readUserInput();
-        if (this.validator(value)) {
-            this.value = value;
+        this.value = this.readUserInput();
+        if (this.validate()) {
             this.saveValue();
             return true;
         }
@@ -251,6 +269,113 @@ class SetupQuestion extends Field {
         }
         obj.save();
     }
+
+
+    /**
+     * Returns true if this question's current {@link SetupQuestion#value} is
+     * valid, false if not.
+     *
+     * @returns {boolean}
+     */
+    validate() {
+        let validators = this.getValidators();
+        for (let isValid of validators) {
+            if (!isValid(this.value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * This returns a list of validation functions based on the requirements
+     * specified in this.validators. Each of the functions in the returned
+     * array takes a single param, value, and returns true or false to indicate
+     * whether the value is valid.
+     *
+     * @returns {Array<function>}
+     */
+    getValidators() {
+        let validators = [];
+        this._ensureMinMax();
+        this._setValidationRegExp();
+        if (this.validation) {
+            if (this.validation.required) {
+                validators.push(SetupQuestion.getRequiredValidator());
+            }
+            if (this.looksLikeNumericValidation()) {
+                validators.push(SetupQuestion.getIntRangeValidator(
+                    this.validation.min,
+                    this.validation.max,
+                    !this.validation.required))
+            }
+            if (this.validation.regexp) {
+                validators.push(SetupQuestion.getPatternValidator(
+                    this.validation.regexp,
+                    !this.validation.required))
+            }
+        }
+        return validators;
+    }
+
+    /**
+     * This sets the RegExp object for validation if the validation object
+     * includes a pattern property. If validation.pattern is set to any of
+     * the following strings, this assigns the RegExp from the Constants
+     * module: 'RE_DOMAIN', 'RE_IPV4', 'RE_FILE_PATH_POSIX',
+     * 'RE_FILE_PATH_WINDOWS', 'RE_FILE_PATH_ANY_OS', 'RE_EMAIL'.
+     *
+     * If validation.pattern is set to any other string, this converts the
+     * string to a regexp.
+     *
+     * The resulting RegExp is assigned to this.validation.regexp.
+     *
+     * @pattern
+     */
+    _setValidationRegExp() {
+        if (this.validation && this.validation.pattern) {
+            if (this.validation.pattern.startsWith('RE_')) {
+                this.validation.regexp = Constants[this.validation.pattern];
+            } else {
+                this.validation.regexp = new RegExp(this.validation.pattern);
+            }
+        }
+    }
+
+    /**
+     * If this question's validation requirements include either a min
+     * or a max value, this ensures that it includes BOTH a min and max
+     * value, so we can use the {@link SetupQuestion.getIntRangeValidator}
+     * to validate the response.
+     *
+     * If this question does not have validation requirements, or the
+     * validation requirements include neither min nor max, this method
+     * does nothing.
+     *
+     * @private
+     */
+    _ensureMinMax() {
+        if (this.looksLikeNumericValidation()) {
+            if (typeof this.validation.min != 'number') {
+                this.validation.min = Number.MIN_SAFE_INTEGER
+            }
+            if (typeof this.validation.max != 'number') {
+                this.validation.max = Number.MAX_SAFE_INTEGER;
+            }
+        }
+    }
+
+    /**
+     * Returns true if this question has validation requirements that include
+     * a min and or max value.
+     *
+     * @returns {boolean}
+     */
+    looksLikeNumericValidation() {
+        return (this.validation && (typeof this.validation.min == 'number' || typeof this.validation.max == 'number'))
+    }
+
 
     /**
      * Returns a validator function that tests whether a value is empty.

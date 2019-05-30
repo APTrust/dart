@@ -51,8 +51,9 @@ const settingOpts = {
     heading: 'Question 1',
     error: 'I asked you what time it is.',
     options: ['9:00', settingValue, '11:00'],
-    validator: function(value) {
-        return value == '11:00';
+    validation: {
+        required: true,
+        pattern: '^11:00$'
     },
     mapsToProperty: {
         type: 'AppSetting',
@@ -65,8 +66,9 @@ const tagOpts = {
     question: "Where's Waldo?",
     heading: 'Question 2',
     error: 'Nothing will come of nothing. Speak again.',
-    validator: function(value) {
-        return value.length > 2;
+    validation: {
+        required: true,
+        pattern: '.{2,}'  // any string of 2+ characters
     },
     mapsToProperty: {
         type: 'BagItProfile',
@@ -83,7 +85,7 @@ test('Constructor sets expected fields', () => {
     expect(q.value).toEqual(settingValue);
     expect(q.error).toEqual(settingOpts.error);
     expect(q.choices).toEqual(Choice.makeList(settingOpts.options, settingValue, true));
-    expect(q.validator).toEqual(settingOpts.validator);
+    expect(q.validation).toEqual(settingOpts.validation);
 });
 
 test('readUserInput()', () => {
