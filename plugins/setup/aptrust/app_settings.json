@@ -4,6 +4,6 @@
         "name": "Institution Domain",
         "value": "example.org",
         "userCanDelete": false,
-        "help": Context.y18n.__"Your organization's internet domain name."
+        "help": "Your organization's internet domain name."
     }
 ]

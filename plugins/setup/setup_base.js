@@ -142,7 +142,6 @@ class SetupBase extends Plugin {
      * * plugins/setup/<your setup plugin>/app_settings.json
      * * plugins/setup/<your setup plugin>/bagit_profiles.json
      * * plugins/setup/<your setup plugin>/internal_settings.json
-     * * plugins/setup/<your setup plugin>/questions.js
      * * plugins/setup/<your setup plugin>/remote_repositories.json
      * * plugins/setup/<your setup plugin>/storage_services.json
      *
@@ -240,6 +239,51 @@ class SetupBase extends Plugin {
         if (fs.existsSync(pathToFile)) {
             return JSON.parse(fs.readFileSync(pathToFile));
         }
+    }
+
+    /**
+     * The setup controller calls this before installing AppSettings and
+     * other objects from the json files. By default, this method does
+     * nothing, but you may override it in your Setup subclass to do
+     * meaningful work.
+     *
+     * If this returns a string, the SetupController will display it as
+     * HTML to the user.
+     *
+     * @returns {string}
+     */
+    preInstallationCallback() {
+
+    }
+
+    /**
+     * The setup controller calls this after installing AppSettings and
+     * before it presents questions to the user. By default, this method
+     * does nothing, but you may override it in your Setup subclass to do
+     * meaningful work.
+     *
+     * If this returns a string, the SetupController will display it as
+     * HTML to the user.
+     *
+     * @returns {string}
+     */
+    preQuestionCallback() {
+
+    }
+
+    /**
+     * The setup controller calls this after the user has answered all
+     * of the setup questions and before it displays the end message.
+     * By default, this method does nothing, but you may override it
+     * in your Setup subclass to do meaningful work.
+     *
+     * If this returns a string, the SetupController will display it as
+     * HTML to the user.
+     *
+     * @returns {string}
+     */
+    postQuestionCallback() {
+
     }
 
     /**
