@@ -325,5 +325,6 @@
   "S3Error: The AWS Access Key Id you provided does not exist in our records.": "S3Error: The AWS Access Key Id you provided does not exist in our records.",
   "When serialization is allowed, you must specify at least one serialization format.": "When serialization is allowed, you must specify at least one serialization format.",
   "Serialization must be one of: %s.": "Serialization must be one of: %s.",
-  "APTrust setup module. This helps users set up a basic APTrust configuration.": "APTrust setup module. This helps users set up a basic APTrust configuration."
+  "APTrust setup module. This helps users set up a basic APTrust configuration.": "APTrust setup module. This helps users set up a basic APTrust configuration.",
+  "DPN setup module. This helps users set up a basic DPN configuration.": "DPN setup module. This helps users set up a basic DPN configuration."
 }

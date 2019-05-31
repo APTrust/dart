@@ -1,3 +1,6 @@
+const { Context } = require('../../core/context');
+const { Plugin } = require('../plugin');
+
 /**
  * DPNSetup provides a walk-through setup for DART users
  * to create a basic DPN environment.

@@ -1,0 +1,11 @@
+<h2>Setup Modules</h2>
+{{#each items}}
+<div class="card p-2 m-2" style="width: 18rem;">
+  <img class="card-img-top" src="{{ logoPath }}" alt="{{ name }}">
+  <div class="card-body">
+    <h5 class="card-title">{{ name }}</h5>
+    <p class="card-text">{{ description }}</p>
+    <p class="card-text">{{ lastRun }}</p>
+  </div>
+</div>
+{{/each }}
