@@ -48,6 +48,7 @@ afterEach(() => {
 
 function getSettingOpts() {
     return {
+        id: 'q_1',
         question: 'What time is it?',
         heading: 'Question 1',
         error: 'I asked you what time it is.',
@@ -66,6 +67,7 @@ function getSettingOpts() {
 
 function getTagOpts() {
     return {
+        id: 'q_1',
         question: "Where's Waldo?",
         heading: 'Question 2',
         error: 'Nothing will come of nothing. Speak again.',
@@ -84,6 +86,7 @@ function getTagOpts() {
 
 function getNumericOpts() {
     return {
+        id: 'q_1',
         question: 'Choose a number between 1 and 10.',
         heading: 'Question 3',
         error: 'Nope. Try again.',
@@ -101,6 +104,7 @@ function getNumericOpts() {
 }
 
 const barebonesOpts = {
+    id: 'q_1',
     question: 'Tell us about it.',
     mapsToProperty: {
         type: 'AppSetting',

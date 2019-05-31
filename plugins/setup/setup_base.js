@@ -252,7 +252,7 @@ class SetupBase extends Plugin {
      *
      * @returns {string}
      */
-    preInstallationCallback() {
+    beforeObjectInstallation() {
 
     }
 
@@ -267,7 +267,7 @@ class SetupBase extends Plugin {
      *
      * @returns {string}
      */
-    preQuestionCallback() {
+    beforeAllQuestions() {
 
     }
 
@@ -282,7 +282,19 @@ class SetupBase extends Plugin {
      *
      * @returns {string}
      */
-    postQuestionCallback() {
+    afterAllQuestions() {
+
+    }
+
+    /**
+     * The setup controller calls this after the user has provided a valid
+     * answer to a question, passing in the {@link SetupQuestion} that the
+     * user just answered. Note that this will be called if the user provides
+     * an empty response if empty responses are vlalid. This will not be called
+     * when the user provides an invalid response.
+     *
+     */
+    afterEachQuestion(setupQuestion) {
 
     }
 

@@ -22,6 +22,12 @@ const { Util } = require('../../core/util');
  *
  * @param {object} opts - An object containing setup options.
  *
+ * @param {string} id - A unique identifier for this question. This will
+ * become the ID of the questions HTML form input and the
+ * {@link SetupBase#afterEachQuestion}  will use it to identify which
+ * question was just answered. You should prepend these with "q_" to
+ * prevent HTML ID conflicts.
+ *
  * @param {string} opts.question - The question to ask the user.
  *
  * @param {object} opts.mapsToProperty - An object that describes where the
@@ -52,8 +58,7 @@ const { Util } = require('../../core/util');
  */
 class SetupQuestion extends Field {
     constructor(opts) {
-        let rand = 'setup_' + Math.random().toString().replace(/^0\./, '');
-        super(rand, rand, opts.question, opts.initialValue)
+        super(opts.id, opts.id, opts.question, opts.initialValue)
         /**
          * The heading that will appear above the question on the
          * page that displays the question to the user.
