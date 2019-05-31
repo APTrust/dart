@@ -1,15 +1,16 @@
 const { Context } = require('../../core/context');
-const { Plugin } = require('../plugin');
+const path = require('path');
+const { SetupBase } = require('./setup_base');
 
 /**
  * DPNSetup provides a walk-through setup for DART users
  * to create a basic DPN environment.
  *
  */
-class DPNSetup extends Plugin {
+class DPNSetup extends SetupBase {
 
     constructor() {
-        super(__dirname);
+        super(path.join(__dirname, 'dpn'));
     }
 
     /**

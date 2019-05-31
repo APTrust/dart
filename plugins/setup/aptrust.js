@@ -5,9 +5,9 @@ const { Context } = require('../../core/context');
 const { InternalSetting } = require('../../core/internal_setting');
 const os = require('os');
 const path = require('path');
-const { Plugin } = require('../plugin');
 const { PluginManager } = require('../plugin_manager');
 const { RemoteRepository } = require('../../core/remote_repository');
+const { SetupBase } = require('./setup_base');
 const { StorageService } = require('../../core/storage_service');
 
 
@@ -16,12 +16,12 @@ const { StorageService } = require('../../core/storage_service');
  * to create a basic APTrust environment.
  *
  */
-class APTrustSetup extends Plugin {
+class APTrustSetup extends SetupBase {
     /**
      *
      */
     constructor() {
-        super(__dirname);
+        super(path.join(__dirname, 'aptrust'));
     }
 
     /**

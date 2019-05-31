@@ -4,25 +4,32 @@ const path = require('path');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const Templates = require('../common/templates');
 
-const setupDir = path.join(__dirname, '..', '..', 'plugins', 'setup');
+//const setupDir = path.join(__dirname, '..', '..', 'plugins', 'setup');
 
 class SetupController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
+        this.plugin;
+        let id = params.get('id');
+        if (id) {
+            let pluginClass = PluginManager.findById(id);
+            this.plugin = new pluginClass();
+        }
     }
 
     list() {
         let plugins = PluginManager.getModuleCollection('Setup');
         let items = [];
         for (let plugin of plugins) {
+            let pluginInstance = new plugin();
             let desc = plugin.description();
             let setsUp = desc.setsUp[0];
             items.push({
-                id: plugin.id,
+                id: desc.id,
                 name: desc.name,
                 description: desc.description,
-                logoPath: this.getLogoPath(setsUp),
+                logoPath: this.getLogoPath(pluginInstance.settingsDir),
                 lastRun: 'Yesterday' // Placeholder
             });
         }
@@ -34,7 +41,19 @@ class SetupController extends BaseController {
     }
 
     start() {
-        return this.containerContent('Start Setup');
+        let desc = this.plugin.constructor.description();
+        let data = {
+            id: desc.id,
+            name: desc.name,
+            message: this.plugin.getMessage('start'),
+            next_question: 0
+        }
+        let html = Templates.setupStart(data);
+        return this.containerContent(html);
+    }
+
+    question() {
+        return this.containerContent('Coming soon');
     }
 
     next(params) {
@@ -56,10 +75,10 @@ class SetupController extends BaseController {
      *
      * @returns {string}
      */
-    getLogoPath(subDir) {
+    getLogoPath(settingsDir) {
         let extensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif'];
         for (let ext of extensions) {
-            let logoPath = path.join(setupDir, subDir, 'logo' + ext);
+            let logoPath = path.join(settingsDir, 'logo' + ext);
             if (fs.existsSync(logoPath)) {
                 return logoPath;
             }
@@ -67,6 +86,9 @@ class SetupController extends BaseController {
         return null;
     }
 
+    /**
+     * This attaches click events to setup cards.
+     */
     postRenderCallback(fnName) {
         $('.clickable-card').on('click', function(e) {
             location.href = $(this).data('url');

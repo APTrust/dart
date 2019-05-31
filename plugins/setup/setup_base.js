@@ -313,5 +313,6 @@ class SetupBase extends Plugin {
         record.value = new Date().toISOString();
         record.save();
     }
-
 }
+
+module.exports.SetupBase = SetupBase;
