@@ -1,10 +1,9 @@
 /* Any clickable element */
-.clickable {
+.clickable, .clickable-card, .clickable-row {
     cursor: pointer;
 }
-/* These elements have an attached event handler to display an editable form. */
-.clickable-row {
-    cursor: pointer;
+.clickable-card:hover {
+    background-color: #f8f9fa;
 }
 .bottom-buttons {
     margin-top: 15px;

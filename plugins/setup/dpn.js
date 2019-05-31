@@ -21,7 +21,7 @@ class DPNSetup extends Plugin {
         return {
             id: 'ba6cf526-f73a-454c-b0b3-6378edc3851a',
             name: 'DPNSetup',
-            description: Context.y18n.__('DPN setup module. This helps users set up a basic DPN configuration.'),
+            description: Context.y18n.__('This helps you set up the basic DPN configuration.'),
             version: '0.1',
             readsFormats: [],
             writesFormats: [],

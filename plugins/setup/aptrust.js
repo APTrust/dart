@@ -33,7 +33,7 @@ class APTrustSetup extends Plugin {
         return {
             id: 'd0a34f7f-a0f6-487b-86de-ece9b9a31189',
             name: 'APTrustSetup',
-            description: Context.y18n.__('APTrust setup module. This helps users set up a basic APTrust configuration.'),
+            description: Context.y18n.__('This will help you set up the basic APTrust configuration.'),
             version: '0.1',
             readsFormats: [],
             writesFormats: [],

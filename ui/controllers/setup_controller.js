@@ -19,6 +19,7 @@ class SetupController extends BaseController {
             let desc = plugin.description();
             let setsUp = desc.setsUp[0];
             items.push({
+                id: plugin.id,
                 name: desc.name,
                 description: desc.description,
                 logoPath: this.getLogoPath(setsUp),
@@ -40,7 +41,7 @@ class SetupController extends BaseController {
         return this.containerContent('Next Setup');
     }
 
-        /**
+    /**
      * This returns the path to the logo for this setup plugin. That's
      * the first file in the directory that contains your questions.json,
      * app_settings.json, etc. that matches any of the following names:
@@ -64,6 +65,12 @@ class SetupController extends BaseController {
             }
         }
         return null;
+    }
+
+    postRenderCallback(fnName) {
+        $('.clickable-card').on('click', function(e) {
+            location.href = $(this).data('url');
+        });
     }
 
 }
