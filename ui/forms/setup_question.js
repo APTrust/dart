@@ -35,7 +35,7 @@ const { Util } = require('../../core/util');
  * saved. See {@link SetupQuestion#mapsToProperty}, which includes a full
  * description and examples.
  *
- * @param {string} opts.error - An error message to display if the user's
+ * @param {string} opts.errMessage - An error message to display if the user's
  * response is invalid.
  *
  * @param {string} [opts.heading] - An optional heading to display above
@@ -80,7 +80,7 @@ class SetupQuestion extends Field {
          *
          * @type {string}
          */
-        this.error = opts.error || Context.y18n.__("The response is not valid.");
+        this.errMessage = opts.errMessage || Context.y18n.__("The response is not valid.");
         /**
          * An object that describes how this question should be validated.
          * The object has the following properties.
@@ -223,7 +223,9 @@ class SetupQuestion extends Field {
      */
     processResponse() {
         this.value = this.readUserInput();
+        Context.logger.debug("Got value: " + this.value);
         if (this.validate()) {
+            Context.logger.debug("Value is valid");
             this.saveValue();
             return true;
         }
@@ -294,6 +296,7 @@ class SetupQuestion extends Field {
      */
     saveValue() {
         let obj = this._getMappedObject();
+        Context.logger.info(`Saving ${this.value} to ${obj}`);
         if (this.mapsToProperty.tagFile && this.mapsToProperty.tagName) {
             let tags = obj.getTagsFromFile(this.mapsToProperty.tagFile, this.mapsToProperty.tagName);
             tags[0].userValue = this.value;

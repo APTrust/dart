@@ -328,5 +328,12 @@
   "APTrust setup module. This helps users set up a basic APTrust configuration.": "APTrust setup module. This helps users set up a basic APTrust configuration.",
   "DPN setup module. This helps users set up a basic DPN configuration.": "DPN setup module. This helps users set up a basic DPN configuration.",
   "This will help you set up the basic APTrust configuration.": "This will help you set up the basic APTrust configuration.",
-  "This helps you set up the basic DPN configuration.": "This helps you set up the basic DPN configuration."
+  "This helps you set up the basic DPN configuration.": "This helps you set up the basic DPN configuration.",
+  "Could not find object of type %s with id %s": "Could not find object of type %s with id %s",
+  "Installing settings from file %s": "Installing settings from file %s",
+  "Installed %s %s": "Installed %s %s",
+  "Skipping installation of %s %s because it is already installed.": "Skipping installation of %s %s because it is already installed.",
+  "Running pre-question callbacks": "Running pre-question callbacks",
+  "RemoteRepository_uri_label": "RemoteRepository_uri_label",
+  "RemoteRepository_uri_help": "RemoteRepository_uri_help"
 }

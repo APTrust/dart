@@ -22,7 +22,7 @@
         "validation": {
             "pattern": "RE_DOMAIN"
         },
-        "error": "Please enter a valid domain name, or leave this blank if you don't know."
+        "errMessage": "Please enter a valid domain name, or leave this blank if you don't know."
     },
     {
         "id": "q_bagging_dir",
@@ -37,7 +37,7 @@
             "required": true,
             "pattern": "RE_FILE_PATH_ANY_OS"
         },
-        "error": "Please enter a valid file path."
+        "errMessage": "Please enter a valid file path."
     },
     {
         "id": "q_access",
@@ -53,7 +53,7 @@
         "validation": {
             "required": true
         },
-        "error": "Please select one of the three options."
+        "errMessage": "Please select one of the three options."
     },
     {
         "id": "q_aws_demo_key_id",
@@ -87,7 +87,7 @@
         "validation": {
             "pattern": "RE_EMAIL"
         },
-        "error": "Please enter a valid email address."
+        "errMessage": "Please enter a valid email address."
     },
     {
         "id": "q_pharos_demo_api_key",
@@ -131,7 +131,7 @@
         "validation": {
             "pattern": "RE_EMAIL"
         },
-        "error": "Please enter a valid email address."
+        "errMessage": "Please enter a valid email address."
     },
     {
         "id": "q_pharos_prod_api_key",

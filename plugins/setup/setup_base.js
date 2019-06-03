@@ -179,7 +179,7 @@ class SetupBase extends Plugin {
             if (!objType.find(record.id)) {
                 this._installObject(record, objType);
             } else {
-                Context.logger.info(Context.y18n.__("Skipping installation of %s %s because it is already installed.", objType.toString(), record.name || record.id));
+                Context.logger.info(Context.y18n.__("Skipping installation of %s %s because it is already installed.", objType.name, record.name || record.id));
             }
         }
     }
@@ -206,7 +206,7 @@ class SetupBase extends Plugin {
             Object.assign(obj, record);
         }
         obj.save();
-        Context.logger.info(Context.y18n.__("Installed %s %s", objType.toString(), record.name || record.id));
+        Context.logger.info(Context.y18n.__("Installed %s %s", objType.name, record.name || record.id));
     }
 
     /**

@@ -15,14 +15,14 @@
     {{#if isFirstQuestion }}
     <a class="btn btn-primary" href="#Setup/list" role="button">&lt;&lt; Back</a>
     {{ else }}
-    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ prevQuestion }}" role="button">&lt;&lt; Back</a>
+    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ prevQuestion }}&dir=back" role="button">&lt;&lt; Back</a>
     {{/if }}
   </div>
   <div class="pull-right" id="btnNextDiv">
     {{#if isLastQuestion }}
     <a class="btn btn-primary" href="#Setup/end?id={{ id }}" role="button">Next &gt;&gt;</a>
     {{ else }}
-    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ nextQuestion }}" role="button">Next &gt;&gt;</a>
+    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ nextQuestion }}&dir=next" role="button">Next &gt;&gt;</a>
     {{/if }}
   </div>
 </div>

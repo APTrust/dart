@@ -1,4 +1,5 @@
 const { BaseController } = require('./base_controller');
+const { Context } = require('../../core/context');
 const fs = require('fs');
 const path = require('path');
 const { PluginManager } = require('../../plugins/plugin_manager');
@@ -60,17 +61,62 @@ class SetupController extends BaseController {
     question() {
         let questions = this.plugin.getQuestions();
         let index = this.typedParams['q'];
+        // User clicked either Back or Next.
+        let dir = this.typedParams['dir'];
+        let currentIndex = dir == 'next' ? index - 1 : index + 1;
+        if (currentIndex >= 0 && currentIndex < questions.length) {
+            let currentQuestion = questions[currentIndex];
+            if (currentQuestion.processResponse() == false) {
+                Context.logger.debug("Invalid response for question " + currentIndex);
+                return this._showQuestion(currentIndex, true, currentQuestion.value)
+            }
+        }
+        return this._showQuestion(index, false);
+    }
+
+    _showQuestion(index, showError, withValue) {
+        let questions = this.plugin.getQuestions();
+        let question = questions[index];
+        if (showError) {
+            question.error = question.errMessage;
+            question.value = withValue;
+        } else {
+            question.error = '';
+            question.setInitialValue();
+        }
         let data = {
             id: this.pluginId,
             isFirstQuestion: index == 0,
             isLastQuestion: index == (questions.length - 1),
             prevQuestion: index - 1,
             nextQuestion: index + 1,
-            question: questions[index]
+            question: question
         }
         let html = Templates.setupQuestion(data);
         return this.containerContent(html);
     }
+
+    runPreQuestionCallbacks() {
+        Context.logger.info(Context.y18n.__("Running pre-question callbacks"));
+        try {
+            this.plugin.beforeObjectInstallation();
+            this.plugin.installSettings();
+            this.plugin.beforeAllQuestions();
+        } catch (error) {
+            return this._showError(error);
+        }
+        return this._showQuestion(0, false);
+    }
+
+    _showError(error) {
+        Context.logger.error(error);
+        let data = {
+            error: error
+        }
+        let html = Templates.setupError(data);
+        return this.containerContent(html);
+    }
+
 
     end() {
         return this.containerContent('End');

@@ -51,7 +51,7 @@ function getSettingOpts() {
         id: 'q_1',
         question: 'What time is it?',
         heading: 'Question 1',
-        error: 'I asked you what time it is.',
+        errMessage: 'I asked you what time it is.',
         options: ['9:00', settingValue, '11:00'],
         validation: {
             required: true,
@@ -70,7 +70,7 @@ function getTagOpts() {
         id: 'q_1',
         question: "Where's Waldo?",
         heading: 'Question 2',
-        error: 'Nothing will come of nothing. Speak again.',
+        errMessage: 'Nothing will come of nothing. Speak again.',
         validation: {
             required: true,
             pattern: '.{2,}'  // any string of 2+ characters
@@ -89,7 +89,7 @@ function getNumericOpts() {
         id: 'q_1',
         question: 'Choose a number between 1 and 10.',
         heading: 'Question 3',
-        error: 'Nope. Try again.',
+        errMessage: 'Nope. Try again.',
         validation: {
             required: true,
             min: 1,
@@ -119,7 +119,7 @@ test('Constructor sets expected fields', () => {
     expect(q.label).toEqual(opts.question);
     expect(q.heading).toEqual(opts.heading);
     expect(q.value).toEqual(settingValue);
-    expect(q.error).toEqual(opts.error);
+    expect(q.errMessage).toEqual(opts.errMessage);
     expect(q.choices).toEqual(Choice.makeList(opts.options, settingValue, true));
     expect(q.validation).toEqual(opts.validation);
 });
