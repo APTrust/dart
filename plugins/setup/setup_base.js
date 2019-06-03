@@ -6,6 +6,7 @@ const { InternalSetting } = require('../../core/internal_setting');
 const path = require('path');
 const { Plugin } = require('../plugin');
 const { RemoteRepository } = require('../../core/remote_repository');
+const { SetupQuestion } = require('../../ui/forms/setup_question');
 const { StorageService } = require('../../core/storage_service');
 
 
@@ -19,7 +20,7 @@ const settingsFiles = {
 
 const startMessageFile = "start_message.html";
 const endMessageFile = "end_message.html";
-const questionsFile = "questions.js";
+const questionsFile = "questions.json";
 
 
 /**
@@ -235,10 +236,15 @@ class SetupBase extends Plugin {
      * @returns {Array<SetupQuestion>}
      */
     getQuestions() {
+        let questions = [];
         let pathToFile = path.join(this.settingsDir, questionsFile);
         if (fs.existsSync(pathToFile)) {
-            return JSON.parse(fs.readFileSync(pathToFile));
+            let data = JSON.parse(fs.readFileSync(pathToFile));
+            for (let q of data) {
+                questions.push(new SetupQuestion(q));
+            }
         }
+        return questions;
     }
 
     /**

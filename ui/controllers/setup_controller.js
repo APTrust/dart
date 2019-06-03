@@ -4,18 +4,23 @@ const path = require('path');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const Templates = require('../common/templates');
 
-//const setupDir = path.join(__dirname, '..', '..', 'plugins', 'setup');
+const typeMap = {
+    q: 'number'
+}
 
 class SetupController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
+        this.typeMap = typeMap;
         this.plugin;
         let id = params.get('id');
         if (id) {
             let pluginClass = PluginManager.findById(id);
             this.plugin = new pluginClass();
+            this.pluginId = id;
         }
+        this.typedParams = this.paramsToHash();
     }
 
     list() {
@@ -46,18 +51,29 @@ class SetupController extends BaseController {
             id: desc.id,
             name: desc.name,
             message: this.plugin.getMessage('start'),
-            next_question: 0
+            nextQuestion: 0
         }
         let html = Templates.setupStart(data);
         return this.containerContent(html);
     }
 
     question() {
-        return this.containerContent('Coming soon');
+        let questions = this.plugin.getQuestions();
+        let index = this.typedParams['q'];
+        let data = {
+            id: this.pluginId,
+            isFirstQuestion: index == 0,
+            isLastQuestion: index == (questions.length - 1),
+            prevQuestion: index - 1,
+            nextQuestion: index + 1,
+            question: questions[index]
+        }
+        let html = Templates.setupQuestion(data);
+        return this.containerContent(html);
     }
 
-    next(params) {
-        return this.containerContent('Next Setup');
+    end() {
+        return this.containerContent('End');
     }
 
     /**

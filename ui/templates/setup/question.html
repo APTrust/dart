@@ -1,1 +1,28 @@
-... Coming Soon ...
+<form method="post" action="#" id="{{ id }}">
+
+  <h2>{{ question.heading }}</h2>
+
+  {{#if question.choices }}
+    {{> inputSelect field = question }}
+  {{else}}
+    {{> inputText field = question }}
+  {{/if}}
+
+</form>
+
+<div>
+  <div class="pull-left" id="btnBackDiv">
+    {{#if isFirstQuestion }}
+    <a class="btn btn-primary" href="#Setup/list" role="button">&lt;&lt; Back</a>
+    {{ else }}
+    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ prevQuestion }}" role="button">&lt;&lt; Back</a>
+    {{/if }}
+  </div>
+  <div class="pull-right" id="btnNextDiv">
+    {{#if isLastQuestion }}
+    <a class="btn btn-primary" href="#Setup/end?id={{ id }}" role="button">Next &gt;&gt;</a>
+    {{ else }}
+    <a class="btn btn-primary" href="#Setup/question?id={{ id }}&q={{ nextQuestion }}" role="button">Next &gt;&gt;</a>
+    {{/if }}
+  </div>
+</div>

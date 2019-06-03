@@ -1,7 +1,7 @@
 [
     {
         "id": "q_organization",
-        "header": "Your Organization",
+        "heading": "Your Organization",
         "question": "What is the name of your organization? This name will become the default value of the Source-Organization field of the bag-info.txt file of each APTrust bag you create.",
         "mapsToProperty": {
             "type": "BagItProfile",
@@ -12,7 +12,7 @@
     },
     {
         "id": "q_domain",
-        "header": "Your Domain Name",
+        "heading": "Your Domain Name",
         "question": "What is your organization's domain name? All bags submitted to APTrust will be prefixed with this domain name.",
         "mapsToProperty": {
             "type": "AppSetting",
@@ -26,7 +26,7 @@
     },
     {
         "id": "q_bagging_dir",
-        "header": "Bagging",
+        "heading": "Bagging",
         "question": "Where should DART build its bags?",
         "mapsToProperty": {
             "type": "AppSetting",
@@ -41,7 +41,7 @@
     },
     {
         "id": "q_access",
-        "header": "Object Access",
+        "heading": "Object Access",
         "question": "Set the default access policy for your APTrust bags. Consortia means other APTrust depositors can see your bag's metadata (title and description), but not its contents. Insitution means all APTrust users from your institution can see this object's metadata. Restricted means only your institutional administrator can see that this bag exists. Institution is usually the safe default. You can override this setting for any individual bag.",
         "options": ["Consortia", "Institution", "Restricted"],
         "mapsToProperty": {
@@ -57,7 +57,7 @@
     },
     {
         "id": "q_aws_demo_key_id",
-        "header": "APTrust Demo Repository (1 of 4)",
+        "heading": "APTrust Demo Repository (1 of 4)",
         "question": "What is your AWS Access Key Id for the APTrust demo repository? If your AWS keys are stored in environment variables, this should be env:AWS_ACCESS_KEY_ID_DEMO.",
         "mapsToProperty": {
             "type": "StorageService",
@@ -67,7 +67,7 @@
     },
     {
         "id": "q_aws_demo_secret_key",
-        "header": "APTrust Demo Repository (2 of 4)",
+        "heading": "APTrust Demo Repository (2 of 4)",
         "question": "What is your AWS Access Secret Access Key for the APTrust demo repository? If your AWS keys are stored in environment variables, this should be env:AWS_SECRET_ACCESS_KEY_DEMO.",
         "mapsToProperty": {
             "type": "StorageService",
@@ -77,7 +77,7 @@
     },
     {
         "id": "q_pharos_demo_login",
-        "header": "APTrust Demo Repository (3 of 4)",
+        "heading": "APTrust Demo Repository (3 of 4)",
         "question": "What email address do you use to log in to the Pharos Demo system?",
         "mapsToProperty": {
             "type": "RemoteRepository",
@@ -91,7 +91,7 @@
     },
     {
         "id": "q_pharos_demo_api_key",
-        "header": "APTrust Demo Repository (4 of 4)",
+        "heading": "APTrust Demo Repository (4 of 4)",
         "question": "What is your API key for the Pharos demo system?",
         "mapsToProperty": {
             "type": "RemoteRepository",
@@ -101,7 +101,7 @@
     },
     {
         "id": "q_aws_prod_key_id",
-        "header": "APTrust Production Repository (1 of 4)",
+        "heading": "APTrust Production Repository (1 of 4)",
         "question": "What is your AWS Access Key Id for the APTrust production repository? If your AWS keys are stored in environment variables, this should be env:AWS_ACCESS_KEY_ID_PROD.",
         "mapsToProperty": {
             "type": "StorageService",
@@ -111,7 +111,7 @@
     },
     {
         "id": "q_aws_prod_secret_key",
-        "header": "APTrust Production Repository (2 of 4)",
+        "heading": "APTrust Production Repository (2 of 4)",
         "question": "What is your AWS Access Secret Access Key for the APTrust production repository? If your AWS keys are stored in environment variables, this should be env:AWS_SECRET_ACCESS_KEY_PROD.",
         "mapsToProperty": {
             "type": "StorageService",
@@ -121,7 +121,7 @@
     },
     {
         "id": "q_pharos_prod_login",
-        "header": "APTrust Production Repository (3 of 4)",
+        "heading": "APTrust Production Repository (3 of 4)",
         "question": "What email address do you use to log in to the Pharos production system?",
         "mapsToProperty": {
             "type": "RemoteRepository",
@@ -135,7 +135,7 @@
     },
     {
         "id": "q_pharos_prod_api_key",
-        "header": "APTrust Production Repository (4 of 4)",
+        "heading": "APTrust Production Repository (4 of 4)",
         "question": "What is your API key for the Pharos production system?",
         "mapsToProperty": {
             "type": "RemoteRepository",
