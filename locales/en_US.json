@@ -335,5 +335,6 @@
   "Skipping installation of %s %s because it is already installed.": "Skipping installation of %s %s because it is already installed.",
   "Running pre-question callbacks": "Running pre-question callbacks",
   "RemoteRepository_uri_label": "RemoteRepository_uri_label",
-  "RemoteRepository_uri_help": "RemoteRepository_uri_help"
+  "RemoteRepository_uri_help": "RemoteRepository_uri_help",
+  "Setup Error": "Setup Error"
 }

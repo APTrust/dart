@@ -111,7 +111,8 @@ class SetupController extends BaseController {
     _showError(error) {
         Context.logger.error(error);
         let data = {
-            error: error
+            error: error,
+            stack: error.stack.split("\n")
         }
         let html = Templates.setupError(data);
         return this.containerContent(html);
@@ -119,6 +120,13 @@ class SetupController extends BaseController {
 
 
     end() {
+        let questions = this.plugin.getQuestions();
+        let currentIndex = questions.length - 1;
+        let lastQuestion = questions[currentIndex];
+        if (lastQuestion.processResponse() == false) {
+            Context.logger.debug("Invalid response for question " + currentIndex);
+            return this._showQuestion(currentIndex, true, lastQuestion.value)
+        }
         return this.containerContent('End');
     }
 

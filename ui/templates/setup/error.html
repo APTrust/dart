@@ -1,7 +1,12 @@
 <h2>{{ translate "Setup Error" }}</h2>
 
 
-<div class="card">
-    <pre class="text-danger">{{ error }}</pre>
+<div class="card p-3">
+  <h5 class="card-title">{{ error }}</h5>
+  <p class="text-danger">
+    {{#each stack}}
+    {{ this }} <br/>
+    {{/each}}
+  </p>
   </div>
 </div>
