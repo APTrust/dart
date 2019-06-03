@@ -34,7 +34,7 @@
         "tail": "^2.0.2",
         "tar-stream": "^2.0.1",
         "tmp": "0.1.0",
-        "typescript": "^3.4.5",
+        "typescript": "^3.5.1",
         "vue": "^2.6.10",
         "vue-template-compiler": "^2.6.10",
         "winston": "^3.2.1",
