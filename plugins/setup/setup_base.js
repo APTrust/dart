@@ -312,11 +312,13 @@ class SetupBase extends Plugin {
      */
     setCompletionTimestamp() {
         let className = this.constructor.name;
-        let record = InternalSetting.firstMatching('name', className);
-        if (!record) {
-            record = new InternalSetting({ name: className });
+        let record = new InternalSetting({ name: className });
+        let data = InternalSetting.firstMatching('name', className);
+        if (data) {
+            Object.assign(record, data);
         }
         record.value = new Date().toISOString();
+        console.log(record);
         record.save();
     }
 }

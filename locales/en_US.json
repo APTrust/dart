@@ -336,5 +336,8 @@
   "Running pre-question callbacks": "Running pre-question callbacks",
   "RemoteRepository_uri_label": "RemoteRepository_uri_label",
   "RemoteRepository_uri_help": "RemoteRepository_uri_help",
-  "Setup Error": "Setup Error"
+  "Setup Error": "Setup Error",
+  "Last Installed": "Last Installed",
+  "Installed": "Installed",
+  "Never": "Never"
 }

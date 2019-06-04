@@ -1,6 +1,7 @@
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const fs = require('fs');
+const { InternalSetting } = require('../../core/internal_setting');
 const path = require('path');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const Templates = require('../common/templates');
@@ -9,21 +10,60 @@ const typeMap = {
     q: 'number'
 }
 
+/**
+ * The SetupController installs an organization's default settings and
+ * walks the user through a series of questions to collect custom setting
+ * information. See {@link SetupBase} for info on how to write a Setup
+ * plugin.
+ *
+ * @param {url.URLSearchParams} params - URL parameters from the UI.
+ * These usually come from a query string attached to the href attribute
+ * of a link or button.
+ *
+ */
 class SetupController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
+        /**
+         * This maps items in params to their correct type (number,
+         * boolean, or string).
+         *
+         * @type {object}
+         */
         this.typeMap = typeMap;
+        /**
+         * The Setup plugin that includes a number of settings to
+         * install and questions to ask the user.
+         *
+         * @type {SetupBase}
+         */
         this.plugin;
+        /**
+         * The id of Setup plugin that the controller is running.
+         *
+         * @type {string}
+         */
+        this.pluginId;
         let id = params.get('id');
         if (id) {
             let pluginClass = PluginManager.findById(id);
             this.plugin = new pluginClass();
             this.pluginId = id;
         }
+        /**
+         * Contains the same keys and values as the params object,
+         * but they have been cast to the proper types (number, boolean,
+         * string).
+         *
+         * @type {object}
+         */
         this.typedParams = this.paramsToHash();
     }
 
+    /**
+     * Displays a list of available Setup plugins.
+     */
     list() {
         let plugins = PluginManager.getModuleCollection('Setup');
         let items = [];
@@ -36,7 +76,7 @@ class SetupController extends BaseController {
                 name: desc.name,
                 description: desc.description,
                 logoPath: this.getLogoPath(pluginInstance.settingsDir),
-                lastRun: 'Yesterday' // Placeholder
+                lastRun: this._formatLastRunDate(plugin.name)
             });
         }
         let data = {
@@ -44,6 +84,26 @@ class SetupController extends BaseController {
         }
         let html = Templates.setupList(data);
         return this.containerContent(html);
+    }
+
+    _formatLastRunDate(pluginClassName) {
+        let lastRun = Context.y18n.__('Never');
+        let date = this._getLastRunDate(pluginClassName);
+        console.log(date);
+        if (date) {
+            lastRun = date.toDateString();
+        }
+        return lastRun;
+    }
+
+    _getLastRunDate(pluginClassName) {
+        let date = null;
+        let data = InternalSetting.firstMatching('name', pluginClassName);
+        if (data) {
+            try { date = new Date(data.value) }
+            catch (ex) { }
+        }
+        return date;
     }
 
     start() {
@@ -127,6 +187,15 @@ class SetupController extends BaseController {
             Context.logger.debug("Invalid response for question " + currentIndex);
             return this._showQuestion(currentIndex, true, lastQuestion.value)
         }
+        this.plugin.setCompletionTimestamp();
+        let desc = this.plugin.constructor.description();
+        let data = {
+            id: desc.id,
+            name: desc.name,
+            message: this.plugin.getMessage('end'),
+            prevQuestion: currentIndex
+        }
+        let html = Templates.setupEnd(data);
         return this.containerContent('End');
     }
 

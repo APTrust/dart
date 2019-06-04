@@ -3,11 +3,13 @@
   {{#each items}}
   <div class="col-4" >
     <div class="card p-2 m-2 clickable-card" data-url="#Setup/start?id={{ id }}">
-      <img class="card-img-top" src="{{ logoPath }}" alt="{{ name }}">
+      <div style="height: 130px">
+        <img class="card-img-top" src="{{ logoPath }}" alt="{{ name }}">
+      </div>
       <div class="card-body">
         <h5 class="card-title">{{ name }}</h5>
         <p class="card-text">{{ description }}</p>
-        <p class="card-text">{{ lastRun }}</p>
+        <p class="card-text">{{ translate "Installed" }}: {{ lastRun }}</p>
       </div>
     </div>
   </div>

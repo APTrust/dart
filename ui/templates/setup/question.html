@@ -2,11 +2,13 @@
 
   <h2>{{ question.heading }}</h2>
 
-  {{#if question.choices }}
-    {{> inputSelect field = question }}
-  {{else}}
-    {{> inputText field = question }}
-  {{/if}}
+  <div class="mt-4 mb-5 w-100">
+    {{#if question.choices }}
+      {{> inputSelect field = question }}
+    {{else}}
+      {{> inputText field = question }}
+    {{/if}}
+  </div>
 
 </form>
 
