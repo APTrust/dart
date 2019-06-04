@@ -339,5 +339,6 @@
   "Setup Error": "Setup Error",
   "Last Installed": "Last Installed",
   "Installed": "Installed",
-  "Never": "Never"
+  "Never": "Never",
+  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist"
 }
