@@ -42,7 +42,7 @@
     {
         "id": "q_access",
         "heading": "Object Access",
-        "question": "Set the default access policy for your APTrust bags. Consortia means other APTrust depositors can see your bag's metadata (title and description), but not its contents. Insitution means all APTrust users from your institution can see this object's metadata. Restricted means only your institutional administrator can see that this bag exists. Institution is usually the safe default. You can override this setting for any individual bag.",
+        "question": "Set the default access policy for your APTrust bags.",
         "options": ["Consortia", "Institution", "Restricted"],
         "mapsToProperty": {
             "type": "BagItProfile",
