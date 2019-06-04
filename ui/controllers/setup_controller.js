@@ -86,6 +86,12 @@ class SetupController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * Returns the date that a Setup plugin was last run, or Never if
+     * the Setup plugin has not been installed.
+     *
+     * @returns {string}
+     */
     _formatLastRunDate(pluginClassName) {
         let lastRun = Context.y18n.__('Never');
         let date = this._getLastRunDate(pluginClassName);
@@ -96,6 +102,12 @@ class SetupController extends BaseController {
         return lastRun;
     }
 
+    /**
+     * Returns the date that a Setup plugin was last run, or null if
+     * the Setup plugin has not been installed.
+     *
+     * @returns {Date}
+     */
     _getLastRunDate(pluginClassName) {
         let date = null;
         let data = InternalSetting.firstMatching('name', pluginClassName);
@@ -106,6 +118,10 @@ class SetupController extends BaseController {
         return date;
     }
 
+    /**
+     * Displays the Setup plugin's start message.
+     *
+     */
     start() {
         let desc = this.plugin.constructor.description();
         let data = {
@@ -118,22 +134,46 @@ class SetupController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * Displays a question from the Setup plugin. If a question is already
+     * showing when this is called, it validates the user's response and
+     * saves it if the response was valid, or displays a validation error
+     * message if the response was invalid.
+     *
+     */
     question() {
         let questions = this.plugin.getQuestions();
         let index = this.typedParams['q'];
         // User clicked either Back or Next.
         let dir = this.typedParams['dir'];
         let currentIndex = dir == 'next' ? index - 1 : index + 1;
+        let currentQuestion = questions[currentIndex];
         if (currentIndex >= 0 && currentIndex < questions.length) {
-            let currentQuestion = questions[currentIndex];
             if (currentQuestion.processResponse() == false) {
                 Context.logger.debug("Invalid response for question " + currentIndex);
                 return this._showQuestion(currentIndex, true, currentQuestion.value)
             }
         }
+        // On successful response, call the afterEach callback
+        this.plugin.afterEachQuestion(currentQuestion);
         return this._showQuestion(index, false);
     }
 
+    /**
+     * Displays a question.
+     *
+     * @param {number} index - The number of the question to display.
+     * This is the index of the question within the array that contains
+     * all of this plugin's questions.
+     *
+     * @param {boolean} showError - If true, this displays the validation
+     * error.
+     *
+     * @param {string} [withValue] - Display the question with this
+     * value filled in as the default.
+     *
+     * @private
+     */
     _showQuestion(index, showError, withValue) {
         let questions = this.plugin.getQuestions();
         let question = questions[index];
@@ -156,6 +196,14 @@ class SetupController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * This runs the following callbacks (defined in {@link SetupBase} in
+     * order:
+     *
+     * * {@link SetupBase#beforeObjectInstallation}
+     * * {@link SetupBase#installSettings}
+     * * {@link SetupBase#beforeAllQuestions}
+     */
     runPreQuestionCallbacks() {
         Context.logger.info(Context.y18n.__("Running pre-question callbacks"));
         try {
@@ -168,6 +216,12 @@ class SetupController extends BaseController {
         return this._showQuestion(0, false);
     }
 
+    /**
+     * This displays exceptions that occurred during the setup process.
+     * These are unexpected exceptions, not validation errors.
+     *
+     * @private
+     */
     _showError(error) {
         Context.logger.error(error);
         let data = {
@@ -179,6 +233,12 @@ class SetupController extends BaseController {
     }
 
 
+    /**
+     * This displays the end message at the end of the setup process.
+     * It also calls {@link SetupBase#afterAllQuestions} and creates
+     * or updates an internal setting describing when the setup completed.
+     *
+     */
     end() {
         let questions = this.plugin.getQuestions();
         let currentIndex = questions.length - 1;
@@ -187,6 +247,7 @@ class SetupController extends BaseController {
             Context.logger.debug("Invalid response for question " + currentIndex);
             return this._showQuestion(currentIndex, true, lastQuestion.value)
         }
+        this.plugin.afterAllQuestions();
         this.plugin.setCompletionTimestamp();
         let desc = this.plugin.constructor.description();
         let data = {
@@ -196,7 +257,7 @@ class SetupController extends BaseController {
             prevQuestion: currentIndex
         }
         let html = Templates.setupEnd(data);
-        return this.containerContent('End');
+        return this.containerContent(html);
     }
 
     /**
