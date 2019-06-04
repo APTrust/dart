@@ -38,13 +38,13 @@ class SetupController extends BaseController {
          *
          * @type {SetupBase}
          */
-        this.plugin;
+        this.plugin = null;
         /**
          * The id of Setup plugin that the controller is running.
          *
          * @type {string}
          */
-        this.pluginId;
+        this.pluginId = null;
         let id = params.get('id');
         if (id) {
             let pluginClass = PluginManager.findById(id);
