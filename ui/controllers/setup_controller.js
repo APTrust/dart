@@ -203,6 +203,10 @@ class SetupController extends BaseController {
      * * {@link SetupBase#beforeObjectInstallation}
      * * {@link SetupBase#installSettings}
      * * {@link SetupBase#beforeAllQuestions}
+     *
+     * That this is called when the user clicks the Next button on the
+     * Setup start page. When this completes, it sends the user on to the
+     * first setup question.
      */
     runPreQuestionCallbacks() {
         Context.logger.info(Context.y18n.__("Running pre-question callbacks"));
