@@ -245,7 +245,6 @@ class SetupController extends BaseController {
     _showError(error) {
         Context.logger.error(error);
         let data = {
-            error: error,
             stack: error.stack.split("\n")
         }
         let html = Templates.setupError(data);

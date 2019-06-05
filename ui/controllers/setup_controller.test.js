@@ -65,6 +65,20 @@ function testQuestion(qNumber) {
     return response;
 }
 
+function testForMessage(msgName) {
+    let plugin = getSetupPluginInstance(APTrustPluginId);
+    let message = plugin.getMessage(msgName);
+    let controller = new SetupController(getParams());
+    controller.plugin.installSettings(); // to prevent error
+    let response;
+    if (msgName == 'start') {
+        response = controller.start();
+    } else {
+        response = controller.end();
+    }
+    expect(response.container).toMatch(message);
+}
+
 test('Constructor sets expected properties', () => {
     // Without plugin id
     let params = new URLSearchParams({ q: '5' });
@@ -118,11 +132,7 @@ test('_formatLastRunDate()', () => {
 });
 
 test('start()', () => {
-    let plugin = getSetupPluginInstance(APTrustPluginId);
-    let startMessage = plugin.getMessage('start');
-    let controller = new SetupController(getParams());
-    let response = controller.start();
-    expect(response.container).toMatch(startMessage);
+    testForMessage('start');
 });
 
 test('question() renders question', () => {
@@ -215,7 +225,7 @@ test('question() does not run callback after invalid answer', () => {
 });
 
 
-test('startQuestions()', () => {
+test('runPreQuestionCallbacks()', () => {
     let controller = new SetupController(getParams())
     controller.plugin.beforeObjectInstallation = jest.fn();
     controller.plugin.installSettings = jest.fn();
@@ -227,18 +237,34 @@ test('startQuestions()', () => {
     expect(controller.plugin.beforeAllQuestions).toHaveBeenCalled();
 });
 
-// test('_showError()', () => {
+test('startQuestions() calls runPreQuestionCallbacks and _showQuestion', () => {
+    let controller = new SetupController(getParams())
+    controller.runPreQuestionCallbacks = jest.fn();
+    controller._showQuestion = jest.fn();
+    let response = controller.startQuestions();
+    expect(controller.runPreQuestionCallbacks).toHaveBeenCalled();
+    expect(controller._showQuestion).toHaveBeenCalled();
+});
 
-// });
+test('startQuestions() with error', () => {
+    let controller = new SetupController(getParams())
+    controller.plugin.installSettings = jest.fn(() => { throw new Error('Test Error')} );
+    let response = controller.startQuestions();
+    expect(response.container).toMatch('Test Error');
+});
 
-// test('end()', () => {
+test('_showError()', () => {
+    let error = new Error("Release the hounds");
+    let controller = new SetupController(getParams())
+    let response = controller._showError(error);
+    expect(response.container).toMatch("Release the hounds");
+});
 
-// });
+test('end()', () => {
+    testForMessage('end');
+});
 
-// test('getLogoPath()', () => {
-
-// });
-
-// test('postRenderCallback()', () => {
-
-// });
+test('getLogoPath()', () => {
+    let controller = new SetupController(getParams())
+    expect(controller.getLogoPath(controller.plugin.settingsDir)).toMatch(/logo\.png/);
+});
