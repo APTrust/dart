@@ -179,9 +179,17 @@ test('question() with invalid answer', () => {
     expect(response.container).toMatch(errMessage);
 });
 
-// test('_runPreQuestionCallbacks()', () => {
+test('startQuestions()', () => {
+    let controller = new SetupController(getParams())
+    controller.plugin.beforeObjectInstallation = jest.fn();
+    controller.plugin.installSettings = jest.fn();
+    controller.plugin.beforeAllQuestions = jest.fn();
 
-// });
+    controller.runPreQuestionCallbacks();
+    expect(controller.plugin.beforeObjectInstallation).toHaveBeenCalled();
+    expect(controller.plugin.installSettings).toHaveBeenCalled();
+    expect(controller.plugin.beforeAllQuestions).toHaveBeenCalled();
+});
 
 // test('_showError()', () => {
 

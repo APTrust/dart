@@ -196,6 +196,23 @@ class SetupController extends BaseController {
     }
 
     /**
+     * That this is called when the user clicks the Next button on the
+     * Setup start page. This runs the pre-question callbacks, and if they
+     * complete without error, itsends the user on to the first setup question.
+     *
+     * If there's an error in the pre-question callbacks, this displays the
+     * error and stops the setup process.
+     *
+     */
+    startQuestions() {
+        let error = this.runPreQuestionCallbacks();
+        if (error) {
+            return this._showError(error);
+        }
+        return this._showQuestion(0, false);
+    }
+
+    /**
      * This runs the following callbacks (defined in {@link SetupBase} in
      * order:
      *
@@ -203,9 +220,9 @@ class SetupController extends BaseController {
      * * {@link SetupBase#installSettings}
      * * {@link SetupBase#beforeAllQuestions}
      *
-     * That this is called when the user clicks the Next button on the
-     * Setup start page. When this completes, it sends the user on to the
-     * first setup question.
+     * Returns an error if anything goes wrong. Otherwise returns null.
+     *
+     * @returns {Error}
      */
     runPreQuestionCallbacks() {
         Context.logger.info(Context.y18n.__("Running pre-question callbacks"));
@@ -214,9 +231,9 @@ class SetupController extends BaseController {
             this.plugin.installSettings();
             this.plugin.beforeAllQuestions();
         } catch (error) {
-            return this._showError(error);
+            return error;
         }
-        return this._showQuestion(0, false);
+        return null;
     }
 
     /**
