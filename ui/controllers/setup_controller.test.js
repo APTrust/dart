@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { InternalSetting } = require('../../core/internal_setting');
 const { PluginManager } = require('../../plugins/plugin_manager');
@@ -155,6 +156,29 @@ test('question() with valid answer', () => {
     testQuestion(demoLogin + 1);
 });
 
+test('question() runs callback after valid answer', () => {
+    let response = testQuestion(demoLogin)
+    UITestUtil.setDocumentBody(response);
+    $('#q_pharos_demo_login').val('user@example.com');
+
+    // After supplying a valid response, controller should call
+    // plugin.afterEachQuestion() before it displays the next
+    // question.
+    let controller = new SetupController(getParams(demoLogin + 1));
+
+    // Controller passes in the question we just answered, which
+    // should have our response in the .value field. The validation
+    // regexp is filled in at runtime by DART.
+    let demoLoginQuestion = controller.plugin.getQuestions()[demoLogin];
+    demoLoginQuestion.value = "user@example.com";
+    demoLoginQuestion.validation.regexp = Constants.RE_EMAIL;
+
+    controller.plugin.afterEachQuestion = jest.fn((q) => {});
+    response = controller.question();
+    expect(controller.plugin.afterEachQuestion).toHaveBeenCalledWith(demoLoginQuestion);
+});
+
+
 test('question() with invalid answer', () => {
     // See comments in test immediately above.
     let response = testQuestion(demoLogin)
@@ -178,6 +202,18 @@ test('question() with invalid answer', () => {
     let errMessage = Context.y18n.__(demoLoginQuestion.errMessage);
     expect(response.container).toMatch(errMessage);
 });
+
+test('question() does not run callback after invalid answer', () => {
+    let response = testQuestion(demoLogin)
+    UITestUtil.setDocumentBody(response);
+    $('#q_pharos_demo_login').val('This answer is not valid');
+
+    let controller = new SetupController(getParams(demoLogin + 1));
+    controller.plugin.afterEachQuestion = jest.fn((q) => {});
+    response = controller.question();
+    expect(controller.plugin.afterEachQuestion).not.toHaveBeenCalled();
+});
+
 
 test('startQuestions()', () => {
     let controller = new SetupController(getParams())
