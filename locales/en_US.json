@@ -340,5 +340,6 @@
   "Last Installed": "Last Installed",
   "Installed": "Installed",
   "Never": "Never",
-  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist"
+  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist",
+  "Please enter a valid email address.": "Please enter a valid email address."
 }

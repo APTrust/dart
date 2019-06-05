@@ -155,13 +155,29 @@ test('question() with valid answer', () => {
     testQuestion(demoLogin + 1);
 });
 
-// test('question() with invalid answer', () => {
+test('question() with invalid answer', () => {
+    // See comments in test immediately above.
+    let response = testQuestion(demoLogin)
+    UITestUtil.setDocumentBody(response);
 
-// });
+    // Use jQuery to set an invalid response to the question.
+    $('#q_pharos_demo_login').val('invalid address!!');
 
-// test('_showQuestion()', () => {
+    // Now when we try to move on to the next
+    // question, the controller should instead display the
+    // demoLogin question again with a message saying our
+    // response was invalid.
+    let plugin = getSetupPluginInstance(APTrustPluginId);
+    let demoLoginQuestion = plugin.getQuestions()[demoLogin];
+    let controller = new SetupController(getParams(demoLogin + 1));
+    response = controller.question();
+    expect(response.container).toMatch(demoLoginQuestion.heading);
+    expect(response.container).toMatch(demoLoginQuestion.label);
 
-// });
+    // Make sure the validation error is showing.
+    let errMessage = Context.y18n.__(demoLoginQuestion.errMessage);
+    expect(response.container).toMatch(errMessage);
+});
 
 // test('_runPreQuestionCallbacks()', () => {
 

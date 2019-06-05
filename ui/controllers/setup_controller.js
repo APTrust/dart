@@ -177,7 +177,7 @@ class SetupController extends BaseController {
         let questions = this.plugin.getQuestions();
         let question = questions[index];
         if (showError) {
-            question.error = question.errMessage;
+            question.error = Context.y18n.__(question.errMessage);
             question.value = withValue;
         } else {
             question.error = '';
