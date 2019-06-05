@@ -95,7 +95,6 @@ class SetupController extends BaseController {
     _formatLastRunDate(pluginClassName) {
         let lastRun = Context.y18n.__('Never');
         let date = this._getLastRunDate(pluginClassName);
-        console.log(date);
         if (date) {
             lastRun = date.toDateString();
         }
