@@ -318,7 +318,6 @@ class SetupBase extends Plugin {
             Object.assign(record, data);
         }
         record.value = new Date().toISOString();
-        console.log(record);
         record.save();
     }
 }
