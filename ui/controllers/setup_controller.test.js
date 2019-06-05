@@ -20,6 +20,20 @@ const DPNPluginId = 'ba6cf526-f73a-454c-b0b3-6378edc3851a';
 const aptPluginName = PluginManager.findById(APTrustPluginId).constructor.name;
 const dpnPluginName = PluginManager.findById(DPNPluginId).constructor.name;
 
+// The Demo Login Email Address question is at index 6 in the
+// list of APTrust setup questions.
+const demoLogin = 6;
+
+function getParams(questionNumber = null, dir = 'next') {
+    let params = new URLSearchParams({
+        id: APTrustPluginId,
+        dir: dir
+    });
+    if (questionNumber != null) {
+        params.set('q', questionNumber);
+    }
+    return params;
+}
 
 function cleanupPersistentData() {
     TestUtil.deleteJsonFile('AppSetting');
@@ -32,6 +46,22 @@ function cleanupPersistentData() {
 function getSetupPluginInstance(id) {
     let pluginClass = PluginManager.findById(id);
     return new pluginClass();
+}
+
+function testQuestion(qNumber) {
+    let plugin = getSetupPluginInstance(APTrustPluginId);
+
+    // Need to install objects first for question mappings to work.
+    plugin.installSettings();
+
+    let question = plugin.getQuestions()[qNumber];
+    let controller = new SetupController(getParams(qNumber));
+    let response = controller.question();
+    expect(response.container).toMatch(question.heading);
+    expect(response.container).toMatch(question.label);
+
+    // Return response so caller can run additional tests.
+    return response;
 }
 
 test('Constructor sets expected properties', () => {
@@ -86,21 +116,44 @@ test('_formatLastRunDate()', () => {
 
 });
 
-// test('start()', () => {
+test('start()', () => {
+    let plugin = getSetupPluginInstance(APTrustPluginId);
+    let startMessage = plugin.getMessage('start');
+    let controller = new SetupController(getParams());
+    let response = controller.start();
+    expect(response.container).toMatch(startMessage);
+});
 
-// });
+test('question() renders question', () => {
+    // Test questions that don't have requirements
+    let response = testQuestion(0);  // organization
+    expect(response.container).toMatch('type="text" id="q_organization"');
 
-// test('question() first', () => {
+    response = testQuestion(5);  // demo secret key
+    response = testQuestion(11); // prod api key
+});
 
-// });
+test('question() last links to end message', () => {
+    let response = testQuestion(11);
+    expect(response.container).toMatch('#Setup/end');
+});
 
-// test('question() last', () => {
+test('question() with valid answer', () => {
+    // The demoLogin question requires an email address.
+    // Get the question HTML and put it in the document body.
+    let response = testQuestion(demoLogin)
+    UITestUtil.setDocumentBody(response);
 
-// });
+    // Use jQuery to set a valid response to the question.
+    $('#q_pharos_demo_login').val('user@example.com');
 
-// test('question() with valid answer', () => {
-
-// });
+    // Now ensure that when we try to move on to the next
+    // question, the controller actually displays it.
+    // If our answer to the email question were invalid,
+    // the controller would redisplay the email question
+    // with an error message.
+    testQuestion(demoLogin + 1);
+});
 
 // test('question() with invalid answer', () => {
 

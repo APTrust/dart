@@ -113,7 +113,7 @@ class SetupBase extends Plugin {
     getMessage(which) {
         let pathToFile = this._getPathToMessageFile(which);
         if (fs.existsSync(pathToFile)) {
-            return fs.readFileSync(pathToFile);
+            return fs.readFileSync(pathToFile).toString();
         }
     }
 
