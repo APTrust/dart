@@ -315,6 +315,32 @@ class BagItProfileController extends BaseController {
         return this.noContent();
     }
 
+    postRenderCallback(fnName) {
+        if (fnName == 'newTagFile' || fnName == 'newTagFileCreate') {
+            $('#tagFileForm_tagFileName').keydown(this._enterKeyHandler);
+        }
+    }
+
+    /**
+     * Handle the enter key press in the New Tag File modal. If we don't
+     * handle this, the Electron browser window takes the default action
+     * of submitting the single-element form, resulting in a blank window.
+     *
+     * This handler does what the user expects, which is the same as clicking
+     * on the save button.
+     *
+     *
+     */
+    _enterKeyHandler(e) {
+        if (e.keyCode == 13) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (e.type == 'keydown') {
+                // trigger('click') doesn't do it...
+                location.href = $('#newTagFileSave').attr('href');
+            }
+        }
+    }
 }
 
 module.exports.BagItProfileController = BagItProfileController;
