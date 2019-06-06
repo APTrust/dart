@@ -42,6 +42,12 @@ test("Context can get DART version info", () => {
     expect(version).toMatch(/^DART/);
 });
 
+test("Context can get DART release number", () => {
+    var version = Context.dartReleaseNumber();
+    expect(version).not.toEqual("0.0.0");
+    expect(version).toMatch(/\d+/);
+});
+
 test("We should be able to write to the log", () => {
     expect(Context.logger).not.toBeNull();
     expect(Context.logger).toBeDefined();

@@ -143,7 +143,9 @@ class GlobalContext {
     }
 
     /**
-     * Returns the version of DART.
+     * Returns the full version of DART, including which Node version
+     * DART is using and the OS platform, architecture, and release
+     * number.
      *
      * @returns {string}
      */
@@ -152,7 +154,22 @@ class GlobalContext {
         if (pkg == null) {
             return "Cannot read version from package.json file.";
         }
-        return `${pkg.name} ${pkg.version} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`
+        return `${pkg.name} ${pkg.version} with Node.js ${process.version} for ${os.platform()}-${os.arch()}-${os.release()}.)`;
+    }
+
+    /**
+     * Returns the release number of this DART build. For example,
+     * "2.0.16". If you need more complete information, use
+     * {@link GlobalContext#dartVersion}.
+     *
+     * @returns {string}
+     */
+    dartReleaseNumber() {
+        var pkg = this.getPackageInfo();
+        if (pkg == null) {
+            return "0.0.0";
+        }
+        return pkg.version;
     }
 }
 
