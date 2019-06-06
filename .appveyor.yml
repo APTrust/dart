@@ -28,7 +28,6 @@ install:
 build_script:
   - npm test -- --runInBand
   - electron-builder . --publish never
-  - nexe -i apps/dart-cli.js -o dist/dart-cli-win.exe -t win32-x86-10.13.0
 
 after_build:
   - ps: Get-ChildItem .\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }
