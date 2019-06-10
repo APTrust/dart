@@ -12,6 +12,11 @@ function readFile(...args) {
     return fs.readFileSync(filepath, 'utf8');
 }
 
+function compile(pathToTemplate) {
+    let html = fs.readFileSync(pathToTemplate);
+    return handlebars.compile(html);
+}
+
 var about = handlebars.compile(readFile('about', 'index.html'));
 var appSettingForm = handlebars.compile(readFile('app_setting', 'form.html'));
 var appSettingList = handlebars.compile(readFile('app_setting', 'list.html'));
@@ -98,6 +103,7 @@ module.exports.appSettingList = appSettingList;
 module.exports.bagItProfileForm = bagItProfileForm;
 module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
+module.exports.compile = compile;
 module.exports.dashboard = dashboard;
 // module.exports.help = help;
 module.exports.dartProcessList = dartProcessList;

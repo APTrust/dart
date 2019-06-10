@@ -8,7 +8,20 @@ class DashboardController extends BaseController {
     }
 
     show() {
-        return this.containerContent('Show Dashboard');
+        let html = Templates.dashboard({});
+        return this.containerContent(html);
+    }
+
+    _getRunningJobs() {
+
+    }
+
+    _getRecentJobs() {
+
+    }
+
+    _getConnectableRepos() {
+
     }
 
 }
