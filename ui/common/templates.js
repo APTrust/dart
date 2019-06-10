@@ -13,7 +13,7 @@ function readFile(...args) {
 }
 
 function compile(pathToTemplate) {
-    let html = fs.readFileSync(pathToTemplate);
+    let html = fs.readFileSync(pathToTemplate, 'utf8');
     return handlebars.compile(html);
 }
 

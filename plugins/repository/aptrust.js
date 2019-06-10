@@ -1,4 +1,5 @@
 const { AppSetting } = require('../../core/app_setting');
+const { Context } = require('../../core/context');
 const { Plugin } = require('../plugin');
 const { RemoteRepository } = require('../../core/remote_repository');
 const path = require('path');
@@ -71,7 +72,10 @@ class APTrustClient extends Plugin {
      * @returns {Promise}
      */
     recentIngests() {
-        return this._doRequest(this.objectsUrl, this.formatObjects);
+        let aptrust = this;
+        return aptrust._doRequest(this.objectsUrl, (data) => {
+            return aptrust.objectsTemplate({ objects: data.results })
+        });
     }
 
     /**
@@ -82,27 +86,22 @@ class APTrustClient extends Plugin {
      * @returns {Promise}
      */
     recentWorkItems() {
-        return this._doRequest(this.itemsUrl, this.formatWorkItems);
+        return this._doRequest(this.itemsUrl, (data) => {
+            return aptrust.itemsTemplate({ objects: data.results })
+        });
     }
 
 
-    _doRequest(url) {
-        let promise = new Promise(function(resolve, reject) {
+    _doRequest(url, formatter) {
+        let aptrust = this;
+        return new Promise(function(resolve, reject) {
             aptrust._request(url, function(data) {
-                let html = '';
-                resolve(html);
+                //console.log(formatter.data);
+                resolve(formatter(data));
             }, function(error) {
                 reject(error);
             });
         });
-    }
-
-    formatObjects(data) {
-
-    }
-
-    formatWorkItems(data) {
-
     }
 
 
@@ -138,14 +137,15 @@ class APTrustClient extends Plugin {
             method: 'GET',
             headers: this._getHeaders()
         }
-        Console.logger.info(`Requesting ${url}`);
+        Context.logger.info(`Requesting ${url}`);
         request(opts, (err, res, body) => {
             if (err) {
                 Context.logger.error(`Error from ${url}:`);
                 Context.logger.error(err);
                 onError(err, res, body);
             }
-            if (response.statusCode == 200) {
+            if (res.statusCode == 200) {
+                //Context.logger.info(body);
                 onSuccess(JSON.parse(body));
             }
         });
