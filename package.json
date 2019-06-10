@@ -28,7 +28,7 @@
         "minio": "^7.0.8",
         "os-locale": "^3.1.0",
         "popper.js": "^1.15.0",
-        "readdirp": "^3.0.1",
+        "readdirp": "^3.0.2",
         "require-dir": "^1.2.0",
         "tail": "^2.0.2",
         "tar-stream": "^2.1.0",
