@@ -178,31 +178,6 @@ class StorageService extends PersistentObject {
         return Object.keys(this.errors).length == 0;
     }
 
-
-    /**
-     * This returns the value of propertyName as read from the
-     * property itself or from the process's environment. This will
-     * return undefined if it tries to read an undefined environment
-     * variable.
-     *
-     * @example
-     *
-     * storageService.login = "user@example.com";
-     * storageService.getValue("login");  // returns "user@example.com"
-     *
-     * storageService.login = "env:USER";
-     * storageService.getValue("login");  // returns the value of process.env.USER
-     *
-     * @param {string} propertyName - The name of the property whose value
-     * you want to get.
-     *
-     * @returns {string}
-     *
-     */
-    getValue(propertyName) {
-        let value = this[propertyName];
-        return Util.looksLikeEnvSetting(value) ? Util.getEnvSetting(value) : value;
-    }
 }
 
 // Get static methods from base class.

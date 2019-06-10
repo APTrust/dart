@@ -103,6 +103,16 @@ test('first()', () => {
     expect(match.url).toEqual("https://repo3.example.com");
 });
 
+test('getValue()', () => {
+    let repo = new RemoteRepository({ name: 'example'});
+    repo.login = 'user@example.com';
+    expect(repo.getValue('login')).toEqual('user@example.com');
+
+    // PATH is common to Windows, Mac, Linux
+    repo.login = 'env:PATH';
+    expect(repo.getValue('login')).toEqual(process.env.PATH);
+});
+
 function makeObjects(howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {

@@ -32,7 +32,7 @@ test('All templates are defined', () => {
         "bagItProfileForm",
         "bagItProfileList",
         "bagItProfileNew",
-        // "dashboard",
+        "dashboard",
         // "help",
         "internalSettingList",
         // "jobFiles",
@@ -76,6 +76,10 @@ test('All partials are defined', () => {
         'inputTextArea',
         'jobTabs',
         'profileTags',
+        'recentJobs',
+        'runningJobs',
+        'recentIngests',
+        'recentTasks',
         'tableBottomLinks',
         'tagDefRow'
     ];

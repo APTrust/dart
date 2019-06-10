@@ -127,6 +127,39 @@ class PersistentObject {
         return this;
     }
 
+
+    /**
+     * This returns the value of propertyName as read from the
+     * property itself or from the process's environment. This will
+     * return undefined if it tries to read an undefined environment
+     * variable.
+     *
+     * This is used primarily by the subclasses {@link StorageService}
+     * and {@link RemoteRepository}, both of which use credentials that a
+     * user may want to store in the environment.
+     *
+     * For most values, you'll simply want to access the property itself.
+     *
+     * @example
+     *
+     * storageService.login = "user@example.com";
+     * storageService.getValue("login");  // returns "user@example.com"
+     *
+     * storageService.login = "env:USER";
+     * storageService.getValue("login");  // returns the value of process.env.USER
+     *
+     * @param {string} propertyName - The name of the property whose value
+     * you want to get.
+     *
+     * @returns {string}
+     *
+     */
+    getValue(propertyName) {
+        let value = this[propertyName];
+        return Util.looksLikeEnvSetting(value) ? Util.getEnvSetting(value) : value;
+    }
+
+
     /**
      * find finds the object with the specified id in the datastore
      * and returns it. Returns undefined if the object is not in the datastore.

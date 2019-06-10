@@ -1,0 +1,66 @@
+<div class="row">
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Running Jobs</div>
+      <div class="card-body">
+        {{ > runningJobs jobs = runningJobs }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Jobs</div>
+      <div class="card-body">
+        {{ > recentJobs jobs = recentJobs }}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="row">
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Ingests (Production)</div>
+      <div class="card-body">
+        {{ > recentIngests objects = recentProductionIngests }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Tasks (Production)</div>
+      <div class="card-body">
+        {{ > recentTasks objects = recentProductionTasks }}
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Ingests (Demo)</div>
+      <div class="card-body">
+        {{ > recentIngests objects = recentDemoIngests }}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">Recent Tasks (Demo)</div>
+      <div class="card-body">
+        {{ > recentTasks objects = recentDemoTasks }}
+      </div>
+    </div>
+  </div>
+
+</div>

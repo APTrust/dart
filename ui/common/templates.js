@@ -19,7 +19,7 @@ var bagItProfileList = handlebars.compile(readFile('bagit_profile', 'list.html')
 var bagItProfileForm = handlebars.compile(readFile('bagit_profile', 'form.html'));
 var bagItProfileNew = handlebars.compile(readFile('bagit_profile', 'new.html'));
 var dartProcessList = handlebars.compile(readFile('dart_process', 'list.html'));
-// var dashboard = handlebars.compile(readFile('dashboard.html'));
+var dashboard = handlebars.compile(readFile('dashboard', 'show.html'));
 // var help = handlebars.compile(readFile('help.html'));
 var internalSettingList = handlebars.compile(readFile('internal_setting', 'list.html'));
 var jobFileRow = handlebars.compile(readFile('job', 'file_row.html'));
@@ -59,6 +59,10 @@ handlebars.registerPartial({
     inputTextArea: readFile(path.join('partials', 'input_textarea.html')),
     jobTabs: readFile(path.join('partials', 'job_tabs.html')),
     profileTags: readFile(path.join('partials', 'profile_tags.html')),
+    recentIngests: readFile(path.join('partials', 'recent_ingests.html')),
+    recentJobs: readFile(path.join('partials', 'recent_jobs.html')),
+    recentTasks: readFile(path.join('partials', 'recent_tasks.html')),
+    runningJobs: readFile(path.join('partials', 'running_jobs.html')),
     tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
     tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
 });
@@ -94,7 +98,7 @@ module.exports.appSettingList = appSettingList;
 module.exports.bagItProfileForm = bagItProfileForm;
 module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
-// module.exports.dashboard = dashboard;
+module.exports.dashboard = dashboard;
 // module.exports.help = help;
 module.exports.dartProcessList = dartProcessList;
 module.exports.internalSettingList = internalSettingList;
