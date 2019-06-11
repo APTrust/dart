@@ -1,8 +1,8 @@
 const { AppSetting } = require('../../core/app_setting');
 const { Context } = require('../../core/context');
-const { Plugin } = require('../plugin');
 const { RemoteRepository } = require('../../core/remote_repository');
 const path = require('path');
+const { RepositoryBase } = require('./repository_base');
 const request = require('request');
 const Templates = require('../../ui/common/templates');
 
@@ -12,17 +12,17 @@ const Templates = require('../../ui/common/templates');
  *
  *
  */
-class APTrustClient extends Plugin {
+class APTrustClient extends RepositoryBase {
     /**
      *
      */
     constructor(remoteRepository) {
-        super();
+        super(remoteRepository);
         let setting = AppSetting.find('name', 'Institution Domain');
         if (setting) {
             this.institutionDomain = setting.value;
         }
-        this.repo = remoteRepository;
+        //this.repo = remoteRepository;
         this.objectsUrl = `${this.repo.url}/member-api/v2/objects/?page=1&per_page=50&sort=date&state=A`
         this.itemsUrl = `${this.repo.url}/member-api/v2/items/?page=1&per_page=50&sort=date`
 
@@ -74,6 +74,9 @@ class APTrustClient extends Plugin {
     recentIngests() {
         let aptrust = this;
         return aptrust._doRequest(this.objectsUrl, (data) => {
+            data.results.forEach((item) => {
+                item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`
+            });
             return aptrust.objectsTemplate({ objects: data.results })
         });
     }

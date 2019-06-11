@@ -1,3 +1,10 @@
 {{#each objects}}
-{{ this.identifier }}
+<div class="row ingested clickable" data-url="{{ this.url }}">
+  <div class="col">
+    {{ this.identifier }}
+  </div>
+  <div class="col">
+    {{ this.updated_at }}
+  </div>
+</div>
 {{/each }}
