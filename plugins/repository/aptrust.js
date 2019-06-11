@@ -121,7 +121,7 @@ class APTrustClient extends RepositoryBase {
      * @returns {boolean}
      */
     hasRequiredConnectionInfo() {
-        return this.repo.url && this.repo.user && this.repo.apiKey;
+        return this.repo.url && this.repo.userId && this.repo.apiToken;
     }
 
     /**
