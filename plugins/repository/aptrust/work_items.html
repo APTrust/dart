@@ -1,3 +1,20 @@
-{{#each items}}
-{{ this.identifier }}
-{{/each }}
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Action</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each items}}
+    <tr class="repository clickable-row" data-url="{{ this.url }}"
+        data-toggle="popover"
+        data-content="Size: {{ this.size }}<br/>Etag: {{ this.etag }}<br/>Updated: {{ this.updated_at }}<br/>Note: {{ this.escaped_note }}">
+      <td>{{ this.name }}</td>
+      <td>{{ this.action }}</td>
+      <td>{{ this.status }}</td>
+    </tr>
+    {{/each }}
+  </tbody>
+</table>

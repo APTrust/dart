@@ -75,7 +75,8 @@ class APTrustClient extends RepositoryBase {
         let aptrust = this;
         return aptrust._doRequest(this.objectsUrl, (data) => {
             data.results.forEach((item) => {
-                item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`
+                item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`;
+                item.escaped_title = item.title.replace(/"/g, "'");
             });
             return aptrust.objectsTemplate({ objects: data.results })
         });
@@ -89,8 +90,13 @@ class APTrustClient extends RepositoryBase {
      * @returns {Promise}
      */
     recentWorkItems() {
+        let aptrust = this;
         return this._doRequest(this.itemsUrl, (data) => {
-            return aptrust.itemsTemplate({ objects: data.results })
+            data.results.forEach((item) => {
+                item.url = `${aptrust.repo.url}/items/${item.id}`;
+                item.escaped_note = item.note.replace(/"/g, "'");
+            });
+            return aptrust.itemsTemplate({ items: data.results })
         });
     }
 
