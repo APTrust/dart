@@ -142,16 +142,17 @@ class APTrustClient extends RepositoryBase {
     }
 
     provides() {
+        let aptrust = this;
         return [
             {
-                title: 'Ingested Objects',
+                title: `Ingested Objects (${this.repo.name})`,
                 description: 'Recently ingested objects.',
-                method: this.recentIngests
+                method: () => { return aptrust.recentIngests() }
             },
             {
-                title: 'Work Items',
+                title: `Work Items  (${this.repo.name})`,
                 description: 'A list of tasks.',
-                method: this.recentWorkItems
+                method: () => { return aptrust.recentWorkItems() }
             }
         ];
     }
@@ -165,10 +166,11 @@ class APTrustClient extends RepositoryBase {
      */
     recentIngests() {
         let aptrust = this;
-        return aptrust._doRequest(this.objectsUrl, (data) => {
+        return this._doRequest(this.objectsUrl, (data) => {
             data.results.forEach((item) => {
                 item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`;
-                item.escaped_title = item.title.replace(/"/g, "'");
+                item.escapedTitle = item.title.replace(/"/g, "'");
+                item.displayDate = item.updated_at.split('T')[0];
             });
             return aptrust.objectsTemplate({ objects: data.results })
         });

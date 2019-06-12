@@ -161,6 +161,7 @@ class JobController extends BaseController {
      * so we can color-code the display.
      */
     colorCodeJobs(jobs) {
+        // TODO: This code has some overlap with DashboardController#formatJobOutcome.
         for(let i=0; i &lt; jobs.length; i++) {
             let job = Job.inflateFrom(jobs[i]);
             job.pkgDate = '-';
