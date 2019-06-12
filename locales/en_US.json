@@ -341,5 +341,9 @@
   "Installed": "Installed",
   "Never": "Never",
   "Skipping file %s because it does not exist": "Skipping file %s because it does not exist",
-  "Please enter a valid email address.": "Please enter a valid email address."
+  "Please enter a valid email address.": "Please enter a valid email address.",
+  "Recent Jobs": "Recent Jobs",
+  "No running jobs.": "No running jobs.",
+  "No recent jobs.": "No recent jobs.",
+  "Running Jobs": "Running Jobs"
 }

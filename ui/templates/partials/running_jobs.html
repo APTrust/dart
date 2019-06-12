@@ -1,4 +1,28 @@
-<!-- Running Jobs -->
-{{#each jobs}}
-  {{ this }}
-{{/each}}
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-header">{{ translate "Running Jobs" }}</div>
+    <div class="card-body dashboard-card-body" id="cardRunningJobs">
+
+      {{#if items }}
+      <table class="table table-hover">
+        <thead class="thead-inverse">
+          <tr>
+            <th>Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each items}}
+          <tr>
+            <td>{{ name }}</td>
+            <td>{{ status }}</td>
+          </tr>
+          {{/each }}
+        </tbody>
+      </table>
+      {{else }}
+      <p>{{ translate "No running jobs." }}</p>
+      {{/if}}
+    </div>
+  </div>
+</div>

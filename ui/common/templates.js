@@ -55,6 +55,7 @@ handlebars.registerPartial({
     bannerAlert: readFile(path.join('partials', 'banner_alert.html')),
     customTag: readFile(path.join('partials', 'custom_tag.html')),
     dartProcess: readFile(path.join('partials', 'dart_process.html')),
+    dashboardCard: readFile(path.join('partials', 'dashboard_card.html')),
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
@@ -64,9 +65,7 @@ handlebars.registerPartial({
     inputTextArea: readFile(path.join('partials', 'input_textarea.html')),
     jobTabs: readFile(path.join('partials', 'job_tabs.html')),
     profileTags: readFile(path.join('partials', 'profile_tags.html')),
-    recentIngests: readFile(path.join('partials', 'recent_ingests.html')),
     recentJobs: readFile(path.join('partials', 'recent_jobs.html')),
-    recentTasks: readFile(path.join('partials', 'recent_tasks.html')),
     runningJobs: readFile(path.join('partials', 'running_jobs.html')),
     tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
     tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))

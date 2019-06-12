@@ -146,3 +146,8 @@ legend {
 ul.ui-autocomplete {
     z-index: 9999;
 }
+
+.dashboard-card-body {
+    max-height: 250px;
+    overflow-y: auto;
+}

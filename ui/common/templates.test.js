@@ -67,6 +67,7 @@ test('All partials are defined', () => {
         'bannerAlert',
         'customTag',
         'dartProcess',
+        'dashboardCard',
         'formButtons',
         'inputCheckboxGroup',
         'inputHidden',
@@ -78,8 +79,6 @@ test('All partials are defined', () => {
         'profileTags',
         'recentJobs',
         'runningJobs',
-        'recentIngests',
-        'recentTasks',
         'tableBottomLinks',
         'tagDefRow'
     ];
