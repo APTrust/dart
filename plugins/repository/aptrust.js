@@ -77,7 +77,8 @@ class APTrustClient extends RepositoryBase {
         return this._doRequest(this.objectsUrl, (data) => {
             data.results.forEach((item) => {
                 item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`;
-                item.escaped_title = item.title.replace(/"/g, "'");
+                item.escapedTitle = item.title.replace(/"/g, "'");
+                item.displayDate = item.updated_at.split('T')[0];
             });
             return aptrust.objectsTemplate({ objects: data.results })
         });

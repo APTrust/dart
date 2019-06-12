@@ -14,32 +14,6 @@ class DashboardController extends BaseController {
     }
 
     show() {
-        // let repoClients = this._getViableRepoClients();
-        //console.log(repoClients);
-
-        // TODO: We need to call client.provides() to get a list
-        // of available calls.
-
-        // For POC only. We want the following to be flexible,
-        // not hard wired. This all hacked for now, so we can fiddle
-        // with the display.
-        // let demoClient = repoClients[0];
-        // let demoItemsHTML = '';
-        // let demoObjectsHTML = '';
-        // demoClient.recentIngests().then(
-        //     result => { $('#aptDemoIngests').html(result) },
-        //     error => alert(error));
-        // demoClient.recentWorkItems().then(
-        //     result => { $('#aptDemoTasks').html(result) },
-        //     error => alert(error));
-
-        // // let prodClient = repoClients[1];
-
-        // let data = {
-        //     demoObjectsHTML: demoObjectsHTML,
-        //     demoItemsHTML: demoItemsHTML
-        // }
-
         // Get a list of RemoteRepository clients that have enough information
         // to attempt a connection with the remote repo.
         let clients = this._getViableRepoClients();
@@ -66,7 +40,7 @@ class DashboardController extends BaseController {
             let elementId = '#' + report.id
             report.method().then(
                 result => { $(elementId).html(result) },
-                error => $(elementId).html(error)
+                error => { $(elementId).html(error) }
             );
         });
 
@@ -91,7 +65,7 @@ class DashboardController extends BaseController {
         let opts = {limit: 10, offset: 0, orderBy: 'updatedAt', sortDir: 'desc'};
         // TODO: Override list() in Job to do its own inflation?
         let jobs = Job.list(null, opts).map((data) => { return Job.inflateFrom(data) });
-        console.log(jobs);
+        //console.log(jobs);
         for (let job of jobs) {
             let [outcome, timestamp] = this._getJobOutcomeAndTimestamp(job);
             jobSummaries.push({
@@ -107,15 +81,16 @@ class DashboardController extends BaseController {
         // TODO: This code has some overlap with JobController#colorCodeJobs.
         let outcome = "Job has not been run.";
         let timestamp = null;
+        console.log(job);
         if(job.uploadAttempted()) {
             outcome = job.uploadSucceeded() ? 'Uploaded' : 'Upload failed';
-            timestamp = dateFormat(job.uploadedAt(), 'shortDate');
+            timestamp = dateFormat(job.uploadedAt(), 'yyyy-mm-dd');
         } else if (job.validationAttempted) {
             outcome = job.validationSucceeded() ? 'Validated' : 'Validation failed';
-            timestamp = dateFormat(job.validatedAt(), 'shortDate');
+            timestamp = dateFormat(job.validatedAt(), 'yyyy-mm-dd');
         } else if (job.packageAttempted()) {
             outcome = job.packageSucceeded() ? 'Packaged' : 'Packaging failed';
-            timestamp = dateFormat(job.packagedAt(), 'shortDate');
+            timestamp = dateFormat(job.packagedAt(), 'yyyy-mm-dd');
         }
         return [outcome, timestamp]
     }
@@ -129,9 +104,7 @@ class DashboardController extends BaseController {
             let repo = new RemoteRepository();
             Object.assign(repo, _repoData);
             let clientClass = PluginManager.findById(repo.pluginId);
-            //console.log(clientClass);
             let clientInstance = new clientClass(repo);
-            //console.log(clientInstance);
             if (clientInstance.hasRequiredConnectionInfo()) {
                 repoClients.push(clientInstance);
             }

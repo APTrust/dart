@@ -2,16 +2,16 @@
   <thead class="thead-inverse">
     <tr>
       <th>Identifier</th>
-      <th>Updated</th>
+      <th>Last Ingested</th>
     </tr>
   </thead>
   <tbody>
     {{#each objects}}
     <tr class="repository clickable-row" data-url="{{ this.url }}"
         data-toggle="popover"
-        data-content="<p>Etag: {{ this.etag }}</p><p>Title: {{ this.escaped_title }}</p>">
+        data-content="<p>Etag: {{ this.etag }}</p><p>Title: {{ this.escapedTitle }}</p>">
       <td>{{ this.identifier }}</td>
-      <td>{{ this.updated_at }}</td>
+      <td>{{ this.displayDate }}</td>
     </tr>
     {{/each }}
   </tbody>
