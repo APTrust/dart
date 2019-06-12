@@ -58,7 +58,7 @@ class APTrustClient extends RepositoryBase {
                 method: () => { return aptrust.recentIngests() }
             },
             {
-                title: 'Work Items  (${this.repo.name})',
+                title: `Work Items  (${this.repo.name})`,
                 description: 'A list of tasks.',
                 method: () => { return aptrust.recentWorkItems() }
             }
