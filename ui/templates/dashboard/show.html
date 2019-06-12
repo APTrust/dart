@@ -1,8 +1,8 @@
 <div class="row mb-3">
 
-  {{> runningJobs jobs = runningJobs }}
+  {{> runningJobs items = runningJobs }}
 
-  {{> recentJobs jobs = recentJobs }}
+  {{> recentJobs items = recentJobs }}
 
 </div>
 
@@ -11,8 +11,8 @@
 
   <div class="col-md-6">
     <div class="card">
-      <div class="card-header">Recent Ingests (Production)</div>
-      <div class="card-body">
+      <div class="card-header">Recent Ingests (Demo)</div>
+      <div class="card-body dashboard-card-body" id="aptDemoIngests">
 
       </div>
     </div>
@@ -20,8 +20,8 @@
 
   <div class="col-md-6">
     <div class="card">
-      <div class="card-header">Recent Tasks (Production)</div>
-      <div class="card-body">
+      <div class="card-header">Recent Tasks (Demo)</div>
+      <div class="card-body dashboard-card-body" id="aptDemoTasks">
 
       </div>
     </div>

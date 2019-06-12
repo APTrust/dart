@@ -151,3 +151,7 @@ ul.ui-autocomplete {
     max-height: 250px;
     overflow-y: auto;
 }
+
+.popover{
+    max-width: 60%;
+}

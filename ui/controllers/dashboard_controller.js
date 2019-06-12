@@ -1,5 +1,7 @@
 const $ = require('jquery');
 const { BaseController } = require('./base_controller');
+const dateFormat = require('dateformat');
+const { Job } = require('../../core/job');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const { RemoteRepository } = require('../../core/remote_repository');
 const Templates = require('../common/templates');
@@ -39,7 +41,10 @@ class DashboardController extends BaseController {
         }
 
 
-        let html = Templates.dashboard({});
+        let html = Templates.dashboard({
+            runningJobs: null,
+            recentJobs: this._getRecentJobSummaries()
+        });
         return this.containerContent(html);
     }
 
@@ -47,8 +52,47 @@ class DashboardController extends BaseController {
 
     }
 
-    _getRecentJobs() {
+    /**
+     * This returns summary info about the ten most recent jobs.
+     * The return value is an array of objects, each of which has three
+     * string properties. Object.name is the job name. Object.outcome
+     * is the name and outcome of the last attempted action.
+     * Object.date is the date at which the job last completed.
+     *
+     * @returns {Array<object>}
+     */
+    _getRecentJobSummaries() {
+        let jobSummaries = [];
+        let opts = {limit: 10, offset: 0, orderBy: 'updatedAt', sortDir: 'desc'};
+        // TODO: Override list() in Job to do its own inflation?
+        let jobs = Job.list(null, opts).map((data) => { return Job.inflateFrom(data) });
+        console.log(jobs);
+        for (let job of jobs) {
+            let [outcome, timestamp] = this._getJobOutcomeAndTimestamp(job);
+            jobSummaries.push({
+                name: job.title,
+                outcome: outcome,
+                date: timestamp
+            });
+        }
+        return jobSummaries;
+    }
 
+    _getJobOutcomeAndTimestamp(job) {
+        // TODO: This code has some overlap with JobController#colorCodeJobs.
+        let outcome = "Job has not been run.";
+        let timestamp = null;
+        if(job.uploadAttempted()) {
+            outcome = job.uploadSucceeded() ? 'Uploaded' : 'Upload failed';
+            timestamp = dateFormat(job.uploadedAt(), 'shortDate');
+        } else if (job.validationAttempted) {
+            outcome = job.validationSucceeded() ? 'Validated' : 'Validation failed';
+            timestamp = dateFormat(job.validatedAt(), 'shortDate');
+        } else if (job.packageAttempted()) {
+            outcome = job.packageSucceeded() ? 'Packaged' : 'Packaging failed';
+            timestamp = dateFormat(job.packagedAt(), 'shortDate');
+        }
+        return [outcome, timestamp]
     }
 
     _getConnectableRepos() {
