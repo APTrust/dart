@@ -14,7 +14,7 @@ class DashboardController extends BaseController {
     }
 
     show() {
-        let repoClients = this.getViableRepoClients();
+        // let repoClients = this._getViableRepoClients();
         //console.log(repoClients);
 
         // TODO: We need to call client.provides() to get a list
@@ -23,28 +23,53 @@ class DashboardController extends BaseController {
         // For POC only. We want the following to be flexible,
         // not hard wired. This all hacked for now, so we can fiddle
         // with the display.
-        let demoClient = repoClients[0];
-        let demoItemsHTML = '';
-        let demoObjectsHTML = '';
-        demoClient.recentIngests().then(
-            result => { $('#aptDemoIngests').html(result) },
-            error => alert(error));
-        demoClient.recentWorkItems().then(
-            result => { $('#aptDemoTasks').html(result) },
-            error => alert(error));
+        // let demoClient = repoClients[0];
+        // let demoItemsHTML = '';
+        // let demoObjectsHTML = '';
+        // demoClient.recentIngests().then(
+        //     result => { $('#aptDemoIngests').html(result) },
+        //     error => alert(error));
+        // demoClient.recentWorkItems().then(
+        //     result => { $('#aptDemoTasks').html(result) },
+        //     error => alert(error));
 
-        // let prodClient = repoClients[1];
+        // // let prodClient = repoClients[1];
 
-        let data = {
-            demoObjectsHTML: demoObjectsHTML,
-            demoItemsHTML: demoItemsHTML
-        }
+        // let data = {
+        //     demoObjectsHTML: demoObjectsHTML,
+        //     demoItemsHTML: demoItemsHTML
+        // }
 
+        // Get a list of RemoteRepository clients that have enough information
+        // to attempt a connection with the remote repo.
+        let clients = this._getViableRepoClients();
 
+        // Get a list of available reports.
+        let repoReports = this._getRepoReportDescriptions(clients);
+
+        // Each of these clients can provide one or more reports. We want to
+        // display the reports in rows, with two reports per row.
+        let reportRows = this._getRepoRows(repoReports);
+
+        // Assemble the HTML
         let html = Templates.dashboard({
+            reportRows: reportRows,
             runningJobs: null,
             recentJobs: this._getRecentJobSummaries()
         });
+
+        // Call the reports. These are asynchronous, since they have to
+        // query remote repositories. The callbacks describe which HTML
+        // element on the rendered page will contain the HTML output of
+        // the reports.
+        repoReports.forEach((report) => {
+            let elementId = '#' + report.id
+            report.method().then(
+                result => { $(elementId).html(result) },
+                error => $(elementId).html(error)
+            );
+        });
+
         return this.containerContent(html);
     }
 
@@ -95,11 +120,7 @@ class DashboardController extends BaseController {
         return [outcome, timestamp]
     }
 
-    _getConnectableRepos() {
-
-    }
-
-    getViableRepoClients() {
+    _getViableRepoClients() {
         let repoClients = [];
         let repos = RemoteRepository.list((r) => { return !Util.isEmpty(r.pluginId) });
         for (let _repoData of repos) {
@@ -116,6 +137,39 @@ class DashboardController extends BaseController {
             }
         }
         return repoClients;
+    }
+
+    // Returns a list of report rows to be displayed in the dashboard.
+    // Each row has up to two reports.
+    _getRepoRows(repoReports) {
+        let reportRows = [];
+        let i = 0;
+        while (i < repoReports.length) {
+            let report1 = repoReports[i];
+            let report2 = i + 1 < repoReports.length ? repoReports[i + 1] : null;
+            reportRows.push([report1, report2]);
+            i += 2;
+        }
+        return reportRows;
+    }
+
+    // Returns a list of all reports.
+    _getRepoReportDescriptions(clients) {
+        let reports = [];
+        clients.forEach((client) => {
+            let className = client.constructor.name;
+            let reportIndex = 1;
+            client.provides().forEach((report) => {
+                reports.push({
+                    id: `${className}_${reportIndex}`,
+                    title: report.title,
+                    description: report.description,
+                    method: report.method
+                });
+                reportIndex++;
+            }
+        )});
+        return reports;
     }
 
 }
