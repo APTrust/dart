@@ -124,13 +124,13 @@ test('uploadedAt()', () => {
     let job = getJobWithOps();
     expect(job.uploadedAt()).toBeNull();
 
-    job.uploadOps[0].result = new OperationResult('upload', '---');
-    job.uploadOps[0].result.start();
-    job.uploadOps[0].result.finish();
+    job.uploadOps[0].results.push(new OperationResult('upload', '---'));
+    job.uploadOps[0].results[0].start();
+    job.uploadOps[0].results[0].finish();
     expect(job.uploadedAt()).not.toBeNull();
-    expect(job.uploadedAt()).toEqual(job.uploadOps[0].result.completed);
+    expect(job.uploadedAt()).toEqual(job.uploadOps[0].results[0].completed);
 
-    job.uploadOps[0].result = null;
+    job.uploadOps[0].results[0] = null;
     expect(job.uploadedAt()).toBeNull();
 
     job.uploadOps = [];

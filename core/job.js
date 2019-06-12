@@ -242,8 +242,10 @@ class Job extends PersistentObject {
         var uploadedAt = null;
         if (this.uploadOps.length > 0) {
             for (let uploadOp of this.uploadOps) {
-                if (uploadOp.result && uploadOp.result.completed) {
-                    uploadedAt = uploadOp.result.completed;
+                for (let result of uploadOp.results) {
+                    if (result && result.completed) {
+                        uploadedAt = result.completed;
+                    }
                 }
             }
         }
