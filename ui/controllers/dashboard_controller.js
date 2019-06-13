@@ -7,12 +7,24 @@ const { RemoteRepository } = require('../../core/remote_repository');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
+/**
+ * The Dashboard crontroller displays information about recent
+ * jobs, recent uploads, etc.
+ *
+ */
 class DashboardController extends BaseController {
 
     constructor(params) {
         super(params, 'Dashboard')
     }
 
+    /**
+     * This collects and renders all of the data to be displayed
+     * in the Dashboard. The data includes information about currently
+     * running jobs, recently defined jobs, and information fetched
+     * from any remote repositories DART can connect to.
+     *
+     */
     show() {
         // Get a list of RemoteRepository clients that have enough information
         // to attempt a connection with the remote repo.
@@ -53,6 +65,8 @@ class DashboardController extends BaseController {
         return this.containerContent(html);
     }
 
+    // TODO: Plenty of underlying infrastructure work before
+    // we can implement this.
     _getRunningJobs() {
 
     }
@@ -82,6 +96,15 @@ class DashboardController extends BaseController {
         return jobSummaries;
     }
 
+    /**
+     * This returns formatted information about the outcome of a job
+     * and when that outcome occurred. The return value is a two-element
+     * array of strings. The first element describes the outcome. The
+     * second is the date on which the outcome occurred.
+     *
+     * @returns {Array<string>}
+     *
+     */
     _getJobOutcomeAndTimestamp(job) {
         // TODO: This code has some overlap with JobController#colorCodeJobs.
         let outcome = "Job has not been run.";
@@ -99,6 +122,20 @@ class DashboardController extends BaseController {
         return [outcome, timestamp]
     }
 
+    /**
+     * This returns a list of repository clients that look like they
+     * can return data from remote repository. To find a list of viable
+     * repository clients, DART first gets a list of all
+     * {@link RemoteRepository} objects. If the RemoteRepository object
+     * includes a {@link RemoteRepository#pluginId}, this function creates
+     * an instance of the plugin and calls the plugin's {@link
+     * RepositoryBase#hasRequiredConnectionInfo} method. If the method
+     * returns true, the instantiated client will be returned in the list
+     * of viable repo clients.
+     *
+     * @returns {Array<RepositoryBase>}
+     *
+     */
     _getViableRepoClients() {
         let repoClients = [];
         let repos = RemoteRepository.list((r) => { return !Util.isEmpty(r.pluginId) });
@@ -116,8 +153,20 @@ class DashboardController extends BaseController {
         return repoClients;
     }
 
-    // Returns a list of report rows to be displayed in the dashboard.
-    // Each row has up to two reports.
+    /**
+     * This returns a list of report rows to be displayed in the dashboard.
+     * Each row has up to two reports. (Because we're using the brain dead
+     * Handlebars templating library, we have to format our data structures
+     * precisely before rendering them. And, by the way, templates *should*
+     * be brain dead, because when they start thinking, they become evil,
+     * like PHP and React.)
+     *
+     * @param {} repoReports - A list of repo report summary objects, which
+     * can be obtained from
+     * {@link DashboardController#_getRepoReportDescriptions}.
+     *
+     * @returns {Array<Array<object>>}
+     */
     _getRepoRows(repoReports) {
         let reportRows = [];
         let i = 0;
@@ -130,7 +179,23 @@ class DashboardController extends BaseController {
         return reportRows;
     }
 
-    // Returns a list of all reports.
+    /**
+     * This returns an array of objects describing all of the
+     * reports available from all of the viable repository clients.
+     *
+     * Internally, this calls {@link RepositoryBase#provides} to
+     * get the title, description, and function to call for each report.
+     *
+     * This adds an id to each description record, so the Dashboard
+     * controller can map each report to the HTML element that will
+     * display its output.
+     *
+     * Each item in the returned array will have properies id, title,
+     * description, and method.
+     *
+     * @returns {Array<object>}
+     *
+     */
     _getRepoReportDescriptions(clients) {
         let reports = [];
         let clientNumber = 0;
