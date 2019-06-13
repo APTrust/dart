@@ -40,11 +40,11 @@ class DashboardController extends BaseController {
             let elementId = '#' + report.id
             report.method().then(
                 result => {
-                    console.log(elementId + ' OK');
+                    $(elementId).removeClass('text-danger');
                     $(elementId).html(result)
                 },
                 error => {
-                    console.log(elementId + ' ' + error);
+                    $(elementId).addClass('text-danger');
                     $(elementId).html(error)
                 }
             );
