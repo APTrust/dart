@@ -10,7 +10,14 @@ const Templates = require('../../ui/common/templates');
  * APTrustClient provides methods for querying an APTrust repository
  * that conform to the DART repository interface.
  *
+ * This repository plugin provides two reports: one listing recently
+ * ingested objects, and one listing recently updated tasks. In APTrust
+ * these tasks (also called WorkItems) describe the status of pending
+ * ingest requests as well as other types of requests. The ingest
+ * WorkItems are of most interest to depositors, since they show a bag's
+ * progress through ingest pipeline.
  *
+ * @param {RemoteRepository} remoteRepository - The repository to connect to.
  */
 class APTrustClient extends RepositoryBase {
 
@@ -20,11 +27,36 @@ class APTrustClient extends RepositoryBase {
         if (setting) {
             this.institutionDomain = setting.value;
         }
-        //this.repo = remoteRepository;
+        /**
+         * The Pharos URL to query for a list of recently ingested objects.
+         *
+         * @type {string}
+         * @private
+         */
         this.objectsUrl = `${this.repo.url}/member-api/v2/objects/?page=1&per_page=50&sort=date&state=A`
+        /**
+         * The Pharos URL to query for a list of currently active and recently
+         * active WorkItems.
+         *
+         * @type {string}
+         * @private
+         */
         this.itemsUrl = `${this.repo.url}/member-api/v2/items/?page=1&per_page=50&sort=date`
-
+        /**
+         * This is the path to the Handlebars template used to format results
+         * from the object query. (Recently ingested items.)
+         *
+         * @type {string}
+         * @private
+         */
         this.objectsTemplate = Templates.compile(path.join(__dirname, 'aptrust', 'objects.html'));
+        /**
+         * This is the path to the Handlebars template used to format results
+         * from the WorkItems query.
+         *
+         * @type {string}
+         * @private
+         */
         this.itemsTemplate = Templates.compile(path.join(__dirname, 'aptrust', 'work_items.html'));
     }
 
@@ -47,6 +79,24 @@ class APTrustClient extends RepositoryBase {
         };
     }
 
+    /**
+     * This returns a list of objects describing what reports this
+     * module provides. The DART dashboard queries this list to see
+     * what method calls this plugin makes available. Each object in
+     * the list this function returns has three properties.
+     *
+     * title - This is the title of the report. The dashboard will
+     * display this title as is at the top of the report.
+     *
+     * description - A description of the report.
+     *
+     * method - A function to call to get the contents of the report.
+     * The function takes no parameters and should a promis that
+     * ultimately returns HTML. The dashboard will display the HTML
+     * when the promise is resolved.
+     *
+     * @type {Array<object>}
+     */
     provides() {
         let aptrust = this;
         return [
@@ -65,8 +115,12 @@ class APTrustClient extends RepositoryBase {
 
 
     /**
-     * This returns a list of recently ingested objects. The return value
-     * is a string of HTML to be displayed directly in the dashboard.
+     * This fetches a list of recently ingested objects from Pharos,
+     * which is APTrust's REST API. After retrieving the data, this
+     * function formats the list into an HTML table.
+     *
+     * This function returns a promise. The promise resolves to the
+     * HTML, which DART will display in its Dashboard.
      *
      * @returns {Promise}
      */
@@ -87,6 +141,9 @@ class APTrustClient extends RepositoryBase {
      * ingest requests and other tasks. Items uploaded for ingest that have
      * not yet been processed will be in this list.
      *
+     * This function returns a promise. The promise resolves to the
+     * HTML, which DART will display in its Dashboard.
+     *
      * @returns {Promise}
      */
     recentWorkItems() {
@@ -100,7 +157,19 @@ class APTrustClient extends RepositoryBase {
         });
     }
 
-
+    /**
+     * This creates an HTTP(S) request and returns a promise.
+     *
+     * @param {string} url - The URL to fetch. For this module, all requests
+     * will be GET requests.
+     *
+     * @param {formatter} function - The function to format the data, if it
+     * is successfully retrieved. The formatter function should take a single
+     * paramater, an object, which is constructed from the parsed JSON data
+     * in the response body fetched from url.
+     *
+     * @returns {Promise}
+     */
     _doRequest(url, formatter) {
         let aptrust = this;
         return new Promise(function(resolve, reject) {
@@ -115,7 +184,9 @@ class APTrustClient extends RepositoryBase {
 
     /**
      * This returns true if the RemoteRepository object has enough info to
-     * attempt a connection. (For APTrust, we require url, userId, and apiToken.
+     * attempt a connection. For APTrust, we require url, userId, and apiToken.
+     * Other repositories may require different data in their RemoteRepository
+     * object.
      *
      * @returns {boolean}
      */
@@ -139,6 +210,32 @@ class APTrustClient extends RepositoryBase {
         }
     }
 
+    /**
+     * This sends a GET request to url, calling the onSuccess callback
+     * if it gets a 200 response, and the onError callback for all other
+     * responses.
+     *
+     * Other repository plugins may need to support PUT, POST, and HEAD
+     * requests, and may need more robust handling for different response
+     * status codes.
+     *
+     * For APTrust, we're hitting only two endpoints, using only GET,
+     * and we know that any non-200 response means something is wrong.
+     *
+     * Because we're using the request library from
+     * https://github.com/request/request, the onSuccess and onError
+     * functions take params (error, response, body), which are an
+     * Error object, a Response object, and the body of the HTTP
+     * response (which should be JSON).
+     *
+     * @param {string} url - The URL to get.
+     *
+     * @param {function} onSuccess - A function to handle successful
+     * responses. Takes params (error, response, body).
+     *
+     * @param {function} onError - A function to handle errors.
+     * Takes params (error, response, body).
+     */
     _request(url, onSuccess, onError) {
         let opts = {
             url: url,
