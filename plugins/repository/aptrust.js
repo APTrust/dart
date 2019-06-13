@@ -13,9 +13,7 @@ const Templates = require('../../ui/common/templates');
  *
  */
 class APTrustClient extends RepositoryBase {
-    /**
-     *
-     */
+
     constructor(remoteRepository) {
         super(remoteRepository);
         let setting = AppSetting.find('name', 'Institution Domain');
@@ -107,7 +105,6 @@ class APTrustClient extends RepositoryBase {
         let aptrust = this;
         return new Promise(function(resolve, reject) {
             aptrust._request(url, function(data) {
-                //console.log(formatter.data);
                 resolve(formatter(data));
             }, function(error) {
                 reject(error);
@@ -156,8 +153,15 @@ class APTrustClient extends RepositoryBase {
                 onError(err, res, body);
             }
             if (res.statusCode == 200) {
-                //Context.logger.info(body);
                 onSuccess(JSON.parse(body));
+            } else {
+                let errMsg = res.headers.status;
+                try {
+                    let data = JSON.parse(body);
+                    errMsg += ` - ${data.error}`
+                } catch (ex) {}
+                Context.logger.error(`Unexpected response from ${url}: ${errMsg}`);
+                onError(errMsg);
             }
         });
     }

@@ -39,8 +39,14 @@ class DashboardController extends BaseController {
         repoReports.forEach((report) => {
             let elementId = '#' + report.id
             report.method().then(
-                result => { $(elementId).html(result) },
-                error => { $(elementId).html(error) }
+                result => {
+                    console.log(elementId + ' OK');
+                    $(elementId).html(result)
+                },
+                error => {
+                    console.log(elementId + ' ' + error);
+                    $(elementId).html(error)
+                }
             );
         });
 
@@ -65,7 +71,6 @@ class DashboardController extends BaseController {
         let opts = {limit: 10, offset: 0, orderBy: 'updatedAt', sortDir: 'desc'};
         // TODO: Override list() in Job to do its own inflation?
         let jobs = Job.list(null, opts).map((data) => { return Job.inflateFrom(data) });
-        //console.log(jobs);
         for (let job of jobs) {
             let [outcome, timestamp] = this._getJobOutcomeAndTimestamp(job);
             jobSummaries.push({
@@ -81,7 +86,6 @@ class DashboardController extends BaseController {
         // TODO: This code has some overlap with JobController#colorCodeJobs.
         let outcome = "Job has not been run.";
         let timestamp = null;
-        console.log(job);
         if(job.uploadAttempted()) {
             outcome = job.uploadSucceeded() ? 'Uploaded' : 'Upload failed';
             timestamp = dateFormat(job.uploadedAt(), 'yyyy-mm-dd');
@@ -129,17 +133,19 @@ class DashboardController extends BaseController {
     // Returns a list of all reports.
     _getRepoReportDescriptions(clients) {
         let reports = [];
+        let clientNumber = 0;
         clients.forEach((client) => {
+            clientNumber++;
             let className = client.constructor.name;
-            let reportIndex = 1;
+            let reportIndex = 0;
             client.provides().forEach((report) => {
+                reportIndex++;
                 reports.push({
-                    id: `${className}_${reportIndex}`,
+                    id: `${className}_${clientNumber}_${reportIndex}`,
                     title: report.title,
                     description: report.description,
                     method: report.method
                 });
-                reportIndex++;
             }
         )});
         return reports;
