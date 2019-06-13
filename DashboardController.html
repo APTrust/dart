@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      TarWriter - Documentation
+      DashboardController - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -79,7 +79,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        TarWriter
+        DashboardController
       </h1>
     
 
@@ -90,16 +90,14 @@
     
       <h2>
         
-        TarWriter
+        DashboardController
         
       </h2>
 
       
         <div class="class-description">
-          TarWriter writes files directly into a tarball. By obviating the need
-to copy files into a directory and then tar up the directory, this can
-save considerable time and disk space when tarring large bags into a
-tarred BagIt package.
+          The Dashboard crontroller displays information about recent
+jobs, recent uploads, etc.
         </div>
       
     
@@ -116,13 +114,13 @@ tarred BagIt package.
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#TarWriter">
+    <a class="link-icon" href="#DashboardController">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="TarWriter">
-      <span class="type-signature"></span>new TarWriter<span class="signature">(pathToTarFile)</span><span class="type-signature"></span>
+    <h4 class="name" id="DashboardController">
+      <span class="type-signature"></span>new DashboardController<span class="signature">()</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -130,72 +128,10 @@ tarred BagIt package.
 
 
 
-  <div class="description">
-    Creates a new TarWriter.
-  </div>
 
 
 
 
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>pathToTarFile</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          The path to the tar file you want to
-create. You must have write permissions on this path, and the parent
-directories should already exist. If a file already exists at the
-speficied path, it will be overwritten.
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
 
 
 
@@ -232,7 +168,7 @@ speficied path, it will be overwritten.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_tar_writer.js.html">plugins/formats/write/tar_writer.js</a>, <a href="plugins_formats_write_tar_writer.js.html#line27">line 27</a>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line17">line 17</a>
         </li>
       </ul>
     </dd>
@@ -272,148 +208,6 @@ speficied path, it will be overwritten.
     
 
     
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-
-<h4 class="name" id="bagName">
-  <span class="type-signature"></span>bagName<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    bagName is the name of the bag, which is the tar file name
-minus the leading path and trailing ".tar" extension.
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="plugins_formats_write_tar_writer.js.html">plugins/formats/write/tar_writer.js</a>, <a href="plugins_formats_write_tar_writer.js.html#line44">line 44</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="pathToTarFile">
-  <span class="type-signature"></span>pathToTarFile<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    pathToTarFile is the path to the file we will write.
-The file's parent directories should exist before writing, and you
-must have write permissions on the file. If the file already
-exists, it will be overwritten.
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="plugins_formats_write_tar_writer.js.html">plugins/formats/write/tar_writer.js</a>, <a href="plugins_formats_write_tar_writer.js.html#line37">line 37</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-    
 
     
       <h3 class="subsection-title">Methods</h3>
@@ -425,13 +219,13 @@ exists, it will be overwritten.
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#.description">
+    <a class="link-icon" href="#_getJobOutcomeAndTimestamp">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id=".description">
-      <span class="type-signature">(static) </span>description<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="global.html#PluginDefinition">PluginDefinition</a>}</span>
+    <h4 class="name" id="_getJobOutcomeAndTimestamp">
+      <span class="type-signature"></span>_getJobOutcomeAndTimestamp<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
     </h4>
   </span>
 
@@ -440,7 +234,10 @@ exists, it will be overwritten.
 
 
   <div class="description">
-    Returns a <a href="global.html#PluginDefinition">PluginDefinition</a> object describing this plugin.
+    This returns formatted information about the outcome of a job
+and when that outcome occurred. The return value is a two-element
+array of strings. The first element describes the outcome. The
+second is the date on which the outcome occurred.
   </div>
 
 
@@ -483,7 +280,7 @@ exists, it will be overwritten.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_tar_writer.js.html">plugins/formats/write/tar_writer.js</a>, <a href="plugins_formats_write_tar_writer.js.html#line96">line 96</a>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line108">line 108</a>
         </li>
       </ul>
     </dd>
@@ -516,13 +313,13 @@ exists, it will be overwritten.
   
 
   <span class='name-container'>
-    <a class="link-icon" href="#add">
+    <a class="link-icon" href="#_getRecentJobSummaries">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h4 class="name" id="add">
-      <span class="type-signature"></span>add<span class="signature">(bagItFile, cryptoHashes)</span><span class="type-signature"></span>
+    <h4 class="name" id="_getRecentJobSummaries">
+      <span class="type-signature"></span>_getRecentJobSummaries<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;object>}</span>
     </h4>
   </span>
 
@@ -531,15 +328,209 @@ exists, it will be overwritten.
 
 
   <div class="description">
-    Writes a file into the tar archive. This method is asynchronous, emitting
-events 'fileAdded' when it's done writing a file.
+    This returns summary info about the ten most recent jobs.
+The return value is an array of objects, each of which has three
+string properties. Object.name is the job name. Object.outcome
+is the name and outcome of the last attempted action.
+Object.date is the date at which the job last completed.
+  </div>
 
-Files will be written into the archive in the order they are added.
-Because tar file contents must be written one at a type, this class
-internally manages one-at-a-time write serialization.
 
-You'll get errors if bagItFile.absSourcePath does not exist or is not
-readable.
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line83">line 83</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#_getRepoReportDescriptions">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="_getRepoReportDescriptions">
+      <span class="type-signature"></span>_getRepoReportDescriptions<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;object>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This returns an array of objects describing all of the
+reports available from all of the viable repository clients.
+
+Internally, this calls RepositoryBase#provides to
+get the title, description, and function to call for each report.
+
+This adds an id to each description record, so the Dashboard
+controller can map each report to the HTML element that will
+display its output.
+
+Each item in the returned array will have properies id, title,
+description, and method.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line199">line 199</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#_getRepoRows">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="_getRepoRows">
+      <span class="type-signature"></span>_getRepoRows<span class="signature">(repoReports)</span><span class="type-signature"> &rarr; {Array.&lt;Array.&lt;object>>}</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This returns a list of report rows to be displayed in the dashboard.
+Each row has up to two reports. (Because we're using the brain dead
+Handlebars templating library, we have to format our data structures
+precisely before rendering them. And, by the way, templates *should*
+be brain dead, because when they start thinking, they become evil,
+like PHP and React.)
   </div>
 
 
@@ -572,19 +563,10 @@ readable.
     
       <tr>
         
-          <td class="name"><code>bagItFile</code></td>
+          <td class="name"><code>repoReports</code></td>
         
 
         <td class="type">
-          
-            
-    <span class="param-type">
-      <a href="BagItFile.html">BagItFile</a>
-    </span>
-
-    
-
-
           
         </td>
 
@@ -593,47 +575,9 @@ readable.
         
 
         <td class="description last">
-          The BagItFile object describing the file
-to be added into the tar file.
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>cryptoHashes</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      Array.&lt;crypto.Hash>
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          An array of Node.js crypto.Hash
-objects used to calculate checksums of the files being written into
-the tarball. All digests are calculated during the write, so adding
-multiple hashes will not lead to multiple end-to-end reads of the
-input stream.
-
-You can omit this parameter if you don't care to calculate
-checksums. If present, the digests will be written into the
-bagItFile.checksums object. For example, if cryptoHashes includes md5
-and sha256 Hash objects, bagItFile.checksums will come out looking
-like this:
+          A list of repo report summary objects, which
+can be obtained from
+<a href="DashboardController.html#_getRepoReportDescriptions">DashboardController#_getRepoReportDescriptions</a>.
           
         </td>
       </tr>
@@ -677,7 +621,7 @@ like this:
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_tar_writer.js.html">plugins/formats/write/tar_writer.js</a>, <a href="plugins_formats_write_tar_writer.js.html#line143">line 143</a>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line170">line 170</a>
         </li>
       </ul>
     </dd>
@@ -702,22 +646,197 @@ like this:
 
 
 
-  <div class="example-container">
-    <a class="link-icon" href="#add-examples">
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#_getViableRepoClients">
       <svg height="20" width="20" style="fill: black;">
         <use xlink:href="#linkIcon"></use>
       </svg>
     </a>
-    <h5 id="add-examples">Example</h5>
-    
+    <h4 class="name" id="_getViableRepoClients">
+      <span class="type-signature"></span>_getViableRepoClients<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;RepositoryBase>}</span>
+    </h4>
+  </span>
 
-  <pre class="prettyprint"><code>bagItFile.checksums = {
-    'md5': '1234567890',
-    'sha256': '0987654321'
-}</code></pre>
+  
 
 
+
+  <div class="description">
+    This returns a list of repository clients that look like they
+can return data from remote repository. To find a list of viable
+repository clients, DART first gets a list of all
+<a href="RemoteRepository.html">RemoteRepository</a> objects. If the RemoteRepository object
+includes a <a href="RemoteRepository.html#pluginId">RemoteRepository#pluginId</a>, this function creates
+an instance of the plugin and calls the plugin's RepositoryBase#hasRequiredConnectionInfo method. If the method
+returns true, the instantiated client will be returned in the list
+of viable repo clients.
   </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line139">line 139</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#show">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="show">
+      <span class="type-signature"></span>show<span class="signature">()</span><span class="type-signature"></span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    This collects and renders all of the data to be displayed
+in the Dashboard. The data includes information about currently
+running jobs, recently defined jobs, and information fetched
+from any remote repositories DART can connect to.
+  </div>
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="ui_controllers_dashboard_controller.js.html">ui/controllers/dashboard_controller.js</a>, <a href="ui_controllers_dashboard_controller.js.html#line28">line 28</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
       
