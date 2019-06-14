@@ -20,17 +20,29 @@ test('Constructor sets expected properties', () => {
     expect(typeof client.itemsTemplate).toEqual('function');
 });
 
-// test('PluginManager can find this plugin', () => {
+test('PluginManager can find this plugin', () => {
+    expect(PluginManager.findById(aptrustPluginId)).toBeDefined();
+});
 
-// });
+test('description()', () => {
+    let desc = APTrustClient.description();
+    expect(desc.id).toEqual(aptrustPluginId);
+    expect(desc.name).toEqual('APTrustClient');
+    expect(desc.description.length).toBeGreaterThan(10);
+    expect(desc.version).toBeDefined();
+    expect(desc.talksToRepository.length).toEqual(1);
+    expect(desc.talksToRepository[0]).toEqual('aptrust');
+});
 
-// test('description()', () => {
-
-// });
-
-// test('provides()', () => {
-
-// });
+test('provides()', () => {
+    let client = new APTrustClient(repo);
+    let provides = client.provides();
+    expect(provides.length).toEqual(2);
+    expect(provides[0].title).toMatch(repo.name);
+    expect(typeof provides[0].method).toEqual('function');
+    expect(provides[1].title).toMatch(repo.name);
+    expect(typeof provides[1].method).toEqual('function');
+});
 
 // test('rencentIngests()', () => {
 
