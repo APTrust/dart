@@ -9,6 +9,7 @@ const { Util } = require('../../core/util');
 
 const params = new url.URLSearchParams();
 const today = new Date().toISOString().split('T')[0];
+const aptrustPluginId = 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd';
 
 beforeEach(() => {
 
@@ -37,6 +38,22 @@ function makeJobs(howMany) {
     return ids;
 }
 
+function makeRepos(howMany) {
+    let ids = [];
+    for(let i=0; i < howMany; i++) {
+        let repo = new RemoteRepository({
+            name: `Test Repo ${i + 1}`,
+            url: 'https://example.com',
+            userId: 'marge@example.com',
+            apiToken: '1234-5678',
+            pluginId: aptrustPluginId
+        })
+        repo.save();
+        ids.push(repo.id);
+    }
+    return ids;
+}
+
 test('Constructor sets expected properties', () => {
     let controller = new DashboardController(params);
     expect(controller.navSection).toEqual("Dashboard");
@@ -47,7 +64,7 @@ test('Constructor sets expected properties', () => {
 // });
 
 test('_getRecentJobSummaries()', () => {
-    let ids = makeJobs(4);
+    let _ = makeJobs(4);
     let controller = new DashboardController(params);
     let summaries = controller._getRecentJobSummaries();
     let sampleRecord = {
@@ -61,13 +78,37 @@ test('_getRecentJobSummaries()', () => {
     }
 });
 
-// test('_getJobOutcomeAndTimestamp()', () => {
+test('_getJobOutcomeAndTimestamp()', () => {
+    let ids = makeJobs(1);
+    let controller = new DashboardController(params);
+    let job = Job.find(ids[0]);
+    let expected = ['Validation failed', today];
+    expect(controller._getJobOutcomeAndTimestamp(job)).toEqual(expected);
+});
 
-// });
+test('_getViableRepoClients()', () => {
+    let ids = makeRepos(3);
+    let controller = new DashboardController(params);
+    let clients = controller._getViableRepoClients();
+    expect(clients.length).toEqual(3);
 
-// test('_getViableRepoClients()', () => {
+    // Make one repo not viable by removing the apiToken.
+    // APTrust client plugin says a repo without a token
+    // is not viable because APTrust needs the token for
+    // authorization.
+    let repo1 = RemoteRepository.find(ids[0]);
+    repo1.apiToken = '';
+    repo1.save();
+    expect(controller._getViableRepoClients().length).toEqual(2);
 
-// });
+    // Make another repo not viable by removing its
+    // pluginId. Without a pluginId, DART has no client
+    // to connect to the repo.
+    let repo2 = RemoteRepository.find(ids[1]);
+    repo2.pluginId = '';
+    repo2.save();
+    expect(controller._getViableRepoClients().length).toEqual(1);
+});
 
 // test('_getRepoRows()', () => {
 
