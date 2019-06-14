@@ -110,10 +110,36 @@ test('_getViableRepoClients()', () => {
     expect(controller._getViableRepoClients().length).toEqual(1);
 });
 
-// test('_getRepoRows()', () => {
+test('_getRepoReportDescriptions()', () => {
+    let ids = makeRepos(3);
+    let controller = new DashboardController(params);
+    let clients = controller._getViableRepoClients();
+    let descriptions = controller._getRepoReportDescriptions(clients);
 
-// });
+    // We have 3 viable clients with 2 descriptions each.
+    expect(descriptions.length).toEqual(6);
+    for (let desc of descriptions) {
+        expect(desc.id.length).toBeGreaterThan(4);
+        expect(desc.title.length).toBeGreaterThan(4);
+        expect(desc.description.length).toBeGreaterThan(4);
+        expect(typeof desc.method).toEqual('function');
+    }
+});
 
-// test('_getRepoReportDescriptions()', () => {
-
-// });
+test('_getRepoRows()', () => {
+    let ids = makeRepos(3);
+    let controller = new DashboardController(params);
+    let clients = controller._getViableRepoClients();
+    let descriptions = controller._getRepoReportDescriptions(clients);
+    let rows = controller._getRepoRows(descriptions);
+    expect(rows.length).toEqual(3);
+    for(let row of rows) {
+        expect(row.length).toEqual(2);
+        for (let record of row) {
+            expect(record.id.length).toBeGreaterThan(4);
+            expect(record.title.length).toBeGreaterThan(4);
+            expect(record.description.length).toBeGreaterThan(4);
+            expect(typeof record.method).toEqual('function');
+        }
+    }
+});
