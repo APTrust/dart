@@ -2,6 +2,8 @@ const APTrustClient = require('./aptrust');
 const { PluginManager } = require('../plugin_manager');
 const { RemoteRepository } = require('../../core/remote_repository');
 
+
+
 const aptrustPluginId = 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd';
 const repo = new RemoteRepository({
     name: 'Test Repo',
@@ -10,6 +12,8 @@ const repo = new RemoteRepository({
     apiToken: '1234-5678',
     pluginId: aptrustPluginId
 });
+
+
 
 test('Constructor sets expected properties', () => {
     let client = new APTrustClient(repo);
@@ -96,14 +100,25 @@ test('_doRequest() returns error message on error', done => {
         })
 });
 
-// test('hasRequiredConnectionInfo()', () => {
+test('hasRequiredConnectionInfo()', () => {
+    let client = new APTrustClient(repo);
+    expect(client.hasRequiredConnectionInfo()).toBe(true);
 
-// });
+    let repo2 = new RemoteRepository();
+    Object.assign(repo2, repo);
+    repo2.userId = '';
+    let client2 = new APTrustClient(repo2);
+    expect(client2.hasRequiredConnectionInfo()).toBe(false);
+});
 
-// test('_getHeaders()', () => {
-
-// });
-
-// test('_request()', () => {
-
-// });
+test('_getHeaders()', () => {
+    let expected =  {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "DART 2.0.0 / Node.js request",
+        "X-Pharos-API-Key": "1234-5678",
+        "X-Pharos-API-User": "marge@example.com",
+    }
+    let client = new APTrustClient(repo);
+    expect(client._getHeaders()).toEqual(expected);
+});

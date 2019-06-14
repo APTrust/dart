@@ -5,6 +5,7 @@ const path = require('path');
 const { RepositoryBase } = require('./repository_base');
 const request = require('request');
 const Templates = require('../../ui/common/templates');
+const { Util } = require('../../core/util');
 
 /**
  * APTrustClient provides methods for querying an APTrust repository
@@ -191,7 +192,7 @@ class APTrustClient extends RepositoryBase {
      * @returns {boolean}
      */
     hasRequiredConnectionInfo() {
-        return this.repo.url && this.repo.userId && this.repo.apiToken;
+        return !Util.isEmpty(this.repo.url) && !Util.isEmpty(this.repo.userId) && !Util.isEmpty(this.repo.apiToken);
     }
 
     /**
