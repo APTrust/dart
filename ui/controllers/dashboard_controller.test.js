@@ -1,9 +1,11 @@
+const $ = require('jquery');
 const { DashboardController } = require('./dashboard_controller');
 const { Job } = require('../../core/job');
 const path = require('path');
 const { RemoteRepository } = require('../../core/remote_repository');
 const { TestUtil } = require('../../core/test_util');
 const url = require('url');
+const { UITestUtil } = require('../common/ui_test_util');
 const { Util } = require('../../core/util');
 
 
@@ -59,9 +61,50 @@ test('Constructor sets expected properties', () => {
     expect(controller.navSection).toEqual("Dashboard");
 });
 
-// test('show()', () => {
+test('show()', () => {
+    // This mock is not working. Hmm...
+    //
+    // // Mock the APTrust client.
+    // const { APTrustClient } = require('../../plugins/repository/aptrust');
+    // const mockRecentIngests = jest.fn(() => {
+    //     return new Promise(function(resolve, reject) {
+    //         resolve('10 ingests');
+    //     })
+    // });
+    // const mockRecentWorkItems = jest.fn(() => {
+    //     return new Promise(function(resolve, reject) {
+    //         resolve('10 ingests');
+    //     })
+    // });
+    // jest.mock('../../plugins/repository/aptrust', () => {
+    //     return jest.fn().mockImplementation(() => {
+    //         return {
+    //             recentIngests: mockRecentIngests,
+    //             recentWorkItems: mockRecentWorkItems
+    //         };
+    //     });
+    // });
 
-// });
+    let jobIds = makeJobs(4);
+    let repoIds = makeRepos(2);
+    let controller = new DashboardController(params);
+    UITestUtil.setDocumentBody(controller.show());
+    controller.postRenderCallback();
+
+    let containerHTML = $('#container').html();
+
+    // Look for expect output about recent jobs.
+    expect(containerHTML).toMatch('BagOfPhotos');
+    expect(containerHTML).toMatch('Validation failed');
+
+    // TODO: Test for info about running jobs.
+
+    // Look for expected divs to hold remote repo content.
+    expect(containerHTML).toMatch('id="APTrustClient_1_1"');
+    expect(containerHTML).toMatch('id="APTrustClient_1_2"');
+    expect(containerHTML).toMatch('id="APTrustClient_2_1"');
+    expect(containerHTML).toMatch('id="APTrustClient_2_2"');
+});
 
 test('_getRecentJobSummaries()', () => {
     let _ = makeJobs(4);
