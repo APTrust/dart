@@ -44,17 +44,57 @@ test('provides()', () => {
     expect(typeof provides[1].method).toEqual('function');
 });
 
-// test('rencentIngests()', () => {
+test('rencentIngests()', () => {
+    let client = new APTrustClient(repo);
+    client._doRequest = jest.fn((url, formatter) => {});
+    client.recentIngests();
+    expect(client._doRequest).toHaveBeenCalledWith(client.objectsUrl, expect.any(Function));
+});
 
-// });
+test('recentWorkItems()', () => {
+    let client = new APTrustClient(repo);
+    client._doRequest = jest.fn((url, formatter) => {});
+    client.recentWorkItems();
+    expect(client._doRequest).toHaveBeenCalledWith(client.itemsUrl, expect.any(Function));
+});
 
-// test('recentWorkItems()', () => {
+test('_doRequest() returns content on success', done => {
+    let client = new APTrustClient(repo);
+    let onSuccess = (data) => { return data };
+    let onError = (err) => { return err };
+    let formatter = (data) => { return data; }
+    client._request = jest.fn((url, onSuccess, onError) => {
+        onSuccess('OK');
+    });
+    client._doRequest('http://example.com', formatter)
+        .then(function(data) {
+            expect(data).toEqual('OK');
+            done();
+        })
+        .catch(function (err) {
+            expect(err).not.toBeDefined();
+            done();
+        })
+});
 
-// });
-
-// test('_doRequest()', () => {
-
-// });
+test('_doRequest() returns error message on error', done => {
+    let client = new APTrustClient(repo);
+    let onSuccess = (data) => { return data };
+    let onError = (err) => { return err };
+    let formatter = (data) => { return data; }
+    client._request = jest.fn((url, onSuccess, onError) => {
+        onError('ERROR');
+    });
+    client._doRequest('http://example.com', formatter)
+        .then(function(data) {
+            expect(data).not.toBeDefined();
+            done();
+        })
+        .catch(function (err) {
+            expect(err).toEqual('ERROR');
+            done();
+        })
+});
 
 // test('hasRequiredConnectionInfo()', () => {
 
