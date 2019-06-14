@@ -97,6 +97,7 @@ const path = require('path');
 const { RepositoryBase } = require('./repository_base');
 const request = require('request');
 const Templates = require('../../ui/common/templates');
+const { Util } = require('../../core/util');
 
 /**
  * APTrustClient provides methods for querying an APTrust repository
@@ -191,6 +192,7 @@ class APTrustClient extends RepositoryBase {
      */
     provides() {
         let aptrust = this;
+        console.log("Called provides()")
         return [
             {
                 title: `Ingested Objects (${this.repo.name})`,
@@ -283,7 +285,7 @@ class APTrustClient extends RepositoryBase {
      * @returns {boolean}
      */
     hasRequiredConnectionInfo() {
-        return this.repo.url &amp;&amp; this.repo.userId &amp;&amp; this.repo.apiToken;
+        return !Util.isEmpty(this.repo.url) &amp;&amp; !Util.isEmpty(this.repo.userId) &amp;&amp; !Util.isEmpty(this.repo.apiToken);
     }
 
     /**
