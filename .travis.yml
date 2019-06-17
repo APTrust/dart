@@ -7,6 +7,10 @@ cache:
   directories:
   - node_modules
   - "$HOME/.npm/_prebuilds"
+addons:
+  homebrew:
+    packages:
+      - jq
 before_install:
 - |
   if [ "$TRAVIS_OS_NAME" == "osx" ]; then
