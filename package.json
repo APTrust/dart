@@ -1,7 +1,7 @@
 {
     "name": "DART",
     "version": "2.0.0",
-    "description": "DART is the Digital Archivist's Resource Tool for packaging and shipping digital matierials.",
+    "description": "",
     "main": "main.js",
     "repository": {
         "type": "git",
@@ -29,6 +29,7 @@
         "os-locale": "^4.0.0",
         "popper.js": "^1.15.0",
         "readdirp": "^3.0.2",
+        "request": "^2.88.0",
         "require-dir": "^1.2.0",
         "tail": "^2.0.2",
         "tar-stream": "^2.1.0",
@@ -56,12 +57,12 @@
     },
     "build": {
         "appId": "com.electron.DART",
-        "artifactName": "${name}-${version}-${os}-${arch}.${ext}",
-        "copyright": "Copyright © 2019 APTrust",
+        "copyright": "Copyright © 2019 [object Object]",
         "productName": "DART",
-        "electronVersion": "5.0.1",
+        "electronVersion": "5.0.4",
         "asar": true,
         "directories": {
+            "app": "/Users/apd4n/aptrust/dart",
             "output": "dist"
         },
         "mac": {
@@ -78,10 +79,12 @@
         "linux": {
             "target": [
                 {
-                    "target": "deb"
+                    "target": "deb",
+                    "arch": [
+                        "x64"
+                    ]
                 }
-            ],
-            "category": "public.app-category.productivity"
+            ]
         }
     }
 }

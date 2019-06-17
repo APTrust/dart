@@ -214,5 +214,9 @@
   "Job completed successfully.": "Job completed successfully.",
   "Starting upload": "Starting upload",
   "Finished upload": "Finished upload",
-  "Finished download": "Finished download"
+  "Finished download": "Finished download",
+  "Specify where you want to upload the file.": "Specify where you want to upload the file.",
+  "Hide Default Tags": "Hide Default Tags",
+  "Showing all tags.": "Showing all tags.",
+  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist"
 }
