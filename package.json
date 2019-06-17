@@ -62,7 +62,6 @@
         "electronVersion": "5.0.4",
         "asar": true,
         "directories": {
-            "app": "/Users/apd4n/aptrust/dart",
             "output": "dist"
         },
         "mac": {
