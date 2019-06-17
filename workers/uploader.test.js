@@ -9,10 +9,12 @@ const { UploadTestHelper } = require('../util/upload_test_helper');
 const { Util } = require('../core/util');
 
 let helper = new UploadTestHelper();
-let bagFile1 = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
-                         'example.edu.tagsample_good.tar');
-let bagFile2 = path.join(__dirname, '..', 'test', 'bags', 'aptrust',
-                         'example.edu.sample_good.tar');
+let testBagDir = path.join(__dirname, '..', 'test', 'bags', 'aptrust');
+let bagFile1 = path.join(testBagDir, 'example.edu.tagsample_good.tar');
+let bagFile2 = path.join(testBagDir, 'example.edu.sample_good.tar');
+let bagFile3 = path.join(testBagDir, 'example.edu.tagsample_bad.tar');
+let bagFile4 = path.join(testBagDir, 'example.edu.sample_missing_data_file.tar');
+
 
 function getJob() {
     let ss = helper.getStorageService();
@@ -23,7 +25,7 @@ function getJob() {
     // uploader handles multiple targets.
     job.uploadOps = [
         new UploadOperation(ss.id, [bagFile1, bagFile2]),
-        new UploadOperation(ss.id, [bagFile1, bagFile2])
+        new UploadOperation(ss.id, [bagFile3, bagFile4])
     ];
     return job;
 }
