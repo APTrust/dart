@@ -113,6 +113,7 @@ class S3Client extends Plugin {
                 this.emit('error', xfer.result);
                 return;
             }
+            Context.logger.info(Context.y18n.__('Starting upload'));
             this._upload(xfer);
         } catch (err) {
             xfer.result.finish(err.toString());
@@ -169,6 +170,7 @@ class S3Client extends Plugin {
                 xfer.result.filesize = xfer.localStat.size;
                 xfer.result.finish();
             }
+            Context.logger.info(Context.y18n.__('Finished download'));
             s3Client.emit('finish', xfer.result);
         });
     }
@@ -268,6 +270,7 @@ class S3Client extends Plugin {
                 xfer.remoteChecksum = etag;
                 minioClient.statObject(xfer.bucket, xfer.key, function(err, remoteStat) {
                     if (err) {
+                        Context.logger.error('Error getting object info after upload: %s', err.toString());
                         xfer.result.finish(err.toString());
                         s3Client.emit('error', xfer.result);
                         return;
@@ -277,6 +280,7 @@ class S3Client extends Plugin {
                 });
             });
         } catch (err) {
+            Context.logger.error('Upload error: %s', err.toString());
             xfer.result.finish(err.toString());
             s3Client.emit('error', xfer.result);
         }
@@ -303,6 +307,7 @@ class S3Client extends Plugin {
             xfer.result.remoteChecksum = xfer.remoteStat.etag;
         }
         xfer.result.finish(message);
+        Context.logger.info(Context.y18n.__('Finished upload'));
         this.emit('finish', xfer.result);
     }
 
@@ -328,9 +333,11 @@ class S3Client extends Plugin {
             let s3Client = this;
             setTimeout(function() {
                 xfer.result.attempt += 1;
+                Context.logger.info('Reattempting upload');
                 s3Client._upload(xfer);
             }, 1500);
         } else {
+            Context.logger.error('Too many failed upload attempts');
             xfer.result.finish(err.toString());
             this.emit('error', xfer.result);
         }
