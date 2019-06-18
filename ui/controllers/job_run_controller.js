@@ -73,10 +73,9 @@ class JobRunController extends BaseController {
         // track of running jobs for the UI.
         this.dartProcess = new DartProcess(
             this.job.title,
-            tmpFile,
-            this.childProcess.pid
+            this.job.id,
+            this.childProcess
         );
-        this.dartProcess.save();
         this.initRunningJobDisplay();
         Context.childProcesses[this.dartProcess.id] = this.childProcess;
         return this.noContent();
@@ -90,9 +89,9 @@ class JobRunController extends BaseController {
             controller.renderChildProcOutput(data);
         });
 
-        this.childProcess.on('close', (code) => {
-            this.dartProcess.completedAt = new Date().toISOString();
-            this.dartProcess.exitCode = code;
+        this.childProcess.on('exit', (code, signal) => {
+            Context.logger.info(`Process ${controller.dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
+            delete Context.childProcesses[controller.dartProcess.id];
             this.renderOutcome(code);
         });
     }

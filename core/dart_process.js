@@ -7,7 +7,7 @@ const { Util } = require('./util');
  * the main UI to run jobs, which may include packaging, validatating,
  * and/or uploading files.
  */
-class DartProcess extends PersistentObject {
+class DartProcess {
     /**
      * Creates a new DartProcess
      *
@@ -15,14 +15,18 @@ class DartProcess extends PersistentObject {
      * bag or package name, though jobs that don't include a packaging
      * step may get a generic name like "Validate xxx" or "Upload xxx".
      *
-     * @param {string} pathToJobFile - The path the JSON file that describes
-     * what the job is doing. The JSON file contain a JSON-serialized
-     * {@link Job} object.
+     * @param {string} jobId - The id (UUID) of the job that the process
+     * is running.
      *
-     * @param {number} processId - The system process id.
+     * @param {ChildProcess} processId - The system process id.
      */
-    constructor(name, pathToJobFile, processId) {
-        super({});
+    constructor(name, jobId, process) {
+        /**
+         * A UUID that uniquely identifies this DartProcess.
+         *
+         * @type {string}
+         */
+        this.id = Util.uuid4();
         /**
          * Name is the name of the job. This is usually the
          * bag or package name, though jobs that don't include a packaging
@@ -32,19 +36,17 @@ class DartProcess extends PersistentObject {
          */
         this.name = name;
         /**
-         * The path the JSON file that describes what the job is doing.
-         * The JSON file contain a JSON-serialized {@link Job} object.
-         * Job files are temporary, and are deleted when the job completes.
+         * The id (UUID) of the job that the process is running.
          *
          * @type {string}
          */
-        this.pathToJobFile = pathToJobFile;
+        this.jobId;
         /**
-         * This is the system's numeric process id for the child process.
+         * The child process.
          *
          * @type {number}
          */
-        this.processId = processId;
+        this.process = process;
         /**
          * The date/time at which the job was started. This timestamp
          * is in ISO datetime format.
@@ -52,40 +54,8 @@ class DartProcess extends PersistentObject {
          * @type {string}
          */
         this.startedAt = new Date().toISOString();
-        /**
-         * The date/time at which the job completed. This timestamp
-         * is in ISO datetime format.
-         *
-         * @type {string}
-         */
-        this.completedAt = null;
-        /**
-         * The exit code of the process that ran this job.
-         * A null value indicates the process has not or did not
-         * complete. Zero indicates success, while non-zero numbers
-         * indicate a problem.
-         *
-         * @type {number|null}
-         */
-        this.exitCode = null;
-        /**
-         * This string contains captured final output, which not the
-         * complete output of the process, but some relevant informat
-         * captured from stdout or stderr to say either that the process
-         * completed successfully, or if not, what specific error
-         * caused it to fail.
-         *
-         * @type {string}
-         */
-        this.capturedOutput = "";
     }
 
-    getProcess() {
-        return Context.childProcesses[this.id];
-    }
 }
-
-// Copy static methods from base
-Object.assign(DartProcess, PersistentObject);
 
 module.exports.DartProcess = DartProcess;
