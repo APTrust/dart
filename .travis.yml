@@ -57,5 +57,3 @@ deploy:
     upload-dir: DART
     acl: public_read
     skip_cleanup: true
-    on:
-      repo: APTrust/DART
