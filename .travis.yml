@@ -57,3 +57,6 @@ deploy:
     upload-dir: DART
     acl: public_read
     skip_cleanup: true
+    on:
+      branch:
+        - master
