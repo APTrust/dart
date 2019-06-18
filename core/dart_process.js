@@ -40,7 +40,7 @@ class DartProcess {
          *
          * @type {string}
          */
-        this.jobId;
+        this.jobId = jobId;
         /**
          * The child process.
          *

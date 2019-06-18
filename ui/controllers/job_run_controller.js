@@ -82,55 +82,55 @@ class JobRunController extends BaseController {
     }
 
     initRunningJobDisplay(dartProcess, childProcess) {
-        this.showDivs();
+        this.showDivs(this.job, this.dartProcess);
         let controller = this;
 
         this.childProcess.on('message', (data) => {
-            controller.renderChildProcOutput(data);
+            controller.renderChildProcOutput(data, controller.dartProcess);
         });
 
         this.childProcess.on('exit', (code, signal) => {
             Context.logger.info(`Process ${controller.dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
             delete Context.childProcesses[controller.dartProcess.id];
-            this.renderOutcome(code);
+            this.renderOutcome(controller.dartProcess, code);
         });
     }
 
-    showDivs() {
+    showDivs(job, dartProcess) {
         let processDiv = $('#dartProcessContainer');
-        let html = Templates.partials['dartProcess']({ item: this.dartProcess });
+        let html = Templates.partials['dartProcess']({ item: dartProcess });
         processDiv.html(html);
-        if (this.job.packageOp && this.job.packageOp.outputPath) {
-            $(`#${this.dartProcess.id} div.packageInfo`).show();
-            if (this.job.packageOp.packageFormat == 'BagIt') {
-                $(`#${this.dartProcess.id} div.validationInfo`).show();
+        if (job.packageOp && job.packageOp.outputPath) {
+            $(`#${dartProcess.id} div.packageInfo`).show();
+            if (job.packageOp.packageFormat == 'BagIt') {
+                $(`#${dartProcess.id} div.validationInfo`).show();
             }
         }
-        if (this.job.uploadOps.length > 0) {
-            $(`#${this.dartProcess.id} div.uploadInfo`).show();
+        if (job.uploadOps.length > 0) {
+            $(`#${dartProcess.id} div.uploadInfo`).show();
         }
         processDiv.show();
     }
 
-    renderChildProcOutput(data) {
+    renderChildProcOutput(data, dartProcess) {
         switch (data.op) {
         case 'package':
-            this.renderPackageInfo(data);
+            this.renderPackageInfo(data, dartProcess);
             break;
         case 'validate':
-            this.renderValidationInfo(data);
+            this.renderValidationInfo(data, dartProcess);
             break;
         case 'upload':
-            this.renderUploadInfo(data);
+            this.renderUploadInfo(data, dartProcess);
             break;
         default:
             return;
         }
     }
 
-    renderPackageInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.packageInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.packageInfo div.resultIcon`);
+    renderPackageInfo(data, dartProcess) {
+        let detailDiv = $(`#${dartProcess.id} div.packageInfo div.detail`);
+        let iconDiv = $(`#${dartProcess.id} div.packageInfo div.resultIcon`);
         if (data.action == 'fileAdded') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
@@ -145,9 +145,9 @@ class JobRunController extends BaseController {
         }
     }
 
-    renderValidationInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.validationInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.validationInfo div.resultIcon`);
+    renderValidationInfo(data, dartProcess) {
+        let detailDiv = $(`#${dartProcess.id} div.validationInfo div.detail`);
+        let iconDiv = $(`#${dartProcess.id} div.validationInfo div.resultIcon`);
         if (data.action == 'checksum') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
@@ -160,9 +160,9 @@ class JobRunController extends BaseController {
         }
     }
 
-    renderUploadInfo(data) {
-        let detailDiv = $(`#${this.dartProcess.id} div.uploadInfo div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.uploadInfo div.resultIcon`);
+    renderUploadInfo(data, dartProcess) {
+        let detailDiv = $(`#${dartProcess.id} div.uploadInfo div.detail`);
+        let iconDiv = $(`#${dartProcess.id} div.uploadInfo div.resultIcon`);
         if (data.action == 'start') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(data.msg);
@@ -179,16 +179,15 @@ class JobRunController extends BaseController {
     // TODO: This has a problem. If we're doing a series of uploads and one
     // fails and it's not the LAST one, this reports a successful outcome.
     // It should report an error.
-    renderOutcome(code) {
+    renderOutcome(dartProcess, code) {
         // We have to reload this, because the child process updated
         // the job's record in the database.
-        this.job = Job.find(this.job.id);
-        let detailDiv = $(`#${this.dartProcess.id} div.outcome div.detail`);
-        let iconDiv = $(`#${this.dartProcess.id} div.outcome div.resultIcon`);
+        let job = Job.find(dartProcess.jobId);
+        let detailDiv = $(`#${dartProcess.id} div.outcome div.detail`);
+        let iconDiv = $(`#${dartProcess.id} div.outcome div.resultIcon`);
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
-            let job = Job.find(this.job.id);
             let msg = Context.y18n.__('Job did not complete due to errors.')
             Context.logger.error(msg);
             this.logFailedOps(job);
