@@ -12,7 +12,7 @@ addons:
     packages:
       - jq
 before_install:
-- |
+ - |
   if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
     export PATH="/tmp/git-lfs:$PATH"
@@ -29,7 +29,7 @@ before_script:
 - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
 script:
 - npm test -- --runInBand
-- electron-builder . --publish never -m --linux deb tar.gz
+- electron-builder . --publish never -m dmg --linux deb tar.gz
 #- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-osx -t mac-x64-10.13.0
 #- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-linux -t linux-x64
 - "./jsdoc.sh"
@@ -58,4 +58,5 @@ deploy:
     acl: public_read
     skip_cleanup: true
     on:
-      repo: APTrust/DART
+      branch:
+        - master
