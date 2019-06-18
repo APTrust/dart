@@ -218,5 +218,6 @@
   "Specify where you want to upload the file.": "Specify where you want to upload the file.",
   "Hide Default Tags": "Hide Default Tags",
   "Showing all tags.": "Showing all tags.",
-  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist"
+  "Skipping file %s because it does not exist": "Skipping file %s because it does not exist",
+  "Job did not complete due to errors.": "Job did not complete due to errors."
 }

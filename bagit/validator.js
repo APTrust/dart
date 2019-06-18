@@ -358,7 +358,10 @@ class Validator extends EventEmitter {
             // completion of checksums is usually ~5ms. Not sure of a better
             // way to do this, given that we have an unknown number of pipes
             // on each file. Don't want to go full async with promises, because
-            // we don't want 10,000 open file handles. So... this.
+            // we don't want 10,000 open file handles. So we have this, which
+            // is like a WaitGroup counter in Go or a CountDownLatch in
+            // Java. We check every 50ms to see if it has reached zero. At
+            // zero, we know all the checksums have completed.
             let hashInterval = setInterval(() => {
                 if (validator._hashesInProgress === 0) {
                     clearInterval(hashInterval);
