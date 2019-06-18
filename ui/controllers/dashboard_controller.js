@@ -38,13 +38,10 @@ class DashboardController extends RunningJobsController {
         // display the reports in rows, with two reports per row.
         let reportRows = this._getRepoRows(repoReports);
 
-        let childProcs = Object.values(Context.childProcesses);
-        console.log(childProcs);
-
         // Assemble the HTML
         let html = Templates.dashboard({
             reportRows: reportRows,
-            runningJobs: childProcs,
+            runningJobs: Object.values(Context.childProcesses),
             recentJobs: this._getRecentJobSummaries()
         });
 
@@ -65,10 +62,6 @@ class DashboardController extends RunningJobsController {
                 }
             );
         });
-
-        for(let child of childProcs) {
-            this.initRunningJobDisplay(child);
-        }
 
         return this.containerContent(html);
     }
@@ -222,6 +215,13 @@ class DashboardController extends RunningJobsController {
             }
         )});
         return reports;
+    }
+
+    postRenderCallback(fnName) {
+        for(let dartProcess of Object.values(Context.childProcesses)) {
+            this.initRunningJobDisplay(dartProcess);
+        }
+
     }
 
 }

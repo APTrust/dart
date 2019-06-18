@@ -25,6 +25,14 @@ class RunningJobsController extends BaseController {
         this.showDivs(job, dartProcess);
         let controller = this;
 
+        // If user moves from JobRunController to DashboardController
+        // (both of which derive from this class), we don't want
+        // listeners to be attached twice. Re-adding the listeners
+        // causes them to render content in elements on the current
+        // page.
+        dartProcess.process.removeAllListeners('message');
+        dartProcess.process.removeAllListeners('exit');
+
         dartProcess.process.on('message', (data) => {
             controller.renderChildProcOutput(data, dartProcess);
         });
