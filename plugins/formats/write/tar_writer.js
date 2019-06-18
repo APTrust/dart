@@ -250,7 +250,11 @@ class TarWriter extends Plugin {
 function writeIntoArchive(data, done) {
     try {
         var reader = fs.createReadStream(data.bagItFile.absSourcePath);
+
+        // For testing dashboard process management, slow down writes
+        //var writer = data.tar.entry(data.header, () => setTimeout(done, 1200));
         var writer = data.tar.entry(data.header, done);
+
         writer.on('finish', data.endFn);
         reader.pause();
         for (var h of data.hashes) {
