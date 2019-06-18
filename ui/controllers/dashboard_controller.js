@@ -1,9 +1,10 @@
 const $ = require('jquery');
-const { BaseController } = require('./base_controller');
+const { Context } = require('../../core/context');
 const dateFormat = require('dateformat');
 const { Job } = require('../../core/job');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const { RemoteRepository } = require('../../core/remote_repository');
+const { RunningJobsController } = require('./running_jobs_controller');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 
@@ -12,7 +13,7 @@ const { Util } = require('../../core/util');
  * jobs, recent uploads, etc.
  *
  */
-class DashboardController extends BaseController {
+class DashboardController extends RunningJobsController {
 
     constructor(params) {
         super(params, 'Dashboard')
@@ -37,10 +38,13 @@ class DashboardController extends BaseController {
         // display the reports in rows, with two reports per row.
         let reportRows = this._getRepoRows(repoReports);
 
+        let childProcs = Object.values(Context.childProcesses);
+        console.log(childProcs);
+
         // Assemble the HTML
         let html = Templates.dashboard({
             reportRows: reportRows,
-            runningJobs: null,
+            runningJobs: childProcs,
             recentJobs: this._getRecentJobSummaries()
         });
 
@@ -61,6 +65,10 @@ class DashboardController extends BaseController {
                 }
             );
         });
+
+        for(let child of childProcs) {
+            this.initRunningJobDisplay(child);
+        }
 
         return this.containerContent(html);
     }

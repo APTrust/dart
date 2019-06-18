@@ -20,6 +20,22 @@ class RunningJobsController extends BaseController {
         this.completedUploads = [];
     }
 
+    initRunningJobDisplay(dartProcess) {
+        let job = Job.find(dartProcess.jobId);
+        this.showDivs(job, dartProcess);
+        let controller = this;
+
+        dartProcess.process.on('message', (data) => {
+            controller.renderChildProcOutput(data, dartProcess);
+        });
+
+        dartProcess.process.on('exit', (code, signal) => {
+            Context.logger.info(`Process ${dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
+            delete Context.childProcesses[dartProcess.id];
+            controller.renderOutcome(dartProcess, code);
+        });
+    }
+
     showDivs(job, dartProcess) {
         let processDiv = $('#dartProcessContainer');
         let html = Templates.partials['dartProcess']({ item: dartProcess });

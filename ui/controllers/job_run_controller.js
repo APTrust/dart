@@ -75,24 +75,9 @@ class JobRunController extends RunningJobsController {
             this.job.id,
             this.childProcess
         );
-        this.initRunningJobDisplay();
-        Context.childProcesses[this.dartProcess.id] = this.childProcess;
+        this.initRunningJobDisplay(this.dartProcess);
+        Context.childProcesses[this.dartProcess.id] = this.dartProcess;
         return this.noContent();
-    }
-
-    initRunningJobDisplay(dartProcess, childProcess) {
-        this.showDivs(this.job, this.dartProcess);
-        let controller = this;
-
-        this.childProcess.on('message', (data) => {
-            controller.renderChildProcOutput(data, controller.dartProcess);
-        });
-
-        this.childProcess.on('exit', (code, signal) => {
-            Context.logger.info(`Process ${controller.dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
-            delete Context.childProcesses[controller.dartProcess.id];
-            this.renderOutcome(controller.dartProcess, code);
-        });
     }
 
     postRenderCallback(fnName) {
