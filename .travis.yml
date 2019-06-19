@@ -2,7 +2,7 @@ os: osx
 sudo: false
 language: node_js
 node_js:
-  - 8.11.3
+- 8.11.3
 cache:
   directories:
   - node_modules
@@ -10,9 +10,9 @@ cache:
 addons:
   homebrew:
     packages:
-      - jq
+    - jq
 before_install:
- - |
+- |
   if [ "$TRAVIS_OS_NAME" == "osx" ]; then
     mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v2.3.1/git-lfs-$([ "$TRAVIS_OS_NAME" == "linux" ] && echo "linux" || echo "darwin")-amd64-2.3.1.tar.gz | tar -xz -C /tmp/git-lfs --strip-components 1
     export PATH="/tmp/git-lfs:$PATH"
@@ -21,19 +21,15 @@ install:
 - npm install --global npm@latest
 - rm -rf node_modules
 - rm package-lock.json
-#- npm install --no-optional
 - npm install
-
 before_script:
 - git lfs pull
-- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h -1)"
+- buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
+  -1)"
 script:
 - npm test -- --runInBand
 - electron-builder . --publish never -m dmg --linux deb tar.gz
-#- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-osx -t mac-x64-10.13.0
-#- GITHUB_TOKEN=$GH_TOKEN nexe -i apps/dart-cli.js -o dist/dart-cli-linux -t linux-x64
 - "./jsdoc.sh"
-
 notifications:
   slack:
     secure: fYGIkZMYp/HhRhi4/6Q1jpv0nWfpZaqaIKRhhloi+kBIt2fFun49LmTQfjqGLfwKKCKNmx8XzdIASUZuW7auJhHLUZPWaeEDxQjNVjrSOKOUuFUeGCKRJtw6+la0VxT79y5YIWxrnY2Noi8I6NvxniAJwnyQlHdyCnavmZzTA2xQGHxfTI4PR3ZkFt6lVAEC09NZMYwUf5+jsFmR6k/NGBU0jotDkfsm7AdzADSHwqfGvi70V9+muG4DIJejRVOkyCka2EOixbAyOOzbvrDwOo8tZVbY6Ch0LCfYndbDIztWXWb34R8LQEVKJA6QV2qMHmqSyMmR1RUO/OmMDmq+kM4C3M3D91knrugFVJiLJeowj8cb5LKgX35cd8/dHCDnLkSuaAw+rk5ny3TzfX2uh/EI9QN8y7S+er+QNvumy3M1+pkT+M+7t+auu0l7Ab+G/8W5X0PrZaQ+M933tYy1FC0zrp+CNs6BQnVvpql7REISJuuZ3T950FCxLM09XDGTnqxkgo8NrunuHcFgr8Jo74dl4TiixJteCVTOYI46KvfWDDlByKRmYb8GpQOXY4TT0dH5eEOjbcF3OFSQrx0aiC2TA6sTVHzvRqHdjjDGv2IXcJUJyLMnXrUsMVl4MuDCWGsqwKSEh71mflkreSc4yZ17M5ZEUBh90/dA9eICk9c=
@@ -51,12 +47,10 @@ deploy:
   - provider: s3
     access_key_id: AKIAIN34AYPE5DX5EJUQ
     secret_access_key:
-      secure: K3UeR4/oVQPDdNjeDs6F2HJ3Q5KhVB0CteLqi8EtXViIkK0DHXuHRILoMav0BhXKWRFFPFmcOa0rxoXa8Bvof9GOdPkGm9yc2Fn/CjYQE1WmBDHXNssW3CBE1A2FWDFggR6311dseRZ6T0l+xYmYu2KdPgb8BKY8POsdUDsj5VOCPaQ6ADv/20Dj1xSg2JNKqEKPcM2aOul76wbsaZfY15yjh/DDd8TfgiOp2r37w5db4RBL8GCjZtHVEqi5858x9MKnqyo7XZAtZvakxSTw7t8M1eccDtvQ6FTHzk8dP2QeP7NU2+7merZQ1D2iTyBEHA0mjEmp2UyTN9YYkGSU9j6L3dXOdRACgtgy7MCgBtsu5uWCrTuP1MSn0nyYhtrE5i9FRH3cVChIribKP5dHEUoe4CS2+hpcUpq1Kw/qwcrftCSyTtho9oN34DDyi4+/YtUDT6+1CCsrJS2+Ca2faZLIltSHGLvxnyIcxoyHkQP4ukwY488bg+iZ6UTpCA4QzYjQl2fvzr/+ofDGHjoyTzSjdNwJQkkcqUsSnTP0H/iRYx8pBQMz3DxOFJp6ClUdCkL6trJp0T5OGGnq56CiiaUbCrU49xTiJWKEUI/BufISaK96Tz008Vl0g4k8wz1xmTKSyaeuhFVpY+YJNmc5MDBw51qnIJKcZzqsB2+//q8=
+      secure: PPD7pB+GlT1dyqOHvgnJwqAV7SnWU8TbwQp2XaMzgOQ4Gt2PUUNuC4VUeXoyNpCIIeENsv9fH/BTXATuTihVGKJO+pFmb2C9NnI7kAWwpQyEYZ4fO58Gt+XGCx9y516FgiiapIUvrwU8HOKUKRk4zPqmCxgkSkFEBX7+Ws+Pnqzd9HVdrTC+Z6uYIPibLhLQOvyeW9r/4MTzvvwDXQ4sljj/XsUjzrVpDlLX4k6gdGqJC9PiDsKRF0f70r4CVBFUqqQ6CgbdrfzJ2ckvqpi+dfLSEFs1EyrFjLA8ZbGByBqaHog3OR6aJ/Uu7t5uOSL3Fmjugk+bVokuOuSSbrTnEHEYhoNXusW5W9mabVoK1stZmH1uSO+9aomxZ4/j1XDZrj+5eWsFErddPNEJDWf6nf9i2SM+cCUQLMOIfD3LhS1HKbDTpLs6MWf5IwW8Mk2HZ+WWENlQCJ8iepx1NmZxG5htpuuRTy7AML/KeOrIGvyoD14omcIjH5OfLYEIeHYrWhybxUw9W5Aij5ffRyAYZm01Uk50s+CdgCXVCBen9ePPvwW2FIVpQl3enUZ7mQ5wczdfUvdvxTPN5BYpow9mOZ7QM/Cd1o1xfTcpKvwZC2d/aWxMFpC2LnwzVXUxh9YBGCM0BUq1BIclRGbqCsrDvW8ch5byrY6wNgCxxaFW358=
     bucket: aptrust.public.download
-    local-dir: dist
+    local-dir: dist/
     upload-dir: DART
     acl: public_read
-    skip_cleanup: true
     on:
-      branch:
-        - master
+      repo: APTrust/dart
