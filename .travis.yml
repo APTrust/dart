@@ -49,7 +49,7 @@ deploy:
     secret_access_key:
       secure: PPD7pB+GlT1dyqOHvgnJwqAV7SnWU8TbwQp2XaMzgOQ4Gt2PUUNuC4VUeXoyNpCIIeENsv9fH/BTXATuTihVGKJO+pFmb2C9NnI7kAWwpQyEYZ4fO58Gt+XGCx9y516FgiiapIUvrwU8HOKUKRk4zPqmCxgkSkFEBX7+Ws+Pnqzd9HVdrTC+Z6uYIPibLhLQOvyeW9r/4MTzvvwDXQ4sljj/XsUjzrVpDlLX4k6gdGqJC9PiDsKRF0f70r4CVBFUqqQ6CgbdrfzJ2ckvqpi+dfLSEFs1EyrFjLA8ZbGByBqaHog3OR6aJ/Uu7t5uOSL3Fmjugk+bVokuOuSSbrTnEHEYhoNXusW5W9mabVoK1stZmH1uSO+9aomxZ4/j1XDZrj+5eWsFErddPNEJDWf6nf9i2SM+cCUQLMOIfD3LhS1HKbDTpLs6MWf5IwW8Mk2HZ+WWENlQCJ8iepx1NmZxG5htpuuRTy7AML/KeOrIGvyoD14omcIjH5OfLYEIeHYrWhybxUw9W5Aij5ffRyAYZm01Uk50s+CdgCXVCBen9ePPvwW2FIVpQl3enUZ7mQ5wczdfUvdvxTPN5BYpow9mOZ7QM/Cd1o1xfTcpKvwZC2d/aWxMFpC2LnwzVXUxh9YBGCM0BUq1BIclRGbqCsrDvW8ch5byrY6wNgCxxaFW358=
     bucket: aptrust.public.download
-    local-dir: dist/
+    local-dir: dist
     upload-dir: DART
     acl: public_read
     on:
