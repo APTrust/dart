@@ -85,11 +85,6 @@ hr.menu-divider {
    to {transform: rotate(359deg);}
 }
 
-.resultIcon {
-    display: inline-block;
-    margin-right: 8px;
-}
-
 .drop-zone {
     border: 2px dashed #4285F4;
     border-radius: 20px;

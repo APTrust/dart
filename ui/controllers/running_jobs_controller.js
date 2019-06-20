@@ -49,12 +49,15 @@ class RunningJobsController extends BaseController {
         let html = Templates.partials['dartProcess']({ item: dartProcess });
         processDiv.html(html);
         if (job.packageOp && job.packageOp.outputPath) {
+            this.initProgressBar(dartProcess, 'packageInfo');
             $(`#${dartProcess.id} div.packageInfo`).show();
             if (job.packageOp.packageFormat == 'BagIt') {
+                this.initProgressBar(dartProcess, 'validationInfo');
                 $(`#${dartProcess.id} div.validationInfo`).show();
             }
         }
         if (job.uploadOps.length > 0) {
+            this.initProgressBar(dartProcess, 'uploadInfo');
             $(`#${dartProcess.id} div.uploadInfo`).show();
         }
         processDiv.show();
@@ -77,17 +80,8 @@ class RunningJobsController extends BaseController {
     }
 
     renderPackageInfo(data, dartProcess) {
-        // let detailDiv = $(`#${dartProcess.id} div.packageInfo div.detail div.message`);
-        // let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'packageInfo');
-        let iconDiv = $(`#${dartProcess.id} div.packageInfo div span.resultIcon`);
-        for (let cssClass of ["progress-bar-striped", "progress-bar-animated"]) {
-            if (progressBar.hasClass(cssClass)) {
-                progressBar.addClass(cssClass);
-            }
-        }
         if (data.action == 'fileAdded') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
             console.log(data.percentComplete);
             progressBar.attr("aria-valuenow", data.percentComplete);
@@ -95,9 +89,9 @@ class RunningJobsController extends BaseController {
         } else if (data.action == 'completed') {
             progressBar.removeClass("progress-bar-striped progress-bar-animated");
             if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, iconDiv, data.msg);
+                this.markSuccess(detailDiv, data.msg);
             } else {
-                this.markFailed(detailDiv, iconDiv, data.msg);
+                this.markFailed(detailDiv, data.msg);
             }
         } else {
             detailDiv.text(data.msg);
@@ -105,36 +99,28 @@ class RunningJobsController extends BaseController {
     }
 
     renderValidationInfo(data, dartProcess) {
-        // let detailDiv = $(`#${dartProcess.id} div.validationInfo div.detail div.message`);
-        // let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'validationInfo');
-        let iconDiv = $(`#${dartProcess.id} div.validationInfo div span.resultIcon`);
         if (data.action == 'checksum') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, iconDiv, data.msg);
+                this.markSuccess(detailDiv, data.msg);
             } else {
-                this.markFailed(detailDiv, iconDiv, data.msg);
+                this.markFailed(detailDiv, data.msg);
             }
         }
     }
 
     renderUploadInfo(data, dartProcess) {
-        // let detailDiv = $(`#${dartProcess.id} div.uploadInfo div.detail div.message`);
-        // let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'uploadInfo');
-        let iconDiv = $(`#${dartProcess.id} div.uploadInfo div span.resultIcon`);
         if (data.action == 'start') {
-            iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(data.msg);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.completedUploads.push(data.msg);
-                this.markSuccess(detailDiv, iconDiv, this.completedUploads.join("<br/>\n"));
+                this.markSuccess(detailDiv, this.completedUploads.join("<br/>\n"));
             } else {
-                this.markFailed(detailDiv, iconDiv, detailDiv.html());
+                this.markFailed(detailDiv, detailDiv.html());
             }
         }
     }
@@ -146,18 +132,15 @@ class RunningJobsController extends BaseController {
         // We have to reload this, because the child process updated
         // the job's record in the database.
         let job = Job.find(dartProcess.jobId);
-        // let detailDiv = $(`#${dartProcess.id} div.outcome div.detail div.message`);
-        // let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'outcome');
-        let iconDiv = $(`#${dartProcess.id} div.outcome div span.resultIcon`);
         if (code == 0) {
-            this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
+            this.markSuccess(detailDiv, Context.y18n.__('Job completed successfully.'));
         } else {
             let msg = Context.y18n.__('Job did not complete due to errors.')
             Context.logger.error(msg);
             this.logFailedOps(job);
             msg += `<br/>${job.getRunErrors().join("<br/>")}`
-            this.markFailed(detailDiv, iconDiv, msg.replace(/\n/g, '<br/>'));
+            this.markFailed(detailDiv, msg.replace(/\n/g, '<br/>'));
         }
     }
 
@@ -180,14 +163,24 @@ class RunningJobsController extends BaseController {
         }
     }
 
-    markSuccess(detailDiv, iconDiv, message) {
-        detailDiv.html(message);
-        iconDiv.html(UIConstants.GREEN_SMILEY);
+    initProgressBar(dartProcess, section) {
+        let [_, progressBar] = this.getDivs(dartProcess, section);
+        if (progressBar) {
+            let initialClasses = ["progress-bar-striped", "progress-bar-animated"];
+            for (let cssClass of initialClasses) {
+                if (progressBar.hasClass(cssClass)) {
+                    progressBar.addClass(cssClass);
+                }
+            }
+        }
     }
 
-    markFailed(detailDiv, iconDiv, message) {
+    markSuccess(detailDiv, message) {
         detailDiv.html(message);
-        iconDiv.html(UIConstants.RED_ANGRY_FACE);
+    }
+
+    markFailed(detailDiv, message) {
+        detailDiv.html(message);
     }
 
 }
