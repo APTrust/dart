@@ -8,7 +8,7 @@ const TarWriter = require('./formats/write/tar_writer');
 var readerDir = path.join(__dirname, "formats", "read");
 var writerDir = path.join(__dirname, "formats", "write");
 var fileFilter = function(f) {
-    return (f != 'index.js' && f.endsWith('.js') && !f.endsWith('.test.js'));
+    return (f != 'index.js' && f.endsWith('.js') && !f.endsWith('.test.js') &&!f.startsWith('base_writer'));
 };
 var readerFiles = fs.readdirSync(readerDir).filter(fileFilter);
 var writerFiles = fs.readdirSync(writerDir).filter(fileFilter);

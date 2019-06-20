@@ -1,9 +1,9 @@
-const async = require('async');
+//const async = require('async');
 const { BaseWriter } = require('./base_writer');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
-const { Plugin } = require('../../plugin');
+//const { Plugin } = require('../../plugin');
 
 /**
  * FileSystemWriter writes files directly to the file system.
@@ -18,7 +18,7 @@ class FileSystemWriter extends BaseWriter {
      *
      */
     constructor(pathToOutputDir) {
-        super();
+        super('FileSystemWriter', writeIntoArchive);
         /**
           * pathToOutputDir is the path to the directory into which
           * the FileSystemWriter will write its files.
@@ -26,45 +26,6 @@ class FileSystemWriter extends BaseWriter {
           * @type {string}
           */
         this.pathToOutputDir = pathToOutputDir;
-        /**
-          * Asynchronous queue for writing files one at a time onto the
-          * file system
-          *
-          * @type {async.queue}
-          * @private
-          */
-        this._queue = async.queue(writeIntoArchive, 1);
-        var fsWriter = this;
-
-        /**
-         * @event FileSystemWriter#finish - This event fires after all files
-         * have been written to the file system.
-         *
-         * @type {BagItFile}
-         *
-         */
-        this._queue.drain = function () {
-            let intervalCount = 0;
-            let doneInterval = setInterval(function() {
-                intervalCount += 1;
-                if (intervalCount % 50 == 0) {
-                    Context.logger.warn(Context.y18n.__("TarWriter is still writing final file to archive."));
-                }
-                if (fsWriter.filesWritten == fsWriter.filesAdded) {
-                    fsWriter.emit('finish');
-                    clearInterval(doneInterval);
-                }
-            }, 50);
-        }
-
-        this._queue.error = function(err, task) {
-            if (err) {
-                fsWriter._queue.pause();  // stop processing
-                fsWriter._queue.kill();   // empty the queue & remove drain fn
-                fsWriter.emit('error', `FileSystemWriter: ${err.message}`);
-                fsWriter.emit('finish');
-            }
-        }
     }
 
     /**
@@ -116,7 +77,6 @@ class FileSystemWriter extends BaseWriter {
      *
      */
     add(bagItFile, cryptoHashes = []) {
-        //this.filesAdded += 1;
         super.add(bagItFile, cryptoHashes);
         var fsWriter = this;
         /**
@@ -131,7 +91,7 @@ class FileSystemWriter extends BaseWriter {
             dest: path.join(this.pathToOutputDir , bagItFile.relDestPath),
             hashes: cryptoHashes,
             endFn: () => {
-                fsWriter.filesWritten += 1;
+                fsWriter.onFileWritten();
                 fsWriter.emit('fileAdded', bagItFile);
             }
         };
