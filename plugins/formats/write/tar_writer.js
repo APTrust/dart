@@ -73,9 +73,24 @@ class TarWriter extends Plugin {
          * tar file. This is an unreliable marker of actual completion, because
          * it fires every time the queue drains.
          *
+         * In testing, this event consistenly fires a few ms before DART
+         * has finished calculating checksums on the last file written, so it
+         * includes some internal checks to try to ensure all writes are
+         * actually complete.
+         *
          */
         this._queue.drain = function () {
-            tarWriter.emit('finish');
+            let intervalCount = 0;
+            let doneInterval = setInterval(function() {
+                intervalCount += 1;
+                if (intervalCount % 50 == 0) {
+                    Context.logger.warn(Context.y18n.__("TarWriter is still writing final file to archive."));
+                }
+                if (tarWriter.filesWritten == tarWriter.filesAdded) {
+                    tarWriter.emit('finish');
+                    clearInterval(doneInterval);
+                }
+            }, 50);
         }
 
         this._queue.error = function(err, task) {
@@ -86,6 +101,21 @@ class TarWriter extends Plugin {
                 tarWriter.emit('finish');
             }
         }
+
+        /**
+         * The total number of files added to the write queue.
+         *
+         * @type {number}
+         */
+        this.filesAdded = 0;
+
+        /**
+         * The total number of files that have been written into the
+         * tar file.
+         *
+         * @type {number}
+         */
+        this.filesWritten = 0;
     }
 
     /**
@@ -141,6 +171,7 @@ class TarWriter extends Plugin {
      *
      */
     add(bagItFile, cryptoHashes = []) {
+        this.filesAdded += 1;
         var tarWriter = this;
         var header = {
             // Don't use path.join because Windows will give us
@@ -176,9 +207,22 @@ class TarWriter extends Plugin {
             header: header,
             tar: packer,
             hashes: cryptoHashes,
-            endFn: () => tarWriter.emit('fileAdded', bagItFile)
+            endFn: () => {
+                tarWriter.filesWritten += 1;
+                tarWriter.emit('fileAdded', bagItFile);
+            }
         };
         this._queue.push(data);
+    }
+
+    /**
+     * Returns the percent complete of the total write operations.
+     * This will be a number between 0 and 100. E.g. 42.833.
+     *
+     * @returns {number}
+     */
+    percentComplete() {
+        return (this.filesWritten / this.filesAdded) * 100;
     }
 
     /**

@@ -62,6 +62,11 @@ test('TarWriter adds files', done => {
         for (var cb of callbacks) {
             expect(cb).toHaveBeenCalled();
         }
+
+        expect(tarWriter.filesAdded).toEqual(bagItFiles.length);
+        expect(tarWriter.filesWritten).toEqual(bagItFiles.length);
+        expect(tarWriter.percentComplete()).toEqual(100);
+
         done();
     });
 
