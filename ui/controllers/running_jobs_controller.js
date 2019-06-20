@@ -83,15 +83,19 @@ class RunningJobsController extends BaseController {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'packageInfo');
         if (data.action == 'fileAdded') {
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
-            console.log(data.percentComplete);
-            progressBar.attr("aria-valuenow", data.percentComplete);
-            progressBar.css("width", data.percentComplete + '%');
+            // Progress bar hits 100% when all payload files are added.
+            // We have to add tag files and manifests afterward, and we
+            // don't want the bar to bounce, so no changes after it
+            // reaches 100%.
+            if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
+                progressBar.attr("aria-valuenow", data.percentComplete);
+                progressBar.css("width", data.percentComplete + '%');
+            }
         } else if (data.action == 'completed') {
-            progressBar.removeClass("progress-bar-striped progress-bar-animated");
             if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, data.msg);
+                this.markSuccess(detailDiv, progressBar, data.msg);
             } else {
-                this.markFailed(detailDiv, data.msg);
+                this.markFailed(detailDiv, progressBar, data.msg);
             }
         } else {
             detailDiv.text(data.msg);
@@ -104,9 +108,9 @@ class RunningJobsController extends BaseController {
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
-                this.markSuccess(detailDiv, data.msg);
+                this.markSuccess(detailDiv, progressBar, data.msg);
             } else {
-                this.markFailed(detailDiv, data.msg);
+                this.markFailed(detailDiv, progressBar, data.msg);
             }
         }
     }
@@ -118,9 +122,9 @@ class RunningJobsController extends BaseController {
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.completedUploads.push(data.msg);
-                this.markSuccess(detailDiv, this.completedUploads.join("<br/>\n"));
+                this.markSuccess(detailDiv, progressBar, this.completedUploads.join("<br/>\n"));
             } else {
-                this.markFailed(detailDiv, detailDiv.html());
+                this.markFailed(detailDiv, progressBar, detailDiv.html());
             }
         }
     }
@@ -134,13 +138,13 @@ class RunningJobsController extends BaseController {
         let job = Job.find(dartProcess.jobId);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'outcome');
         if (code == 0) {
-            this.markSuccess(detailDiv, Context.y18n.__('Job completed successfully.'));
+            this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
         } else {
             let msg = Context.y18n.__('Job did not complete due to errors.')
             Context.logger.error(msg);
             this.logFailedOps(job);
             msg += `<br/>${job.getRunErrors().join("<br/>")}`
-            this.markFailed(detailDiv, msg.replace(/\n/g, '<br/>'));
+            this.markFailed('outcome', msg.replace(/\n/g, '<br/>'));
         }
     }
 
@@ -166,6 +170,8 @@ class RunningJobsController extends BaseController {
     initProgressBar(dartProcess, section) {
         let [_, progressBar] = this.getDivs(dartProcess, section);
         if (progressBar) {
+            progressBar.removeClass("bg-success");
+            progressBar.removeClass("bg-danger");
             let initialClasses = ["progress-bar-striped", "progress-bar-animated"];
             for (let cssClass of initialClasses) {
                 if (progressBar.hasClass(cssClass)) {
@@ -175,12 +181,20 @@ class RunningJobsController extends BaseController {
         }
     }
 
-    markSuccess(detailDiv, message) {
+    markSuccess(detailDiv, progressBar, message) {
         detailDiv.html(message);
+        if (progressBar) {
+            progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.addClass("bg-success");
+        }
     }
 
-    markFailed(detailDiv, message) {
+    markFailed(detailDiv, progressBar, message) {
         detailDiv.html(message);
+        if (progressBar) {
+            progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.addClass("bg-danger");
+        }
     }
 
 }
