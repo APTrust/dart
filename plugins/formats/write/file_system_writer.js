@@ -1,5 +1,5 @@
 const async = require('async');
-const EventEmitter = require('events');
+const { BaseWriter } = require('./base_writer');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
@@ -9,7 +9,7 @@ const { Plugin } = require('../../plugin');
  * FileSystemWriter writes files directly to the file system.
  * Use this for creating unserialzed bags.
  */
-class FileSystemWriter extends Plugin {
+class FileSystemWriter extends BaseWriter {
     /**
      * Creates a new FileSystemWriter.
      *
@@ -65,21 +65,6 @@ class FileSystemWriter extends Plugin {
                 fsWriter.emit('finish');
             }
         }
-
-        /**
-         * The total number of files added to the write queue.
-         *
-         * @type {number}
-         */
-        this.filesAdded = 0;
-
-        /**
-         * The total number of files that have been written into the
-         * tar file.
-         *
-         * @type {number}
-         */
-        this.filesWritten = 0;
     }
 
     /**
@@ -131,7 +116,8 @@ class FileSystemWriter extends Plugin {
      *
      */
     add(bagItFile, cryptoHashes = []) {
-        this.filesAdded += 1;
+        //this.filesAdded += 1;
+        super.add(bagItFile, cryptoHashes);
         var fsWriter = this;
         /**
          * @event FileSystemWriter#fileAdded - This event fires after a file
@@ -150,16 +136,6 @@ class FileSystemWriter extends Plugin {
             }
         };
         this._queue.push(data);
-    }
-
-    /**
-     * Returns the percent complete of the total write operations.
-     * This will be a number between 0 and 100. E.g. 42.833.
-     *
-     * @returns {number}
-     */
-    percentComplete() {
-        return (this.filesWritten / this.filesAdded) * 100;
     }
 
 }
