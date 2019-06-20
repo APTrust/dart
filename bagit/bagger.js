@@ -177,18 +177,7 @@ class Bagger extends EventEmitter {
             await this._addTagManifests();
         }
 
-        // Either Node.js streams say they are finished before
-        // the final chunk of the final buffer is written to disk
-        // or our underlying TarWriter is emitting a drain event
-        // prematurely, when the queue is only temporarily drained.
-        // When we stat the output file just after our writer says
-        // it's finished, we get one size. When we stat it again a
-        // few milliseconds later, it's a few hundred bytes larger.
-        // We should fix this problem at its root, when we have time
-        // to actually find the root. For now, we have this hack to
-        // allow the last bit of data to be flushed to disk before
-        // we stat the file in the _finish() method.
-        await setTimeout(function() { bagger._finish(); }, 300);
+        bagger._finish();
     }
 
     /**
