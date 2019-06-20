@@ -1,42 +1,30 @@
 <div class="container mb-3" id="{{ item.id }}">
   <div class="row">
-    <div class="col-1"></div>
     <div class="col-3">Job</div>
-    <div class="col-8">{{ item.name }}</div>
+    <div class="col-9">{{ item.name }}</div>
   </div>
   <div class="row">
-    <div class="col-1"></div>
     <div class="col-3">Process Id</div>
-    <div class="col-8">{{ item.processId }}</div>
+    <div class="col-9">{{ item.process.pid }}</div>
   </div>
   <div class="row">
-    <div class="col-1"></div>
     <div class="col-3">Started At</div>
-    <div class="col-8">{{ item.startedAt }}</div>
-  </div>
-  <div class="row">
-    <div class="col-1"></div>
-    <div class="col-3">Completed At</div>
-    <div class="col-8">{{ item.completedAt }}</div>
+    <div class="col-9">{{ item.startedAt }}</div>
   </div>
   <div class="row packageInfo" style="display:none">
-    <div class="col-1 resultIcon"></div>
-    <div class="col-3">Packaging</div>
-    <div class="col-8 detail"></div>
+    <div class="col-3"><span class="resultIcon"></span>Packaging</div>
+    <div class="col-9 detail"></div>
   </div>
   <div class="row validationInfo" style="display:none">
-    <div class="col-1 resultIcon"></div>
-    <div class="col-3">Validation</div>
-    <div class="col-8 detail"></div>
+    <div class="col-3"><span class="resultIcon"></span>Validation</div>
+    <div class="col-9 detail"></div>
   </div>
   <div class="row uploadInfo" style="display:none">
-    <div class="col-1 resultIcon"></div>
-    <div class="col-3">Upload</div>
-    <div class="col-8 detail"></div>
+    <div class="col-3"><span class="resultIcon"></span>Upload</div>
+    <div class="col-9 detail"></div>
   </div>
   <div class="row outcome">
-    <div class="col-1 resultIcon"></div>
-    <div class="col-3">Outcome</div>
-    <div class="col-8 detail"></div>
+    <div class="col-3"><span class="resultIcon"></span>Outcome</div>
+    <div class="col-9 detail"></div>
   </div>
 </div>

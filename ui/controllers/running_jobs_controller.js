@@ -78,7 +78,7 @@ class RunningJobsController extends BaseController {
 
     renderPackageInfo(data, dartProcess) {
         let detailDiv = $(`#${dartProcess.id} div.packageInfo div.detail`);
-        let iconDiv = $(`#${dartProcess.id} div.packageInfo div.resultIcon`);
+        let iconDiv = $(`#${dartProcess.id} div.packageInfo div span.resultIcon`);
         if (data.action == 'fileAdded') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
@@ -95,7 +95,7 @@ class RunningJobsController extends BaseController {
 
     renderValidationInfo(data, dartProcess) {
         let detailDiv = $(`#${dartProcess.id} div.validationInfo div.detail`);
-        let iconDiv = $(`#${dartProcess.id} div.validationInfo div.resultIcon`);
+        let iconDiv = $(`#${dartProcess.id} div.validationInfo div span.resultIcon`);
         if (data.action == 'checksum') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
@@ -110,7 +110,7 @@ class RunningJobsController extends BaseController {
 
     renderUploadInfo(data, dartProcess) {
         let detailDiv = $(`#${dartProcess.id} div.uploadInfo div.detail`);
-        let iconDiv = $(`#${dartProcess.id} div.uploadInfo div.resultIcon`);
+        let iconDiv = $(`#${dartProcess.id} div.uploadInfo div span.resultIcon`);
         if (data.action == 'start') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(data.msg);
@@ -132,7 +132,7 @@ class RunningJobsController extends BaseController {
         // the job's record in the database.
         let job = Job.find(dartProcess.jobId);
         let detailDiv = $(`#${dartProcess.id} div.outcome div.detail`);
-        let iconDiv = $(`#${dartProcess.id} div.outcome div.resultIcon`);
+        let iconDiv = $(`#${dartProcess.id} div.outcome div span.resultIcon`);
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
         } else {
