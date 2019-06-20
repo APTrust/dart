@@ -1,9 +1,8 @@
-//const async = require('async');
 const { BaseWriter } = require('./base_writer');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
-//const { Plugin } = require('../../plugin');
+
 
 /**
  * FileSystemWriter writes files directly to the file system.
@@ -37,7 +36,7 @@ class FileSystemWriter extends BaseWriter {
         return {
             id: '92e69251-0e76-412d-95b6-987a79f6fa71',
             name: 'FileSystemWriter',
-            description: 'Built-in DART file system writer. Writes files directory into a directory.',
+            description: 'Built-in DART file system writer. Writes files directly into a directory.',
             version: '0.1',
             readsFormats: [],
             writesFormats: ['directory'],

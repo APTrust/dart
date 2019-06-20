@@ -1,10 +1,8 @@
-const async = require('async');
+const { BaseWriter } = require('./base_writer');
 const { Context } = require('../../../core/context');
-const EventEmitter = require('events');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
-const { Plugin } = require('../../plugin');
 const tar = require('tar-stream');
 
 /**
@@ -14,7 +12,7 @@ const tar = require('tar-stream');
  * tarred BagIt package.
  *
  */
-class TarWriter extends Plugin {
+class TarWriter extends BaseWriter {
     /**
      * Creates a new TarWriter.
      *
@@ -25,7 +23,7 @@ class TarWriter extends Plugin {
      *
      */
     constructor(pathToTarFile) {
-        super();
+        super('TarWriter', writeIntoArchive);
         /**
           * pathToTarFile is the path to the file we will write.
           * The file's parent directories should exist before writing, and you
@@ -56,66 +54,6 @@ class TarWriter extends Plugin {
           * @private
           */
         this._tarOutputWriter = null;
-        /**
-          * Asynchronous queue for writing files one at a time into the tar
-          * archive.
-          *
-          * @type {async.queue}
-          * @private
-          */
-        this._queue = async.queue(writeIntoArchive, 1);
-        var tarWriter = this;
-
-        /**
-         * @event TarWriter#finish
-         *
-         * This event fires after all files have been written to the underlying
-         * tar file. This is an unreliable marker of actual completion, because
-         * it fires every time the queue drains.
-         *
-         * In testing, this event consistenly fires a few ms before DART
-         * has finished calculating checksums on the last file written, so it
-         * includes some internal checks to try to ensure all writes are
-         * actually complete.
-         *
-         */
-        this._queue.drain = function () {
-            let intervalCount = 0;
-            let doneInterval = setInterval(function() {
-                intervalCount += 1;
-                if (intervalCount % 50 == 0) {
-                    Context.logger.warn(Context.y18n.__("TarWriter is still writing final file to archive."));
-                }
-                if (tarWriter.filesWritten == tarWriter.filesAdded) {
-                    tarWriter.emit('finish');
-                    clearInterval(doneInterval);
-                }
-            }, 50);
-        }
-
-        this._queue.error = function(err, task) {
-            if (err) {
-                tarWriter._queue.pause();  // stop processing
-                tarWriter._queue.kill();   // empty the queue & remove drain fn
-                tarWriter.emit('error', `TarWriter: ${err.message}`);
-                tarWriter.emit('finish');
-            }
-        }
-
-        /**
-         * The total number of files added to the write queue.
-         *
-         * @type {number}
-         */
-        this.filesAdded = 0;
-
-        /**
-         * The total number of files that have been written into the
-         * tar file.
-         *
-         * @type {number}
-         */
-        this.filesWritten = 0;
     }
 
     /**
@@ -171,7 +109,7 @@ class TarWriter extends Plugin {
      *
      */
     add(bagItFile, cryptoHashes = []) {
-        this.filesAdded += 1;
+        super.add(bagItFile, cryptoHashes);
         var tarWriter = this;
         var header = {
             // Don't use path.join because Windows will give us
@@ -208,21 +146,11 @@ class TarWriter extends Plugin {
             tar: packer,
             hashes: cryptoHashes,
             endFn: () => {
-                tarWriter.filesWritten += 1;
+                tarWriter.onFileWritten();
                 tarWriter.emit('fileAdded', bagItFile);
             }
         };
         this._queue.push(data);
-    }
-
-    /**
-     * Returns the percent complete of the total write operations.
-     * This will be a number between 0 and 100. E.g. 42.833.
-     *
-     * @returns {number}
-     */
-    percentComplete() {
-        return (this.filesWritten / this.filesAdded) * 100;
     }
 
     /**
