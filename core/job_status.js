@@ -9,7 +9,7 @@ const { Context } = require('./context');
  * read them.
  */
 class JobStatus {
-    constructor(operation, action, message, status, errors, exception) {
+    constructor(operation, action, message, status, percentComplete, errors, exception) {
         if (!Constants.OP_STATUSES.includes(status)) {
             throw Context.y18n.__('Invalid status: %s', status);
         }
@@ -40,6 +40,13 @@ class JobStatus {
          * @type {string}
          */
         this.status = status;
+        /**
+         * Percent completion of the task. This should be a number between
+         * 0 and 100. If it's less than zero, it should be ignored.
+         *
+         * @type {string}
+         */
+        this.percentComplete = percentComplete;
         /**
          * A list of errors that occurred in the most recent action of
          * the child process.

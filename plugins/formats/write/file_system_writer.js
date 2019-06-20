@@ -91,7 +91,7 @@ class FileSystemWriter extends BaseWriter {
             hashes: cryptoHashes,
             endFn: () => {
                 fsWriter.onFileWritten();
-                fsWriter.emit('fileAdded', bagItFile);
+                fsWriter.emit('fileAdded', bagItFile, fsWriter.percentComplete());
             }
         };
         this._queue.push(data);

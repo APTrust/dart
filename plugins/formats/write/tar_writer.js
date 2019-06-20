@@ -147,7 +147,7 @@ class TarWriter extends BaseWriter {
             hashes: cryptoHashes,
             endFn: () => {
                 tarWriter.onFileWritten();
-                tarWriter.emit('fileAdded', bagItFile);
+                tarWriter.emit('fileAdded', bagItFile, tarWriter.percentComplete());
             }
         };
         this._queue.push(data);

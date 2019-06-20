@@ -32,11 +32,13 @@ const { Util } = require('../core/util');
  *    // Check the contents of job.packageOperation.result.errors
  *    // for details of what went wrong.
  * });
- * bagger.on('fileAdded', function(bagItFile) {
+ * bagger.on('fileAdded', function(bagItFile, percentComplete) {
  *    // Do something with the BagItFile, such as displaying
  *    // a message saying it's been written into the bag.
  *    // Don't alter the bagItFile object since it's still
- *    // in use by the bagger.
+ *    // in use by the bagger. percentComplete is a number
+ *    // between 0 and 100 indicating what percentage of the
+ *    // total write job is complete.
  * });
  * bagger.on('finish', function() {
  *     // Do whatever you want when the bag is complete.
@@ -159,8 +161,8 @@ class Bagger extends EventEmitter {
          *
          * @type {BagItFile}
          */
-        this.formatWriter.on('fileAdded', function(bagItFile) {
-            bagger.emit('fileAdded', bagItFile);
+        this.formatWriter.on('fileAdded', function(bagItFile, percentComplete) {
+            bagger.emit('fileAdded', bagItFile, percentComplete);
         });
 
         await this._addPayloadFiles();

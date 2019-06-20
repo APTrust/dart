@@ -85,9 +85,12 @@ class Uploader extends Worker {
             let provider = new providerClass(ss);
             var promise = new Promise(function(resolve, reject) {
                 provider.on('start', function(result) {
+                    // Note: percentComplete is -1 because we don't
+                    // yet have a way of getting that info.
                     uploader.info('start',
                                   Constants.OP_IN_PROGRESS,
                                   ss.url(path.basename(filepath)),
+                                  -1,
                                   false);
                 });
                 provider.on('finish', function(result) {
@@ -110,8 +113,10 @@ class Uploader extends Worker {
                     provider = null;
                 });
                 provider.on('warning', function(xferResult) {
+                    // Note: percentComplete is -1 because we don't
+                    // yet have a way of getting that info.
                     uploader.info('upload', Constants.OP_IN_PROGRESS,
-                                  xferResult.warning, false);
+                                  xferResult.warning, -1, false);
                 });
             });
             promises.push(promise);

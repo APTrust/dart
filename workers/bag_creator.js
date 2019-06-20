@@ -39,10 +39,10 @@ class BagCreator extends Worker {
         }
         var bagger = new Bagger(this.job);
         bagger.on('packageStart', function(message) {
-            creator.info('start', Constants.OP_IN_PROGRESS, message, false);
+            creator.info('start', Constants.OP_IN_PROGRESS, message, 0, false);
         });
-        bagger.on('fileAdded', function(bagItFile) {
-            creator.info('fileAdded', Constants.OP_IN_PROGRESS, bagItFile.relDestPath, false);
+        bagger.on('fileAdded', function(bagItFile, percentComplete) {
+            creator.info('fileAdded', Constants.OP_IN_PROGRESS, bagItFile.relDestPath, percentComplete, false);
         });
         var promise = new Promise(function(resolve, reject) {
             // Finish never fires. Why? But promise resolves. How?

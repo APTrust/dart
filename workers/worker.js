@@ -25,13 +25,14 @@ class Worker extends EventEmitter {
         this.exitCode = Constants.EXIT_SUCCESS;
     }
 
-    info(action, status, message, translate = true) {
+    info(action, status, message, percentComplete, translate = true) {
         let msg = translate ? Context.y18n.__(message) : message;
         let jobStatus = new JobStatus(
             this.operation,
             action,
             msg,
-            status
+            status,
+            percentComplete
         );
         Context.logger.info(`${this.operation}/${action} - ${msg}`);
         this._emitStatusMessage(jobStatus);
@@ -40,7 +41,7 @@ class Worker extends EventEmitter {
 
     completedSuccess(message, translate = true) {
         this.exitCode = Constants.EXIT_SUCCESS;
-        return this.info('completed', Constants.OP_SUCCEEDED, message, translate);
+        return this.info('completed', Constants.OP_SUCCEEDED, message, 100, translate);
     }
 
     /**
@@ -95,6 +96,7 @@ class Worker extends EventEmitter {
             action,
             Context.y18n.__(message),
             Constants.OP_FAILED,
+            -1,
             errors,
             exception
         );
