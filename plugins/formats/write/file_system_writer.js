@@ -44,7 +44,17 @@ class FileSystemWriter extends Plugin {
          *
          */
         this._queue.drain = function () {
-            fsWriter.emit('finish');
+            let intervalCount = 0;
+            let doneInterval = setInterval(function() {
+                intervalCount += 1;
+                if (intervalCount % 50 == 0) {
+                    Context.logger.warn(Context.y18n.__("TarWriter is still writing final file to archive."));
+                }
+                if (fsWriter.filesWritten == fsWriter.filesAdded) {
+                    fsWriter.emit('finish');
+                    clearInterval(doneInterval);
+                }
+            }, 50);
         }
 
         this._queue.error = function(err, task) {
@@ -55,6 +65,21 @@ class FileSystemWriter extends Plugin {
                 fsWriter.emit('finish');
             }
         }
+
+        /**
+         * The total number of files added to the write queue.
+         *
+         * @type {number}
+         */
+        this.filesAdded = 0;
+
+        /**
+         * The total number of files that have been written into the
+         * tar file.
+         *
+         * @type {number}
+         */
+        this.filesWritten = 0;
     }
 
     /**
@@ -106,6 +131,7 @@ class FileSystemWriter extends Plugin {
      *
      */
     add(bagItFile, cryptoHashes = []) {
+        this.filesAdded += 1;
         var fsWriter = this;
         /**
          * @event FileSystemWriter#fileAdded - This event fires after a file
@@ -118,10 +144,24 @@ class FileSystemWriter extends Plugin {
             bagItFile: bagItFile,
             dest: path.join(this.pathToOutputDir , bagItFile.relDestPath),
             hashes: cryptoHashes,
-            endFn: () => fsWriter.emit('fileAdded', bagItFile)
+            endFn: () => {
+                fsWriter.filesWritten += 1;
+                fsWriter.emit('fileAdded', bagItFile);
+            }
         };
         this._queue.push(data);
     }
+
+    /**
+     * Returns the percent complete of the total write operations.
+     * This will be a number between 0 and 100. E.g. 42.833.
+     *
+     * @returns {number}
+     */
+    percentComplete() {
+        return (this.filesWritten / this.filesAdded) * 100;
+    }
+
 }
 
 /**

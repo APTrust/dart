@@ -54,6 +54,10 @@ test('FileSystemWriter adds files', done => {
             expect(bf.checksums.sha256.length).toEqual(64);
         }
 
+        expect(fsWriter.filesAdded).toEqual(bagItFiles.length);
+        expect(fsWriter.filesWritten).toEqual(bagItFiles.length);
+        expect(fsWriter.percentComplete()).toEqual(100);
+
         for (var cb of callbacks) {
             expect(cb).toHaveBeenCalled();
         }
