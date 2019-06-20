@@ -77,12 +77,22 @@ class RunningJobsController extends BaseController {
     }
 
     renderPackageInfo(data, dartProcess) {
-        let detailDiv = $(`#${dartProcess.id} div.packageInfo div.detail`);
+        let detailDiv = $(`#${dartProcess.id} div.packageInfo div.detail div.message`);
+        let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let iconDiv = $(`#${dartProcess.id} div.packageInfo div span.resultIcon`);
+        for (let cssClass of ["progress-bar-striped", "progress-bar-animated"]) {
+            if (progressBar.hasClass(cssClass)) {
+                progressBar.addClass(cssClass);
+            }
+        }
         if (data.action == 'fileAdded') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
+            console.log(data.percentComplete);
+            progressBar.attr("aria-valuenow", data.percentComplete);
+            progressBar.css("width", data.percentComplete + '%');
         } else if (data.action == 'completed') {
+            progressBar.removeClass("progress-bar-striped progress-bar-animated");
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.markSuccess(detailDiv, iconDiv, data.msg);
             } else {
@@ -94,7 +104,8 @@ class RunningJobsController extends BaseController {
     }
 
     renderValidationInfo(data, dartProcess) {
-        let detailDiv = $(`#${dartProcess.id} div.validationInfo div.detail`);
+        let detailDiv = $(`#${dartProcess.id} div.validationInfo div.detail div.message`);
+        let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let iconDiv = $(`#${dartProcess.id} div.validationInfo div span.resultIcon`);
         if (data.action == 'checksum') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
@@ -109,7 +120,8 @@ class RunningJobsController extends BaseController {
     }
 
     renderUploadInfo(data, dartProcess) {
-        let detailDiv = $(`#${dartProcess.id} div.uploadInfo div.detail`);
+        let detailDiv = $(`#${dartProcess.id} div.uploadInfo div.detail div.message`);
+        let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let iconDiv = $(`#${dartProcess.id} div.uploadInfo div span.resultIcon`);
         if (data.action == 'start') {
             iconDiv.html(UIConstants.SMALL_BLUE_SPINNER);
@@ -131,7 +143,8 @@ class RunningJobsController extends BaseController {
         // We have to reload this, because the child process updated
         // the job's record in the database.
         let job = Job.find(dartProcess.jobId);
-        let detailDiv = $(`#${dartProcess.id} div.outcome div.detail`);
+        let detailDiv = $(`#${dartProcess.id} div.outcome div.detail div.message`);
+        let progressBar = $(`#${dartProcess.id} div.packageInfo div.detail div.progress-bar`);
         let iconDiv = $(`#${dartProcess.id} div.outcome div span.resultIcon`);
         if (code == 0) {
             this.markSuccess(detailDiv, iconDiv, Context.y18n.__('Job completed successfully.'));
