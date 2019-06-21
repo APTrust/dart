@@ -124,7 +124,7 @@ class RunningJobsController extends BaseController {
                 this.markFailed(detailDiv, progressBar, data.msg);
             }
         } else if (data.action == 'status'){
-            this.settingUpload = true; // DEBUG
+            //detailDiv.text(data.msg);
             this.setProgressBar(progressBar, data);
         }
     }
