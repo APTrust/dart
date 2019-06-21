@@ -224,8 +224,12 @@ function writeIntoArchive(data, done) {
         var reader = fs.createReadStream(data.bagItFile.absSourcePath);
 
         // For testing dashboard process management, slow down writes
-        //var writer = data.tar.entry(data.header, () => setTimeout(done, 200));
-        var writer = data.tar.entry(data.header, done);
+        let writer;
+        if (Context.slowMotionDelay > 0) {
+            writer = data.tar.entry(data.header, () => setTimeout(done, Context.slowMotionDelay));
+        } else {
+            writer = data.tar.entry(data.header, done);
+        }
 
         writer.on('finish', data.endFn);
         reader.pause();

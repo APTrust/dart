@@ -148,6 +148,15 @@ class Validator extends EventEmitter {
          */
         this._hashesInProgress = 0;
         /**
+         * This is a private internal variable that registers a preliminary
+         * count of files found in a bag. This count includes tag files and
+         * manifests as well as payload files.
+         *
+         * @type {number}
+         * @default 0
+         */
+        this._initialFileCount = 0;
+        /**
          * This is a private internal variable that keeps track of the number
          * of files whose checksums we have compared against checksums in
          * the manifest.
@@ -323,6 +332,7 @@ class Validator extends EventEmitter {
             validator.emit('error', err);
         });
         reader.on('entry', function (entry) {
+            validator._initialFileCount += 1;
             if (validator.bagRoot == null && validator.readingFromTar()) {
                 validator.bagRoot = entry.relPath.split(/\//)[0];
             }
@@ -511,9 +521,16 @@ class Validator extends EventEmitter {
      *
      */
     _readEntry(entry) {
+        let validator = this;
         if (entry.fileStat.isFile()) {
             var bagItFile = this._addBagItFile(entry);
-            this._readFile(bagItFile, entry.stream);
+            if (Context.slowMotionDelay > 0) {
+                setTimeout(() => {
+                    validator._readFile(bagItFile, entry.stream)
+                }, Context.slowMotionDelay);
+            } else {
+                this._readFile(bagItFile, entry.stream);
+            }
         } else if (entry.fileStat.isDirectory()) {
             var relPath = this._cleanEntryRelPath(entry.relPath);
             if (this.bagRoot == null && relPath == '') {
@@ -605,7 +622,7 @@ class Validator extends EventEmitter {
     _readFile(bagItFile, readStream) {
         var validator = this;
         this._filesChecked += 1;
-        let percentComplete = (this._filesChecked / Object.keys(this.files).length) * 100;
+        let percentComplete = (this._filesChecked / this._initialFileCount) * 100;
         this.emit('task', new TaskDescription(bagItFile.relDestPath, 'checksum', '', percentComplete));
 
         // Get pipes for all of the hash digests we'll need to calculate.
