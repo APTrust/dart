@@ -64,7 +64,6 @@ class S3Client extends Plugin {
     constructor(storageService) {
         super();
         this.storageService = storageService;
-        this._statusInterval = null;
     }
 
     /**
@@ -112,7 +111,6 @@ class S3Client extends Plugin {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 xfer.result.finish(Context.y18n.__('%s is not a file', filepath));
                 this.emit('error', xfer.result);
-                clearInterval(this._statusInterval);
                 return;
             }
             Context.logger.info(Context.y18n.__('Starting upload'));
@@ -120,7 +118,6 @@ class S3Client extends Plugin {
         } catch (err) {
             xfer.result.finish(err.toString());
             this.emit('error', xfer.result);
-            clearInterval(this._statusInterval);
         }
     }
 
@@ -297,7 +294,6 @@ class S3Client extends Plugin {
         }
         xfer.result.finish(message);
         Context.logger.info(Context.y18n.__('Finished upload'));
-        clearInterval(this._statusInterval);
         this.emit('finish', xfer.result);
     }
 
@@ -329,7 +325,6 @@ class S3Client extends Plugin {
         } else {
             Context.logger.error('Too many failed upload attempts');
             xfer.result.finish(err.toString());
-            clearInterval(this._statusInterval);
             this.emit('error', xfer.result);
         }
     }
