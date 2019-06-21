@@ -202,6 +202,7 @@ class RunningJobsController extends BaseController {
     markSuccess(detailDiv, progressBar, message) {
         detailDiv.html(message);
         if (progressBar) {
+            this.setProgressBar(progressBar, { percentComplete: 100 });
             progressBar.removeClass("progress-bar-striped progress-bar-animated");
             progressBar.addClass("bg-success");
         }

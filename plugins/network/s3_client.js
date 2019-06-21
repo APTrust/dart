@@ -64,6 +64,7 @@ class S3Client extends Plugin {
     constructor(storageService) {
         super();
         this.storageService = storageService;
+        this._statusInterval = null;
     }
 
     /**
@@ -111,13 +112,19 @@ class S3Client extends Plugin {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 xfer.result.finish(Context.y18n.__('%s is not a file', filepath));
                 this.emit('error', xfer.result);
+                clearInterval(this._statusInterval);
                 return;
             }
             Context.logger.info(Context.y18n.__('Starting upload'));
-            this._upload(xfer);
+            let minioClient = this._upload(xfer);
+            let client = this;
+            this._statusInterval = setInterval(() => {
+                client._getUploadProgress(minioClient, xfer)
+            }, 800);
         } catch (err) {
             xfer.result.finish(err.toString());
             this.emit('error', xfer.result);
+            clearInterval(this._statusInterval);
         }
         // --------------------------------------------------------------
         // TODO: Progress bar. See https://trello.com/c/GkXdln8N
@@ -138,6 +145,27 @@ class S3Client extends Plugin {
         // Uploaded 29.8 GB of 387 GB as of 3:15:22 PM (2.5 MB / minute)
         //
         // --------------------------------------------------------------
+    }
+
+    _getUploadProgress(minioClient, xfer) {
+        let client = this;
+        let fileSize = xfer.localStat.size;
+        let _stream = minioClient.listIncompleteUploads(xfer.bucket, xfer.key, false);
+        _stream.on('data', function(part) {
+            xfer.bytesTransferred = part.size;
+            xfer.percentComplete = (part.size / fileSize) * 100;
+            Console.logger.info(
+                'Uploaded %s bytes of %s. %s percent complete',
+                part.size, xfer.key, xfer.percentComplete
+            );
+            client.emit('status', xfer);
+        })
+        // _stream.on('end', function() {
+        //     console.log('End')
+        // })
+        // _stream.on('error', function(err) {
+        //     console.log(err)
+        // })
     }
 
     /**
@@ -247,6 +275,8 @@ class S3Client extends Plugin {
      * @param {S3Transfer} xfer - An object describing what to upload
      * and where it should go.
      *
+     * @returns {Minio.Client}
+     *
      * @private
      */
     _upload(xfer) {
@@ -284,6 +314,7 @@ class S3Client extends Plugin {
             xfer.result.finish(err.toString());
             s3Client.emit('error', xfer.result);
         }
+        return minioClient;
     }
 
     /**
@@ -308,6 +339,7 @@ class S3Client extends Plugin {
         }
         xfer.result.finish(message);
         Context.logger.info(Context.y18n.__('Finished upload'));
+        clearInterval(this._statusInterval);
         this.emit('finish', xfer.result);
     }
 
@@ -339,6 +371,7 @@ class S3Client extends Plugin {
         } else {
             Context.logger.error('Too many failed upload attempts');
             xfer.result.finish(err.toString());
+            clearInterval(this._statusInterval);
             this.emit('error', xfer.result);
         }
     }

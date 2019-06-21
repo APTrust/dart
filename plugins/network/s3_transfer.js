@@ -102,6 +102,20 @@ class S3Transfer {
          */
         this.error = null;
         /**
+         * The number of bytes transferred to or from the remote host.
+         *
+         * @type {number}
+         */
+        this.bytesTransferred = 0;
+        /**
+         * The percentage complete of this operation (percentage of
+         * total bytes transferred). If known, this will be a number between
+         * 0 and 100.
+         *
+         * @type {number}
+         */
+        this.percentComplete = 0;
+        /**
          * An object describing the outcome of an upload or download
          * operation, including any errors that may have occurred.
          *
