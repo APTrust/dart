@@ -121,7 +121,7 @@ class RunningJobsController extends BaseController {
                 this.completedUploads.push(data.msg);
                 this.markSuccess(detailDiv, progressBar, this.completedUploads.join("<br/>\n"));
             } else {
-                this.markFailed(detailDiv, progressBar, detailDiv.html());
+                this.markFailed(detailDiv, progressBar, data.msg);
             }
         } else if (data.action == 'status'){
             this.settingUpload = true; // DEBUG
@@ -144,7 +144,7 @@ class RunningJobsController extends BaseController {
             Context.logger.error(msg);
             this.logFailedOps(job);
             msg += `<br/>${job.getRunErrors().join("<br/>")}`
-            this.markFailed('outcome', msg.replace(/\n/g, '<br/>'));
+            this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
         }
     }
 
