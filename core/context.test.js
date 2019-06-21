@@ -65,3 +65,10 @@ test("Context has y18n", () => {
     expect(Context.y18n.locale).toBeDefined();
     expect(Context.y18n.locale.length).toBeGreaterThan(1);
 });
+
+test("slowMotionDelay is off", () => {
+    if (Context.slowMotionDelay != 0) {
+        console.log("When Context.slowMotionDelay is set above 0, some bagging and validation tests will fail. Set it back to 0 during tests!");
+    }
+    expect(Context.slowMotionDelay).toEqual(0);
+});
