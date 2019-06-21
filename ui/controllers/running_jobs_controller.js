@@ -83,14 +83,7 @@ class RunningJobsController extends BaseController {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'packageInfo');
         if (data.action == 'fileAdded') {
             detailDiv.text(Context.y18n.__('Added file %s', data.msg));
-            // Progress bar hits 100% when all payload files are added.
-            // We have to add tag files and manifests afterward, and we
-            // don't want the bar to bounce, so no changes after it
-            // reaches 100%.
-            if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
-                progressBar.attr("aria-valuenow", data.percentComplete);
-                progressBar.css("width", data.percentComplete + '%');
-            }
+            this.setProgressBar(progressBar, data);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.markSuccess(detailDiv, progressBar, data.msg);
@@ -106,6 +99,7 @@ class RunningJobsController extends BaseController {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'validationInfo');
         if (data.action == 'checksum') {
             detailDiv.text(Context.y18n.__('Validating %s', data.msg));
+            this.setProgressBar(progressBar, data);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.markSuccess(detailDiv, progressBar, data.msg);
@@ -178,6 +172,30 @@ class RunningJobsController extends BaseController {
                     progressBar.addClass(cssClass);
                 }
             }
+        }
+    }
+
+    setProgressBar(progressBar, data) {
+        // Sometimes the data object does not include percentComplete,
+        // and when percentComplete is unknown, it's set to -1.
+        if (isNaN(data.percentComplete) || data.percentComplete < 0) {
+            return;
+        }
+        // In bag creation, progress bar hits 100% when all payload
+        // files are added. We have to add tag files and manifests
+        // afterward, and we don't want the bar to bounce, so no
+        // changes after it reaches 100%.
+        //
+        // Similarly with validation, the bar hits 100% when all checksums
+        // have been verified, but the validator still has a few remaining
+        // tasks, including tag file validation.
+        //
+        // In both cases, the bar will stick at 100% for a second or two.
+        // When all items are complete, the bar animation will stop and
+        // the bar will turn green.
+        if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
+            progressBar.attr("aria-valuenow", data.percentComplete);
+            progressBar.css("width", data.percentComplete + '%');
         }
     }
 

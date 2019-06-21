@@ -69,9 +69,7 @@ class BagValidator extends Worker {
                 resolve(bagValidator.job.validationOp.result);
             });
             validator.on('task', function(taskDesc) {
-                // Note: Set percentComplete to -1 because validator can't yet
-                // tell us its percent complete.
-                bagValidator.info(taskDesc.op, Constants.OP_IN_PROGRESS, taskDesc.path, -1, false);
+                bagValidator.info(taskDesc.op, Constants.OP_IN_PROGRESS, taskDesc.path, taskDesc.percentComplete, false);
             });
             validator.validate();
         });
