@@ -20,7 +20,7 @@ class TaskDescription {
      * to the user.
      *
      */
-    constructor(path, operation, message) {
+    constructor(path, operation, message, percentComplete = -1) {
         /**
          * Relative path to the file that the validator
          * is currently working on, or absolute path to the bag being validated
@@ -41,6 +41,14 @@ class TaskDescription {
          * @type {string}
          */
         this.msg = message;
+        /**
+         * The percent complete of the entire operation, expressed as
+         * a number between 0 and 100. This will be set only when the
+         * operation is 'checksum'.
+         *
+         * @type {string}
+         */
+        this.percentComplete = percentComplete;
     }
 }
 

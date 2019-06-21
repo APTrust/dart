@@ -145,6 +145,10 @@ test('Validator emits expected events for tarred APTrust bag', done => {
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
         taskCount++;
+        if (taskDesc.op == 'checksum') {
+            expect(taskDesc.percentComplete).toBeGreaterThanOrEqual(0);
+            expect(taskDesc.percentComplete).toBeLessThanOrEqual(100);
+        }
     });
     validator.on('error', function(err) {
         // Force failure & stop test.

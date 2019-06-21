@@ -147,6 +147,15 @@ class Validator extends EventEmitter {
          * @default 0
          */
         this._hashesInProgress = 0;
+        /**
+         * This is a private internal variable that keeps track of the number
+         * of files whose checksums we have compared against checksums in
+         * the manifest.
+         *
+         * @type {number}
+         * @default 0
+         */
+        this._filesChecked = 0;
     }
 
     /**
@@ -595,7 +604,9 @@ class Validator extends EventEmitter {
      */
     _readFile(bagItFile, readStream) {
         var validator = this;
-        this.emit('task', new TaskDescription(bagItFile.relDestPath, 'checksum'));
+        this._filesChecked += 1;
+        let percentComplete = (this._filesChecked / Object.keys(this.files).length) * 100;
+        this.emit('task', new TaskDescription(bagItFile.relDestPath, 'checksum', '', percentComplete));
 
         // Get pipes for all of the hash digests we'll need to calculate.
         // We need to calculate checksums on everything in the bag.
