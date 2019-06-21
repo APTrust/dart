@@ -154,10 +154,10 @@ class S3Client extends Plugin {
         _stream.on('data', function(part) {
             xfer.bytesTransferred = part.size;
             xfer.percentComplete = (part.size / fileSize) * 100;
-            Console.logger.info(
+            Context.logger.info(Context.y18n.__(
                 'Uploaded %s bytes of %s. %s percent complete',
                 part.size, xfer.key, xfer.percentComplete
-            );
+            ));
             client.emit('status', xfer);
         })
         // _stream.on('end', function() {

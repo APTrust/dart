@@ -113,6 +113,9 @@ class RunningJobsController extends BaseController {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'uploadInfo');
         if (data.action == 'start') {
             detailDiv.text(data.msg);
+            // We can have multiple uploads, so we re-initialize the
+            // progress bar each time we get a start event.
+            this.initProgressBar(dartProcess, 'uploadInfo');
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.completedUploads.push(data.msg);
