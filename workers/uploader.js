@@ -112,11 +112,15 @@ class Uploader extends Worker {
                     resolve(result);
                     provider = null;
                 });
-                provider.on('warning', function(xferResult) {
+                provider.on('warning', function(result) {
                     // Note: percentComplete is -1 because we don't
                     // yet have a way of getting that info.
                     uploader.info('upload', Constants.OP_IN_PROGRESS,
-                                  xferResult.warning, -1, false);
+                                  result.warning, -1, false);
+                });
+                provider.on('status', function(xfer) {
+                    uploader.info('upload', Constants.OP_IN_PROGRESS,
+                                  null, xfer.percentComplete, false);
                 });
             });
             promises.push(promise);
