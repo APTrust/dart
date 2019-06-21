@@ -305,6 +305,84 @@ what consititutes a valid bag.
         
             
 
+<h4 class="name" id="_filesChecked">
+  <span class="type-signature"></span>_filesChecked<span class="type-signature"> :number</span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is a private internal variable that keeps track of the number
+of files whose checksums we have compared against checksums in
+the manifest.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default">
+      <ul class="dummy">
+        <li>
+          0
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line167">line 167</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
 <h4 class="name" id="_hashesInProgress">
   <span class="type-signature"></span>_hashesInProgress<span class="type-signature"> :number</span>
 </h4>
@@ -362,6 +440,84 @@ lovely hack.
       <ul class="dummy">
         <li>
           <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line149">line 149</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
+<h4 class="name" id="_initialFileCount">
+  <span class="type-signature"></span>_initialFileCount<span class="type-signature"> :number</span>
+</h4>
+
+
+
+
+  <div class="description">
+    This is a private internal variable that registers a preliminary
+count of files found in a bag. This count includes tag files and
+manifests as well as payload files.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default">
+      <ul class="dummy">
+        <li>
+          0
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line158">line 158</a>
         </li>
       </ul>
     </dd>
@@ -1322,7 +1478,7 @@ about the file.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line541">line 541</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line567">line 567</a>
         </li>
       </ul>
     </dd>
@@ -1474,7 +1630,7 @@ TarReader or FileSystemReader.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line572">line 572</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line598">line 598</a>
         </li>
       </ul>
     </dd>
@@ -1567,7 +1723,7 @@ top-level folder, such as bag-info.txt and manifests.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line771">line 771</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line799">line 799</a>
         </li>
       </ul>
     </dd>
@@ -1721,7 +1877,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line650">line 650</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line678">line 678</a>
         </li>
       </ul>
     </dd>
@@ -1828,7 +1984,7 @@ _validateFormatAndContents()
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line342">line 342</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line361">line 361</a>
         </li>
       </ul>
     </dd>
@@ -1978,7 +2134,7 @@ file's contents if necessary.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line504">line 504</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line523">line 523</a>
         </li>
       </ul>
     </dd>
@@ -2160,7 +2316,7 @@ the file's contents.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line596">line 596</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line622">line 622</a>
         </li>
       </ul>
     </dd>
@@ -2269,7 +2425,7 @@ in manifests that are not part of the <a href="BagItProfile.html">BagItProfile</
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line310">line 310</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line328">line 328</a>
         </li>
       </ul>
     </dd>
@@ -2366,7 +2522,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line387">line 387</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line406">line 406</a>
         </li>
       </ul>
     </dd>
@@ -2520,7 +2676,7 @@ This should be either <a href="global.html#Constants#.PAYLOAD_MANIFEST">Constant
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line826">line 826</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line854">line 854</a>
         </li>
       </ul>
     </dd>
@@ -2616,7 +2772,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line860">line 860</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line888">line 888</a>
         </li>
       </ul>
     </dd>
@@ -2714,7 +2870,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line948">line 948</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line976">line 976</a>
         </li>
       </ul>
     </dd>
@@ -2809,7 +2965,7 @@ list.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line480">line 480</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line499">line 499</a>
         </li>
       </ul>
     </dd>
@@ -2962,7 +3118,7 @@ This should be either <a href="global.html#Constants#.PAYLOAD_MANIFEST">Constant
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line798">line 798</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line826">line 826</a>
         </li>
       </ul>
     </dd>
@@ -3063,7 +3219,7 @@ before you tar or zip it.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line422">line 422</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line441">line 441</a>
         </li>
       </ul>
     </dd>
@@ -3155,7 +3311,7 @@ serialized format. This is called only if necessary.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line459">line 459</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line478">line 478</a>
         </li>
       </ul>
     </dd>
@@ -3252,7 +3408,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line881">line 881</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line909">line 909</a>
         </li>
       </ul>
     </dd>
@@ -3350,7 +3506,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line721">line 721</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line749">line 749</a>
         </li>
       </ul>
     </dd>
@@ -3451,7 +3607,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line751">line 751</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line779">line 779</a>
         </li>
       </ul>
     </dd>
@@ -3558,7 +3714,7 @@ subject to change without notice.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line697">line 697</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line725">line 725</a>
         </li>
       </ul>
     </dd>
@@ -3653,7 +3809,7 @@ points to a directory. In the special (and common) case of
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line184">line 184</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line202">line 202</a>
         </li>
       </ul>
     </dd>
@@ -3746,7 +3902,7 @@ call it 20 times, you're going to get 20 individual reader objects.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line235">line 235</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line253">line 253</a>
         </li>
       </ul>
     </dd>
@@ -3837,7 +3993,7 @@ call it 20 times, you're going to get 20 individual reader objects.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line197">line 197</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line215">line 215</a>
         </li>
       </ul>
     </dd>
@@ -3928,7 +4084,7 @@ call it 20 times, you're going to get 20 individual reader objects.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line206">line 206</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line224">line 224</a>
         </li>
       </ul>
     </dd>
@@ -4021,7 +4177,7 @@ a tar, zip, gzip, or other single-file format.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line171">line 171</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line189">line 189</a>
         </li>
       </ul>
     </dd>
@@ -4124,7 +4280,7 @@ a tar, zip, gzip, or other single-file format.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line159">line 159</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line177">line 177</a>
         </li>
       </ul>
     </dd>
@@ -4215,7 +4371,7 @@ a tar, zip, gzip, or other single-file format.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line215">line 215</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line233">line 233</a>
         </li>
       </ul>
     </dd>
@@ -4306,7 +4462,7 @@ a tar, zip, gzip, or other single-file format.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line224">line 224</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line242">line 242</a>
         </li>
       </ul>
     </dd>
@@ -4406,7 +4562,7 @@ This method emits events "start", "task", "end", and "error".
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line261">line 261</a>
+          <a href="bagit_validator.js.html">bagit/validator.js</a>, <a href="bagit_validator.js.html#line279">line 279</a>
         </li>
       </ul>
     </dd>

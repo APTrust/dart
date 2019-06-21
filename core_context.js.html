@@ -181,6 +181,16 @@ class GlobalContext {
          * childProcesses, it is not currently running.
          */
         this.childProcesses = {};
+
+        /**
+         * Force the bagger and the validator to elay this many milliseconds
+         * between operations. This slows down the bagging and validation
+         * processes. We use this only for UI testing during development.
+         * In production, this should always be set to zero.
+         *
+         * @type {number}
+         */
+        this.slowMotionDelay = 0;
     }
     /**
       * Returns the JsonStore with the specified name (class name),

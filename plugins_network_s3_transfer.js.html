@@ -194,6 +194,12 @@ class S3Transfer {
          */
         this.error = null;
         /**
+         * The number of bytes transferred to or from the remote host.
+         *
+         * @type {number}
+         */
+        this.bytesTransferred = 0;
+        /**
          * An object describing the outcome of an upload or download
          * operation, including any errors that may have occurred.
          *
@@ -215,6 +221,15 @@ class S3Transfer {
         }
         url += `/${this.bucket}/${this.key}`;
         return url;
+    }
+
+    percentComplete() {
+        let size = this.operation == 'upload' ? this.localStat.size : this.remoteStat.size;
+        let percentComplete = 0;
+        if (size > 0) {
+            percentComplete = (this.bytesTransferred / size) * 100;
+        }
+        return percentComplete;
     }
 
 }
