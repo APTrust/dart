@@ -119,8 +119,11 @@ class Uploader extends Worker {
                                   result.warning, -1, false);
                 });
                 provider.on('status', function(xfer) {
-                    uploader.info('upload', Constants.OP_IN_PROGRESS,
-                                  null, xfer.percentComplete, false);
+                    // Uploader reads faster than it writes, so fudge this.
+                    let pctComplete = xfer.percentComplete() * 0.95;
+                    uploader.info('status', Constants.OP_IN_PROGRESS,
+                                  `${pctComplete.toFixed(2)}% complete`,
+                                  pctComplete, false);
                 });
             });
             promises.push(promise);

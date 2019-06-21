@@ -116,56 +116,12 @@ class S3Client extends Plugin {
                 return;
             }
             Context.logger.info(Context.y18n.__('Starting upload'));
-            let minioClient = this._upload(xfer);
-            let client = this;
-            this._statusInterval = setInterval(() => {
-                client._getUploadProgress(minioClient, xfer)
-            }, 800);
+            this._upload(xfer);
         } catch (err) {
             xfer.result.finish(err.toString());
             this.emit('error', xfer.result);
             clearInterval(this._statusInterval);
         }
-        // --------------------------------------------------------------
-        // TODO: Progress bar. See https://trello.com/c/GkXdln8N
-        //
-        // As long as xfer.result.completed == null, check periodically
-        // to get the size the parts uploaded so far. We would do this
-        // only on large files (> 20 GB or 50GB) that take a long time
-        // to upload. For those, call Minio's listIncompleteUploads()
-        // function with the exact bucket name and object key name being
-        // uploaded. That returns a readable stream whose data event
-        // should emit one object (because the bucket/key name is unique)
-        // with a .size attribute.
-        //
-        // Check listIncompleteUploads() every 1-5 minutes, based on the
-        // size of the file being sent. Stop when xfer.result.completed
-        // is no longer null. Display something like this to the user:
-        //
-        // Uploaded 29.8 GB of 387 GB as of 3:15:22 PM (2.5 MB / minute)
-        //
-        // --------------------------------------------------------------
-    }
-
-    _getUploadProgress(minioClient, xfer) {
-        let client = this;
-        let fileSize = xfer.localStat.size;
-        let _stream = minioClient.listIncompleteUploads(xfer.bucket, xfer.key, false);
-        _stream.on('data', function(part) {
-            xfer.bytesTransferred = part.size;
-            xfer.percentComplete = (part.size / fileSize) * 100;
-            Context.logger.info(Context.y18n.__(
-                'Uploaded %s bytes of %s. %s percent complete',
-                part.size, xfer.key, xfer.percentComplete
-            ));
-            client.emit('status', xfer);
-        })
-        // _stream.on('end', function() {
-        //     console.log('End')
-        // })
-        // _stream.on('error', function(err) {
-        //     console.log(err)
-        // })
     }
 
     /**
@@ -275,8 +231,6 @@ class S3Client extends Plugin {
      * @param {S3Transfer} xfer - An object describing what to upload
      * and where it should go.
      *
-     * @returns {Minio.Client}
-     *
      * @private
      */
     _upload(xfer) {
@@ -289,8 +243,13 @@ class S3Client extends Plugin {
         };
         xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
         this.emit('start', xfer.result)
+        let fileStream = fs.createReadStream(xfer.localPath);
+        fileStream.on('data', (chunk) => {
+            xfer.bytesTransferred += chunk.length;
+            s3Client.emit('status', xfer);
+        });
         try {
-            minioClient.fPutObject(xfer.bucket, xfer.key, xfer.localPath, metadata, function(err, etag) {
+            minioClient.putObject(xfer.bucket, xfer.key, fileStream, metadata, function(err, etag) {
                 if (err) {
                     s3Client._handleError(err, xfer);
                     return;
@@ -314,7 +273,6 @@ class S3Client extends Plugin {
             xfer.result.finish(err.toString());
             s3Client.emit('error', xfer.result);
         }
-        return minioClient;
     }
 
     /**

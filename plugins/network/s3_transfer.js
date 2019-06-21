@@ -108,14 +108,6 @@ class S3Transfer {
          */
         this.bytesTransferred = 0;
         /**
-         * The percentage complete of this operation (percentage of
-         * total bytes transferred). If known, this will be a number between
-         * 0 and 100.
-         *
-         * @type {number}
-         */
-        this.percentComplete = 0;
-        /**
          * An object describing the outcome of an upload or download
          * operation, including any errors that may have occurred.
          *
@@ -137,6 +129,15 @@ class S3Transfer {
         }
         url += `/${this.bucket}/${this.key}`;
         return url;
+    }
+
+    percentComplete() {
+        let size = this.operation == 'upload' ? this.localStat.size : this.remoteStat.size;
+        let percentComplete = 0;
+        if (size > 0) {
+            percentComplete = (this.bytesTransferred / size) * 100;
+        }
+        return percentComplete;
     }
 
 }
