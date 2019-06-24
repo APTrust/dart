@@ -55,7 +55,7 @@ class RunningJobsController extends BaseController {
         // already rendered when the page loaded.
         if (this.navSection == 'Jobs') {
             let html = Templates.partials['dartProcess']({ item: dartProcess });
-            processDiv.append(html);
+            processDiv.html(html);
         }
         if (job.packageOp && job.packageOp.outputPath) {
             this.initProgressBar(dartProcess, 'packageInfo');
@@ -155,6 +155,8 @@ class RunningJobsController extends BaseController {
             msg += `<br/>${job.getRunErrors().join("<br/>")}`
             this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
         }
+        // Button exists on job "Review and Run" page, not dashboard.
+        $('#btnRunJob').prop('disabled', false);
     }
 
     getDivs(dartProcess, section) {

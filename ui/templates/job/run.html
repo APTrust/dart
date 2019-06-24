@@ -62,6 +62,7 @@
     <a class="btn btn-primary" href="#JobUpload/show?id={{ job.id }}" role="button">&lt;&lt; Back</a>
   </div>
   <div class="pull-right" id="btnNextDiv">
-    <a class="btn btn-success" href="#JobRun/run?id={{ job.id }}" role="button">Run Job</a>
+    {{!-- Though it acts like a link, this has to be a button so we can disable it after click. --}}
+    <button id="btnRunJob" class="btn btn-success" onclick="location.hash='#JobRun/run?id={{ job.id }}'" role="button">Run Job</button>
   </div>
 </div>

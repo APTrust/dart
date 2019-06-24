@@ -77,6 +77,7 @@ class JobRunController extends RunningJobsController {
         );
         this.initRunningJobDisplay(this.dartProcess);
         Context.childProcesses[this.dartProcess.id] = this.dartProcess;
+        $('#btnRunJob').prop('disabled', true);
         return this.noContent();
     }
 
