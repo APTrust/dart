@@ -84,6 +84,7 @@ class Uploader extends Worker {
         for (let filepath of uploadOp.sourceFiles) {
             let provider = new providerClass(ss);
             var promise = new Promise(function(resolve, reject) {
+                let lastPercentComplete = 0;
                 provider.on('start', function(result) {
                     // Note: percentComplete is -1 because we don't
                     // yet have a way of getting that info.
@@ -120,10 +121,16 @@ class Uploader extends Worker {
                 });
                 provider.on('status', function(xfer) {
                     // Uploader reads faster than it writes, so fudge this.
+                    // Only write for changes >= 1%, otherwise, on large
+                    // uploads, this can write thousands of lines into the
+                    // logs.
                     let pctComplete = xfer.percentComplete() * 0.95;
-                    uploader.info('status', Constants.OP_IN_PROGRESS,
-                                  `${pctComplete.toFixed(2)}% complete`,
-                                  pctComplete, false);
+                    if (pctComplete - lastPercentComplete > 1) {
+                        uploader.info('status', Constants.OP_IN_PROGRESS,
+                                      `${pctComplete.toFixed(2)}% complete`,
+                                      pctComplete, false);
+                        lastPercentComplete = pctComplete;
+                    }
                 });
             });
             promises.push(promise);
