@@ -1,4 +1,6 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { Context } = require('./context');
+const { DartProcess } = require('./dart_process');
 const { Job } = require('./job');
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
@@ -7,6 +9,9 @@ const { TestUtil } = require('./test_util');
 const { UploadOperation } = require('./upload_operation');
 const { ValidationOperation } = require('./validation_operation');
 
+afterAll(() => {
+    Object.keys(Context.childProcesses).forEach(k => delete Context.childProcesses[k])
+});
 
 function getJobWithOps() {
     let job = new Job();
@@ -286,4 +291,15 @@ test('getRunErrors()', () => {
         'upload err 4.1',
         'upload err 4.2'
     ]);
+});
+
+test('isRunning()', () => {
+    let job = new Job();
+    expect(job.isRunning()).toBe(false);
+
+    // Create a dummy child process that's supposedly running this job.
+    let dartProcess = new DartProcess('test', job.id, null);
+    Context.childProcesses[dartProcess.id] = dartProcess;
+
+    expect(job.isRunning()).toBe(true);
 });

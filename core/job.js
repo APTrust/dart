@@ -350,6 +350,20 @@ class Job extends PersistentObject {
     }
 
     /**
+     * Returns true if this job is currently running.
+     *
+     * @returns {boolean}
+     */
+    isRunning() {
+        for (let dartProcess of Object.values(Context.childProcesses)) {
+            if (dartProcess.jobId == this.id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * This converts the JSON representation of a job as stored in the DB
      * to a full-fledged Job object with all of the expected methods.
      *
