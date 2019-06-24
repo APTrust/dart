@@ -25,9 +25,6 @@
         <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
           <a class="dropdown-item" href="#Job/list">List</a>
           <a class="dropdown-item" href="#Job/new">New</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#DartProcess/list">Running Jobs</a>
-          <a class="dropdown-item" href="#Manifest/list">Manifests</a>
         </div>
       </li>
       <li class="nav-item dropdown {{#if (eq section 'Help')}}active{{/if}}">
@@ -40,5 +37,10 @@
         </div>
       </li>
     </ul>
+  </div>
+  <div class="float-right">
+    <span id="runningJobsBadge" class="badge badge-pill badge-info">
+      <a href="#Dashboard/show" class="text-white"></a>
+    </span>
   </div>
 </nav>

@@ -77,4 +77,20 @@ $(function() {
         }
     }
     $('body').popover(popOverSettings);
+
+
+    function showRunningJobsBadge() {
+        let runningJobCount = Object.values(DART.Core.Context.childProcesses).length;
+        let badge = $('#runningJobsBadge');
+        if (runningJobCount > 0) {
+            $('#runningJobsBadge a').text(DART.Core.Context.y18n.__("%s Running Jobs", runningJobCount));
+            badge.show();
+        } else {
+            badge.hide();
+        }
+    }
+
+    // Show the running jobs badge immediate, then refresh every 3 seconds.
+    showRunningJobsBadge();
+    let runningJobsInterval = setInterval(showRunningJobsBadge, 3000);
 });

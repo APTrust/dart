@@ -98,7 +98,7 @@ class GlobalContext {
          *
          * @type {number}
          */
-        this.slowMotionDelay = 0;
+        this.slowMotionDelay = 4000;
     }
     /**
       * Returns the JsonStore with the specified name (class name),
