@@ -124,7 +124,7 @@ class Uploader extends Worker {
                     // Only write for changes >= 1%, otherwise, on large
                     // uploads, this can write thousands of lines into the
                     // logs.
-                    let pctComplete = xfer.percentComplete() * 0.95;
+                    let pctComplete = xfer.percentComplete() * 0.985;
                     if (pctComplete - lastPercentComplete > 1) {
                         uploader.info('status', Constants.OP_IN_PROGRESS,
                                       `${ss.name } - ${pctComplete.toFixed(2)}%`,

@@ -222,5 +222,7 @@
   "Job did not complete due to errors.": "Job did not complete due to errors.",
   "Test Message": "Test Message",
   "Uploaded %s bytes of %s. %s percent complete": "Uploaded %s bytes of %s. %s percent complete",
-  "%s Running Jobs": "%s Running Jobs"
+  "%s Running Jobs": "%s Running Jobs",
+  "You must specify an output path.": "You must specify an output path.",
+  "You must specify a package name.": "You must specify a package name."
 }

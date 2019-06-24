@@ -82,8 +82,9 @@ $(function() {
     function showRunningJobsBadge() {
         let runningJobCount = Object.values(DART.Core.Context.childProcesses).length;
         let badge = $('#runningJobsBadge');
+        let msg = runningJobCount == 1 ? "Running Jobs" : "Running Jobs";
         if (runningJobCount > 0) {
-            $('#runningJobsBadge a').text(DART.Core.Context.y18n.__("%s Running Jobs", runningJobCount));
+            $('#runningJobsBadge a').text(DART.Core.Context.y18n.__("%s ${msg}", runningJobCount));
             badge.show();
         } else {
             badge.hide();
