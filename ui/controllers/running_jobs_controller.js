@@ -46,8 +46,17 @@ class RunningJobsController extends BaseController {
 
     showDivs(job, dartProcess) {
         let processDiv = $('#dartProcessContainer');
-        let html = Templates.partials['dartProcess']({ item: dartProcess });
-        processDiv.html(html);
+
+        // If we're in the Jobs section, this is the job_run_controller
+        // and we need to add some HTML to the page to display job status
+        // because the user has just clicked "Run Job".
+        //
+        // Otherwise, we're in the dashboard, and the HTML we need was
+        // already rendered when the page loaded.
+        if (this.navSection == 'Jobs') {
+            let html = Templates.partials['dartProcess']({ item: dartProcess });
+            processDiv.append(html);
+        }
         if (job.packageOp && job.packageOp.outputPath) {
             this.initProgressBar(dartProcess, 'packageInfo');
             $(`#${dartProcess.id} div.packageInfo`).show();
