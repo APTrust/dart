@@ -233,11 +233,14 @@ class S3Client extends Plugin {
     _upload(xfer) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
-        var metadata = {
-            'Uploaded-By': `${Context.dartVersion()}`,
-            'Original-Path': xfer.localPath,
-            'Size': xfer.localStat.size
-        };
+        // Metadata works with fPutObject, but not with putObject,
+        // so this is commented out for now. We can delete it if we
+        // stick with putObject (which allows our progress bar to work, sort of).
+        // var metadata = {
+        //     'Uploaded-By': `${Context.dartVersion()}`,
+        //     'Original-Path': xfer.localPath,
+        //     'Size': xfer.localStat.size
+        // };
         xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
         this.emit('start', xfer.result)
         let fileStream = fs.createReadStream(xfer.localPath);
@@ -246,7 +249,7 @@ class S3Client extends Plugin {
             s3Client.emit('status', xfer);
         });
         try {
-            minioClient.putObject(xfer.bucket, xfer.key, fileStream, metadata, function(err, etag) {
+            minioClient.putObject(xfer.bucket, xfer.key, fileStream, xfer.localStat.size, function(err, etag) {
                 if (err) {
                     s3Client._handleError(err, xfer);
                     return;
