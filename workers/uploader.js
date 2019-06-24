@@ -90,7 +90,7 @@ class Uploader extends Worker {
                     // yet have a way of getting that info.
                     uploader.info('start',
                                   Constants.OP_IN_PROGRESS,
-                                  ss.url(path.basename(filepath)),
+                                  ss.name,
                                   -1,
                                   false);
                 });
@@ -99,7 +99,7 @@ class Uploader extends Worker {
                     if (result.errors.length > 0) {
                         uploader.completedWithError(result.errors);
                     } else {
-                        uploader.completedSuccess(ss.url(path.basename(filepath)), false);
+                        uploader.completedSuccess(ss.name, false);
                     }
                     resolve(result);
                 });
@@ -127,7 +127,7 @@ class Uploader extends Worker {
                     let pctComplete = xfer.percentComplete() * 0.95;
                     if (pctComplete - lastPercentComplete > 1) {
                         uploader.info('status', Constants.OP_IN_PROGRESS,
-                                      `${pctComplete.toFixed(2)}% complete`,
+                                      `${ss.name } - ${pctComplete.toFixed(2)}%`,
                                       pctComplete, false);
                         lastPercentComplete = pctComplete;
                     }

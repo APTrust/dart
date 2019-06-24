@@ -3,7 +3,7 @@
     <div class="card-header">{{ translate "Running Jobs" }}</div>
     <div class="card-body dashboard-card-body" id="dartProcessContainer">
       {{#if items }}
-        {{#each items}}
+        {{#each items as |item| }}
           {{> dartProcess item = item }}
         {{/each}}
       {{else }}
