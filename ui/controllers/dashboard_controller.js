@@ -221,7 +221,6 @@ class DashboardController extends RunningJobsController {
         for(let dartProcess of Object.values(Context.childProcesses)) {
             this.initRunningJobDisplay(dartProcess);
         }
-
     }
 
 }

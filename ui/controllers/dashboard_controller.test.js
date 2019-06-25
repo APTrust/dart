@@ -1,8 +1,12 @@
 const $ = require('jquery');
+const { Context } = require('../../core/context');
+const { DartProcess } = require('../../core/dart_process');
 const { DashboardController } = require('./dashboard_controller');
 const { Job } = require('../../core/job');
+const os = require('os');
 const path = require('path');
 const { RemoteRepository } = require('../../core/remote_repository');
+const { spawn } = require('child_process');
 const { TestUtil } = require('../../core/test_util');
 const url = require('url');
 const { UITestUtil } = require('../common/ui_test_util');
@@ -20,24 +24,25 @@ beforeEach(() => {
 afterEach(() => {
     TestUtil.deleteJsonFile('Job');
     TestUtil.deleteJsonFile('RemoteRepository');
-})
+    Object.keys(Context.childProcesses).forEach(k => delete Context.childProcesses[k])
+});
 
 afterAll(() => {
     TestUtil.deleteJsonFile('Job');
     TestUtil.deleteJsonFile('RemoteRepository');
-})
+});
 
 function makeJobs(howMany) {
     let pathToFile = path.join(__dirname, '..', '..', 'test', 'fixtures', 'Job_001.json');
-    let ids = []; // id, createdAt
+    let jobs = [];
     for(let i=0; i < howMany; i++) {
         let job = Job.inflateFromFile(pathToFile);
         job.id = Util.uuid4();
         job.updatedAt = new Date().toISOString();
         job.save();
-        ids.push(job.id)
+        jobs.push(job)
     }
-    return ids;
+    return jobs;
 }
 
 function makeRepos(howMany) {
@@ -56,48 +61,45 @@ function makeRepos(howMany) {
     return ids;
 }
 
+function makeDartProcesses(jobs) {
+    // We need to pass a process into the DartProcess constructor.
+    // A simple ls/dir will work.
+    let command = os.platform == 'win32' ? 'dir' : 'ls';
+    let dartProcesses = [];
+    let i = 1;
+    for(let job in jobs) {
+        let dartProcess = new DartProcess(`Test_${i}`, job.id, spawn(command));
+        dartProcesses.push(dartProcess);
+        Context.childProcesses[dartProcess.id] = dartProcess;
+        i++;
+    }
+    return dartProcesses;
+}
+
 test('Constructor sets expected properties', () => {
     let controller = new DashboardController(params);
     expect(controller.navSection).toEqual("Dashboard");
 });
 
 test('show()', () => {
-    // This mock is not working. Hmm...
-    //
-    // // Mock the APTrust client.
-    // const { APTrustClient } = require('../../plugins/repository/aptrust');
-    // const mockRecentIngests = jest.fn(() => {
-    //     return new Promise(function(resolve, reject) {
-    //         resolve('10 ingests');
-    //     })
-    // });
-    // const mockRecentWorkItems = jest.fn(() => {
-    //     return new Promise(function(resolve, reject) {
-    //         resolve('10 ingests');
-    //     })
-    // });
-    // jest.mock('../../plugins/repository/aptrust', () => {
-    //     return jest.fn().mockImplementation(() => {
-    //         return {
-    //             recentIngests: mockRecentIngests,
-    //             recentWorkItems: mockRecentWorkItems
-    //         };
-    //     });
-    // });
-
-    let jobIds = makeJobs(4);
+    let jobs = makeJobs(4);
     let repoIds = makeRepos(2);
+    let processes = makeDartProcesses(jobs);
     let controller = new DashboardController(params);
     UITestUtil.setDocumentBody(controller.show());
     controller.postRenderCallback();
 
     let containerHTML = $('#container').html();
 
-    // Look for expect output about recent jobs.
+    // Look for output about recent jobs.
     expect(containerHTML).toMatch('BagOfPhotos');
     expect(containerHTML).toMatch('Validation failed');
 
-    // TODO: Test for info about running jobs.
+    // Test for presence of info about running jobs.
+    expect(containerHTML).toMatch(processes[0].id);
+    expect(containerHTML).toMatch(processes[1].id);
+    expect(containerHTML).toMatch(processes[2].id);
+    expect(containerHTML).toMatch(processes[3].id);
 
     // Look for expected divs to hold remote repo content.
     expect(containerHTML).toMatch('id="APTrustClient_1_1"');
@@ -122,9 +124,9 @@ test('_getRecentJobSummaries()', () => {
 });
 
 test('_getJobOutcomeAndTimestamp()', () => {
-    let ids = makeJobs(1);
+    let jobs = makeJobs(1);
     let controller = new DashboardController(params);
-    let job = Job.find(ids[0]);
+    let job = Job.find(jobs[0].id);
     let expected = ['Validation failed', today];
     expect(controller._getJobOutcomeAndTimestamp(job)).toEqual(expected);
 });
