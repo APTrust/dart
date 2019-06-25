@@ -14,26 +14,96 @@ const { StorageService } = require('./storage_service');
  * A workflow allows users to define a repeatable set of actions,
  * and to run jobs based on those pre-defined actions.
  *
+ * @param {object} opts
+ *
+ * @param {string} opts.name - The name to assign to this Workflow.
+ *
+ * @param {string} [opts.description] - An optional description of
+ * this workflow.
+ *
+ * @param {string} [opts.packageFormat] - The package format, if this
+ * workflow includes a packaging step. Options include "None", "BagIt",
+ * or the UUID of any format/write plugin.
+ *
+ * @param {string} [opts.packagePluginId] - The id of the plugin that
+ * will write the package to disk, if there is a packaging step.
+ *
+ * @param {string} [opts.bagItProfileId] - The id of the BagIt profile
+ * to be used in the packaging step, if there is a packaging step. If
+ * this is specified, the package will be a bag that conforms to this
+ * profile.
+ *
+ * @param {Array<string>} [opts.storageServiceIds] - A list of
+ * {@link StorageService} ids. The workflow will upload files to these
+ * storage services.
+ *
  */
 class Workflow extends PersistentObject {
     constructor(opts) {
+        opts.required = ["name"];
+        super(opts);
+        /**
+         * The name of this workflow.
+         *
+         * @type {string}
+         */
         this.name = opts.name;
+        /**
+         * A description of this workflow.
+         *
+         * @type {string}
+         */
         this.description = opts.description;
+        /**
+         * The package format, if this workflow includes a
+         * packaging step. Options include "None", "BagIt",
+         * or the UUID of any format/write plugin.
+         *
+         * @type {string}
+         */
         this.packageFormat = opts.packageFormat;
+        /**
+         * The id of the plugin that will write the
+         * package to disk, if there is a packaging step.
+         *
+         * @type {string}
+         */
         this.packagePluginId = opts.packagePluginId;
+        /**
+         * The id of the BagIt profile to be used in the
+         * packaging step, if there is a packaging step. If
+         * this is specified, the package will be a bag that
+         * conforms to this profile.
+         *
+         * @type {string}
+         */
         this.bagItProfileId = opts.bagItProfileId;
+        /**
+         * A list of {@link StorageService} ids. The workflow
+         * will upload files to these storage services.
+         *
+         * @type {string}
+         */
         this.storageServiceIds = opts.storageServiceIds || [];
     }
 
     /**
      * This returns the plugin class that provides the packaging
-     * for this workflow.
+     * for this workflow. Note that this returns a class and not
+     * an instance of an object.
      *
+     * @returns {function}
      */
     packagePlugin() {
         return PluginManager.findById(this.packagePluginId);
     }
 
+    /**
+     * Returns the name of the plugin that will be used to package
+     * data in this workflow.
+     *
+     * @returns {string}
+     */
     packagePluginName() {
         let name = null;
         let plugin = this.packagePlugin();
@@ -43,10 +113,22 @@ class Workflow extends PersistentObject {
         return name;
     }
 
+    /**
+     * This returns the BagItProfile the workflow will use to generate
+     * bags.
+     *
+     * @returns {BagItProfile}
+     */
     bagItProfile() {
         return BagItProfile.find(this.bagItProfileId);
     }
 
+    /**
+     * Returns the name of the BagItProfile that will be used to
+     * create bags in this workflow (if there is one).
+     *
+     * @returns {string}
+     */
     bagItProfileName() {
         let name = null;
         let profile = this.bagItProfile();
@@ -56,14 +138,26 @@ class Workflow extends PersistentObject {
         return name;
     }
 
+    /**
+     * Returns an array of {@link StorageService} objects. The workflow
+     * will upload files to each of these services.
+     *
+     * @returns {Array<StorageService>}
+     */
     storageServices() {
         let services = [];
-        for (let id in this.storageServiceIds) {
+        for (let id of this.storageServiceIds) {
             services.push(StorageService.find(id));
         }
         return services;
     }
 
+    /**
+     * Returns the names of the {@link StorageService}s to which this
+     * workflow will upload files.
+     *
+     * @returns {Array<string>}
+     */
     storageServiceNames() {
         let names = [];
         for(let service of this.storageServices()) {
@@ -72,3 +166,5 @@ class Workflow extends PersistentObject {
         return names;
     }
 }
+
+module.exports.Workflow = Workflow;

@@ -722,7 +722,7 @@ class BagItProfile extends PersistentObject {
 
     /**
      * find finds the BagItProfile with the specified id in the datastore
-     * and returns it. Returns undefined if the object is not in the datastore.
+     * and returns it. Returns null if the object is not in the datastore.
      *
      * This overrides the find() method of PersistentObject to return a
      * correctly constructed BagItProfile object.
@@ -732,11 +732,13 @@ class BagItProfile extends PersistentObject {
      * @returns {BagItProfile}
      */
     static find(id) {
-        let data = Context.db('BagItProfile').get(id);
-        if (data) {
-            return BagItProfile.inflateFrom(data);
+        if (id) {
+            let data = Context.db('BagItProfile').get(id);
+            if (data) {
+                return BagItProfile.inflateFrom(data);
+            }
         }
-        return undefined;
+        return null;
     }
 }
 
