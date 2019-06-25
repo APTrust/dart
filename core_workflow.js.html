@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      plugins/plugin.js - Documentation
+      core/workflow.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -81,7 +81,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        plugins/plugin.js
+        core/workflow.js
       </h1>
     
 
@@ -90,79 +90,176 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const EventEmitter = require('events');
+    <pre class="prettyprint source linenums"><code>const { BagItProfile } = require('../bagit/bagit_profile');
+const { PersistentObject } = require('./persistent_object');
+const { PluginManager } = require('../plugins/plugin_manager');
+const { StorageService } = require('./storage_service');
 
 /**
- * PluginDefinition contains information about what capabilities a plugin
- * provides.
- * @typedef {Object} PluginDefinition
- * @property {string} id - A UUID in string format that uniquely identifies
- *            this plugin.
- * @property {string} name - The name of this plugin.
- * @property {string} description - A human-readable description of this plugin.
- * @property {string} version - The version number of this plugin. E.g. 1.44
- * @property {Array&lt;string>} readsFormats - The file extensions of the types
- *           of files this plugin can read. This applies only to plugins of
- *           type FormatReader. For example, a tar reader plugin may be able
- *           to read types ['.tar', '.tar.gz', '.tgz']. If your plugin is not
- *           a FormatReader, this property should be an empty array. Use all
- *           lowercase letters.
- * @property {Array&lt;string>} writesFormats - The file extensions of the types
- *           of files this plugin can write. This applies only to plugins of
- *           type FormatWriter. For example, a tar writer plugin may be able
- *           to read types ['.tar', '.tar.gz', '.tgz']. If your plugin is not
- *           a FormatWriter, this property should be an empty array. Use all
- *           lowercase letters.
- * @property {Array&lt;string>} implementsProtocols - The network protocols that
- *           this plugin implements. For example, an FTP plugin may implement
- *           ['ftp', 'sftp', 'ftps']. This applies only to plugins of type
- *           NetworkClient. If your plugin is not a NetworkClient, this should
- *           be an empty list. Use all lowercase letters.
- * @property {Array&lt;string>} setsUp - This describes what general configuration
- *           your plugin provides. For example, the 'aptrust' setup plugin helps
- *           the user configure some basic APTrust settings, such as the URL of
- *           the APTrust repository, the user's API keys, etc. This applies only
- *           to plugins of type Setup. If your plugin is not a Setup plugin,
- *           this should be empty. Use all lowercase letters.
- * @property {Array&lt;string>} talksToRepository - This describes what type of
- *           repository your plugin talks to. For example, 'fedora', 'aptrust',
- *           etc. This applies only to plugins of type Repository. If your plugin
- *           is not a Repository plugin, this should be empty. Use all lowercase
- *           letters.
+ * A workflow defines the set up steps that compose a job. These
+ * steps may include packaging, validation, and uploading
+ * to one or more storage services.
+ *
+ * If the packaging format is BagIt, the Workflow should include
+ * a BagIt profile as well.
+ *
+ * A workflow allows users to define a repeatable set of actions,
+ * and to run jobs based on those pre-defined actions.
+ *
+ * @param {object} opts
+ *
+ * @param {string} opts.name - The name to assign to this Workflow.
+ *
+ * @param {string} [opts.description] - An optional description of
+ * this workflow.
+ *
+ * @param {string} [opts.packageFormat] - The package format, if this
+ * workflow includes a packaging step. Options include "None", "BagIt",
+ * or the UUID of any format/write plugin.
+ *
+ * @param {string} [opts.packagePluginId] - The id of the plugin that
+ * will write the package to disk, if there is a packaging step.
+ *
+ * @param {string} [opts.bagItProfileId] - The id of the BagIt profile
+ * to be used in the packaging step, if there is a packaging step. If
+ * this is specified, the package will be a bag that conforms to this
+ * profile.
+ *
+ * @param {Array&lt;string>} [opts.storageServiceIds] - A list of
+ * {@link StorageService} ids. The workflow will upload files to these
+ * storage services.
  *
  */
-
-
-/**
- * Plugin is the base class for all plugins.
- */
-class Plugin extends EventEmitter {
-    constructor() {
-        super();
+class Workflow extends PersistentObject {
+    constructor(opts) {
+        opts.required = ["name"];
+        super(opts);
+        /**
+         * The name of this workflow.
+         *
+         * @type {string}
+         */
+        this.name = opts.name;
+        /**
+         * A description of this workflow.
+         *
+         * @type {string}
+         */
+        this.description = opts.description;
+        /**
+         * The package format, if this workflow includes a
+         * packaging step. Options include "None", "BagIt",
+         * or the UUID of any format/write plugin.
+         *
+         * @type {string}
+         */
+        this.packageFormat = opts.packageFormat;
+        /**
+         * The id of the plugin that will write the
+         * package to disk, if there is a packaging step.
+         *
+         * @type {string}
+         */
+        this.packagePluginId = opts.packagePluginId;
+        /**
+         * The id of the BagIt profile to be used in the
+         * packaging step, if there is a packaging step. If
+         * this is specified, the package will be a bag that
+         * conforms to this profile.
+         *
+         * @type {string}
+         */
+        this.bagItProfileId = opts.bagItProfileId;
+        /**
+         * A list of {@link StorageService} ids. The workflow
+         * will upload files to these storage services.
+         *
+         * @type {string}
+         */
+        this.storageServiceIds = opts.storageServiceIds || [];
     }
 
     /**
-     * The description method returns a description of the plugin and its
-     * capabilities.
+     * This returns the plugin class that provides the packaging
+     * for this workflow. Note that this returns a class and not
+     * an instance of an object.
      *
-     * @returns {PluginDefinition}
+     * @returns {function}
      */
-    static description() {
-        return {
-            id: '',
-            name: '',
-            description: '',
-            version: '',
-            readsFormats: [],
-            writesFormats: [],
-            implementsProtocols: [],
-            talksToRepository: [],
-            setsUp: []
+    packagePlugin() {
+        return PluginManager.findById(this.packagePluginId);
+    }
+
+    /**
+     * Returns the name of the plugin that will be used to package
+     * data in this workflow.
+     *
+     * @returns {string}
+     */
+    packagePluginName() {
+        let name = null;
+        let plugin = this.packagePlugin();
+        if (plugin) {
+            name = plugin.description().name;
         }
+        return name;
+    }
+
+    /**
+     * This returns the BagItProfile the workflow will use to generate
+     * bags.
+     *
+     * @returns {BagItProfile}
+     */
+    bagItProfile() {
+        return BagItProfile.find(this.bagItProfileId);
+    }
+
+    /**
+     * Returns the name of the BagItProfile that will be used to
+     * create bags in this workflow (if there is one).
+     *
+     * @returns {string}
+     */
+    bagItProfileName() {
+        let name = null;
+        let profile = this.bagItProfile();
+        if (profile) {
+            name = profile.name;
+        }
+        return name;
+    }
+
+    /**
+     * Returns an array of {@link StorageService} objects. The workflow
+     * will upload files to each of these services.
+     *
+     * @returns {Array&lt;StorageService>}
+     */
+    storageServices() {
+        let services = [];
+        for (let id of this.storageServiceIds) {
+            services.push(StorageService.find(id));
+        }
+        return services;
+    }
+
+    /**
+     * Returns the names of the {@link StorageService}s to which this
+     * workflow will upload files.
+     *
+     * @returns {Array&lt;string>}
+     */
+    storageServiceNames() {
+        let names = [];
+        for(let service of this.storageServices()) {
+            names.push(service.name);
+        }
+        return names;
     }
 }
 
-module.exports.Plugin = Plugin;
+module.exports.Workflow = Workflow;
 </code></pre>
   </article>
 </section>
