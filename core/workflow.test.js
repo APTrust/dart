@@ -31,6 +31,11 @@ afterAll(() => {
     TestUtil.deleteJsonFile('StorageService');
 });
 
+afterEach(() => {
+    TestUtil.deleteJsonFile('Workflow');
+});
+
+
 let opts = {
     name: 'Test Workflow',
     description: 'Workflow for unit tests.',
@@ -111,3 +116,29 @@ test('storageServiceNames()', () => {
     workflow.storageServiceIds = [];
     expect(workflow.storageServiceNames().length).toEqual(0);
 });
+
+test('save()', () => {
+    let workflow = new Workflow({ name: 'Groundskeeper Willie'});
+    workflow.save();
+
+    let retrieved = Workflow.find(workflow.id);
+    expect(retrieved).toBeDefined();
+    expect(retrieved.name).toEqual(workflow.name);
+})
+
+test('validate() ensures unique name', () => {
+    let wf1 = new Workflow({ name: 'This name is taken' });
+    expect(wf1.validate()).toBe(true);
+    wf1.save();
+
+    let wf2 = new Workflow({ name: 'This name is taken' });
+    expect(wf2.validate()).toBe(false);
+})
+
+test('find by name', () => {
+    let workflow = new Workflow({ name: 'Professor Frink' });
+    workflow.save();
+    let retrieved = Workflow.firstMatching('name', 'Professor Frink');
+    expect(retrieved).toBeDefined();
+    expect(retrieved.id).toEqual(workflow.id);
+})

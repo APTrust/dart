@@ -1,4 +1,5 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('./storage_service');
@@ -39,7 +40,7 @@ const { StorageService } = require('./storage_service');
  *
  */
 class Workflow extends PersistentObject {
-    constructor(opts) {
+    constructor(opts = {}) {
         opts.required = ["name"];
         super(opts);
         /**
@@ -164,6 +165,23 @@ class Workflow extends PersistentObject {
             names.push(service.name);
         }
         return names;
+    }
+
+    /**
+     * Checks to see if this workflow has a unique non-empty name.
+     * Returns true if so, false otherwise.
+     *
+     * @returns {boolean}
+     */
+    validate() {
+        super.validate();
+        let wf = Workflow.firstMatching('name', this.name);
+        if (wf && wf.id != this.id) {
+            this.errors["name"] = Context.y18n.__(
+                "%s must be unique", "name"
+            );
+        }
+        return Object.keys(this.errors).length == 0;
     }
 }
 
