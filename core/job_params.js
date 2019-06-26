@@ -200,8 +200,9 @@ class JobParams {
         for(let tags of Object.values(this._groupedTags())) {
             // Every tag in this list will have the same tagFile and tagName.
             let firstTag = tags[0];
-            let indices = this._getTagIndices(bagItProfile, firstTag.tagFile, firstTag.tagName);
-            this._mergeTagSet(bagItProfile, tags, indices);
+            //let indices = this._getTagIndices(job.bagItProfile, firstTag.tagFile, firstTag.tagName);
+            let profileTags = job.bagItProfile.tags.filter(tag => tag.tagFile == firstTag.tagFile && tag.tagName == firstTag.tagName);
+            this._mergeTagSet(job.bagItProfile, tags, profileTags);
         }
     }
 
@@ -209,13 +210,12 @@ class JobParams {
      * Merges one or more values from this.tags into job.bagItProfile.tags.
      *
      */
-    _mergeTagSet(bagItProfile, tags, indices) {
+    _mergeTagSet(bagItProfile, tags, profileTags) {
         let firstInstanceOfTag = null;
         for (let i = 0; i < tags.length; i++) {
             let tag = tags[i];
-            if (indices.length > i) {
-                let tagIndex = indices[i];
-                let tagInProfile = bagItProfile.tags[tagIndex];
+            if (profileTags.length > i) {
+                let tagInProfile = profileTags[i];
                 if (!firstInstanceOfTag) {
                     // If this tag definition exists in the BagItProfile,
                     // keep a copy of it for use in the else clause
@@ -266,22 +266,22 @@ class JobParams {
         return groupedTags;
     }
 
-    /**
-     * Returns the array indices of every TagDefinition in bagItProfile
-     * that match tagFile and tagName.
-     *
-     * @returns {Array<number>}
-     */
-    _getTagIndices(bagItProfile, tagFile, tagName) {
-        let indices = [];
-        for(let i = 0; i < bagItProfile.tags.length; i++) {
-            let tag = bagItProfile.tags[i];
-            if (tag.tagFile == tagFile && tag.tagName == tagName) {
-                indices.push(i);
-            }
-        }
-        return indices;
-    }
+    // /**
+    //  * Returns the array indices of every TagDefinition in bagItProfile
+    //  * that match tagFile and tagName.
+    //  *
+    //  * @returns {Array<number>}
+    //  */
+    // _getTagIndices(bagItProfile, tagFile, tagName) {
+    //     let indices = [];
+    //     for(let i = 0; i < bagItProfile.tags.length; i++) {
+    //         let tag = bagItProfile.tags[i];
+    //         if (tag.tagFile == tagFile && tag.tagName == tagName) {
+    //             indices.push(i);
+    //         }
+    //     }
+    //     return indices;
+    // }
 
     /**
      * This does the same as {@link JobParams#toJob}, but instead of
