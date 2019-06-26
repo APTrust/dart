@@ -1,5 +1,9 @@
+const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Job } = require('./job');
+const { PackageOperation } = require('./package_operation');
+const path = require('path');
+const { UploadOperation } = require('./upload_operation');
 const { Workflow } = require('./workflow');
 
 /**
@@ -103,14 +107,13 @@ class JobParams {
          * @type {Array<TagDefinition>}
          */
         this.tags = opts.tags;
-    }
 
-    /**
-     * Validates that the JobParams are complete.
-     *
-     */
-    validate() {
 
+        this._workflowObj = null;
+
+        this._bagItProfile = null;
+
+        this.errors = {};
     }
 
     /**
@@ -140,7 +143,21 @@ class JobParams {
      * @returns {@link Job}
      */
     toJob() {
+        if (!this._getWorkflow()) {
+            return null;
+        }
+        if (!this._getBagItProfile()) {
+            return null;
+        }
+        let job = new Job();
 
+        // Call job.validate before returning.
+    }
+
+    validate() {
+        // If packageName, then files are required.
+        // If packageName, then packageFormat is required.
+        // If packageFormat requires a plugin, then pluginId required.
     }
 
     /**
@@ -155,6 +172,76 @@ class JobParams {
     toJobFile(pathToFile) {
 
     }
+
+    _getWorkflow() {
+        this._workflowObj = Workflow.firstMatching('name', this.workflow);
+        if (!this._workflowObj) {
+            this.errors['workflow'] = Context.y18n.__('Cannot find workflow %s', this.workflow);
+            return false;
+        }
+        return true;
+    }
+
+    _getBagItProfile() {
+        if (this._workflowObj.bagItProfileId) {
+            this._bagItProfile = BagItProfile.find(this._workflowObj.bagItProfileId);
+            if (!bagItProfile) {
+                this.errors['bagItProfile'] = Context.y18n.__("Could not find BagItProfile with id %s", this._workflowObj.bagItProfileId);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    _buildJob() {
+        // Note: No need to create job.validationOp. The JobRunner will
+        // create that if the package format is BagIt and the package was
+        // successfully created. See workers/job_runner.js#createPackage().
+        let job = new Job();
+        job.name = this._workflowObj.packageName || Job.genericName();
+        job.bagItProfile = this._bagItProfile;
+        this._makePackageOp(job);
+        this._makeUploadOps(job);
+        return job;
+    }
+
+    _makePackageOp(job) {
+        if (this.packageName) {
+            let outputPath = this._getOutputPath();
+            job.packageOp = new PackageOperation(this.packageName, outputPath);
+            job.packageOp.packageFormat = this._workflowObj.packageFormat;
+            job.packageOp.pluginId = this._workflowObj.packagePluginId;
+            job.packageOp.sourceFiles = this._workflowObj.files;
+        }
+    }
+
+    _makeUploadOps(job) {
+        if (!this._workflowObj.storageServiceIds || this._workflowObj.storageServiceIds.length == 0) {
+            // No storage services specified, so no uploads to perform.
+            return;
+        }
+        let files = [];
+        if (job.packageOp && job.packageOp.outputPath) {
+            // We want to upload the result of the package operation.
+            files = [job.packageOp.outputPath];
+        } else {
+            // No packaging step. We want to upload the files themselves.
+            files = this.files;
+        }
+        for (let ssid of this._workflowObj.storageServiceIds) {
+            job.uploadOps.push(new UploadOperation(ssid, files));
+        }
+    }
+
+    _getOutputPath() {
+        let outputPath = null;
+        if (this.packageName) {
+            let outputDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
+            outputPath = path.join(outputDir, this.packageName);
+        }
+        return outputPath;
+    }
+
 }
 
 module.exports.JobParams = JobParams;
