@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      BagItFile - Documentation
+      core/job_params.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -79,1900 +81,427 @@
   <div id="main">
     
       <h1 class="page-title">
-        BagItFile
+        core/job_params.js
       </h1>
     
 
     
+      
 
 <section>
-  <header>
-    
-      <h2>
-        
-        BagItFile
-        
-      </h2>
-
-      
-        <div class="class-description">
-          <p>BagItFile contains metadata about a file that the bagger
-will be packaging into a bag. This metadata includes the
-file's absolute source path, its relative path within the
-bag, its size and checksums, and a few other bits of data.</p>
-<p>If the file happens to be a tag file, manifest, or tag manifest,
-it may have additional data stored in the keyValueCollection
-property. That data may be written into a text file during the
-bagging process.</p>
-        </div>
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-
-
-  
-    <h2>Constructor</h2>
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#BagItFile">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="BagItFile">
-      <span class="type-signature"></span>new BagItFile<span class="signature">(absSourcePath, relDestPath, stats)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>absSourcePath</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The absolute source path of the
-file. The bagger will copy the file from this path into
-relDestPath inside the bag.</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>relDestPath</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The relative path at which this
-file should reside within the bag. For manifests, relDestPath
-will be inside the top-level directory of the bag. For example,
-at 'manifest-sha256.txt'. For payload files, relDestPath will
-have the prefix 'data/'. For example, 'data/images/photo.jpg.'
-Some bagging profiles permit tag files in subdirectories outside
-the payload directory; hence 'dpn-data/dpn-tags.txt' may be a
-valid relDestPath. BagItFile infers the type of the file from
-the relDestPath param.</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>stats</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      object
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>A subset of stats gathered from Node's
-fs.Stat() function. The BagItFile object keeps only a handful of
-properties from fs.Stat(). This param can be a Node.js fs.Stats
-object or a <a href="FileStat.html">FileStat</a> object.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line38">line 38</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-
-<h4 class="name" id="absSourcePath">
-  <span class="type-signature"></span>absSourcePath<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>absSourcePath is the absolute source path to this file.
-The bagger will copy the file from this path into
-relDestPath inside the bag.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line46">line 46</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="checksums">
-  <span class="type-signature"></span>checksums<span class="type-signature"> :Object.&lt;string, string></span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>checksums contains a hash of fixity values we calculate on
-the file's contents.</p>
-<p>key = algorithm name ('md5', 'sha256', etc.)
-value = digest</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line114">line 114</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="fileType">
-  <span class="type-signature"></span>fileType<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>fileType is one of 'manifest', 'tagmanifest', 'payload', or 'tagfile',
-based on relDestPath. File types are defined in Constants.FILE_TYPES.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line104">line 104</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="gid">
-  <span class="type-signature"></span>gid<span class="type-signature"> :number</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>gid is the id of the group that owns this file.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line78">line 78</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="isDirectory">
-  <span class="type-signature"></span>isDirectory<span class="type-signature"> :boolean</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>isDirectory will be true if this is a directory.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line97">line 97</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="isFile">
-  <span class="type-signature"></span>isFile<span class="type-signature"> :boolean</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>isFile will be true if this is a regular file.
-It will be false if this is a directory, socket, or link.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line91">line 91</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="keyValueCollection">
-  <span class="type-signature"></span>keyValueCollection<span class="type-signature"> :<a href="KeyValueCollection.html">KeyValueCollection</a></span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>keyValueCollection is used by the validator to store
-the parsed contents of tag files and manifests.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line121">line 121</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="mtime">
-  <span class="type-signature"></span>mtime<span class="type-signature"> :Date</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>mtime is the time this file was last modified.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line84">line 84</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="relDestPath">
-  <span class="type-signature"></span>relDestPath<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>The relative path at which this
-file should reside within the bag. For manifests, relDestPath
-will be inside the top-level directory of the bag. For example,
-at 'manifest-sha256.txt'. For payload files, relDestPath will
-have the prefix 'data/'. For example, 'data/images/photo.jpg.'
-Some bagging profiles permit tag files in subdirectories outside
-the payload directory; hence 'dpn-data/dpn-tags.txt' may be a
-valid relDestPath. BagItFile infers the type of the file from
-the relDestPath param.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line60">line 60</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="size">
-  <span class="type-signature"></span>size<span class="type-signature"> :number</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>size is the size, in bytes, of the file.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line66">line 66</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="uid">
-  <span class="type-signature"></span>uid<span class="type-signature"> :number</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>uid is the id of the user who owns the file.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line72">line 72</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-    
-
-    
-      <h3 class="subsection-title">Methods</h3>
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#.getFileType">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id=".getFileType">
-      <span class="type-signature">(static) </span>getFileType<span class="signature">(relDestPath)</span><span class="type-signature"> &rarr; {string}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>getFileType returns the type of BagIt file based on relDestPath.
-File types are defined in Constants.FILE_TYPES and include
-'manifest', 'tagmanifest', 'payload', and 'tagfile'.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>relDestPath</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The relative path, within the bag,
-of the file. For example, 'data/images/photo.jpg' or 'manifest-sha256.txt'.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line231">line 231</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#getCryptoHash">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="getCryptoHash">
-      <span class="type-signature"></span>getCryptoHash<span class="signature">(algorithm, done)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>This returns a crypto hash that will add a hex digest to this
-BagItFile's checksums object upon completion. For example, adding
-a crypto hash with algorithm 'sha512' will result in
-bagItFile.checksums['sha512'] being populated with the file's
-sha512 digest after you pipe the file's contents through the hash
-object. It's up to the caller to pipe the data through.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>algorithm</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The hash digest algorithm to calculate.
-For example, 'md5', 'sha256', 'sha512', etc.</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>done</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      function
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>A callback to call when hasing is complete.
-The callback will be given data with the format:</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line202">line 202</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <div class="example-container">
-    <a class="link-icon" href="#getCryptoHash-examples">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h5 id="getCryptoHash-examples">Example</h5>
-    
-
-  <pre class="prettyprint"><code>{ absSourcePath: &lt;bagItFile.absSourcePath>,
-  relPath: &lt;bagItFile.relDestPath>,
-  algorithm: &lt;hashing algorithm>,
-  digest: &lt;message digest as hex string>
-}</code></pre>
-
-
-  </div>
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#getManifestEntry">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="getManifestEntry">
-      <span class="type-signature"></span>getManifestEntry<span class="signature">(algorithm)</span><span class="type-signature"> &rarr; {string}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns the manifest entry for the specified algorithm,
-or throws an exception if the checksum for that algorithm
-is not present. The format of the returned string is suitable
-for printing into a payload manifest or tag manifest.</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>algorithm</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The algorithm of the digest to retrieve.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line135">line 135</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#isPayloadFile">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="isPayloadFile">
-      <span class="type-signature"></span>isPayloadFile<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns true if this is a payload file.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line148">line 148</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#isPayloadManifest">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="isPayloadManifest">
-      <span class="type-signature"></span>isPayloadManifest<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns true if this is a payload manifest.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line157">line 157</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#isTagFile">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="isTagFile">
-      <span class="type-signature"></span>isTagFile<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns true if this is a tag file.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line166">line 166</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#isTagManifest">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="isTagManifest">
-      <span class="type-signature"></span>isTagManifest<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns true if this is a tag manifest.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="bagit_bagit_file.js.html">bagit/bagit_file.js</a>, <a href="bagit_bagit_file.js.html#line175">line 175</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    
-
-    
-
-    
+    <pre class="prettyprint source linenums"><code>const { AppSetting } = require('./app_setting');
+const { BagItProfile } = require('../bagit/bagit_profile');
+const fs = require('fs');
+const { Job } = require('./job');
+const { PackageOperation } = require('./package_operation');
+const path = require('path');
+const { TagDefinition } = require('../bagit/tag_definition');
+const { UploadOperation } = require('./upload_operation');
+const { Workflow } = require('./workflow');
+
+/**
+ * The JobParams class provides a way of converting a simple set of
+ * parameters into a DART job. See the {@link JobParams#toJob} method
+ * for details on how this small data structure is converted to a Job.
+ *
+ * @param {object} opts
+ *
+ * @param {string} opts.workflow - The name of the workflow to run. The
+ * {@link JobParams#toJob} method will create a {@link Job} that includes
+ * all of the components of the named Workflow, including packaging,
+ * validation, and upload to one or more targets. Be sure to name an
+ * existing {@link Workflow}, or you'll get an error when you call
+ * {@link JobParams#toJob}.
+ *
+ * @param {string} [opts.packageName] - The name of the package/file
+ * your job will create. This may be a tar or zip file. For example,
+ * "virginia.edu.Photos_2019-06-26.tar", "pdfs.zip", etc. This parameter
+ * is required if your job will be creating a package.
+ *
+ * @param {string} [opts.files] - An array of file paths. These are the
+ * files that the job will be packaging and/or uploading. These should be
+ * absolute paths.
+ *
+ * @param {Array&lt;TagDefinition>} [opts.tags] - These are required only
+ * if your job will be creating a package in BagIt, OCFL, or another
+ * format that requires metadata in name-value pairs. These values will
+ * be written into the package. Per the BagIt specification, repeated
+ * tags (those with the same tagFile and tagName) will be written in the
+ * same order in which they appear in the opts.tags array.
+ *
+ * @example
+ *
+ * let opts = {
+ * 	workflow: "Name of Workflow",
+ * 	packageName: "test.edu.my_files.tar",
+ * 	files: [
+ * 		"/path/to/first/directory",
+ * 		"/path/to/second/directory",
+ * 		"/path/to/some/document.pdf"
+ * 	],
+ * 	tags: [
+ * 		{
+ * 			"tagFile": "bag-info.txt",
+ * 			"tagName": "Bag-Group-Identifier",
+ * 			"userValue": "Photos_2019"
+ * 		},
+ * 		{
+ * 			"tagFile": "aptrust-info.txt",
+ * 			"tagName": "Title",
+ * 			"userValue": "Photos from 2019"
+ * 		},
+ * 		{
+ * 			"tagFile": "aptrust-info.txt",
+ * 			"tagName": "Description",
+ * 			"userValue": "What I did with my summer vacation."
+ * 		},
+ * 		{
+ * 			"tagFile": "custom/legal-info.txt",
+ * 			"tagName": "License",
+ * 			"userValue": "https://creativecommons.org/publicdomain/zero/1.0/"
+ * 		}
+ * 	]
+ * }
+ *
+ * let jobParams = new JobParams(opts);
+ *
+ * // Create a job and save it to the DART Jobs database.
+ * let job = jobParams.toJob();
+ * job.save();
+ *
+ * // Or just write the job directly to a JSON file.
+ * jobParams.toJobFile("/tmp/dart/job_file.json");
+ */
+class JobParams {
+    constructor(opts = {}) {
+        /**
+         * The name of the workflow. This workflow will provide the
+         * template for the job.
+         *
+         * @type {string}
+         */
+        this.workflow = opts.workflow;
+        /**
+         * The name of the package or output file to create.
+         *
+         * @type {string}
+         */
+        this.packageName = opts.packageName;
+        /**
+         * A list of files to package and/or upload. These should be
+         * absolute paths.
+         *
+         * @type {Array&lt;string>}
+         */
+        this.files = opts.files;
+        /**
+         * A list of metadata tags to include in the package.
+         *
+         * @type {Array&lt;TagDefinition>}
+         */
+        this.tags = opts.tags;
+        /**
+         * A copy of the {@link Workflow} object whose name matches
+         * this.workflow. This is private, for internal use only.
+         *
+         * @private
+         * @type {Workflow}
+         */
+        this._workflowObj = null;
+        /**
+         * A copy of the {@link BagItProfile} object whose id matches
+         * this._workflowObj.bagItProfileId. This is private, for internal
+         * use only.
+         *
+         * @private
+         * @type {BagItProfile}
+         */
+        this._bagItProfile = null;
+        /**
+         * A hash of validation errors for this JobParams object. Keys
+         * are the names of invalid properies. Values are error messages
+         * (strings) describing why the field is invalid.
+         *
+         * @type {object.&lt;string, string>}
+         */
+        this.errors = {};
+    }
+
+    /**
+     * Converts the JobParams to a {@link Job} object, which DART can then
+     * run. This performs the following operations to create a job:
+     *
+     * 1. Loads the {@link Workflow} speficied in this.workflow.
+     *
+     * 2. Creates a {@link Job} object patterned after that Workflow.
+     *
+     * 3. Copies the packageName and files (if specified) into the new
+     *    {@link Job} object.
+     *
+     * 4. If the {@link Workflow} includes a {@link BagItProfile}, this
+     *    copies this.tags into a copy of that {@link BagItProfile}.
+     *    Typically, most tag values in a DART {@link BagItProfile}, such
+     *    as "Source-Organization", "Contact-Email", etc. are set to
+     *    default values because they do not change from one bag to the
+     *    next. More specific values, such as "Title", "Description", or
+     *    "Internal-Sender-Identifier" do change from bag to bag. The
+     *    {@link JobParams#tags} property allows you to overwrite
+     *    bag-specific tag values withouth having to re-specify any
+     *    default tag values. Any values you specify in {@link JobParams#tags}
+     *    will overwrite tag values in the job-specific copy of the
+     *    {@link BagItProfile}.
+     *
+     * @returns {@link Job}
+     */
+    toJob() {
+        if (!this._getWorkflow()) {
+            return null;
+        }
+        if (!this._getBagItProfile()) {
+            return null;
+        }
+        // Call job.validate before returning?
+        return this._buildJob();
+    }
+
+    /**
+     * Validates this JobParams object to ensure it can build a valid
+     * job.
+     *
+     */
+    validate() {
+        // If packageName, then files are required.
+        // If packageName, then packageFormat is required.
+        // If packageFormat requires a plugin, then pluginId required.
+    }
+
+    /**
+     * Merge tags from this.tags into the Job's copy of the BagItProfile.
+     * Note that this.tags may include 1..N instances of a tag that is
+     * defined 1 time in the BagItProfile. In those cases, this merge function
+     * ensures that all values from this.tags will be copied, and that
+     * any validation constraints on the original {@link TagDefinition} in
+     * the {@link BagItProfile} will be copied to all instances of the tag.
+     * Those constraints include the "required" attribute and the list of
+     * valid values in the "values" attribute.
+     *
+     * @param {Job}
+     */
+    _mergeTags(job) {
+        for(let tags of Object.values(this._groupedTags())) {
+            // Every tag in this list will have the same tagFile and tagName.
+            let firstTag = tags[0];
+            //let indices = this._getTagIndices(job.bagItProfile, firstTag.tagFile, firstTag.tagName);
+            let profileTags = job.bagItProfile.tags.filter(tag => tag.tagFile == firstTag.tagFile &amp;&amp; tag.tagName == firstTag.tagName);
+            this._mergeTagSet(job.bagItProfile, tags, profileTags);
+        }
+    }
+
+    /**
+     * Merges one or more values from this.tags into job.bagItProfile.tags.
+     *
+     */
+    _mergeTagSet(bagItProfile, tags, profileTags) {
+        let firstInstanceOfTag = null;
+        for (let i = 0; i &lt; tags.length; i++) {
+            let tag = tags[i];
+            if (profileTags.length > i) {
+                let tagInProfile = profileTags[i];
+                if (!firstInstanceOfTag) {
+                    // If this tag definition exists in the BagItProfile,
+                    // keep a copy of it for use in the else clause
+                    // below. The tag definition may include important
+                    // validation info, such as whether a value is
+                    // required and which values are legal.
+                    firstInstanceOfTag = tagInProfile;
+                }
+                tagInProfile.userValue = tag.userValue;
+            } else {
+                // We have more instances of the tag specified
+                // in our .tags array than in the BagItProfile.
+                // This is allowed. Just append the new values
+                // in order, per the BagIt spec (which says order
+                // may be important).
+                let newTag = new TagDefinition();
+                let origId = netTag.id;
+                if (firstInstanceOfTag) {
+                    Object.assign(newTag, firstInstanceOfTag);
+                    newTag.id = origId;
+                } else {
+                    newTag.tagFile = tag.tagFile;
+                    newTag.tagName = tag.tagName;
+                }
+                newTag.userValue = tag.userValue;
+                bagItProfile.tags.push(newTag);
+            }
+        }
+    }
+
+    /**
+     * Returns an object in which tags having the same
+     * tagFile and tagName are grouped. The order of the tags within
+     * each group is preserved. The key to each object is tagFile/tagName
+     * and the value is a list of tags having that tagFile and tagName.
+     *
+     * @returns {object}
+     */
+    _groupedTags() {
+        let groupedTags = {};
+        for (let tag of this.tags) {
+            let key = tag.tagFile + '/' + tag.tagName;
+            if (key in groupedTags === false) {
+                groupedTags[key] = [];
+            }
+            groupedTags[key].push(tag)
+        }
+        return groupedTags;
+    }
+
+    // /**
+    //  * Returns the array indices of every TagDefinition in bagItProfile
+    //  * that match tagFile and tagName.
+    //  *
+    //  * @returns {Array&lt;number>}
+    //  */
+    // _getTagIndices(bagItProfile, tagFile, tagName) {
+    //     let indices = [];
+    //     for(let i = 0; i &lt; bagItProfile.tags.length; i++) {
+    //         let tag = bagItProfile.tags[i];
+    //         if (tag.tagFile == tagFile &amp;&amp; tag.tagName == tagName) {
+    //             indices.push(i);
+    //         }
+    //     }
+    //     return indices;
+    // }
+
+    /**
+     * This does the same as {@link JobParams#toJob}, but instead of
+     * returning the Job object, it writes it as JSON to the specified
+     * file.
+     *
+     * @param {string} pathToFile - The path to the file where you want
+     * to write a JSON description of this job.
+     *
+     */
+    toJobFile(pathToFile) {
+        let job = this.toJob();
+        fs.writeFileSync(pathToFile, JSON.stringify(this.job));
+    }
+
+    _getWorkflow() {
+        this._workflowObj = Workflow.firstMatching('name', this.workflow);
+        if (!this._workflowObj) {
+            this.errors['workflow'] = Context.y18n.__('Cannot find workflow %s', this.workflow);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Sets this._bagItProfile to the {@link BagItProfile} object whose
+     * id is stored in this._workFlowObj.bagItProfileId, or does nothing if
+     * no profile id is specified. Returns false and sets
+     * this.errors['bagItProfile'] if a profile id was specified
+     * but no matching BagItProfile could be found. Returns true otherwise.
+     *
+     * @returns {boolean}
+     */
+    _getBagItProfile() {
+        if (this._workflowObj.bagItProfileId) {
+            this._bagItProfile = BagItProfile.find(this._workflowObj.bagItProfileId);
+            if (!bagItProfile) {
+                this.errors['bagItProfile'] = Context.y18n.__("Could not find BagItProfile with id %s", this._workflowObj.bagItProfileId);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Builds a {@link Job} object based on the workflow and other params
+     * specified in this JobParams object. Returns the object, but does
+     * not save it to the DART Jobs database. It's up to the caller to do
+     * that, if they so choose.
+     *
+     * @returns {Job}
+     */
+    _buildJob() {
+        // Note: No need to create job.validationOp. The JobRunner will
+        // create that if the package format is BagIt and the package was
+        // successfully created. See workers/job_runner.js#createPackage().
+        let job = new Job();
+        job.name = this._workflowObj.packageName || Job.genericName();
+        job.bagItProfile = this._bagItProfile;
+        this._makePackageOp(job);
+        this._makeUploadOps(job);
+        this._mergeTags(job);
+        return job;
+    }
+
+    /**
+     * Creates the {@link PackageOperation} for the {@link Job} returned
+     * by {@link JobParams#buildJob}.
+     *
+     * @param {Job}
+     */
+    _makePackageOp(job) {
+        if (this.packageName) {
+            let outputPath = this._getOutputPath();
+            job.packageOp = new PackageOperation(this.packageName, outputPath);
+            job.packageOp.packageFormat = this._workflowObj.packageFormat;
+            job.packageOp.pluginId = this._workflowObj.packagePluginId;
+            job.packageOp.sourceFiles = this._workflowObj.files;
+        }
+    }
+
+    /**
+     * Creates the {@link UploadOperation}s for the {@link Job} returned
+     * by {@link JobParams#buildJob}.
+     *
+     * @param {Job}
+     */
+    _makeUploadOps(job) {
+        if (!this._workflowObj.storageServiceIds || this._workflowObj.storageServiceIds.length == 0) {
+            // No storage services specified, so no uploads to perform.
+            return;
+        }
+        let files = [];
+        if (job.packageOp &amp;&amp; job.packageOp.outputPath) {
+            // We want to upload the result of the package operation.
+            files = [job.packageOp.outputPath];
+        } else {
+            // No packaging step. We want to upload the files themselves.
+            files = this.files;
+        }
+        for (let ssid of this._workflowObj.storageServiceIds) {
+            job.uploadOps.push(new UploadOperation(ssid, files));
+        }
+    }
+
+    /**
+     * Returns the output path of the package that will be built during
+     * the Job's packaging stage.
+     *
+     * @returns {string}
+     */
+    _getOutputPath() {
+        let outputPath = null;
+        if (this.packageName) {
+            let outputDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
+            outputPath = path.join(outputDir, this.packageName);
+        }
+        return outputPath;
+    }
+
+}
+
+module.exports.JobParams = JobParams;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
