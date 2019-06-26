@@ -148,7 +148,7 @@ class Job extends PersistentObject {
         }
         // If no title or filename, create a generic name.
         if (!name) {
-            name = `Job of ${dateFormat(this.createdAt, 'shortDate')} ${dateFormat(this.createdAt, 'shortTime')}`;
+            name = Job.genericName(this.createdAt);
         }
         return Util.truncateString(name, 40);
     }
@@ -362,6 +362,22 @@ class Job extends PersistentObject {
         }
         return false;
     }
+
+    /**
+     * This returns a generic job name that includes a date and
+     * time.
+     *
+     * @param {Date} date - The date the job was created. Use job.createdAt.
+     *
+     * @returns {string}
+     */
+    static genericName(date) {
+        return Context.y18n.__(
+            "Job of %s %s",
+            dateFormat(date, 'shortDate'),
+            dateFormat(date, 'shortTime'));
+    }
+
 
     /**
      * This converts the JSON representation of a job as stored in the DB

@@ -196,6 +196,12 @@ test('uploadSucceeded()', () => {
     expect(job.uploadSucceeded()).toBe(true);
 });
 
+test('genericName()', () => {
+    let name = Job.genericName();
+    expect(name.startsWith('Job of')).toBe(true);
+    expect(name.length).toBeGreaterThan(20);
+});
+
 test('inflateFrom()', () => {
     let job = getJobWithOps();
     let json = JSON.stringify(job);
