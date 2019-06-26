@@ -1,5 +1,6 @@
 const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
+const fs = require('fs');
 const { Job } = require('./job');
 const { PackageOperation } = require('./package_operation');
 const path = require('path');
@@ -149,15 +150,103 @@ class JobParams {
         if (!this._getBagItProfile()) {
             return null;
         }
-        let job = new Job();
-
-        // Call job.validate before returning.
+        // Call job.validate before returning?
+        return this._buildJob();
     }
 
     validate() {
         // If packageName, then files are required.
         // If packageName, then packageFormat is required.
         // If packageFormat requires a plugin, then pluginId required.
+    }
+
+    /**
+     * Merge tags from this.tags into the Job's copy of the BagItProfile.
+     * Note that this.tags may include 1..N instances of a tag that is
+     * defined 1 time in the BagItProfile. In those cases, this merge function
+     * ensures that all values from this.tags will be copied, and that
+     * any validation constraints on the original {@link TagDefinition} in
+     * the {@link BagItProfile} will be copied to all instances of the tag.
+     * Those constraints include the "required" attribute and the list of
+     * valid values in the "values" attribute.
+     *
+     * @param {Job}
+     */
+    _mergeTags(job) {
+        for(let tags of Object.values(this._groupedTags())) {
+            // Every tag in this list will have the same tagFile and tagName.
+            let firstTag = tags[0];
+            let indices = this._getTagIndices(bagItProfile, firstTag.tagFile, firstTag.tagName);
+            this._mergeTagSet(tags, indices, bagItProfile);
+        }
+    }
+
+    _mergeTagSet(tags, indices, bagItProfile) {
+        let firstInstanceOfTag = null;
+        for (let i = 0; i < tags.length; i++) {
+            let tag = tags[i];
+            if (indices.length > i) {
+                let tagIndex = indices[i];
+                let tagInProfile = bagItProfile.tags[tagIndex];
+                if (!firstInstanceOfTag) {
+                    // If this tag definition exists in the BagItProfile,
+                    // keep a copy of it for use in the else clause
+                    // below. The tag definition may include important
+                    // validation info, such as whether a value is
+                    // required and which values are legal.
+                    firstInstanceOfTag = tagInProfile;
+                }
+                tagInProfile.userValue = tag.userValue;
+            } else {
+                // We have more instances of the tag specified
+                // in our .tags array than in the BagItProfile.
+                // This is allowed. Just append the new values
+                // in order, per the BagIt spec (which says order
+                // may be important).
+                let newTag = new TagDefinition();
+                let origId = netTag.id;
+                if (firstInstanceOfTag) {
+                    Object.assign(newTag, firstInstanceOfTag);
+                    newTag.id = origId;
+                } else {
+                    newTag.tagFile = tag.tagFile;
+                    newTag.tagName = tag.tagName;
+                }
+                newTag.userValue = tag.userValue;
+                bagItProfile.tags.push(newTag);
+            }
+        }
+    }
+
+    /**
+     * Returns an object in which tags having the same
+     * tagFile and tagName are grouped. The order of the tags within
+     * each group is preserved. The key to each object is tagFile/tagName
+     * and the value is a list of tags having that tagFile and tagName.
+     *
+     * @returns {object}
+     */
+    _groupedTags() {
+        let groupedTags = {};
+        for (let tag of this.tags) {
+            let key = tag.tagFile + '/' + tag.tagName;
+            if (key in groupedTags === false) {
+                groupedTags[key] = [];
+            }
+            groupedTags[key].push(tag)
+        }
+        return groupedTags;
+    }
+
+    _getTagIndices(bagItProfile, tagFile, tagName) {
+        let indices = [];
+        for(let i = 0; i < bagItProfile.tags.length; i++) {
+            let tag = bagItProfile.tags[i];
+            if (tag.tagFile == tagFile && tag.tagName == tagName) {
+                indices.push(i);
+            }
+        }
+        return indices;
     }
 
     /**
@@ -170,7 +259,8 @@ class JobParams {
      *
      */
     toJobFile(pathToFile) {
-
+        let job = this.toJob();
+        fs.writeFileSync(pathToFile, JSON.stringify(this.job));
     }
 
     _getWorkflow() {
@@ -202,6 +292,7 @@ class JobParams {
         job.bagItProfile = this._bagItProfile;
         this._makePackageOp(job);
         this._makeUploadOps(job);
+        this._mergeTags(job);
         return job;
     }
 
