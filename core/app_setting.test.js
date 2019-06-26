@@ -41,6 +41,17 @@ test('validate()', () => {
     expect(result3).toEqual(true);
 });
 
+test('validate() ensures unique name', () => {
+    let setting1 = new AppSetting({ name: 'This name is taken' });
+    expect(setting1.validate()).toBe(true);
+    setting1.save();
+
+    let setting2 = new AppSetting({ name: 'This name is taken' });
+    expect(setting2.validate()).toBe(false);
+    expect(setting2.errors['name']).toEqual(Context.y18n.__(
+        '%s must be unique', "name"));
+})
+
 test('find()', () => {
     let objs = makeObjects(3);
     let obj = objs[1];

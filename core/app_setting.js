@@ -64,7 +64,14 @@ class AppSetting extends PersistentObject {
      * @returns {boolean}
      */
     validate() {
-        return super.validate();
+        super.validate();
+        let setting = AppSetting.firstMatching('name', this.name);
+        if (setting && setting.id != this.id) {
+            this.errors["name"] = Context.y18n.__(
+                "%s must be unique", "name"
+            );
+        }
+        return Object.keys(this.errors).length == 0;
     }
 }
 
