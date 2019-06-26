@@ -4,6 +4,7 @@ const fs = require('fs');
 const { Job } = require('./job');
 const { PackageOperation } = require('./package_operation');
 const path = require('path');
+const { TagDefinition } = require('../bagit/tag_definition');
 const { UploadOperation } = require('./upload_operation');
 const { Workflow } = require('./workflow');
 
@@ -108,12 +109,30 @@ class JobParams {
          * @type {Array<TagDefinition>}
          */
         this.tags = opts.tags;
-
-
+        /**
+         * A copy of the {@link Workflow} object whose name matches
+         * this.workflow. This is private, for internal use only.
+         *
+         * @private
+         * @type {Workflow}
+         */
         this._workflowObj = null;
-
+        /**
+         * A copy of the {@link BagItProfile} object whose id matches
+         * this._workflowObj.bagItProfileId. This is private, for internal
+         * use only.
+         *
+         * @private
+         * @type {BagItProfile}
+         */
         this._bagItProfile = null;
-
+        /**
+         * A hash of validation errors for this JobParams object. Keys
+         * are the names of invalid properies. Values are error messages
+         * (strings) describing why the field is invalid.
+         *
+         * @type {object.<string, string>}
+         */
         this.errors = {};
     }
 
@@ -154,6 +173,11 @@ class JobParams {
         return this._buildJob();
     }
 
+    /**
+     * Validates this JobParams object to ensure it can build a valid
+     * job.
+     *
+     */
     validate() {
         // If packageName, then files are required.
         // If packageName, then packageFormat is required.
@@ -177,11 +201,15 @@ class JobParams {
             // Every tag in this list will have the same tagFile and tagName.
             let firstTag = tags[0];
             let indices = this._getTagIndices(bagItProfile, firstTag.tagFile, firstTag.tagName);
-            this._mergeTagSet(tags, indices, bagItProfile);
+            this._mergeTagSet(bagItProfile, tags, indices);
         }
     }
 
-    _mergeTagSet(tags, indices, bagItProfile) {
+    /**
+     * Merges one or more values from this.tags into job.bagItProfile.tags.
+     *
+     */
+    _mergeTagSet(bagItProfile, tags, indices) {
         let firstInstanceOfTag = null;
         for (let i = 0; i < tags.length; i++) {
             let tag = tags[i];
@@ -238,6 +266,12 @@ class JobParams {
         return groupedTags;
     }
 
+    /**
+     * Returns the array indices of every TagDefinition in bagItProfile
+     * that match tagFile and tagName.
+     *
+     * @returns {Array<number>}
+     */
     _getTagIndices(bagItProfile, tagFile, tagName) {
         let indices = [];
         for(let i = 0; i < bagItProfile.tags.length; i++) {
@@ -272,6 +306,15 @@ class JobParams {
         return true;
     }
 
+    /**
+     * Sets this._bagItProfile to the {@link BagItProfile} object whose
+     * id is stored in this._workFlowObj.bagItProfileId, or does nothing if
+     * no profile id is specified. Returns false and sets
+     * this.errors['bagItProfile'] if a profile id was specified
+     * but no matching BagItProfile could be found. Returns true otherwise.
+     *
+     * @returns {boolean}
+     */
     _getBagItProfile() {
         if (this._workflowObj.bagItProfileId) {
             this._bagItProfile = BagItProfile.find(this._workflowObj.bagItProfileId);
@@ -283,6 +326,14 @@ class JobParams {
         return true;
     }
 
+    /**
+     * Builds a {@link Job} object based on the workflow and other params
+     * specified in this JobParams object. Returns the object, but does
+     * not save it to the DART Jobs database. It's up to the caller to do
+     * that, if they so choose.
+     *
+     * @returns {Job}
+     */
     _buildJob() {
         // Note: No need to create job.validationOp. The JobRunner will
         // create that if the package format is BagIt and the package was
@@ -296,6 +347,12 @@ class JobParams {
         return job;
     }
 
+    /**
+     * Creates the {@link PackageOperation} for the {@link Job} returned
+     * by {@link JobParams#buildJob}.
+     *
+     * @param {Job}
+     */
     _makePackageOp(job) {
         if (this.packageName) {
             let outputPath = this._getOutputPath();
@@ -306,6 +363,12 @@ class JobParams {
         }
     }
 
+    /**
+     * Creates the {@link UploadOperation}s for the {@link Job} returned
+     * by {@link JobParams#buildJob}.
+     *
+     * @param {Job}
+     */
     _makeUploadOps(job) {
         if (!this._workflowObj.storageServiceIds || this._workflowObj.storageServiceIds.length == 0) {
             // No storage services specified, so no uploads to perform.
@@ -324,6 +387,12 @@ class JobParams {
         }
     }
 
+    /**
+     * Returns the output path of the package that will be built during
+     * the Job's packaging stage.
+     *
+     * @returns {string}
+     */
     _getOutputPath() {
         let outputPath = null;
         if (this.packageName) {
