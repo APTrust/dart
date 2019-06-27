@@ -257,7 +257,7 @@ class JobParams {
     _groupedTags() {
         let groupedTags = {};
         for (let tag of this.tags) {
-            let key = tag.tagFile + '/' + tag.tagName;
+            let key = tag.tagFile + ':' + tag.tagName;
             if (key in groupedTags === false) {
                 groupedTags[key] = [];
             }
@@ -363,8 +363,6 @@ class JobParams {
             job.packageOp.packageFormat = this._workflowObj.packageFormat;
             job.packageOp.pluginId = this._workflowObj.packagePluginId;
             job.packageOp.sourceFiles = this.files;
-        } else {
-            job.packageOp = null;
         }
     }
 

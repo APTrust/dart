@@ -7,6 +7,7 @@ const os = require('os');
 const path = require('path');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
+const { Util } = require('./util');
 const { Workflow } = require('./workflow');
 
 beforeAll(() => {
@@ -32,7 +33,13 @@ const BagsPath = path.join(__dirname, '..', 'test', 'bags');
 const FixturesPath = path.join(__dirname, '..', 'test', 'fixtures');
 const ProfilesPath = path.join(__dirname, '..', 'test', 'profiles');
 
-var files = [ BagsPath, FixturesPath, ProfilesPath ];
+const Files = [ BagsPath, FixturesPath, ProfilesPath ];
+const GroupedTagKeys = [
+    'bag-info.txt:Bag-Group-Identifier',
+    'aptrust-info.txt:Title',
+    'aptrust-info.txt:Description',
+    'custom/legal-info.txt:License'
+];
 
 function saveStorageServices() {
     new StorageService({ name: 'Service 1'}).save();
@@ -118,11 +125,36 @@ function getTags() {
     ]
 }
 
+function getTagsWithDuplicates() {
+    let tags = getTags();
+    tags.push({
+	    "tagFile": "bag-info.txt",
+	    "tagName": "Bag-Group-Identifier",
+	    "userValue": "Photos_2018"
+    });
+    tags.push({
+	    "tagFile": "bag-info.txt",
+	    "tagName": "Bag-Group-Identifier",
+	    "userValue": "Photos_2017"
+    });
+    tags.push({
+	    "tagFile": "custom/legal-info.txt",
+	    "tagName": "License",
+	    "userValue": "https://opensource.org/licenses/MIT"
+    });
+    tags.push({
+	    "tagFile": "custom/legal-info.txt",
+	    "tagName": "License",
+	    "userValue": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"
+    });
+    return tags;
+}
+
 function getJobParams(nameOfWorkflow, packageName) {
     return new JobParams({
         workflow: nameOfWorkflow,
         packageName: packageName,
-        files: files,
+        files: Files,
         tags: getTags()
     });
 }
@@ -131,7 +163,7 @@ test('Constructor sets expected properties', () => {
     let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
     expect(jobParams.workflow).toEqual("BagIt Package, With Uploads");
     expect(jobParams.packageName).toEqual("Bag1.tar");
-    expect(jobParams.files).toEqual(files);
+    expect(jobParams.files).toEqual(Files);
     expect(jobParams.tags).toEqual(getTags());
 });
 
@@ -168,7 +200,7 @@ test('_makePackageOp() creates BagIt packageOp', () => {
     expect(job.packageOp.outputPath).toEqual(path.join(OutputDir, 'Bag1.tar'));
     expect(job.packageOp.packageFormat).toEqual('BagIt');
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
-    expect(job.packageOp.sourceFiles).toEqual(files);
+    expect(job.packageOp.sourceFiles).toEqual(Files);
 });
 
 test('_makePackageOp() creates tar packageOp', () => {
@@ -183,7 +215,7 @@ test('_makePackageOp() creates tar packageOp', () => {
     expect(job.packageOp.outputPath).toEqual(path.join(OutputDir, 'Bag1.tar'));
     expect(job.packageOp.packageFormat).toEqual('.tar');
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
-    expect(job.packageOp.sourceFiles).toEqual(files);
+    expect(job.packageOp.sourceFiles).toEqual(Files);
 });
 
 test('_makePackageOp() creates no packageOp when there is no package step', () => {
@@ -192,16 +224,65 @@ test('_makePackageOp() creates no packageOp when there is no package step', () =
     jobParams._loadBagItProfile();
     let job = new Job();
     jobParams._makePackageOp(job);
-    expect(job.packageOp).toBeNull();
+
+    expect(job.packageOp).toBeDefined();
+    expect(job.packageOp.packageFormat).toBeNull();
+    expect(job.packageOp.pluginId).toBeNull();
+    expect(job.packageOp.sourceFiles).toEqual([]);
 });
 
-// test('_makeUploadOps()', () => {
+test('_makeUploadOps() with 3 upload targets', () => {
+    let jobParams = getJobParams("No Package, With Uploads");
+    jobParams._loadWorkflow();
+    let job = new Job();
+    jobParams._makeUploadOps(job);
 
-// });
+    expect(job.uploadOps.length).toEqual(3);
+    for (let op of job.uploadOps) {
+        expect(Util.looksLikeUUID(op.storageServiceId)).toBe(true);
+        expect(op.sourceFiles).toEqual(Files);
+    }
+});
 
-// test('_groupedTags()', () => {
+test('_makeUploadOps() with 0 upload targets', () => {
+    let jobParams = getJobParams("Tar Package, No Uploads", "Bag1.tar");
+    jobParams._loadWorkflow();
+    let job = new Job();
+    jobParams._makeUploadOps(job);
 
-// });
+    expect(job.uploadOps.length).toEqual(0);
+});
+
+test('_groupedTags()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let groupedTags = jobParams._groupedTags();
+    for (let key of GroupedTagKeys) {
+        expect(groupedTags[key]).toBeDefined();
+        expect(groupedTags[key].length).toEqual(1);
+    }
+
+    jobParams.tags = getTagsWithDuplicates();
+    groupedTags = jobParams._groupedTags();
+    for (let key of GroupedTagKeys) {
+        expect(groupedTags[key]).toBeDefined();
+    }
+
+    expect(groupedTags['aptrust-info.txt:Title'].length).toEqual(1);
+    expect(groupedTags['aptrust-info.txt:Description'].length).toEqual(1);
+
+    // Make sure items are grouped and order is preserved.
+    let tagSet1 = groupedTags['bag-info.txt:Bag-Group-Identifier'];
+    expect(tagSet1.length).toEqual(3);
+    expect(tagSet1[0].userValue).toEqual('Photos_2019');
+    expect(tagSet1[1].userValue).toEqual('Photos_2018');
+    expect(tagSet1[2].userValue).toEqual('Photos_2017');
+
+    let tagSet2 = groupedTags['custom/legal-info.txt:License'];
+    expect(tagSet2.length).toEqual(3);
+    expect(tagSet2[0].userValue).toEqual('https://creativecommons.org/publicdomain/zero/1.0/');
+    expect(tagSet2[1].userValue).toEqual('https://opensource.org/licenses/MIT');
+    expect(tagSet2[2].userValue).toEqual('https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html');
+});
 
 // test('_mergeTagSet()', () => {
 
