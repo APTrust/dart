@@ -178,6 +178,8 @@ class JobParams {
      * Validates this JobParams object to ensure it can build a valid
      * job.
      *
+     * THIS IS NOT YET IMPLEMENTED.
+     *
      */
     validate() {
         // If packageName, then files are required.
@@ -212,6 +214,36 @@ class JobParams {
 
     /**
      * Merges one or more values from this.tags into job.bagItProfile.tags.
+     * Note the following behaviors:
+     *
+     * 1. If tags contains one tag with tagFile "bag-info.txt" and
+     *    tagName "My-Tag", and profileTags also has one tag with that
+     *    tagFile and tagName, the userValue from the tags version will
+     *    be copied into the userValue from the profileTags version.
+     *    That latter version persists in bag.bagItProfile.tags.
+     *    When it's time to create the bag, the value will be copied
+     *    from bag.bagItProfile.tags into the tag file.
+     *
+     * 2. If tags and profileTags each contain multiple copies of a tag
+     *    with a given tagFile/tagName combination, all userValues from
+     *    tags will be copied into the corresponding profileTags.
+     *
+     * 3. If tags contains more copies of a tag than are defined in
+     *    profileTags, this method will add new tags to profileTags,
+     *    each with a userValue copied from tags.
+     *
+     * @param {BagItProfile} bagItProfile - The job.bagItProfile object
+     * into which you want to merge tags. Tags in the job's copy of the
+     * BagItProfile will have their userValue property updated with the
+     * userValue from matching items in the tags list. Items in the tags
+     * list that do not exist in the bagItProfile will be added.
+     *
+     * @param {Array<object>} tags - A list of tags from this JobParams
+     * object that have the same tagFile and tagName attributes.
+     *
+     * @param {Array<TagDefinition>} profileTags - A list of tags from
+     * the job.bagItProfile.tags list that have the same tagFile and
+     * tagName properties as those in the tags list (second param).
      *
      */
     _mergeTagSet(bagItProfile, tags, profileTags) {
@@ -270,22 +302,6 @@ class JobParams {
         return groupedTags;
     }
 
-    // /**
-    //  * Returns the array indices of every TagDefinition in bagItProfile
-    //  * that match tagFile and tagName.
-    //  *
-    //  * @returns {Array<number>}
-    //  */
-    // _getTagIndices(bagItProfile, tagFile, tagName) {
-    //     let indices = [];
-    //     for(let i = 0; i < bagItProfile.tags.length; i++) {
-    //         let tag = bagItProfile.tags[i];
-    //         if (tag.tagFile == tagFile && tag.tagName == tagName) {
-    //             indices.push(i);
-    //         }
-    //     }
-    //     return indices;
-    // }
 
     /**
      * This does the same as {@link JobParams#toJob}, but instead of
@@ -301,6 +317,17 @@ class JobParams {
         fs.writeFileSync(pathToFile, JSON.stringify(job), 'utf8');
     }
 
+    /**
+     * Loads the Workflow from the DART Worflow database whose name
+     * matches this.workflow and stores it in this._workflowObj.
+     * Returns true if it was able to load the {@link Workflow}.
+     * Returns false if there is no such workflow in the database.
+     *
+     * If this returns false, the caller should check this.errors['workflow']
+     * and should assume that no further operations will succeed.
+     *
+     * @returns {boolean}
+     */
     _loadWorkflow() {
         this._workflowObj = Workflow.firstMatching('name', this.workflow);
         if (!this._workflowObj) {
@@ -316,6 +343,8 @@ class JobParams {
      * no profile id is specified. Returns false and sets
      * this.errors['bagItProfile'] if a profile id was specified
      * but no matching BagItProfile could be found. Returns true otherwise.
+     * If this returns false, the caller should assume that no further
+     * operations on this object will succeed.
      *
      * @returns {boolean}
      */
