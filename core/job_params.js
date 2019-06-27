@@ -232,7 +232,7 @@ class JobParams {
                 // in order, per the BagIt spec (which says order
                 // may be important).
                 let newTag = new TagDefinition();
-                let origId = netTag.id;
+                let origId = newTag.id;
                 if (firstInstanceOfTag) {
                     Object.assign(newTag, firstInstanceOfTag);
                     newTag.id = origId;

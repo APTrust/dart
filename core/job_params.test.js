@@ -284,13 +284,78 @@ test('_groupedTags()', () => {
     expect(tagSet2[2].userValue).toEqual('https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html');
 });
 
-// test('_mergeTagSet()', () => {
+test('_mergeTags() with single values', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    expect(jobParams._bagItProfile).not.toBeNull();
 
-// });
+    let job = new Job();
+    job.bagItProfile = jobParams._bagItProfile;
 
-// test('_mergeTags()', () => {
+    // Merging the tags should copy tag values from JobParams into
+    // the Job's local copy of the BagItProfile.
+    jobParams._mergeTags(job);
 
-// });
+    let titleTags = job.bagItProfile.findMatchingTags('tagName', 'Title')
+    expect(titleTags.length).toEqual(1);
+    expect(titleTags[0].userValue).toEqual('Photos from 2019');
+
+    let groupIdentifierTags = job.bagItProfile.findMatchingTags('tagName', 'Bag-Group-Identifier');
+    expect(groupIdentifierTags.length).toEqual(1);
+    expect(groupIdentifierTags[0].userValue).toEqual('Photos_2019');
+
+    let descriptionTags = job.bagItProfile.findMatchingTags('tagName', 'Description');
+    expect(descriptionTags.length).toEqual(1);
+    expect(descriptionTags[0].userValue).toEqual('What I did with my summer vacation.');
+
+    let licenseTags = job.bagItProfile.findMatchingTags('tagName', 'License');
+    expect(licenseTags.length).toEqual(1);
+    expect(licenseTags[0].userValue).toEqual('https://creativecommons.org/publicdomain/zero/1.0/');
+});
+
+test('_mergeTags() with multiple values', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    jobParams.tags = getTagsWithDuplicates();
+    jobParams.tags.push({
+	    "tagFile": "aptrust-info.txt",
+	    "tagName": "Jenny-I-Got-Your-Number",
+	    "userValue": "867-5309"
+    });
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    expect(jobParams._bagItProfile).not.toBeNull();
+
+    let job = new Job();
+    job.bagItProfile = jobParams._bagItProfile;
+    jobParams._mergeTags(job);
+
+
+    let titleTags = job.bagItProfile.findMatchingTags('tagName', 'Title')
+    expect(titleTags.length).toEqual(1);
+    expect(titleTags[0].userValue).toEqual('Photos from 2019');
+
+    let groupIdentifierTags = job.bagItProfile.findMatchingTags('tagName', 'Bag-Group-Identifier');
+    expect(groupIdentifierTags.length).toEqual(3);
+    expect(groupIdentifierTags[0].userValue).toEqual('Photos_2019');
+    expect(groupIdentifierTags[1].userValue).toEqual('Photos_2018');
+    expect(groupIdentifierTags[2].userValue).toEqual('Photos_2017');
+
+    let descriptionTags = job.bagItProfile.findMatchingTags('tagName', 'Description');
+    expect(descriptionTags.length).toEqual(1);
+    expect(descriptionTags[0].userValue).toEqual('What I did with my summer vacation.');
+
+    let licenseTags = job.bagItProfile.findMatchingTags('tagName', 'License');
+    expect(licenseTags.length).toEqual(3);
+    expect(licenseTags[0].userValue).toEqual('https://creativecommons.org/publicdomain/zero/1.0/');
+    expect(licenseTags[1].userValue).toEqual('https://opensource.org/licenses/MIT');
+    expect(licenseTags[2].userValue).toEqual('https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html');
+
+    // Make sure new tag was added.
+    let jennysNumber = job.bagItProfile.findMatchingTags('tagName', 'Jenny-I-Got-Your-Number')
+    expect(jennysNumber.length).toEqual(1);
+    expect(jennysNumber[0].userValue).toEqual('867-5309');
+});
 
 // test('validate()', () => {
 
