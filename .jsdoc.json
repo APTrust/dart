@@ -1,3 +1,15 @@
 {
-    "plugins": ["plugins/markdown"]
+	"source": {
+        "include": ["package.json", "README.md"],
+        "includePattern": ".js$",
+        "excludePattern": "(node_modules/|docs|ui/include/)"
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "referenceTitle": "DART (Digital Asset Routing Tool)",
+        "disableSort": false,
+        "collapse": true,
+	    "resources": {
+        }
+     }
 }
