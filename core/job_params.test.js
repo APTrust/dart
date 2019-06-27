@@ -26,6 +26,11 @@ afterAll(() => {
 
 const TarWriterPluginId = "90110710-1ff9-4650-a086-d7b23772238f";
 const BagItProfileId = "28f48fcc-064d-4acf-bb5b-ea6ad5c6264d";
+const BagsPath = path.join(__dirname, '..', 'test', 'bags');
+const FixturesPath = path.join(__dirname, '..', 'test', 'fixtures');
+const ProfilesPath = path.join(__dirname, '..', 'test', 'profiles');
+
+var files = [ BagsPath, FixturesPath, ProfilesPath ];
 
 function saveStorageServices() {
     new StorageService({ name: 'Service 1'}).save();
@@ -83,8 +88,49 @@ function saveBaggingDirSetting() {
     }).save();
 }
 
-test('Constructor sets expected properties', () => {
+// Return a hash that we can alter per test without changes
+// affecting all tests. These tags will be used in constructing
+// JobParams objects.
+function getTags() {
+    return [
+        {
+	        "tagFile": "bag-info.txt",
+	        "tagName": "Bag-Group-Identifier",
+	        "userValue": "Photos_2019"
+        },
+        {
+	        "tagFile": "aptrust-info.txt",
+	        "tagName": "Title",
+	        "userValue": "Photos from 2019"
+        },
+        {
+	        "tagFile": "aptrust-info.txt",
+	        "tagName": "Description",
+	        "userValue": "What I did with my summer vacation."
+        },
+        {
+	        "tagFile": "custom/legal-info.txt",
+	        "tagName": "License",
+	        "userValue": "https://creativecommons.org/publicdomain/zero/1.0/"
+        }
+    ]
+}
 
+function getJobParams(nameOfWorkflow, packageName) {
+    return new JobParams({
+        workflow: nameOfWorkflow,
+        packageName: packageName,
+        files: files,
+        tags: getTags()
+    });
+}
+
+test('Constructor sets expected properties', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    expect(jobParams.workflow).toEqual("BagIt Package, With Uploads");
+    expect(jobParams.packageName).toEqual("Bag1.tar");
+    expect(jobParams.files).toEqual(files);
+    expect(jobParams.tags).toEqual(getTags());
 });
 
 // test('_getOutputPath()', () => {
