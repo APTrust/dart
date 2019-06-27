@@ -363,6 +363,8 @@ class JobParams {
             job.packageOp.packageFormat = this._workflowObj.packageFormat;
             job.packageOp.pluginId = this._workflowObj.packagePluginId;
             job.packageOp.sourceFiles = this.files;
+        } else {
+            job.packageOp = null;
         }
     }
 

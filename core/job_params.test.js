@@ -156,7 +156,7 @@ test('_loadBagItProfile()', () => {
     expect(jobParams._bagItProfile.name).toEqual("APTrust");
 });
 
-test('_makePackageOp()', () => {
+test('_makePackageOp() creates BagIt packageOp', () => {
     let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
     jobParams._loadWorkflow();
     jobParams._loadBagItProfile();
@@ -169,6 +169,30 @@ test('_makePackageOp()', () => {
     expect(job.packageOp.packageFormat).toEqual('BagIt');
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
     expect(job.packageOp.sourceFiles).toEqual(files);
+});
+
+test('_makePackageOp() creates tar packageOp', () => {
+    let jobParams = getJobParams("Tar Package, No Uploads", "Bag1.tar");
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    let job = new Job();
+    jobParams._makePackageOp(job);
+
+    expect(job.packageOp).toBeDefined();
+    expect(job.packageOp.packageName).toEqual('Bag1.tar');
+    expect(job.packageOp.outputPath).toEqual(path.join(OutputDir, 'Bag1.tar'));
+    expect(job.packageOp.packageFormat).toEqual('.tar');
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.sourceFiles).toEqual(files);
+});
+
+test('_makePackageOp() creates no packageOp when there is no package step', () => {
+    let jobParams = getJobParams("No Package, With Uploads");
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    let job = new Job();
+    jobParams._makePackageOp(job);
+    expect(job.packageOp).toBeNull();
 });
 
 // test('_makeUploadOps()', () => {
