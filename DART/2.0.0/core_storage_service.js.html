@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>
+      core/storage_service.js - Documentation
+  </title>
+
+  <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.7.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+  <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  
+  <link type="text/css" rel="stylesheet" href="styles/collapse.css">
+  
+
+  
+
+  <!-- start Mixpanel -->
+  <script type="text/javascript">(function(e,a){if(!a.__SV){var b=window;try{var c,l,i,j=b.location,g=j.hash;c=function(a,b){return(l=a.match(RegExp(b+"=([^&]*)")))?l[1]:null};g&&c(g,"state")&&(i=JSON.parse(decodeURIComponent(c(g,"state"))),"mpeditor"===i.action&&(b.sessionStorage.setItem("_mpcehash",g),history.replaceState(i.desiredHash||"",e.title,j.pathname+j.search)))}catch(m){}var k,h;window.mixpanel=a;a._i=[];a.init=function(b,c,f){function e(b,a){var c=a.split(".");2==c.length&&(b=b[c[0]],a=c[1]);b[a]=function(){b.push([a].concat(Array.prototype.slice.call(arguments,
+  0)))}}var d=a;"undefined"!==typeof f?d=a[f]=[]:f="mixpanel";d.people=d.people||[];d.toString=function(b){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);b||(a+=" (stub)");return a};d.people.toString=function(){return d.toString(1)+".people (stub)"};k="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+  for(h=0;h<k.length;h++)e(d,k[h]);a._i.push([b,c,f])};a.__SV=1.2;b=e.createElement("script");b.type="text/javascript";b.async=!0;b.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";c=e.getElementsByTagName("script")[0];c.parentNode.insertBefore(b,c)}})(document,window.mixpanel||[]);
+  mixpanel.init("1919205b2da72e4da3b9b6639b444d59");</script>
+  <!-- end Mixpanel -->
+</head>
+
+<body>
+  <svg style="display: none;">
+    <defs>
+      <symbol id="linkIcon" fill="#706d77" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h24v24H0z" fill="none"/>
+          <path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger" class="navicon-button x">
+    <div class="navicon"></div>
+  </label>
+
+  <label for="nav-trigger" class="overlay"></label>
+
+  <div class="top-nav-wrapper">
+    <ul>
+      <li >
+        <a href="index.html">
+          
+            <svg fill="#6D6D6D" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+              <path d="M0 0h24v24H0z" fill="none"/>
+            </svg>
+          
+          
+        </a>
+      </li>
+
+      
+
+    </ul>
+  </div>
+
+  <nav>
+    <h3 class="reference-title">
+      DART (Digital Asset Routing Tool)
+    </h3>
+
+    
+      <h3>
+        Resources
+      </h3>
+      
+    
+
+    <h3>Classes</h3><ul><li id="AppSetting-nav"><a href="AppSetting.html">AppSetting</a><ul class='methods'><li data-type="method" id="AppSetting-validate-nav"><a href="AppSetting.html#validate">validate</a></li></ul></li><li id="APTrustClient-nav"><a href="APTrustClient.html">APTrustClient</a><ul class='methods'><li data-type="method" id="APTrustClient-description-nav"><a href="APTrustClient.html#.description">description</a></li><li data-type="method" id="APTrustClient-_doRequest-nav"><a href="APTrustClient.html#_doRequest">_doRequest</a></li><li data-type="method" id="APTrustClient-_getHeaders-nav"><a href="APTrustClient.html#_getHeaders">_getHeaders</a></li><li data-type="method" id="APTrustClient-_request-nav"><a href="APTrustClient.html#_request">_request</a></li><li data-type="method" id="APTrustClient-hasRequiredConnectionInfo-nav"><a href="APTrustClient.html#hasRequiredConnectionInfo">hasRequiredConnectionInfo</a></li><li data-type="method" id="APTrustClient-provides-nav"><a href="APTrustClient.html#provides">provides</a></li><li data-type="method" id="APTrustClient-recentIngests-nav"><a href="APTrustClient.html#recentIngests">recentIngests</a></li><li data-type="method" id="APTrustClient-recentWorkItems-nav"><a href="APTrustClient.html#recentWorkItems">recentWorkItems</a></li></ul></li><li id="APTrustSetup-nav"><a href="APTrustSetup.html">APTrustSetup</a><ul class='methods'><li data-type="method" id="APTrustSetup-description-nav"><a href="APTrustSetup.html#.description">description</a></li></ul></li><li id="Bagger-nav"><a href="Bagger.html">Bagger</a><ul class='methods'><li data-type="method" id="Bagger-_addPayloadFiles-nav"><a href="Bagger.html#_addPayloadFiles">_addPayloadFiles</a></li><li data-type="method" id="Bagger-create-nav"><a href="Bagger.html#create">create</a></li><li data-type="method" id="Bagger-validatePackagingOperation-nav"><a href="Bagger.html#validatePackagingOperation">validatePackagingOperation</a></li></ul></li><li id="BagItFile-nav"><a href="BagItFile.html">BagItFile</a><ul class='methods'><li data-type="method" id="BagItFile-getFileType-nav"><a href="BagItFile.html#.getFileType">getFileType</a></li><li data-type="method" id="BagItFile-getCryptoHash-nav"><a href="BagItFile.html#getCryptoHash">getCryptoHash</a></li><li data-type="method" id="BagItFile-getManifestEntry-nav"><a href="BagItFile.html#getManifestEntry">getManifestEntry</a></li><li data-type="method" id="BagItFile-isPayloadFile-nav"><a href="BagItFile.html#isPayloadFile">isPayloadFile</a></li><li data-type="method" id="BagItFile-isPayloadManifest-nav"><a href="BagItFile.html#isPayloadManifest">isPayloadManifest</a></li><li data-type="method" id="BagItFile-isTagFile-nav"><a href="BagItFile.html#isTagFile">isTagFile</a></li><li data-type="method" id="BagItFile-isTagManifest-nav"><a href="BagItFile.html#isTagManifest">isTagManifest</a></li></ul></li><li id="BagItProfile-nav"><a href="BagItProfile.html">BagItProfile</a><ul class='methods'><li data-type="method" id="BagItProfile-find-nav"><a href="BagItProfile.html#.find">find</a></li><li data-type="method" id="BagItProfile-fromJson-nav"><a href="BagItProfile.html#.fromJson">fromJson</a></li><li data-type="method" id="BagItProfile-inflateFrom-nav"><a href="BagItProfile.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="BagItProfile-load-nav"><a href="BagItProfile.html#.load">load</a></li><li data-type="method" id="BagItProfile-nameLooksLegal-nav"><a href="BagItProfile.html#.nameLooksLegal">nameLooksLegal</a></li><li data-type="method" id="BagItProfile-suggestGenericBagName-nav"><a href="BagItProfile.html#.suggestGenericBagName">suggestGenericBagName</a></li><li data-type="method" id="BagItProfile-bagDescription-nav"><a href="BagItProfile.html#bagDescription">bagDescription</a></li><li data-type="method" id="BagItProfile-bagInternalIdentifier-nav"><a href="BagItProfile.html#bagInternalIdentifier">bagInternalIdentifier</a></li><li data-type="method" id="BagItProfile-bagTitle-nav"><a href="BagItProfile.html#bagTitle">bagTitle</a></li><li data-type="method" id="BagItProfile-copyDefaultTagValuesFrom-nav"><a href="BagItProfile.html#copyDefaultTagValuesFrom">copyDefaultTagValuesFrom</a></li><li data-type="method" id="BagItProfile-findExactOrPartial-nav"><a href="BagItProfile.html#findExactOrPartial">findExactOrPartial</a></li><li data-type="method" id="BagItProfile-findMatchingTags-nav"><a href="BagItProfile.html#findMatchingTags">findMatchingTags</a></li><li data-type="method" id="BagItProfile-firstMatchingTag-nav"><a href="BagItProfile.html#firstMatchingTag">firstMatchingTag</a></li><li data-type="method" id="BagItProfile-getTagFileContents-nav"><a href="BagItProfile.html#getTagFileContents">getTagFileContents</a></li><li data-type="method" id="BagItProfile-getTagsFromFile-nav"><a href="BagItProfile.html#getTagsFromFile">getTagsFromFile</a></li><li data-type="method" id="BagItProfile-hasTagFile-nav"><a href="BagItProfile.html#hasTagFile">hasTagFile</a></li><li data-type="method" id="BagItProfile-isCustomTagFile-nav"><a href="BagItProfile.html#isCustomTagFile">isCustomTagFile</a></li><li data-type="method" id="BagItProfile-isValidBagName-nav"><a href="BagItProfile.html#isValidBagName">isValidBagName</a></li><li data-type="method" id="BagItProfile-mergeTagValues-nav"><a href="BagItProfile.html#mergeTagValues">mergeTagValues</a></li><li data-type="method" id="BagItProfile-mustBeTarred-nav"><a href="BagItProfile.html#mustBeTarred">mustBeTarred</a></li><li data-type="method" id="BagItProfile-preferredSerialization-nav"><a href="BagItProfile.html#preferredSerialization">preferredSerialization</a></li><li data-type="method" id="BagItProfile-suggestBagName-nav"><a href="BagItProfile.html#suggestBagName">suggestBagName</a></li><li data-type="method" id="BagItProfile-tagFileNames-nav"><a href="BagItProfile.html#tagFileNames">tagFileNames</a></li><li data-type="method" id="BagItProfile-tagsGroupedByFile-nav"><a href="BagItProfile.html#tagsGroupedByFile">tagsGroupedByFile</a></li><li data-type="method" id="BagItProfile-validate-nav"><a href="BagItProfile.html#validate">validate</a></li></ul></li><li id="BagItProfileController-nav"><a href="BagItProfileController.html">BagItProfileController</a><ul class='methods'><li data-type="method" id="BagItProfileController-_enterKeyHandler-nav"><a href="BagItProfileController.html#_enterKeyHandler">_enterKeyHandler</a></li><li data-type="method" id="BagItProfileController-_getPageHTML-nav"><a href="BagItProfileController.html#_getPageHTML">_getPageHTML</a></li><li data-type="method" id="BagItProfileController-create-nav"><a href="BagItProfileController.html#create">create</a></li><li data-type="method" id="BagItProfileController-deleteTagDef-nav"><a href="BagItProfileController.html#deleteTagDef">deleteTagDef</a></li><li data-type="method" id="BagItProfileController-edit-nav"><a href="BagItProfileController.html#edit">edit</a></li><li data-type="method" id="BagItProfileController-getNewProfileFromBase-nav"><a href="BagItProfileController.html#getNewProfileFromBase">getNewProfileFromBase</a></li><li data-type="method" id="BagItProfileController-new-nav"><a href="BagItProfileController.html#new">new</a></li><li data-type="method" id="BagItProfileController-newTagFile-nav"><a href="BagItProfileController.html#newTagFile">newTagFile</a></li><li data-type="method" id="BagItProfileController-newTagFileCreate-nav"><a href="BagItProfileController.html#newTagFileCreate">newTagFileCreate</a></li><li data-type="method" id="BagItProfileController-update-nav"><a href="BagItProfileController.html#update">update</a></li></ul></li><li id="BagItProfileForm-nav"><a href="BagItProfileForm.html">BagItProfileForm</a><ul class='methods'><li data-type="method" id="BagItProfileForm-_setProfileInfoFields-nav"><a href="BagItProfileForm.html#_setProfileInfoFields">_setProfileInfoFields</a></li><li data-type="method" id="BagItProfileForm-parseFromDOM-nav"><a href="BagItProfileForm.html#parseFromDOM">parseFromDOM</a></li></ul></li><li id="BagItProfileInfo-nav"><a href="BagItProfileInfo.html">BagItProfileInfo</a></li><li id="BagItUtil-nav"><a href="BagItUtil.html">BagItUtil</a><ul class='methods'><li data-type="method" id="BagItUtil-profileFromStandardJson-nav"><a href="BagItUtil.html#.profileFromStandardJson">profileFromStandardJson</a></li><li data-type="method" id="BagItUtil-profileFromStandardObject-nav"><a href="BagItUtil.html#.profileFromStandardObject">profileFromStandardObject</a></li></ul></li><li id="BaseController-nav"><a href="BaseController.html">BaseController</a><ul class='methods'><li data-type="method" id="BaseController-containerContent-nav"><a href="BaseController.html#containerContent">containerContent</a></li><li data-type="method" id="BaseController-destroy-nav"><a href="BaseController.html#destroy">destroy</a></li><li data-type="method" id="BaseController-edit-nav"><a href="BaseController.html#edit">edit</a></li><li data-type="method" id="BaseController-list-nav"><a href="BaseController.html#list">list</a></li><li data-type="method" id="BaseController-modalContent-nav"><a href="BaseController.html#modalContent">modalContent</a></li><li data-type="method" id="BaseController-new-nav"><a href="BaseController.html#new">new</a></li><li data-type="method" id="BaseController-noContent-nav"><a href="BaseController.html#noContent">noContent</a></li><li data-type="method" id="BaseController-openExternal-nav"><a href="BaseController.html#openExternal">openExternal</a></li><li data-type="method" id="BaseController-paramsToHash-nav"><a href="BaseController.html#paramsToHash">paramsToHash</a></li><li data-type="method" id="BaseController-postRenderCallback-nav"><a href="BaseController.html#postRenderCallback">postRenderCallback</a></li><li data-type="method" id="BaseController-redirect-nav"><a href="BaseController.html#redirect">redirect</a></li><li data-type="method" id="BaseController-update-nav"><a href="BaseController.html#update">update</a></li></ul></li><li id="BaseWriter-nav"><a href="BaseWriter.html">BaseWriter</a><ul class='methods'><li data-type="method" id="BaseWriter-description-nav"><a href="BaseWriter.html#.description">description</a></li><li data-type="method" id="BaseWriter-add-nav"><a href="BaseWriter.html#add">add</a></li><li data-type="method" id="BaseWriter-onFileWritten-nav"><a href="BaseWriter.html#onFileWritten">onFileWritten</a></li><li data-type="method" id="BaseWriter-percentComplete-nav"><a href="BaseWriter.html#percentComplete">percentComplete</a></li></ul></li><li id="Choice-nav"><a href="Choice.html">Choice</a><ul class='methods'><li data-type="method" id="Choice-makeList-nav"><a href="Choice.html#.makeList">makeList</a></li></ul></li><li id="DartProcess-nav"><a href="DartProcess.html">DartProcess</a></li><li id="DartProcessController-nav"><a href="DartProcessController.html">DartProcessController</a><ul class='methods'><li data-type="method" id="DartProcessController-list-nav"><a href="DartProcessController.html#list">list</a></li></ul></li><li id="DashboardController-nav"><a href="DashboardController.html">DashboardController</a><ul class='methods'><li data-type="method" id="DashboardController-_getJobOutcomeAndTimestamp-nav"><a href="DashboardController.html#_getJobOutcomeAndTimestamp">_getJobOutcomeAndTimestamp</a></li><li data-type="method" id="DashboardController-_getRecentJobSummaries-nav"><a href="DashboardController.html#_getRecentJobSummaries">_getRecentJobSummaries</a></li><li data-type="method" id="DashboardController-_getRepoReportDescriptions-nav"><a href="DashboardController.html#_getRepoReportDescriptions">_getRepoReportDescriptions</a></li><li data-type="method" id="DashboardController-_getRepoRows-nav"><a href="DashboardController.html#_getRepoRows">_getRepoRows</a></li><li data-type="method" id="DashboardController-_getViableRepoClients-nav"><a href="DashboardController.html#_getViableRepoClients">_getViableRepoClients</a></li><li data-type="method" id="DashboardController-show-nav"><a href="DashboardController.html#show">show</a></li></ul></li><li id="DPNSetup-nav"><a href="DPNSetup.html">DPNSetup</a><ul class='methods'><li data-type="method" id="DPNSetup-description-nav"><a href="DPNSetup.html#.description">description</a></li></ul></li><li id="DummyReader-nav"><a href="DummyReader.html">DummyReader</a><ul class='methods'><li data-type="method" id="DummyReader-_read-nav"><a href="DummyReader.html#_read">_read</a></li></ul></li><li id="FileStat-nav"><a href="FileStat.html">FileStat</a><ul class='methods'><li data-type="method" id="FileStat-isDirectory-nav"><a href="FileStat.html#isDirectory">isDirectory</a></li><li data-type="method" id="FileStat-isFile-nav"><a href="FileStat.html#isFile">isFile</a></li></ul></li><li id="FileSystemReader-nav"><a href="FileSystemReader.html">FileSystemReader</a><ul class='methods'><li data-type="method" id="FileSystemReader-description-nav"><a href="FileSystemReader.html#.description">description</a></li><li data-type="method" id="FileSystemReader-list-nav"><a href="FileSystemReader.html#list">list</a></li><li data-type="method" id="FileSystemReader-read-nav"><a href="FileSystemReader.html#read">read</a></li></ul></li><li id="FileSystemWriter-nav"><a href="FileSystemWriter.html">FileSystemWriter</a><ul class='methods'><li data-type="method" id="FileSystemWriter-description-nav"><a href="FileSystemWriter.html#.description">description</a></li><li data-type="method" id="FileSystemWriter-add-nav"><a href="FileSystemWriter.html#add">add</a></li></ul></li><li id="Form-nav"><a href="Form.html">Form</a><ul class='methods'><li data-type="method" id="Form-_initField-nav"><a href="Form.html#_initField">_initField</a></li><li data-type="method" id="Form-_initFields-nav"><a href="Form.html#_initFields">_initFields</a></li><li data-type="method" id="Form-castNewValueToType-nav"><a href="Form.html#castNewValueToType">castNewValueToType</a></li><li data-type="method" id="Form-hasErrors-nav"><a href="Form.html#hasErrors">hasErrors</a></li><li data-type="method" id="Form-parseFromDOM-nav"><a href="Form.html#parseFromDOM">parseFromDOM</a></li><li data-type="method" id="Form-setErrors-nav"><a href="Form.html#setErrors">setErrors</a></li></ul></li><li id="GlobalContext-nav"><a href="GlobalContext.html">GlobalContext</a><ul class='methods'><li data-type="method" id="GlobalContext-dartReleaseNumber-nav"><a href="GlobalContext.html#dartReleaseNumber">dartReleaseNumber</a></li><li data-type="method" id="GlobalContext-dartVersion-nav"><a href="GlobalContext.html#dartVersion">dartVersion</a></li><li data-type="method" id="GlobalContext-db-nav"><a href="GlobalContext.html#db">db</a></li><li data-type="method" id="GlobalContext-electronIsRunning-nav"><a href="GlobalContext.html#electronIsRunning">electronIsRunning</a></li><li data-type="method" id="GlobalContext-getPackageInfo-nav"><a href="GlobalContext.html#getPackageInfo">getPackageInfo</a></li><li data-type="method" id="GlobalContext-isElectronDevMode-nav"><a href="GlobalContext.html#isElectronDevMode">isElectronDevMode</a></li></ul></li><li id="InternalSetting-nav"><a href="InternalSetting.html">InternalSetting</a><ul class='methods'><li data-type="method" id="InternalSetting-validate-nav"><a href="InternalSetting.html#validate">validate</a></li></ul></li><li id="Job-nav"><a href="Job.html">Job</a><ul class='methods'><li data-type="method" id="Job-find-nav"><a href="Job.html#.find">find</a></li><li data-type="method" id="Job-genericName-nav"><a href="Job.html#.genericName">genericName</a></li><li data-type="method" id="Job-inflateFrom-nav"><a href="Job.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="Job-inflateFromFile-nav"><a href="Job.html#.inflateFromFile">inflateFromFile</a></li><li data-type="method" id="Job-getRunErrors-nav"><a href="Job.html#getRunErrors">getRunErrors</a></li><li data-type="method" id="Job-isRunning-nav"><a href="Job.html#isRunning">isRunning</a></li><li data-type="method" id="Job-packageAttempted-nav"><a href="Job.html#packageAttempted">packageAttempted</a></li><li data-type="method" id="Job-packagedAt-nav"><a href="Job.html#packagedAt">packagedAt</a></li><li data-type="method" id="Job-packageSucceeded-nav"><a href="Job.html#packageSucceeded">packageSucceeded</a></li><li data-type="method" id="Job-uploadAttempted-nav"><a href="Job.html#uploadAttempted">uploadAttempted</a></li><li data-type="method" id="Job-uploadedAt-nav"><a href="Job.html#uploadedAt">uploadedAt</a></li><li data-type="method" id="Job-uploadSucceeded-nav"><a href="Job.html#uploadSucceeded">uploadSucceeded</a></li><li data-type="method" id="Job-validate-nav"><a href="Job.html#validate">validate</a></li><li data-type="method" id="Job-validatedAt-nav"><a href="Job.html#validatedAt">validatedAt</a></li><li data-type="method" id="Job-validationAttempted-nav"><a href="Job.html#validationAttempted">validationAttempted</a></li><li data-type="method" id="Job-validationSucceeded-nav"><a href="Job.html#validationSucceeded">validationSucceeded</a></li></ul></li><li id="JobController-nav"><a href="JobController.html">JobController</a><ul class='methods'><li data-type="method" id="JobController-colorCodeJobs-nav"><a href="JobController.html#colorCodeJobs">colorCodeJobs</a></li><li data-type="method" id="JobController-list-nav"><a href="JobController.html#list">list</a></li><li data-type="method" id="JobController-new-nav"><a href="JobController.html#new">new</a></li></ul></li><li id="JobFilesController-nav"><a href="JobFilesController.html">JobFilesController</a><ul class='methods'><li data-type="method" id="JobFilesController-addFileToPackageSources-nav"><a href="JobFilesController.html#addFileToPackageSources">addFileToPackageSources</a></li><li data-type="method" id="JobFilesController-addItemsToUI-nav"><a href="JobFilesController.html#addItemsToUI">addItemsToUI</a></li><li data-type="method" id="JobFilesController-addItemToUI-nav"><a href="JobFilesController.html#addItemToUI">addItemToUI</a></li><li data-type="method" id="JobFilesController-addRow-nav"><a href="JobFilesController.html#addRow">addRow</a></li><li data-type="method" id="JobFilesController-attachDeleteEvents-nav"><a href="JobFilesController.html#attachDeleteEvents">attachDeleteEvents</a></li><li data-type="method" id="JobFilesController-attachDragAndDropEvents-nav"><a href="JobFilesController.html#attachDragAndDropEvents">attachDragAndDropEvents</a></li><li data-type="method" id="JobFilesController-findContainingItem-nav"><a href="JobFilesController.html#findContainingItem">findContainingItem</a></li><li data-type="method" id="JobFilesController-getTableRow-nav"><a href="JobFilesController.html#getTableRow">getTableRow</a></li><li data-type="method" id="JobFilesController-postRenderCallback-nav"><a href="JobFilesController.html#postRenderCallback">postRenderCallback</a></li><li data-type="method" id="JobFilesController-removeItemFromUI-nav"><a href="JobFilesController.html#removeItemFromUI">removeItemFromUI</a></li><li data-type="method" id="JobFilesController-show-nav"><a href="JobFilesController.html#show">show</a></li><li data-type="method" id="JobFilesController-updateTotal-nav"><a href="JobFilesController.html#updateTotal">updateTotal</a></li><li data-type="method" id="JobFilesController-updateTotals-nav"><a href="JobFilesController.html#updateTotals">updateTotals</a></li></ul></li><li id="JobMetadataController-nav"><a href="JobMetadataController.html">JobMetadataController</a><ul class='methods'><li data-type="method" id="JobMetadataController-_attachTagFileAutocomplete-nav"><a href="JobMetadataController.html#_attachTagFileAutocomplete">_attachTagFileAutocomplete</a></li><li data-type="method" id="JobMetadataController-_attachToggleHiddenTags-nav"><a href="JobMetadataController.html#_attachToggleHiddenTags">_attachToggleHiddenTags</a></li><li data-type="method" id="JobMetadataController-_parseMetadataForm-nav"><a href="JobMetadataController.html#_parseMetadataForm">_parseMetadataForm</a></li><li data-type="method" id="JobMetadataController-_validateMetadataForm-nav"><a href="JobMetadataController.html#_validateMetadataForm">_validateMetadataForm</a></li><li data-type="method" id="JobMetadataController-back-nav"><a href="JobMetadataController.html#back">back</a></li><li data-type="method" id="JobMetadataController-newTag-nav"><a href="JobMetadataController.html#newTag">newTag</a></li><li data-type="method" id="JobMetadataController-next-nav"><a href="JobMetadataController.html#next">next</a></li><li data-type="method" id="JobMetadataController-postRenderCallback-nav"><a href="JobMetadataController.html#postRenderCallback">postRenderCallback</a></li><li data-type="method" id="JobMetadataController-saveNewTag-nav"><a href="JobMetadataController.html#saveNewTag">saveNewTag</a></li><li data-type="method" id="JobMetadataController-show-nav"><a href="JobMetadataController.html#show">show</a></li></ul></li><li id="JobPackageOp-nav"><a href="JobPackageOp.html">JobPackageOp</a></li><li id="JobPackageOpForm-nav"><a href="JobPackageOpForm.html">JobPackageOpForm</a></li><li id="JobPackagingController-nav"><a href="JobPackagingController.html">JobPackagingController</a><ul class='methods'><li data-type="method" id="JobPackagingController-_parseJobPackagingForm-nav"><a href="JobPackagingController.html#_parseJobPackagingForm">_parseJobPackagingForm</a></li><li data-type="method" id="JobPackagingController-_renderPackagingForm-nav"><a href="JobPackagingController.html#_renderPackagingForm">_renderPackagingForm</a></li><li data-type="method" id="JobPackagingController-_updatePackaging-nav"><a href="JobPackagingController.html#_updatePackaging">_updatePackaging</a></li><li data-type="method" id="JobPackagingController-back-nav"><a href="JobPackagingController.html#back">back</a></li><li data-type="method" id="JobPackagingController-next-nav"><a href="JobPackagingController.html#next">next</a></li><li data-type="method" id="JobPackagingController-onFormatChange-nav"><a href="JobPackagingController.html#onFormatChange">onFormatChange</a></li><li data-type="method" id="JobPackagingController-onPackageNameKeyUp-nav"><a href="JobPackagingController.html#onPackageNameKeyUp">onPackageNameKeyUp</a></li><li data-type="method" id="JobPackagingController-postRenderCallback-nav"><a href="JobPackagingController.html#postRenderCallback">postRenderCallback</a></li><li data-type="method" id="JobPackagingController-show-nav"><a href="JobPackagingController.html#show">show</a></li></ul></li><li id="JobParams-nav"><a href="JobParams.html">JobParams</a><ul class='methods'><li data-type="method" id="JobParams-_buildJob-nav"><a href="JobParams.html#_buildJob">_buildJob</a></li><li data-type="method" id="JobParams-_getBagItProfile-nav"><a href="JobParams.html#_getBagItProfile">_getBagItProfile</a></li><li data-type="method" id="JobParams-_getOutputPath-nav"><a href="JobParams.html#_getOutputPath">_getOutputPath</a></li><li data-type="method" id="JobParams-_groupedTags-nav"><a href="JobParams.html#_groupedTags">_groupedTags</a></li><li data-type="method" id="JobParams-_makePackageOp-nav"><a href="JobParams.html#_makePackageOp">_makePackageOp</a></li><li data-type="method" id="JobParams-_makeUploadOps-nav"><a href="JobParams.html#_makeUploadOps">_makeUploadOps</a></li><li data-type="method" id="JobParams-_mergeTags-nav"><a href="JobParams.html#_mergeTags">_mergeTags</a></li><li data-type="method" id="JobParams-_mergeTagSet-nav"><a href="JobParams.html#_mergeTagSet">_mergeTagSet</a></li><li data-type="method" id="JobParams-toJob-nav"><a href="JobParams.html#toJob">toJob</a></li><li data-type="method" id="JobParams-toJobFile-nav"><a href="JobParams.html#toJobFile">toJobFile</a></li><li data-type="method" id="JobParams-validate-nav"><a href="JobParams.html#validate">validate</a></li></ul></li><li id="JobRunController-nav"><a href="JobRunController.html">JobRunController</a><ul class='methods'><li data-type="method" id="JobRunController-run-nav"><a href="JobRunController.html#run">run</a></li><li data-type="method" id="JobRunController-show-nav"><a href="JobRunController.html#show">show</a></li></ul></li><li id="JobStatus-nav"><a href="JobStatus.html">JobStatus</a></li><li id="JobTagsForm-nav"><a href="JobTagsForm.html">JobTagsForm</a><ul class='methods'><li data-type="method" id="JobTagsForm-_tagDefToField-nav"><a href="JobTagsForm.html#_tagDefToField">_tagDefToField</a></li></ul></li><li id="JobUploadController-nav"><a href="JobUploadController.html">JobUploadController</a><ul class='methods'><li data-type="method" id="JobUploadController-back-nav"><a href="JobUploadController.html#back">back</a></li><li data-type="method" id="JobUploadController-next-nav"><a href="JobUploadController.html#next">next</a></li><li data-type="method" id="JobUploadController-show-nav"><a href="JobUploadController.html#show">show</a></li></ul></li><li id="JobUploadForm-nav"><a href="JobUploadForm.html">JobUploadForm</a></li><li id="JsonStore-nav"><a href="JsonStore.html">JsonStore</a></li><li id="KeyValueCollection-nav"><a href="KeyValueCollection.html">KeyValueCollection</a><ul class='methods'><li data-type="method" id="KeyValueCollection-add-nav"><a href="KeyValueCollection.html#add">add</a></li><li data-type="method" id="KeyValueCollection-all-nav"><a href="KeyValueCollection.html#all">all</a></li><li data-type="method" id="KeyValueCollection-first-nav"><a href="KeyValueCollection.html#first">first</a></li><li data-type="method" id="KeyValueCollection-keys-nav"><a href="KeyValueCollection.html#keys">keys</a></li><li data-type="method" id="KeyValueCollection-sortedKeys-nav"><a href="KeyValueCollection.html#sortedKeys">sortedKeys</a></li></ul></li><li id="ManifestEntry-nav"><a href="ManifestEntry.html">ManifestEntry</a><ul class='methods'><li data-type="method" id="ManifestEntry-validate-nav"><a href="ManifestEntry.html#validate">validate</a></li></ul></li><li id="ManifestParser-nav"><a href="ManifestParser.html">ManifestParser</a></li><li id="NewBagItProfileForm-nav"><a href="NewBagItProfileForm.html">NewBagItProfileForm</a></li><li id="OperationResult-nav"><a href="OperationResult.html">OperationResult</a><ul class='methods'><li data-type="method" id="OperationResult-inflateFrom-nav"><a href="OperationResult.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="OperationResult-finish-nav"><a href="OperationResult.html#finish">finish</a></li><li data-type="method" id="OperationResult-firstError-nav"><a href="OperationResult.html#firstError">firstError</a></li><li data-type="method" id="OperationResult-hasErrors-nav"><a href="OperationResult.html#hasErrors">hasErrors</a></li><li data-type="method" id="OperationResult-lastError-nav"><a href="OperationResult.html#lastError">lastError</a></li><li data-type="method" id="OperationResult-reset-nav"><a href="OperationResult.html#reset">reset</a></li><li data-type="method" id="OperationResult-start-nav"><a href="OperationResult.html#start">start</a></li><li data-type="method" id="OperationResult-succeeded-nav"><a href="OperationResult.html#succeeded">succeeded</a></li></ul></li><li id="PackageOperation-nav"><a href="PackageOperation.html">PackageOperation</a><ul class='methods'><li data-type="method" id="PackageOperation-inflateFrom-nav"><a href="PackageOperation.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="PackageOperation-getWriter-nav"><a href="PackageOperation.html#getWriter">getWriter</a></li><li data-type="method" id="PackageOperation-pruneSourceFilesUnlessJobCompleted-nav"><a href="PackageOperation.html#pruneSourceFilesUnlessJobCompleted">pruneSourceFilesUnlessJobCompleted</a></li><li data-type="method" id="PackageOperation-validate-nav"><a href="PackageOperation.html#validate">validate</a></li></ul></li><li id="PersistentObject-nav"><a href="PersistentObject.html">PersistentObject</a><ul class='methods'><li data-type="method" id="PersistentObject-find-nav"><a href="PersistentObject.html#.find">find</a></li><li data-type="method" id="PersistentObject-findMatching-nav"><a href="PersistentObject.html#.findMatching">findMatching</a></li><li data-type="method" id="PersistentObject-first-nav"><a href="PersistentObject.html#.first">first</a></li><li data-type="method" id="PersistentObject-firstMatching-nav"><a href="PersistentObject.html#.firstMatching">firstMatching</a></li><li data-type="method" id="PersistentObject-list-nav"><a href="PersistentObject.html#.list">list</a></li><li data-type="method" id="PersistentObject-mergeDefaultOpts-nav"><a href="PersistentObject.html#.mergeDefaultOpts">mergeDefaultOpts</a></li><li data-type="method" id="PersistentObject-sort-nav"><a href="PersistentObject.html#.sort">sort</a></li><li data-type="method" id="PersistentObject-delete-nav"><a href="PersistentObject.html#delete">delete</a></li><li data-type="method" id="PersistentObject-getValue-nav"><a href="PersistentObject.html#getValue">getValue</a></li><li data-type="method" id="PersistentObject-save-nav"><a href="PersistentObject.html#save">save</a></li><li data-type="method" id="PersistentObject-validate-nav"><a href="PersistentObject.html#validate">validate</a></li></ul></li><li id="Plugin-nav"><a href="Plugin.html">Plugin</a><ul class='methods'><li data-type="method" id="Plugin-description-nav"><a href="Plugin.html#.description">description</a></li></ul></li><li id="PluginManager-nav"><a href="PluginManager.html">PluginManager</a><ul class='methods'><li data-type="method" id="PluginManager-canRead-nav"><a href="PluginManager.html#.canRead">canRead</a></li><li data-type="method" id="PluginManager-canWrite-nav"><a href="PluginManager.html#.canWrite">canWrite</a></li><li data-type="method" id="PluginManager-findById-nav"><a href="PluginManager.html#.findById">findById</a></li><li data-type="method" id="PluginManager-getModuleCollection-nav"><a href="PluginManager.html#.getModuleCollection">getModuleCollection</a></li><li data-type="method" id="PluginManager-implementsProtocol-nav"><a href="PluginManager.html#.implementsProtocol">implementsProtocol</a></li><li data-type="method" id="PluginManager-pluginProvides-nav"><a href="PluginManager.html#.pluginProvides">pluginProvides</a></li><li data-type="method" id="PluginManager-setsUp-nav"><a href="PluginManager.html#.setsUp">setsUp</a></li><li data-type="method" id="PluginManager-talksTo-nav"><a href="PluginManager.html#.talksTo">talksTo</a></li><li data-type="method" id="PluginManager-types-nav"><a href="PluginManager.html#.types">types</a></li></ul></li><li id="RemoteRepository-nav"><a href="RemoteRepository.html">RemoteRepository</a><ul class='methods'><li data-type="method" id="RemoteRepository-validate-nav"><a href="RemoteRepository.html#validate">validate</a></li></ul></li><li id="RunningJobsController-nav"><a href="RunningJobsController.html">RunningJobsController</a></li><li id="S3Client-nav"><a href="S3Client.html">S3Client</a><ul class='methods'><li data-type="method" id="S3Client-description-nav"><a href="S3Client.html#.description">description</a></li><li data-type="method" id="S3Client-download-nav"><a href="S3Client.html#download">download</a></li><li data-type="method" id="S3Client-exists-nav"><a href="S3Client.html#exists">exists</a></li><li data-type="method" id="S3Client-list-nav"><a href="S3Client.html#list">list</a></li><li data-type="method" id="S3Client-upload-nav"><a href="S3Client.html#upload">upload</a></li></ul></li><li id="S3Transfer-nav"><a href="S3Transfer.html">S3Transfer</a><ul class='methods'><li data-type="method" id="S3Transfer-getRemoteUrl-nav"><a href="S3Transfer.html#getRemoteUrl">getRemoteUrl</a></li></ul></li><li id="SetupBase-nav"><a href="SetupBase.html">SetupBase</a><ul class='methods'><li data-type="method" id="SetupBase-_getPathToMessageFile-nav"><a href="SetupBase.html#_getPathToMessageFile">_getPathToMessageFile</a></li><li data-type="method" id="SetupBase-afterAllQuestions-nav"><a href="SetupBase.html#afterAllQuestions">afterAllQuestions</a></li><li data-type="method" id="SetupBase-afterEachQuestion-nav"><a href="SetupBase.html#afterEachQuestion">afterEachQuestion</a></li><li data-type="method" id="SetupBase-beforeAllQuestions-nav"><a href="SetupBase.html#beforeAllQuestions">beforeAllQuestions</a></li><li data-type="method" id="SetupBase-beforeObjectInstallation-nav"><a href="SetupBase.html#beforeObjectInstallation">beforeObjectInstallation</a></li><li data-type="method" id="SetupBase-getMessage-nav"><a href="SetupBase.html#getMessage">getMessage</a></li><li data-type="method" id="SetupBase-getQuestions-nav"><a href="SetupBase.html#getQuestions">getQuestions</a></li><li data-type="method" id="SetupBase-installSettings-nav"><a href="SetupBase.html#installSettings">installSettings</a></li><li data-type="method" id="SetupBase-setCompletionTimestamp-nav"><a href="SetupBase.html#setCompletionTimestamp">setCompletionTimestamp</a></li></ul></li><li id="SetupController-nav"><a href="SetupController.html">SetupController</a><ul class='methods'><li data-type="method" id="SetupController-_formatLastRunDate-nav"><a href="SetupController.html#_formatLastRunDate">_formatLastRunDate</a></li><li data-type="method" id="SetupController-_getLastRunDate-nav"><a href="SetupController.html#_getLastRunDate">_getLastRunDate</a></li><li data-type="method" id="SetupController-end-nav"><a href="SetupController.html#end">end</a></li><li data-type="method" id="SetupController-getLogoPath-nav"><a href="SetupController.html#getLogoPath">getLogoPath</a></li><li data-type="method" id="SetupController-list-nav"><a href="SetupController.html#list">list</a></li><li data-type="method" id="SetupController-postRenderCallback-nav"><a href="SetupController.html#postRenderCallback">postRenderCallback</a></li><li data-type="method" id="SetupController-question-nav"><a href="SetupController.html#question">question</a></li><li data-type="method" id="SetupController-runPreQuestionCallbacks-nav"><a href="SetupController.html#runPreQuestionCallbacks">runPreQuestionCallbacks</a></li><li data-type="method" id="SetupController-start-nav"><a href="SetupController.html#start">start</a></li><li data-type="method" id="SetupController-startQuestions-nav"><a href="SetupController.html#startQuestions">startQuestions</a></li></ul></li><li id="SetupQuestion-nav"><a href="SetupQuestion.html">SetupQuestion</a><ul class='methods'><li data-type="method" id="SetupQuestion-getIntRangeValidator-nav"><a href="SetupQuestion.html#.getIntRangeValidator">getIntRangeValidator</a></li><li data-type="method" id="SetupQuestion-getPatternValidator-nav"><a href="SetupQuestion.html#.getPatternValidator">getPatternValidator</a></li><li data-type="method" id="SetupQuestion-getRequiredValidator-nav"><a href="SetupQuestion.html#.getRequiredValidator">getRequiredValidator</a></li><li data-type="method" id="SetupQuestion-_setValidationRegExp-nav"><a href="SetupQuestion.html#_setValidationRegExp">_setValidationRegExp</a></li><li data-type="method" id="SetupQuestion-getValidators-nav"><a href="SetupQuestion.html#getValidators">getValidators</a></li><li data-type="method" id="SetupQuestion-looksLikeNumericValidation-nav"><a href="SetupQuestion.html#looksLikeNumericValidation">looksLikeNumericValidation</a></li><li data-type="method" id="SetupQuestion-processResponse-nav"><a href="SetupQuestion.html#processResponse">processResponse</a></li><li data-type="method" id="SetupQuestion-readUserInput-nav"><a href="SetupQuestion.html#readUserInput">readUserInput</a></li><li data-type="method" id="SetupQuestion-saveValue-nav"><a href="SetupQuestion.html#saveValue">saveValue</a></li><li data-type="method" id="SetupQuestion-setInitialValue-nav"><a href="SetupQuestion.html#setInitialValue">setInitialValue</a></li><li data-type="method" id="SetupQuestion-validate-nav"><a href="SetupQuestion.html#validate">validate</a></li></ul></li><li id="StorageService-nav"><a href="StorageService.html">StorageService</a><ul class='methods'><li data-type="method" id="StorageService-url-nav"><a href="StorageService.html#url">url</a></li><li data-type="method" id="StorageService-validate-nav"><a href="StorageService.html#validate">validate</a></li></ul></li><li id="TagDefinition-nav"><a href="TagDefinition.html">TagDefinition</a><ul class='methods'><li data-type="method" id="TagDefinition-fromCommandLineArg-nav"><a href="TagDefinition.html#.fromCommandLineArg">fromCommandLineArg</a></li><li data-type="method" id="TagDefinition-getValue-nav"><a href="TagDefinition.html#getValue">getValue</a></li><li data-type="method" id="TagDefinition-looksLikeDescriptionTag-nav"><a href="TagDefinition.html#looksLikeDescriptionTag">looksLikeDescriptionTag</a></li><li data-type="method" id="TagDefinition-systemMustSet-nav"><a href="TagDefinition.html#systemMustSet">systemMustSet</a></li><li data-type="method" id="TagDefinition-toFormattedString-nav"><a href="TagDefinition.html#toFormattedString">toFormattedString</a></li><li data-type="method" id="TagDefinition-validate-nav"><a href="TagDefinition.html#validate">validate</a></li><li data-type="method" id="TagDefinition-validateForJob-nav"><a href="TagDefinition.html#validateForJob">validateForJob</a></li></ul></li><li id="TagFileForm-nav"><a href="TagFileForm.html">TagFileForm</a></li><li id="TagFileParser-nav"><a href="TagFileParser.html">TagFileParser</a></li><li id="TarReader-nav"><a href="TarReader.html">TarReader</a><ul class='methods'><li data-type="method" id="TarReader-description-nav"><a href="TarReader.html#.description">description</a></li><li data-type="method" id="TarReader-list-nav"><a href="TarReader.html#list">list</a></li><li data-type="method" id="TarReader-read-nav"><a href="TarReader.html#read">read</a></li></ul></li><li id="TarWriter-nav"><a href="TarWriter.html">TarWriter</a><ul class='methods'><li data-type="method" id="TarWriter-description-nav"><a href="TarWriter.html#.description">description</a></li><li data-type="method" id="TarWriter-add-nav"><a href="TarWriter.html#add">add</a></li></ul></li><li id="TaskDescription-nav"><a href="TaskDescription.html">TaskDescription</a></li><li id="TestUtil-nav"><a href="TestUtil.html">TestUtil</a><ul class='methods'><li data-type="method" id="TestUtil-deleteJsonFile-nav"><a href="TestUtil.html#.deleteJsonFile">deleteJsonFile</a></li><li data-type="method" id="TestUtil-loadProfile-nav"><a href="TestUtil.html#.loadProfile">loadProfile</a></li><li data-type="method" id="TestUtil-loadProfilesFromSetup-nav"><a href="TestUtil.html#.loadProfilesFromSetup">loadProfilesFromSetup</a></li></ul></li><li id="UploadOperation-nav"><a href="UploadOperation.html">UploadOperation</a><ul class='methods'><li data-type="method" id="UploadOperation-inflateFrom-nav"><a href="UploadOperation.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="UploadOperation-validate-nav"><a href="UploadOperation.html#validate">validate</a></li></ul></li><li id="UploadTestHelper-nav"><a href="UploadTestHelper.html">UploadTestHelper</a><ul class='methods'><li data-type="method" id="UploadTestHelper-envHasS3Credentials-nav"><a href="UploadTestHelper.html#envHasS3Credentials">envHasS3Credentials</a></li><li data-type="method" id="UploadTestHelper-getStorageService-nav"><a href="UploadTestHelper.html#getStorageService">getStorageService</a></li></ul></li><li id="Util-nav"><a href="Util.html">Util</a><ul class='methods'><li data-type="method" id="Util-bagNameFromPath-nav"><a href="Util.html#.bagNameFromPath">bagNameFromPath</a></li><li data-type="method" id="Util-boolEqual-nav"><a href="Util.html#.boolEqual">boolEqual</a></li><li data-type="method" id="Util-boolValue-nav"><a href="Util.html#.boolValue">boolValue</a></li><li data-type="method" id="Util-camelToTitle-nav"><a href="Util.html#.camelToTitle">camelToTitle</a></li><li data-type="method" id="Util-cast-nav"><a href="Util.html#.cast">cast</a></li><li data-type="method" id="Util-deleteFromArray-nav"><a href="Util.html#.deleteFromArray">deleteFromArray</a></li><li data-type="method" id="Util-deleteRecursive-nav"><a href="Util.html#.deleteRecursive">deleteRecursive</a></li><li data-type="method" id="Util-escapeBackslashes-nav"><a href="Util.html#.escapeBackslashes">escapeBackslashes</a></li><li data-type="method" id="Util-filterEmptyStrings-nav"><a href="Util.html#.filterEmptyStrings">filterEmptyStrings</a></li><li data-type="method" id="Util-getEnvSetting-nav"><a href="Util.html#.getEnvSetting">getEnvSetting</a></li><li data-type="method" id="Util-getSortFunction-nav"><a href="Util.html#.getSortFunction">getSortFunction</a></li><li data-type="method" id="Util-isEmpty-nav"><a href="Util.html#.isEmpty">isEmpty</a></li><li data-type="method" id="Util-isEmptyStringArray-nav"><a href="Util.html#.isEmptyStringArray">isEmptyStringArray</a></li><li data-type="method" id="Util-lcFirst-nav"><a href="Util.html#.lcFirst">lcFirst</a></li><li data-type="method" id="Util-listContains-nav"><a href="Util.html#.listContains">listContains</a></li><li data-type="method" id="Util-looksLikeEnvSetting-nav"><a href="Util.html#.looksLikeEnvSetting">looksLikeEnvSetting</a></li><li data-type="method" id="Util-looksLikeHypertextURL-nav"><a href="Util.html#.looksLikeHypertextURL">looksLikeHypertextURL</a></li><li data-type="method" id="Util-looksLikeUUID-nav"><a href="Util.html#.looksLikeUUID">looksLikeUUID</a></li><li data-type="method" id="Util-normalizeWindowsPath-nav"><a href="Util.html#.normalizeWindowsPath">normalizeWindowsPath</a></li><li data-type="method" id="Util-tmpFilePath-nav"><a href="Util.html#.tmpFilePath">tmpFilePath</a></li><li data-type="method" id="Util-toHumanSize-nav"><a href="Util.html#.toHumanSize">toHumanSize</a></li><li data-type="method" id="Util-truncateString-nav"><a href="Util.html#.truncateString">truncateString</a></li><li data-type="method" id="Util-unicodeByteLength-nav"><a href="Util.html#.unicodeByteLength">unicodeByteLength</a></li><li data-type="method" id="Util-uuid4-nav"><a href="Util.html#.uuid4">uuid4</a></li><li data-type="method" id="Util-walkSync-nav"><a href="Util.html#.walkSync">walkSync</a></li></ul></li><li id="ValidationOperation-nav"><a href="ValidationOperation.html">ValidationOperation</a><ul class='methods'><li data-type="method" id="ValidationOperation-inflateFrom-nav"><a href="ValidationOperation.html#.inflateFrom">inflateFrom</a></li><li data-type="method" id="ValidationOperation-validate-nav"><a href="ValidationOperation.html#validate">validate</a></li></ul></li><li id="Validator-nav"><a href="Validator.html">Validator</a><ul class='methods'><li data-type="method" id="Validator-_addBagItFile-nav"><a href="Validator.html#_addBagItFile">_addBagItFile</a></li><li data-type="method" id="Validator-_cleanEntryRelPath-nav"><a href="Validator.html#_cleanEntryRelPath">_cleanEntryRelPath</a></li><li data-type="method" id="Validator-_expectedTopLevelFiles-nav"><a href="Validator.html#_expectedTopLevelFiles">_expectedTopLevelFiles</a></li><li data-type="method" id="Validator-_getCryptoHashes-nav"><a href="Validator.html#_getCryptoHashes">_getCryptoHashes</a></li><li data-type="method" id="Validator-_readBag-nav"><a href="Validator.html#_readBag">_readBag</a></li><li data-type="method" id="Validator-_readEntry-nav"><a href="Validator.html#_readEntry">_readEntry</a></li><li data-type="method" id="Validator-_readFile-nav"><a href="Validator.html#_readFile">_readFile</a></li><li data-type="method" id="Validator-_scanBag-nav"><a href="Validator.html#_scanBag">_scanBag</a></li><li data-type="method" id="Validator-_validateFormatAndContents-nav"><a href="Validator.html#_validateFormatAndContents">_validateFormatAndContents</a></li><li data-type="method" id="Validator-_validateManifestEntries-nav"><a href="Validator.html#_validateManifestEntries">_validateManifestEntries</a></li><li data-type="method" id="Validator-_validateNoExtraneousPayloadFiles-nav"><a href="Validator.html#_validateNoExtraneousPayloadFiles">_validateNoExtraneousPayloadFiles</a></li><li data-type="method" id="Validator-_validatePayloadOxum-nav"><a href="Validator.html#_validatePayloadOxum">_validatePayloadOxum</a></li><li data-type="method" id="Validator-_validateProfile-nav"><a href="Validator.html#_validateProfile">_validateProfile</a></li><li data-type="method" id="Validator-_validateRequiredManifests-nav"><a href="Validator.html#_validateRequiredManifests">_validateRequiredManifests</a></li><li data-type="method" id="Validator-_validateSerialization-nav"><a href="Validator.html#_validateSerialization">_validateSerialization</a></li><li data-type="method" id="Validator-_validateSerializationFormat-nav"><a href="Validator.html#_validateSerializationFormat">_validateSerializationFormat</a></li><li data-type="method" id="Validator-_validateTags-nav"><a href="Validator.html#_validateTags">_validateTags</a></li><li data-type="method" id="Validator-_validateTopLevelDirs-nav"><a href="Validator.html#_validateTopLevelDirs">_validateTopLevelDirs</a></li><li data-type="method" id="Validator-_validateTopLevelFiles-nav"><a href="Validator.html#_validateTopLevelFiles">_validateTopLevelFiles</a></li><li data-type="method" id="Validator-_validateUntarDirectory-nav"><a href="Validator.html#_validateUntarDirectory">_validateUntarDirectory</a></li><li data-type="method" id="Validator-fileExtension-nav"><a href="Validator.html#fileExtension">fileExtension</a></li><li data-type="method" id="Validator-getNewReader-nav"><a href="Validator.html#getNewReader">getNewReader</a></li><li data-type="method" id="Validator-payloadFiles-nav"><a href="Validator.html#payloadFiles">payloadFiles</a></li><li data-type="method" id="Validator-payloadManifests-nav"><a href="Validator.html#payloadManifests">payloadManifests</a></li><li data-type="method" id="Validator-readingFromDir-nav"><a href="Validator.html#readingFromDir">readingFromDir</a></li><li data-type="method" id="Validator-readingFromTar-nav"><a href="Validator.html#readingFromTar">readingFromTar</a></li><li data-type="method" id="Validator-tagFiles-nav"><a href="Validator.html#tagFiles">tagFiles</a></li><li data-type="method" id="Validator-tagManifests-nav"><a href="Validator.html#tagManifests">tagManifests</a></li><li data-type="method" id="Validator-validate-nav"><a href="Validator.html#validate">validate</a></li></ul></li><li id="Workflow-nav"><a href="Workflow.html">Workflow</a><ul class='methods'><li data-type="method" id="Workflow-bagItProfile-nav"><a href="Workflow.html#bagItProfile">bagItProfile</a></li><li data-type="method" id="Workflow-bagItProfileName-nav"><a href="Workflow.html#bagItProfileName">bagItProfileName</a></li><li data-type="method" id="Workflow-packagePlugin-nav"><a href="Workflow.html#packagePlugin">packagePlugin</a></li><li data-type="method" id="Workflow-packagePluginName-nav"><a href="Workflow.html#packagePluginName">packagePluginName</a></li><li data-type="method" id="Workflow-storageServiceNames-nav"><a href="Workflow.html#storageServiceNames">storageServiceNames</a></li><li data-type="method" id="Workflow-storageServices-nav"><a href="Workflow.html#storageServices">storageServices</a></li><li data-type="method" id="Workflow-validate-nav"><a href="Workflow.html#validate">validate</a></li></ul></li></ul><h3 id="global-nav">Global</h3><ul><li><a href="global.html#Config">Config</a></li><li><a href="global.html#Constants">Constants</a></li><li><a href="global.html#FATAL_UPLOAD_ERRORS">FATAL_UPLOAD_ERRORS</a></li><li><a href="global.html#loadBuiltInProfiles">loadBuiltInProfiles</a></li><li><a href="global.html#OPTS">OPTS</a></li><li><a href="global.html#pluginTypes">pluginTypes</a></li><li><a href="global.html#run">run</a></li><li><a href="global.html#runAll">runAll</a></li><li><a href="global.html#tagsByFileAndName">tagsByFileAndName</a></li><li><a href="global.html#tagsSetBySystem">tagsSetBySystem</a></li><li><a href="global.html#titleTags">titleTags</a></li><li><a href="global.html#UIConstants">UIConstants</a></li></ul>
+  </nav>
+
+  <div id="main">
+    
+      <h1 class="page-title">
+        core/storage_service.js
+      </h1>
+    
+
+    
+      
+
+<section>
+  <article>
+    <pre class="prettyprint source linenums"><code>const { Context } = require('./context');
+const { PersistentObject } = require('./persistent_object');
+const { Util } = require('./util');
+
+/**
+ * StorageService describes any remote service (s3, ftp, etc.) to which
+ * we can upload data. This object contains the information required to
+ * connect to the remote service (hostname, login name, password, etc.).
+ */
+class StorageService extends PersistentObject {
+    /**
+     * Creates a new StorageService.
+     *
+     * @param {object} opts - Object containing properties to set.
+     *
+     * @param {string} opts.id - A UUID in hex-string format. This is
+     * the object's unique identifier.
+     *
+     * @param {boolean} opts.userCanDelete - Indicates whether user is
+     * allowed to delete this record.
+     *
+     * @param {string} opts.name - The name of the remote storage service. This
+     * can be anything that's meaningful to the user (e.g. 'My S3 Bucket',
+     * 'Library SFTP Server', etc.). Names should be unique to prevent confusion.
+     *
+     * @param {string} opts.description - A user-friendly description of
+     * the storage service.
+     *
+     * @param {string} opts.protocol - The protocol to use when connecting
+     * to the remote repo ('s3', 'sftp', etc.).
+     *
+     * @param {string} opts.host - The name or IP address of the remote host.
+     *
+     * @param {string} opts.port - The port to connect to on the remote host.
+     * A value of zero means use the default port.
+     *
+     * @param {string} opts.bucket - The bucket or root folder into which
+     * to upload material.
+     *
+     * @param {string} opts.login - The user name or AWS Access Key ID to use
+     * when authenticating with the remote service. To avoid storing sensitive
+     * info in DART's data files, you can specify an environment variable
+     * here by using "env:VAR_NAME". When performing upload operations, DART
+     * will substitute the value of the environment variable "VAR_NAME".
+     *
+     * @param {string} opts.password - The password or AWS Secret Access Key
+     * to use when authenticating with the remote service. You can specify
+     * an environment variable here by using "env:VAR_NAME". When performing
+     * upload operations, DART will substitute the value of the environment
+     * variable "VAR_NAME".
+     *
+     * @param {string} opts.loginExtra - Optional additional information to
+     * pass to the remote service during the authentication process. You can
+     * specify an environment variable here by using "env:VAR_NAME". When
+     * performing upload operations, DART will substitute the value of the
+     * environment variable "VAR_NAME".
+     *
+     */
+    constructor(opts = {}) {
+        opts.required = ["name", "protocol", "host"];
+        super(opts);
+        /**
+          * name is the name of this storage service. It should be meaningful
+          * to the user.
+          *
+          * @type {string}
+          */
+        this.name = opts.name || "";
+        /**
+          * A description of this storage service. It should be meaningful
+          * to the user.
+          *
+          * @type {string}
+          */
+        this.description = opts.description || "";
+        /**
+          * The protocol to use when connecting to the remote service.
+          * For example, 's3', 'sftp', etc. There should be a valid plugin
+          * capable of communicating via that protocol.
+          *
+          * @type {string}
+          */
+        this.protocol = opts.protocol || "";
+        /**
+          * The hostname or IP address of the remote server.
+          *
+          * @type {string}
+          */
+        this.host = opts.host || "";
+        /**
+          * The port number to connect to on the remote server. This should
+          * be a whole number. You can leave this blank if you're connecting
+          * to the service's default port.
+          *
+          * @type {number}
+          */
+        this.port = opts.port || 0;
+        /**
+          * Bucket is the name of the s3 bucket to connect to, or the directory
+          * to cd into on the remote server.
+          *
+          * @type {string}
+          */
+        this.bucket = opts.bucket || "";
+        /**
+          * login is the name to use when logging in to the remote server.
+          * For s3 connections, it's the Access Key Id. You can use an
+          * environment variable in this field by specifying "env:VAR_NAME".
+          * DART will look up the environment variable at runtime, and its
+          * value will not be stored with DART's data.
+          *
+          * @type {string}
+          */
+        this.login = opts.login || "";
+        /**
+          * password is the password required to connect to the remote server.
+          * For S3, it's the secret key (aka AWS Secret Access Key). You can use
+          * an environment variable in this field by specifying "env:VAR_NAME".
+          * DART will look up the environment variable at runtime, and its
+          * value will not be stored with DART's data.
+          *
+          * @type {string}
+          */
+        this.password = opts.password || "";
+        /**
+          * loginExtra is any additional information required by plugins to
+          * connect to remote services. What the plugin does with this bit of info
+          * is its own business. For example, a plugin that requires the path to
+          * a local private key file can ask the user to enter the path to that
+          * file here. You can use an environment variable in this field by
+          * specifying a value like "env:VAR_NAME". DART will look up the environment
+          * variable at runtime, and its value will not be stored with DART's data.
+          *
+          * @type {string}
+          */
+        this.loginExtra = opts.loginExtra || "";
+        /**
+         * This describes whether the storage service allows users to
+         * write data/files into it.
+         *
+         * @type {boolean}
+         * @default true
+         */
+        this.allowsUpload = opts.allowsUpload || true;
+        /**
+         * This describes whether the storage service allows users to
+         * read data/files from it.
+         *
+         * @type {boolean}
+         * @default true
+         */
+        this.allowsDownload = opts.allowsDownload || true;
+    }
+
+    /**
+     * Returns the url to which files will be uploaded.
+     *
+     * @returns {string}
+     */
+    url(filename = '') {
+        // TODO: Branch for protocols that construct URLs differently.
+        let portString = this.port ? `:${this.port}` : '';
+        return `${this.protocol}://${this.host}${portString}/${this.bucket}/${filename}`
+    }
+
+    /**
+     * validate returns true or false, indicating whether this object
+     * contains complete and valid data. If it returns false, check
+     * the errors property for specific errors.
+     *
+     * @returns {boolean}
+     */
+    validate() {
+        super.validate();
+        if (!Util.isEmpty(this.port) &amp;&amp; this.port != 0 &amp;&amp; parseInt(this.port, 10) != this.port) {
+            this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
+        }
+        return Object.keys(this.errors).length == 0;
+    }
+
+}
+
+// Get static methods from base class.
+Object.assign(StorageService, PersistentObject);
+
+module.exports.StorageService = StorageService;
+</code></pre>
+  </article>
+</section>
+
+    
+
+
+  </div>
+
+  <br class="clear">
+
+  <footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
+  </footer>
+
+  <script src="scripts/linenumber.js"></script>
+  <script src="scripts/pagelocation.js"></script>
+
+  
+
+</body>
+</html>
