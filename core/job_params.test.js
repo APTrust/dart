@@ -1,6 +1,7 @@
 const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
+const { Job } = require('./job');
 const { JobParams } = require('./job_params');
 const os = require('os');
 const path = require('path');
@@ -26,6 +27,7 @@ afterAll(() => {
 
 const TarWriterPluginId = "90110710-1ff9-4650-a086-d7b23772238f";
 const BagItProfileId = "28f48fcc-064d-4acf-bb5b-ea6ad5c6264d";
+const OutputDir = path.join(os.homedir(), '.dart', 'bags');
 const BagsPath = path.join(__dirname, '..', 'test', 'bags');
 const FixturesPath = path.join(__dirname, '..', 'test', 'fixtures');
 const ProfilesPath = path.join(__dirname, '..', 'test', 'profiles');
@@ -84,7 +86,7 @@ function saveWorkflows() {
 function saveBaggingDirSetting() {
     new AppSetting({
         name: "Bagging Directory",
-        value: path.join(os.homedir(), '.dart', 'bags')
+        value: OutputDir
     }).save();
 }
 
@@ -133,21 +135,41 @@ test('Constructor sets expected properties', () => {
     expect(jobParams.tags).toEqual(getTags());
 });
 
-// test('_getOutputPath()', () => {
+test('_getOutputPath()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let actual = jobParams._getOutputPath();
+    let expected = path.join(os.homedir(), '.dart', 'bags', "Bag1.tar");
+    expect(actual).toEqual(expected);
+});
 
-// });
+test('_loadWorkflow()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let gotWorkflow = jobParams._loadWorkflow();
+    expect(gotWorkflow).toBe(true);
+    expect(jobParams._workflowObj.name).toEqual("BagIt Package, With Uploads");
+});
 
-// test('_getWorkflow()', () => {
+test('_loadBagItProfile()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let gotProfile = jobParams._loadBagItProfile();
+    expect(gotProfile).toBe(true);
+    expect(jobParams._bagItProfile.name).toEqual("APTrust");
+});
 
-// });
+test('_makePackageOp()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    let job = new Job();
+    jobParams._makePackageOp(job);
 
-// test('_getBagItProfile()', () => {
-
-// });
-
-// test('_makePackageOp()', () => {
-
-// });
+    expect(job.packageOp).toBeDefined();
+    expect(job.packageOp.packageName).toEqual('Bag1.tar');
+    expect(job.packageOp.outputPath).toEqual(path.join(OutputDir, 'Bag1.tar'));
+    expect(job.packageOp.packageFormat).toEqual('BagIt');
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.sourceFiles).toEqual(files);
+});
 
 // test('_makeUploadOps()', () => {
 

@@ -163,10 +163,10 @@ class JobParams {
      * @returns {@link Job}
      */
     toJob() {
-        if (!this._getWorkflow()) {
+        if (!this._loadWorkflow()) {
             return null;
         }
-        if (!this._getBagItProfile()) {
+        if (!this._loadBagItProfile()) {
             return null;
         }
         // Call job.validate before returning?
@@ -297,7 +297,7 @@ class JobParams {
         fs.writeFileSync(pathToFile, JSON.stringify(this.job));
     }
 
-    _getWorkflow() {
+    _loadWorkflow() {
         this._workflowObj = Workflow.firstMatching('name', this.workflow);
         if (!this._workflowObj) {
             this.errors['workflow'] = Context.y18n.__('Cannot find workflow %s', this.workflow);
@@ -315,10 +315,13 @@ class JobParams {
      *
      * @returns {boolean}
      */
-    _getBagItProfile() {
+    _loadBagItProfile() {
+        if (!this._workflowObj) {
+            this._loadWorkflow();
+        }
         if (this._workflowObj.bagItProfileId) {
             this._bagItProfile = BagItProfile.find(this._workflowObj.bagItProfileId);
-            if (!bagItProfile) {
+            if (!this._bagItProfile) {
                 this.errors['bagItProfile'] = Context.y18n.__("Could not find BagItProfile with id %s", this._workflowObj.bagItProfileId);
                 return false;
             }
@@ -359,7 +362,7 @@ class JobParams {
             job.packageOp = new PackageOperation(this.packageName, outputPath);
             job.packageOp.packageFormat = this._workflowObj.packageFormat;
             job.packageOp.pluginId = this._workflowObj.packagePluginId;
-            job.packageOp.sourceFiles = this._workflowObj.files;
+            job.packageOp.sourceFiles = this.files;
         }
     }
 
