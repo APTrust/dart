@@ -226,5 +226,7 @@
   "You must specify an output path.": "You must specify an output path.",
   "You must specify a package name.": "You must specify a package name.",
   "%s must be unique": "%s must be unique",
-  "Job of %s %s": "Job of %s %s"
+  "Job of %s %s": "Job of %s %s",
+  "Cannot find workflow %s": "Cannot find workflow %s",
+  "Could not find BagItProfile with id %s": "Could not find BagItProfile with id %s"
 }

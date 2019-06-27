@@ -1,6 +1,7 @@
 const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
+const fs = require('fs');
 const { Job } = require('./job');
 const { JobParams } = require('./job_params');
 const os = require('os');
@@ -361,26 +362,102 @@ test('_mergeTags() with multiple values', () => {
 
 // });
 
-// test('_buildJob()', () => {
+test('_buildJob()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    jobParams.tags = getTagsWithDuplicates();
+    jobParams._loadWorkflow();
+    jobParams._loadBagItProfile();
+    let job = jobParams._buildJob();
+    expect(job).toBeDefined();
+    expect(job).not.toBeNull();
 
-// });
+    // Spot check. The tests above did a more thorough
+    // inspection of the underlying methods and components.
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
+    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
+    expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(3);
+});
 
-// test('toJob with BagIt packaging, no upload', () => {
 
-// });
+test('toJob() with BagIt packaging, no upload', () => {
+    let jobParams = getJobParams("BagIt Package, No Uploads", "Bag1.tar");
+    let job = jobParams.toJob();
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
+    expect(job.uploadOps.length).toEqual(0);
+    expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
+});
 
-// test('toJob with tar packaging, no upload', () => {
+test('toJob() with tar packaging, no upload', () => {
+    let jobParams = getJobParams("Tar Package, No Uploads", "Bag1.tar");
+    let job = jobParams.toJob();
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
+    expect(job.uploadOps.length).toEqual(0);
+});
 
-// });
+test('toJob() with uploads, no packaging', () => {
+    let jobParams = getJobParams("No Package, With Uploads");
+    let job = jobParams.toJob();
+    expect(job).not.toBeNull();
+    expect(job.packageOp.pluginId).toBeNull();
+    expect(job.packageOp.outputPath).not.toBeDefined();
+    expect(job.uploadOps.length).toEqual(3);
 
-// test('toJob with uploads, no packaging', () => {
+    // We're not packaging the files, just uploading them directly.
+    expect(job.uploadOps[0].sourceFiles).toEqual(Files);
+});
 
-// });
+test('toJob() with BagIt packaging and uploads', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let job = jobParams.toJob();
+    expect(job).not.toBeNull();
 
-// test('toJob with BagIt packaging and uploads', () => {
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
+    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
+    expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
+});
 
-// });
+test('toJob() returns null and sets error on missing Workflow', () => {
+    let workflowName = "This workflow does not exist";
+    let jobParams = getJobParams(workflowName);
+    let job = jobParams.toJob();
+    expect(job).toBeNull();
+    expect(jobParams.errors['workflow']).toEqual(
+        Context.y18n.__('Cannot find workflow %s', workflowName)
+    );
+});
 
-// test('toJobFile()', () => {
+test('toJob() returns null and sets error on missing BagItProfile', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    jobParams._loadWorkflow = jest.fn(() => {
+        jobParams._workflowObj = { bagItProfileId: "00000000-0000-0000-0000-000000000000" }
+        return true;
+    });
+    let job = jobParams.toJob();
+    expect(job).toBeNull();
+    expect(jobParams.errors['bagItProfile']).toEqual(
+        Context.y18n.__("Could not find BagItProfile with id %s", "00000000-0000-0000-0000-000000000000")
+    );
+});
 
-// });
+
+test('toJobFile()', () => {
+    let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
+    let tmpFile = Util.tmpFilePath();
+    jobParams.toJobFile(tmpFile);
+    expect(fs.existsSync(tmpFile)).toBe(true);
+
+    let job = Job.inflateFromFile(tmpFile);
+
+    expect(job).not.toBeNull();
+    expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
+    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
+    expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
+});

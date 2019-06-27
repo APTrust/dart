@@ -1,5 +1,6 @@
 const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { Context } = require('./context');
 const fs = require('fs');
 const { Job } = require('./job');
 const { PackageOperation } = require('./package_operation');
@@ -197,6 +198,9 @@ class JobParams {
      * @param {Job}
      */
     _mergeTags(job) {
+        if (!job.bagItProfile) {
+            return;
+        }
         for(let tags of Object.values(this._groupedTags())) {
             // Every tag in this list will have the same tagFile and tagName.
             let firstTag = tags[0];
@@ -294,7 +298,7 @@ class JobParams {
      */
     toJobFile(pathToFile) {
         let job = this.toJob();
-        fs.writeFileSync(pathToFile, JSON.stringify(this.job));
+        fs.writeFileSync(pathToFile, JSON.stringify(job), 'utf8');
     }
 
     _loadWorkflow() {
