@@ -13,6 +13,10 @@
     {{> inputSelect field = form.fields.bagItProfileId }}
   </div>
 
+  <p>Upload To</p>
+
+  {{> inputCheckboxGroup field = form.fields.storageServiceIds }}
+
   {{> inputHidden field = form.fields.pluginId }}
 
   {{> inputHidden field = form.fields.userCanDelete }}

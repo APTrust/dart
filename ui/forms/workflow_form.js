@@ -75,7 +75,7 @@ class WorkflowForm extends Form {
         this.fields['storageServiceIds'].choices = Choice.makeList(
             StorageService.list(filterFn, listOptions),
             this.obj.storageServiceIds,
-            true
+            false
         );
     }
 
