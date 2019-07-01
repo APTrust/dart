@@ -245,5 +245,6 @@
   "Workflow_bagItProfileId_help": "Workflow_bagItProfileId_help",
   "Workflow_storageServiceIds_label": "Workflow_storageServiceIds_label",
   "Workflow_storageServiceIds_help": "Workflow_storageServiceIds_help",
-   "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.": "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets."
+  "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.": "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.",
+  "Could not find object of type %s with id %s": "Could not find object of type %s with id %s"
 }

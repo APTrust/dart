@@ -32,6 +32,7 @@ function run() {
         win = ui.win;
         app = ui.app;
     }
+    Context.logger.info(`DART started (${process.DART_MODE} mode)`);
 }
 
 // Run in command-line mode.

@@ -15,7 +15,7 @@ function run() {
     let migrationName = `Migration_${migration}`;
     let record = InternalSetting.firstMatching('name', migrationName);
     if (record && record.value) {
-        Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
+        //Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
         return;
     }
     Context.logger.info(`Starting migration ${migration}`);
