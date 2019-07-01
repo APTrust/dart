@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      bagit/key_value_collection.js - Documentation
+      ui/forms/workflow_form.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -88,7 +88,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        bagit/key_value_collection.js
+        ui/forms/workflow_form.js
       </h1>
     
 
@@ -97,87 +97,100 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>/**
-  * KeyValueCollection represents keys and values parsed from
-  * manifests and tag files. Manifest data should use the file path
-  * as the key and the checksum as the value. There should be only
-  * one entry for each file in a manifest.
-  *
-  * Tag file data should use the tag name as the key and the tag
-  * value as the value. Each tag may appear multiple times in a tag
-  * file, so tag names may have multiple values. This collection preserves
-  * the order of those values.
-*/
-class KeyValueCollection {
-    constructor() {
-        this.items = {};
+    <pre class="prettyprint source linenums"><code>const $ = require('jquery');
+const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Choice } = require('./choice');
+const { Context } = require('../../core/context');
+const { Field } = require('./field');
+const { Form } = require('./form');
+const { PluginManager } = require('../../plugins/plugin_manager');
+const { StorageService } = require('../../core/storage_service');
+const { Util } = require('../../core/util');
+
+/**
+ * WorkflowForm allows the user to define a workflow.
+ */
+class WorkflowForm extends Form {
+
+    constructor(workflow) {
+        super('Workflow', workflow);
+        this._init(workflow);
     }
-    /**
-     * Adds a key with the specified value to the collection.
-     * You may add a key multiple times, and all values will be
-     * stored in the order they were added.
-     *
-     * @param {string} key
-     * @param {string} value
-     */
-    add(key, value) {
-        if (!this.items.hasOwnProperty(key)) {
-            this.items[key] = [];
+
+    _init() {
+        this._initPackageFormatList();
+        this._initBagItProfileList();
+        this._initStorageServiceList();
+    }
+
+    _initPackageFormatList() {
+        let formats = [
+            {
+                id: 'None',
+                name: 'None'
+            },
+            {
+                id: 'BagIt',
+                name: 'BagIt'
+            }
+        ];
+        for (let writer of PluginManager.getModuleCollection('FormatWriter')) {
+            let description = writer.description();
+            for (let format of description.writesFormats) {
+                formats.push({
+                    id: description.id,
+                    name: format
+                });
+            };
         }
-        this.items[key].push(value);
+        this.fields['packageFormat'].choices = Choice.makeList(
+            formats,
+            this.obj.packageFormat,
+            false
+        );
     }
-    /**
-     * first returns the first value for the key, or null
-     * if the key is not found. Use this to when reading data
-     * parsed from manifests.
-     *
-     * @param {string} key
-     *
-     * @returns {*} The first value associated with the specified
-     * key, or null.
-     */
-    first(key) {
-        var match = this.items[key];
-        if (Array.isArray(match)) {
-            return match[0];
+
+    _initBagItProfileList() {
+        var profiles = BagItProfile.list(null, {
+            limit: 0,
+            offset: 0,
+            orderBy: 'name',
+            sortDirection: 'asc'
+        });
+        this.fields['bagItProfileId'].choices = Choice.makeList(
+            profiles,
+            this.obj.bagItProfileId,
+            true
+        );
+        this.fields['bagItProfileId'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
+    }
+
+    _initStorageServiceList() {
+        let listOptions = {
+            orderBy: 'name',
+            sortDirection: 'asc'
         }
-        return null;
+        let filterFn = function(ss) { return ss.allowsUpload };
+        this.fields['storageServiceIds'].choices = Choice.makeList(
+            StorageService.list(filterFn, listOptions),
+            this.obj.storageServiceIds,
+            false
+        );
     }
-    /**
-      * all returns all values for a key as an array of strings,
-      * or null, which indicates the key is not present at all.
-      * Use this when reading data parsed from tag files, where tags
-      * may appear multiple times and have multiple values.
-      *
-      * @param {string} key
-      *
-      * @returns {Array} List of associated keys, or null if key is not found.
-      */
-    all(key) {
-        if (this.items.hasOwnProperty(key)) {
-            return this.items[key];
+
+    parseFromDOM() {
+        super.parseFromDOM();
+        let selectedPluginId = this.obj.packageFormat;
+        let formatName = $('#workflowForm_packageFormat option:selected').text();
+        this.obj.packagePluginId = selectedPluginId;
+        if (formatName) {
+            this.obj.packageFormat = formatName.trim();
         }
-        return null;
     }
-    /**
-      * keys returns all keys in the collection
-      *
-      * @returns {Array}
-      */
-    keys() {
-        return Object.keys(this.items);
-    }
-    /**
-      * Returns all the keys in sorted order.
-      *
-      * @returns {Array}
-      */
-    sortedKeys() {
-        return this.keys().sort();
-    }
+
 }
 
-module.exports.KeyValueCollection = KeyValueCollection;
+module.exports.WorkflowForm = WorkflowForm;
 </code></pre>
   </article>
 </section>
