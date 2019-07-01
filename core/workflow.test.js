@@ -1,8 +1,11 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('./constants');
+const { Job } = require('./job');
+const path = require('path');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
+const { UploadOperation } = require('./upload_operation');
 const { Workflow } = require('./workflow');
 
 const tarPluginId = '90110710-1ff9-4650-a086-d7b23772238f';
@@ -142,3 +145,31 @@ test('find by name', () => {
     expect(retrieved).toBeDefined();
     expect(retrieved.id).toEqual(workflow.id);
 })
+
+test('fromJob()', () => {
+    let pathToFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_001.json');
+    let job = Job.inflateFromFile(pathToFile);
+    job.uploadOps.push(new UploadOperation('69b7877b-1ddc-41ee-bd4d-8c905884f2e1', []));
+    let workflow = Workflow.fromJob(job);
+    expect(workflow.name).toEqual('');
+    expect(workflow.description).toEqual('');
+    expect(workflow.packageFormat).toEqual('BagIt');
+    expect(workflow.packagePluginId).toEqual('BagIt');
+    expect(workflow.bagItProfileId).toEqual('24a1e6ac-f1f4-4ec5-b020-b97887e32284');
+    expect(workflow.storageServiceIds).toEqual([
+        'e712265a-45ee-41be-b3b0-c4a8c7929e00',
+        '69b7877b-1ddc-41ee-bd4d-8c905884f2e1'
+    ]);
+})
+
+test('fromJob() does not error if some job attributes are missing', () => {
+    let job = new Job();
+    job.packageOp = null;
+    job.uploadOps = null;
+
+    let workflow = Workflow.fromJob(job);
+    expect(workflow.packageFormat).toEqual('None');
+    expect(workflow.packagePluginId).toBeNull();
+    expect(workflow.bagItProfileId).toBeNull();
+    expect(workflow.storageServiceIds).toEqual([]);
+});

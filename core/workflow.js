@@ -183,6 +183,29 @@ class Workflow extends PersistentObject {
         }
         return Object.keys(this.errors).length == 0;
     }
+
+    /**
+     * Given a {@link Job} object, this returns a Workflow that has
+     * the same pattern as the Job.
+     *
+     * @param {Job}
+     *
+     * @returns {Workflow}
+     */
+    static fromJob(job) {
+        let profileId = job.bagItProfile ? job.bagItProfile.id : null;
+        let packageFormat = job.packageOp ? job.packageOp.packageFormat : 'None';
+        let pluginId = job.packageOp ? job.packageOp.pluginId : null;
+        let ssids = job.uploadOps ? job.uploadOps.map(op => op.storageServiceId) : [];
+        return new Workflow({
+            name: '',
+            description: '',
+            packageFormat: packageFormat,
+            packagePluginId: pluginId,
+            bagItProfileId: profileId,
+            storageServiceIds: ssids
+        });
+    }
 }
 
 module.exports.Workflow = Workflow;
