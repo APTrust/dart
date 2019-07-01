@@ -94,4 +94,7 @@ $(function() {
     // Show the running jobs badge immediate, then refresh every 3 seconds.
     showRunningJobsBadge();
     let runningJobsInterval = setInterval(showRunningJobsBadge, 3000);
+
+    // Show the dashboard
+    location.hash = '#Dashboard/show';
 });

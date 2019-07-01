@@ -32,6 +32,10 @@
         <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
           <a class="dropdown-item" href="#Workflow/list">List</a>
           <a class="dropdown-item" href="#Workflow/new">New</a>
+          <div class="dropdown-divider"></div>
+          {{#each workflows}}
+          <a class="dropdown-item" href="javascript:alert('Coming soon!')">Run {{ this.name }}</a>
+          {{/each}}
         </div>
       </li>
       <li class="nav-item dropdown {{#if (eq section 'Help')}}active{{/if}}">

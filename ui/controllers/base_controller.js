@@ -2,6 +2,7 @@ const { Context } = require('../../core/context')
 const electron = require('electron');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
+const { Workflow } = require('../../core/workflow');
 
 /**
  * BaseController is the base class from which other view controllers
@@ -161,8 +162,15 @@ class BaseController {
      * main container.
      */
     containerContent(html) {
+        let workflows = Workflow.list(null, {
+            orderBy: 'name',
+            sortDirection: 'asc'
+        });
         return {
-            nav: Templates.nav({ section: this.navSection }),
+            nav: Templates.nav({
+                section: this.navSection,
+                workflows: workflows
+            }),
             container: html
         }
     }
