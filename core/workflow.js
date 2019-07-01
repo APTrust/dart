@@ -3,6 +3,7 @@ const { Context } = require('./context');
 const { PersistentObject } = require('./persistent_object');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('./storage_service');
+const { Util } = require('./util');
 
 /**
  * A workflow defines the set up steps that compose a job. These
@@ -182,6 +183,32 @@ class Workflow extends PersistentObject {
             );
         }
         return Object.keys(this.errors).length == 0;
+    }
+
+    /**
+     * Returns the first Workflow that has the same packaging format and
+     * upload targets as this Workflow. Returns null if there is no match.
+     *
+     * @returns {Workflow}
+     */
+    findDuplicate() {
+        let self = this;
+        let opts = { orderBy: 'name', sortDirection: 'asc', limit: 1, offset: 0 };
+        let duplicate = null;
+        let filter = function(wf) {
+            return (wf.packageFormat == self.packageFormat &&
+                    wf.packagePluginId == self.packagePluginId &&
+                    wf.bagItProfileId == self.bagItProfileId &&
+                    Util.arrayContentsMatch(wf.storageServiceIds,
+                                            self.storageServiceIds,
+                                            false)
+                   );
+        }
+        let matches = Workflow.list(filter, opts);
+        if (matches && matches.length > 0) {
+            duplicate = matches[0];
+        }
+        return duplicate;
     }
 
     /**

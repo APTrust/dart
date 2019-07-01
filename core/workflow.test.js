@@ -173,3 +173,13 @@ test('fromJob() does not error if some job attributes are missing', () => {
     expect(workflow.bagItProfileId).toBeNull();
     expect(workflow.storageServiceIds).toEqual([]);
 });
+
+test('findDuplicate() finds a duplicate Workflow, if it exists', () => {
+    let workflow = new Workflow(opts);
+    //let origWorkflowId = workflow.id;
+    expect(workflow.findDuplicate()).toBeNull();
+    workflow.save();
+
+    let newWorkflow = new Workflow(opts);
+    expect(newWorkflow.findDuplicate()).toEqual(workflow);
+});
