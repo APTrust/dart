@@ -261,6 +261,12 @@ class Form {
     setErrors() {
         this.changed = {};
         this._initFields();
+
+        // Some heavily customized forms call a custom _init
+        // function after initializing fields.
+        if (typeof this._init === 'function') {
+            this._init();
+        }
     }
 }
 

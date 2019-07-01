@@ -182,6 +182,12 @@ class Workflow extends PersistentObject {
                 "%s must be unique", "name"
             );
         }
+        let duplicate = this.findDuplicate();
+        if (duplicate) {
+            this.errors["storageServiceIds"] = Context.y18n.__(
+                "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.", duplicate.name
+            );
+        }
         return Object.keys(this.errors).length == 0;
     }
 
@@ -196,7 +202,8 @@ class Workflow extends PersistentObject {
         let opts = { orderBy: 'name', sortDirection: 'asc', limit: 1, offset: 0 };
         let duplicate = null;
         let filter = function(wf) {
-            return (wf.packageFormat == self.packageFormat &&
+            return (wf.id != self.id &&
+                    wf.packageFormat == self.packageFormat &&
                     wf.packagePluginId == self.packagePluginId &&
                     wf.bagItProfileId == self.bagItProfileId &&
                     Util.arrayContentsMatch(wf.storageServiceIds,

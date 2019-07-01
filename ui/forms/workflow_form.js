@@ -18,7 +18,7 @@ class WorkflowForm extends Form {
         this._init(workflow);
     }
 
-    _init(job) {
+    _init() {
         this._initPackageFormatList();
         this._initBagItProfileList();
         this._initStorageServiceList();
@@ -87,7 +87,6 @@ class WorkflowForm extends Form {
         if (formatName) {
             this.obj.packageFormat = formatName.trim();
         }
-        //this.obj.storageServiceIds = $("input[name='storageServiceIds']:checked").toArray().map(cb => cb.value)
     }
 
 }
