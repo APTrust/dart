@@ -46,7 +46,7 @@ class WorkflowForm extends Form {
         }
         this.fields['packageFormat'].choices = Choice.makeList(
             formats,
-            this.obj.pluginId,
+            this.obj.packageFormat,
             false
         );
     }
