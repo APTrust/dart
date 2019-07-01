@@ -212,6 +212,10 @@ class Form {
         for (let [name, field] of Object.entries(this.fields)) {
             let oldValue = this.obj[name];
             let formValue = $(`#${field.id}`).val();
+            if (typeof formValue === "undefined") {
+                // Try parsing as checkbox group.
+                formValue = $(`input[name='${name}']:checked`).toArray().map(cb => cb.value);
+            }
             try {
                 if (Array.isArray(formValue)) {
                     formValue = formValue.map(val => val.trim());

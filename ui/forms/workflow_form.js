@@ -82,11 +82,12 @@ class WorkflowForm extends Form {
     parseFromDOM() {
         super.parseFromDOM();
         let selectedPluginId = this.obj.packageFormat;
-        let formatName = $('#jobPackageOpForm_packageFormat option:selected').text();
+        let formatName = $('#workflowForm_packageFormat option:selected').text();
         this.obj.packagePluginId = selectedPluginId;
         if (formatName) {
             this.obj.packageFormat = formatName.trim();
         }
+        //this.obj.storageServiceIds = $("input[name='storageServiceIds']:checked").toArray().map(cb => cb.value)
     }
 
 }
