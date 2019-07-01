@@ -521,6 +521,42 @@ class Util {
         let filename = `${prefix}_${suffix}`;
         return path.join(dartTmpDir, filename);
     }
+
+    /**
+     * Returns true if arrays a and b contain the same elements, regardless
+     * of order. When specifying orderMatters = false, be careful using this
+     * with large arrays, since it copies and sorts each array. This is
+     * intended for arrays of scalar values like strings, numbers, and dates,
+     * whose values can be compared for simple equality.
+     *
+     * @param {Array} a - The first array.
+     * @param {Array} b - The second array.
+     * @param {boolean} orderMatters - Set this to true if the arrays must
+     * contain the same elements in the same order. Set to false to check if
+     * they contain the same elements in any order.
+     *
+     * @returns {boolean}
+     *
+     */
+    static arrayContentsMatch(a, b, orderMatters) {
+        if (!Array.isArray(a) || !Array.isArray(b)) {
+            return false;
+        }
+        if (a === b) {
+            return true;
+        }
+        if (a.length != b.length) {
+            return false;
+        }
+        let aCopy = orderMatters ? a : [...a].sort();
+        let bCopy = orderMatters ? b : [...b].sort();
+        for (var i = 0; i < aCopy.length; ++i) {
+            if (aCopy[i] !== bCopy[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 module.exports.Util = Util;

@@ -279,3 +279,36 @@ test('Util.tmpFilePath()', () => {
     expect(path).toMatch(new RegExp(`^${tmpDir}`));
     expect(path).toMatch(/[a-f0-9]{8}_\d{13}$/);
 });
+
+test('Util.arrayContentsMatch()', () => {
+    // No match because they're not arrays.
+    var a, b; // both undefined
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(false);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(false);
+
+    // No match because they're not arrays.
+    a = null, b = null;
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(false);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(false);
+
+    // No match because they're not arrays.
+    a = 1, b = 1;
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(false);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(false);
+
+    // Different contents.
+    a = [1], b = [2];
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(false);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(false);
+
+    // Same contents, different orders.
+    // The match only when orderMatters == false.
+    a = ['Homer', 'Marge', 'Lisa'], b = ['Lisa', 'Marge', 'Homer'];
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(true);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(false);
+
+    // Same contents, same order.
+    a = ['Homer', 'Marge', 'Lisa'], b = ['Homer', 'Marge', 'Lisa'];
+    expect(Util.arrayContentsMatch(a, b, false)).toBe(true);
+    expect(Util.arrayContentsMatch(a, b, true)).toBe(true);
+});
