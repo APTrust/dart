@@ -62,7 +62,7 @@
     <a class="btn btn-primary" href="#JobUpload/show?id={{ job.id }}" role="button">&lt;&lt; Back</a>
   </div>
   <div class="pull-right" id="btnNextDiv">
-    <a class="btn btn-info mr-5" href="javascript:alert('Coming soon');" role="button" data-toggle="popover" data-trigger="hover" data-content="Create a reusable workflow from this job. Click for more info.">Create Workflow</a>
+    <a class="btn btn-info mr-5" href="#Workflow/newFromJob?jobId={{ job.id }}" role="button">Create Workflow</a>
     {{!-- Though it acts like a link, this has to be a button so we can disable it after click. --}}
     <button id="btnRunJob" class="btn btn-success ml-5" onclick="location.hash='#JobRun/run?id={{ job.id }}'" role="button">Run Job</button>
   </div>

@@ -1,5 +1,5 @@
 const { BaseController } = require('./base_controller');
-//const { Context } = require('../../core/context');
+const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
 const { Workflow } = require('../../core/workflow');
 const { WorkflowForm } = require('../forms/workflow_form');
@@ -31,6 +31,20 @@ class WorkflowController extends BaseController {
      */
     postRenderCallback(fnName) {
         $("select[name=packageFormat]").change(this.onFormatChange());
+    }
+
+    /**
+     * This presents a form to create a new {@link Workflow} from a
+     * {@link Job}. Most of the fields on the form will be automatically
+     * populated.
+     *
+     */
+    newFromJob() {
+        let job = Job.find(this.params.get('jobId'));
+        let workflow = Workflow.fromJob(job);
+        let form = new this.formClass(workflow);
+        let html = this.formTemplate({ form: form });
+        return this.containerContent(html);
     }
 
     /**
