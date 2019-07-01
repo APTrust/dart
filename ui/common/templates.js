@@ -49,6 +49,8 @@ var setupStart = handlebars.compile(readFile('setup', 'start.html'));
 var setupQuestion = handlebars.compile(readFile('setup', 'question.html'));
 var tagDefinitionForm = handlebars.compile(readFile('tag_definition', 'form.html'));
 var tagFileForm = handlebars.compile(readFile('tag_file', 'form.html'));
+var workflowForm = handlebars.compile(readFile('workflow', 'form.html'));
+var workflowList = handlebars.compile(readFile('workflow', 'list.html'));
 // var uploadOrRebag = handlebars.compile(readFile('upload_or_rebag.html'));
 
 handlebars.registerPartial({
@@ -130,4 +132,6 @@ module.exports.setupQuestion = setupQuestion;
 module.exports.setupStart = setupStart;
 module.exports.tagDefinitionForm = tagDefinitionForm;
 module.exports.tagFileForm = tagFileForm;
+module.exports.workflowForm = workflowForm;
+module.exports.workflowList = workflowList;
 // module.exports.uploadOrRebag = uploadOrRebag;

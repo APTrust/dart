@@ -1,0 +1,24 @@
+<h2>Workflow</h2>
+
+<form method="post" action="#" id="{{ form.id }}">
+
+  {{> inputText field = form.fields.name }}
+
+  {{> inputText field = form.fields.description }}
+
+
+  {{> inputSelect field = form.fields.packageFormat }}
+
+  <div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};">
+    {{> inputSelect field = form.fields.bagItProfileId }}
+  </div>
+
+  {{> inputHidden field = form.fields.pluginId }}
+
+  {{> inputHidden field = form.fields.userCanDelete }}
+
+  {{> inputHidden field = form.fields.id }}
+
+  {{> formButtons form = form }}
+
+</form>

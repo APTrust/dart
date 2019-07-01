@@ -228,5 +228,21 @@
   "%s must be unique": "%s must be unique",
   "Job of %s %s": "Job of %s %s",
   "Cannot find workflow %s": "Cannot find workflow %s",
-  "Could not find BagItProfile with id %s": "Could not find BagItProfile with id %s"
+  "Could not find BagItProfile with id %s": "Could not find BagItProfile with id %s",
+  "Workflow_id_label": "Workflow_id_label",
+  "Workflow_id_help": "Workflow_id_help",
+  "Workflow_userCanDelete_label": "Workflow_userCanDelete_label",
+  "Workflow_userCanDelete_help": "Workflow_userCanDelete_help",
+  "Workflow_name_label": "Workflow_name_label",
+  "Workflow_name_help": "Workflow_name_help",
+  "Workflow_description_label": "Workflow_description_label",
+  "Workflow_description_help": "Workflow_description_help",
+  "Workflow_packageFormat_label": "Workflow_packageFormat_label",
+  "Workflow_packageFormat_help": "Workflow_packageFormat_help",
+  "Workflow_packagePluginId_label": "Workflow_packagePluginId_label",
+  "Workflow_packagePluginId_help": "Workflow_packagePluginId_help",
+  "Workflow_bagItProfileId_label": "Workflow_bagItProfileId_label",
+  "Workflow_bagItProfileId_help": "Workflow_bagItProfileId_help",
+  "Workflow_storageServiceIds_label": "Workflow_storageServiceIds_label",
+  "Workflow_storageServiceIds_help": "Workflow_storageServiceIds_help"
 }

@@ -17,6 +17,7 @@ const { RemoteRepositoryController } = require('./remote_repository_controller')
 const { SetupController } = require('./setup_controller');
 const { StorageServiceController } = require('./storage_service_controller');
 const { TagDefinitionController } = require('./tag_definition_controller');
+const { WorkflowController } = require('./workflow_controller');
 
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
@@ -37,3 +38,4 @@ module.exports.RemoteRepositoryController = RemoteRepositoryController;
 module.exports.SetupController = SetupController;
 module.exports.StorageServiceController = StorageServiceController;
 module.exports.TagDefinitionController = TagDefinitionController;
+module.exports.WorkflowController = WorkflowController;
