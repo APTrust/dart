@@ -377,6 +377,7 @@ class JobParams {
         let job = new Job();
         job.name = this._workflowObj.packageName || Job.genericName();
         job.bagItProfile = this._bagItProfile;
+        job.workflowId = this._workflowObj.id;
         this._makePackageOp(job);
         this._makeUploadOps(job);
         this._mergeTags(job);

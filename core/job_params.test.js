@@ -374,6 +374,8 @@ test('_buildJob()', () => {
     // Spot check. The tests above did a more thorough
     // inspection of the underlying methods and components.
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
+    expect(job.workflowId).not.toBeNull();
+    expect(Util.looksLikeUUID(job.workflowId)).toBe(true);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
     expect(job.uploadOps.length).toEqual(3);
     expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
@@ -384,6 +386,8 @@ test('_buildJob()', () => {
 test('toJob() with BagIt packaging, no upload', () => {
     let jobParams = getJobParams("BagIt Package, No Uploads", "Bag1.tar");
     let job = jobParams.toJob();
+    expect(job.workflowId).not.toBeNull();
+    expect(Util.looksLikeUUID(job.workflowId)).toBe(true);
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
     expect(job.uploadOps.length).toEqual(0);
@@ -396,6 +400,8 @@ test('toJob() with tar packaging, no upload', () => {
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
     expect(job.uploadOps.length).toEqual(0);
+    expect(job.workflowId).not.toBeNull();
+    expect(Util.looksLikeUUID(job.workflowId)).toBe(true);
 });
 
 test('toJob() with uploads, no packaging', () => {

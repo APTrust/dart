@@ -115,6 +115,22 @@ class Job extends PersistentObject {
          * @default -1
          */
         this.byteCount = -1;
+
+        /**
+         * The id of the workflow from which this job was created.
+         * If the job was not created from a {@link Workflow}, this
+         * will be null.
+         *
+         * This attribute is significant only to some portions of the
+         * UI, which may hide some job configution options since the
+         * workflow already describes what those options should be.
+         *
+         * For info on how a {@link Workflow} becomes a {@link Job},
+         * see {@link JobParams#toJob}.
+         *
+         * @type {string}
+         */
+        this.workflowId = null;
     }
 
     /**

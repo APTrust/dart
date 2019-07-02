@@ -16,6 +16,12 @@ const { Util } = require('./util');
  * A workflow allows users to define a repeatable set of actions,
  * and to run jobs based on those pre-defined actions.
  *
+ * For info on how to create a {@link Job} from a {@link Workflow},
+ * see {@link Workflow.fromJob}.
+ *
+ * For info on how a {@link Workflow} becomes a {@link Job},
+ * see {@link JobParams#toJob}.
+ *
  * @param {object} opts
  *
  * @param {string} opts.name - The name to assign to this Workflow.
@@ -221,6 +227,9 @@ class Workflow extends PersistentObject {
     /**
      * Given a {@link Job} object, this returns a Workflow that has
      * the same pattern as the Job.
+     *
+     * For info on how a {@link Workflow} becomes a {@link Job},
+     * see {@link JobParams#toJob}.
      *
      * @param {Job}
      *
