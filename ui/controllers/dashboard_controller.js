@@ -83,7 +83,9 @@ class DashboardController extends RunningJobsController {
      */
     _getRecentJobSummaries() {
         let jobSummaries = [];
-        let opts = {limit: 10, offset: 0, orderBy: 'updatedAt', sortDir: 'desc'};
+        // This sort can approximate the 20 most recent jobs,
+        // but the sort below, based on a calculated value, is more accurate.
+        let opts = {limit: 20, offset: 0, orderBy: 'createdAt', sortDir: 'desc'};
         // TODO: Override list() in Job to do its own inflation?
         let jobs = Job.list(null, opts).map((data) => { return Job.inflateFrom(data) });
         for (let job of jobs) {
@@ -94,7 +96,8 @@ class DashboardController extends RunningJobsController {
                 date: timestamp
             });
         }
-        return jobSummaries;
+        let sortFn = Util.getSortFunction('date', 'desc');
+        return jobSummaries.sort(sortFn);
     }
 
     /**
