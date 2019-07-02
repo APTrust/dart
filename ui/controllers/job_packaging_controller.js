@@ -172,9 +172,10 @@ class JobPackagingController extends BaseController {
         let job = this.job;
         return function(e) {
             let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
-            let packageName = $('#jobPackageOpForm_packageName').val();
-            if (job.bagItProfile) {
-                packageName += job.bagItProfile.preferredSerialization();
+            let packageName = $('#jobPackageOpForm_packageName').val().trim();
+            let extension = job.bagItProfile.preferredSerialization();
+            if (job.bagItProfile && packageName && !packageName.endsWith(extension)) {
+                packageName += extension;
             }
             $('#jobPackageOpForm_outputPath').val(path.join(baggingDir, packageName));
         }
