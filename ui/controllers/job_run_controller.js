@@ -81,6 +81,20 @@ class JobRunController extends RunningJobsController {
         return this.noContent();
     }
 
+    /**
+     * This handles the page's Back button click.
+     */
+    back() {
+        let prevController = 'JobUpload';
+        // If we have a workflow id, the uploads for this job
+        // are already determined, so we can skip that screen.
+        if (this.job.workflowId) {
+            prevController = 'JobMetadata';
+        }
+        return this.redirect(prevController, 'show', this.params);
+    }
+
+
     postRenderCallback(fnName) {
 
     }

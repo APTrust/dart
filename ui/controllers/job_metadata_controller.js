@@ -62,7 +62,13 @@ class JobMetadataController extends BaseController {
         if(!tagsAreValid) {
             return this.show();
         }
-        return this.redirect('JobUpload', 'show', this.params);
+        let nextController = 'JobUpload';
+        // If we have a workflow id, the uploads for this job
+        // are already determined, so we can skip that screen.
+        if (this.job.workflowId) {
+            nextController = 'JobRun';
+        }
+        return this.redirect(nextController, 'show', this.params);
     }
 
     /**

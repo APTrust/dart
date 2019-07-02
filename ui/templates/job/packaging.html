@@ -4,15 +4,21 @@
 
 <form method="post" action="#" id="{{ form.id }}">
 
-  {{> inputSelect field = form.fields.packageFormat }}
+  <div style="display: {{#if job.workflowId}} none {{else}} block {{/if}};">
+    {{> inputSelect field = form.fields.packageFormat }}
 
-  <div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};">
-    {{> inputSelect field = form.fields.bagItProfileId }}
+    <div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};">
+      {{> inputSelect field = form.fields.bagItProfileId }}
+    </div>
   </div>
+
 
   {{> inputText field = form.fields.packageName }}
 
-  {{> inputText field = form.fields.outputPath }}
+
+  <div style="display: {{#if job.workflowId}} none {{else}} block {{/if}};">
+    {{> inputText field = form.fields.outputPath }}
+  </div>
 
   {{> inputHidden field = form.fields.pluginId }}
   {{> inputHidden field = form.fields.id }}
