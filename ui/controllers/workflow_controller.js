@@ -1,4 +1,5 @@
 const { BaseController } = require('./base_controller');
+const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobParams } = require('../../core/job_params');
 const Templates = require('../common/templates');
@@ -31,7 +32,6 @@ class WorkflowController extends BaseController {
      * the user to the JobController, where they can set up and run
      * the job.
      *
-     *
      */
     createJob() {
         let workflow = Workflow.find(this.params.get('workflowId'));
@@ -40,7 +40,13 @@ class WorkflowController extends BaseController {
         });
         let job = jobParams.toJob();
         if (job == null) {
-            // Show errors
+            let errMsg = Context.y18n.__('Error creating job from workflow.');
+            for (let [key, value] of Object.entries(jobParams.errors)) {
+                errMsg += `\n\n${key}: ${value}`
+            }
+            Context.logger.error(errMsg);
+            alert(errMsg);
+            return this.noContent();
         }
         job.save();
         this.params.set('id', job.id);
