@@ -34,7 +34,7 @@
           <a class="dropdown-item" href="#Workflow/new">New</a>
           <div class="dropdown-divider"></div>
           {{#each workflows}}
-          <a class="dropdown-item" href="javascript:alert('Coming soon!')">Run {{ this.name }}</a>
+          <a class="dropdown-item" href="#Workflow/createJob?workflowId={{this.id}}">Run {{ this.name }}</a>
           {{/each}}
         </div>
       </li>

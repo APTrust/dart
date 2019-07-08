@@ -109,7 +109,7 @@ class JobParams {
          *
          * @type {Array<TagDefinition>}
          */
-        this.tags = opts.tags;
+        this.tags = opts.tags || [];
         /**
          * A copy of the {@link Workflow} object whose name matches
          * this.workflowName. This is private, for internal use only.

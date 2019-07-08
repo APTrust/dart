@@ -1,5 +1,6 @@
 const { BaseController } = require('./base_controller');
 const { Job } = require('../../core/job');
+const { JobParams } = require('../../core/job_params');
 const Templates = require('../common/templates');
 const { Workflow } = require('../../core/workflow');
 const { WorkflowForm } = require('../forms/workflow_form');
@@ -23,6 +24,27 @@ class WorkflowController extends BaseController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'name';
         this.defaultSortDirection = 'asc';
+    }
+
+    /**
+     * This creates a new job based on a workflow, then redirects
+     * the user to the JobController, where they can set up and run
+     * the job.
+     *
+     *
+     */
+    createJob() {
+        let workflow = Workflow.find(this.params.get('workflowId'));
+        let jobParams = new JobParams({
+            workflowName: workflow.name
+        });
+        let job = jobParams.toJob();
+        if (job == null) {
+            // Show errors
+        }
+        job.save();
+        this.params.set('id', job.id);
+        return this.redirect('JobFiles', 'show', this.params);
     }
 
     /**
