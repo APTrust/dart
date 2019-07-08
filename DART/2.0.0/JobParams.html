@@ -215,7 +215,7 @@ for details on how this small data structure is converted to a Job.</p>
     
       <tr>
         
-          <td class="name"><code>workflow</code></td>
+          <td class="name"><code>workflowName</code></td>
         
 
         <td class="type">
@@ -797,8 +797,8 @@ absolute paths.</p>
         
             
 
-<h4 class="name" id="workflow">
-  <span class="type-signature"></span>workflow<span class="type-signature"> :string</span>
+<h4 class="name" id="workflowName">
+  <span class="type-signature"></span>workflowName<span class="type-signature"> :string</span>
 </h4>
 
 
@@ -1268,7 +1268,7 @@ operations on this object will succeed.</p>
 
   <div class="description">
     <p>Loads the Workflow from the DART Worflow database whose name
-matches this.workflow and stores it in this._workflowObj.
+matches this.workflowName and stores it in this._workflowObj.
 Returns true if it was able to load the <a href="Workflow.html">Workflow</a>.
 Returns false if there is no such workflow in the database.</p>
 <p>If this returns false, the caller should check this.errors['workflow']
@@ -2047,7 +2047,7 @@ tagName properties as those in the tags list (second param).</p>
 run. This performs the following operations to create a job:</p>
 <ol>
 <li>
-<p>Loads the <a href="Workflow.html">Workflow</a> speficied in this.workflow.</p>
+<p>Loads the <a href="Workflow.html">Workflow</a> speficied in this.workflowName.</p>
 </li>
 <li>
 <p>Creates a <a href="Job.html">Job</a> object patterned after that Workflow.</p>
