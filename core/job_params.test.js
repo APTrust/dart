@@ -153,7 +153,7 @@ function getTagsWithDuplicates() {
 
 function getJobParams(nameOfWorkflow, packageName) {
     return new JobParams({
-        workflow: nameOfWorkflow,
+        workflowName: nameOfWorkflow,
         packageName: packageName,
         files: Files,
         tags: getTags()
@@ -162,7 +162,7 @@ function getJobParams(nameOfWorkflow, packageName) {
 
 test('Constructor sets expected properties', () => {
     let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
-    expect(jobParams.workflow).toEqual("BagIt Package, With Uploads");
+    expect(jobParams.workflowName).toEqual("BagIt Package, With Uploads");
     expect(jobParams.packageName).toEqual("Bag1.tar");
     expect(jobParams.files).toEqual(Files);
     expect(jobParams.tags).toEqual(getTags());

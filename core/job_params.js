@@ -16,7 +16,7 @@ const { Workflow } = require('./workflow');
  *
  * @param {object} opts
  *
- * @param {string} opts.workflow - The name of the workflow to run. The
+ * @param {string} opts.workflowName - The name of the workflow to run. The
  * {@link JobParams#toJob} method will create a {@link Job} that includes
  * all of the components of the named Workflow, including packaging,
  * validation, and upload to one or more targets. Be sure to name an
@@ -90,7 +90,7 @@ class JobParams {
          *
          * @type {string}
          */
-        this.workflow = opts.workflow;
+        this.workflowName = opts.workflowName;
         /**
          * The name of the package or output file to create.
          *
@@ -112,7 +112,7 @@ class JobParams {
         this.tags = opts.tags;
         /**
          * A copy of the {@link Workflow} object whose name matches
-         * this.workflow. This is private, for internal use only.
+         * this.workflowName. This is private, for internal use only.
          *
          * @private
          * @type {Workflow}
@@ -141,7 +141,7 @@ class JobParams {
      * Converts the JobParams to a {@link Job} object, which DART can then
      * run. This performs the following operations to create a job:
      *
-     * 1. Loads the {@link Workflow} speficied in this.workflow.
+     * 1. Loads the {@link Workflow} speficied in this.workflowName.
      *
      * 2. Creates a {@link Job} object patterned after that Workflow.
      *
@@ -319,7 +319,7 @@ class JobParams {
 
     /**
      * Loads the Workflow from the DART Worflow database whose name
-     * matches this.workflow and stores it in this._workflowObj.
+     * matches this.workflowName and stores it in this._workflowObj.
      * Returns true if it was able to load the {@link Workflow}.
      * Returns false if there is no such workflow in the database.
      *
@@ -329,9 +329,9 @@ class JobParams {
      * @returns {boolean}
      */
     _loadWorkflow() {
-        this._workflowObj = Workflow.firstMatching('name', this.workflow);
+        this._workflowObj = Workflow.firstMatching('name', this.workflowName);
         if (!this._workflowObj) {
-            this.errors['workflow'] = Context.y18n.__('Cannot find workflow %s', this.workflow);
+            this.errors['workflow'] = Context.y18n.__('Cannot find workflow %s', this.workflowName);
             return false;
         }
         return true;
