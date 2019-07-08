@@ -54,14 +54,6 @@ class WorkflowController extends BaseController {
     }
 
     /**
-     * The postRenderCallback attaches event handlers to elements
-     * that this controller has just rendered.
-     */
-    postRenderCallback(fnName) {
-        $("select[name=packageFormat]").change(this.onFormatChange());
-    }
-
-    /**
      * This presents a form to create a new {@link Workflow} from a
      * {@link Job}. Most of the fields on the form will be automatically
      * populated.
@@ -88,6 +80,16 @@ class WorkflowController extends BaseController {
             } else {
                 $('#jobProfileContainer').hide();
             }
+        }
+    }
+
+    /**
+     * The postRenderCallback attaches event handlers to elements
+     * that this controller has just rendered.
+     */
+    postRenderCallback(fnName) {
+        if (fnName == 'newFromJob') {
+            $("select[name=packageFormat]").change(this.onFormatChange());
         }
     }
 
