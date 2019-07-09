@@ -105,17 +105,17 @@ test('constructor()', () => {
     expect(jobLoader.stdinData).toEqual(stdinData);
 });
 
-test('loadFromStdin() with Job JSON', () => {
+test('_loadFromStdin() with Job JSON', () => {
     let job = Job.find(jobId);
     let stdinData = JSON.stringify(job);
     let jobLoader = new JobLoader(dummyOpts, stdinData);
-    let loadedJob = jobLoader.loadFromStdin();
+    let loadedJob = jobLoader._loadFromStdin();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
     expect(loadedJob.id).toEqual(job.id);
 });
 
-test('loadFromStdin() with JobParams JSON', () => {
+test('_loadFromStdin() with JobParams JSON', () => {
     let jobParams = getJobParams();
     let stdinData = JSON.stringify(jobParams);
     let jobLoader = new JobLoader(dummyOpts, stdinData);
@@ -124,7 +124,7 @@ test('loadFromStdin() with JobParams JSON', () => {
     // and create a job from it. The underlying code that
     // converts JobParams to Job is tested more thoroughly
     // in job_params.test.js.
-    let loadedJob = jobLoader.loadFromStdin();
+    let loadedJob = jobLoader._loadFromStdin();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
     expect(Util.looksLikeUUID(loadedJob.id)).toBe(true);
@@ -135,29 +135,29 @@ test('loadFromStdin() with JobParams JSON', () => {
     expect(loadedJob.packageOp.sourceFiles).toEqual(['file1', 'file2']);
 });
 
-test('loadFromStdin() throws error if Workflow does not exist', () => {
+test('_loadFromStdin() throws error if Workflow does not exist', () => {
     let jobParams = getJobParams();
     jobParams.workflowName = 'This workflow does not exist';
     let stdinData = JSON.stringify(jobParams);
     let jobLoader = new JobLoader(dummyOpts, stdinData);
     expect(function() {
-        jobLoader.loadFromStdin();
+        jobLoader._loadFromStdin();
     }).toThrow('Error creating job.\nworkflow: Cannot find workflow This workflow does not exist');
 });
 
-test('loadFromStdin() with valid JSON of bad object type', () => {
+test('_loadFromStdin() with valid JSON of bad object type', () => {
     let stdinData = '{"one": 1, "two": 2}';
     let jobLoader = new JobLoader(dummyOpts, stdinData);
     expect(function() {
-        jobLoader.loadFromStdin();
+        jobLoader._loadFromStdin();
     }).toThrow(Context.y18n.__("JSON data passed to STDIN does not look like a job or a workflow."));
 });
 
-test('loadFromStdin() with invalid JSON', () => {
+test('_loadFromStdin() with invalid JSON', () => {
     let stdinData = "This isn't even JSON";
     let jobLoader = new JobLoader(dummyOpts, stdinData);
     expect(function() {
-        jobLoader.loadFromStdin();
+        jobLoader._loadFromStdin();
     }).toThrow(Context.y18n.__("Error parsing JSON from STDIN"));
 });
 
