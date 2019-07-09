@@ -1,3 +1,4 @@
+const { Context } = require('../core/context');
 const { Job } = require('../core/job');
 const { JobParams } = require('../core/job_params');
 const { Util } = require('../core/util');
@@ -23,7 +24,7 @@ const { Util } = require('../core/util');
  * metadata values should be applied. The JobLoader will convert JobParams
  * objects to full-fledged Job objects.
  */
-class JobLoader() {
+class JobLoader {
 
     constructor(opts, stdinData) {
         this.opts = opts;
@@ -50,11 +51,23 @@ class JobLoader() {
         if (this.looksLikeJob(data)) {
             return Job.inflateFrom(data);
         } else if (this.looksLikeJobParams(data)) {
-            let jobParams = new JobParams(data);
-            return jobParams.toJob();
+            return this.loadFromJobParams(data);
         } else {
             throw new Error(Context.y18n.__("JSON data passed to STDIN does not look like a job or a workflow."));
         }
+    }
+
+    loadFromJobParams(data) {
+        let jobParams = new JobParams(data);
+        let job = jobParams.toJob();
+        if (!job) {
+            let msg = Context.y18n.__('Error creating job.');
+            for(let [key, value] of Object.entries(jobParams.errors)) {
+                msg += `\n${key}: ${value}`;
+            }
+            throw new Error(msg);
+        }
+        return job;
     }
 
     parseStdin() {
