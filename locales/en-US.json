@@ -55,7 +55,6 @@
   "BagItProfile_infoSourceOrganization_help": "BagItProfile_infoSourceOrganization_help",
   "BagItProfile_infoVersion_label": "BagItProfile_infoVersion_label",
   "BagItProfile_infoVersion_help": "BagItProfile_infoVersion_help",
-  "ObjectSaved_message": "ObjectSaved_message",
   "%s cannot be empty.": "%s cannot be empty.",
   "Profile must accept at least one BagIt version.": "Profile must accept at least one BagIt version.",
   "Profile must require at least one manifest.": "Profile must require at least one manifest.",
@@ -246,5 +245,6 @@
   "Workflow_storageServiceIds_label": "Workflow_storageServiceIds_label",
   "Workflow_storageServiceIds_help": "Workflow_storageServiceIds_help",
   "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.": "This workflow duplicates '%s'. Either delete this workflow, or change its package format, bagit profile, or upload targets.",
-  "Could not find object of type %s with id %s": "Could not find object of type %s with id %s"
+  "Could not find object of type %s with id %s": "Could not find object of type %s with id %s",
+  "ObjectSaved_message": "Saved "
 }
