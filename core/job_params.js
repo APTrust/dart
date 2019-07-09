@@ -42,7 +42,7 @@ const { Workflow } = require('./workflow');
  * @example
  *
  * let opts = {
- * 	workflow: "Name of Workflow",
+ * 	workflowName: "Name of Workflow",
  * 	packageName: "test.edu.my_files.tar",
  * 	files: [
  * 		"/path/to/first/directory",

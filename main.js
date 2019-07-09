@@ -1,5 +1,6 @@
 const { Constants } = require('./core/constants');
 const { Context } = require('./core/context');
+const fs = require('fs');
 const { JobRunner } = require('./workers/job_runner');
 const minimist = require('minimist');
 const process = require('process');
@@ -17,10 +18,11 @@ function run() {
         string: ['j', 'job'],
         boolean: ['D', 'debug', 'h', 'help', 'v', 'version',
                   'd', 'deleteJobFile'],
-        default: { D: false, debug: false, h: false, help: false,
-                   v: false, version:false, d: false, deleteJobFile: false},
-        alias: { D: ['debug'], v: ['version'], h: ['help'], j: ['job'],
-                 d: ['deleteJobFile']}
+        default: { D: false, debug: false, d: false, deleteJobFile: false,
+                   h: false, help: false, v: false, version: false},
+        alias: { D: ['debug'], d: ['deleteJobFile'],
+                 h: ['help'], j: ['job'], v: ['version'],
+                 w: ['workflow']}
     });
     if (opts.job) {
         process.DART_MODE = 'cli';
@@ -38,11 +40,16 @@ function run() {
 // Run in command-line mode.
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
+    let stdinData = '';
+    if (!process.stdin.isTTY) {
+        stdinData = fs.readFileSync(0, 'utf-8');
+    }
+    //console.log(opts);
+    //console.log(stdinData);
     let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);
     let exitCode = await jobRunner.run();
     Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
     process.exit(exitCode);
-    //return exitCode;
 }
 
 // And away we go...
