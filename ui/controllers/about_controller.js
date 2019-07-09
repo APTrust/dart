@@ -13,7 +13,8 @@ class AboutController extends BaseController {
         let data = {
             version: Dart.Context.dartVersion(),
             appPath: app.getAppPath(),
-            userDataPath: app.getPath('userData')
+            userDataPath: app.getPath('userData'),
+            logFilePath: Dart.Context.logger.pathToLogFile()
         }
         let html = Templates.about(data);
         return this.modalContent('About DART', html);
