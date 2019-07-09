@@ -1,4 +1,5 @@
 const { Context } = require('../core/context');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobParams } = require('../core/job_params');
 const { Util } = require('../core/util');
@@ -36,13 +37,33 @@ class JobLoader {
     }
 
     loadJob () {
-        if (this.stdinData.length > 0) {
+        if (this.stdinData && this.stdinData.length > 0) {
             return this.loadFromStdin();
         }
         if (Util.looksLikeUUID(this.opts.job)) {
-            return Job.find(this.opts.job);
+            return this.loadJobById();
         } else if (this.opts.job) {
+            return this.loadJobFromFile();
+        }
+    }
+
+    loadJobById() {
+        let job = Job.find(this.opts.job);
+        if (!job) {
+            throw new Error(Context.y18n.__('Cannot find job with id %s', this.opts.job));
+        }
+        return job;
+    }
+
+    loadJobFromFile() {
+        if (!fs.existsSync(this.opts.job)) {
+            throw new Error(Context.y18n.__('Job file does not exist at %s', this.opts.job));
+        }
+        try {
             return Job.inflateFromFile(this.opts.job);
+        } catch (ex) {
+            throw new Error(Context.y18n.__('Error loading job file at %s: %s',
+                                            this.opts.job, ex.message));
         }
     }
 
