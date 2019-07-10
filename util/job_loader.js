@@ -26,7 +26,7 @@ const { Util } = require('../core/util');
  * objects to full-fledged Job objects.
  *
  * Although both params listed below are optional, you must specify at
- * least one of the two. If you specify both, stdinData takes precedence
+ * least one of the two. If you specify both, json takes precedence
  * over opts.job.
  *
  * @param {object} opts - An object, typically the command line options.
@@ -36,23 +36,23 @@ const { Util } = require('../core/util');
  * load the job from the database. If it's any other string, the loader
  * will attempt to load it from a JSON file.
  *
- * @param {string|Buffer} [stdinData] - A string or buffer containing JSON
+ * @param {string|Buffer} [json] - A string or buffer containing JSON
  * data. Typically, this is read from STDIN when DART is run from the
  * command line.
  */
 class JobLoader {
 
-    constructor(opts, stdinData = null) {
+    constructor(opts, json = null) {
         this.opts = opts || { job: null };
-        if (stdinData) {
-            this.stdinData = stdinData.toString();
+        if (json) {
+            this.json = json.toString();
         } else {
-            this.stdinData = null;
+            this.json = null;
         }
     }
 
     /**
-     * Loads a job. If stdinData is not empty, this tries to parse the
+     * Loads a job. If json is not empty, this tries to parse the
      * data as {@link Job} JSON or as {@link JobParams} JSON. Otherwise
      * if opts.job is a UUID, it tries to load the job with that UUID from
      * the Jobs database. If opts.job is any string other than a UUID, this
@@ -67,13 +67,13 @@ class JobLoader {
      *
      */
     loadJob () {
-        if (!this.stdinData && !this.opts.job) {
+        if (!this.json && !this.opts.job) {
             // TODO: Test this.
             throw new Error(Context.y18n.__('You must specify either %s or %s',
-                                            'opts.job', 'stdinData'));
+                                            'opts.job', 'json'));
         }
-        if (this.stdinData && this.stdinData.length > 0) {
-            return this._loadFromStdin();
+        if (this.json && this.json.length > 0) {
+            return this._loadFromJson();
         }
         if (Util.looksLikeUUID(this.opts.job)) {
             return this._loadJobById();
@@ -82,7 +82,7 @@ class JobLoader {
             // either Job or JobParams.
             // TODO: Add test to ensure this loads either type
             // of JSON.
-            return this._loadJobFromFile();
+            return this._loadObjectFromFile();
         }
     }
 
@@ -105,43 +105,45 @@ class JobLoader {
     /**
      * Loads a {@link Job} from the file path specified in this.opts.job.
      * This will throw an error if the file does not exist, cannot be read,
-     * or cannot be parsed as JSON.
+     * or cannot be parsed as JSON. The JSON in the file can be either a
+     * {@link Job} or a {@link JobParams} object.
      *
      * @private
      * @returns {Job}
      */
-    _loadJobFromFile() {
+    _loadObjectFromFile() {
         if (!fs.existsSync(this.opts.job)) {
             throw new Error(Context.y18n.__('Job file does not exist at %s', this.opts.job));
         }
         try {
-            return Job.inflateFromFile(this.opts.job);
+            this.json = fs.readFileSync(this.opts.job);
         } catch (ex) {
             throw new Error(Context.y18n.__('Error loading job file at %s: %s',
                                             this.opts.job, ex.message));
         }
+        return this._loadFromJson();
     }
 
     /**
-     * Loads a Job from the JSON string passed in through STDIN. That string
-     * may be a JSON-serialized {@link Job} or a JSON-serialized {@link
-     * JobParams} object. In either case, this returns a {@link Job} object.
+     * Loads a Job from the JSON string that passed through STDIN or
+     * read from a file. That string may be a JSON-serialized {@link Job}
+     * or a JSON-serialized {@link JobParams} object. In either case,
+     * this returns a {@link Job} object.
      *
-     * This will throw an error if the JSON passed to STDIN is invalid or
-     * does not appear to represent either a {@link Job} or a {@link
-     * JobParams} object.
+     * This will throw an error if the JSON is invalid or does not appear
+     * to represent either a {@link Job} or a {@link JobParams} object.
      *
      * @private
      * @returns {Job}
      */
-    _loadFromStdin() {
-        let data = this._parseStdin();
+    _loadFromJson() {
+        let data = this._parseJson();
         if (this.looksLikeJob(data)) {
             return Job.inflateFrom(data);
         } else if (this.looksLikeJobParams(data)) {
             return this._loadFromJobParams(data);
         } else {
-            throw new Error(Context.y18n.__("JSON data passed to STDIN does not look like a job or a workflow."));
+            throw new Error(Context.y18n.__("JSON data does not look like a job or a workflow."));
         }
     }
 
@@ -166,19 +168,19 @@ class JobLoader {
     }
 
     /**
-     * This parses the string or Buffer in this.stdinData into a generic
+     * This parses the string or Buffer in this.json into a generic
      * JavaScript object.
      *
      * @private
      * @returns {object}
      */
-    _parseStdin() {
+    _parseJson() {
         try {
-            return JSON.parse(this.stdinData);
+            return JSON.parse(this.json);
         } catch (ex) {
-            throw new Error(Context.y18n.__(
-                "Error parsing JSON from STDIN: %s",
-                ex.stack));
+            let source = this.opts.job || 'STDIN'
+            throw new Error(Context.y18n.__("Error parsing JSON from %s: %s",
+                                            source, ex.stack));
         }
     }
 

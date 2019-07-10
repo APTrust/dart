@@ -99,32 +99,32 @@ let dummyOpts = {
 // ----- END OF SETUP. NOW THE TESTS ----- //
 
 test('constructor()', () => {
-    let stdinData = '{ "key": "value"}';
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = '{ "key": "value"}';
+    let jobLoader = new JobLoader(dummyOpts, json);
     expect(jobLoader.opts).toEqual(dummyOpts);
-    expect(jobLoader.stdinData).toEqual(stdinData);
+    expect(jobLoader.json).toEqual(json);
 });
 
-test('_loadFromStdin() with Job JSON', () => {
+test('_loadFromJson() with Job JSON', () => {
     let job = Job.find(jobId);
-    let stdinData = JSON.stringify(job);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
-    let loadedJob = jobLoader._loadFromStdin();
+    let json = JSON.stringify(job);
+    let jobLoader = new JobLoader(dummyOpts, json);
+    let loadedJob = jobLoader._loadFromJson();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
     expect(loadedJob.id).toEqual(job.id);
 });
 
-test('_loadFromStdin() with JobParams JSON', () => {
+test('_loadFromJson() with JobParams JSON', () => {
     let jobParams = getJobParams();
-    let stdinData = JSON.stringify(jobParams);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(jobParams);
+    let jobLoader = new JobLoader(dummyOpts, json);
 
     // This should load the Workflow called 'Test Workflow'
     // and create a job from it. The underlying code that
     // converts JobParams to Job is tested more thoroughly
     // in job_params.test.js.
-    let loadedJob = jobLoader._loadFromStdin();
+    let loadedJob = jobLoader._loadFromJson();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
     expect(Util.looksLikeUUID(loadedJob.id)).toBe(true);
@@ -135,39 +135,39 @@ test('_loadFromStdin() with JobParams JSON', () => {
     expect(loadedJob.packageOp.sourceFiles).toEqual(['file1', 'file2']);
 });
 
-test('_loadFromStdin() throws error if Workflow does not exist', () => {
+test('_loadFromJson() throws error if Workflow does not exist', () => {
     let jobParams = getJobParams();
     jobParams.workflowName = 'This workflow does not exist';
-    let stdinData = JSON.stringify(jobParams);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(jobParams);
+    let jobLoader = new JobLoader(dummyOpts, json);
     expect(function() {
-        jobLoader._loadFromStdin();
+        jobLoader._loadFromJson();
     }).toThrow('Error creating job.\nworkflow: Cannot find workflow This workflow does not exist');
 });
 
-test('_loadFromStdin() with valid JSON of bad object type', () => {
-    let stdinData = '{"one": 1, "two": 2}';
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+test('_loadFromJson() with valid JSON of bad object type', () => {
+    let json = '{"one": 1, "two": 2}';
+    let jobLoader = new JobLoader(dummyOpts, json);
     expect(function() {
-        jobLoader._loadFromStdin();
-    }).toThrow(Context.y18n.__("JSON data passed to STDIN does not look like a job or a workflow."));
+        jobLoader._loadFromJson();
+    }).toThrow(Context.y18n.__("JSON data does not look like a job or a workflow."));
 });
 
-test('_loadFromStdin() with invalid JSON', () => {
-    let stdinData = "This isn't even JSON";
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+test('_loadFromJson() with invalid JSON', () => {
+    let json = "This isn't even JSON";
+    let jobLoader = new JobLoader(dummyOpts, json);
     expect(function() {
-        jobLoader._loadFromStdin();
-    }).toThrow(Context.y18n.__("Error parsing JSON from STDIN"));
+        jobLoader._loadFromJson();
+    }).toThrow(Context.y18n.__("Error parsing JSON"));
 });
 
 test('looksLikeJob()', () => {
     let job = Job.find(jobId);
-    let stdinData = JSON.stringify(job);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(job);
+    let jobLoader = new JobLoader(dummyOpts, json);
 
     // A data structure that looks like a Job
-    let data1 = JSON.parse(stdinData);
+    let data1 = JSON.parse(json);
     expect(jobLoader.looksLikeJob(data1)).toBe(true);
 
     // A data structure that does not look like a job
@@ -178,11 +178,11 @@ test('looksLikeJob()', () => {
 
 test('looksLikeJobParams()', () => {
     let job = Job.find(jobId);
-    let stdinData = JSON.stringify(job);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(job);
+    let jobLoader = new JobLoader(dummyOpts, json);
 
     // A data structure that looks like a Job
-    let data1 = JSON.parse(stdinData);
+    let data1 = JSON.parse(json);
     expect(jobLoader.looksLikeJobParams(data1)).toBe(false);
 
     // A data structure that does not look like a job
@@ -193,8 +193,8 @@ test('looksLikeJobParams()', () => {
 
 test('loadJob() with Job JSON', () => {
     let job = Job.find(jobId);
-    let stdinData = JSON.stringify(job);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(job);
+    let jobLoader = new JobLoader(dummyOpts, json);
     let loadedJob = jobLoader.loadJob();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
@@ -203,8 +203,8 @@ test('loadJob() with Job JSON', () => {
 
 test('loadJob() with JobParams JSON', () => {
     let jobParams = getJobParams();
-    let stdinData = JSON.stringify(jobParams);
-    let jobLoader = new JobLoader(dummyOpts, stdinData);
+    let json = JSON.stringify(jobParams);
+    let jobLoader = new JobLoader(dummyOpts, json);
     let loadedJob = jobLoader.loadJob();
     expect(loadedJob).toBeTruthy();
     expect(loadedJob.constructor.name).toEqual('Job');
@@ -232,7 +232,7 @@ test('loadJob() with invalid Job UUID', () => {
     }).toThrow(Context.y18n.__('Cannot find job with id'));
 });
 
-test('loadJob() with valid file path and good JSON', () => {
+test('loadJob() with valid file path and valid Job JSON', () => {
     let pathToFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_001.json');
     let jobLoader = new JobLoader({ job: pathToFile });
     let loadedJob = jobLoader.loadJob();
@@ -245,7 +245,7 @@ test('loadJob() with valid file path and bad JSON', () => {
     let jobLoader = new JobLoader({ job: __filename });
     expect(function() {
         jobLoader.loadJob();
-    }).toThrow(Context.y18n.__('Error loading job file'));
+    }).toThrow(Context.y18n.__('Error parsing JSON from'));
 });
 
 test('loadJob() with invalid file path', () => {

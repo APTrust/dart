@@ -248,13 +248,12 @@
   "Could not find object of type %s with id %s": "Could not find object of type %s with id %s",
   "ObjectSaved_message": "Saved ",
   "Error creating job.": "Error creating job.",
-  "JSON data passed to STDIN does not look like a job or a workflow.": "JSON data passed to STDIN does not look like a job or a workflow.",
-  "Error parsing JSON from STDIN: %s": "Error parsing JSON from STDIN: %s",
-  "Error parsing JSON from STDIN": "Error parsing JSON from STDIN",
+  "JSON data does not look like a job or a workflow.": "JSON data does not look like a job or a workflow.",
+  "Error parsing JSON": "Error parsing JSON",
+  "Error parsing JSON from %s: %s": "Error parsing JSON from %s: %s",
   "Cannot find job with id": "Cannot find job with id",
   "Cannot find job with id %s": "Cannot find job with id %s",
-  "Error loading job file at %s: %s": "Error loading job file at %s: %s",
-  "Error loading job file": "Error loading job file",
-  "Job file does not exist at %s": "Job file does not exist at %s",
-  "Job file does not exist": "Job file does not exist"
+  "Error parsing JSON from": "Error parsing JSON from",
+  "Job file does not exist": "Job file does not exist",
+  "Job file does not exist at %s": "Job file does not exist at %s"
 }
