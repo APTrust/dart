@@ -12,9 +12,7 @@ const { Util } = require('./util');
 const { Workflow } = require('./workflow');
 
 beforeAll(() => {
-    // Save the underlying objects we'll need to convert
-    // JobParam objects into Jobs.
-    saveBaggingDirSetting();
+    TestUtil.loadFixtures('AppSetting_DevNull', AppSetting, true);
     saveStorageServices();
     saveBagItProfile();
     saveWorkflows();
@@ -28,8 +26,7 @@ afterAll(() => {
 });
 
 const TarWriterPluginId = "90110710-1ff9-4650-a086-d7b23772238f";
-const BagItProfileId = "28f48fcc-064d-4acf-bb5b-ea6ad5c6264d";
-const OutputDir = path.join(os.homedir(), '.dart', 'bags');
+const OutputDir = '/dev/null';
 const BagsPath = path.join(__dirname, '..', 'test', 'bags');
 const FixturesPath = path.join(__dirname, '..', 'test', 'fixtures');
 const ProfilesPath = path.join(__dirname, '..', 'test', 'profiles');
@@ -43,9 +40,11 @@ const GroupedTagKeys = [
 ];
 
 function saveStorageServices() {
-    new StorageService({ name: 'Service 1'}).save();
-    new StorageService({ name: 'Service 2'}).save();
-    new StorageService({ name: 'Service 3'}).save();
+    TestUtil.loadFixtures(
+        ['StorageService_001', 'StorageService_002'],
+        StorageService,
+        true
+    );
 }
 
 function saveBagItProfile() {
@@ -54,48 +53,13 @@ function saveBagItProfile() {
 }
 
 function saveWorkflows() {
-    new Workflow({
-        name: "BagIt Package, No Uploads",
-        description: "Includes BagIt packaging but no uploads",
-        packageFormat: "BagIt",
-        packagePluginId: TarWriterPluginId,
-        bagItProfileId: BagItProfileId
-    }).save();
-    new Workflow({
-        name: "Tar Package, No Uploads",
-        description: "Includes tar packaging but no uploads",
-        packageFormat: ".tar",
-        packagePluginId: TarWriterPluginId
-    }).save();
-    new Workflow({
-        name: "BagIt Package, With Uploads",
-        description: "Includes BagIt packaging and three uploads",
-        packageFormat: "BagIt",
-        packagePluginId: TarWriterPluginId,
-        bagItProfileId: BagItProfileId,
-        storageServiceIds: [
-            StorageService.firstMatching('name', 'Service 1').id,
-            StorageService.firstMatching('name', 'Service 2').id,
-            StorageService.firstMatching('name', 'Service 3').id
-        ]
-    }).save();
-    new Workflow({
-        name: "No Package, With Uploads",
-        description: "Includes no packaging, with three uploads",
-        packageFormat: "None",
-        storageServiceIds: [
-            StorageService.firstMatching('name', 'Service 1').id,
-            StorageService.firstMatching('name', 'Service 2').id,
-            StorageService.firstMatching('name', 'Service 3').id
-        ]
-    }).save();
-}
-
-function saveBaggingDirSetting() {
-    new AppSetting({
-        name: "Bagging Directory",
-        value: OutputDir
-    }).save();
+    let workflows = [
+        'Workflow_BagIt_NoUploads',
+        'Workflow_BagIt_WithUploads',
+        'Workflow_NoPackage_WithUploads',
+        'Workflow_Tar_NoUploads',
+    ];
+    TestUtil.loadFixtures(workflows, Workflow, true);
 }
 
 // Return a hash that we can alter per test without changes
@@ -171,7 +135,7 @@ test('Constructor sets expected properties', () => {
 test('_getOutputPath()', () => {
     let jobParams = getJobParams("BagIt Package, With Uploads", "Bag1.tar");
     let actual = jobParams._getOutputPath();
-    let expected = path.join(os.homedir(), '.dart', 'bags', "Bag1.tar");
+    let expected = path.join(OutputDir, "Bag1.tar");
     expect(actual).toEqual(expected);
 });
 
@@ -232,13 +196,13 @@ test('_makePackageOp() creates no packageOp when there is no package step', () =
     expect(job.packageOp.sourceFiles).toEqual([]);
 });
 
-test('_makeUploadOps() with 3 upload targets', () => {
+test('_makeUploadOps() with 2 upload targets', () => {
     let jobParams = getJobParams("No Package, With Uploads");
     jobParams._loadWorkflow();
     let job = new Job();
     jobParams._makeUploadOps(job);
 
-    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps.length).toEqual(2);
     for (let op of job.uploadOps) {
         expect(Util.looksLikeUUID(op.storageServiceId)).toBe(true);
         expect(op.sourceFiles).toEqual(Files);
@@ -377,7 +341,7 @@ test('_buildJob()', () => {
     expect(job.workflowId).not.toBeNull();
     expect(Util.looksLikeUUID(job.workflowId)).toBe(true);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
-    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps.length).toEqual(2);
     expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
     expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(3);
 });
@@ -410,7 +374,7 @@ test('toJob() with uploads, no packaging', () => {
     expect(job).not.toBeNull();
     expect(job.packageOp.pluginId).toBeNull();
     expect(job.packageOp.outputPath).not.toBeDefined();
-    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps.length).toEqual(2);
 
     // We're not packaging the files, just uploading them directly.
     expect(job.uploadOps[0].sourceFiles).toEqual(Files);
@@ -423,7 +387,7 @@ test('toJob() with BagIt packaging and uploads', () => {
 
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
-    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps.length).toEqual(2);
     expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
     expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
 });
@@ -463,7 +427,7 @@ test('toJobFile()', () => {
     expect(job).not.toBeNull();
     expect(job.packageOp.pluginId).toEqual(TarWriterPluginId);
     expect(job.packageOp.outputPath).toMatch(/Bag1\.tar$/);
-    expect(job.uploadOps.length).toEqual(3);
+    expect(job.uploadOps.length).toEqual(2);
     expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
     expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
 });

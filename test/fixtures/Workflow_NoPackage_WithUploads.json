@@ -1,0 +1,10 @@
+{
+	"id": "6299bab5-feb5-43f0-8657-11422cbc5db2",
+	"userCanDelete": true,
+	"required": ["name", "id"],
+	"errors": {},
+	"name": "No Package, With Uploads",
+	"description": "Includes no packaging, with three uploads",
+	"packageFormat": "None",
+	"storageServiceIds": ["e014864f-ec9d-43c8-9c78-3712c65f2d4d", "cd3c7014-e66e-4f87-9f08-7bb6e12f1da2"]
+}

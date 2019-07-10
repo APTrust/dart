@@ -1,0 +1,12 @@
+{
+	"id": "f4205a54-55aa-48cf-9eaf-ec5ba5f8acd8",
+	"userCanDelete": true,
+	"required": ["name", "id"],
+	"errors": {},
+	"name": "BagIt Package, No Uploads",
+	"description": "Includes BagIt packaging but no uploads",
+	"packageFormat": "BagIt",
+	"packagePluginId": "90110710-1ff9-4650-a086-d7b23772238f",
+	"bagItProfileId": "28f48fcc-064d-4acf-bb5b-ea6ad5c6264d",
+	"storageServiceIds": []
+}
