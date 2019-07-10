@@ -1,0 +1,9 @@
+{
+	"id": "0ba4e5ec-123a-4a53-b58c-70ab79ec70c8",
+	"userCanDelete": true,
+	"required": ["name", "id"],
+	"errors": {},
+	"name": "Bagging Directory",
+	"value": "/dev/null",
+	"help": ""
+}

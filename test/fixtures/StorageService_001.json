@@ -1,0 +1,17 @@
+{
+    "id": "e014864f-ec9d-43c8-9c78-3712c65f2d4d",
+    "userCanDelete": true,
+    "required": [ "name", "protocol", "host", "id" ],
+    "errors": {},
+    "name": "SS 1",
+    "description": "Storage Service 1",
+    "protocol": "s3",
+    "host": "example.com",
+    "port": 0,
+    "bucket": "ss1.aptrust.org",
+    "login": "login_1",
+    "password": "password_1",
+    "loginExtra": "",
+    "allowsUpload": true,
+    "allowsDownload": true
+}

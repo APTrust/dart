@@ -11,23 +11,16 @@ const { TestUtil } = require('../core/test_util');
 const { Util } = require('../core/util');
 const { Workflow } = require('../core/workflow');
 
-// TODO: Too much boilerplate & setup in this file.
-// Create fixtures that can be shared by multiple test files.
-
 // The Job Id of the fixture at Job_001.json
-let jobId = '3a8ab4fc-141e-494c-82a2-323c6f5dfe87';
-
-// This will be populated by createStorageServices.
-let storageServices = [];
-
+const jobId = '3a8ab4fc-141e-494c-82a2-323c6f5dfe87';
 const tarPluginId = '90110710-1ff9-4650-a086-d7b23772238f';
 
 beforeAll(() => {
-    saveBaggingDirSetting();
-    saveBagItProfile();
-    saveJob();
-    createStorageServices();
-    saveTestWorkflow();
+    TestUtil.loadFixtures('AppSetting_DevNull', AppSetting, true);
+    TestUtil.loadProfilesFromSetup('aptrust')[0].save();
+    TestUtil.loadFixtures('Job_001', Job, true);
+    TestUtil.loadFixtures(['StorageService_001', 'StorageService_002'], StorageService, true);
+    TestUtil.loadFixtures('Workflow_001', Workflow, true);
 });
 
 afterAll(() => {
@@ -38,43 +31,6 @@ afterAll(() => {
     TestUtil.deleteJsonFile('Workflow');
 });
 
-function saveBaggingDirSetting() {
-    new AppSetting({
-        name: 'Bagging Directory',
-        value: '/dev/null'
-    }).save();
-}
-
-function saveBagItProfile() {
-    TestUtil.loadProfilesFromSetup('aptrust')[0].save();
-}
-
-function saveJob() {
-    let pathToFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_001.json');
-    let job = Job.inflateFromFile(pathToFile);
-    job.save();
-}
-
-function saveTestWorkflow() {
-    new Workflow(opts).save();
-}
-
-function createStorageServices() {
-    storageServices.push(new StorageService({
-        name: 'SS 1',
-        protocol: 's3',
-        host: 'example.com'
-    }));
-    storageServices.push(new StorageService({
-        name: 'SS 2',
-        protocol: 'ftp',
-        host: 'aptrust.org'
-    }));
-    storageServices[0].save();
-    storageServices[1].save();
-    opts.storageServiceIds = storageServices.map(ss => ss.id);
-}
-
 let opts = {
     name: 'Test Workflow',
     description: 'Workflow for unit tests.',
@@ -83,21 +39,10 @@ let opts = {
     bagItProfileId: Constants.BUILTIN_PROFILE_IDS['aptrust']
 }
 
-function getJobParams() {
-    return new JobParams({
-        workflowName: 'Test Workflow',
-        packageName: 'Bag of Stuff',
-        files: ['file1', 'file2'],
-        tags: []
-    });
-}
-
 let dummyOpts = {
     opt1: 'opt one',
     opt2: 'opt two'
 }
-
-// ----- END OF SETUP. NOW THE TESTS ----- //
 
 test('constructor()', () => {
     let json = '{ "key": "value"}';
@@ -117,7 +62,7 @@ test('_loadFromJson() with Job JSON', () => {
 });
 
 test('_loadFromJson() with JobParams JSON', () => {
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     let json = JSON.stringify(jobParams);
     let jobLoader = new JobLoader(dummyOpts, json);
 
@@ -137,7 +82,7 @@ test('_loadFromJson() with JobParams JSON', () => {
 });
 
 test('_loadFromJson() throws error if Workflow does not exist', () => {
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     jobParams.workflowName = 'This workflow does not exist';
     let json = JSON.stringify(jobParams);
     let jobLoader = new JobLoader(dummyOpts, json);
@@ -172,7 +117,7 @@ test('looksLikeJob()', () => {
     expect(jobLoader.looksLikeJob(data1)).toBe(true);
 
     // A data structure that does not look like a job
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     let data2 = JSON.parse(JSON.stringify(jobParams));
     expect(jobLoader.looksLikeJob(data2)).toBe(false);
 });
@@ -187,7 +132,7 @@ test('looksLikeJobParams()', () => {
     expect(jobLoader.looksLikeJobParams(data1)).toBe(false);
 
     // A data structure that does not look like a job
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     let data2 = JSON.parse(JSON.stringify(jobParams));
     expect(jobLoader.looksLikeJobParams(data2)).toBe(true);
 });
@@ -203,7 +148,7 @@ test('loadJob() with Job JSON', () => {
 });
 
 test('loadJob() with JobParams JSON', () => {
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     let json = JSON.stringify(jobParams);
     let jobLoader = new JobLoader(dummyOpts, json);
     let loadedJob = jobLoader.loadJob();
@@ -244,7 +189,7 @@ test('loadJob() with valid file path and valid Job JSON', () => {
 
 test('loadJob() with valid file path and valid JobParams JSON', () => {
     // Write a JobParams file...
-    let jobParams = getJobParams();
+    let jobParams = TestUtil.loadFixtures('JobParams_001', JobParams)[0];
     let tmpFile = Util.tmpFilePath();
     fs.writeFileSync(tmpFile, JSON.stringify(jobParams));
 
