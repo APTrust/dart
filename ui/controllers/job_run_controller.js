@@ -70,6 +70,7 @@ class JobRunController extends RunningJobsController {
 
         // TODO: Do we still need this? It's job is to keep
         // track of running jobs for the UI.
+        // Looks like it's used in a number of places, but confirm.
         this.dartProcess = new DartProcess(
             this.job.title,
             this.job.id,
