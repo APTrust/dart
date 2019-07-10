@@ -41,6 +41,15 @@ test('validate()', () => {
     expect(result3).toEqual(true);
 });
 
+test('inflateFrom()', () => {
+    let data = { name: 'City', value: 'Washington, DC' };
+    let setting = AppSetting.inflateFrom(data);
+    expect(setting).toBeTruthy();
+    expect(setting.constructor.name).toEqual('AppSetting');
+    expect(setting.name).toEqual('City');
+    expect(setting.value).toEqual('Washington, DC');
+});
+
 test('validate() ensures unique name', () => {
     let setting1 = new AppSetting({ name: 'This name is taken' });
     expect(setting1.validate()).toBe(true);

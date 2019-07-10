@@ -68,7 +68,6 @@ class JobLoader {
      */
     loadJob () {
         if (!this.json && !this.opts.job) {
-            // TODO: Test this.
             throw new Error(Context.y18n.__('You must specify either %s or %s',
                                             'opts.job', 'json'));
         }
@@ -78,10 +77,6 @@ class JobLoader {
         if (Util.looksLikeUUID(this.opts.job)) {
             return this._loadJobById();
         } else if (this.opts.job) {
-            // TODO: Load as vanilla object, then convert to
-            // either Job or JobParams.
-            // TODO: Add test to ensure this loads either type
-            // of JSON.
             return this._loadObjectFromFile();
         }
     }

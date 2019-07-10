@@ -138,6 +138,14 @@ test('getValue()', () => {
     expect(service.getValue('login')).toEqual(process.env.PATH);
 });
 
+test('inflateFrom()', () => {
+    let data = { name: 'My S3 bucket', url: 'https://s3.example.com' };
+    let ss = StorageService.inflateFrom(data);
+    expect(ss).toBeTruthy();
+    expect(ss.constructor.name).toEqual('StorageService');
+    expect(ss.name).toEqual(data.name);
+    expect(ss.url).toEqual(data.url);
+});
 
 function makeObjects(howMany) {
     let list = [];

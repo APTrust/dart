@@ -439,6 +439,22 @@ class JobParams {
         return outputPath;
     }
 
+    /**
+     * This converts a generic hash/object into an JobParams
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to an
+     * JobParams. The object should include the same properties as
+     * a JobParams object.
+     *
+     * @returns {JobParams}
+     */
+    static inflateFrom(data) {
+        let setting = new JobParams();
+        Object.assign(setting, data);
+        return setting;
+    }
+
 }
 
 module.exports.JobParams = JobParams;

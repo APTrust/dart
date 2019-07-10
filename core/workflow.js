@@ -249,6 +249,23 @@ class Workflow extends PersistentObject {
             storageServiceIds: ssids
         });
     }
+
+    /**
+     * This converts a generic object into an Workflow
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to
+     * a Workflow.
+     *
+     * @returns {Workflow}
+     *
+     */
+    static inflateFrom(data) {
+        let setting = new Workflow();
+        Object.assign(setting, data);
+        return setting;
+    }
+
 }
 
 module.exports.Workflow = Workflow;

@@ -73,6 +73,26 @@ class AppSetting extends PersistentObject {
         }
         return Object.keys(this.errors).length == 0;
     }
+
+    /**
+     * This converts a generic JavaScript hash/object into an AppSetting
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to an AppSetting.
+     * This object should have the properties 'name' and 'value'.
+     *
+     * @returns {AppSetting}
+     *
+     * @example
+     * let data = { name: 'Homer', value: 'Simpson' };
+     * let setting = AppSetting.inflateFrom(data);
+     *
+     */
+    static inflateFrom(data) {
+        let setting = new AppSetting();
+        Object.assign(setting, data);
+        return setting;
+    }
 }
 
 // Copy static methods from base

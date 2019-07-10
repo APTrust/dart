@@ -257,5 +257,6 @@
   "Job file does not exist": "Job file does not exist",
   "Job file does not exist at %s": "Job file does not exist at %s",
   "You must specify either": "You must specify either",
-  "You must specify either %s or %s": "You must specify either %s or %s"
+  "You must specify either %s or %s": "You must specify either %s or %s",
+  "%s can only load items of these types: %s": "%s can only load items of these types: %s"
 }

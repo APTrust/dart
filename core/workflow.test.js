@@ -183,3 +183,15 @@ test('findDuplicate() finds a duplicate Workflow, if it exists', () => {
     let newWorkflow = new Workflow(opts);
     expect(newWorkflow.findDuplicate()).toEqual(workflow);
 });
+
+test('inflateFrom()', () => {
+    let data = {
+        name: 'Spongebob',
+        description: 'Flip crabby patties at the Crusty Crab'
+    };
+    let workflow = Workflow.inflateFrom(data);
+    expect(workflow).toBeTruthy();
+    expect(workflow.constructor.name).toEqual('Workflow');
+    expect(workflow.name).toEqual(data.name);
+    expect(workflow.description).toEqual(data.description);
+});

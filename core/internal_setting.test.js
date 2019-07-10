@@ -41,6 +41,15 @@ test('validate()', () => {
     expect(result3).toEqual(true);
 });
 
+test('inflateFrom()', () => {
+    let data = { name: 'City', value: 'Washington, DC' };
+    let setting = InternalSetting.inflateFrom(data);
+    expect(setting).toBeTruthy();
+    expect(setting.constructor.name).toEqual('InternalSetting');
+    expect(setting.name).toEqual('City');
+    expect(setting.value).toEqual('Washington, DC');
+});
+
 test('find()', () => {
     let objs = makeObjects(3);
     let obj = objs[1];

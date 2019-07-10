@@ -67,6 +67,27 @@ class InternalSetting extends PersistentObject {
         return super.validate();
     }
 
+    /**
+     * This converts a generic hash/object into an InternalSetting
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to an
+     * InternalSetting. This object should have the properties 'name'
+     * and 'value'.
+     *
+     * @returns {InternalSetting}
+     *
+     * @example
+     * let data = { name: 'Homer', value: 'Simpson' };
+     * let setting = InternalSetting.inflateFrom(data);
+     *
+     */
+    static inflateFrom(data) {
+        let setting = new InternalSetting();
+        Object.assign(setting, data);
+        return setting;
+    }
+
 }
 
 // Copy static methods from base class.

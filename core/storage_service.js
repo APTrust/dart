@@ -178,6 +178,22 @@ class StorageService extends PersistentObject {
         return Object.keys(this.errors).length == 0;
     }
 
+    /**
+     * This converts a generic object into an StorageService
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to
+     * a StorageService.
+     *
+     * @returns {StorageService}
+     *
+     */
+    static inflateFrom(data) {
+        let setting = new StorageService();
+        Object.assign(setting, data);
+        return setting;
+    }
+
 }
 
 // Get static methods from base class.

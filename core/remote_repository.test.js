@@ -113,6 +113,16 @@ test('getValue()', () => {
     expect(repo.getValue('login')).toEqual(process.env.PATH);
 });
 
+test('inflateFrom()', () => {
+    let data = { name: 'My Repo', url: 'https://example.com' };
+    let repo = RemoteRepository.inflateFrom(data);
+    expect(repo).toBeTruthy();
+    expect(repo.constructor.name).toEqual('RemoteRepository');
+    expect(repo.name).toEqual(data.name);
+    expect(repo.url).toEqual(data.url);
+});
+
+
 function makeObjects(howMany) {
     let list = [];
     for(let i=0; i < howMany; i++) {

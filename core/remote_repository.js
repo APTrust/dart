@@ -103,6 +103,22 @@ class RemoteRepository extends PersistentObject {
         return Object.keys(this.errors).length == 0;
     }
 
+    /**
+     * This converts a generic object into an RemoteRepository
+     * object. this is useful when loading objects from JSON.
+     *
+     * @param {object} data - An object you want to convert to
+     * a RemoteRepository.
+     *
+     * @returns {RemoteRepository}
+     *
+     */
+    static inflateFrom(data) {
+        let setting = new RemoteRepository();
+        Object.assign(setting, data);
+        return setting;
+    }
+
 }
 
 // Copy static methods from base class.

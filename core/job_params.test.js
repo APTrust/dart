@@ -467,3 +467,17 @@ test('toJobFile()', () => {
     expect(job.uploadOps[0].sourceFiles).toEqual([path.join(OutputDir, 'Bag1.tar')]);
     expect(job.bagItProfile.findMatchingTags('tagName', 'License').length).toEqual(1);
 });
+
+test('inflateFrom()', () => {
+    let data = {
+        workflowName: 'Sample Workflow',
+        packageName: 'BagOfPhotos',
+        files: ['file1', 'file2']
+    };
+    let jobParams = JobParams.inflateFrom(data);
+    expect(jobParams).toBeTruthy();
+    expect(jobParams.constructor.name).toEqual('JobParams');
+    expect(jobParams.workflowName).toEqual('Sample Workflow');
+    expect(jobParams.packageName).toEqual('BagOfPhotos');
+    expect(jobParams.files).toEqual(['file1', 'file2']);
+});

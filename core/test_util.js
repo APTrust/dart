@@ -60,6 +60,56 @@ class TestUtil {
         return profiles;
     }
 
+    /**
+     * This loads fixtures from the test/fixtures directory and optionally
+     * saves them. It returns an array of the objects it loaded. To load
+     * {@link BagItProfile} fixtures, see
+     * {@link TestUtil.loadProfilesFromSetup}.
+     *
+     * @param {string|Array<string>} filenames - A string or array of strings
+     * speficying which files to load. These should be the names of files
+     * inside the test/fixtures directory, minus the .json file extension.
+     * For example, "Job_001" or ["Job_001", "Job_002", "Job_003"].
+     *
+     * @param {PersistentObject|JobParams} type - The type of object to load.
+     * This should be one of the following:
+     *
+     * * AppSetting
+     * * InternalSetting
+     * * Job
+     * * JobParams
+     * * RemoteRepository
+     * * StorageService
+     * * Workflow
+     *
+     * @param {boolean} save - If true, this saves the fixtures into the
+     * DART database before returning them. Default is false.
+     *
+     * @returns {Array<object>}
+     */
+    static loadFixtures(filenames, type, save = false) {
+        let types = ['AppSetting', 'InternalSetting', 'Job',
+                     'JobParams', 'RemoteRepository', 'StorageService',
+                     'Workflow'];
+        if (typeof type.name != 'string' || !types.includes(type.name)) {
+            throw new Error(Context.y18n.__("%s can only load items of these types: %s", 'loadFixtures', types.join(', ')));
+        }
+        let objects = [];
+        let fixturePath = path.join(__dirname, "..", "test", "fixtures");
+        if (!Array.isArray(filenames)) {
+            filenames = [filenames];
+        }
+        for (let filename of filenames) {
+            let fullPath = path.join(fixturePath, filename + '.json');
+            let data = JSON.parse(fs.readFileSync(fullPath));
+            let obj = type.inflateFrom(data);
+            objects.push(obj);
+            if (save && typeof obj.save == 'function') {
+                obj.save();
+            }
+        }
+        return objects;
+    }
 }
 
 /**
