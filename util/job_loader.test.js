@@ -1,6 +1,7 @@
 const { AppSetting } = require('../core/app_setting');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobLoader } = require('./job_loader');
 const { JobParams } = require('../core/job_params');
@@ -241,6 +242,20 @@ test('loadJob() with valid file path and valid Job JSON', () => {
     expect(loadedJob.id).toEqual(jobId);
 });
 
+test('loadJob() with valid file path and valid JobParams JSON', () => {
+    // Write a JobParams file...
+    let jobParams = getJobParams();
+    let tmpFile = Util.tmpFilePath();
+    fs.writeFileSync(tmpFile, JSON.stringify(jobParams));
+
+    // Make sure JobLoader loads it and converts it to a job.
+    let jobLoader = new JobLoader({ job: tmpFile });
+    let loadedJob = jobLoader.loadJob();
+    expect(loadedJob).toBeTruthy();
+    expect(loadedJob.constructor.name).toEqual('Job');
+    expect(Util.looksLikeUUID(loadedJob.id)).toBe(true);
+});
+
 test('loadJob() with valid file path and bad JSON', () => {
     let jobLoader = new JobLoader({ job: __filename });
     expect(function() {
@@ -253,4 +268,11 @@ test('loadJob() with invalid file path', () => {
     expect(function() {
         jobLoader.loadJob();
     }).toThrow(Context.y18n.__('Job file does not exist'));
+});
+
+test('loadJob() throws meaningful error if there is nothing to load', () => {
+    let jobLoader = new JobLoader();
+    expect(function() {
+        jobLoader.loadJob();
+    }).toThrow(Context.y18n.__('You must specify either'));
 });
