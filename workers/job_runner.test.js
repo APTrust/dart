@@ -14,9 +14,6 @@ const { ValidationOperation } = require('../core/validation_operation');
 // Create a tarred bag here.
 let tmpBagFile = Util.tmpFilePath() + ".tar";
 
-// Save the job file here.
-let tmpJobFile = Util.tmpFilePath() + ".json";
-
 // Job Id from fixture Job_003.json, which we load below.
 let jobId = "96d21b19-82ba-4de3-842c-ff961877e8de";
 
@@ -32,7 +29,7 @@ function deleteTmpBagFile() {
     catch (ex) { }
 }
 
-function writeJobFile() {
+function getJob() {
     let ss = helper.getStorageService();
     ss.save();
     let jobFile = path.join(__dirname, '..', 'test', 'fixtures', 'Job_003.json');
@@ -56,7 +53,7 @@ function writeJobFile() {
             skipMessagePrinted = true;
         }
     }
-    fs.writeFileSync(tmpJobFile, JSON.stringify(job));
+    return job;
 }
 
 function checkBagCreatorResults(job, stats) {
@@ -126,17 +123,14 @@ function testFailedPackage(jobRunner, returnCode, errorPrefix) {
 }
 
 test('Constructor sets expected properties', () => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
-    expect(jobRunner.jobFilePath).toEqual(tmpJobFile);
-    expect(jobRunner.deleteJobFile).toBe(true);
-    expect(jobRunner.job).not.toBeNull();
-    expect(jobRunner.job.id).toEqual(jobId);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
+    expect(jobRunner.job).toEqual(job);
 });
 
 test('run() completes when all job operations are valid', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
 
     jobRunner.run().then(function(returnCode) {
 
@@ -155,7 +149,7 @@ test('run() completes when all job operations are valid', done => {
 
         // We set deleteJobFile to true in the constructor,
         // so make sure it's deleted.
-        expect(fs.existsSync(tmpJobFile)).toBe(false);
+        //expect(fs.existsSync(tmpJobFile)).toBe(false);
 
         done();
     });
@@ -170,8 +164,8 @@ test('run() fails gracefully if package fails (untarred bag)', done => {
         return
     }
 
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
 
     // Force failure by writing to an output file that doesn't exist.
     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist';
@@ -189,8 +183,8 @@ test('run() fails gracefully if package fails (tarred bag, cannot create directo
         return
     }
 
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
 
     // Force failure by writing to an output file that doesn't exist.
     jobRunner.job.packageOp.outputPath = '/dev/null/xyz/file_does_not_exist.tar';
@@ -208,8 +202,8 @@ test('run() fails gracefully if package fails (tarred bag, cannot write in direc
         return
     }
 
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
 
     // Force failure by writing to an output file that doesn't exist.
     jobRunner.job.packageOp.outputPath = '/dev/null/file_does_not_exist.tar';
@@ -221,9 +215,9 @@ test('run() fails gracefully if package fails (tarred bag, cannot write in direc
 });
 
 test('run() fails gracefully if bag is in character device', done => {
-    writeJobFile();
+    let job = getJob();;
     let pathThatDoesNotExist = Util.escapeBackslashes('/dev/null/xyz/bag.tar');
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
 
@@ -237,9 +231,9 @@ test('run() fails gracefully if bag is in character device', done => {
 });
 
 test('run() fails gracefully if bag file does not exist', done => {
-    writeJobFile();
+    let job = getJob();;
     let pathThatDoesNotExist = Util.escapeBackslashes('bag_does_not_exist.tar');
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
 
@@ -253,9 +247,9 @@ test('run() fails gracefully if bag file does not exist', done => {
 });
 
 test('run() fails gracefully if bag directory does not exist', done => {
-    writeJobFile();
+    let job = getJob();;
     let pathThatDoesNotExist = Util.escapeBackslashes('dir/does/not/exist');
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = new ValidationOperation(pathThatDoesNotExist);
 
@@ -269,8 +263,8 @@ test('run() fails gracefully if bag directory does not exist', done => {
 });
 
 test('run() fails gracefully if BagItProfile is missing', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.bagItProfile = null;
     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
@@ -285,8 +279,8 @@ test('run() fails gracefully if BagItProfile is missing', done => {
 });
 
 test('run() fails gracefully if BagItProfile is invalid', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.bagItProfile.tags = []; // no tag defs = invalid
     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
@@ -307,8 +301,8 @@ test('run() fails gracefully if BagItProfile is invalid', done => {
 // -------------------------------------------------------------------------
 
 test('run() fails gracefully if required serialization is missing', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
 
@@ -328,8 +322,8 @@ test('run() fails gracefully if required serialization is missing', done => {
 });
 
 test('run() fails gracefully if serialization is wrong format', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = new ValidationOperation(pathToValidTestBag);
 
@@ -351,8 +345,8 @@ test('run() fails gracefully if upload file does not exist', done => {
         done();
         return;
     }
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
     jobRunner.job.uploadOps[0].sourceFiles[0] += 'FileDoesNotExist';
@@ -376,8 +370,8 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
         done();
         return;
     }
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
 
@@ -405,8 +399,8 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
         done();
         return;
     }
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
 
@@ -451,8 +445,8 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
 // user saves a job with an StorageService, then deletes the
 // StorageService, then tries to run the job.
 test('run() fails gracefully if StorageService does not exist', done => {
-    writeJobFile();
-    let jobRunner = new JobRunner(tmpJobFile, true);
+    let job = getJob();;
+    let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
 
