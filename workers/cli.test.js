@@ -28,7 +28,7 @@ beforeAll(() => {
     setBaggingDir();
     saveBagItProfile();
     jobId = saveRunnableJob();
-    createRunnableWorkflow();
+    workflow = saveRunnableWorkflow();
 });
 
 afterAll(() => {
@@ -74,10 +74,8 @@ function setTag(profile, name, value) {
     profile.firstMatchingTag('tagName', name).userValue = value;
 }
 
-// This creates a runnable workflow and assigns it to the package-level
-// var workflow.
-function createRunnableWorkflow() {
-    workflow = new Workflow({
+function saveRunnableWorkflow() {
+    let workflow = new Workflow({
 	    name: "CLI Test Workflow",
 	    description: "Includes BagIt packaging but no uploads",
 	    packageFormat: "BagIt",
@@ -85,45 +83,125 @@ function createRunnableWorkflow() {
 	    bagItProfileId: bagItProfileId,
 	    storageServiceIds: []
     });
+    workflow.save();
+    return workflow;
 }
 
+function createJobParams() {
+    return new JobParams({
+        workflowName: 'CLI Test Workflow',
+        packageName: path.basename(outputPath),
+        files: [ __dirname ],
+        tags: [
+  		    {
+  			    "tagFile": "bag-info.txt",
+  			    "tagName": "Bag-Group-Identifier",
+  			    "userValue": "Photos_2019"
+  		    },
+  		    {
+  			    "tagFile": "aptrust-info.txt",
+  			    "tagName": "Title",
+  			    "userValue": "Photos from 2019"
+  		    },
+  		    {
+  			    "tagFile": "aptrust-info.txt",
+  			    "tagName": "Storage-Option",
+  			    "userValue": "Standard"
+  		    },
+  		    {
+  			    "tagFile": "aptrust-info.txt",
+  			    "tagName": "Access",
+  			    "userValue": "Institution"
+  		    }
+        ]
+    });
+}
 
-function forkProcess(arg) {
+function forkProcess(param, stdinData) {
     let modulePath = path.join(__dirname, '..', 'main.js');
     return fork(
         modulePath,
-        ['--job', arg, '--deleteJobFile']
+        ['--job', param]
     );
+    if (stdinData) {
+        proc.stdin.pipe(stdinData + "\n");
+    }
+    // proc.on('message', (data) => {
+    //      console.log(data.toString());
+    // });
+    // proc.stderr.on('data', function(data) {
+    //     console.error(data.toString());
+    // });
+    // expect(proc).toBeTruthy();
+    // return proc;
 }
 
 // Be safe about this. Don't delete anything outside the
 // tmp dir.
-function removeOutputFile() {
-    if (outputPath.startsWith(os.tmpdir())) {
-        fs.unlinkSync(outputPath);
+function removeFile(filepath) {
+    if (filepath.startsWith(os.tmpdir())) {
+        fs.unlinkSync(filepath);
     }
 }
 
 test('Run job by UUID', done => {
+    // Pass in the job UUID as the command line arg.
+    // The JobLoader should load the job from the DART Jobs DB.
     forkProcess(jobId).on('exit', function(exitCode){
         expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
         expect(outputPath).toBeTruthy();
         expect(fs.existsSync(outputPath)).toBe(true);
-        removeOutputFile();
+        removeFile(outputPath);
         done();
     });
 });
 
-// test('Run job from Job JSON file', () => {
+test('Run job from Job JSON file', done => {
+    let job = Job.find(jobId);
+    let jsonPath = path.join(os.tmpdir(), 'DART_CLI_Test_Job.json');
+    fs.writeFileSync(jsonPath, JSON.stringify(job));
 
-// });
+    // Pass in the path of the Job JSON file as arg.
+    // The JobLoader should load the job from that file.
+    forkProcess(jsonPath).on('exit', function(exitCode){
+        expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(outputPath).toBeTruthy();
+        expect(fs.existsSync(outputPath)).toBe(true);
+        removeFile(outputPath);
+        removeFile(jsonPath);
+        done();
+    });
+});
 
-// test('Run job from JobParams JSON file', () => {
+// test('Run job from JobParams JSON file', done => {
+//     let jobParams = createJobParams();
+//     let jsonPath = path.join(os.tmpdir(), 'DART_CLI_Test_JobParams.json');
+//     fs.writeFileSync(jsonPath, JSON.stringify(jobParams));
 
+//     // Pass in the path of the JobParams JSON file as arg.
+//     // The JobLoader should parse that file, assemble a Job
+//     // from it, and run the job.
+//     forkProcess(jsonPath).on('exit', function(exitCode){
+//         expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+//         expect(outputPath).toBeTruthy();
+//         expect(fs.existsSync(outputPath)).toBe(true);
+//         removeFile(outputPath);
+//         removeFile(jsonPath);
+//         done();
+//     });
 // });
 
 // test('Run job from Job JSON passed through STDIN', () => {
-
+//     let job = Job.find(jobId);
+//     let jobJson = JSON.stringify(job);
+//     forkProcess('', jobJson).on('exit', function(exitCode){
+//         expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+//         expect(outputPath).toBeTruthy();
+//         expect(fs.existsSync(outputPath)).toBe(true);
+//         removeFile(outputPath);
+//         removeFile(jsonPath);
+//         done();
+//     });
 // });
 
 // test('Run job from JobParams JSON passed through STDIN', () => {
