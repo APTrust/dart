@@ -146,11 +146,6 @@ test('run() completes when all job operations are valid', done => {
         if (helper.envHasS3Credentials()) {
             checkUploadResults(jobRunner.job);
         }
-
-        // We set deleteJobFile to true in the constructor,
-        // so make sure it's deleted.
-        //expect(fs.existsSync(tmpJobFile)).toBe(false);
-
         done();
     });
 });

@@ -65,7 +65,7 @@ class JobRunController extends RunningJobsController {
         let modulePath = path.join(__dirname, '..', '..', 'main.js');
         this.childProcess = fork(
                 modulePath,
-                ['--job', tmpFile, '--deleteJobFile']
+                ['--job', tmpFile]
         );
 
         // TODO: Do we still need this? It's job is to keep

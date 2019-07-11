@@ -17,11 +17,10 @@ let app;
 function run() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
-        boolean: ['D', 'debug', 'h', 'help', 'v', 'version',
-                  'd', 'deleteJobFile'],
-        default: { D: false, debug: false, d: false, deleteJobFile: false,
+        boolean: ['d', 'debug', 'h', 'help', 'v', 'version'],
+        default: { d: false, debug: false,
                    h: false, help: false, v: false, version: false},
-        alias: { D: ['debug'], d: ['deleteJobFile'],
+        alias: { D: ['debug'],
                  h: ['help'], j: ['job'], v: ['version'],
                  w: ['workflow']}
     });
@@ -45,10 +44,7 @@ async function runWithoutUI(opts) {
     if (!process.stdin.isTTY) {
         stdinData = fs.readFileSync(0, 'utf-8');
     }
-    //console.log(opts);
-    //console.log(stdinData);
     let job = new JobLoader(opts, stdinData).loadJob();
-    //console.log(job);
     let jobRunner = new JobRunner(job);
     let exitCode = await jobRunner.run();
     Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
