@@ -1,6 +1,8 @@
 const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
+const { Constants } = require('../core/constants');
 const { fork } = require('child_process');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobParams } = require('../core/job_params');
 const os = require('os');
@@ -14,8 +16,11 @@ const { Workflow } = require('../core/workflow');
 // TODO: Move the Job fork code to a Util class that ensures
 // the spawned job's DartProcess is added to Context.childProcesses
 
+// These three will be set below.
 let jobId = null;
 let workflow = null;
+let outputPath = null;
+
 const bagItProfileId = '28f48fcc-064d-4acf-bb5b-ea6ad5c6264d';
 const tarPluginId = '90110710-1ff9-4650-a086-d7b23772238f';
 
@@ -47,7 +52,7 @@ function saveBagItProfile() {
 
 function saveRunnableJob() {
     let outputDir = AppSetting.list()[0].value;
-    let outputPath = path.join(outputDir, 'CLI_Test_Bag.tar');
+    outputPath = path.join(outputDir, 'CLI_Test_Bag.tar');
     let bagItProfile = BagItProfile.find(bagItProfileId);
     setTag(bagItProfile, 'Source-Organization', 'Test University');
     setTag(bagItProfile, 'Title', 'CLI Test Bag');
@@ -82,21 +87,32 @@ function createRunnableWorkflow() {
     });
 }
 
-// // Need to change npm command outside of dev env.
-// let modulePath = path.join(__dirname, '..', '..', 'main.js');
-// this.childProcess = fork(
-//     modulePath,
-//     ['--job', tmpFile, '--deleteJobFile']
-// );
 
+function forkProcess(arg) {
+    let modulePath = path.join(__dirname, '..', 'main.js');
+    return fork(
+        modulePath,
+        ['--job', arg, '--deleteJobFile']
+    );
+}
 
-test('...', () => {
-    expect(1).toEqual(1);
+// Be safe about this. Don't delete anything outside the
+// tmp dir.
+function removeOutputFile() {
+    if (outputPath.startsWith(os.tmpdir())) {
+        fs.unlinkSync(outputPath);
+    }
+}
+
+test('Run job by UUID', done => {
+    forkProcess(jobId).on('exit', function(exitCode){
+        expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(outputPath).toBeTruthy();
+        expect(fs.existsSync(outputPath)).toBe(true);
+        removeOutputFile();
+        done();
+    });
 });
-
-// test('Run job by UUID', () => {
-
-// });
 
 // test('Run job from Job JSON file', () => {
 

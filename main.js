@@ -1,6 +1,7 @@
 const { Constants } = require('./core/constants');
 const { Context } = require('./core/context');
 const fs = require('fs');
+const { JobLoader } = require('./util/job_loader');
 const { JobRunner } = require('./workers/job_runner');
 const minimist = require('minimist');
 const process = require('process');
@@ -46,7 +47,9 @@ async function runWithoutUI(opts) {
     }
     //console.log(opts);
     //console.log(stdinData);
-    let jobRunner = new JobRunner(opts.job, opts.deleteJobFile);
+    let job = new JobLoader(opts, stdinData).loadJob();
+    //console.log(job);
+    let jobRunner = new JobRunner(job);
     let exitCode = await jobRunner.run();
     Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
     process.exit(exitCode);

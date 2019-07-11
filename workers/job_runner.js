@@ -12,17 +12,12 @@ const { Util } = require('../core/util');
 /**
  * JobRunner runs a {@link Job} in a child process.
  *
- * @param {string} pathToFile - The path to the JSON file that contains
- * a description of the Job.
+ * @param {string} job - The job to run.
  *
- * @param {boolean} deleteJobFile - If true, the JobRunner will delete
- * the job file on completion. This defaults to false.
  */
 class JobRunner {
-    constructor(pathToFile, deleteJobFile = false) {
-        this.jobFilePath = pathToFile;
-        this.deleteJobFile = deleteJobFile;
-        this.job = Job.inflateFromFile(pathToFile);
+    constructor(job) {
+        this.job = job;
     }
 
     /**
@@ -40,7 +35,6 @@ class JobRunner {
             if (returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.uploadFiles();
             }
-            this.removeJobFile();
             return returnCode;
         } catch (ex) {
             // Caller collects messages from STDERR.
@@ -136,17 +130,6 @@ class JobRunner {
             if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
                 uploadOp.sourceFiles.push(packOp.outputPath);
             }
-        }
-    }
-
-    /**
-     * This deletes the job file when the run is complete, but only if
-     * the caller specified that the job file should be deleted.
-     *
-     */
-    removeJobFile() {
-        if (this.deleteJobFile && fs.existsSync(this.jobFilePath)) {
-            fs.unlinkSync(this.jobFilePath);
         }
     }
 }
