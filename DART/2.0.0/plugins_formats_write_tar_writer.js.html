@@ -214,7 +214,7 @@ class TarWriter extends BaseWriter {
             // Don't use path.join because Windows will give us
             // backslashes and tar file needs forward slashes.
             name: this.bagName + '/' + bagItFile.relDestPath,
-            size: Number(bagItFile.size),
+            size: bagItFile.size,
             mode: bagItFile.mode,
             uid: bagItFile.uid,
             gid: bagItFile.gid,
@@ -222,7 +222,7 @@ class TarWriter extends BaseWriter {
         };
         // pax headers allow us to include files over 8GB in size
         header.pax = {
-            size: Number(bagItFile.size)
+            size: bagItFile.size
         };
 
         /**

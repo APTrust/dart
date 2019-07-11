@@ -486,7 +486,7 @@ class Bagger extends EventEmitter {
             for (let f of this.bagItFiles) {
                 if (f.isPayloadFile()) {
                     fileCount += 1;
-                    byteCount += Number(f.size);
+                    byteCount += f.size;
                 }
             }
             payloadOxum.userValue = `${byteCount}.${fileCount}`;
@@ -519,10 +519,10 @@ class Bagger extends EventEmitter {
         if (fs.existsSync(result.filepath)) {
             let stat = fs.statSync(result.filepath);
             if (stat.isDirectory()) {
-                const sum = (total, file) => total + Number(file.size);
+                const sum = (total, file) => total + file.size;
                 result.filesize = this.bagItFiles.reduce(sum, 0);
             } else {
-                result.filesize = Number(stat.size);
+                result.filesize = stat.size;
             }
         }
         this._deleteTempFiles();
