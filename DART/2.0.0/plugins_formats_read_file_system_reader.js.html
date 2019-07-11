@@ -109,7 +109,8 @@ const readdirp = require('readdirp');
  */
 const OPTS = {
     entryType: "all",
-    alwaysStat: true
+    alwaysStat: true,
+    bigint: false     // handle breaking change in readdirp 3.1
 };
 
 /**
