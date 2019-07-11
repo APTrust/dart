@@ -255,9 +255,12 @@ class FileSystemReader extends Plugin {
             // TarReader emits. Caller can get full path
             // by prepending FileSystemReader.pathToDirectory
             // to entry.path, which is relative.
+            //
+            // Explicitly converting entry.stats.size to Number should
+            // fix BigInt problem on Windows. See https://trello.com/c/AQ42tLzK
             if (entry.stats.isFile()) {
                 fsReader.fileCount += 1;
-                fsReader.byteCount += entry.stats.size;
+                fsReader.byteCount += Number(entry.stats.size);
             } else if (entry.stats.isDirectory()) {
                 fsReader.dirCount += 1;
             }
