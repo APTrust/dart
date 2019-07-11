@@ -54,7 +54,7 @@ test('FileSystemReader.read() returns expected stats', done => {
     fsReader.on('entry', function(entry) {
         if (entry.relPath === relPath) {
             foundTestFile = true;
-            expect(Number(entry.fileStat.size)).toEqual(32768);
+            expect(entry.fileStat.size).toEqual(32768);
             expect(entry.fileStat.mtimeMs).not.toEqual(0);
             expect(entry.fileStat.isFile()).toEqual(true);
 
@@ -65,7 +65,7 @@ test('FileSystemReader.read() returns expected stats', done => {
             });
             entry.stream.on('end', function() {
                 var binaryData = Buffer.concat(fileContents);
-                expect(binaryData.length).toEqual(Number(entry.fileStat.size));
+                expect(binaryData.length).toEqual(entry.fileStat.size);
             });
         }
         entry.stream.pipe(new PassThrough());

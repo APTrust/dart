@@ -47,7 +47,7 @@ test('FileSystemWriter adds files', done => {
             let destPath = path.join(pathToOutputDir, bf.relDestPath)
             expect(fs.existsSync(destPath)).toEqual(true);
             let stats = fs.statSync(destPath);
-            expect(Number(stats.size)).toEqual(bf.size);
+            expect(stats.size).toEqual(bf.size);
             expect(bf.checksums.md5).toBeDefined();
             expect(bf.checksums.md5.length).toEqual(32);
             expect(bf.checksums.sha256).toBeDefined();

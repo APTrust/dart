@@ -988,7 +988,7 @@ class Validator extends EventEmitter {
                 let fileCount = 0;
                 for (let f of this.payloadFiles()) {
                     fileCount += 1;
-                    byteCount += Number(f.size);
+                    byteCount += f.size;
                 }
                 if (oxumFiles != fileCount) {
                     this.errors.push(`Payload-Oxum says there should be ${oxumFiles} files in the payload, but validator found ${fileCount}.`);
