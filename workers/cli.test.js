@@ -212,6 +212,15 @@ test('Run job from Job JSON passed through STDIN', done => {
     });
 });
 
-// test('Run job from JobParams JSON passed through STDIN', () => {
+test('Run job from JobParams JSON passed through STDIN', done => {
+    let jobParams = createJobParams();
+    let jsonData = JSON.stringify(jobParams);
 
-// });
+    forkProcess(null, jsonData).on('exit', function(exitCode){
+        expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(outputPath).toBeTruthy();
+        expect(fs.existsSync(outputPath)).toBe(true);
+        removeFile(outputPath);
+        done();
+    });
+});

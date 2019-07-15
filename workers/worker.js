@@ -111,7 +111,6 @@ class Worker extends EventEmitter {
             msg += `${exception.message} ... ${exception.stack}`;
         }
         Context.logger.error(msg);
-        //console.log(msg);
         this._emitStatusMessage(jobStatus);
         return false;
     }
