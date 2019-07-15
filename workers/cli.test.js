@@ -1,7 +1,7 @@
 const { AppSetting } = require('../core/app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('../core/constants');
-const { fork } = require('child_process');
+const { fork, spawn } = require('child_process');
 const fs = require('fs');
 const { Job } = require('../core/job');
 const { JobParams } = require('../core/job_params');
@@ -119,21 +119,34 @@ function createJobParams() {
 
 function forkProcess(param, stdinData) {
     let modulePath = path.join(__dirname, '..', 'main.js');
-    return fork(
-        modulePath,
-        ['--job', param]
-    );
+    let params = ['--job', param];
     if (stdinData) {
-        proc.stdin.pipe(stdinData + "\n");
+        params = ['--stdin'];
     }
-    // proc.on('message', (data) => {
-    //      console.log(data.toString());
-    // });
-    // proc.stderr.on('data', function(data) {
-    //     console.error(data.toString());
-    // });
-    // expect(proc).toBeTruthy();
-    // return proc;
+    //return fork(
+    let proc = fork(
+        modulePath,
+        params,
+        { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
+    );
+    //console.log(proc);
+    //proc.stdout.pipe(process.stdout);
+    if (stdinData) {
+        //proc.stdin.pipe(stdinData + "\n");
+        proc.stdin.write(stdinData + "\n");
+        proc.stdin.end();
+    }
+    proc.on('message', (data) => {
+         console.log(data.toString());
+    });
+    proc.stdout.on('data', function(data) {
+        console.log(data.toString());
+    });
+    proc.stderr.on('data', function(data) {
+        console.error(data.toString());
+    });
+    expect(proc).toBeTruthy();
+    return proc;
 }
 
 // Be safe about this. Don't delete anything outside the
@@ -191,18 +204,18 @@ test('Run job from Job JSON file', done => {
 //     });
 // });
 
-// test('Run job from Job JSON passed through STDIN', () => {
-//     let job = Job.find(jobId);
-//     let jobJson = JSON.stringify(job);
-//     forkProcess('', jobJson).on('exit', function(exitCode){
-//         expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
-//         expect(outputPath).toBeTruthy();
-//         expect(fs.existsSync(outputPath)).toBe(true);
-//         removeFile(outputPath);
-//         removeFile(jsonPath);
-//         done();
-//     });
-// });
+test('Run job from Job JSON passed through STDIN', done => {
+    let job = Job.find(jobId);
+    let jobJson = JSON.stringify(job);
+    forkProcess('', jobJson).on('exit', function(exitCode){
+        expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(outputPath).toBeTruthy();
+        expect(fs.existsSync(outputPath)).toBe(true);
+        removeFile(outputPath);
+        //removeFile(jsonPath);
+        done();
+    });
+});
 
 // test('Run job from JobParams JSON passed through STDIN', () => {
 

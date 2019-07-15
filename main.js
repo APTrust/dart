@@ -17,14 +17,17 @@ let app;
 function run() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
-        boolean: ['d', 'debug', 'h', 'help', 'v', 'version'],
+        boolean: ['d', 'debug', 'h', 'help', 'v', 'version',
+                 's', 'stdin'],
         default: { d: false, debug: false,
-                   h: false, help: false, v: false, version: false},
-        alias: { D: ['debug'],
-                 h: ['help'], j: ['job'], v: ['version'],
+                   h: false, help: false,
+                   s: false, stdin: false,
+                   v: false, version: false},
+        alias: { D: ['debug'], h: ['help'], j: ['job'],
+                 s: ['stdin'], v: ['version'],
                  w: ['workflow']}
     });
-    if (opts.job) {
+    if (opts.job || opts.stdin) {
         process.DART_MODE = 'cli';
         return runWithoutUI(opts);
     } else {
@@ -41,9 +44,11 @@ function run() {
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let stdinData = '';
-    if (!process.stdin.isTTY) {
+    //if (!process.stdin.isTTY) {
+    if (opts.stdin) {
         stdinData = fs.readFileSync(0, 'utf-8');
     }
+    Context.logger.info('STDIN -> ', stdinData);
     let job = new JobLoader(opts, stdinData).loadJob();
     let jobRunner = new JobRunner(job);
     let exitCode = await jobRunner.run();
