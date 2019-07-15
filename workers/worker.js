@@ -100,7 +100,18 @@ class Worker extends EventEmitter {
             errors,
             exception
         );
-        Context.logger.error(`${this.operation}/${action} - ${message}`);
+        // Why can we not print two consecutive error messages
+        // using Context.logger.error? For now, merge all data
+        // into a single message.
+        let msg = `${this.operation}/${action} - ${message} `;
+        if (errors) {
+            msg += errors.join(', ');
+        }
+        if (exception) {
+            msg += `${exception.message} ... ${exception.stack}`;
+        }
+        Context.logger.error(msg);
+        //console.log(msg);
         this._emitStatusMessage(jobStatus);
         return false;
     }

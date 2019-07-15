@@ -11,12 +11,7 @@ const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { Workflow } = require('../core/workflow');
 
-// TODO: Fixtures for the a runnable job and runnable workflow
-
-// TODO: Move the Job fork code to a Util class that ensures
-// the spawned job's DartProcess is added to Context.childProcesses
-
-// These three will be set below.
+// Values for these three will be set below.
 let jobId = null;
 let workflow = null;
 let outputPath = null;
@@ -99,6 +94,11 @@ function createJobParams() {
   			    "userValue": "Photos_2019"
   		    },
   		    {
+  			    "tagFile": "bag-info.txt",
+  			    "tagName": "Source-Organization",
+  			    "userValue": "Test University"
+  		    },
+  		    {
   			    "tagFile": "aptrust-info.txt",
   			    "tagName": "Title",
   			    "userValue": "Photos from 2019"
@@ -123,16 +123,12 @@ function forkProcess(param, stdinData) {
     if (stdinData) {
         params = ['--stdin'];
     }
-    //return fork(
     let proc = fork(
         modulePath,
         params,
         { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
     );
-    //console.log(proc);
-    //proc.stdout.pipe(process.stdout);
     if (stdinData) {
-        //proc.stdin.pipe(stdinData + "\n");
         proc.stdin.write(stdinData + "\n");
         proc.stdin.end();
     }
@@ -186,23 +182,23 @@ test('Run job from Job JSON file', done => {
     });
 });
 
-// test('Run job from JobParams JSON file', done => {
-//     let jobParams = createJobParams();
-//     let jsonPath = path.join(os.tmpdir(), 'DART_CLI_Test_JobParams.json');
-//     fs.writeFileSync(jsonPath, JSON.stringify(jobParams));
+test('Run job from JobParams JSON file', done => {
+    let jobParams = createJobParams();
+    let jsonPath = path.join(os.tmpdir(), 'DART_CLI_Test_JobParams.json');
+    fs.writeFileSync(jsonPath, JSON.stringify(jobParams));
 
-//     // Pass in the path of the JobParams JSON file as arg.
-//     // The JobLoader should parse that file, assemble a Job
-//     // from it, and run the job.
-//     forkProcess(jsonPath).on('exit', function(exitCode){
-//         expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
-//         expect(outputPath).toBeTruthy();
-//         expect(fs.existsSync(outputPath)).toBe(true);
-//         removeFile(outputPath);
-//         removeFile(jsonPath);
-//         done();
-//     });
-// });
+    // Pass in the path of the JobParams JSON file as arg.
+    // The JobLoader should parse that file, assemble a Job
+    // from it, and run the job.
+    forkProcess(jsonPath).on('exit', function(exitCode){
+        expect(exitCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(outputPath).toBeTruthy();
+        expect(fs.existsSync(outputPath)).toBe(true);
+        removeFile(outputPath);
+        removeFile(jsonPath);
+        done();
+    });
+});
 
 test('Run job from Job JSON passed through STDIN', done => {
     let job = Job.find(jobId);
@@ -212,7 +208,6 @@ test('Run job from Job JSON passed through STDIN', done => {
         expect(outputPath).toBeTruthy();
         expect(fs.existsSync(outputPath)).toBe(true);
         removeFile(outputPath);
-        //removeFile(jsonPath);
         done();
     });
 });

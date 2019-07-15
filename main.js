@@ -44,7 +44,6 @@ function run() {
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     let stdinData = '';
-    //if (!process.stdin.isTTY) {
     if (opts.stdin) {
         stdinData = fs.readFileSync(0, 'utf-8');
     }
