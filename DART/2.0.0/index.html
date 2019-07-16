@@ -177,10 +177,24 @@ the top-level directory of the project.</p>
 <p>The binary will appear in the /dist folder. For example, when building
 on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
 <p>You can run the binary directly from there.</p>
-<h2>Running in Command-Line Mode</h2>
-<p>DART runs in command-line mode if you specify a job file on the command line.
-Note the double dashes before the --job option.</p>
-<pre class="prettyprint source"><code>dist/mac/DART.app/Contents/MacOS/DART -- --job ~/tmp/dart/job.json
+<h2>Running Jobs in Command-Line Mode</h2>
+<p>DART can run both Jobs and Workflows from the command line. Most users will
+want to run Workflows, because they're easier, but we'll start by discussing
+jobs.</p>
+<p>There are several ways to pass job information to DART in command-line mode.
+Each of the examples below will run a job withouth launching the graphical
+interface. All jobs log to the same log file as the DART UI.</p>
+<p>Note the double dashes before the --job and --json options.</p>
+<pre class="prettyprint source"><code># Run a job from Job JSON file, which contains a full description
+# of the job to be executed.
+dist/mac/DART.app/Contents/MacOS/DART -- --job ~/tmp/dart/job.json
+
+# Run a Job stored in the DART Jobs database. The UUID is the unique
+# identifier of the job
+dist/mac/DART.app/Contents/MacOS/DART -- --job 00000000-0000-0000-0000-000000000000
+
+# Run a job by passing Job JSON directly to stdin
+echo '{ ... Job JSON ... }' | dist/mac/DART.app/Contents/MacOS/DART -- --json
 </code></pre>
 <p>A job file contains a JSON description of a job, including any or all of
 the following operations:</p>
@@ -190,14 +204,37 @@ the following operations:</p>
 <li>uploads to one or more remote endpoints (currently limited to S3)</li>
 </ul>
 <p>The ability to export a Job JSON file will be coming soon.</p>
+<h2>Running Workflows in Command-Line Mode</h2>
+<p>Workflows define a set of pre-determined actions to take a set of files. For
+example, a Workflow may include the following steps:</p>
+<ul>
+<li>Package files in BagIt format</li>
+<li>Using a specified BagIt profile</li>
+<li>With a specified set of default values</li>
+<li>And upload the resulting package to one or more targets</li>
+</ul>
+<p>Workflows are easy to run from the command line. To do so, simply create a
+JobParams JSON structure with the following info and pass it to DART:</p>
+<ul>
+<li>The name of the workflow to execute</li>
+<li>The name of the package to create</li>
+<li>A list of files to package</li>
+<li>A list of tag values to include in the package</li>
+</ul>
+<p>You can then run the Workflow in one of two ways.</p>
+<pre class="prettyprint source"><code># Run from a JobParams JSON file
+dist/mac/DART.app/Contents/MacOS/DART -- --job ~/tmp/dart/job_params.json
+
+# Run by passing JobParams JSON directly to stdin
+echo '{ ... JobParams JSON ... }' | dist/mac/DART.app/Contents/MacOS/DART -- --json
+</code></pre>
 <h2>Documentation</h2>
 <p>After every commit the documentation is rebuilt and published at</p>
 <p><a href="https://aptrust.github.io/dart">https://aptrust.github.io/dart</a></p>
 <h2>Building the Docs</h2>
 <pre class="prettyprint source"><code>./jsdoc.sh
 </code></pre>
-<p>After running that, check the index.html file in the docs directory, which the
-command will create if it doesn't already exist.</p>
+<p>After running that, open the file <code>docs/DART/2.0.0/index.html</code> in your browser.</p>
     </article>
   </section>
 
