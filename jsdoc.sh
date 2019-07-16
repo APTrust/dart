@@ -4,6 +4,7 @@ echo "Generating documentation..."
 ./node_modules/.bin/jsdoc -c .jsdoc.json -t node_modules/braintree-jsdoc-template/ -d docs -r bagit/ core/ migrations/ plugins/ ui/ util/
 echo "New doc is in docs/index.html"
 
+#
 #echo "Hello, Travis! You there?"
 #if [[ -z "${TRAVIS}" ]]; then
 #    echo "No Travis here. I'm done here."
