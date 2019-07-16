@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      SetupController - Documentation
+      controllers/running_jobs_controller.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -86,1422 +88,258 @@
   <div id="main">
     
       <h1 class="page-title">
-        SetupController
+        controllers/running_jobs_controller.js
       </h1>
     
 
     
+      
 
 <section>
-  <header>
-    
-      <h2>
-        
-        SetupController
-        
-      </h2>
-
-      
-        <div class="class-description">
-          <p>The SetupController installs an organization's default settings and
-walks the user through a series of questions to collect custom setting
-information. See SetupBase for info on how to write a Setup
-plugin.</p>
-        </div>
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-
-
-  
-    <h2>Constructor</h2>
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#SetupController">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="SetupController">
-      <span class="type-signature"></span>new SetupController<span class="signature">(params)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>params</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      url.URLSearchParams
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>URL parameters from the UI.
-These usually come from a query string attached to the href attribute
-of a link or button.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line26">line 26</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-
-<h4 class="name" id="plugin">
-  <span class="type-signature"></span>plugin<span class="type-signature"> :SetupBase</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>The Setup plugin that includes a number of settings to
-install and questions to ask the user.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line41">line 41</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="pluginId">
-  <span class="type-signature"></span>pluginId<span class="type-signature"> :string</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>The id of Setup plugin that the controller is running.</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line47">line 47</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="typedParams">
-  <span class="type-signature"></span>typedParams<span class="type-signature"> :object</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>Contains the same keys and values as the params object,
-but they have been cast to the proper types (number, boolean,
-string).</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line61">line 61</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="typeMap">
-  <span class="type-signature"></span>typeMap<span class="type-signature"> :object</span>
-</h4>
-
-
-
-
-  <div class="description">
-    <p>This maps items in params to their correct type (number,
-boolean, or string).</p>
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line34">line 34</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-    
-
-    
-      <h3 class="subsection-title">Methods</h3>
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#_formatLastRunDate">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="_formatLastRunDate">
-      <span class="type-signature"></span>_formatLastRunDate<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns the date that a Setup plugin was last run, or Never if
-the Setup plugin has not been installed.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line95">line 95</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#_getLastRunDate">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="_getLastRunDate">
-      <span class="type-signature"></span>_getLastRunDate<span class="signature">()</span><span class="type-signature"> &rarr; {Date}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Returns the date that a Setup plugin was last run, or null if
-the Setup plugin has not been installed.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line110">line 110</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#end">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="end">
-      <span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>This displays the end message at the end of the setup process.
-It also calls SetupBase#afterAllQuestions and creates
-or updates an internal setting describing when the setup completed.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line261">line 261</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#getLogoPath">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="getLogoPath">
-      <span class="type-signature"></span>getLogoPath<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>This returns the path to the logo for this setup plugin. That's
-the first file in the directory that contains your questions.json,
-app_settings.json, etc. that matches any of the following names:</p>
-<ul>
-<li>logo.png</li>
-<li>logo.jpg</li>
-<li>logo.jpeg</li>
-<li>logo.svg</li>
-<li>logo.gif</li>
-</ul>
-<p>You can override this method if you want to return some other path.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line297">line 297</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#list">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="list">
-      <span class="type-signature"></span>list<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Displays a list of available Setup plugins.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line67">line 67</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#postRenderCallback">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="postRenderCallback">
-      <span class="type-signature"></span>postRenderCallback<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>This attaches click events to setup cards.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line311">line 311</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#question">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="question">
-      <span class="type-signature"></span>question<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Displays a question from the Setup plugin. If a question is already
-showing when this is called, it validates the user's response and
-saves it if the response was valid, or displays a validation error
-message if the response was invalid.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line143">line 143</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#runPreQuestionCallbacks">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="runPreQuestionCallbacks">
-      <span class="type-signature"></span>runPreQuestionCallbacks<span class="signature">()</span><span class="type-signature"> &rarr; {Error}</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>This runs the following callbacks (defined in SetupBase in
-order:</p>
-<ul>
-<li>SetupBase#beforeObjectInstallation</li>
-<li>SetupBase#installSettings</li>
-<li>SetupBase#beforeAllQuestions</li>
-</ul>
-<p>Returns an error if anything goes wrong. Otherwise returns null.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line227">line 227</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#start">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="start">
-      <span class="type-signature"></span>start<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Displays the Setup plugin's start message.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line124">line 124</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#startQuestions">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="startQuestions">
-      <span class="type-signature"></span>startQuestions<span class="signature">()</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>That this is called when the user clicks the Next button on the
-Setup start page. This runs the pre-question callbacks, and if they
-complete without error, itsends the user on to the first setup question.</p>
-<p>If there's an error in the pre-question callbacks, this displays the
-error and stops the setup process.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="controllers_setup_controller.js.html">controllers/setup_controller.js</a>, <a href="controllers_setup_controller.js.html#line207">line 207</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    
-
-    
-
-    
+    <pre class="prettyprint source linenums"><code>const $ = require('jquery');
+const { BaseController } = require('./base_controller');
+const { Constants } = require('../../core/constants');
+const { Context } = require('../../core/context');
+const { Job } = require('../../core/job');
+const Templates = require('../common/templates');
+const { UIConstants } = require('../common/ui_constants');
+
+/**
+ * This controller is never instantiated or called directly.
+ * Both the {@link JobRunController} and the {@link DashboardController}
+ * inherit from this class, which contains common methods for displaying
+ * info about running jobs.
+ *
+ */
+class RunningJobsController extends BaseController {
+
+    constructor(params, navSection) {
+        super(params, navSection)
+        this.completedUploads = [];
+    }
+
+    initRunningJobDisplay(dartProcess) {
+        let job = Job.find(dartProcess.jobId);
+        this.showDivs(job, dartProcess);
+        let controller = this;
+
+        // If user moves from JobRunController to DashboardController
+        // (both of which derive from this class), we don't want
+        // listeners to be attached twice. Re-adding the listeners
+        // causes them to render content in elements on the current
+        // page.
+        dartProcess.process.removeAllListeners('message');
+        dartProcess.process.removeAllListeners('exit');
+
+        dartProcess.process.on('message', (data) => {
+            controller.renderChildProcOutput(data, dartProcess);
+        });
+
+        dartProcess.process.on('exit', (code, signal) => {
+            Context.logger.info(`Process ${dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
+            delete Context.childProcesses[dartProcess.id];
+            controller.renderOutcome(dartProcess, code);
+        });
+    }
+
+    showDivs(job, dartProcess) {
+        let processDiv = $('#dartProcessContainer');
+
+        // If we're in the Jobs section, this is the job_run_controller
+        // and we need to add some HTML to the page to display job status
+        // because the user has just clicked "Run Job".
+        //
+        // Otherwise, we're in the dashboard, and the HTML we need was
+        // already rendered when the page loaded.
+        if (this.navSection == 'Jobs') {
+            let html = Templates.partials['dartProcess']({ item: dartProcess });
+            processDiv.html(html);
+        }
+        if (job.packageOp &amp;&amp; job.packageOp.outputPath) {
+            this.initProgressBar(dartProcess, 'packageInfo');
+            $(`#${dartProcess.id} div.packageInfo`).show();
+            if (job.packageOp.packageFormat == 'BagIt') {
+                this.initProgressBar(dartProcess, 'validationInfo');
+                $(`#${dartProcess.id} div.validationInfo`).show();
+            }
+        }
+        if (job.uploadOps.length > 0) {
+            this.initProgressBar(dartProcess, 'uploadInfo');
+            $(`#${dartProcess.id} div.uploadInfo`).show();
+        }
+        processDiv.show();
+    }
+
+    renderChildProcOutput(data, dartProcess) {
+        switch (data.op) {
+        case 'package':
+            this.renderPackageInfo(data, dartProcess);
+            break;
+        case 'validate':
+            this.renderValidationInfo(data, dartProcess);
+            break;
+        case 'upload':
+            this.renderUploadInfo(data, dartProcess);
+            break;
+        default:
+            return;
+        }
+    }
+
+    renderPackageInfo(data, dartProcess) {
+        let [detailDiv, progressBar] = this.getDivs(dartProcess, 'packageInfo');
+        if (data.action == 'fileAdded') {
+            detailDiv.text(Context.y18n.__('Added file %s', data.msg));
+            this.setProgressBar(progressBar, data);
+        } else if (data.action == 'completed') {
+            if (data.status == Constants.OP_SUCCEEDED) {
+                this.markSuccess(detailDiv, progressBar, data.msg);
+            } else {
+                this.markFailed(detailDiv, progressBar, data.msg);
+            }
+        } else {
+            detailDiv.text(data.msg);
+        }
+    }
+
+    renderValidationInfo(data, dartProcess) {
+        let [detailDiv, progressBar] = this.getDivs(dartProcess, 'validationInfo');
+        if (data.action == 'checksum') {
+            detailDiv.text(Context.y18n.__('Validating %s', data.msg));
+            this.setProgressBar(progressBar, data);
+        } else if (data.action == 'completed') {
+            if (data.status == Constants.OP_SUCCEEDED) {
+                this.markSuccess(detailDiv, progressBar, data.msg);
+            } else {
+                this.markFailed(detailDiv, progressBar, data.msg);
+            }
+        }
+    }
+
+    renderUploadInfo(data, dartProcess) {
+        let [detailDiv, progressBar] = this.getDivs(dartProcess, 'uploadInfo');
+        if (data.action == 'start') {
+            detailDiv.text(data.msg);
+            // We can have multiple uploads, so we re-initialize the
+            // progress bar each time we get a start event.
+            this.initProgressBar(dartProcess, 'uploadInfo');
+        } else if (data.action == 'completed') {
+            if (data.status == Constants.OP_SUCCEEDED) {
+                this.completedUploads.push(data.msg);
+                this.markSuccess(detailDiv, progressBar, this.completedUploads.join("&lt;br/>\n"));
+            } else {
+                this.markFailed(detailDiv, progressBar, data.msg);
+            }
+        } else if (data.action == 'status'){
+            detailDiv.text(data.msg);
+            this.setProgressBar(progressBar, data);
+        }
+    }
+
+    // TODO: This has a problem. If we're doing a series of uploads and one
+    // fails and it's not the LAST one, this reports a successful outcome.
+    // It should report an error.
+    renderOutcome(dartProcess, code) {
+        // We have to reload this, because the child process updated
+        // the job's record in the database.
+        let job = Job.find(dartProcess.jobId);
+        let [detailDiv, progressBar] = this.getDivs(dartProcess, 'outcome');
+        if (code == 0) {
+            this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
+        } else {
+            let msg = Context.y18n.__('Job did not complete due to errors.')
+            Context.logger.error(msg);
+            this.logFailedOps(job);
+            msg += `&lt;br/>${job.getRunErrors().join("&lt;br/>")}`
+            this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '&lt;br/>'));
+        }
+        // Button exists on job "Review and Run" page, not dashboard.
+        $('#btnRunJob').prop('disabled', false);
+    }
+
+    getDivs(dartProcess, section) {
+        let selectorPrefix = `#${dartProcess.id} div.${section} div.detail`;
+        let detailDiv = $(`${selectorPrefix} div.message`);
+        let progressBar = $(`${selectorPrefix} div.progress-bar`);
+        return [detailDiv, progressBar];
+    }
+
+    logFailedOps(job) {
+        if (job.packageOp) {
+            Context.logger.error(JSON.stringify(job.packageOp));
+        }
+        if (job.validationOp) {
+            Context.logger.error(JSON.stringify(job.validationOp));
+        }
+        if (job.uploadOps &amp;&amp; job.uploadOps.length > 0) {
+            Context.logger.error(JSON.stringify(job.uploadOps));
+        }
+    }
+
+    initProgressBar(dartProcess, section) {
+        let [_, progressBar] = this.getDivs(dartProcess, section);
+        if (progressBar) {
+            progressBar.removeClass("bg-success");
+            progressBar.removeClass("bg-danger");
+            let initialClasses = ["progress-bar-striped", "progress-bar-animated"];
+            for (let cssClass of initialClasses) {
+                if (progressBar.hasClass(cssClass)) {
+                    progressBar.addClass(cssClass);
+                }
+            }
+        }
+    }
+
+    setProgressBar(progressBar, data) {
+        // Sometimes the data object does not include percentComplete,
+        // and when percentComplete is unknown, it's set to -1.
+        if (isNaN(data.percentComplete) || data.percentComplete &lt; 0) {
+            return;
+        }
+        // In bag creation, progress bar hits 100% when all payload
+        // files are added. We have to add tag files and manifests
+        // afterward, and we don't want the bar to bounce, so no
+        // changes after it reaches 100%.
+        //
+        // Similarly with validation, the bar hits 100% when all checksums
+        // have been verified, but the validator still has a few remaining
+        // tasks, including tag file validation.
+        //
+        // In both cases, the bar will stick at 100% for a second or two.
+        // When all items are complete, the bar animation will stop and
+        // the bar will turn green.
+        if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
+            progressBar.attr("aria-valuenow", data.percentComplete);
+            progressBar.css("width", data.percentComplete + '%');
+        }
+    }
+
+    markSuccess(detailDiv, progressBar, message) {
+        detailDiv.html(message);
+        if (progressBar) {
+            this.setProgressBar(progressBar, { percentComplete: 100 });
+            progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.addClass("bg-success");
+        }
+    }
+
+    markFailed(detailDiv, progressBar, message) {
+        detailDiv.html(message);
+        if (progressBar) {
+            progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.addClass("bg-danger");
+        }
+    }
+
+}
+
+module.exports.RunningJobsController = RunningJobsController;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
