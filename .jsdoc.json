@@ -2,7 +2,7 @@
 	"source": {
         "include": ["package.json", "README.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs|ui/include/)"
+        "excludePattern": "(node_modules/|docs|ui/include/|bagit|core|migration|plugins|util)"
     },
     "plugins": ["plugins/markdown"],
     "templates": {
@@ -11,5 +11,10 @@
         "collapse": true,
 	    "resources": {
         }
-     }
+     },
+	"opts": {
+		"template": "node_modules/braintree-jsdoc-template",
+
+		"destination": "docs"
+	}
 }
