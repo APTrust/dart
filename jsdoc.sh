@@ -2,7 +2,7 @@
 #set -x
 echo "Generating documentation..."
 ./node_modules/.bin/jsdoc -c .jsdoc.json -t node_modules/braintree-jsdoc-template/ -d docs -r bagit/ core/ migrations/ plugins/ ui/ util/
-echo "New doc is in docs/index.html"
+echo "New doc is in docs/DART/2.0.0/index.html"
 
 #
 #echo "Hello, Travis! You there?"

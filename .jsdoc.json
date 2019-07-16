@@ -2,7 +2,7 @@
 	"source": {
         "include": ["package.json", "README.md"],
         "includePattern": ".js$",
-        "excludePattern": "(node_modules/|docs|ui/include/|bagit|core|migration|plugins|util)"
+        "excludePattern": "(node_modules/|docs|ui/include/)"
     },
     "plugins": ["plugins/markdown"],
     "templates": {
