@@ -1,6 +1,6 @@
 {
 	"source": {
-        "include": ["README.md"],
+        "include": ["README.md","bagit/","core/", "migrations/","plugins/","ui/","util/"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs|ui/include/)"
     },
