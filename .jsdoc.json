@@ -1,6 +1,6 @@
 {
 	"source": {
-        "include": ["package.json", "README.md"],
+        "include": ["README.md"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs|ui/include/)"
     },
