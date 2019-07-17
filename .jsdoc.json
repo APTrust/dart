@@ -14,7 +14,7 @@
      },
 	"opts": {
 		"template": "node_modules/braintree-jsdoc-template",
-
+		"recurse": true,
 		"destination": "docs"
 	}
 }
