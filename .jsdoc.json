@@ -1,6 +1,6 @@
 {
 	"source": {
-        "include": ["package.json", "README.md"],
+        "include": ["README.md","bagit/","core/", "migrations/","plugins/","ui/","util/"],
         "includePattern": ".js$",
         "excludePattern": "(node_modules/|docs|ui/include/)"
     },
@@ -14,7 +14,7 @@
      },
 	"opts": {
 		"template": "node_modules/braintree-jsdoc-template",
-
+		"recurse": true,
 		"destination": "docs"
 	}
 }
