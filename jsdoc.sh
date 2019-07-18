@@ -1,7 +1,6 @@
 #! /usr/bin/env bash
 #set -x
 echo "Generating documentation..."
-#./node_modules/.bin/jsdoc -c .jsdoc.json -t node_modules/braintree-jsdoc-template/ -d docs -r bagit/ core/ migrations/ plugins/ ui/ util/
 ./node_modules/.bin/jsdoc -c .jsdoc.json
 echo "New documentation is in docs"
 
