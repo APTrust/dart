@@ -165,9 +165,12 @@ echo '{ ... JobParams JSON ... }' | dist/mac/DART.app/Contents/MacOS/DART -- --j
 ```
 
 ## Documentation
-After every commit the documentation is rebuilt and published at
+After every commit the API documentation is rebuilt and published at
 
 [https://aptrust.github.io/dart](https://aptrust.github.io/dart)
+
+User and developer docs are currently in progress at
+[https://aptrust.github.io/dart-docs](https://aptrust.github.io/dart-docs)
 
 ## Building the Docs
 
