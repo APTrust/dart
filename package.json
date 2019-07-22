@@ -47,7 +47,7 @@
         "electron-builder": "^21.1.1",
         "electron-toolkit": "^1.0.24",
         "jest": "^24.8.0",
-        "jsdoc": "^3.6.2"
+        "jsdoc": "^3.6.3"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
