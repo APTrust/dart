@@ -217,6 +217,20 @@ class JobPackagingController extends BaseController {
         }
     }
 
+    /**
+     * Returns the appropriate file extension for the specified
+     * format. For example, ".tar".
+     *
+     * @params {string} format - The packaging format, which comes from
+     * the format select list. E.g. BagIt, None, or the UUID of the
+     * plugin that creates packages in that format.
+     *
+     * @params {BagItProfile} bagItProfile - The BagItProfile for the job,
+     * or null if there is none. If this param is not null, this function
+     * checks the profile's preferred serialization.
+     *
+     * @returns {string}
+     */
     _getCalculatedFileExtension(format, bagItProfile) {
         let extension = '';
         if (format != 'BagIt' && format != 'None' && format != Constants.DIRECTORY_WRITER_UUID) {
