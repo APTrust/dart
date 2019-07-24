@@ -7,6 +7,7 @@ const { Job } = require('../../core/job');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
 const path = require('path');
 const Templates = require('../common/templates');
+const { Util } = require('../../core/util');
 
 /**
  * The JobPackaingController presents the page that allows users
@@ -154,7 +155,7 @@ class JobPackagingController extends BaseController {
      */
     onProfileChange() {
         let controller = this;
-        let outputPathUpdater = this.onPackageNameKeyUp();
+        let updateOutputPath = this.onPackageNameKeyUp();
         return function() {
             var format = $("select[name=packageFormat]").val();
             var profileId = $("select[name=bagItProfileId]").val();
@@ -163,7 +164,7 @@ class JobPackagingController extends BaseController {
             } else {
                 controller.job.bagItProfile = BagItProfile.find(profileId);
             }
-            outputPathUpdater();
+            updateOutputPath();
         }
     }
 
@@ -174,13 +175,19 @@ class JobPackagingController extends BaseController {
      * include bagging, the user must speficy a BagIt profile.
      */
     onFormatChange() {
+        let job = this.job;
+        let updateOutputPath = this.onPackageNameKeyUp();
         return function() {
             var format = $("select[name=packageFormat]").val();
             if (format == 'BagIt') {
                 $('#jobProfileContainer').show();
+                let profileId = $("select[name=bagItProfileId]").val();
+                job.bagItProfile = BagItProfile.find(profileId);
             } else {
                 $('#jobProfileContainer').hide();
+                job.bagItProfile = null;
             }
+            updateOutputPath();
         }
     }
 
@@ -198,8 +205,16 @@ class JobPackagingController extends BaseController {
             if (job.bagItProfile) {
                 extension = job.bagItProfile.preferredSerialization();
             }
+            Context.logger.info(extension);
             if (job.bagItProfile && packageName && !packageName.endsWith(extension)) {
                 packageName += extension;
+            }
+            if (extension == '') {
+                Context.logger.info("Resetting");
+                // If user switched a package format having a file extension
+                // to one with no extension, strip the extension from the
+                // output path.
+                packageName = Util.bagNameFromPath(packageName);
             }
             $('#jobPackageOpForm_outputPath').val(path.join(baggingDir, packageName));
         }
