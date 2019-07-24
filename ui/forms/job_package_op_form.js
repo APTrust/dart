@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
@@ -20,6 +21,7 @@ class JobPackageOpForm extends Form {
     _init() {
         this._listPackageFormats();
         this._listBagItProfiles();
+        this._initOutputPath();
     }
 
     _listPackageFormats() {
@@ -62,6 +64,15 @@ class JobPackageOpForm extends Form {
             true
         );
         this.fields['bagItProfileId'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
+    }
+
+    _initOutputPath() {
+        if (!this.fields['outputPath'].value) {
+            let setting = AppSetting.firstMatching("name", "Bagging Directory");
+            if (setting) {
+                this.fields['outputPath'].value = setting.value;
+            }
+        }
     }
 
     parseFromDOM() {

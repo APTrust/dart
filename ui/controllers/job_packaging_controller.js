@@ -144,8 +144,29 @@ class JobPackagingController extends BaseController {
      */
     postRenderCallback(fnName) {
         $("select[name=packageFormat]").change(this.onFormatChange());
+        $("select[name=bagItProfileId]").change(this.onProfileChange());
         $('#jobPackageOpForm_packageName').on('keyup', this.onPackageNameKeyUp());
     }
+
+    /**
+     * This function loads a BagIt profile when the user selects one
+     * from the list.
+     */
+    onProfileChange() {
+        let controller = this;
+        let outputPathUpdater = this.onPackageNameKeyUp();
+        return function() {
+            var format = $("select[name=packageFormat]").val();
+            var profileId = $("select[name=bagItProfileId]").val();
+            if (!profileId || format != 'BagIt') {
+                controller.job.bagItProfile = null;
+            } else {
+                controller.job.bagItProfile = BagItProfile.find(profileId);
+            }
+            outputPathUpdater();
+        }
+    }
+
 
     /**
      * This function shows or hides a list of BagIt profiles, based
@@ -173,7 +194,10 @@ class JobPackagingController extends BaseController {
         return function(e) {
             let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
             let packageName = $('#jobPackageOpForm_packageName').val().trim();
-            let extension = job.bagItProfile.preferredSerialization();
+            let extension = '';
+            if (job.bagItProfile) {
+                extension = job.bagItProfile.preferredSerialization();
+            }
             if (job.bagItProfile && packageName && !packageName.endsWith(extension)) {
                 packageName += extension;
             }

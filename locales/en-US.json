@@ -144,7 +144,7 @@
   "StorageService_allowsDownload_label": "StorageService_allowsDownload_label",
   "StorageService_allowsDownload_help": "StorageService_allowsDownload_help",
   "Confirm_deletion": "Confirm_deletion",
-  "ObjectDeleted_message": "ObjectDeleted_message",
+  "ObjectDeleted_message": "Deleted",
   "You must specify the path to the bag you want to validate.": "You must specify the path to the bag you want to validate.",
   "This will help you set up the basic APTrust configuration.": "This will help you set up the basic APTrust configuration.",
   "The following files are missing: %s": "The following files are missing: %s",
