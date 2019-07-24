@@ -75,6 +75,12 @@ const Constants =  {
      */
     FILESYSTEM_READER_UUID: '265f724e-8289-4bf7-bbdf-803a65bcdf19',
     /**
+     * The UUID of the plugin that writes files directly to the filesystem.
+     *
+     * @type {string}
+     */
+    DIRECTORY_WRITER_UUID: '92e69251-0e76-412d-95b6-987a79f6fa71',
+    /**
      * This regular expression matches the name of payload
      * manifest files, and includes a capture to extract the
      * checksum algorithm.

@@ -2,6 +2,7 @@ const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobPackageOpForm } = require('../forms/job_package_op_form');
@@ -197,20 +198,16 @@ class JobPackagingController extends BaseController {
      * to this output path.
      */
     onPackageNameKeyUp() {
-        let job = this.job;
+        let controller = this;
         return function(e) {
             let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
             let packageName = $('#jobPackageOpForm_packageName').val().trim();
-            let extension = '';
-            if (job.bagItProfile) {
-                extension = job.bagItProfile.preferredSerialization();
-            }
-            Context.logger.info(extension);
-            if (job.bagItProfile && packageName && !packageName.endsWith(extension)) {
+            var format = $("select[name=packageFormat]").val();
+            let extension = controller._getCalculatedFileExtension(format, controller.job.bagItProfile);
+            if (packageName && !packageName.endsWith(extension)) {
                 packageName += extension;
             }
             if (extension == '') {
-                Context.logger.info("Resetting");
                 // If user switched a package format having a file extension
                 // to one with no extension, strip the extension from the
                 // output path.
@@ -218,6 +215,17 @@ class JobPackagingController extends BaseController {
             }
             $('#jobPackageOpForm_outputPath').val(path.join(baggingDir, packageName));
         }
+    }
+
+    _getCalculatedFileExtension(format, bagItProfile) {
+        let extension = '';
+        if (format != 'BagIt' && format != 'None' && format != Constants.DIRECTORY_WRITER_UUID) {
+            extension = $("select[name=packageFormat] option:selected").text();
+        }
+        if (bagItProfile) {
+            extension = bagItProfile.preferredSerialization();
+        }
+        return extension;
     }
 }
 
