@@ -1,8 +1,4 @@
 const async = require('async');
-//const EventEmitter = require('events');
-//const fs = require('fs');
-//const mkdirp = require('mkdirp');
-//const path = require('path');
 const { Plugin } = require('../../plugin');
 
 /**
