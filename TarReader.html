@@ -287,6 +287,75 @@ path to the tar file you want to read.</p>
         
             
 
+<h4 class="name" id="byteCount">
+  <span class="type-signature"></span>byteCount<span class="type-signature"> :number</span>
+</h4>
+
+
+
+
+  <div class="description">
+    <p>byteCount keeps track of the total number of bytes in all
+files beneath the speficied directory. This value is valid
+only during list operations, not during read().</p>
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line59">line 59</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
 <h4 class="name" id="dirCount">
   <span class="type-signature"></span>dirCount<span class="type-signature"> :number</span>
 </h4>
@@ -559,7 +628,7 @@ this iterator will read.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line59">line 59</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line67">line 67</a>
         </li>
       </ul>
     </dd>
@@ -653,7 +722,7 @@ not return a readable stream for any of the files it encounters.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line166">line 166</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line177">line 177</a>
         </li>
       </ul>
     </dd>
@@ -751,7 +820,7 @@ the &quot;entry&quot; event.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line86">line 86</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line94">line 94</a>
         </li>
       </ul>
     </dd>
@@ -851,7 +920,188 @@ the last entry in the tar file and there's nothing left to read.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line144">line 144</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line155">line 155</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+        
+
+
+  
+
+  <span class='name-container'>
+    <a class="link-icon" href="#event:entry">
+      <svg height="20" width="20" style="fill: black;">
+        <use xlink:href="#linkIcon"></use>
+      </svg>
+    </a>
+    <h4 class="name" id="event:entry">
+      <span class="type-signature"></span>entry<span class="type-signature"> :object</span>
+    </h4>
+  </span>
+
+  
+
+
+
+  <div class="description">
+    <p>The entry event of the list() method returns info about
+the tar entry, but no reader to read the contents of the entry.</p>
+  </div>
+
+
+
+
+
+
+
+
+
+
+  <h5 class="subsection-title">Properties:</h5>
+
+  
+
+<table class="props">
+  <thead>
+    <tr>
+      
+        <th>Name</th>
+      
+
+      <th>Type</th>
+
+      
+
+      
+
+      <th class="last">Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    
+
+    <tr>
+      
+        <td class="name"><code>relPath</code></td>
+      
+
+      <td class="type">
+        
+          
+    <span class="param-type">
+      string
+    </span>
+
+    
+
+
+        
+      </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>The relative path (within the tar file)
+of the entry.</p>
+          </td>
+    </tr>
+
+  
+
+    <tr>
+      
+        <td class="name"><code>fileStat</code></td>
+      
+
+      <td class="type">
+        
+          
+    <span class="param-type">
+      <a href="FileStat.html">FileStat</a>
+    </span>
+
+    
+
+
+        
+      </td>
+
+        
+
+        
+
+        <td class="description last">
+          <p>An object containing a subset info similar
+to the fs.Stats object, describing the file's size and other attributes.</p>
+          </td>
+    </tr>
+
+  
+  </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line184">line 184</a>
         </li>
       </ul>
     </dd>
@@ -1065,188 +1315,7 @@ to the fs.Stats object, describing the file's size and other attributes.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line99">line 99</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-        
-
-
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#event:entry">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="event:entry">
-      <span class="type-signature"></span>entry<span class="type-signature"> :object</span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>The entry event of the list() method returns info about
-the tar entry, but no reader to read the contents of the entry.</p>
-  </div>
-
-
-
-
-
-
-
-
-
-
-  <h5 class="subsection-title">Properties:</h5>
-
-  
-
-<table class="props">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-
-    <tr>
-      
-        <td class="name"><code>relPath</code></td>
-      
-
-      <td class="type">
-        
-          
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-        
-      </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The relative path (within the tar file)
-of the entry.</p>
-          </td>
-    </tr>
-
-  
-
-    <tr>
-      
-        <td class="name"><code>fileStat</code></td>
-      
-
-      <td class="type">
-        
-          
-    <span class="param-type">
-      <a href="FileStat.html">FileStat</a>
-    </span>
-
-    
-
-
-        
-      </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>An object containing a subset info similar
-to the fs.Stats object, describing the file's size and other attributes.</p>
-          </td>
-    </tr>
-
-  
-  </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line173">line 173</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line109">line 109</a>
         </li>
       </ul>
     </dd>
@@ -1337,7 +1406,7 @@ to the fs.Stats object, describing the file's size and other attributes.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line133">line 133</a>
+          <a href="plugins_formats_read_tar_reader.js.html">plugins/formats/read/tar_reader.js</a>, <a href="plugins_formats_read_tar_reader.js.html#line144">line 144</a>
         </li>
       </ul>
     </dd>
