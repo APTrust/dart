@@ -114,6 +114,25 @@ var expectedStats = {
     }
 }
 
+/* --------------------------------------------------------------
+
+Items in this tar file:
+
+     0  example.edu.sample_good/
+    74  example.edu.sample_good/aptrust-info.txt
+   223  example.edu.sample_good/bag-info.txt
+    55  example.edu.sample_good/bagit.txt
+     0  example.edu.sample_good/data/
+   230  example.edu.sample_good/manifest-md5.txt
+  2388  example.edu.sample_good/data/datastream-DC
+  6191  example.edu.sample_good/data/datastream-descMetadata
+  4663  example.edu.sample_good/data/datastream-MARC
+   579  example.edu.sample_good/data/datastream-RELS-EXT
+
+ 14403  TOTAL
+
+----------------------------------------------------------------*/
+
 test('TarReader.read() returns correct stats', done => {
     var pathToTarFile = path.join(__dirname, "..", "..", "..", "test", "bags", "aptrust", "example.edu.sample_good.tar")
     var tarReader = new TarReader(pathToTarFile);
@@ -134,6 +153,7 @@ test('TarReader.read() returns correct stats', done => {
     // Let jest know when we're done.
     tarReader.on('end', function(fileCount) {
         expect(tarReader.fileCount).toEqual(8);
+        expect(tarReader.byteCount).toEqual(14403);
         expect(tarReader.dirCount).toEqual(2);
         done();
     });
@@ -161,6 +181,7 @@ test('TarReader.list() returns correct stats', done => {
     // Let jest know when we're done.
     tarReader.on('end', function(fileCount) {
         expect(tarReader.fileCount).toEqual(8);
+        expect(tarReader.byteCount).toEqual(14403);
         expect(tarReader.dirCount).toEqual(2);
         done();
     });

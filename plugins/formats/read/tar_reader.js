@@ -49,6 +49,14 @@ class TarReader extends Plugin {
          * @type {number}
          */
         this.dirCount = 0;
+        /**
+         * byteCount keeps track of the total number of bytes in all
+         * files beneath the speficied directory. This value is valid
+         * only during list operations, not during read().
+         *
+         * @type {number}
+         */
+        this.byteCount = 0;
     }
 
     /**
@@ -88,6 +96,8 @@ class TarReader extends Plugin {
         var extract = tar.extract();
         tarReader.fileCount = 0;
         tarReader.dirCount = 0;
+        tarReader.byteCount = 0;
+
         extract.on('entry', function(header, stream, next) {
 
             var fileStat = tarReader._headerToFileStat(header);
@@ -123,6 +133,7 @@ class TarReader extends Plugin {
             stream.on('end', function() {
                 if (header.type === "file") {
                     tarReader.fileCount += 1;
+                    tarReader.byteCount += Number(fileStat.size);
                 } else if (header.type === "directory") {
                     tarReader.dirCount += 1;
                 }
@@ -192,6 +203,7 @@ class TarReader extends Plugin {
             stream.on('end', function() {
                 if (header.type === "file") {
                     tarReader.fileCount += 1;
+                    tarReader.byteCount += Number(fileStat.size);
                 } else if (header.type === "directory") {
                     tarReader.dirCount += 1;
                 }
