@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      JsonStore - Documentation
+      plugins/repository/repository_base.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -86,239 +88,78 @@
   <div id="main">
     
       <h1 class="page-title">
-        JsonStore
+        plugins/repository/repository_base.js
       </h1>
     
 
     
+      
 
 <section>
-  <header>
-    
-      <h2>
-        
-        JsonStore
-        
-      </h2>
-
-      
-        <div class="class-description">
-          <p>JsonStore allows us to save, update, retrieve, and delete objects
-from a plain-text JSON file.</p>
-<p>This class extends the simple conf library from
-https://github.com/sindresorhus/conf and exposes its methods.</p>
-<p>To get system standard user data directories for the dataDir param,
-see https://github.com/sindresorhus/env-paths</p>
-        </div>
-      
-    
-  </header>
-
   <article>
-    <div class="container-overview">
-      
-        
-
-
-  
-    <h2>Constructor</h2>
-  
-
-  <span class='name-container'>
-    <a class="link-icon" href="#JsonStore">
-      <svg height="20" width="20" style="fill: black;">
-        <use xlink:href="#linkIcon"></use>
-      </svg>
-    </a>
-    <h4 class="name" id="JsonStore">
-      <span class="type-signature"></span>new JsonStore<span class="signature">(dataDir, name)</span><span class="type-signature"></span>
-    </h4>
-  </span>
-
-  
-
-
-
-  <div class="description">
-    <p>Creates a new JsonStore</p>
-  </div>
-
-
-
-
-
-
-
-  <h5>Parameters:</h5>
-  
-
-<table class="params">
-  <thead>
-    <tr>
-      
-        <th>Name</th>
-      
-
-      <th>Type</th>
-
-      
-
-      
-
-      <th class="last">Description</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    
-      <tr>
-        
-          <td class="name"><code>dataDir</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>Path to the directory in which to store data.</p>
-          
-        </td>
-      </tr>
-
-    
-      <tr>
-        
-          <td class="name"><code>name</code></td>
-        
-
-        <td class="type">
-          
-            
-    <span class="param-type">
-      string
-    </span>
-
-    
-
-
-          
-        </td>
-
-        
-
-        
-
-        <td class="description last">
-          <p>The name of the file to store data in. This should
-match the class name of the type of object you're storing. The file name
-will have a .json extension appended automatically.</p>
-          
-        </td>
-      </tr>
-
-    
-  </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="core_json_store.js.html">core/json_store.js</a>, <a href="core_json_store.js.html#line27">line 27</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-
-    
-
-    
-
-    
+    <pre class="prettyprint source linenums"><code>const { Plugin } = require('../plugin');
+
+/**
+ * This is the base class for repository plugins, which must provide
+ * their own implementation of the methods described below. Repository
+ * plugins provide methods of querying remote repositories, for example,
+ * to list recently ingested objects. The query methods should return
+ * HTML to be displayed in the DART dashboard.
+ *
+ * @param {RemoteRepository} remoteRepository - A configuration object
+ * that includes information about how to connect to the remote repository's
+ * REST API.
+ *
+ */
+class RepositoryBase extends Plugin {
+    constructor(remoteRepository) {
+        super();
+        this.repo = remoteRepository;
+    }
+
+    /**
+     * This returns a list of objects describing what reports this
+     * module provides. The DART dashboard queries this list to see
+     * what method calls this plugin makes available. Each object in
+     * the list this function returns has three properties.
+     *
+     * title - This is the title of the report. The dashboard will
+     * display this title as is at the top of the report.
+     *
+     * description - A description of the report.
+     *
+     * method - A function to call to get the contents of the report.
+     * The function takes no parameters and should a promis that
+     * ultimately returns HTML. The dashboard will display the HTML
+     * when the promise is resolved.
+     *
+     * Subclasses MUST override this method and must not call super().
+     *
+     * @type {Array&lt;object>}
+     */
+    provides() {
+        throw new Error('This method must be implemented in the subclass.');
+    }
+
+    /**
+     * This returns true if the RemoteRepository object has enough info to
+     * attempt a connection. Most repos required a url, userId, and/or apiToken.
+     *
+     * Subclasses MUST override this method and must not call super().
+     *
+     * @returns {boolean}
+     */
+    hasRequiredConnectionInfo() {
+        throw new Error('This method must be implemented in the subclass.');
+    }
+}
+
+module.exports.RepositoryBase = RepositoryBase;
+</code></pre>
   </article>
 </section>
 
-
+    
 
 
   </div>
