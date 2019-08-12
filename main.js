@@ -29,10 +29,12 @@ function run() {
     });
     if (opts.job || opts.stdin) {
         process.DART_MODE = 'cli';
+        makey18nWriteSafe();
         return runWithoutUI(opts);
     } else {
         // GUI mode. Hoist win and app to global namespace.
         process.DART_MODE = 'gui';
+        makey18nWriteSafe();
         let ui = require('./ui/main');
         win = ui.win;
         app = ui.app;
@@ -53,6 +55,18 @@ async function runWithoutUI(opts) {
     let exitCode = await jobRunner.run();
     Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
     process.exit(exitCode);
+}
+
+// This prevents a bug where y18n may wipe out locale files.
+// Don't let y18n write locale files in cli mode because it
+// can corrupt files. Don't let it write outside of dev mode
+// because it probably cannot write back into the packaged ASAR file.
+// We can't call this until after process.DART_MODE is set.
+//
+// See https://trello.com/c/ELW94mfF for more info.
+function makey18nWriteSafe() {
+    Context.y18n.updateFiles = (process.DART_MODE == 'gui' && Context.isElectronDevMode());
+    Context.logger.info("Y18 updateFiles = " + Context.y18n.updateFiles);
 }
 
 // And away we go...
