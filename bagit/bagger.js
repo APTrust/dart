@@ -336,8 +336,8 @@ class Bagger extends EventEmitter {
             mkdirp.sync(parentDir, { mode: 0o755 });
         }
         var plugins = PluginManager.canWrite(fileExtension);
-        if (!plugins) {
-            throw `No plugins know how to write ${fileExtension}`
+        if (!plugins || plugins.length == 0) {
+            throw Context.y18n.__("DART cannot find a plugin that knows how to write %s files.", fileExtension);
         }
         // plugins[0] is a writer plugin (a class) with a constructor
         // that takes pathToBag as its sole param.
