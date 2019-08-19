@@ -47,7 +47,7 @@
         "electron": "^6.0.2",
         "electron-builder": "^21.2.0",
         "electron-toolkit": "^1.0.24",
-        "jest": "^24.8.0",
+        "jest": "^24.9.0",
         "jsdoc": "^3.6.3"
     },
     "scripts": {
