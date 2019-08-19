@@ -29,7 +29,7 @@
         "minio": "^7.0.11",
         "os-locale": "^4.0.0",
         "popper.js": "^1.15.0",
-        "readdirp": "^3.1.1",
+        "readdirp": "^3.1.2",
         "request": "^2.88.0",
         "require-dir": "^1.2.0",
         "tail": "^2.0.2",
