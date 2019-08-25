@@ -33,7 +33,7 @@
         "readdirp": "^3.1.2",
         "request": "^2.88.0",
         "require-dir": "^1.2.0",
-        "tail": "^2.0.2",
+        "tail": "^2.0.3",
         "tar-stream": "^2.1.0",
         "tmp": "0.1.0",
         "typescript": "^3.5.3",
