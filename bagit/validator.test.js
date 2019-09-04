@@ -422,3 +422,61 @@ test('Validator finds bad Payload-Oxum', done => {
 
     validator.validate();
 });
+
+test('Validator identifies illegal manifests', done => {
+    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    validator.profile.manifestsAllowed = [];
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function() {
+        expect(validator.errors.length).toEqual(2);
+        expect(validator.errors).toContain("Bag includes manifest md5, which is not in the list of allowed manifests");
+        expect(validator.errors).toContain("Bag includes manifest sha256, which is not in the list of allowed manifests");
+        done();
+    });
+    validator.validate();
+});
+
+test('Validator identifies illegal tag manifests', done => {
+    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    validator.profile.tagManifestsAllowed = [];
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function() {
+        expect(validator.errors.length).toEqual(2);
+        expect(validator.errors).toContain("Bag includes tagmanifest md5, which is not in the list of allowed tagmanifests");
+        expect(validator.errors).toContain("Bag includes tagmanifest sha256, which is not in the list of allowed tagmanifests");
+        done();
+    });
+    validator.validate();
+});
+
+test('Validator identifies illegal tag files', done => {
+    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    // bagit.txt is always allowed.
+    validator.profile.tagFilesAllowed = [
+        "bag-info.txt",
+        "aptrust-info.txt"
+    ];
+    validator.on('error', function(err) {
+        // Force failure & stop test.
+        expect(err).toBeNull();
+        done();
+    });
+    validator.on('end', function() {
+        expect(validator.errors.length).toEqual(5);
+        expect(validator.errors).toContain("Tag file junk_file.txt is not in the list of allowed tag files.");
+        expect(validator.errors).toContain("Tag file custom_tag_file.txt is not in the list of allowed tag files.");
+        expect(validator.errors).toContain("Tag file custom_tags/tracked_tag_file.txt is not in the list of allowed tag files.");
+        expect(validator.errors).toContain("Tag file custom_tags/untracked_tag_file.txt is not in the list of allowed tag files.");
+        expect(validator.errors).toContain("Tag file custom_tags/tracked_file_custom.xml is not in the list of allowed tag files.");
+        done();
+    });
+    validator.validate();
+});

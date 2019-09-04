@@ -814,9 +814,12 @@ class Validator extends EventEmitter {
      *
      */
     _validateAllowedTagFiles() {
-        let allowed = this.profile.allowedTagFiles || [];
+        let allowed = this.profile.tagFilesAllowed || [];
         let tagFiles = this.tagFiles();
         for (let file of tagFiles) {
+            if (file.relDestPath == 'bagit.txt') {
+                continue;
+            }
             let matchesAllowedPattern = false;
             let fileWasTested = false;
             for (let pattern of allowed) {
@@ -828,6 +831,7 @@ class Validator extends EventEmitter {
                 }
                 fileWasTested = true;
             }
+            //console.log(`${file.relDestPath} Tested: ${fileWasTested}, Allowed: ${matchesAllowedPattern}`)
             if (fileWasTested && !matchesAllowedPattern) {
                 this.errors.push(`Tag file ${file.relDestPath} is not in the list of allowed tag files.`);
             }
