@@ -30,7 +30,10 @@ test('Constructor sets initial properties', () => {
     expect(profile.allowFetchTxt).toEqual(false);
     expect(profile.bagItProfileInfo).not.toBeNull();
     expect(profile.manifestsRequired).toEqual(['sha256']);
+    expect(profile.manifestsAllowed).toEqual(Constants.DIGEST_ALGORITHMS);
     expect(profile.tagManifestsRequired).toEqual([]);
+    expect(profile.tagManifestsAllowed).toEqual(Constants.DIGEST_ALGORITHMS);
+    expect(profile.tagFilesAllowed).toEqual(['*']);
     expect(profile.tags.length).toEqual(17);
     expect(profile.serialization).toEqual('optional');
     expect(profile.baseProfileId).toEqual(null);

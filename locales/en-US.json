@@ -261,5 +261,9 @@
   "BagItProfile_tagManifestsAllowed_label": "Tag Manifests Allowed",
   "BagItProfile_tagManifestsAllowed_help": "Which tag manifest algorithms are valid for this profile?",
   "BagItProfile_tagFilesAllowed_label": "Tag Files Allowed",
-  "BagItProfile_tagFilesAllowed_help": "List of tag files allowed to be in this bag. Leave empty to allow any tag files."
+  "BagItProfile_tagFilesAllowed_help": "List of tag files allowed to be in this bag. Leave empty to allow any tag files.",
+  "BagItProfile_allowMiscTopLevelFiles_label": "BagItProfile_allowMiscTopLevelFiles_label",
+  "BagItProfile_allowMiscTopLevelFiles_help": "BagItProfile_allowMiscTopLevelFiles_help",
+  "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
+  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help"
 }
