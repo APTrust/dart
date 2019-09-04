@@ -76,27 +76,6 @@ class BagItProfile extends PersistentObject {
           */
         this.allowFetchTxt = opts.allowFetchTxt === true ? true : false;
         /**
-          * Describes whether bags conforming to this profile
-          * may include files in the top-level folder other
-          * than manifests, tag manifests, and the required tag
-          * files listed in the {@link tags} list.
-          *
-          * @type {boolean}
-          * @default false
-          */
-        this.allowMiscTopLevelFiles = opts.allowMiscTopLevelFiles === true ? true : false;
-        /**
-          * Describes whether bags conforming to this profile
-          * may include directories other than the payload
-          * directory (aka 'data' directory) in the top-level
-          * folder. These other directories are sometimes used
-          * to hold custom tag files.
-          *
-          * @type {boolean}
-          * @default false
-          */
-        this.allowMiscDirectories = opts.allowMiscDirectories === true ? true : false;
-        /**
           * This contains metadata about the BagIt profile
           * itself, such as who publishes and maintains it.
           *

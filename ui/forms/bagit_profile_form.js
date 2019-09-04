@@ -92,18 +92,6 @@ class BagItProfileForm extends Form {
             this.obj.allowFetchTxt,
             false);
 
-        // Allow misc top-level files
-        this.fields['allowMiscTopLevelFiles'].choices = Choice.makeList(
-            Constants.YES_NO,
-            this.obj.allowMiscTopLevelFiles,
-            false);
-
-        // Allow misc directories
-        this.fields['allowMiscDirectories'].choices = Choice.makeList(
-            Constants.YES_NO,
-            this.obj.allowMiscDirectories,
-            false);
-
         // Manifests required
         this.fields['manifestsRequired'].attrs['multiple'] = true;
         this.fields['manifestsRequired'].attrs['required'] = true;

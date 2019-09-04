@@ -31,10 +31,6 @@
   "BagItProfile_acceptSerialization_help": "BagItProfile_acceptSerialization_help",
   "BagItProfile_allowFetchTxt_label": "BagItProfile_allowFetchTxt_label",
   "BagItProfile_allowFetchTxt_help": "BagItProfile_allowFetchTxt_help",
-  "BagItProfile_allowMiscTopLevelFiles_label": "BagItProfile_allowMiscTopLevelFiles_label",
-  "BagItProfile_allowMiscTopLevelFiles_help": "BagItProfile_allowMiscTopLevelFiles_help",
-  "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
-  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help",
   "BagItProfile_manifestsRequired_label": "BagItProfile_manifestsRequired_label",
   "BagItProfile_manifestsRequired_help": "BagItProfile_manifestsRequired_help",
   "BagItProfile_tagManifestsRequired_label": "BagItProfile_tagManifestsRequired_label",
@@ -258,6 +254,10 @@
   "Job file does not exist at %s": "Job file does not exist at %s",
   "You must specify either": "You must specify either",
   "You must specify either %s or %s": "You must specify either %s or %s",
-    "%s can only load items of these types: %s": "%s can only load items of these types: %s",
-    "DART cannot find a plugin that knows how to write %s files.": "DART cannot find a plugin that knows how to write %s files."
+  "%s can only load items of these types: %s": "%s can only load items of these types: %s",
+  "DART cannot find a plugin that knows how to write %s files.": "DART cannot find a plugin that knows how to write %s files.",
+  "BagItProfile_allowMiscTopLevelFiles_label": "BagItProfile_allowMiscTopLevelFiles_label",
+  "BagItProfile_allowMiscTopLevelFiles_help": "BagItProfile_allowMiscTopLevelFiles_help",
+  "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
+  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help"
 }

@@ -9,8 +9,6 @@
         "application/tar"
     ],
     "allowFetchTxt": false,
-    "allowMiscTopLevelFiles": true,
-    "allowMiscDirectories": true,
     "tarDirMustMatchName": true,
     "bagItProfileInfo": {
         "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",

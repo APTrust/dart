@@ -12,8 +12,6 @@ const expectedFields = [
     'acceptBagItVersion',
     'acceptSerialization',
     'allowFetchTxt',
-    'allowMiscTopLevelFiles',
-    'allowMiscDirectories',
     'manifestsRequired',
     'tagManifestsRequired',
     'serialization',

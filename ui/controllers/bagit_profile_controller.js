@@ -12,8 +12,6 @@ const { Util } = require('../../core/util');
 
 const typeMap = {
     allowFetchTxt: 'boolean',
-    allowMiscTopLevelFiles: 'boolean',
-    allowMiscDirectories: 'boolean',
     isBuiltIn: 'boolean',
     tarDirMustMatchName: 'boolean',
     userCanDelete: 'boolean'

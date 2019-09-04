@@ -41,8 +41,6 @@ class BagItUtil {
         p.acceptBagItVersion = obj["Accept-BagIt-Version"];
         p.acceptSerialization = obj["Accept-Serialization"];
         p.allowFetchTxt = obj["Allow-Fetch.txt"];
-        p.allowMiscTopLevelFiles = obj["Allow-Misc-Top-Level-Files"];
-        p.allowMiscDirectories = obj["Allow-Misc-Directories"];
         p.manifestsRequired = obj["Manifests-Required"];
         p.serialization = obj["Serialization"];
         p.tagManifestsRequired = obj["Tag-Manifests-Required"];

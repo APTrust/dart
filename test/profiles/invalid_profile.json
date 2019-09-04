@@ -5,8 +5,6 @@
     "acceptBagItVersion": [],
     "acceptSerialization": [],
     "allowFetchTxt": false,
-    "allowMiscTopLevelFiles": false,
-    "allowMiscDirectories": false,
     "tarDirMustMatchName": false,
     "bagItProfileInfo": {
         "bagItProfileIdentifier": "https://example.com/invalid_profile.json",

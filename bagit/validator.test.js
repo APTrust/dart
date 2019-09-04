@@ -21,10 +21,6 @@ test('Constructor sets initial properties', () => {
     expect(validator.tagFiles.length).toEqual(0);
     expect(validator.tagManifests).not.toBeNull();
     expect(validator.tagManifests.length).toEqual(0);
-    expect(validator.topLevelDirs).not.toBeNull();
-    expect(validator.topLevelDirs.length).toEqual(0);
-    expect(validator.topLevelFiles).not.toBeNull();
-    expect(validator.topLevelFiles.length).toEqual(0);
     expect(validator.errors).not.toBeNull();
     expect(validator.errors.length).toEqual(0);
     expect(validator.readingFromTar()).toEqual(true);

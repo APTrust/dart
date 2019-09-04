@@ -28,8 +28,6 @@ test('Constructor sets initial properties', () => {
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.allowFetchTxt).toEqual(false);
-    expect(profile.allowMiscTopLevelFiles).toEqual(false);
-    expect(profile.allowMiscDirectories).toEqual(false);
     expect(profile.bagItProfileInfo).not.toBeNull();
     expect(profile.manifestsRequired).toEqual(['sha256']);
     expect(profile.tagManifestsRequired).toEqual([]);
@@ -301,7 +299,6 @@ test('fromJson()', () => {
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
-    expect(profile.allowMiscDirectories).toEqual(true);
     expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
 });
 
@@ -317,7 +314,6 @@ test('load()', () => {
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
     expect(profile.tags.length).toEqual(14);
-    expect(profile.allowMiscDirectories).toEqual(true);
     expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
 });
 

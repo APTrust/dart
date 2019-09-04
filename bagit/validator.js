@@ -78,28 +78,6 @@ class Validator extends EventEmitter {
         */
         this.files = {};
         /**
-         * topLevelDirs is a list of strings representing the relative
-         * paths of all of the directories found at the top level of the
-         * bag. The "data" directory should always be in this list, if a
-         * bag is valid. The validator tracks these because some BagItProfiles
-         * allow top-level directories other than "data" and some do not.
-         *
-         * @type {Array<string>}
-         */
-        this.topLevelDirs = [];
-        /**
-         * topLevelFiles is a list of strings representing the relative
-         * paths of all of the files found at the top level of the
-         * bag. The "bagit.txt" and "bag-info.txt" files along with at least
-         * one paylowd manifest should always be in this list if a bag is valid.
-         * The validator tracks these because  some BagItProfiles allow additional
-         * top-level files (other than required tag files and manifests) and some
-         * do not.
-         *
-         * @type {Array<string>}
-         */
-        this.topLevelFiles = [];
-        /**
          * This is a list of manifest algorithms found during an initial
          * scan of the bag. While some BagItProfiles specify that a manifest
          * with algorithm X must be present, the profile does preclude other
@@ -409,8 +387,6 @@ class Validator extends EventEmitter {
             // ------------------------------------------
             // TODO: Validate fetch.txt
             // ------------------------------------------
-            this._validateTopLevelDirs();
-            this._validateTopLevelFiles();
             this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
             this._validateRequiredManifests(Constants.TAG_MANIFEST);
             this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
@@ -537,8 +513,6 @@ class Validator extends EventEmitter {
                 this.bagRoot = entry.relPath.replace(/\/$/, ''); // right relpath for untarring
             } else if (this.bagRoot == null && relPath == entry.relPath.replace(/\/$/, '')) {
                 this.bagRoot = relPath; // wrong relpath for untarring
-            } else {
-                this.topLevelDirs.push(relPath);
             }
             entry.stream.pipe(new stream.PassThrough());
         } else {
@@ -732,60 +706,6 @@ class Validator extends EventEmitter {
             }
         }
         return okToProceed;
-    }
-
-
-    /**
-     * _validateTopLevelDirs checks to see if any directories other than
-     * the required "data" directory exist at the top level of the bag
-     * structure. Some {@link BagItProfile}s allow for this, others do not.
-     * If an illegal top-level directory appears in the bag, this method
-     * will make a note of it in the Validator.errors array.
-     *
-     * This method is private, and it internal operations are
-     * subject to change without notice.
-     *
-     */
-    _validateTopLevelDirs() {
-        //Context.logger.info(`Validator: Validating top-level directories in ${this.pathToBag}`);
-        var exceptions = ['data']; // data dir is always required
-        for (var f of this.profile.tagFileNames()) {
-            var requiredTagDir = f.split('/', 1);
-            exceptions.push(requiredTagDir);
-        }
-        if (!this.profile.allowMiscDirectories) {
-            for (var dir of this.topLevelDirs) {
-                if (!Util.listContains(exceptions, dir)) {
-                    this.errors.push(`Profile prohibits top-level directory ${dir}`);
-                }
-            }
-        }
-    }
-
-    /**
-     * _validateTopLevelFiles looks for illegal files in the top-level directory
-     * of the bag. Most bags require certain top-level tag files (bagit.txt,
-     * bag-info.txt, etc.) and manifests (manifest-sha256.txt,
-     * tagmanifest-sha256.txt, etc), but some {@link BagItProfile}s allow
-     * miscellaneous files to exist in that space and others do not.
-     *
-     * If this method finds illegal top-level files, it will make a note of each
-     * one in the Validator.errors array.
-     *
-     * This method is private, and it internal operations are
-     * subject to change without notice.
-     *
-     */
-    _validateTopLevelFiles() {
-        //Context.logger.info(`Validator: Validating top-level files in ${this.pathToBag}`);
-        if (!this.profile.allowMiscTopLevelFiles) {
-            var expected = this._expectedTopLevelFiles();
-            for (var name of this.topLevelFiles) {
-                if (!Util.listContains(expected, name)) {
-                    this.errors.push(`Profile prohibits top-level file ${name}`);
-                }
-            }
-        }
     }
 
     /**

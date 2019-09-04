@@ -8,8 +8,6 @@
             "application/tar"
         ],
         "allowFetchTxt": false,
-        "allowMiscDirectories": true,
-        "allowMiscTopLevelFiles": true,
         "bagItProfileInfo": {
             "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
             "contactEmail": "support@aptrust.org",
