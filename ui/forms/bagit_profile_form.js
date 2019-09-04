@@ -125,6 +125,7 @@ class BagItProfileForm extends Form {
         // Tag files allowed
         if (Array.isArray(this.obj.tagFilesAllowed) && this.obj.tagFilesAllowed.length > 0) {
             this.fields['tagFilesAllowed'].value = this.obj.tagFilesAllowed.join("\n").trim();
+            window.field = this.fields['tagFilesAllowed'];
         }
     }
 
@@ -159,7 +160,7 @@ class BagItProfileForm extends Form {
         let fieldId = '#' + this.fields['tagFilesAllowed'].id
         let tagFilesAllowed = $(fieldId).val();
         if (tagFilesAllowed) {
-            let values = tagFilesAllowed.split("/n");
+            let values = tagFilesAllowed.split("\n");
             this.obj.tagFilesAllowed = values.map(val => val.trim());
         }
     }

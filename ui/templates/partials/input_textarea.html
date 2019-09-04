@@ -3,9 +3,7 @@
          {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{/if}} {{#if field.help}}<i class="fas fa-question-circle text-primary"></i>{{/if}}</label>
   <textarea id="{{ field.id }}" name="{{ field.name }}"
          class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}" rows="4"
-         {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }}>
-{{~field.value~}}
-</textarea>
+            {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each}} }}>{{~ field.value ~}}</textarea>
   <small id="{{ field.id }}Error" class="form-text text-danger">
     {{ field.error }}
   </small>
