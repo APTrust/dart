@@ -5,6 +5,7 @@ const crypto = require('crypto');
 const EventEmitter = require('events');
 const fs = require('fs');
 const { ManifestParser } = require('./manifest_parser');
+const minimatch = require("minimatch")
 const os = require('os');
 const path = require('path');
 const { PluginManager } = require('../plugins/plugin_manager');
@@ -95,6 +96,19 @@ class Validator extends EventEmitter {
          * @type {Array<string>}
          */
         this.manifestAlgorithmsFoundInBag = [];
+        /**
+         * This is a list of tag manifest algorithms found during an initial
+         * scan of the bag.
+         *
+         * If an initial scan reveals tagmanifest-md5.txt and
+         * tagmanifest-sha256.txt, tagManifestAlgorithmsFoundInBag will
+         * contain ["md5", "sha256"].
+         *
+         * See also {@link _scanBag}.
+         *
+         * @type {Array<string>}
+         */
+        this.tagManifestAlgorithmsFoundInBag = [];
         /**
          * errors is a list of error messages describing problems encountered
          * while trying to validate the bag or specific violations of the
@@ -317,8 +331,9 @@ class Validator extends EventEmitter {
             var relPath = validator._cleanEntryRelPath(entry.relPath);
             if (relPath.match(Constants.RE_MANIFEST) || relPath.match(Constants.RE_TAG_MANIFEST)) {
                 var algorithm = relPath.split('-')[1].split('.')[0];
-                if (!validator.manifestAlgorithmsFoundInBag.includes(algorithm)) {
-                    validator.manifestAlgorithmsFoundInBag.push(algorithm);
+                var list = relPath.match(Constants.RE_MANIFEST) ? validator.manifestAlgorithmsFoundInBag : validator.tagManifestAlgorithmsFoundInBag;
+                if (!list.includes(algorithm)) {
+                    list.push(algorithm);
                 }
             }
         });
@@ -389,6 +404,8 @@ class Validator extends EventEmitter {
             // ------------------------------------------
             this._validateRequiredManifests(Constants.PAYLOAD_MANIFEST);
             this._validateRequiredManifests(Constants.TAG_MANIFEST);
+            this._validateAllowedManifests(Constants.PAYLOAD_MANIFEST);
+            this._validateAllowedManifests(Constants.TAG_MANIFEST);
             this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
             this._validateManifestEntries(Constants.TAG_MANIFEST);
             this._validateNoExtraneousPayloadFiles();
@@ -744,7 +761,6 @@ class Validator extends EventEmitter {
      *
      */
     _validateRequiredManifests(manifestType) {
-        //Context.logger.info(`Validator: Validating ${manifestType}s`);
         var manifestList = this.profile.manifestsRequired;
         if (manifestType === Constants.TAG_MANIFEST) {
             manifestList = this.profile.tagManifestsRequired;
@@ -752,7 +768,65 @@ class Validator extends EventEmitter {
         for (var alg of manifestList) {
             var name = `${manifestType}-${alg}.txt`
             if(this.files[name] === undefined) {
-                this.errors.push(`Bag is missing required manifest ${name}`);
+                this.errors.push(`Bag is missing required ${manifestType} ${name}`);
+            }
+        }
+    }
+
+
+    /**
+     * _validateAllowedManifests checks to see if the bag contains manifests
+     * not listed in the manifestsAllowed or tagManifestsAllowed list of the
+     * {@link BagItProfile}. This records illegal manifests in the
+     * Validator.errors array.
+     *
+     * This method is private, and it internal operations are
+     * subject to change without notice.
+     *
+     * @param {string} manifestType - The type of manifest to look for.
+     * This should be either {@link Constants.PAYLOAD_MANIFEST} or
+     * {Constants.TAG_MANIFEST}.
+     *
+     */
+    _validateAllowedManifests(manifestType) {
+        let allowed = this.profile.manifestsAllowed;
+        let foundInBag = this.manifestAlgorithmsFoundInBag;
+        if (manifestType === Constants.TAG_MANIFEST) {
+            allowed = this.profile.tagManifestsAllowed;
+            foundInBag = this.tagManifestAlgorithmsFoundInBag;
+        }
+        for (var alg of foundInBag) {
+            if(!allowed.includes(alg)) {
+                this.errors.push(`Bag includes ${manifestType} ${alg}, which is not in the list of allowed ${manifestType}s`);
+            }
+        }
+    }
+
+    /**
+     * _validateAllowedTagFiles checks to see if the bag contains tag files
+     * not listed in the tagFilesAllowed list of the
+     * {@link BagItProfile}. This records illegal tag files in the
+     * Validator.errors array.
+     *
+     * This method is private, and it internal operations are
+     * subject to change without notice.
+     *
+     */
+    _validateAllowedTagFiles() {
+        let allowed = this.profile.allowedTagFiles || [];
+        let tagFiles = this.tagFiles();
+        for (let file of tagFiles) {
+            let matchesAllowedPattern = false;
+            for (let pattern of allowed) {
+                if (Util.isEmpty(pattern) || pattern.trim() == '*') {
+                    continue;
+                }
+                if (minimatch(file, pattern)) {
+                    matchesAllowedPattern = true;
+                }
+            }
+            if (!matchesAllowedPattern) {
+                this.errors.push(`Tag file ${file} is not in the list of allowed tag files.`);
             }
         }
     }
