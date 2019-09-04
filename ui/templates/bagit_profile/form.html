@@ -55,8 +55,11 @@
     {{> inputSelect field = form.fields.allowFetchTxt }}
   </div>
   <div class="tab-pane fade" role="tabpanel" id="profileManifests" aria-labelledby="navManifestsTab">
+    {{> inputSelect field = form.fields.manifestsAllowed }}
     {{> inputSelect field = form.fields.manifestsRequired }}
+    {{> inputSelect field = form.fields.tagManifestsAllowed }}
     {{> inputSelect field = form.fields.tagManifestsRequired }}
+    {{> inputTextArea field = form.fields.tagFilesAllowed }}
   </div>
   <div class="tab-pane fade" role="tabpanel" id="profileSerialization" aria-labelledby="navSerializationTab">
     {{> inputSelect field = form.fields.serialization }}

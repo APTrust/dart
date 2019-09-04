@@ -12,8 +12,11 @@ const expectedFields = [
     'acceptBagItVersion',
     'acceptSerialization',
     'allowFetchTxt',
+    'manifestsAllowed',
     'manifestsRequired',
+    'tagManifestsAllowed',
     'tagManifestsRequired',
+    'tagFilesAllowed',
     'serialization',
     'tarDirMustMatchName',
     'infoIdentifier',
@@ -35,6 +38,9 @@ test('create()', () => {
         if (name.startsWith('info')) {
             let propertyName = form.toObjectPropertyName(name);
             expect(field.value).toEqual(profile.bagItProfileInfo[propertyName]);
+        } else if (name == 'tagFilesAllowed') {
+            // Need a more generic way of handling this.
+            expect(field.value).toEqual(profile.tagFilesAllowed.join("\n").trim());
         } else {
             expect(field.value).toEqual(profile[name]);
         }

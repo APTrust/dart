@@ -100,12 +100,32 @@ class BagItProfileForm extends Form {
             this.obj.manifestsRequired,
             false);
 
-        // Tag manifests require
+        // Manifests allowed
+        this.fields['manifestsAllowed'].attrs['multiple'] = true;
+        this.fields['manifestsAllowed'].attrs['required'] = true;
+        this.fields['manifestsAllowed'].choices = Choice.makeList(
+            Constants.DIGEST_ALGORITHMS,
+            this.obj.manifestsAllowed,
+            false);
+
+        // Tag manifests required
         this.fields['tagManifestsRequired'].attrs['multiple'] = true;
         this.fields['tagManifestsRequired'].choices = Choice.makeList(
             Constants.DIGEST_ALGORITHMS,
             this.obj.tagManifestsRequired,
             false);
+
+        // Tag manifests allowed
+        this.fields['tagManifestsAllowed'].attrs['multiple'] = true;
+        this.fields['tagManifestsAllowed'].choices = Choice.makeList(
+            Constants.DIGEST_ALGORITHMS,
+            this.obj.tagManifestsAllowed,
+            false);
+
+        // Tag files allowed
+        if (Array.isArray(this.obj.tagFilesAllowed) && this.obj.tagFilesAllowed.length > 0) {
+            this.fields['tagFilesAllowed'].value = this.obj.tagFilesAllowed.join("\n").trim();
+        }
     }
 
     /**
@@ -128,10 +148,19 @@ class BagItProfileForm extends Form {
      * properties on the BagItProfile object.
      */
     parseFromDOM() {
+        if ($ === undefined) {
+            var $ = require('jquery');
+        }
         super.parseFromDOM();
         for (let [fakeName, actualName] of Object.entries(infoFields)) {
             this.obj.bagItProfileInfo[actualName] = this.obj[fakeName];
             delete(this.obj[fakeName]);
+        }
+        let fieldId = '#' + this.fields['tagFilesAllowed'].id
+        let tagFilesAllowed = $(fieldId).val();
+        if (tagFilesAllowed) {
+            let values = tagFilesAllowed.split("/n");
+            this.obj.tagFilesAllowed = values.map(val => val.trim());
         }
     }
 

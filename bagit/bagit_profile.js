@@ -92,6 +92,13 @@ class BagItProfile extends PersistentObject {
           */
         this.manifestsRequired = opts.manifestsRequired || ['sha256'];
         /**
+          * A list of supported algorithms for payload manifests.
+          *
+          * @type {string[]}
+          * @default {@link Constants.DIGEST_ALGORITHMS}
+          */
+        this.manifestsAllowed = opts.manifestsAllowed || Constants.DIGEST_ALGORITHMS;
+        /**
           * A list of algorithms of required tag manifests.
           * For example, 'sha256' indicates that bags conforming
           * to this profile must have a tagmanifest-sha256.txt file.
@@ -101,6 +108,25 @@ class BagItProfile extends PersistentObject {
           * @default []
           */
         this.tagManifestsRequired = opts.tagManifestsRequired || [];
+        /**
+          * A list of supported algorithms for tag manifests.
+          *
+          * @type {string[]}
+          * @default {@link Constants.DIGEST_ALGORITHMS}
+          */
+        this.tagManifestsAllowed = opts.tagManifestsAllowed || Constants.DIGEST_ALGORITHMS;
+        /**
+         * List of allowed tag files. This is a list of file names, and
+         * can use glob matching patterns, such as ['custom-tags/*',
+         * 'my-tags/*.txt', 'other-tags/info.txt', 'credits.txt'].
+         * If this list is empty or not present, it is assumed to be ['*'],
+         * per the BagItProfile spec at
+         * https://github.com/bagit-profiles/bagit-profiles
+         *
+         * @type {string[]}
+         * @default ['*']
+         */
+        this.tagFilesAllowed = opts.tagManifestsAllowed || ['*'];
         /**
           * A list of tags that you expect to be present or expect
           * to parse when creating or validating bags that conform to

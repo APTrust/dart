@@ -256,8 +256,10 @@
   "You must specify either %s or %s": "You must specify either %s or %s",
   "%s can only load items of these types: %s": "%s can only load items of these types: %s",
   "DART cannot find a plugin that knows how to write %s files.": "DART cannot find a plugin that knows how to write %s files.",
-  "BagItProfile_allowMiscTopLevelFiles_label": "BagItProfile_allowMiscTopLevelFiles_label",
-  "BagItProfile_allowMiscTopLevelFiles_help": "BagItProfile_allowMiscTopLevelFiles_help",
-  "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
-  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help"
+  "BagItProfile_manifestsAllowed_label": "Manifests Allowed",
+  "BagItProfile_manifestsAllowed_help": "Which payload manifest algorithms are allowed for this profile?",
+  "BagItProfile_tagManifestsAllowed_label": "Tag Manifests Allowed",
+  "BagItProfile_tagManifestsAllowed_help": "Which tag manifest algorithms are valid for this profile?",
+  "BagItProfile_tagFilesAllowed_label": "Tag Files Allowed",
+  "BagItProfile_tagFilesAllowed_help": "List of tag files allowed to be in this bag. Leave empty to allow any tag files."
 }
