@@ -218,6 +218,9 @@ class Bagger extends EventEmitter {
             let content = profile.getTagFileContents(tagFileName);
             let tmpFile = path.join(os.tmpdir(), tagFileName + Date.now());
             this.tmpFiles.push(tmpFile);
+            if (!fs.existsSync(path.dirname(tmpFile))) {
+                mkdirp.sync(path.dirname(tmpFile), { mode: 0o755 });
+            }
             fs.writeFileSync(tmpFile, content);
             var stats = fs.statSync(tmpFile);
             await this._addFile(tmpFile, tagFileName, stats);
