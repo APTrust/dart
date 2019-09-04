@@ -1,0 +1,38 @@
+{
+   "BagIt-Profile-Info":{
+      "BagIt-Profile-Identifier":"http://www.library.yale.edu/mssa/bagitprofiles/disk_images.json",
+      "BagIt-Profile-Version": "1.1.0",
+      "Source-Organization":"Yale University",
+      "Contact-Name":"Mark Matienzo",
+      "External-Description":"BagIt profile for packaging disk images",
+      "Version":"0.3"
+   },
+   "Bag-Info":{
+      "Bagging-Date":{
+         "required":true
+      },
+      "Source-Organization":{
+         "required":true,
+         "values":[
+            "Simon Fraser University",
+            "York University"
+         ]
+      },
+      "Contact-Phone":{
+         "required":true
+      }
+   },
+   "Manifests-Required":[
+      "md5"
+   ],
+   "Allow-Fetch.txt":false,
+   "Serialization":"required",
+   "Accept-Serialization":[
+      "application/zip",
+      "application/tar"
+   ],
+   "Accept-BagIt-Version":[
+      "0.96",
+      "0.97"
+   ]
+}

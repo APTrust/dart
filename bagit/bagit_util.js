@@ -1,4 +1,7 @@
 const { BagItProfile } = require('./bagit_profile');
+const { BagItProfileInfo } = require('./bagit_profile_info');
+const { Constants } = require('../core/constants');
+const { TagDefinition } = require('./tag_definition');
 
 /**
  * BagItUtil contains some static utility functions to help with BagIt profiles.
@@ -18,7 +21,7 @@ class BagItUtil {
      */
     static profileFromStandardJson(jsonString) {
         var obj = JSON.parse(jsonString)
-        return ProfileFromStandardObject(obj)
+        return BagItUtil.profileFromStandardObject(obj)
     }
 
     /**
@@ -41,9 +44,12 @@ class BagItUtil {
         p.acceptBagItVersion = obj["Accept-BagIt-Version"];
         p.acceptSerialization = obj["Accept-Serialization"];
         p.allowFetchTxt = obj["Allow-Fetch.txt"];
-        p.manifestsRequired = obj["Manifests-Required"];
         p.serialization = obj["Serialization"];
+        p.manifestsRequired = obj["Manifests-Required"];
+        p.manifestsAllowed = obj["Manifests-Allowed"] || Constants.DIGEST_ALGORITHMS;
         p.tagManifestsRequired = obj["Tag-Manifests-Required"];
+        p.tagManifestsRequired = obj["Tag-Manifests-Allowed"] || Constants.DIGEST_ALGORITHMS;
+        p.tagFilesAllowed = obj["Tag-Files-Allowed"] || ["8"];
 
         p.bagItProfileInfo = new BagItProfileInfo();
         p.bagItProfileInfo.bagItProfileIdentifier = obj["BagIt-Profile-Info"]["BagIt-Profile-Identifier"];
@@ -60,8 +66,8 @@ class BagItUtil {
 
         // Copy required tag definitions to our preferred structure.
         // The BagIt profiles we're transforming don't have default values for tags.
-        for (var fileName of Object.keys(obj["Tag-Files-Required"])) {
-            var tags = obj["Tag-Files-Required"][fileName]
+        for (var fileName of Object.keys(obj["Bag-Info"])) {
+            var tags = obj["Bag-Info"][fileName]
             for (var tagName of Object.keys(tags)) {
                 var originalDef = tags[tagName];
                 var tagDef = new TagDefinition({
