@@ -406,6 +406,7 @@ class Validator extends EventEmitter {
             this._validateRequiredManifests(Constants.TAG_MANIFEST);
             this._validateAllowedManifests(Constants.PAYLOAD_MANIFEST);
             this._validateAllowedManifests(Constants.TAG_MANIFEST);
+            this._validateAllowedTagFiles();
             this._validateManifestEntries(Constants.PAYLOAD_MANIFEST);
             this._validateManifestEntries(Constants.TAG_MANIFEST);
             this._validateNoExtraneousPayloadFiles();
@@ -817,16 +818,18 @@ class Validator extends EventEmitter {
         let tagFiles = this.tagFiles();
         for (let file of tagFiles) {
             let matchesAllowedPattern = false;
+            let fileWasTested = false;
             for (let pattern of allowed) {
                 if (Util.isEmpty(pattern) || pattern.trim() == '*') {
                     continue;
                 }
-                if (minimatch(file, pattern)) {
+                if (minimatch(file.relDestPath, pattern)) {
                     matchesAllowedPattern = true;
                 }
+                fileWasTested = true;
             }
-            if (!matchesAllowedPattern) {
-                this.errors.push(`Tag file ${file} is not in the list of allowed tag files.`);
+            if (fileWasTested && !matchesAllowedPattern) {
+                this.errors.push(`Tag file ${file.relDestPath} is not in the list of allowed tag files.`);
             }
         }
     }
