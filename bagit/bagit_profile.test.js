@@ -19,7 +19,6 @@ test('Constructor sets initial properties', () => {
     let profile = new BagItProfile();
     expect(profile.name).toEqual('New BagIt Profile');
     expect(profile.description).toEqual('New custom BagIt profile');
-
     profile = new BagItProfile({ name: 'Test Profile',
                                  description: 'Profile for testing'});
     expect(profile.name).toEqual('Test Profile');

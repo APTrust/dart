@@ -12,6 +12,7 @@
     "tarDirMustMatchName": true,
     "bagItProfileInfo": {
         "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
+        "bagItProfileVersion": "",
         "contactEmail": "support@aptrust.org",
         "contactName": "A. Diamond",
         "externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",

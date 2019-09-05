@@ -8,6 +8,7 @@
     "tarDirMustMatchName": false,
     "bagItProfileInfo": {
         "bagItProfileIdentifier": "https://example.com/invalid_profile.json",
+        "bagItProfileVersion": "",
         "contactEmail": "support@example.com",
         "contactName": "Duke Nukem",
         "externalDescription": "Invalid profile for testing",

@@ -13,6 +13,17 @@ class BagItProfileInfo {
          */
         this.bagItProfileIdentifier = "";
         /**
+         * The version of the BagItProfile specification to which this
+         * profile conforms. For example, "1.1.0", "1.2.0", etc.
+         *
+         * This may be (and will likely be) empty for profiles created
+         * within DART, since DART BagItProfiles differ somewhat from
+         * the published stadard.
+         *
+         * @type {string}
+         */
+        this.bagItProfileVersion = "";
+        /**
          * The email address of the poor soul who has to
          * maintain this profile.
          *
