@@ -265,5 +265,6 @@
   "BagItProfile_allowMiscTopLevelFiles_label": "BagItProfile_allowMiscTopLevelFiles_label",
   "BagItProfile_allowMiscTopLevelFiles_help": "BagItProfile_allowMiscTopLevelFiles_help",
   "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
-  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help"
+  "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help",
+  "Imported from %s": "Imported from %s"
 }
