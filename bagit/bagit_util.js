@@ -91,6 +91,92 @@ class BagItUtil {
         }
         return p;
     }
+
+    /**
+     * This function converts a DART BagItProfile object to the format
+     * described at https://github.com/bagit-profiles/bagit-profiles.
+     *
+     * Note that a considerable amount of tag-related information
+     * will be lost in the conversion, since the GitHub BagIt profiles
+     * do not support as rich a set of information as DART profiles.
+     *
+     * @see {@link https://github.com/bagit-profiles/bagit-profiles|Standard BagIt Profiles}
+     *
+     * @param {BagItProfile} - A DART BagItProfile object.
+     * @returns {Object} - A converted BagIt profile.
+     *
+     */
+    static profileToStandardObject(p) {
+        var obj = {};
+        obj["Accept-BagIt-Version"] = p.acceptBagItVersion;
+        obj["Accept-Serialization"] = p.acceptSerialization;
+        obj["Allow-Fetch.txt"] = p.allowFetchTxt;
+        obj["Serialization"] = p.serialization;
+        obj["Manifests-Required"] = p.manifestsRequired;
+        obj["Manifests-Allowed"] = p.manifestsAllowed;
+        obj["Tag-Manifests-Required"] = p.tagManifestsRequired;
+        obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
+        obj["Tag-Files-Allowed"] = p.tagFilesAllowed;
+
+        obj["BagIt-Profile-Info"] = {};
+        obj["BagIt-Profile-Info"]["BagIt-Profile-Identifier"] = p.bagItProfileInfo.bagItProfileIdentifier;
+        obj["BagIt-Profile-Info"]["BagIt-Profile-Version"] = p.bagItProfileInfo.bagItProfileVersion;
+        obj["BagIt-Profile-Info"]["Contact-Email"] = p.bagItProfileInfo.contactEmail;
+        obj["BagIt-Profile-Info"]["Contact-Name"] = p.bagItProfileInfo.contactName;
+        obj["BagIt-Profile-Info"]["External-Description"] = p.bagItProfileInfo.externalDescription;
+        obj["BagIt-Profile-Info"]["Source-Organization"] = p.bagItProfileInfo.sourceOrganization;
+        obj["BagIt-Profile-Info"]["Version"] = p.bagItProfileInfo.version;
+
+        // Add values to one tag in this profile, so we can test...
+        p.firstMatchingTag("tagName", "Bagging-Software").values = [
+            "DART",
+            "TRAD"
+        ];
+
+        // Tags
+        obj["Bag-Info"] = {};
+        obj["Tag-Files-Required"] = [];
+        for (let tagDef of p.tags) {
+            if (tagDef.tagFile == "bagit.txt") {
+                continue;
+            }
+            if (tagDef.tagFile == "bag-info.txt") {
+                obj["Bag-Info"][tagDef.tagName] = {};
+                obj["Bag-Info"][tagDef.tagName]["required"] = tagDef.required;
+                if (Array.isArray(tagDef.values) && tagDef.values.length) {
+                    obj["Bag-Info"][tagDef.tagName]["values"] = tagDef.values;
+                }
+            } else {
+                // We can't specify tag info outside of bag-info.txt,
+                // but if we find a required tag in another file,
+                // we can assume that tag file is required.
+                if (tagDef.required === true && !obj["Tag-Files-Required"].includes(tagDef.tagFile)) {
+                    obj["Tag-Files-Required"].push(tagDef.tagFile);
+                }
+            }
+        }
+        return obj;
+    }
+
+    /**
+     * This function converts a DART BagItProfile object to a JSON string
+     * in the format described at
+     * https://github.com/bagit-profiles/bagit-profiles.
+     *
+     * Note that a considerable amount of tag-related information
+     * will be lost in the conversion, since the GitHub BagIt profiles
+     * do not support as rich a set of information as DART profiles.
+     *
+     * @see {@link https://github.com/bagit-profiles/bagit-profiles|Standard BagIt Profiles}
+     *
+     * @param {BagItProfile} - A DART BagItProfile object.
+     * @returns {string}
+     *
+     */
+    static profileToStandardJson(profile) {
+        return JSON.stringify(BagItUtil.profileToStandardObject(profile), null, 2);
+    }
+
 }
 
 module.exports.BagItUtil = BagItUtil;

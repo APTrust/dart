@@ -3,7 +3,7 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const fs = require('fs');
 const path = require('path');
-//const { TestUtil } = require('../core/test_util');
+const { TestUtil } = require('../core/test_util');
 
 const BASE_PATH = path.join(__dirname, '..', 'test', 'profiles', 'bagit_profiles_github');
 const FOO_PATH = path.join(BASE_PATH, 'bagProfileFoo.json');
@@ -69,3 +69,103 @@ test('profileFromStandardJson with tag files', () => {
     // expect(convertedProfile.tagFilesRequired.length).toEqual(2);
     // expect(convertedProfile.tagFilesRequired).toEqual(origProfile["Tag-Files-Required"]);
 })
+
+test('profileToStandardObject', () => {
+    let profile = TestUtil.loadProfile('multi_manifest.json');
+    let obj = BagItUtil.profileToStandardObject(profile);
+    let expected = expectedStandardObject();
+    expect(obj).toBeDefined();
+    expect(obj).toEqual(expected);
+});
+
+test('profileToStandardJson', () => {
+    let profile = TestUtil.loadProfile('multi_manifest.json');
+    let json = BagItUtil.profileToStandardJson(profile);
+    let expected = JSON.stringify(expectedStandardObject(), null, 2);
+    expect(json).toBeDefined();
+    expect(json).toEqual(expected);
+});
+
+
+function expectedStandardObject() {
+    return {
+      "Accept-BagIt-Version": [
+        "0.97",
+        "1.0"
+      ],
+      "Accept-Serialization": [
+        "application/tar"
+      ],
+      "Allow-Fetch.txt": false,
+      "Serialization": "required",
+      "Manifests-Required": [
+        "md5",
+        "sha256"
+      ],
+      "Manifests-Allowed": [
+        "md5",
+        "sha1",
+        "sha224",
+        "sha256",
+        "sha384",
+        "sha512"
+      ],
+      "Tag-Manifests-Required": [
+        "md5",
+        "sha256"
+      ],
+      "Tag-Manifests-Allowed": [
+        "md5",
+        "sha1",
+        "sha224",
+        "sha256",
+        "sha384",
+        "sha512"
+      ],
+      "Tag-Files-Allowed": [
+        "*"
+      ],
+      "BagIt-Profile-Info": {
+        "BagIt-Profile-Identifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
+        "BagIt-Profile-Version": "",
+        "Contact-Email": "support@aptrust.org",
+        "Contact-Name": "A. Diamond",
+        "External-Description": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
+        "Source-Organization": "aptrust.org",
+        "Version": "2.2"
+      },
+      "Bag-Info": {
+        "Source-Organization": {
+          "required": true
+        },
+        "Bag-Count": {
+          "required": false
+        },
+        "Bagging-Date": {
+          "required": false
+        },
+        "Bagging-Software": {
+          "required": false,
+          "values": [
+            "DART",
+            "TRAD"
+          ]
+        },
+        "Bag-Group-Identifier": {
+          "required": false
+        },
+        "Internal-Sender-Description": {
+          "required": false
+        },
+        "Internal-Sender-Identifier": {
+          "required": false
+        },
+        "Payload-Oxum": {
+          "required": false
+        }
+      },
+      "Tag-Files-Required": [
+        "aptrust-info.txt"
+      ]
+    }
+}
