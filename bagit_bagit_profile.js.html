@@ -362,8 +362,8 @@ class BagItProfile extends PersistentObject {
         if (Util.isEmptyStringArray(this.acceptBagItVersion)) {
             this.errors["acceptBagItVersion"] = Context.y18n.__("Profile must accept at least one BagIt version.");
         }
-        if (Util.isEmptyStringArray(this.manifestsRequired)) {
-            this.errors["manifestsRequired"] = Context.y18n.__("Profile must require at least one manifest.");
+        if (Util.isEmptyStringArray(this.manifestsAllowed)) {
+            this.errors["manifestsAllowed"] = Context.y18n.__("Profile must allow at least one payload manifest algorithm.");
         }
         if (!this.hasTagFile("bagit.txt")) {
             this.errors["tags"] = Context.y18n.__("Profile lacks requirements for bagit.txt tag file.");

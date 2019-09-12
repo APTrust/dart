@@ -301,8 +301,8 @@ class BagItProfileController extends BaseController {
         if (!Util.isEmpty(profile.errors["acceptBagItVersion"])) {
             errors.push(Context.y18n.__("General Tab: %s", profile.errors["acceptBagItVersion"]));
         }
-        if (!Util.isEmpty(profile.errors["manifestsRequired"])) {
-            errors.push(Context.y18n.__("Manifests Tab: %s", profile.errors["manifestsRequired"]));
+        if (!Util.isEmpty(profile.errors["manifestsAllowed"])) {
+            errors.push(Context.y18n.__("Manifests Tab: %s", profile.errors["manifestsAllowed"]));
         }
         if (!Util.isEmpty(profile.errors["serialization"])) {
             errors.push(Context.y18n.__("Serialization Tab: %s", profile.errors["serialization"]));

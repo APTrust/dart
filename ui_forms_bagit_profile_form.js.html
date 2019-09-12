@@ -193,7 +193,6 @@ class BagItProfileForm extends Form {
 
         // Manifests required
         this.fields['manifestsRequired'].attrs['multiple'] = true;
-        this.fields['manifestsRequired'].attrs['required'] = true;
         this.fields['manifestsRequired'].choices = Choice.makeList(
             Constants.DIGEST_ALGORITHMS,
             this.obj.manifestsRequired,
