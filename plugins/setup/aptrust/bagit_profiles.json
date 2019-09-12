@@ -19,8 +19,10 @@
             "sourceOrganization": "aptrust.org",
             "version": "2.2"
         },
-        "manifestsRequired": [
-            "md5"
+        "manifestsRequired": [],
+        "manifestsAllowed": [
+            "md5",
+            "sha256"
         ],
         "tags": [
             {
@@ -196,6 +198,10 @@
         ],
         "serialization": "required",
         "tagManifestsRequired": [],
+        "tagManifestsAllowed": [
+            "md5",
+            "sha256"
+        ],
         "baseProfileId": "",
         "isBuiltIn": true
     }

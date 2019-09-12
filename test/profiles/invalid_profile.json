@@ -16,9 +16,11 @@
         "version": "0.0"
     },
     "manifestsRequired": [],
+    "manifestsAllowed": [],
     "tags": [],
     "serialization": "capn-crunch",
     "tagManifestsRequired": [],
+    "tagManifestsAllowed": [],
     "baseProfileId": "",
     "isBuiltIn": false
 }

@@ -4,7 +4,8 @@
         "name": "DPN",
         "description": "Digital Preservation Network default BagIt profile.",
         "acceptBagItVersion": [
-            "0.97", "1.0"
+            "0.97",
+            "1.0"
         ],
         "acceptSerialization": [
             "application/tar"
@@ -29,7 +30,8 @@
                 "tagName": "BagIt-Version",
                 "required": true,
                 "values": [
-                    "0.97", "1.0"
+                    "0.97",
+                    "1.0"
                 ],
                 "defaultValue": "0.97",
                 "userValue": "",

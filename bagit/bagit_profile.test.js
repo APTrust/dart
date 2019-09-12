@@ -45,7 +45,7 @@ test('validate() catches invalid properties', () => {
     profile.id = '';
     profile.name = '';
     profile.acceptBagItVersion = [];
-    profile.manifestsRequired = [];
+    profile.manifestsAllowed = [];
     profile.tags = [];
     profile.serialization = "Cap'n Crunch";
     let result = profile.validate();
@@ -53,7 +53,7 @@ test('validate() catches invalid properties', () => {
     expect(profile.errors['id']).toEqual('Id cannot be empty.');
     expect(profile.errors['name']).toEqual('Name cannot be empty.');
     expect(profile.errors['acceptBagItVersion']).toEqual("Profile must accept at least one BagIt version.");
-    expect(profile.errors['manifestsRequired']).toEqual("Profile must require at least one manifest.");
+    expect(profile.errors['manifestsAllowed']).toEqual("Profile must allow at least one payload manifest algorithm.");
     expect(profile.errors['tags']).toEqual("Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.");
     expect(profile.errors['serialization']).toEqual("Serialization must be one of: required, optional, forbidden.");
 });

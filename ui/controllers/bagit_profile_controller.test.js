@@ -159,6 +159,7 @@ test('update() with invalid profile', () => {
     profile.name = '';
     profile.acceptBagItVersion = [];
     profile.manifestsRequired = [];
+    profile.manifestsAllowed = [];
     profile.serialization = 'required';
     profile.acceptSerialization = [];
     profile.tags = [];

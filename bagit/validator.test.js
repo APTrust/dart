@@ -59,7 +59,7 @@ test('_validateProfile()', () => {
     expect(validator.errors).toEqual([]);
 
     let expected = ["BagItProfile: Profile must accept at least one BagIt version.",
-                    "BagItProfile: Profile must require at least one manifest.",
+                    "BagItProfile: Profile must allow at least one payload manifest algorithm.",
                     "BagItProfile: Profile lacks requirements for bagit.txt tag file.\nProfile lacks requirements for bag-info.txt tag file.",
                     "BagItProfile: Serialization must be one of: required, optional, forbidden."];
     let validator2 = getValidator("invalid_profile.json", "aptrust", "example.edu.tagsample_good.tar");
@@ -335,6 +335,8 @@ test('Validator identifies missing data dir', done => {
 
 test('Validator identifies missing manifest', done => {
     let validator = getValidator("aptrust", "aptrust", "example.edu.sample_no_md5_manifest.tar");
+    // Add a required profile to be sure validator checks for it.
+    validator.profile.manifestsRequired = ["md5"];
     let expected = ["Bag is missing required manifest manifest-md5.txt",
                     "Required tag Storage-Option is missing from aptrust-info.txt"];
 
@@ -425,7 +427,7 @@ test('Validator finds bad Payload-Oxum', done => {
 
 test('Validator identifies illegal manifests', done => {
     let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
-    validator.profile.manifestsAllowed = [];
+    validator.profile.manifestsAllowed = ["sha384"];
     validator.on('error', function(err) {
         // Force failure & stop test.
         expect(err).toBeNull();
