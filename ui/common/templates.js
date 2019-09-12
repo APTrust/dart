@@ -7,6 +7,14 @@ const { Util } = require('../../core/util');
 
 const templateDir = path.join(__dirname, "..", "templates");
 
+// preventIndent prevents a problem in which the contents of
+// multi-line textareas are indented, resulting in poor display
+// and extraneous spaces in the textarea content.
+// See https://handlebarsjs.com/reference.html
+const compileOptions = {
+    preventIndent: true
+}
+
 function readFile(...args) {
     let filepath = path.join(templateDir, ...args)
     return fs.readFileSync(filepath, 'utf8');
@@ -14,42 +22,46 @@ function readFile(...args) {
 
 function compile(pathToTemplate) {
     let html = fs.readFileSync(pathToTemplate, 'utf8');
-    return handlebars.compile(html);
+    return handlebars.compile(html, compileOptions);
 }
 
-var about = handlebars.compile(readFile('about', 'index.html'));
-var appSettingForm = handlebars.compile(readFile('app_setting', 'form.html'));
-var appSettingList = handlebars.compile(readFile('app_setting', 'list.html'));
-var bagItProfileList = handlebars.compile(readFile('bagit_profile', 'list.html'));
-var bagItProfileForm = handlebars.compile(readFile('bagit_profile', 'form.html'));
-var bagItProfileNew = handlebars.compile(readFile('bagit_profile', 'new.html'));
-var dartProcessList = handlebars.compile(readFile('dart_process', 'list.html'));
-var dashboard = handlebars.compile(readFile('dashboard', 'show.html'));
-var internalSettingList = handlebars.compile(readFile('internal_setting', 'list.html'));
-var jobFileRow = handlebars.compile(readFile('job', 'file_row.html'));
-var jobFiles = handlebars.compile(readFile('job', 'files.html'));
-var jobForm = handlebars.compile(readFile('job', 'form.html'));
-var jobList = handlebars.compile(readFile('job', 'list.html'));
-var jobPackaging = handlebars.compile(readFile('job', 'packaging.html'));
-var jobMetadata = handlebars.compile(readFile('job', 'metadata.html'));
-var jobNewTag = handlebars.compile(readFile('job', 'new_tag.html'));
-var jobUpload = handlebars.compile(readFile('job', 'upload.html'));
-var jobRun = handlebars.compile(readFile('job', 'run.html'));
-var nav = handlebars.compile(readFile('nav.html'));
-var pluginsList = handlebars.compile(readFile('plugins', 'list.html'));
-var remoteRepositoryForm = handlebars.compile(readFile('remote_repository', 'form.html'));
-var remoteRepositoryList = handlebars.compile(readFile('remote_repository', 'list.html'));
-var storageServiceForm = handlebars.compile(readFile('storage_service', 'form.html'));
-var storageServiceList = handlebars.compile(readFile('storage_service', 'list.html'));
-var setupEnd = handlebars.compile(readFile('setup', 'end.html'));
-var setupError = handlebars.compile(readFile('setup', 'error.html'));
-var setupList = handlebars.compile(readFile('setup', 'list.html'));
-var setupStart = handlebars.compile(readFile('setup', 'start.html'));
-var setupQuestion = handlebars.compile(readFile('setup', 'question.html'));
-var tagDefinitionForm = handlebars.compile(readFile('tag_definition', 'form.html'));
-var tagFileForm = handlebars.compile(readFile('tag_file', 'form.html'));
-var workflowForm = handlebars.compile(readFile('workflow', 'form.html'));
-var workflowList = handlebars.compile(readFile('workflow', 'list.html'));
+function compileHTML(html) {
+    return handlebars.compile(html, compileOptions);
+}
+
+var about = compileHTML(readFile('about', 'index.html'));
+var appSettingForm = compileHTML(readFile('app_setting', 'form.html'));
+var appSettingList = compileHTML(readFile('app_setting', 'list.html'));
+var bagItProfileList = compileHTML(readFile('bagit_profile', 'list.html'));
+var bagItProfileForm = compileHTML(readFile('bagit_profile', 'form.html'));
+var bagItProfileNew = compileHTML(readFile('bagit_profile', 'new.html'));
+var dartProcessList = compileHTML(readFile('dart_process', 'list.html'));
+var dashboard = compileHTML(readFile('dashboard', 'show.html'));
+var internalSettingList = compileHTML(readFile('internal_setting', 'list.html'));
+var jobFileRow = compileHTML(readFile('job', 'file_row.html'));
+var jobFiles = compileHTML(readFile('job', 'files.html'));
+var jobForm = compileHTML(readFile('job', 'form.html'));
+var jobList = compileHTML(readFile('job', 'list.html'));
+var jobPackaging = compileHTML(readFile('job', 'packaging.html'));
+var jobMetadata = compileHTML(readFile('job', 'metadata.html'));
+var jobNewTag = compileHTML(readFile('job', 'new_tag.html'));
+var jobUpload = compileHTML(readFile('job', 'upload.html'));
+var jobRun = compileHTML(readFile('job', 'run.html'));
+var nav = compileHTML(readFile('nav.html'));
+var pluginsList = compileHTML(readFile('plugins', 'list.html'));
+var remoteRepositoryForm = compileHTML(readFile('remote_repository', 'form.html'));
+var remoteRepositoryList = compileHTML(readFile('remote_repository', 'list.html'));
+var storageServiceForm = compileHTML(readFile('storage_service', 'form.html'));
+var storageServiceList = compileHTML(readFile('storage_service', 'list.html'));
+var setupEnd = compileHTML(readFile('setup', 'end.html'));
+var setupError = compileHTML(readFile('setup', 'error.html'));
+var setupList = compileHTML(readFile('setup', 'list.html'));
+var setupStart = compileHTML(readFile('setup', 'start.html'));
+var setupQuestion = compileHTML(readFile('setup', 'question.html'));
+var tagDefinitionForm = compileHTML(readFile('tag_definition', 'form.html'));
+var tagFileForm = compileHTML(readFile('tag_file', 'form.html'));
+var workflowForm = compileHTML(readFile('workflow', 'form.html'));
+var workflowList = compileHTML(readFile('workflow', 'list.html'));
 
 handlebars.registerPartial({
     bannerAlert: readFile(path.join('partials', 'banner_alert.html')),
@@ -93,7 +105,7 @@ handlebars.registerHelper('toHumanSize', function(number) {
 
 // Pre-compile partials so they can be called from within JS.
 for(let [name, template] of Object.entries(handlebars.partials)) {
-    handlebars.partials[name] = handlebars.compile(template);
+    handlebars.partials[name] = compileHTML(template);
 }
 
 module.exports.about = about;
