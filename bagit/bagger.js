@@ -279,11 +279,7 @@ class Bagger extends EventEmitter {
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
             if(entry.fileStat.isFile()) {
-                let relDestPath = path.join('data', entry.relPath);
-                if (bagger.formatWriter.constructor.name === 'TarWriter') {
-                    // For tar files, use forward slash, even on Windows.
-                    relDestPath = 'data/' + entry.relPath;
-                }
+                let relDestPath = path.join('data', fullPath);
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
             }
         });
@@ -304,7 +300,7 @@ class Bagger extends EventEmitter {
      * @private
      */
     _addFile(absPath, relDestPath, stats) {
-        if (os.platform() === 'win32') {
+        if (os.platform() === 'win32' && bagger.formatWriter.constructor.name === 'TarWriter') {
             relDestPath = relDestPath.replace(/\\/g, '/');
         }
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
@@ -330,7 +326,7 @@ class Bagger extends EventEmitter {
         }
         var outputPath = this.job.packageOp.outputPath;
         var parentDir = path.dirname(outputPath);
-        var fileExtension = path.extname(outputPath);
+        let fileExtension = path.extname(outputPath);
         if (fileExtension === '') {
             fileExtension = 'directory';
             parentDir = outputPath;
