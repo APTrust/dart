@@ -278,7 +278,7 @@ class Bagger extends EventEmitter {
         let fsReader = new fsReaderClass(absPath);
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
-            if(entry.fileStat.isFile()) {
+            if (entry.fileStat.isFile()) {
                 let relDestPath = path.join('data', fullPath);
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
             }
