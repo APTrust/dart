@@ -6,3 +6,4 @@ node_modules
 # Compiled binaries
 tsconfig.json
 apps/bin/*
+aptrust.org/*.tar
