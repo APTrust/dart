@@ -283,9 +283,6 @@ class Bagger extends EventEmitter {
             if (entry.fileStat.isFile()) {
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
             }
-            // else if (entry.fileStat.isDirectory()) {
-            //     bagger._mkdir(absPath, relDestPath, stats);
-            // }
         });
         fsReader.on('error', function(err) {
             packOp.result.errors.push(err.toString());

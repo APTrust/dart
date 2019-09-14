@@ -84,23 +84,13 @@ class TarWriter extends BaseWriter {
     }
 
     /**
-     * This creates the initial directories in the tarball.
+     * This ensures that the necessary directory entries are created
+     * for each file added to the tarball. This is the equivalent of
+     * mkdirp in the filesystem.
+     *
+     * @param {Object}
+     * @private
      */
-    // init() {
-    //     this._directoriesAdded.clear();
-    //     let rootDir = {
-    //         relDestPath: '',
-    //         mode: 0o755,
-    //         uid: process.getuid(),
-    //         gid: process.getgid(),
-    //         mtime: new Date()
-    //     };
-    //     let dataDir = Object.assign({}, rootDir);
-    //     dataDir.relDestPath = 'data/';
-    //     this.mkdir(rootDir);
-    //     this.mkdir(dataDir);
-    // }
-
     _ensureDirectories(fileHeader) {
         let template =
         {
@@ -110,15 +100,15 @@ class TarWriter extends BaseWriter {
             gid: fileHeader.gid,
             mtime: null
         };
-        let parts = fileHeader.name.replace(this.bagName + '/', '').split('/');
+        let parts = fileHeader.name.split('/');
         let dir = '';
         for (let i=0; i < parts.length -1; i++) {
             dir = dir + parts[i] + '/';
-            if (!this._directoriesAdded.has(this.bagName + '/' + dir)) {
+            if (!this._directoriesAdded.has(dir)) {
                 let data = Object.assign({}, template);
                 data.relDestPath = dir;
                 data.mtime = new Date();
-                this.mkdir(data);
+                this._mkdir(data);
             }
         }
     }
@@ -208,13 +198,12 @@ class TarWriter extends BaseWriter {
      * contents to the directory. Use {@link add} for that.
      *
      * @param {BagItFile}
+     * @private
      */
-    mkdir(bagItFile) {
+    _mkdir(bagItFile) {
         var tarWriter = this;
         var header = {
-            // Don't use path.join because Windows will give us
-            // backslashes and tar file needs forward slashes.
-            name: this.bagName + '/' + bagItFile.relDestPath,
+            name: bagItFile.relDestPath,
             type: 'directory',
             mode: bagItFile.mode,
             uid: bagItFile.uid,
