@@ -194,7 +194,7 @@ class Bagger extends EventEmitter {
                 // Wait until entire directory is added before
                 // attaching finish listener, else queue will
                 // drain more than once.
-                await this._addDirectory(absPath);
+                await this._addDirectory(absPath, relDestPath, stats);
             }
         }
         var bagger = this;
@@ -271,16 +271,19 @@ class Bagger extends EventEmitter {
      *
      * @private
      */
-    _addDirectory(absPath) {
+    _addDirectory(absPath, relDestPath, stats) {
         let bagger = this;
         let packOp = this.job.packageOp;
         let fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         let fsReader = new fsReaderClass(absPath);
+        bagger._mkdir(absPath, relDestPath, stats);
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
+            let relDestPath = path.join('data', fullPath);
             if (entry.fileStat.isFile()) {
-                let relDestPath = path.join('data', fullPath);
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
+            } else if (entry.fileStat.isDirectory()) {
+                bagger._mkdir(absPath, relDestPath, stats);
             }
         });
         fsReader.on('error', function(err) {
@@ -311,6 +314,25 @@ class Bagger extends EventEmitter {
             resolve(bagItFile);
         });
     }
+
+    /**
+     * Adds a single directory entry to the bag's payload.
+     * Does not add the files inside the directory. This call
+     * is equivalent to mkdir.
+     *
+     * @private
+     */
+    _mkdir(absPath, relDestPath, stats) {
+        if (os.platform() === 'win32' && bagger.formatWriter.constructor.name === 'TarWriter') {
+            relDestPath = relDestPath.replace(/\\/g, '/');
+        }
+        let bagItFile = new BagItFile(absPath, relDestPath, stats);
+        this.formatWriter.mkdir(bagItFile);
+        return new Promise(function(resolve) {
+            resolve(bagItFile);
+        });
+    }
+
 
     /**
      * This chooses the plugin that will be used when writing the bag

@@ -154,6 +154,52 @@ class TarWriter extends BaseWriter {
     }
 
     /**
+     * This adds a directory entry to the tar file. It does not add any
+     * contents to the directory. Use {@link add} for that.
+     *
+     * @param {BagItFile}
+     */
+    mkdir(bagItFile) {
+        var tarWriter = this;
+        var header = {
+            // Don't use path.join because Windows will give us
+            // backslashes and tar file needs forward slashes.
+            name: this.bagName + '/' + bagItFile.relDestPath,
+            type: 'directory',
+            mode: bagItFile.mode,
+            uid: bagItFile.uid,
+            gid: bagItFile.gid,
+            mtime: bagItFile.mtime
+        };
+
+        /**
+         * @event TarWriter#directoryAdded - This event fires after a
+         * directory entry has been written into the underlying tar file.
+         *
+         * @type {BagItFile}
+         *
+         */
+        let packer = null;
+        try {
+            packer = this._getTarPacker()
+        } catch (err) {
+            this._queue.error(err);
+            return;
+        }
+        var data = {
+            bagItFile: bagItFile,
+            header: header,
+            tar: packer,
+            hashes: [],
+            endFn: () => {
+                tarWriter.emit('directoryAdded', bagItFile);
+            }
+        };
+        this._queue.push(data);
+    }
+
+
+    /**
      * This returns the tar-stream packer object, creating it if it
      * doesn't already exist. The tar-stream packer transforms data to
      * tar format before the output writer writes it to disk.
@@ -220,6 +266,14 @@ class TarWriter extends BaseWriter {
  * @private
  */
 function writeIntoArchive(data, done) {
+    if (data.header.type === 'directory') {
+        writeDirectory(data, done);
+    } else {
+        writeFile(data, done);
+    }
+}
+
+function writeFile(data, done) {
     try {
         var reader = fs.createReadStream(data.bagItFile.absSourcePath);
 
@@ -243,5 +297,13 @@ function writeIntoArchive(data, done) {
     }
 }
 
+function writeDirectory(data, done) {
+    try {
+        let writer = data.tar.entry(data.header, done);
+        writer.on('finish', data.endFn);
+    } catch (err) {
+        done(err, data);
+    }
+}
 
 module.exports = TarWriter;
