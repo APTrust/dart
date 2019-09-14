@@ -276,15 +276,16 @@ class Bagger extends EventEmitter {
         let packOp = this.job.packageOp;
         let fsReaderClass = PluginManager.findById(Constants.FILESYSTEM_READER_UUID);
         let fsReader = new fsReaderClass(absPath);
-        bagger._mkdir(absPath, relDestPath, stats);
+        //bagger._mkdir(absPath, relDestPath, stats);
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
             let relDestPath = path.join('data', fullPath);
             if (entry.fileStat.isFile()) {
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
-            } else if (entry.fileStat.isDirectory()) {
-                bagger._mkdir(absPath, relDestPath, stats);
             }
+            // else if (entry.fileStat.isDirectory()) {
+            //     bagger._mkdir(absPath, relDestPath, stats);
+            // }
         });
         fsReader.on('error', function(err) {
             packOp.result.errors.push(err.toString());
@@ -363,6 +364,7 @@ class Bagger extends EventEmitter {
         // plugins[0] is a writer plugin (a class) with a constructor
         // that takes pathToBag as its sole param.
         this.formatWriter = new plugins[0](outputPath);
+        this.formatWriter.init();
     }
 
     /**

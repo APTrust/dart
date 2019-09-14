@@ -54,6 +54,14 @@ class TarWriter extends BaseWriter {
           * @private
           */
         this._tarOutputWriter = null;
+        /**
+         * This keels track of which directory entries have been written into
+         * the tarball.
+         *
+         * @type {Set}
+         * @private
+         */
+        this._directoriesAdded = new Set();
     }
 
     /**
@@ -73,6 +81,46 @@ class TarWriter extends BaseWriter {
             talksToRepository: [],
             setsUp: []
         };
+    }
+
+    /**
+     * This creates the initial directories in the tarball.
+     */
+    // init() {
+    //     this._directoriesAdded.clear();
+    //     let rootDir = {
+    //         relDestPath: '',
+    //         mode: 0o755,
+    //         uid: process.getuid(),
+    //         gid: process.getgid(),
+    //         mtime: new Date()
+    //     };
+    //     let dataDir = Object.assign({}, rootDir);
+    //     dataDir.relDestPath = 'data/';
+    //     this.mkdir(rootDir);
+    //     this.mkdir(dataDir);
+    // }
+
+    _ensureDirectories(fileHeader) {
+        let template =
+        {
+            relDestPath: '',
+            mode: 0o755,
+            uid: fileHeader.uid,
+            gid: fileHeader.gid,
+            mtime: null
+        };
+        let parts = fileHeader.name.replace(this.bagName + '/', '').split('/');
+        let dir = '';
+        for (let i=0; i < parts.length -1; i++) {
+            dir = dir + parts[i] + '/';
+            if (!this._directoriesAdded.has(this.bagName + '/' + dir)) {
+                let data = Object.assign({}, template);
+                data.relDestPath = dir;
+                data.mtime = new Date();
+                this.mkdir(data);
+            }
+        }
     }
 
     /**
@@ -126,6 +174,8 @@ class TarWriter extends BaseWriter {
             size: Number(bagItFile.size)
         };
 
+        tarWriter._ensureDirectories(header);
+
         /**
          * @event TarWriter#fileAdded - This event fires after a file
          * has been written into the underlying tar file.
@@ -172,6 +222,10 @@ class TarWriter extends BaseWriter {
             mtime: bagItFile.mtime
         };
 
+        if (!header.name.match(/\/$/)) {
+            header.name += '/';
+        }
+
         /**
          * @event TarWriter#directoryAdded - This event fires after a
          * directory entry has been written into the underlying tar file.
@@ -196,6 +250,7 @@ class TarWriter extends BaseWriter {
             }
         };
         this._queue.push(data);
+        this._directoriesAdded.add(header.name);
     }
 
 

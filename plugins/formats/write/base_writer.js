@@ -127,6 +127,21 @@ class BaseWriter extends Plugin {
     }
 
     /**
+     * Subclasses should implement their own init methods if they
+     * require some initialization. Otherwise, they can omit this.
+     *
+     * For example, a TarWriter must initialize a tarball with a
+     * directory entry for the root directory. A FileSystemWriter,
+     * on the other hand, requires no initialization, so it omits
+     * the init method.
+     *
+     * In the BaseWriter, init() is a noop.
+     */
+    init() {
+
+    }
+
+    /**
      * Returns the percent complete of the total write operations.
      * This will be a number between 0 and 100. E.g. 42.833.
      *
