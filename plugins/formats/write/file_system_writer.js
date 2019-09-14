@@ -96,17 +96,6 @@ class FileSystemWriter extends BaseWriter {
         };
         this._queue.push(data);
     }
-
-    /**
-     * This is a noop function for compatibility with the format writer
-     * interface. FileSystemWriter makes directory entries as necessary
-     * in its internal write function.
-     *
-     * @param {BagItFile}
-     */
-    mkdir(bagItFile) {
-        // Noop. _writeIntoArchive makes directories as necessary.
-    }
 }
 
 /**

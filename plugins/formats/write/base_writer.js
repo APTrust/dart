@@ -184,17 +184,6 @@ class BaseWriter extends Plugin {
     }
 
     /**
-     * This adds a directory entry to the package being written.
-     * It does not add any of the directory's contents. Format writers
-     * must provide their own implementation of this method.
-     *
-     * @param {BagItFile}
-     */
-    mkdir(bagItFile) {
-        throw("Derived class must implement mkdir");
-    }
-
-    /**
      * Call this after a file is written, to keep an accurate
      * count of how many files have been written. See {@link
      * TarWriter} or {@link FileSystemWriter} for examples.
