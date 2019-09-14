@@ -39,7 +39,7 @@ test('TarWriter constructor sets expected params', () => {
     expect(tarWriter.bagName).toEqual('tar_writer_test');
 });
 
-test('TarWriter adds files', done => {
+test('TarWriter adds files and directories', done => {
     var tarWriter = new TarWriter(pathToTarFile);
     var bagItFiles = [];
     var callbacks = [];
@@ -66,6 +66,9 @@ test('TarWriter adds files', done => {
         expect(tarWriter.filesAdded).toEqual(bagItFiles.length);
         expect(tarWriter.filesWritten).toEqual(bagItFiles.length);
         expect(tarWriter.percentComplete()).toEqual(100);
+
+        expect(tarWriter._directoriesAdded.has('tar_writer_test/')).toBe(true);
+        expect(tarWriter._directoriesAdded.has('tar_writer_test/data/')).toBe(true);
 
         done();
     });
