@@ -312,3 +312,17 @@ test('Util.arrayContentsMatch()', () => {
     expect(Util.arrayContentsMatch(a, b, false)).toBe(true);
     expect(Util.arrayContentsMatch(a, b, true)).toBe(true);
 });
+
+test('Util.canRead()', () => {
+    let testDir = path.join(__dirname, '..', 'test', 'files');
+    expect(Util.canRead(path.join(testDir, 'unwritable.txt'))).toBe(true);
+    expect(Util.canRead(path.join(testDir, 'readwrite.txt'))).toBe(true);
+    expect(Util.canRead(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
+});
+
+test('Util.canWrite()', () => {
+    let testDir = path.join(__dirname, '..', 'test', 'files');
+    expect(Util.canWrite(path.join(testDir, 'unwritable.txt'))).toBe(false);
+    expect(Util.canRead(path.join(testDir, 'readwrite.txt'))).toBe(true);
+    expect(Util.canWrite(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
+});

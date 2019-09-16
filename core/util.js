@@ -557,6 +557,41 @@ class Util {
         }
         return true;
     }
+
+    /**
+     * Returns true if the file at filepath is readable by
+     * the current user/application.
+     *
+     * @params {string} filepath - The path the the file.
+     * @returns {boolean}
+     */
+    static canRead(filepath) {
+        let canRead = true;
+        try {
+            fs.accessSync(filepath, fs.constants.R_OK);
+        } catch (err) {
+            canRead = false;
+        }
+        return canRead;
+    }
+
+    /**
+     * Returns true if the file at filepath is writable by
+     * the current user/application.
+     *
+     * @params {string} filepath - The path the the file.
+     * @returns {boolean}
+     */
+    static canWrite(filepath) {
+        let canWrite = true;
+        try {
+            fs.accessSync(filepath, fs.constants.W_OK);
+        } catch (err) {
+            canWrite = false;
+        }
+        return canWrite;
+    }
+
 }
 
 module.exports.Util = Util;
