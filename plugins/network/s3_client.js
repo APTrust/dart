@@ -122,7 +122,7 @@ class S3Client extends Plugin {
     }
 
     /**
-     * Downloads a file fron the remote bucket. The name of the remote bucket is
+     * Downloads a file from the remote bucket. The name of the remote bucket is
      * determined by the {@link StorageService} passed in to this class'
      * constructor.
      *
