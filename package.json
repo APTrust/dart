@@ -21,7 +21,7 @@
         "dateformat": "^3.0.3",
         "electron-context-menu": "^0.15.0",
         "electron-log": "^3.0.8",
-        "electron-store": "^4.0.0",
+        "electron-store": "^5.0.0",
         "es6-error": "^4.1.1",
         "glob": "^7.1.4",
         "graceful-fs": "^4.2.2",
