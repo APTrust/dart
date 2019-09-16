@@ -300,7 +300,7 @@ class Bagger extends EventEmitter {
      * @private
      */
     _addFile(absPath, relDestPath, stats) {
-        if (os.platform() === 'win32' && bagger.formatWriter.constructor.name === 'TarWriter') {
+        if (os.platform() === 'win32' && this.formatWriter.constructor.name === 'TarWriter') {
             relDestPath = relDestPath.replace(/\\/g, '/');
         }
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
