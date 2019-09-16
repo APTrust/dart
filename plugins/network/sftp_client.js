@@ -1,7 +1,9 @@
+const Client = require('ssh2-sftp-client');
 const { Context } = require('../../core/context');
 const fs = require('fs');
 const { Plugin } = require('../plugin');
-const ssh2 = require('ssh2');
+const { Util } = require('../../core/util');
+
 
 class SFTPClient extends Plugin {
 
@@ -59,6 +61,7 @@ class SFTPClient extends Plugin {
         if (!keyname) {
             keyname = path.basename(filepath);
         }
+        let client = this.connect();
     }
 
 
@@ -87,6 +90,56 @@ class SFTPClient extends Plugin {
         throw 'SFTPClient.list() is not yet implemented.';
     }
 
+
+    /**
+     * Returns an open connection to the remote sftp server, or throws
+     * an exception.
+     *
+     * @returns {Client}
+     */
+    async _connect() {
+        if (!this.storageService) {
+            throw Context.y18n.__("SFTP client cannot establish a connection without a StorageService object");
+        }
+        let connSettings = {
+            host: this.storageService.host,
+            port: this.storageService.port || 22,
+            username: this.storageService.login
+        }
+        if (!Util.isEmpty(this.storageService.loginExtra)) {
+            connSettings.privateKey = this._loadPrivateKey;
+        } else if (!Util.isEmpty(this.storageService.password)) {
+            Context.logger.info(Context.y18n.__("Using password for SFTP connection"));
+            connSettings.password = this.storageService.password
+        } else {
+            let msg = Context.y18n.__("Storage service %s has no password or key file to connect to remote server", this.storageService.name);
+            Context.logger.error(msg);
+            throw msg;
+        }
+        let client = await new Client().connect(connSettings);
+        return client;
+    }
+
+    /**
+     * Loads a private key to be used in establishing an SFTP connection.
+     *
+     */
+    _loadPrivateKey() {
+        Context.logger.info(Context.y18n.__("Checking %s for RSA key for SFTP connection", this.storageService.loginExtra));
+        if(!fs.existsSync(this.storageService.loginExtra)) {
+            throw Context.y18n.__("Private key file %s is missing for storage service %s", this.storageService.loginExtra, this.storageService.name);
+        }
+        if(!Util.canRead(this.storageService.loginExtra)) {
+            throw Context.y18n.__("You do not have permission to read the private key file %s for storage service %s", this.storageService.loginExtra, this.storageService.name);
+        }
+        let pk = '';
+        try {
+            pk = fs.readFileSync(this.storageService.loginExtra);
+        } catch (ex) {
+            throw Context.y18n.__("Error reading private key file %s for storage service %s: %s", this.storageService.loginExtra, this.storageService.name, ex.toString());
+        }
+        return pk;
+    }
 
     /**
      * @event SFTPClient#start
