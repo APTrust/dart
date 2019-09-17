@@ -321,11 +321,8 @@ test('Util.canRead()', () => {
 });
 
 test('Util.canWrite()', () => {
-    if (process.env.TRAVIS || process.env.APPVEYOR) {
-        console.log("Skipping canWrite test because CI environment doesn't understand file permissions.");
-        return;
-    }
     let testDir = path.join(__dirname, '..', 'test', 'files');
+    fs.chmodSync(path.join(testDir, 'unwritable.txt'), 0o444);
     expect(Util.canWrite(path.join(testDir, 'unwritable.txt'))).toBe(false);
     expect(Util.canRead(path.join(testDir, 'readwrite.txt'))).toBe(true);
     expect(Util.canWrite(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
