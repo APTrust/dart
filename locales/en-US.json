@@ -267,5 +267,7 @@
   "BagItProfile_allowMiscDirectories_label": "BagItProfile_allowMiscDirectories_label",
   "BagItProfile_allowMiscDirectories_help": "BagItProfile_allowMiscDirectories_help",
   "Imported from %s": "Imported from %s",
-  "Profile must allow at least one payload manifest algorithm.": "Profile must allow at least one payload manifest algorithm."
+  "Profile must allow at least one payload manifest algorithm.": "Profile must allow at least one payload manifest algorithm.",
+  "Choose One": "Choose One",
+  "You must specify a package format.": "You must specify a package format."
 }

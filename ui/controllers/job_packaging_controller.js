@@ -92,6 +92,9 @@ class JobPackagingController extends BaseController {
     _updatePackaging(withValidation) {
         let form = this._parseJobPackagingForm();
         if (withValidation) {
+            if (this.job.packageOp.packageFormat == Context.y18n.__('Choose One')) {
+                form.obj.errors['packageFormat'] = Context.y18n.__("You must specify a package format.");
+            }
             if (this.job.packageOp.packageFormat == 'BagIt' && !this.job.bagItProfile) {
                 form.obj.errors['bagItProfileId'] = Context.y18n.__("When choosing BagIt format, you must choose a BagIt profile.");
             }

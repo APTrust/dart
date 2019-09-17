@@ -28,7 +28,7 @@ class JobPackageOpForm extends Form {
         let formats = [
             {
                 id: 'None',
-                name: 'None'
+                name: Context.y18n.__('Choose One')
             },
             {
                 id: 'BagIt',
@@ -38,10 +38,12 @@ class JobPackageOpForm extends Form {
         for (let writer of PluginManager.getModuleCollection('FormatWriter')) {
             let description = writer.description();
             for (let format of description.writesFormats) {
-                formats.push({
-                    id: description.id,
-                    name: format
-                });
+                if (format != 'directory') {
+                    formats.push({
+                        id: description.id,
+                        name: format
+                    });
+                }
             };
         }
         this.fields['packageFormat'].choices = Choice.makeList(
