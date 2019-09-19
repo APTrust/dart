@@ -212,9 +212,14 @@ class BagItUtil {
         obj["Allow-Fetch.txt"] = p.allowFetchTxt;
         obj["Serialization"] = p.serialization;
         obj["Manifests-Required"] = p.manifestsRequired;
-        obj["Manifests-Allowed"] = p.manifestsAllowed;
         obj["Tag-Manifests-Required"] = p.tagManifestsRequired;
-        obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
+
+        // The following two are not yet supported in BagIt Profiles v1.2.0
+        // spec. We have an open pull request to include them.
+        //
+        //obj["Manifests-Allowed"] = p.manifestsAllowed;
+        //obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
+
         obj["Tag-Files-Allowed"] = p.tagFilesAllowed;
 
         obj["BagIt-Profile-Info"] = {};
