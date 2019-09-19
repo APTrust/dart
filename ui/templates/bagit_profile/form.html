@@ -26,6 +26,8 @@
 
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tag Files</a>
     <div class="dropdown-menu">
+      <a class="dropdown-item" id="navTagFilesAllowed" data-toggle="tab" href="#tagFilesAllowed" aria-controls="tagFilesAllowed" aria-selected="false">Show Tag Files Allowed</a>
+      <div class="dropdown-divider"></div>
       {{#each tagFileNames as |tagFile| }}
       <a class="dropdown-item" id="navTags-{{ tagFile }}" data-toggle="tab" href="#profileTags-{{ tagFile }}" aria-controls="profileTags-{{ tagFile }}" aria-selected="false">{{ tagFile }}</a>
       {{/each }}
@@ -59,7 +61,6 @@
     {{> inputSelect field = form.fields.manifestsRequired }}
     {{> inputSelect field = form.fields.tagManifestsAllowed }}
     {{> inputSelect field = form.fields.tagManifestsRequired }}
-    {{> inputTextArea field = form.fields.tagFilesAllowed }}
   </div>
   <div class="tab-pane fade" role="tabpanel" id="profileSerialization" aria-labelledby="navSerializationTab">
     {{> inputSelect field = form.fields.serialization }}
@@ -72,6 +73,10 @@
     {{> profileTags tags = (lookup ../tagsByFile tagFile) bagItProfileId = ../bagItProfileId tagFileName = tagFile }}
   </div>
   {{/each }}
+  <div class="tab-pane fade" role="tabpanel" id="tagFilesAllowed" aria-labelledby="tagFilesAllowed">
+    {{> inputTextArea field = form.fields.tagFilesAllowed }}
+  </div>
+
 
 </div>
 
