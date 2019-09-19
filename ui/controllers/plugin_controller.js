@@ -6,7 +6,7 @@ const { Util } = require('../../core/util');
 class PluginController extends BaseController {
 
     constructor(params) {
-        super(params, 'Settings');
+        super(params, 'Help');
     }
 
     list() {

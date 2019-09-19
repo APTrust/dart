@@ -8,7 +8,7 @@ const params = new url.URLSearchParams();
 test('Constructor sets expected properties', () => {
     let controller = new PluginController(params);
     expect(controller.params).toEqual(params);
-    expect(controller.navSection).toEqual("Settings");
+    expect(controller.navSection).toEqual("Help");
 });
 
 test('list()', () => {
