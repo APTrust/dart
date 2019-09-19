@@ -224,6 +224,7 @@ function _writeIntoArchive(data, done) {
             mkdirp.sync(path.dirname(data.dest), { mode: 0o755 });
         } catch (err) {
             // Windows AppVeyor problem. Lame.
+            // TODO: Fix data.dest. It should not include "C:"
             if (err.code != 'EEXIST') {
                 throw err;
             }
