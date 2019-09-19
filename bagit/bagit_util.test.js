@@ -102,25 +102,9 @@ function expectedStandardObject() {
         "md5",
         "sha256"
       ],
-      "Manifests-Allowed": [
-        "md5",
-        "sha1",
-        "sha224",
-        "sha256",
-        "sha384",
-        "sha512"
-      ],
       "Tag-Manifests-Required": [
         "md5",
         "sha256"
-      ],
-      "Tag-Manifests-Allowed": [
-        "md5",
-        "sha1",
-        "sha224",
-        "sha256",
-        "sha384",
-        "sha512"
       ],
       "Tag-Files-Allowed": [
         "*"
