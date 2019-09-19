@@ -727,28 +727,6 @@ class Validator extends EventEmitter {
     }
 
     /**
-     * This returns a list of expected top-level file names, based on the
-     * BagItProfile. Top-level files are those directly beneath the bag's
-     * top-level folder, such as bag-info.txt and manifests.
-     *
-     * @returns {Array<string>}
-     *
-     */
-    _expectedTopLevelFiles() {
-        var expected = this.profile.tagFileNames();
-        if (this.profile.allowFetchTxt) {
-            expected.push('fetch.txt');
-        }
-        for (var alg of this.profile.manifestsRequired) {
-            expected.push(`manifest-${alg}.txt`);
-        }
-        for (var alg of this.profile.tagManifestsRequired) {
-            expected.push(`tagmanifest-${alg}.txt`);
-        }
-        return expected;
-    }
-
-    /**
      * _validateRequiredManifests checks to see if the manifests required by
      * the {@link BagItProfile} are actually present in the bag. If they're not,
      * it records the error in the Validator.errors array.
