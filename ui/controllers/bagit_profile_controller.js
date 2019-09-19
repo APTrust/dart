@@ -338,7 +338,10 @@ class BagItProfileController extends BaseController {
         let profile = BagItProfile.find(this.params.get('id'));
         let json = BagItUtil.profileToStandardJson(profile);
         let title = Context.y18n.__(profile.name);
-        let body = Templates.bagItProfileExport({ json: json });
+        let body = Templates.bagItProfileExport({
+            profile: profile,
+            json: json
+        });
         return this.modalContent(title, body);
     }
 

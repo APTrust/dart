@@ -1,13 +1,20 @@
-<div class="form-group {{ field.formGroupClass }}">
+<p class="text-info">
+  Below is an export in BagIt Profile v1.2.0 format. Please be sure the BagIt-Profile-Identifier URL is correct before publishing this profile. Also note that this format cannot capture certain requirements, including:
+</p>
+<ul class="text-info">
+  <li>lists of allowed manifests</li>
+  <li>lists of allowed tag manifests</li>
+  <li>information about required tags outside of the bag-info.txt file</li>
+</ul>
+
+
+<div class="form-group">
   <textarea id="txtJson" name="txtJson" class="form-control" rows="20">{{~ json ~}}</textarea>
 </div>
 
 
 <div class="bottom-buttons">
-  <div class="pull-right">
-    <a class="btn btn-primary" href="#" role="button">Save</a>
-  </div>
   <div class="pull-right mr-5">
-    <a class="btn btn-secondary" href="#" role="button">Close</a>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
   </div>
 </div>
