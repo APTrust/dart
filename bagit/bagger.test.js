@@ -174,5 +174,11 @@ test('create() using FileSystemWriter', done => {
         validator.validate();
     });
 
+    // This shouldn't happen, but it does on Windows AppVeyor build.
+    // Force test to fail here to see if we can track it down.
+    bagger.on('error', function(err) {
+        throw err;
+    });
+
     bagger.create();
 });
