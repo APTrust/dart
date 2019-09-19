@@ -220,7 +220,14 @@ function writeIntoArchive(data, done) {
 
 function _writeIntoArchive(data, done) {
     if (!fs.existsSync(path.dirname(data.dest))) {
-        mkdirp.sync(path.dirname(data.dest), { mode: 0o755 });
+        try {
+            mkdirp.sync(path.dirname(data.dest), { mode: 0o755 });
+        } catch (err) {
+            // Windows AppVeyor problem. Lame.
+            if (err.code != 'EEXIST') {
+                throw err;
+            }
+        }
     }
     if (data.hashes.length == 0) {
         // Use fast fs copy if there are no hashes to compute
