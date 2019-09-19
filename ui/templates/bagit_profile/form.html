@@ -85,11 +85,13 @@
 {{> inputHidden field = form.fields.baseProfileId }}
 
 <div class="bottom-buttons">
-  {{#if (eq form.obj.isBuiltIn false) }}
   <div class="pull-left">
+  {{#if (eq form.obj.isBuiltIn false) }}
     <a class="btn btn-danger" href="#{{ form.objType }}/destroy?id={{ form.fields.id.value }}" role="button">Delete Profile</a>
-  </div>
   {{/if}}
+    <a class="btn btn-outline-success" href="#{{ form.objType }}/exportProfile?id={{ form.fields.id.value }}" role="button">Export Profile</a>
+  </div>
+
   <div class="pull-right">
     <a class="btn btn-primary" href="#{{ form.objType }}/update?id={{ form.fields.id.value }}" role="button">Save</a>
   </div>

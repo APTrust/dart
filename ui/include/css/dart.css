@@ -80,6 +80,7 @@ hr.menu-divider {
    border-top:6px solid rgba(66,139,202,.8);
    border-radius:100%;
 }
+
 @keyframes rotation {
    from {transform: rotate(0deg);}
    to {transform: rotate(359deg);}
@@ -154,4 +155,9 @@ ul.ui-autocomplete {
 
 .popover{
     max-width: 60%;
+}
+
+.modal-dialog {
+    max-width: 80%;
+    margin: 1.75rem auto;
 }

@@ -269,5 +269,9 @@
   "Imported from %s": "Imported from %s",
   "Profile must allow at least one payload manifest algorithm.": "Profile must allow at least one payload manifest algorithm.",
   "Choose One": "Choose One",
-  "You must specify a package format.": "You must specify a package format."
+  "You must specify a package format.": "You must specify a package format.",
+  "Zip Profile": "Zip Profile",
+  "DPN": "DPN",
+  "Copy of DPN": "Copy of DPN",
+  "APTrust with default values": "APTrust with default values"
 }
