@@ -278,7 +278,6 @@ class Bagger extends EventEmitter {
         let fsReader = new fsReaderClass(absPath);
         fsReader.on('entry', function(entry) {
             let fullPath = path.join(absPath, entry.relPath);
-            //let relDestPath = path.join('data', fullPath); // xxx
             let relDestPath = bagger._getRelDestPath(fullPath);
             if (entry.fileStat.isFile()) {
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
@@ -358,13 +357,7 @@ class Bagger extends EventEmitter {
     _getRelDestPath(absPath) {
         var relDestPath = 'data' + absPath;
         if (os.platform() == 'win32') {
-            if(this.formatWriter.constructor.name === 'TarWriter') {
-                // Remove C: prefix and change backslashes to forward slashes
-                relDestPath = 'data' + Util.normalizeWindowsPath(absPath);
-            } else {
-                // Remove C: or share prefix, but keep backslashes
-                relDestPath = 'data' + Util.removeWindowsDrivePrefix(absPath);
-            }
+            relDestPath = 'data' + Util.normalizeWindowsPath(absPath);
         }
         return relDestPath;
     }
