@@ -144,9 +144,14 @@ test('Util.escapeBackslashes()', () => {
     expect(Util.escapeBackslashes("C:\\Users\\sally")).toEqual("C:\\\\Users\\\\sally");
 });
 
-test('Util.windowsToBagItPath()', () => {
+test('Util.normalizeWindowsPath()', () => {
     expect(Util.normalizeWindowsPath("C:\\Users\\sally")).toEqual("/Users/sally");
     expect(Util.normalizeWindowsPath("\\remote\\sally")).toEqual("/remote/sally");
+});
+
+test('Util.removeWindowsDrivePrefix()', () => {
+    expect(Util.removeWindowsDrivePrefix("C:\\Users\\sally")).toEqual("\\Users\\sally");
+    expect(Util.removeWindowsDrivePrefix("\\\\share\\remote\\sally")).toEqual("\\remote\\sally");
 });
 
 test('Util.walkSync()', () => {

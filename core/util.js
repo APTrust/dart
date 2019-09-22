@@ -304,13 +304,26 @@ class Util {
       *
       */
 	static normalizeWindowsPath(winPath) {
-		// Remove C:
-		winPath = winPath.replace(/^[A-Z]:/i, '');
-		// Remove \\share
-		winPath = winPath.replace(/^\\\\[^\\]+/, '');
+        winPath = Util.removeWindowsDrivePrefix(winPath);
 		// Backslash to forward slash
 		return winPath.replace(/\\/g, '/');
 	}
+
+    /**
+	  * Strips off drive letters and share names from Windows paths.
+      * E.g. "C:\some\path" becomes "\some\path" and "\\share\some\path"
+      * becomes "\some\path"
+      *
+      * @param {string} winPath - An absolute Windows path.
+      * @returns {string} - Path with drive and share removed.
+      *
+      */
+    static removeWindowsDrivePrefix(winPath) {
+		// Remove C:
+		winPath = winPath.replace(/^[A-Z]:/i, '');
+		// Remove \\share
+		return winPath.replace(/^\\\\[^\\]+/, '');
+    }
 
     /**
      * walkSync recursively lists all files in a directory and its
