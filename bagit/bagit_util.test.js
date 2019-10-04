@@ -9,6 +9,10 @@ const BASE_PATH = path.join(__dirname, '..', 'test', 'profiles', 'bagit_profiles
 const FOO_PATH = path.join(BASE_PATH, 'bagProfileFoo.json');
 const BAR_PATH = path.join(BASE_PATH, 'bagProfileBar.json');
 
+const LOC_PATH = path.join(__dirname, '..', 'test', 'profiles', 'loc');
+const LOC_ORDERED_PATH = path.join(LOC_PATH, 'SANC-state-profile.json');
+const LOC_UNORDERED_PATH = path.join(LOC_PATH, 'other-project-profile.json');
+
 // This implicitly tests profileFromStandardObject as well.
 test('profileFromStandardJson', () => {
     let fooProfileJson = fs.readFileSync(FOO_PATH).toString();
@@ -84,6 +88,25 @@ test('profileToStandardJson', () => {
     let expected = JSON.stringify(expectedStandardObject(), null, 2);
     expect(json).toBeDefined();
     expect(json).toEqual(expected);
+});
+
+test('guessProfileType', () => {
+    let dartProfile = TestUtil.loadProfile('multi_manifest.json');
+    expect(BagItUtil.guessProfileType(dartProfile)).toEqual('dart');
+
+    let locOrdered = JSON.parse(fs.readFileSync(LOC_ORDERED_PATH));
+    expect(BagItUtil.guessProfileType(locOrdered)).toEqual('loc_ordered');
+
+    let locUnordered = JSON.parse(fs.readFileSync(LOC_UNORDERED_PATH));
+    expect(BagItUtil.guessProfileType(locUnordered)).toEqual('loc_unordered');
+
+    let githubBagit = JSON.parse(fs.readFileSync(FOO_PATH));
+    expect(BagItUtil.guessProfileType(githubBagit)).toEqual('bagit_profiles');
+
+    // Path to StorageService object
+    let ssPath = path.join(__dirname, '..', 'test', 'fixtures', 'StorageService_001.json');
+    let notAProfile = JSON.parse(fs.readFileSync(ssPath));
+    expect(BagItUtil.guessProfileType(notAProfile)).toEqual('unknown');
 });
 
 

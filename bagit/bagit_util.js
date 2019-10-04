@@ -93,6 +93,65 @@ class BagItUtil {
     }
 
     /**
+     * This function tries to guess the type of BagIt Profile based on
+     * the keys in the profile object. Returns one of the following:
+     *
+     * * "bagit_profiles" - This profile is of the type described
+     *   in the [bagit-profiles](https://github.com/bagit-profiles/bagit-profiles) GitHub repo.
+     * * "loc_unordered" - This is an unordered Library of Congress
+     *   profile, like the example at [other-project-profile.json](https://github.com/LibraryOfCongress/bagger/blob/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/other-project-profile.json)
+     * * "loc_ordered" - An ordered Library of Congress profile, like the
+     *   [SANC State Profile](https://github.com/LibraryOfCongress/bagger/blob/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/SANC-state-profile.json)
+     * * "dart" - A DART BagIt profile, like the [APTrust BagIt Profile](https://github.com/APTrust/dart/blob/master/plugins/setup/aptrust/bagit_profiles.json)
+     * * "unknown" - Cannot identify profile type.
+     *
+     * The great thing about standards is that there are so many of them.
+     *
+     * @param {object}
+     * @returns {string}
+     *
+     */
+    static guessProfileType(obj) {
+        let type = 'unknown';
+        if (Array.isArray(obj['tags'])) {
+            type = 'dart';
+        } else if (Array.isArray(obj['ordered'])) {
+            type = 'loc_ordered';
+        } else if (typeof obj['Bag-Info'] == 'object') {
+            type = 'bagit_profiles'
+        } else {
+            let everythingLooksLikeATag = true;
+            for (let item of Object.values(obj)) {
+                // Tags have at least one of these properties.
+                if (item['fieldRequired'] === undefined && item['requiredValue'] === undefined) {
+                    everythingLooksLikeATag = false;
+                    break;
+                }
+            }
+            if (everythingLooksLikeATag) {
+                type = 'loc_unordered'
+            }
+        }
+        return type;
+    }
+
+    /**
+     *
+     *
+     */
+    static profileFromLOCOrdered(obj) {
+
+    }
+
+    /**
+     *
+     *
+     */
+    static profileFromLOC(obj) {
+
+    }
+
+    /**
      * This function converts a DART BagItProfile object to the format
      * described at https://github.com/bagit-profiles/bagit-profiles.
      *
