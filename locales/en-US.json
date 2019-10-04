@@ -275,5 +275,6 @@
   "Copy of DPN": "Copy of DPN",
   "APTrust with default values": "APTrust with default values",
   "Imported Profile": "Imported Profile",
-  "Imported Profile %s": "Imported Profile %s"
+  "Imported Profile %s": "Imported Profile %s",
+  "Object does not look like an ordered Library of Congress BagIt profile": "Object does not look like an ordered Library of Congress BagIt profile"
 }

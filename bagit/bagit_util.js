@@ -139,8 +139,12 @@ class BagItUtil {
     }
 
     /**
+     * Converts an ordered Library of Congress BagIt profile like the
+     * [SANC-state-profile.json](https://raw.githubusercontent.com/LibraryOfCongress/bagger/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/SANC-state-profile.json)
+     * profile to a DART BagIt profile.
      *
-     *
+     * @param {object}
+     * @returns {BagItProfile}
      */
     static profileFromLOCOrdered(obj) {
         if (BagItUtil.guessProfileType(obj) != 'loc_ordered') {
@@ -159,11 +163,25 @@ class BagItUtil {
     }
 
     /**
+     * Converts an unordered Library of Congress BagIt profile like the
+     * [other-project-profile.json](https://raw.githubusercontent.com/LibraryOfCongress/bagger/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/other-project-profile.json)
+     * profile to a DART BagIt profile.
      *
-     *
+     * @param {object}
+     * @returns {BagItProfile}
      */
     static profileFromLOC(obj) {
-
+        if (BagItUtil.guessProfileType(obj) != 'loc_unordered') {
+            throw Context.y18n.__("Object does not look like an unordered Library of Congress BagIt profile");
+        }
+        var now = new Date();
+        var dartProfile = new BagItProfile();
+        dartProfile.name = Context.y18n.__("Imported Profile %s", now.toISOString());
+        dartProfile.description = dartProfile.name;
+        for (let [tagName, tagObj] of Object.entries(obj)) {
+            BagItUtil.convertLOCTag(dartProfile, tagName, tagObj);
+        }
+        return dartProfile;
     }
 
     static convertLOCTag(dartProfile, tagName, locTag) {
@@ -181,6 +199,11 @@ class BagItUtil {
         tagDef.required = locTag["fieldRequired"] || false;
         tagDef.values = locTag["valueList"] || [];
         tagDef.defaultValue = locTag["defaultValue"] || null;
+        if (locTag["requiredValue"]) {
+            tagDef.required = true;
+            tagDef.values = [locTag["requiredValue"]];
+            tagDef.defaultValue = locTag["requiredValue"];
+        }
     }
 
     /**

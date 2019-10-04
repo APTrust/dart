@@ -113,14 +113,7 @@ test('profileFromLOCOrdered', () => {
     let locOrdered = JSON.parse(fs.readFileSync(LOC_ORDERED_PATH));
     let p = BagItUtil.profileFromLOCOrdered(locOrdered);
 
-    expect(p.name.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
-    expect(p.description.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
-    expect(p.manifestsRequired).toEqual(['sha256']);
-    expect(p.manifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
-    expect(p.tagManifestsRequired).toEqual([]);
-    expect(p.tagManifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
-    expect(p.tagFilesAllowed).toEqual(["*"]);
-    expect(p.serialization).toEqual("optional");
+    testBasicLOCProps(p);
 
     let importedTagNames = [
         "itemNumber",
@@ -154,6 +147,53 @@ test('profileFromLOCOrdered', () => {
         'Not-Yet-Known' ]);
     expect(classTag.defaultValue).toEqual('???');
 });
+
+test('profileFromLOCUnordered', () => {
+    let locUnordered = JSON.parse(fs.readFileSync(LOC_UNORDERED_PATH));
+    let p = BagItUtil.profileFromLOC(locUnordered);
+
+    testBasicLOCProps(p);
+
+    let importedTagNames = [
+	    "Send-To-Name",
+        "Send-To-Phone",
+        "Send-To-Email",
+        "External-Identifier",
+        "Media-Identifiers",
+        "Number-Of-Media-Shipped",
+        "Additional-Equipment",
+        "Ship-Date",
+        "Ship-Method",
+        "Ship-Tracking-Number",
+        "Ship-Media",
+        "Ship-To-Address"
+    ];
+    for (let tagName of importedTagNames) {
+        let tag = p.firstMatchingTag("tagName", tagName);
+        expect(tag).toBeDefined();
+    }
+
+    let sendToEmail = p.firstMatchingTag("tagName", "Send-To-Email");
+    expect(sendToEmail.required).toBe(true);
+    expect(sendToEmail.defaultValue).toEqual("sbos@loc.gov");
+    expect(sendToEmail.values).toEqual(["sbos@loc.gov"]);
+
+    let tracking = p.firstMatchingTag("tagName", "Ship-Tracking-Number");
+    expect(tracking.required).toBe(false);
+    expect(tracking.defaultValue).toBeNull();
+    expect(tracking.values).toEqual([]);
+});
+
+function testBasicLOCProps(p) {
+    expect(p.name.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
+    expect(p.description.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
+    expect(p.manifestsRequired).toEqual(['sha256']);
+    expect(p.manifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
+    expect(p.tagManifestsRequired).toEqual([]);
+    expect(p.tagManifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
+    expect(p.tagFilesAllowed).toEqual(["*"]);
+    expect(p.serialization).toEqual("optional");
+}
 
 function expectedStandardObject() {
     return {
