@@ -276,5 +276,15 @@
   "APTrust with default values": "APTrust with default values",
   "Imported Profile": "Imported Profile",
   "Imported Profile %s": "Imported Profile %s",
-  "Object does not look like an ordered Library of Congress BagIt profile": "Object does not look like an ordered Library of Congress BagIt profile"
+  "Object does not look like an ordered Library of Congress BagIt profile": "Object does not look like an ordered Library of Congress BagIt profile",
+  "APTrust": "APTrust",
+  "Import BagIt Profile": "Import BagIt Profile",
+  "URL of BagIt Profile": "URL of BagIt Profile",
+  "Import from URL": "Import from URL",
+  "Import from JSON": "Import from JSON",
+  "Profile Name": "Profile Name",
+  "Profile Description": "Profile Description",
+  "Profile URL": "Profile URL",
+  "Import BagIt Profile from URL": "Import BagIt Profile from URL",
+  "BagIt Profile JSON": "BagIt Profile JSON"
 }

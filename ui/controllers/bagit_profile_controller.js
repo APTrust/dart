@@ -317,7 +317,9 @@ class BagItProfileController extends BaseController {
     // Show screen where user can choose to import a profile from
     // a URL, a file, or a textarea.
     importStart() {
-
+        let title = Context.y18n.__("Import BagIt Profile");
+        let body = Templates.bagItProfileImport();
+        return this.modalContent(title, body);
     }
 
     // Import the profile from the url/file/textarea.
