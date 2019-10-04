@@ -273,5 +273,7 @@
   "Zip Profile": "Zip Profile",
   "DPN": "DPN",
   "Copy of DPN": "Copy of DPN",
-  "APTrust with default values": "APTrust with default values"
+  "APTrust with default values": "APTrust with default values",
+  "Imported Profile": "Imported Profile",
+  "Imported Profile %s": "Imported Profile %s"
 }

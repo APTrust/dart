@@ -109,6 +109,51 @@ test('guessProfileType', () => {
     expect(BagItUtil.guessProfileType(notAProfile)).toEqual('unknown');
 });
 
+test('profileFromLOCOrdered', () => {
+    let locOrdered = JSON.parse(fs.readFileSync(LOC_ORDERED_PATH));
+    let p = BagItUtil.profileFromLOCOrdered(locOrdered);
+
+    expect(p.name.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
+    expect(p.description.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
+    expect(p.manifestsRequired).toEqual(['sha256']);
+    expect(p.manifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
+    expect(p.tagManifestsRequired).toEqual([]);
+    expect(p.tagManifestsAllowed).toEqual(["md5","sha1","sha224","sha256","sha384","sha512"]);
+    expect(p.tagFilesAllowed).toEqual(["*"]);
+    expect(p.serialization).toEqual("optional");
+
+    let importedTagNames = [
+        "itemNumber",
+        "rcNumber",
+        "transferringAgencyName",
+        "creatingAgencyName",
+        "creatingAgencySubdivision",
+        "transferringEmployee",
+        "receivingInstitution",
+        "receivingInstitutionAddress",
+        "datesOfRecords (YYYY-MM-DD) - (YYYY-MM-DD)",
+        "digitalOriginality",
+        "Classification (for Access)",
+        "digitalContentStructure",
+        "Notes"
+    ];
+
+    for (let tagName of importedTagNames) {
+        let tag = p.firstMatchingTag("tagName", tagName);
+        expect(tag).toBeDefined();
+    }
+
+    let classTag = p.firstMatchingTag("tagName", "Classification (for Access)");
+    expect(classTag.required).toBe(true);
+    expect(classTag.values).toEqual([
+        '???',
+        'Open/Public',
+        'Open/Redacted',
+        'Contains Some Confidental Records',
+        'Confidential/Sensitive',
+        'Not-Yet-Known' ]);
+    expect(classTag.defaultValue).toEqual('???');
+});
 
 function expectedStandardObject() {
     return {

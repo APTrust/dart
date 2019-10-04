@@ -41,6 +41,9 @@ class BagItUtil {
      *
      */
     static profileFromStandardObject(obj) {
+        if (BagItUtil.guessProfileType(obj) != 'bagit_profiles') {
+            throw Context.y18n.__("Object does not look like a BagIt profile");
+        }
         var p = new BagItProfile();
         p.name = obj["BagIt-Profile-Info"]["External-Description"];
         p.description = Context.y18n.__("Imported from %s", obj["BagIt-Profile-Info"]["BagIt-Profile-Identifier"]);
@@ -140,7 +143,19 @@ class BagItUtil {
      *
      */
     static profileFromLOCOrdered(obj) {
-
+        if (BagItUtil.guessProfileType(obj) != 'loc_ordered') {
+            throw Context.y18n.__("Object does not look like an ordered Library of Congress BagIt profile");
+        }
+        var now = new Date();
+        var dartProfile = new BagItProfile();
+        dartProfile.name = Context.y18n.__("Imported Profile %s", now.toISOString());
+        dartProfile.description = dartProfile.name;
+        for (let item of obj['ordered']) {
+            let tagName = Object.keys(item)[0];
+            let tagObj = Object.values(item)[0];
+            BagItUtil.convertLOCTag(dartProfile, tagName, tagObj);
+        }
+        return dartProfile;
     }
 
     /**
@@ -149,6 +164,23 @@ class BagItUtil {
      */
     static profileFromLOC(obj) {
 
+    }
+
+    static convertLOCTag(dartProfile, tagName, locTag) {
+        let tagDef;
+        let tagsFromProfile = dartProfile.findMatchingTags("tagName", tagName).filter(t => t.tagFile = "bag-info.txt");
+        if (tagsFromProfile.length > 0) {
+            tagDef = tagsFromProfile[0];
+        } else {
+            tagDef = new TagDefinition({
+                tagFile: "bag-info.txt",
+                tagName: tagName
+            });
+            dartProfile.tags.push(tagDef);
+        }
+        tagDef.required = locTag["fieldRequired"] || false;
+        tagDef.values = locTag["valueList"] || [];
+        tagDef.defaultValue = locTag["defaultValue"] || null;
     }
 
     /**
