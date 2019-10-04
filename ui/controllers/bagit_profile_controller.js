@@ -5,10 +5,12 @@ const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { BagItUtil } = require('../../bagit/bagit_util');
 const { BaseController } = require('./base_controller');
 const { NewBagItProfileForm } = require('../forms/new_bagit_profile_form');
+const request = require('request');
 const { TagDefinition } = require('../../bagit/tag_definition');
 const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const { TagFileForm } = require('../forms/tag_file_form');
 const Templates = require('../common/templates');
+const url = require('url');
 const { Util } = require('../../core/util');
 
 const typeMap = {
@@ -369,7 +371,6 @@ class BagItProfileController extends BaseController {
     }
 
     _importProfile() {
-        console.log(this);
         var importSource = $("input[name='importSource']:checked").val();
         if (importSource == 'URL') {
             this._importProfileFromUrl();
@@ -379,13 +380,75 @@ class BagItProfileController extends BaseController {
     }
 
     _importProfileFromUrl() {
-        var profileUrl = $("#txtUrl").val();
-        alert(profileUrl);
+        let controller = this;
+        let profileUrl = $("#txtUrl").val();
+        try {
+            new url.URL(profileUrl);
+        } catch (ex) {
+            alert(Context.y18n.__("Please enter a valid URL."));
+        }
+        request(profileUrl, function (error, response, body) {
+            if (error) {
+                let msg = Context.y18n.__("Error retrieving profile from %s: %s", profileUrl, error);
+                Context.logger.error(msg);
+                alert(msg);
+            } else if (response && response.statusCode == 200) {
+                // TODO: Make sure response is JSON, not HTML.
+                controller._importWithErrHandling(body);
+            } else {
+                let statusCode = (response && response.statusCode) || Context.y18n.__('Unknown');
+                let msg = Context.y18n.__("Got response %s from %s", statusCode, profileUrl);
+                Context.logger.error(msg);
+                alert(msg);
+            }
+        });
     }
 
     _importProfileFromTextArea() {
-        var profileJson = $("#txtJson").val();
-        alert(profileJson);
+        let profileJson = $("#txtJson").val();
+        this._importWithErrHandling(profileJson);
+    }
+
+    _importWithErrHandling(json) {
+        try {
+            this._importProfileObject(json);
+        } catch (ex) {
+            let msg = Context.y18n.__("Error importing profile: %s", ex);
+            Context.logger.error(msg);
+            Context.logger.error(ex);
+            alert(msg);
+        }
+    }
+
+    _importProfileObject(json) {
+        let obj = JSON.parse(json);
+        let convertedProfile;
+        let profileType = BagItUtil.guessProfileType(obj);
+        switch (profileType) {
+        case 'dart':
+            convertedProfile = obj;
+            break;
+        case 'loc_ordered':
+            convertedProfile = BagItUtil.profileFromLOCOrdered(obj);
+            break;
+        case 'loc_unordered':
+            convertedProfile = BagItUtil.profileFromLOC(obj);
+            break;
+        case 'bagit_profiles':
+            convertedProfile = BagItUtil.profileFromStandardObject(obj);
+            break;
+        default:
+            alert(Context.y18n.__("DART does not recognize this BagIt Profile structure."));
+        }
+        if (convertedProfile) {
+            convertedProfile.save();
+            let params = new URLSearchParams({ id: convertedProfile.id });
+            return this.redirect('BagItProfile', 'edit', params);
+        } else {
+            let msg = Context.y18n.__("Failed to import profile");
+            Context.logger.error(msg);
+            alert(msg);
+        }
     }
 
     /**

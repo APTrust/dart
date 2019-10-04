@@ -290,5 +290,6 @@
   "Import from File": "Import from File",
   "Import from JSON (Cut and Paste)": "Import from JSON (Cut and Paste)",
   "Import BagIt Profile from Url": "Import BagIt Profile from Url",
-  "Profile Url": "Profile Url"
+  "Profile Url": "Profile Url",
+  "Error importing profile: %s": "Error importing profile: %s"
 }
