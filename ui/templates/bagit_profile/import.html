@@ -8,27 +8,17 @@
     <div class="form-check">
         <input class="form-check-input" type="radio" name="importSource" id="importSourceTextArea" value="TextArea">
         <label class="form-check-label" for="importSourceTextArea">
-            {{ translate 'Import from JSON' }}
+            {{ translate 'Import from JSON (Cut and Paste)' }}
         </label>
     </div>
 </div>
 
-<div class="form-group" id="txtURLContainer">
-    <label class="control-label" for="txtURL">{{ translate 'Import BagIt Profile from URL' }}</label>
-  <input type="text" id="txtURL" name="txtURL" class="form-control" placeholder="{{ translate 'Profile URL' }}" />
+<div class="form-group" id="txtUrlContainer" style="display:none;">
+    <label class="control-label" for="txtUrl">{{ translate 'Import BagIt Profile from Url' }}</label>
+  <input type="text" id="txtUrl" name="txtUrl" class="form-control" placeholder="{{ translate 'Profile Url' }}" />
 </div>
 
-<div class="form-group" id="txtNameContainer">
-    <label class="control-label" for="txtName">{{ translate 'Profile Name' }}</label>
-    <input type="text" id="txtName" name="txtName" class="form-control" placeholder="{{ translate 'Profile Name' }}" />
-</div>
-
-<div class="form-group" id="txtDescriptionContainer">
-    <label class="control-label" for="txtDescription">{{ translate 'Profile Description' }}</label>
-  <input type="text" id="txtDescription" name="txtDescription" class="form-control" placeholder="{{ translate 'Profile Description' }}" />
-</div>
-
-<div class="form-group" id="txtJsonContainer">
+<div class="form-group" id="txtJsonContainer" style="display:none;">
     <label class="control-label" for="txtJson">{{ translate 'BagIt Profile JSON' }}</label>
     <textarea id="txtJson" name="txtJson" class="form-control" rows="16"></textarea>
 </div>
@@ -36,7 +26,10 @@
 
 
 <div class="bottom-buttons">
-  <div class="pull-right mr-5">
+  <div class="pull-right">
+    <button class="btn btn-primary" type="button" id="btnImport">Import</button>
+  </div>
+  <div class="pull-right mr-3">
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
   </div>
 </div>

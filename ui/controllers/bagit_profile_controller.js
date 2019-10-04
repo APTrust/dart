@@ -348,9 +348,44 @@ class BagItProfileController extends BaseController {
     }
 
     postRenderCallback(fnName) {
+        let controller = this;
         if (fnName == 'newTagFile' || fnName == 'newTagFileCreate') {
             $('#tagFileForm_tagFileName').keydown(this._enterKeyHandler);
+        } else if (fnName == 'importStart') {
+            $('#importSourceUrl').click(this._importSourceUrlClick);
+            $('#importSourceTextArea').click(this._importSourceTextAreaClick);
+            $('#btnImport').click(function() { controller._importProfile() });
         }
+    }
+
+    _importSourceUrlClick(e) {
+        $('#txtJsonContainer').hide();
+        $('#txtUrlContainer').show();
+    }
+
+    _importSourceTextAreaClick(e) {
+        $('#txtUrlContainer').hide();
+        $('#txtJsonContainer').show();
+    }
+
+    _importProfile() {
+        console.log(this);
+        var importSource = $("input[name='importSource']:checked").val();
+        if (importSource == 'URL') {
+            this._importProfileFromUrl();
+        } else if (importSource == 'TextArea') {
+            this._importProfileFromTextArea();
+        }
+    }
+
+    _importProfileFromUrl() {
+        var profileUrl = $("#txtUrl").val();
+        alert(profileUrl);
+    }
+
+    _importProfileFromTextArea() {
+        var profileJson = $("#txtJson").val();
+        alert(profileJson);
     }
 
     /**

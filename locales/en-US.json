@@ -286,5 +286,9 @@
   "Profile Description": "Profile Description",
   "Profile URL": "Profile URL",
   "Import BagIt Profile from URL": "Import BagIt Profile from URL",
-  "BagIt Profile JSON": "BagIt Profile JSON"
+  "BagIt Profile JSON": "BagIt Profile JSON",
+  "Import from File": "Import from File",
+  "Import from JSON (Cut and Paste)": "Import from JSON (Cut and Paste)",
+  "Import BagIt Profile from Url": "Import BagIt Profile from Url",
+  "Profile Url": "Profile Url"
 }
