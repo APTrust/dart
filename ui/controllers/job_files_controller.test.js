@@ -136,7 +136,7 @@ test('dropping a file adds it to the UI and job', done => {
         // Make sure files were added to the job itself.
         expect(job.packageOp.sourceFiles.length).toEqual(allFiles.length);
         done();
-    }, 150);
+    }, 350);
 });
 
 test('deleting a file removes it from the UI and job', done => {
@@ -168,5 +168,5 @@ test('deleting a file removes it from the UI and job', done => {
         // We started with 3, should now have two.
         expect(job.packageOp.sourceFiles.length).toEqual(2);
         done();
-    }, 50);
+    }, 350);
 });
