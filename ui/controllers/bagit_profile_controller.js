@@ -316,16 +316,24 @@ class BagItProfileController extends BaseController {
         return this.noContent();
     }
 
-    // Show screen where user can choose to import a profile from
-    // a URL, a file, or a textarea.
+    /**
+     * This shows a screen where user can choose to import a profile from
+     * a URL or a textarea.
+     *
+     */
     importStart() {
         let title = Context.y18n.__("Import BagIt Profile");
         let body = Templates.bagItProfileImport();
         return this.modalContent(title, body);
     }
 
-    // Add a button on the profile definition page that allows user
-    // to export DART profile to standard BagIt profile.
+    /**
+     * Exports a DART BagIt Profile to the format used by
+     * https://github.com/bagit-profiles/bagit-profiles/
+     *
+     * The exported profile appears in a modal window.
+     *
+     */
     exportProfile() {
         let profile = BagItProfile.find(this.params.get('id'));
         let json = BagItUtil.profileToStandardJson(profile);
@@ -337,6 +345,12 @@ class BagItProfileController extends BaseController {
         return this.modalContent(title, body);
     }
 
+    /**
+     * Attaches event handlers to elements after they are rendered
+     * on the page.
+     *
+     * @private
+     */
     postRenderCallback(fnName) {
         let controller = this;
         if (fnName == 'newTagFile' || fnName == 'newTagFileCreate') {
@@ -348,16 +362,39 @@ class BagItProfileController extends BaseController {
         }
     }
 
+    /**
+     * Handler for clicks on the radio button where user specifies
+     * that they want to import a BagIt profile from a URL.
+     *
+     * This shows the URL field and hides the textarea.
+     *
+     * @private
+     */
     _importSourceUrlClick(e) {
         $('#txtJsonContainer').hide();
         $('#txtUrlContainer').show();
     }
 
+
+    /**
+     * Handler for clicks on the radio button where user specifies
+     * that they want to import a BagIt profile from cut-and-paste JSON.
+     *
+     * This shows the textarea and hides the URL field.
+     *
+     * @private
+     */
     _importSourceTextAreaClick(e) {
         $('#txtUrlContainer').hide();
         $('#txtJsonContainer').show();
     }
 
+    /**
+     * This calls the correct function to import a BagIt Profile, based
+     * on the input source (URL or text area).
+     *
+     * @private
+     */
     _importProfile() {
         var importSource = $("input[name='importSource']:checked").val();
         if (importSource == 'URL') {
@@ -367,6 +404,12 @@ class BagItProfileController extends BaseController {
         }
     }
 
+    /**
+     * Imports a bagit-profile of Library of Congress style BagIt Profile
+     * from the URL the user specified.
+     *
+     * @private
+     */
     _importProfileFromUrl() {
         let controller = this;
         let profileUrl = $("#txtUrl").val();
@@ -392,22 +435,43 @@ class BagItProfileController extends BaseController {
         });
     }
 
+    /**
+     * Imports a bagit-profile of Library of Congress style BagIt Profile
+     * from the JSON in the textarea.
+     *
+     * @private
+     */
     _importProfileFromTextArea() {
         let profileJson = $("#txtJson").val();
         this._importWithErrHandling(profileJson);
     }
 
+
+    /**
+     * This wraps the import process in a general error handler.
+     *
+     * @private
+     */
     _importWithErrHandling(json, profileUrl) {
         try {
             this._importProfileObject(json, profileUrl);
+            return true;
         } catch (ex) {
             let msg = Context.y18n.__("Error importing profile: %s", ex);
             Context.logger.error(msg);
             Context.logger.error(ex);
             alert(msg);
+            return false;
         }
     }
 
+
+    /**
+     * This performs the actual import of the BagIt profile. It may throw
+     * any number of errors, which must be handled by the caller.
+     *
+     * @private
+     */
     _importProfileObject(json, profileUrl) {
         let obj;
         try {
