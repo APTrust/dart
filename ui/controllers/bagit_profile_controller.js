@@ -409,7 +409,16 @@ class BagItProfileController extends BaseController {
     }
 
     _importProfileObject(json, profileUrl) {
-        let obj = JSON.parse(json);
+        let obj;
+        try {
+            obj = JSON.parse(json);
+        } catch (ex) {
+            let msg = Context.y18n.__("Error parsing JSON: %s. ", ex.message || ex);
+            if (profileUrl) {
+                msg += Context.y18n.__("Be sure the URL returned JSON, not HTML.");
+            }
+            throw msg;
+        }
         let convertedProfile;
         let profileType = BagItUtil.guessProfileType(obj);
         switch (profileType) {

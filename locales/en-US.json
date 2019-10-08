@@ -293,5 +293,7 @@
   "Profile Url": "Profile Url",
   "Error importing profile: %s": "Error importing profile: %s",
   "Profile imported from %s": "Profile imported from %s",
-  "Imported BagIt profile. Please review the profile to ensure it is accurate.": "Imported BagIt profile. Please review the profile to ensure it is accurate."
+  "Imported BagIt profile. Please review the profile to ensure it is accurate.": "Imported BagIt profile. Please review the profile to ensure it is accurate.",
+  "Error parsing JSON: %s. ": "Error parsing JSON: %s. ",
+  "Be sure the URL returned JSON, not HTML.": "Be sure the URL returned JSON, not HTML."
 }
