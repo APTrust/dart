@@ -291,5 +291,7 @@
   "Import from JSON (Cut and Paste)": "Import from JSON (Cut and Paste)",
   "Import BagIt Profile from Url": "Import BagIt Profile from Url",
   "Profile Url": "Profile Url",
-  "Error importing profile: %s": "Error importing profile: %s"
+  "Error importing profile: %s": "Error importing profile: %s",
+  "Profile imported from %s": "Profile imported from %s",
+  "Imported BagIt profile. Please review the profile to ensure it is accurate.": "Imported BagIt profile. Please review the profile to ensure it is accurate."
 }

@@ -127,7 +127,7 @@ class BagItProfileController extends BaseController {
     edit() {
         let profile = BagItProfile.find(this.params.get('id'));
         let opts = {
-            alertMessage: this.alertMessage
+            alertMessage: this.alertMessage || this.params.get('alertMessage')
         };
         this.alertMessage = null;
         return this.containerContent(this._getPageHTML(profile, opts));
@@ -324,18 +324,6 @@ class BagItProfileController extends BaseController {
         return this.modalContent(title, body);
     }
 
-    // Import the profile from the url/file/textarea.
-    // This should say whether the profile is valid in DART.
-    importRun() {
-
-    }
-
-    // Save the imported profile.
-    // Don't allow save if profile is not valid in DART?
-    importSave() {
-
-    }
-
     // Add a button on the profile definition page that allows user
     // to export DART profile to standard BagIt profile.
     exportProfile() {
@@ -394,7 +382,7 @@ class BagItProfileController extends BaseController {
                 alert(msg);
             } else if (response && response.statusCode == 200) {
                 // TODO: Make sure response is JSON, not HTML.
-                controller._importWithErrHandling(body);
+                controller._importWithErrHandling(body, profileUrl);
             } else {
                 let statusCode = (response && response.statusCode) || Context.y18n.__('Unknown');
                 let msg = Context.y18n.__("Got response %s from %s", statusCode, profileUrl);
@@ -409,9 +397,9 @@ class BagItProfileController extends BaseController {
         this._importWithErrHandling(profileJson);
     }
 
-    _importWithErrHandling(json) {
+    _importWithErrHandling(json, profileUrl) {
         try {
-            this._importProfileObject(json);
+            this._importProfileObject(json, profileUrl);
         } catch (ex) {
             let msg = Context.y18n.__("Error importing profile: %s", ex);
             Context.logger.error(msg);
@@ -420,7 +408,7 @@ class BagItProfileController extends BaseController {
         }
     }
 
-    _importProfileObject(json) {
+    _importProfileObject(json, profileUrl) {
         let obj = JSON.parse(json);
         let convertedProfile;
         let profileType = BagItUtil.guessProfileType(obj);
@@ -429,10 +417,10 @@ class BagItProfileController extends BaseController {
             convertedProfile = obj;
             break;
         case 'loc_ordered':
-            convertedProfile = BagItUtil.profileFromLOCOrdered(obj);
+            convertedProfile = BagItUtil.profileFromLOCOrdered(obj, profileUrl);
             break;
         case 'loc_unordered':
-            convertedProfile = BagItUtil.profileFromLOC(obj);
+            convertedProfile = BagItUtil.profileFromLOC(obj, profileUrl);
             break;
         case 'bagit_profiles':
             convertedProfile = BagItUtil.profileFromStandardObject(obj);
@@ -442,7 +430,10 @@ class BagItProfileController extends BaseController {
         }
         if (convertedProfile) {
             convertedProfile.save();
-            let params = new URLSearchParams({ id: convertedProfile.id });
+            let params = new URLSearchParams({
+                id: convertedProfile.id,
+                alertMessage: Context.y18n.__("Imported BagIt profile. Please review the profile to ensure it is accurate.")
+            });
             return this.redirect('BagItProfile', 'edit', params);
         } else {
             let msg = Context.y18n.__("Failed to import profile");

@@ -184,6 +184,15 @@ test('profileFromLOCUnordered', () => {
     expect(tracking.values).toEqual([]);
 });
 
+test('_getProfileName', () => {
+    let expectedStart = Context.y18n.__("Imported Profile");
+    expect(BagItUtil._getProfileName().startsWith(expectedStart)).toBe(true);
+
+    let sourceUrl = "https://example.com/profiles/profile.json"
+    let expectedWithURL = Context.y18n.__("Profile imported from %s", sourceUrl);
+    expect(BagItUtil._getProfileName(sourceUrl)).toEqual(expectedWithURL);
+});
+
 function testBasicLOCProps(p) {
     expect(p.name.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
     expect(p.description.startsWith(Context.y18n.__("Imported Profile"))).toBe(true);
