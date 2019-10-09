@@ -62,6 +62,15 @@ class PackageOperation {
          */
         this.packageFormat = null;
         /**
+         * The serialization format of the bag to be produced. This applies
+         * only when creating bags. Some profiles include an acceptSerialization
+         * attribute describing what types of serialization are allowed.
+         * Types typically include 'application/tar', 'application/zip', etc.
+         *
+         * @type {string}
+         */
+        this.bagItSerialization = '';
+        /**
          * The id (UUID) of the plugin that will write the output package.
          *
          * DART allows a single plugin to write multiple formats,

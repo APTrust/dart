@@ -60,6 +60,7 @@ class JobPackagingController extends BaseController {
         form.parseFromDOM();
         this.job.packageOp.packageFormat = form.obj.packageFormat;
         this.job.packageOp.pluginId = form.obj.pluginId;
+        this.job.packageOp.bagItSerialization = form.obj.bagItSerialization;
         this.job.packageOp.outputPath = form.obj.outputPath;
         this.job.packageOp.packageName = form.obj.packageName;
 
@@ -159,7 +160,7 @@ class JobPackagingController extends BaseController {
      */
     onProfileChange() {
         let controller = this;
-        let updateOutputPath = this.onPackageNameKeyUp();
+        //let updateOutputPath = this.onPackageNameKeyUp();
         return function() {
             var format = $("select[name=packageFormat]").val();
             var profileId = $("select[name=bagItProfileId]").val();
@@ -168,7 +169,31 @@ class JobPackagingController extends BaseController {
             } else {
                 controller.job.bagItProfile = BagItProfile.find(profileId);
             }
-            updateOutputPath();
+            controller.updateSerializationOptions();
+            controller.onPackageNameKeyUp();
+        }
+    }
+
+    updateSerializationOptions() {
+        let controller = this;
+        let profile = controller.job.bagItProfile;
+        let selectedValue = $('select[name=bagItSerialization]').val();
+        let none = Context.y18n.__('None');
+        let formats = [{ id: '', name: none }];
+        let accepted = profile.acceptSerialization.sort();
+        if (accepted.length == 1 && profile.serialization == 'required') {
+            // Only one format, and it's required
+            formats = accepted;
+            selectedValue = accepted[0];
+        } else {
+            // Multiple formats suppored and/or serialization optional.
+            formats = formats.concat(accepted);
+        }
+        $('select[name=bagItSerialization]').empty();
+        for (let mimeType of formats) {
+            let extension = Constants.SERIALIZATION_EXTENSIONS[mimeType];
+            let option = new Option(extension, extension, false, extension == selectedValue);
+            $('select[name=bagItSerialization]').append(option);
         }
     }
 
@@ -206,7 +231,7 @@ class JobPackagingController extends BaseController {
             let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value;
             let packageName = $('#jobPackageOpForm_packageName').val().trim();
             var format = $("select[name=packageFormat]").val();
-            let extension = controller._getCalculatedFileExtension(format, controller.job.bagItProfile);
+            let extension = $('select[name=bagItSerialization]').val();
             if (packageName && !packageName.endsWith(extension)) {
                 packageName += extension;
             }
@@ -220,30 +245,6 @@ class JobPackagingController extends BaseController {
         }
     }
 
-    /**
-     * Returns the appropriate file extension for the specified
-     * format. For example, ".tar".
-     *
-     * @params {string} format - The packaging format, which comes from
-     * the format select list. E.g. BagIt, None, or the UUID of the
-     * plugin that creates packages in that format.
-     *
-     * @params {BagItProfile} bagItProfile - The BagItProfile for the job,
-     * or null if there is none. If this param is not null, this function
-     * checks the profile's preferred serialization.
-     *
-     * @returns {string}
-     */
-    _getCalculatedFileExtension(format, bagItProfile) {
-        let extension = '';
-        if (format != 'BagIt' && format != 'None' && format != Constants.DIRECTORY_WRITER_UUID) {
-            extension = $("select[name=packageFormat] option:selected").text();
-        }
-        if (bagItProfile) {
-            extension = bagItProfile.preferredSerialization();
-        }
-        return extension;
-    }
 }
 
 module.exports.JobPackagingController = JobPackagingController;

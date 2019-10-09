@@ -2,6 +2,7 @@ const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
@@ -21,6 +22,7 @@ class JobPackageOpForm extends Form {
     _init() {
         this._listPackageFormats();
         this._listBagItProfiles();
+        this._listBagItSerializations();
         this._initOutputPath();
     }
 
@@ -68,6 +70,33 @@ class JobPackageOpForm extends Form {
         this.fields['bagItProfileId'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
     }
 
+    _listBagItSerializations() {
+        let none = Context.y18n.__('None');
+        let formats = [{ id: '', name: none }];
+        if (this.fields.bagItProfileId.value) {
+            let profile = BagItProfile.find(this.fields.bagItProfileId.value);
+            let accepted = [];
+            for (let mimeType of profile.acceptSerialization) {
+                let extension = Constants.SERIALIZATION_EXTENSIONS[mimeType];
+                accepted.push(extension);
+            }
+            if (accepted.length == 1 && profile.serialization == 'required') {
+                // Only one format, and it's required
+                formats = accepted;
+                this.obj.bagItSerialization = accepted[0];
+            } else {
+                // Multiple formats suppored and/or serialization optional.
+                formats = formats.concat(accepted.sort());
+            }
+        }
+        this.fields['bagItSerialization'].choices = Choice.makeList(
+            formats,
+            this.obj.bagItSerialization,
+            false
+        );
+        this.fields['bagItSerialization'].help = Context.y18n.__('JobPackageOp_bagItSerialization_help');
+    }
+
     _initOutputPath() {
         if (!this.fields['outputPath'].value) {
             let setting = AppSetting.firstMatching("name", "Bagging Directory");
@@ -81,9 +110,15 @@ class JobPackageOpForm extends Form {
         super.parseFromDOM();
         let selectedPluginId = this.obj.packageFormat;
         let formatName = $('#jobPackageOpForm_packageFormat option:selected').text();
+        let serialization = $('#jobPackageOpForm_bagItSerialization option:selected').text();
         this.obj.pluginId = selectedPluginId;
         if (formatName) {
             this.obj.packageFormat = formatName.trim();
+        }
+        if (serialization) {
+            this.obj.bagItSerialization = serialization.trim();
+        } else {
+            this.obj.bagItSerialization = '';
         }
     }
 
@@ -101,6 +136,7 @@ class JobPackageOp {
         this.packageFormat = job.packageOp.packageFormat || 'BagIt';
         this.pluginId = job.packageOp.pluginId || 'BagIt';
         this.bagItProfileId = job.bagItProfile ? job.bagItProfile.id : '';
+        this.bagItSerialization = job.packageOp.bagItSerialization;
         this.outputPath = job.packageOp.outputPath;
         this.packageName = job.packageOp.packageName;
         this.id = job.id;

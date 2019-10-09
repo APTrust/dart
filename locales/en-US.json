@@ -297,5 +297,8 @@
   "Error parsing JSON: %s. ": "Error parsing JSON: %s. ",
   "Be sure the URL returned JSON, not HTML.": "Be sure the URL returned JSON, not HTML.",
   "DART does not recognize this BagIt Profile structure.": "DART does not recognize this BagIt Profile structure.",
-  "Failed to import profile": "Failed to import profile"
+  "Failed to import profile": "Failed to import profile",
+  "None": "None",
+  "JobPackageOp_bagItSerialization_label": "Serialization",
+  "JobPackageOp_bagItSerialization_help": "How should this bag be serialized or compressed?"
 }
