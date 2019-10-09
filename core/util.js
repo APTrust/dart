@@ -605,6 +605,62 @@ class Util {
         return canWrite;
     }
 
+    /**
+     * Given a list of file paths, this returns the prefix common
+     * to all paths. This function probably has worse than 0n^2
+     * efficiency, so it's OK if paths.length < 10, but it probably
+     * gets pretty bad from there.
+     *
+     * If paths have nothing in common, this returns an empty string.
+     *
+     * @example
+     * let posixPaths = [
+     *     "/path/to/some/file.txt",
+     *     "/path/to/some/other/document.pdf",
+     *     "/path/to/some/different/photo.jpg"
+     * ]
+     *
+     * Util.findCommonPathPrefix(posixPaths); // returns "/path/to/some/"
+     *
+     * let windowPaths = [
+     *     "c:\\path\\to\\some\\file.txt",
+     *     "c:\\path\\to\\some\\other\\file.txt",
+     *     "c:\\path\\to\\some\\different\\file.txt",
+     * ]
+     *
+     * Util.findCommonPathPrefix(windowsPaths); // returns "c:\\path\\to\\some\\"
+     *
+     * @param {Array<string>} paths - List of paths to compare.
+     *
+     * @param {string} pathSep - Optional param to specify the path
+     * separator. This defaults to the operating system's path.sep, so you
+     * don't need to specify this.
+     *
+     * @returns {string}
+     */
+    static findCommonPathPrefix(paths, pathSep = path.sep) {
+        let i = 0;
+        let lastPrefix = '';
+        let prefix = '';
+        let match = true;
+        while(match) {
+            i = paths[0].indexOf(pathSep, i + 1);
+            if (i < 0) {
+                break;
+            }
+            prefix = paths[0].slice(0, i + 1);
+            for(let p of paths) {
+                if (!p.startsWith(prefix)){
+                    match = false;
+                    prefix = lastPrefix; // this is the last one that did match
+                    break;
+                }
+            }
+            lastPrefix = prefix;
+        }
+        return prefix;
+    }
+
 }
 
 module.exports.Util = Util;

@@ -332,3 +332,25 @@ test('Util.canWrite()', () => {
     expect(Util.canRead(path.join(testDir, 'readwrite.txt'))).toBe(true);
     expect(Util.canWrite(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
 });
+
+test('Util.findCommonPathPrefix()', () => {
+    let posixPaths = [
+        "/path/to/some/file.txt",
+        "/path/to/some/other/document.pdf",
+        "/path/to/some/different/photo.jpg"
+    ]
+    let windowsPaths = [
+        "c:\\path\\to\\some\\file.txt",
+        "c:\\path\\to\\some\\other\\file.txt",
+        "c:\\path\\to\\some\\different\\file.txt",
+    ]
+    let nothingInCommon = [
+        "/path/to/some/file.txt",
+        "/dont/have/a/cow",
+        "c:\\one\\two\\three\\four"
+    ];
+
+    expect(Util.findCommonPathPrefix(posixPaths, '/')).toEqual("/path/to/some/");
+    expect(Util.findCommonPathPrefix(windowsPaths, '\\')).toEqual("c:\\path\\to\\some\\");
+    expect(Util.findCommonPathPrefix(nothingInCommon, '/')).toEqual('');
+});
