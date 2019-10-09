@@ -303,8 +303,15 @@ class Bagger extends EventEmitter {
         if (os.platform() === 'win32' && this.formatWriter.constructor.name === 'TarWriter') {
             relDestPath = relDestPath.replace(/\\/g, '/');
         }
+        var profile = this.job.bagItProfile;
         let bagItFile = new BagItFile(absPath, relDestPath, stats);
-        let cryptoHashes = this._getCryptoHashes(bagItFile, this.job.bagItProfile.manifestsRequired);
+
+        let manifestAlgs = profile.chooseManifestAlgorithms('manifest');
+        if (!relDestPath.startsWith('data/')) {
+            // This is a tag file, not a payload file.
+            manifestAlgs = profile.chooseManifestAlgorithms('tagmanifest');
+        }
+        let cryptoHashes = this._getCryptoHashes(bagItFile, manifestAlgs);
         this.formatWriter.add(bagItFile, cryptoHashes);
         this.bagItFiles.push(bagItFile);
         return new Promise(function(resolve) {
@@ -449,10 +456,10 @@ class Bagger extends EventEmitter {
      */
     async _writeManifests(payloadOrTag) {
         var profile = this.job.bagItProfile;
-        var manifestAlgs = profile.manifestsRequired;
+        var manifestAlgs = profile.chooseManifestAlgorithms('manifest');
         var fileNamePrefix = 'manifest';
         if (payloadOrTag == 'tag') {
-            manifestAlgs = profile.tagManifestsRequired;
+            manifestAlgs = profile.chooseManifestAlgorithms('tagmanifest');
             fileNamePrefix = 'tagmanifest';
         }
         if (manifestAlgs.length == 0) {

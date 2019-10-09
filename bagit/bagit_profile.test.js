@@ -502,6 +502,43 @@ test('preferredSerialization()', () => {
     expect(profile.preferredSerialization()).toEqual('');
 });
 
+
+test('chooseManifestAlgorithms()', () => {
+    let profile = new BagItProfile();
+
+    profile.manifestsRequired = [];
+    profile.manifestsAllowed = [];
+    profile.tagManifestsRequired = [];
+    profile.tagManifestsAllowed = [];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha512']);
+    expect(profile.chooseManifestAlgorithms('tagmanifest')).toEqual(['sha512']);
+
+    profile.manifestsRequired = ["sha256", "md5"];
+    profile.manifestsAllowed = ["md5", "sha256", "sha512"];
+    profile.tagManifestsRequired = ["sha256", "md5"];
+    profile.tagManifestsAllowed = ["md5", "sha256", "sha512"];
+
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha256', 'md5']);
+    expect(profile.chooseManifestAlgorithms('tagmanifest')).toEqual(['sha256', 'md5']);
+
+    profile.manifestsRequired = ["md5"];
+    profile.manifestsAllowed = ["md5", "sha256", "sha512"];
+    profile.tagManifestsRequired = ["md5"];
+    profile.tagManifestsAllowed = ["md5", "sha256", "sha512"];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['md5']);
+    expect(profile.chooseManifestAlgorithms('tagmanifest')).toEqual(['md5']);
+
+    profile.manifestsRequired = [];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha512']);
+
+    profile.manifestsAllowed = ["md5", "sha256"];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha256']);
+
+    profile.manifestsAllowed = ["sha1"];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha1']);
+});
+
+
 // ---------------------------------
 // Tests of PersistentObject methods
 // ---------------------------------

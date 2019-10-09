@@ -691,6 +691,50 @@ class BagItProfile extends PersistentObject {
         return '';
     }
 
+
+    /**
+     * Chooses one or more manifest/tag manifest algorithms using
+     * the following rules:
+     *
+     * * If the required list is non-empty, use the algorithms specified there.
+     * * If required is empty and allowed is empty, use sha-512
+     *   (per LOC recommendation)
+     * * If required is empty and allowed is not, choose one of the following
+     *   from allowed, in this order: "sha512", "sha256", "md5", first item
+     *   in allowed list.
+     *
+     * @param {string} whichType - Should be either 'manifest' or 'tagmanifest'.
+     * This determines whether the function looks at
+     * manifestsAllowed/manifestsRequired or tagManifestsAllowed/tagManifestsRequired.
+     *
+     */
+    chooseManifestAlgorithms(whichType) {
+        if (whichType != 'manifest' && whichType != 'tagmanifest') {
+            throw Context.y18n.__("Param whichType must be either 'manifest' or 'tagmanifest'");
+        }
+        let required = this.manifestsRequired;
+        let allowed = this.manifestsAllowed;
+        if (whichType == 'tagmanifest') {
+            required = this.tagManifestsRequired;
+            allowed = this.tagManifestsAllowed;
+        }
+        if (Array.isArray(required) && required.length > 0) {
+            return required;
+        }
+        if (!allowed || Util.isEmptyStringArray(allowed)) {
+            return ["sha512"];
+        }
+        let preferredAlgs = ["sha512", "sha256", "md5"];
+        for (let alg of preferredAlgs) {
+            if (allowed.includes(alg)) {
+                return [alg];
+            }
+        }
+        // We have a list, but none of our preferred algorithms are in it.
+        // So return the first allowed item.
+        return [ allowed[0] ];
+    }
+
     /**
      * This creates a new BagItProfile or a vanilla data object that
      * contains the attributes of a BagItProfile. This is used by the
