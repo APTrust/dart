@@ -21,7 +21,7 @@ class TagDefinitionForm extends Form {
         // For some tag definitions, the 'values' attribute contains a list
         // of allowed values. If this is the case, make them appear on
         // seperate lines of the textarea on the form.
-        if (this.fields.values.value && Array.isArray(this.fields.values.value)) {
+        if (this.fields.values.value && Array.isArray(this.fields.values.value) && this.fields.values.value.length > 0) {
             this.fields['values'].value = this.fields['values'].value.join("\n").trim();
             this.fields['defaultValue'].choices = Choice.makeList(
                 this.obj.values,
