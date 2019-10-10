@@ -429,7 +429,7 @@ field is not valid.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line129">line 129</a>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line159">line 159</a>
         </li>
       </ul>
     </dd>
@@ -1014,6 +1014,96 @@ should be an absolute path to a file or directory.</p>
 
           
         
+            
+
+<h4 class="name" id="trimLeadingPaths">
+  <span class="type-signature"></span>trimLeadingPaths<span class="type-signature"> :boolean</span>
+</h4>
+
+
+
+
+  <div class="description">
+    <p>This indicates whether DART should trim common leading paths
+when packaging files. Let's assume you have the following in
+sourceFiles:</p>
+<ul>
+<li>'/path/to/some/dir/photos'</li>
+<li>'/path/to/some/dir/audios'</li>
+<li>'/path/to/some/dir/videos'</li>
+</ul>
+<p>These all have a common leading path of '/path/to/some/dir',
+which can be stripped off in the packaging process. So setting
+trimLeadingPaths to true would lead to these files being bagged
+as:</p>
+<ul>
+<li>'data/photos'</li>
+<li>'data/audios'</li>
+<li>'data/videos'</li>
+</ul>
+<p>If trimLeadingPaths is false, these will be bagged as:</p>
+<ul>
+<li>'data/path/to/some/dir/photos'</li>
+<li>'data/path/to/some/dir/audios'</li>
+<li>'data/path/to/some/dir/videos'</li>
+</ul>
+<p>Note that trimLeadingPaths is useless if the files in sourceFiles have no common leading path.</p>
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line151">line 151</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
     
 
     
@@ -1140,7 +1230,7 @@ full-fledged PackageOperation object with all of the expected methods.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line223">line 223</a>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line253">line 253</a>
         </li>
       </ul>
     </dd>
@@ -1235,7 +1325,7 @@ match any known plugin, this returns null.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line206">line 206</a>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line236">line 236</a>
         </li>
       </ul>
     </dd>
@@ -1337,7 +1427,7 @@ Use absolute paths only.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line178">line 178</a>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line208">line 208</a>
         </li>
       </ul>
     </dd>
@@ -1430,7 +1520,7 @@ the errors property for specific errors.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line139">line 139</a>
+          <a href="core_package_operation.js.html">core/package_operation.js</a>, <a href="core_package_operation.js.html#line169">line 169</a>
         </li>
       </ul>
     </dd>

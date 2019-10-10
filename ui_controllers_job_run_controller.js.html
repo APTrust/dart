@@ -146,7 +146,11 @@ class JobRunController extends RunningJobsController {
                 uploadTargets.push(target.name);
             }
         }
-        let data = { job: this.job, uploadTargets: uploadTargets }
+        let data = {
+            job: this.job,
+            uploadTargets: uploadTargets,
+            trimPath: this._getTrimPath()
+        }
         return this.containerContent(Templates.jobRun(data));
     }
 
@@ -194,6 +198,13 @@ class JobRunController extends RunningJobsController {
         return this.redirect(prevController, 'show', this.params);
     }
 
+    _getTrimPath() {
+        let trimPath = '';
+        if (this.job.packageOp &amp;&amp; this.job.packageOp.trimLeadingPaths) {
+            trimPath = Util.findCommonPathPrefix(this.job.packageOp.sourceFiles);
+        }
+        return trimPath;
+    }
 
     postRenderCallback(fnName) {
 
