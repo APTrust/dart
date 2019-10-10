@@ -87,6 +87,9 @@ class Bagger extends EventEmitter {
          * @type {object}
          */
         this.formatWriter = null;
+
+        // private
+        this._pathToTrim = null;
     }
 
     /**
@@ -362,11 +365,47 @@ class Bagger extends EventEmitter {
      * @private
      */
     _getRelDestPath(absPath) {
-        var relDestPath = 'data' + absPath;
+        var trimmedPath = this._trimAbsPath(absPath);
+        var relDestPath = 'data' + trimmedPath;
         if (os.platform() == 'win32') {
-            relDestPath = 'data' + Util.normalizeWindowsPath(absPath);
+            relDestPath = 'data' + Util.normalizeWindowsPath(trimmedPath);
         }
         return relDestPath;
+    }
+
+    /**
+     * Trim common path prefixes. We call this before calculating the
+     * relDestPath. See {@link Util.findCommonPathPrefix} and
+     * {@link PackageOperation.trimLeadingPaths}.
+     *
+     * @private
+     */
+    _trimAbsPath(absPath) {
+        let trimPath = this._getTrimPath();
+        let trimmed = absPath;
+        if (trimPath) {
+            let pattern = new RegExp('^' + trimPath);
+            trimmed = path.sep + absPath.replace(pattern, '');
+        }
+        return trimmed;
+    }
+
+    /**
+     * Returns the common leading path that we can trim from source
+     * files before bagging. See {@link Util.findCommonPathPrefix} and
+     * {@link PackageOperation.trimLeadingPaths}.
+     *
+     * @private
+     */
+    _getTrimPath() {
+        if (this._pathToTrim === null) {
+            if (this.job.packageOp.trimLeadingPaths) {
+                this._pathToTrim = Util.findCommonPathPrefix(this.job.packageOp.sourceFiles);
+            } else {
+                this._pathToTrim = '';
+            }
+        }
+        return this._pathToTrim;
     }
 
     /**

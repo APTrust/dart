@@ -120,6 +120,36 @@ class PackageOperation {
          */
         this.skipFiles = [];
         /**
+         * This indicates whether DART should trim common leading paths
+         * when packaging files. Let's assume you have the following in
+         * {@link sourceFiles}:
+         *
+         * * '/path/to/some/dir/photos'
+         * * '/path/to/some/dir/audios'
+         * * '/path/to/some/dir/videos'
+         *
+         * These all have a common leading path of '/path/to/some/dir',
+         * which can be stripped off in the packaging process. So setting
+         * trimLeadingPaths to true would lead to these files being bagged
+         * as:
+         *
+         * * 'data/photos'
+         * * 'data/audios'
+         * * 'data/videos'
+         *
+         * If trimLeadingPaths is false, these will be bagged as:
+         *
+         * * 'data/path/to/some/dir/photos'
+         * * 'data/path/to/some/dir/audios'
+         * * 'data/path/to/some/dir/videos'
+         *
+         * Note that trimLeadingPaths is useless if the files in {@link
+         * sourceFiles} have no common leading path.
+         *
+         * @type {boolean}
+         */
+        this.trimLeadingPaths = true;
+        /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the
          * field is not valid.

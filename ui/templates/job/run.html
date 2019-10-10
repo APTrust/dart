@@ -29,7 +29,7 @@
   <div class="col text-right font-weight-bold">Files to Package</div>
   <div class="col-10">
     {{#each job.packageOp.sourceFiles as |path| }}
-      {{ path }} <br/>
+      {{{ showPathWithTrim path ../trimPath }}} <br/>
     {{/each }}
   </div>
 </div>
