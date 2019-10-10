@@ -483,6 +483,9 @@ class Bagger extends EventEmitter {
         let trimPath = this._getTrimPath();
         let trimmed = absPath;
         if (trimPath) {
+            if (os.platform() == 'win32') {
+                trimPath = trimPath.replace(/\\/g, '\\\\');
+            }
             let pattern = new RegExp('^' + trimPath);
             trimmed = path.sep + absPath.replace(pattern, '');
         }
