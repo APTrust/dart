@@ -2,7 +2,7 @@ os: osx
 sudo: false
 language: node_js
 node_js:
-- 12.13LTS
+  - lts/*
 cache:
   directories:
   - node_modules
