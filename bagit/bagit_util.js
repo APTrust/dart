@@ -143,16 +143,16 @@ class BagItUtil {
      * [SANC-state-profile.json](https://raw.githubusercontent.com/LibraryOfCongress/bagger/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/SANC-state-profile.json)
      * profile to a DART BagIt profile.
      *
-     * @param {object}
+     * @param {object} - The profile to import.
+     * @param {string} - Optional URL from which profile was imported.
      * @returns {BagItProfile}
      */
-    static profileFromLOCOrdered(obj) {
+    static profileFromLOCOrdered(obj, sourceUrl) {
         if (BagItUtil.guessProfileType(obj) != 'loc_ordered') {
             throw Context.y18n.__("Object does not look like an ordered Library of Congress BagIt profile");
         }
-        var now = new Date();
         var dartProfile = new BagItProfile();
-        dartProfile.name = Context.y18n.__("Imported Profile %s", now.toISOString());
+        dartProfile.name = BagItUtil._getProfileName(sourceUrl);
         dartProfile.description = dartProfile.name;
         for (let item of obj['ordered']) {
             let tagName = Object.keys(item)[0];
@@ -168,15 +168,15 @@ class BagItUtil {
      * profile to a DART BagIt profile.
      *
      * @param {object}
+     * @param {string} - Optional URL from which profile was imported.
      * @returns {BagItProfile}
      */
-    static profileFromLOC(obj) {
+    static profileFromLOC(obj, sourceUrl) {
         if (BagItUtil.guessProfileType(obj) != 'loc_unordered') {
             throw Context.y18n.__("Object does not look like an unordered Library of Congress BagIt profile");
         }
-        var now = new Date();
         var dartProfile = new BagItProfile();
-        dartProfile.name = Context.y18n.__("Imported Profile %s", now.toISOString());
+        dartProfile.name = BagItUtil._getProfileName(sourceUrl);
         dartProfile.description = dartProfile.name;
         for (let [tagName, tagObj] of Object.entries(obj)) {
             BagItUtil.convertLOCTag(dartProfile, tagName, tagObj);
@@ -204,6 +204,30 @@ class BagItUtil {
             tagDef.values = [locTag["requiredValue"]];
             tagDef.defaultValue = locTag["requiredValue"];
         }
+    }
+
+    /**
+     * This returns a name and description for an imported profile.
+     * This is not necessary for profiles conforming to
+     * https://github.com/bagit-profiles/bagit-profiles/, but it is
+     * useful for Library of Congress profiles.
+     *
+     * If sourceUrl is supplied, this returns a profile name
+     * based on the file name at the end of the url. For example,
+     * if sourceUrl is https://example.com/basic_profile.json,
+     * this returns "Profile imported from https://example.com/basic_profile.json".
+     * Otherwise, it returns "Imported Profile <datestamp>"
+     *
+     * @param {string}
+     * @returns {string}
+     */
+    static _getProfileName(sourceUrl) {
+        var now = new Date();
+        let name = Context.y18n.__("Imported Profile %s", now.toISOString());
+        if (sourceUrl) {
+            name = Context.y18n.__("Profile imported from %s", sourceUrl);
+        }
+        return name;
     }
 
     /**

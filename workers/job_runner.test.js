@@ -129,7 +129,7 @@ test('Constructor sets expected properties', () => {
 });
 
 test('run() completes when all job operations are valid', done => {
-    let job = getJob();;
+    let job = getJob();
     let jobRunner = new JobRunner(job);
 
     jobRunner.run().then(function(returnCode) {

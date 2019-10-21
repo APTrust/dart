@@ -127,7 +127,7 @@ class BagItProfileController extends BaseController {
     edit() {
         let profile = BagItProfile.find(this.params.get('id'));
         let opts = {
-            alertMessage: this.alertMessage
+            alertMessage: this.alertMessage || this.params.get('alertMessage')
         };
         this.alertMessage = null;
         return this.containerContent(this._getPageHTML(profile, opts));
@@ -316,28 +316,24 @@ class BagItProfileController extends BaseController {
         return this.noContent();
     }
 
-    // Show screen where user can choose to import a profile from
-    // a URL, a file, or a textarea.
+    /**
+     * This shows a screen where user can choose to import a profile from
+     * a URL or a textarea.
+     *
+     */
     importStart() {
         let title = Context.y18n.__("Import BagIt Profile");
         let body = Templates.bagItProfileImport();
         return this.modalContent(title, body);
     }
 
-    // Import the profile from the url/file/textarea.
-    // This should say whether the profile is valid in DART.
-    importRun() {
-
-    }
-
-    // Save the imported profile.
-    // Don't allow save if profile is not valid in DART?
-    importSave() {
-
-    }
-
-    // Add a button on the profile definition page that allows user
-    // to export DART profile to standard BagIt profile.
+    /**
+     * Exports a DART BagIt Profile to the format used by
+     * https://github.com/bagit-profiles/bagit-profiles/
+     *
+     * The exported profile appears in a modal window.
+     *
+     */
     exportProfile() {
         let profile = BagItProfile.find(this.params.get('id'));
         let json = BagItUtil.profileToStandardJson(profile);
@@ -349,6 +345,12 @@ class BagItProfileController extends BaseController {
         return this.modalContent(title, body);
     }
 
+    /**
+     * Attaches event handlers to elements after they are rendered
+     * on the page.
+     *
+     * @private
+     */
     postRenderCallback(fnName) {
         let controller = this;
         if (fnName == 'newTagFile' || fnName == 'newTagFileCreate') {
@@ -360,16 +362,39 @@ class BagItProfileController extends BaseController {
         }
     }
 
+    /**
+     * Handler for clicks on the radio button where user specifies
+     * that they want to import a BagIt profile from a URL.
+     *
+     * This shows the URL field and hides the textarea.
+     *
+     * @private
+     */
     _importSourceUrlClick(e) {
         $('#txtJsonContainer').hide();
         $('#txtUrlContainer').show();
     }
 
+
+    /**
+     * Handler for clicks on the radio button where user specifies
+     * that they want to import a BagIt profile from cut-and-paste JSON.
+     *
+     * This shows the textarea and hides the URL field.
+     *
+     * @private
+     */
     _importSourceTextAreaClick(e) {
         $('#txtUrlContainer').hide();
         $('#txtJsonContainer').show();
     }
 
+    /**
+     * This calls the correct function to import a BagIt Profile, based
+     * on the input source (URL or text area).
+     *
+     * @private
+     */
     _importProfile() {
         var importSource = $("input[name='importSource']:checked").val();
         if (importSource == 'URL') {
@@ -379,6 +404,12 @@ class BagItProfileController extends BaseController {
         }
     }
 
+    /**
+     * Imports a bagit-profile of Library of Congress style BagIt Profile
+     * from the URL the user specified.
+     *
+     * @private
+     */
     _importProfileFromUrl() {
         let controller = this;
         let profileUrl = $("#txtUrl").val();
@@ -394,7 +425,7 @@ class BagItProfileController extends BaseController {
                 alert(msg);
             } else if (response && response.statusCode == 200) {
                 // TODO: Make sure response is JSON, not HTML.
-                controller._importWithErrHandling(body);
+                controller._importWithErrHandling(body, profileUrl);
             } else {
                 let statusCode = (response && response.statusCode) || Context.y18n.__('Unknown');
                 let msg = Context.y18n.__("Got response %s from %s", statusCode, profileUrl);
@@ -404,24 +435,54 @@ class BagItProfileController extends BaseController {
         });
     }
 
+    /**
+     * Imports a bagit-profile of Library of Congress style BagIt Profile
+     * from the JSON in the textarea.
+     *
+     * @private
+     */
     _importProfileFromTextArea() {
         let profileJson = $("#txtJson").val();
         this._importWithErrHandling(profileJson);
     }
 
-    _importWithErrHandling(json) {
+
+    /**
+     * This wraps the import process in a general error handler.
+     *
+     * @private
+     */
+    _importWithErrHandling(json, profileUrl) {
         try {
-            this._importProfileObject(json);
+            this._importProfileObject(json, profileUrl);
+            return true;
         } catch (ex) {
             let msg = Context.y18n.__("Error importing profile: %s", ex);
             Context.logger.error(msg);
             Context.logger.error(ex);
             alert(msg);
+            return false;
         }
     }
 
-    _importProfileObject(json) {
-        let obj = JSON.parse(json);
+
+    /**
+     * This performs the actual import of the BagIt profile. It may throw
+     * any number of errors, which must be handled by the caller.
+     *
+     * @private
+     */
+    _importProfileObject(json, profileUrl) {
+        let obj;
+        try {
+            obj = JSON.parse(json);
+        } catch (ex) {
+            let msg = Context.y18n.__("Error parsing JSON: %s. ", ex.message || ex);
+            if (profileUrl) {
+                msg += Context.y18n.__("Be sure the URL returned JSON, not HTML.");
+            }
+            throw msg;
+        }
         let convertedProfile;
         let profileType = BagItUtil.guessProfileType(obj);
         switch (profileType) {
@@ -429,10 +490,10 @@ class BagItProfileController extends BaseController {
             convertedProfile = obj;
             break;
         case 'loc_ordered':
-            convertedProfile = BagItUtil.profileFromLOCOrdered(obj);
+            convertedProfile = BagItUtil.profileFromLOCOrdered(obj, profileUrl);
             break;
         case 'loc_unordered':
-            convertedProfile = BagItUtil.profileFromLOC(obj);
+            convertedProfile = BagItUtil.profileFromLOC(obj, profileUrl);
             break;
         case 'bagit_profiles':
             convertedProfile = BagItUtil.profileFromStandardObject(obj);
@@ -442,7 +503,10 @@ class BagItProfileController extends BaseController {
         }
         if (convertedProfile) {
             convertedProfile.save();
-            let params = new URLSearchParams({ id: convertedProfile.id });
+            let params = new URLSearchParams({
+                id: convertedProfile.id,
+                alertMessage: Context.y18n.__("Imported BagIt profile. Please review the profile to ensure it is accurate.")
+            });
             return this.redirect('BagItProfile', 'edit', params);
         } else {
             let msg = Context.y18n.__("Failed to import profile");

@@ -119,6 +119,13 @@ test('dropping a file adds it to the UI and job', done => {
     let allFiles = sourceFiles.concat([extraFile,extraDir]);
     // Call the handler
     dropEventHandler(mockEvent);
+
+    // There's no event to listen for, so this is a hack.
+    let timeout = 200;
+    if (process.env.APPVEYOR || process.env.TRAVIS_OS_NAME) {
+        timeout = 1000;
+    }
+
     setTimeout(function() {
         // Reload to get changes, else it seems Jest caches this.
         job = Job.find(job.id);
@@ -136,7 +143,7 @@ test('dropping a file adds it to the UI and job', done => {
         // Make sure files were added to the job itself.
         expect(job.packageOp.sourceFiles.length).toEqual(allFiles.length);
         done();
-    }, 150);
+    }, timeout);
 });
 
 test('deleting a file removes it from the UI and job', done => {
@@ -151,6 +158,12 @@ test('deleting a file removes it from the UI and job', done => {
     }
     let pathToDelete = $('td.delete-file').data('filepath');
     deleteEventHandler(mockEvent);
+
+    // There's no event to listen for, so this is a hack.
+    let timeout = 200;
+    if (process.env.APPVEYOR || process.env.TRAVIS_OS_NAME) {
+        timeout = 1000;
+    }
 
     setTimeout(function() {
         // Reload to get changes, else it seems Jest caches this.
@@ -168,5 +181,5 @@ test('deleting a file removes it from the UI and job', done => {
         // We started with 3, should now have two.
         expect(job.packageOp.sourceFiles.length).toEqual(2);
         done();
-    }, 50);
+    }, timeout);
 });

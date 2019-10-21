@@ -4,10 +4,20 @@ const { BagItProfileController, BagItProfileControllerTypeMap } = require('./bag
 const { BagItProfileForm } = require('../forms/bagit_profile_form');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const fs = require('fs');
+const path = require('path');
 const Templates = require('../common/templates');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const url = require('url');
+
+
+// This is necessary because the tests that import BagIt Profiles
+// below (_importWithErrHandling) actually save the profiles to
+// the local test DB.
+afterAll(() => {
+    TestUtil.deleteJsonFile('BagItProfile');
+});
 
 const params = new url.URLSearchParams({
     limit: '10',
@@ -253,6 +263,28 @@ test('deleteTagDef()', () => {
     expect($('div.alert.alert-success').html().includes(message)).toBe(true);
 });
 
+test('_importWithErrHandling() - GitHub', () => {
+    let jsonFile = path.join(__dirname, '..', '..', 'test', 'profiles', 'bagit_profiles_github', 'bagProfileBar.json');
+    let json = fs.readFileSync(jsonFile);
+    let controller = new BagItProfileController(params);
+    expect(controller._importWithErrHandling(json, 'https://so.me/url')).toBe(true);
+});
+
+test('_importWithErrHandling() - LOC', () => {
+    let jsonFile = path.join(__dirname, '..', '..', 'test', 'profiles', 'loc', 'SANC-state-profile.json');
+    let json = fs.readFileSync(jsonFile);
+    let controller = new BagItProfileController(params);
+    expect(controller._importWithErrHandling(json, 'https://so.me/url')).toBe(true);
+});
+
+test('_importWithErrHandling() - Bad JSON', () => {
+    let json = "This is bad JSON and cannot be parsed";
+    let controller = new BagItProfileController(params);
+
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    expect(controller._importWithErrHandling(json, 'https://so.me/url')).toBe(false);
+    expect(window.alert).toHaveBeenCalled();
+});
 
 function ensureBasicFormElements(profile) {
     for (let property of Object.keys(profile)) {

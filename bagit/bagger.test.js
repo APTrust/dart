@@ -176,3 +176,43 @@ test('create() using FileSystemWriter', done => {
 
     bagger.create();
 });
+
+test('_getTrimPath', () => {
+    let job = new Job();
+    job.packageOp.sourceFiles = getSourceFiles();
+    job.packageOp.trimLeadingPaths = true;
+    let bagger = new Bagger(job);
+    if (os.platform() == 'win32') {
+        expect(bagger._getTrimPath()).toEqual('C:\\path\\to\\some\\');
+    } else {
+        expect(bagger._getTrimPath()).toEqual('/path/to/some/');
+    }
+});
+
+test('_trimAbsPath', () => {
+    let job = new Job();
+    job.packageOp.sourceFiles = getSourceFiles();
+    job.packageOp.trimLeadingPaths = true;
+    let bagger = new Bagger(job);
+    if (os.platform() == 'win32') {
+        expect(bagger._trimAbsPath('C:\\path\\to\\some\\dir\\img.png')).toEqual('\\dir\\img.png');
+    } else {
+        expect(bagger._trimAbsPath('/path/to/some/dir/img.png')).toEqual('/dir/img.png');
+    }
+});
+
+function getSourceFiles() {
+    let files = [];
+    if (os.platform == 'win32') {
+        files = [
+            'C:\\path\\to\\some\\file.txt',
+            'C:\\path\\to\\some\\image.jpg'
+        ];
+    } else {
+        files = [
+            '/path/to/some/file.txt',
+            '/path/to/some/image.jpg'
+        ];
+    }
+    return files;
+}

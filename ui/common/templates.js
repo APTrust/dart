@@ -105,6 +105,12 @@ handlebars.registerHelper('toHumanSize', function(number) {
     return Util.toHumanSize(number);
 });
 
+handlebars.registerHelper('showPathWithTrim', function(fullpath, trimpath) {
+    let pattern = new RegExp('^' + trimpath);
+    let replacement = `<span style="color: #ccc;">${trimpath}</span>`;
+    return fullpath.trim().replace(pattern, replacement)
+});
+
 // Pre-compile partials so they can be called from within JS.
 for(let [name, template] of Object.entries(handlebars.partials)) {
     handlebars.partials[name] = compileHTML(template);

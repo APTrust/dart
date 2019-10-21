@@ -9,6 +9,7 @@
 
     <div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};">
       {{> inputSelect field = form.fields.bagItProfileId }}
+      {{> inputSelect field = form.fields.bagItSerialization }}
     </div>
   </div>
 

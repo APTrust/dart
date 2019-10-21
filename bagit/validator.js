@@ -672,8 +672,8 @@ class Validator extends EventEmitter {
         let hashes = [];
         // Put together all of the algorithms we'll need for checksums,
         // filtering out empty strings and duplicates.
-        let m = this.profile.manifestsRequired;
-        let t = this.profile.tagManifestsRequired;
+        let m = this.profile.chooseManifestAlgorithms('manifest');
+        let t = this.profile.chooseManifestAlgorithms('tagmanifest');
         let f = this.manifestAlgorithmsFoundInBag;
         let algorithms = new Set(m.concat(t, f).filter(alg => alg != ''));
         // The done function decreases the validator's internal counter
