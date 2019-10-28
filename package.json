@@ -23,7 +23,7 @@
         "electron-log": "^3.0.8",
         "electron-store": "^5.0.0",
         "es6-error": "^4.1.1",
-        "glob": "^7.1.4",
+        "glob": "^7.1.5",
         "graceful-fs": "^4.2.2",
         "handlebars": "^4.4.3",
         "jquery": "^3.4.1",
