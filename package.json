@@ -19,7 +19,7 @@
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
-        "electron-context-menu": "^0.15.0",
+        "electron-context-menu": "^0.15.1",
         "electron-log": "^3.0.8",
         "electron-store": "^5.1.0",
         "es6-error": "^4.1.1",
