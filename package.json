@@ -34,7 +34,7 @@
         "readdirp": "^3.2.0",
         "request": "^2.88.0",
         "require-dir": "^1.2.0",
-        "ssh2": "^0.8.5",
+        "ssh2": "^0.8.6",
         "ssh2-sftp-client": "^4.2.3",
         "tail": "^2.0.3",
         "tar-stream": "^2.1.0",
