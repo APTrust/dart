@@ -160,7 +160,7 @@ function updateAPTrustBagItProfiles() {
 
 function updateProfile(profile) {
     try {
-        profile.manifestsRequired = [];
+        profile.manifestsRequired = ["md5"];
         profile.tagManifestsRequired = [];
         profile.manifestsAllowed = ["md5", "sha256"];
         profile.tagManifestsAllowed = ["md5", "sha256"]
