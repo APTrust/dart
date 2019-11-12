@@ -110,22 +110,28 @@ simple drag-and-drop application for non-technical users to package and
 upload materials.</p>
 <p>While the prototype worked well for our initial depositors, APTrust has a
 broader vision for DART to serve a wider community. The next iteration of
-DART, which should be available in the summer of 2019, will be able to
-package digital assets in a number of formats and upload them to any number
-of repositories. DART will support custom plugins that allow developers
-to quickly customize and extend its features to serve the needs of their
-own organizations and communities.</p>
-<p>While the prototype was a proof of concept, and was used successfully in
-production by a number of organizations, its underlying code was not suitable
-for long-term maintenance.</p>
-<p>This repository contains refactored code which is meant to be the foundation
-of a viable community-supported project.</p>
-<p>The upcoming version of DART will include both an intuitive drag-and-drop
-UI and scriptable command-line tool for creating archival packages and sending
-them across a network to a remote repository. You'll find a working prototype
-of the GUI application in the
-<a href="https://github.com/APTrust/dart-prototype">dart-prototype repository</a>.</p>
-<h2>DART Core Features</h2>
+DART, will be able to package digital assets in a number of formats and
+upload them to any number of repositories. DART will support custom plugins
+that allow developers to quickly customize and extend its features to serve
+the needs of their own organizations and communities.</p>
+<p>DART includes both an intuitive drag-and-drop UI and a scriptable command-line
+tool for creating archival packages and sending them to a remote repository.</p>
+<h2>Installation</h2>
+<p>Download the DART installer for your system and then check out our <a href="https://aptrust.github.io/dart-docs/users/getting_started/">Getting Started</a> page.</p>
+<ul>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.0.dmg">Mac OSX</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.0.exe">Windows</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.0_amd64.deb">Linux</a></li>
+</ul>
+<p>While these installers are labeled as version 2.0, you should consider them
+a 2.0 pre-release, and DART itself as beta software. See
+<a href="#status-of-core-features">Status of Core Features</a> below for more info.</p>
+<h2>Documentation</h2>
+<p>User and developer docs are currently in progress at
+<a href="https://aptrust.github.io/dart-docs">https://aptrust.github.io/dart-docs</a></p>
+<p>After every commit the API documentation is rebuilt and published at
+<a href="https://aptrust.github.io/dart">https://aptrust.github.io/dart</a></p>
+<h2>DART's Intended Core Features</h2>
 <ul>
 <li>Create Submission Information Packages (SIPs) in BagIt format that conform
 to pre-configured BagIt profiles</li>
@@ -142,42 +148,35 @@ that non-technical users can operate with minimal learning curve.</li>
 <li>Provide all of these features in a well-defined command-line interface, so
 they can be scripted using any scripting language.</li>
 </ul>
-<h2>DART Refactor</h2>
-<p>The goal of the refactor is to create maintainable, extensible code so other
-developers can contribute to DART.</p>
-<ol>
-<li>Separate concerns so core code can run in the Electron UI or from the command line.</li>
-<li>Refactor duplicated code into base classes or helpers.</li>
-<li>Standardize APIs so they're more intuitive.</li>
-<li>Use idiomatic JavaScript.</li>
-<li>Strive for full test coverage with Jest.</li>
-<li>Document all relevant code with JSDoc.</li>
-</ol>
-<h2>Testing</h2>
-<p>Jest runs tests in parallel by default, but this can cause problems when different
-tests are saving different AppSetting values as part of their setup process.
-The --runInBand flag tells Jest to run tests sequentially.</p>
-<p>See the <a href="https://jestjs.io/docs/en/cli.html">Jest CLI reference</a></p>
-<pre class="prettyprint source"><code>npm test -- --runInBand
-</code></pre>
-<h3>Testing on Windows</h3>
-<p>A number of tests will fail on Windows if git is set to automatically convert
-line endings from <code>\n</code> to <code>\r\n</code>. Specifically, tests involving bag validation
-and checksums will fail because the git checkout on Windows adds an extra byte
-to the end of each line of each text file.</p>
-<p>If you want these tests to pass, you'll need to disable git's automatic newline
-transformations with the following command:</p>
-<pre class="prettyprint source"><code>git config --local core.autocrlf false
-</code></pre>
-<h2>Building</h2>
-<p>To build the DART application into a standalone binary, run this command from
-the top-level directory of the project.</p>
-<pre class="prettyprint source"><code>./node_modules/.bin/electron-builder
-</code></pre>
-<p>The binary will appear in the /dist folder. For example, when building
-on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
-<p>You can run the binary directly from there.</p>
-<h2>Running Jobs in Command-Line Mode</h2>
+<h2>Status of Core Features</h2>
+<p>As of November 12, 2019, the core features required for APTrust depositors
+are working in both GUI and command-line mode. These include:</p>
+<ul>
+<li>Creating bags that conform to a selected BagIt profile.</li>
+<li>Validating those bags.</li>
+<li>Sending bags to an S3 bucket. (Or any remote service that supports the
+S3 API).</li>
+<li>Returning basic information from the APTrust repository, including:
+<ul>
+<li>A list of items recently ingested.</li>
+<li>A list of pending or in-progress ingests.</li>
+</ul>
+</li>
+</ul>
+<p>Some additional features, including BagIt profile import and export, are
+also working.</p>
+<h3>What's Not Working Yet</h3>
+<ul>
+<li>Creating bags in formats other than unserialized and tar. (You can build a
+bag as a directory or a tar file, but zip, gzip, and other formats are
+not yet supported.)</li>
+<li>Shipping files in protocols other than S3. We intend to support SFTP soon.</li>
+<li>APTrust has an internal list of a number of minor bugs, all of which
+affect workflows outside the normal APTrust workflow.</li>
+<li>We have not yet formally defined the plugin APIs for developers who want
+to write their own plugins.</li>
+</ul>
+<h2>Running Jobs on the Command-Line</h2>
 <p>DART can run both Jobs and Workflows from the command line. Most users will
 want to run Workflows, because they're easier, but we'll start by discussing
 jobs.</p>
@@ -228,11 +227,30 @@ dist/mac/DART.app/Contents/MacOS/DART -- --job ~/tmp/dart/job_params.json
 # Run by passing JobParams JSON directly to stdin
 echo '{ ... JobParams JSON ... }' | dist/mac/DART.app/Contents/MacOS/DART -- --json
 </code></pre>
-<h2>Documentation</h2>
-<p>After every commit the API documentation is rebuilt and published at</p>
-<p><a href="https://aptrust.github.io/dart">https://aptrust.github.io/dart</a></p>
-<p>User and developer docs are currently in progress at
-<a href="https://aptrust.github.io/dart-docs">https://aptrust.github.io/dart-docs</a></p>
+<h2>Testing</h2>
+<p>Jest runs tests in parallel by default, but this can cause problems when different
+tests are saving different AppSetting values as part of their setup process.
+The --runInBand flag tells Jest to run tests sequentially.</p>
+<p>See the <a href="https://jestjs.io/docs/en/cli.html">Jest CLI reference</a></p>
+<pre class="prettyprint source"><code>npm test -- --runInBand
+</code></pre>
+<h3>Testing on Windows</h3>
+<p>A number of tests will fail on Windows if git is set to automatically convert
+line endings from <code>\n</code> to <code>\r\n</code>. Specifically, tests involving bag validation
+and checksums will fail because the git checkout on Windows adds an extra byte
+to the end of each line of each text file.</p>
+<p>If you want these tests to pass, you'll need to disable git's automatic newline
+transformations with the following command:</p>
+<pre class="prettyprint source"><code>git config --local core.autocrlf false
+</code></pre>
+<h2>Building</h2>
+<p>To build the DART application into a standalone binary, run this command from
+the top-level directory of the project.</p>
+<pre class="prettyprint source"><code>./node_modules/.bin/electron-builder
+</code></pre>
+<p>The binary will appear in the /dist folder. For example, when building
+on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
+<p>You can run the binary directly from there.</p>
 <h2>Building the Docs</h2>
 <pre class="prettyprint source"><code>./jsdoc.sh
 </code></pre>
