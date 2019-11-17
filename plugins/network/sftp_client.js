@@ -1,8 +1,14 @@
 const Client = require('ssh2-sftp-client');
 const { Context } = require('../../core/context');
 const fs = require('fs');
+const { OperationResult } = require('../../core/operation_result');
 const { Plugin } = require('../plugin');
+const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
+
+
+// See https://stackoverflow.com/questions/45111061/sftp-server-for-reading-directory-using-node-js
+// for info on implementing a test server.
 
 
 class SFTPClient extends Plugin {
@@ -55,13 +61,29 @@ class SFTPClient extends Plugin {
      *
      */
     upload(filepath, keyname) {
+        let sftp = this;
         if (!filepath) {
             throw new Error('Param filepath is required for upload.');
         }
         if (!keyname) {
             keyname = path.basename(filepath);
         }
+        // Don't use path.join; force forward slash instead.
+        let remoteFilepath = `${this.storageService.bucket}/keyname`;
+        let result = this._initUploadResult(filepath, remoteFilepath);
         let client = this.connect();
+        result.start();
+        // This library also has a fastPut method that comes
+        // with a warning about potential file corruption.
+        // Use put for initial release.
+        client.put(filepath, remoteFilepath).then(() => {
+            result.finish();
+            sftp.emit('finish', result);
+        }).catch(err => {
+            result.finish(err.message);
+            sftp.emit('error', err.message);
+        });
+        client.end();
     }
 
 
@@ -107,7 +129,7 @@ class SFTPClient extends Plugin {
             username: this.storageService.login
         }
         if (!Util.isEmpty(this.storageService.loginExtra)) {
-            connSettings.privateKey = this._loadPrivateKey;
+            connSettings.privateKey = this._loadPrivateKey();
         } else if (!Util.isEmpty(this.storageService.password)) {
             Context.logger.info(Context.y18n.__("Using password for SFTP connection"));
             connSettings.password = this.storageService.password
@@ -139,6 +161,24 @@ class SFTPClient extends Plugin {
             throw Context.y18n.__("Error reading private key file %s for storage service %s: %s", this.storageService.loginExtra, this.storageService.name, ex.toString());
         }
         return pk;
+    }
+
+
+    _initUploadResult(filepath, remoteFilepath) {
+        let result = new OperationResult('upload', 'SFTPClient');
+        let stats = fs.statSync(filepath);
+        result.filepath = filepath;
+        result.filesize = stats.size;
+        result.fileMtime = stats.mtime;
+        result.remoteUrl = this._buildUrl(remoteFilepath);
+    }
+
+    _buildUrl(remoteFilepath) {
+        let url = `sftp://${this.storageService.host}/remoteFilepath`;
+        if (this.storageService.port) {
+            url += `:${this.storageService.port}`;
+        }
+        return `${url}/${remoteFilepath}`;
     }
 
     /**
