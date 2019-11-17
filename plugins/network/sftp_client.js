@@ -9,7 +9,8 @@ const { Util } = require('../../core/util');
 
 // See https://stackoverflow.com/questions/45111061/sftp-server-for-reading-directory-using-node-js
 // for info on implementing a test server.
-
+//
+// Or, more simply: https://www.npmjs.com/package/ssh2-sftp-server
 
 class SFTPClient extends Plugin {
 
