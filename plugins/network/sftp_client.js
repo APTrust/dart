@@ -92,7 +92,7 @@ class SFTPClient extends Plugin {
             })
             .catch(err => {
                 result.finish(err.message);
-                sftp.emit('error', err.message);
+                sftp.emit('error', result);
             });
     }
 

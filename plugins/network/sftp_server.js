@@ -31,7 +31,7 @@ var server = null;
  * const SFTPServer = require('./sftp_server');
  * var server = SFTPClient.start(SFTPServer.PORT);
  * // Stop the server
- * server.stop();
+ * server.server.close();
  *
  * @param {number} port - The port to listen on. Defaults to 8088.
  */
@@ -84,10 +84,6 @@ function start(port = DEFAULT_PORT) {
     server.on("end", function() {
         server = null;
     });
-
-    server.stop = function() {
-        server.server.close();
-    }
 
     return server;
 }
