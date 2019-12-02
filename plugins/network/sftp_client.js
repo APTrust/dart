@@ -71,20 +71,29 @@ class SFTPClient extends Plugin {
         }
         // Don't use path.join; force forward slash instead.
         let remoteFilepath = `${this.storageService.bucket}/keyname`;
+        let connSettings = this._getConnSettings();
+        let client = new Client();
         let result = this._initUploadResult(filepath, remoteFilepath);
-        let client = this.connect();
-        result.start();
-        // This library also has a fastPut method that comes
-        // with a warning about potential file corruption.
-        // Use put for initial release.
-        client.put(filepath, remoteFilepath).then(() => {
-            result.finish();
-            sftp.emit('finish', result);
-        }).catch(err => {
-            result.finish(err.message);
-            sftp.emit('error', err.message);
-        });
-        client.end();
+        client.connect(connSettings)
+            .then(() => {
+                result.start();
+                // This library also has a fastPut method that comes
+                // with a warning about potential file corruption.
+                // Use put for initial release.
+                return client.put(filepath, remoteFilepath);
+            })
+            .then(() => {
+                result.finish();
+                sftp.emit('finish', result);
+                return client;
+            })
+            .then(() => {
+                return client.end();
+            })
+            .catch(err => {
+                result.finish(err.message);
+                sftp.emit('error', err.message);
+            });
     }
 
 
@@ -114,13 +123,7 @@ class SFTPClient extends Plugin {
     }
 
 
-    /**
-     * Returns an open connection to the remote sftp server, or throws
-     * an exception.
-     *
-     * @returns {Client}
-     */
-    async _connect() {
+    _getConnSettings() {
         if (!this.storageService) {
             throw Context.y18n.__("SFTP client cannot establish a connection without a StorageService object");
         }
@@ -139,8 +142,7 @@ class SFTPClient extends Plugin {
             Context.logger.error(msg);
             throw msg;
         }
-        let client = await new Client().connect(connSettings);
-        return client;
+        return connSettings
     }
 
     /**
@@ -172,6 +174,7 @@ class SFTPClient extends Plugin {
         result.filesize = stats.size;
         result.fileMtime = stats.mtime;
         result.remoteUrl = this._buildUrl(remoteFilepath);
+        return result;
     }
 
     _buildUrl(remoteFilepath) {

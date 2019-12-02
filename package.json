@@ -52,7 +52,8 @@
         "electron-builder": "^22.2.0",
         "electron-toolkit": "^1.0.24",
         "jest": "^24.9.0",
-        "jsdoc": "^3.6.3"
+        "jsdoc": "^3.6.3",
+        "node-sftp-server": "^0.3.0"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
