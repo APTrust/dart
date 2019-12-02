@@ -13,6 +13,7 @@ const PASSWORD = "password";
 // be getting.
 
 const TEST_DIR = path.join(__dirname, '..', '..', 'test');
+//const DIR_TO_READ = path.join(TEST_DIR, 'fixtures');
 const FILE_TO_READ = path.join(TEST_DIR, 'fixtures', 'sftp_test_file.txt');
 const FILE_TO_WRITE = path.join(os.tmpdir(), 'dart-sftp-test-file.txt');
 const KEY_FILE = path.join(TEST_DIR,  'certs', 'rsa_test_key');
@@ -48,6 +49,7 @@ function start(port = DEFAULT_PORT) {
         }
         return auth.accept(function(session) {
             session.on("readdir", function(path, responder) {
+                console.log(path);
                 var dirs, i, j, results;
                 dirs = (function() {
                     results = [];

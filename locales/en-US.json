@@ -301,5 +301,6 @@
   "None": "None",
   "JobPackageOp_bagItSerialization_label": "Serialization",
   "JobPackageOp_bagItSerialization_help": "How should this bag be serialized or compressed?",
-  "Using password for SFTP connection": "Using password for SFTP connection"
+  "Using password for SFTP connection": "Using password for SFTP connection",
+  "Upload succeeded": "Upload succeeded"
 }

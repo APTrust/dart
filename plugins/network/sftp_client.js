@@ -70,19 +70,19 @@ class SFTPClient extends Plugin {
             keyname = path.basename(filepath);
         }
         // Don't use path.join; force forward slash instead.
-        let remoteFilepath = `${this.storageService.bucket}/keyname`;
+        let remoteFilepath = `${this.storageService.bucket}/${keyname}`;
         let connSettings = this._getConnSettings();
         let client = new Client();
         let result = this._initUploadResult(filepath, remoteFilepath);
         client.connect(connSettings)
             .then(() => {
-                result.start();
                 // This library also has a fastPut method that comes
                 // with a warning about potential file corruption.
                 // Use put for initial release.
                 return client.put(filepath, remoteFilepath);
             })
             .then(() => {
+                result.info = Context.y18n.__("Upload succeeded");
                 result.finish();
                 sftp.emit('finish', result);
                 return client;
@@ -169,20 +169,24 @@ class SFTPClient extends Plugin {
 
     _initUploadResult(filepath, remoteFilepath) {
         let result = new OperationResult('upload', 'SFTPClient');
+        result.start();
         let stats = fs.statSync(filepath);
         result.filepath = filepath;
         result.filesize = stats.size;
         result.fileMtime = stats.mtime;
-        result.remoteUrl = this._buildUrl(remoteFilepath);
+        result.remoteURL = this._buildUrl(remoteFilepath);
         return result;
     }
 
     _buildUrl(remoteFilepath) {
-        let url = `sftp://${this.storageService.host}/remoteFilepath`;
+        let url = `sftp://${this.storageService.host}`;
         if (this.storageService.port) {
             url += `:${this.storageService.port}`;
         }
-        return `${url}/${remoteFilepath}`;
+        if (!remoteFilepath.startsWith('/')) {
+            url += '/';
+        }
+        return `${url}${remoteFilepath}`;
     }
 
     /**
