@@ -117,7 +117,7 @@ class SFTPClient extends Plugin {
      *
      */
     download(filepath, keyname) {
-
+        throw 'SFTPClient.download() is not yet implemented.';
     }
 
     /**

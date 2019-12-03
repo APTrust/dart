@@ -5,6 +5,7 @@ const SFTPClient = require('./sftp_client');
 const { StorageService } = require('../../core/storage_service');
 
 var server = null;
+const remoteFileName = 'TestFileForSFTPUpload.xyz';
 
 beforeAll(() => {
     server = SFTPServer.start(SFTPServer.PORT);
@@ -25,7 +26,7 @@ function getStorageService() {
     });
 }
 
-function testCommonResultProperties(result) {
+function testCommonResultProperties(result, withNullCompleted = false) {
     expect(result.operation).toEqual('upload');
     expect(result.provider).toEqual('SFTPClient');
     expect(result.filepath).toEqual(__filename);
@@ -34,7 +35,11 @@ function testCommonResultProperties(result) {
     expect(result.remoteChecksum).toBeNull();
     expect(result.attempt).toEqual(1);
     expect(result.started).not.toBeNull();
-    expect(result.completed).not.toBeNull();
+    if (withNullCompleted) {
+        expect(result.completed).toBeNull();
+    } else {
+        expect(result.completed).not.toBeNull();
+    }
     expect(result.remoteURL).toEqual('sftp://localhost:8088/TestFileForSFTPUpload.xyz');
 }
 
@@ -66,7 +71,7 @@ test('Upload', done => {
         done();
     });
 
-    client.upload(__filename, 'TestFileForSFTPUpload.xyz');
+    client.upload(__filename, remoteFileName);
 });
 
 test('Upload with bad credentials', done => {
@@ -86,7 +91,7 @@ test('Upload with bad credentials', done => {
         expect(result.errors[0]).toMatch(/authentication methods failed/);
         done();
     });
-    client.upload(__filename, 'TestFileForSFTPUpload.xyz');
+    client.upload(__filename, remoteFileName);
 });
 
 test('upload emits error instead of throwing on bad private key file', done => {
@@ -105,7 +110,7 @@ test('upload emits error instead of throwing on bad private key file', done => {
         );
         done();
     });
-    client.upload(__filename, 'TestFileForSFTPUpload.xyz');
+    client.upload(__filename, remoteFileName);
 });
 
 test('_getConnSettings', () => {
@@ -143,4 +148,18 @@ test('_loadPrivateKey', () => {
         username: 'user',
         privateKey: pk
     });
+});
+
+test('_initUploadResult', () => {
+    var ss = getStorageService();
+    var client = new SFTPClient(ss);
+    var result = client._initUploadResult(__filename, remoteFileName);
+    testCommonResultProperties(result, true);
+});
+
+test('_buildUrl', () => {
+    var ss = getStorageService();
+    var client = new SFTPClient(ss);
+    var url = client._buildUrl(remoteFileName);
+    expect(url).toEqual('sftp://localhost:8088/TestFileForSFTPUpload.xyz');
 });
