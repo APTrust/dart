@@ -71,9 +71,15 @@ class SFTPClient extends Plugin {
         }
         // Don't use path.join; force forward slash instead.
         let remoteFilepath = `${this.storageService.bucket}/${keyname}`;
-        let connSettings = this._getConnSettings();
         let client = new Client();
         let result = this._initUploadResult(filepath, remoteFilepath);
+        let connSettings = null;
+        try { connSettings = this._getConnSettings(); }
+        catch (err) {
+            result.finish(err);
+            sftp.emit('error', result);
+            return;
+        }
         client.connect(connSettings)
             .then(() => {
                 // This library also has a fastPut method that comes
@@ -163,7 +169,7 @@ class SFTPClient extends Plugin {
         } catch (ex) {
             throw Context.y18n.__("Error reading private key file %s for storage service %s: %s", this.storageService.loginExtra, this.storageService.name, ex.toString());
         }
-        return pk;
+        return pk.toString();
     }
 
 
