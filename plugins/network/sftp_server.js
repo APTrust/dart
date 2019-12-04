@@ -19,6 +19,8 @@ const FILE_TO_WRITE = path.join(os.tmpdir(), 'dart-sftp-test-file.txt');
 const KEY_FILE = path.join(TEST_DIR,  'certs', 'rsa_test_key');
 
 var server = null;
+var _debug = false;
+
 
 /**
  * Starts the SFTP server. This is used only when testing the SFTP
@@ -35,20 +37,24 @@ var server = null;
  *
  * @param {number} port - The port to listen on. Defaults to 8088.
  */
-function start(port = DEFAULT_PORT) {
+function start(port = DEFAULT_PORT, debug = false) {
     if (server != null) {
         return;
     }
+    _debug = debug;
     server = new SFTPServer({
         privateKeyFile: KEY_FILE
     });
-    server.listen(port);
+    server.listen(port, '127.0.0.1');
     server.on("connect", function(auth, info) {
         if (auth.method !== 'password' || auth.username !== USER || auth.password !== PASSWORD) {
+            log(`Rejected login from ${auth.username} (${auth.method})`);
             return auth.reject(['password'],false);
         }
+        log(`Accepted login from ${auth.username} (${auth.method})`);
         return auth.accept(function(session) {
             session.on("readdir", function(path, responder) {
+                log(`Listing dir ${path}`);
                 console.log(path);
                 var dirs, i, j, results;
                 dirs = (function() {
@@ -69,23 +75,37 @@ function start(port = DEFAULT_PORT) {
                 });
             });
             session.on("readfile", function(path, writestream) {
+                log(`Reading file ${path}`);
                 return fs.createReadStream(FILE_TO_READ).pipe(writestream);
             });
             return session.on("writefile", function(path, readstream) {
+                log(`Writing file ${path} to hardcoded ${FILE_TO_WRITE}`);
                 let outfile = fs.createWriteStream(FILE_TO_WRITE);
                 return readstream.pipe(outfile);
             });
         });
     });
 
+    // When running `node run sftp-server` and testing DART jobs,
+    // this server throws ECONNRESET on syscall 'read' even
+    // though it successfully writes the uploaded file to disk.
     server.on("error", function(err) {
-        throw `SFTP Server error: ${err}`
+        log(err);
+        log('Server will continue to process requests.')
+        //throw `SFTP Server error: ${err}`
     });
     server.on("end", function() {
-        server = null;
+        log(`Finished read/write operation`);
+        //server = null;
     });
 
     return server;
+}
+
+function log(message) {
+    if (_debug === true) {
+        console.log(`[${new Date().toISOString()}] ${message}`);
+    }
 }
 
 module.exports.DEFAULT_PORT = DEFAULT_PORT;

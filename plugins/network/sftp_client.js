@@ -70,7 +70,10 @@ class SFTPClient extends Plugin {
             keyname = path.basename(filepath);
         }
         // Don't use path.join; force forward slash instead.
-        let remoteFilepath = `${this.storageService.bucket}/${keyname}`;
+        let remoteFilepath =  keyname;
+        if (this.storageService.bucket) {
+            `${this.storageService.bucket}/${keyname}`;
+        }
         let client = new Client();
         let result = this._initUploadResult(filepath, remoteFilepath);
         let connSettings = null;
@@ -90,11 +93,15 @@ class SFTPClient extends Plugin {
             .then(() => {
                 result.info = Context.y18n.__("Upload succeeded");
                 result.finish();
-                sftp.emit('finish', result);
-                return client;
-            })
-            .then(() => {
-                return client.end();
+                // We should just emit finish immediately, but when
+                // testing against local SFTP server, this closes
+                // the upload stream before the server is ready,
+                // causing ECONNRESET (even though the write has
+                // completed on the server end).
+                setTimeout(function() {
+                    sftp.emit('finish', result);
+                }, 500);
+                client.end();
             })
             .catch(err => {
                 result.finish(err.message);

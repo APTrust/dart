@@ -59,7 +59,8 @@
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
         "start": "NODE_ENV=dev electron .",
         "release": "build",
-        "test": "jest"
+        "test": "jest",
+        "sftp-server": "node ./test/servers/sftp.js"
     },
     "build": {
         "appId": "com.electron.DART",
