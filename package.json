@@ -40,8 +40,8 @@
         "tar-stream": "^2.1.0",
         "tmp": "0.1.0",
         "typescript": "^3.7.3",
-        "vue": "^2.6.10",
-        "vue-template-compiler": "^2.6.10",
+        "vue": "^2.6.11",
+        "vue-template-compiler": "^2.6.11",
         "winston": "^3.2.1",
         "winston-console-for-electron": "0.0.6",
         "y18n": "^4.0.0"
