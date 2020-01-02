@@ -12,6 +12,13 @@ const { Util } = require('../../core/util');
 //
 // Or, more simply: https://www.npmjs.com/package/ssh2-sftp-server
 
+const defaultPutOptions = {
+  flags: 'w',
+  encoding: null,
+  mode: 0o644,
+  autoClose: true
+}
+
 class SFTPClient extends Plugin {
 
     /**
@@ -88,9 +95,9 @@ class SFTPClient extends Plugin {
                 // This library also has a fastPut method that comes
                 // with a warning about potential file corruption.
                 // Use put for initial release.
-                return client.put(filepath, remoteFilepath);
+                return client.put(filepath, remoteFilepath, defaultPutOptions);
             })
-            .then(() => {
+            .then((response) => {
                 result.info = Context.y18n.__("Upload succeeded");
                 result.finish();
                 // We should just emit finish immediately, but when
@@ -106,6 +113,7 @@ class SFTPClient extends Plugin {
             .catch(err => {
                 result.finish(err.message);
                 sftp.emit('error', result);
+                client.end();
             });
     }
 

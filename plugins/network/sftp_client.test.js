@@ -95,6 +95,21 @@ test('Upload with bad credentials', done => {
     client.upload(__filename, remoteFileName);
 });
 
+test('Upload handles Permission denied', done => {
+    var ss = getStorageService();
+    var client = new SFTPClient(ss);
+    client.on('finish', function(result) {
+        throw "Should have fired error event, not finished."
+        done();
+    });
+    client.on('error', function(result) {
+        expect(result.errors).toEqual(["sftp.put: Permission denied permission-denied"]);
+        done();
+    });
+    client.upload(__filename, "permission-denied");
+});
+
+
 test('upload emits error instead of throwing on bad private key file', done => {
     var ss = getStorageService();
     // For SFTP, loginExtra is path to private key file.
