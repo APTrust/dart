@@ -21,6 +21,7 @@ function getStorageService() {
         protocol: 'sftp',
         host: 'localhost',
         port: SFTPServer.DEFAULT_PORT,
+        bucket: 'files/uploads',
         login: SFTPServer.USER,
         password: SFTPServer.PASSWORD
     });
@@ -40,7 +41,7 @@ function testCommonResultProperties(result, withNullCompleted = false) {
     } else {
         expect(result.completed).not.toBeNull();
     }
-    expect(result.remoteURL).toEqual('sftp://localhost:8088/TestFileForSFTPUpload.xyz');
+    expect(result.remoteURL).toEqual('sftp://localhost:8088/files/uploads/TestFileForSFTPUpload.xyz');
 }
 
 test('Description', () => {
@@ -161,5 +162,10 @@ test('_buildUrl', () => {
     var ss = getStorageService();
     var client = new SFTPClient(ss);
     var url = client._buildUrl(remoteFileName);
-    expect(url).toEqual('sftp://localhost:8088/TestFileForSFTPUpload.xyz');
+    expect(url).toEqual('sftp://localhost:8088/files/uploads/TestFileForSFTPUpload.xyz');
+
+    // Make sure we get rid of multiple slashes
+    ss.bucket = '//files////uploads//'
+    url = client._buildUrl(remoteFileName);
+    expect(url).toEqual('sftp://localhost:8088/files/uploads/TestFileForSFTPUpload.xyz');
 });
