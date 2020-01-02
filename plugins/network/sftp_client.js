@@ -211,7 +211,7 @@ class SFTPClient extends Plugin {
         if (!remoteFilepath.startsWith('/') && !bucket.startsWith('/')) {
             url += '/';
         }
-        if (!bucket.endsWith('/')) {
+        if (bucket.trim() != "" && !bucket.endsWith('/')) {
             bucket += '/';
         }
         // Replace multiple slashes with single slash.
