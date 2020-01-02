@@ -80,7 +80,7 @@ also working.
 * Creating bags in formats other than unserialized and tar. (You can build a
   bag as a directory or a tar file, but zip, gzip, and other formats are
   not yet supported.)
-* Shipping files in protocols other than S3. We intend to support SFTP soon.
+* Shipping files in protocols other than S3 or SFTP.
 * APTrust has an internal list of a number of minor bugs, all of which
   affect workflows outside the normal APTrust workflow.
 * We have not yet formally defined the plugin APIs for developers who want
@@ -195,3 +195,17 @@ You can run the binary directly from there.
 ```
 
 After running that, open the file `docs/DART/2.0.0/index.html` in your browser.
+
+## Testing Against a Local SFTP Server (dev mode only)
+
+To test jobs against a local SFTP server, run the following in a new terminal,
+from the root of the DART project directory:
+
+`node ./test/servers/sftp.js`
+
+Note that this works only in dev mode, when you have the source files. This is
+not part of the release.
+
+The local test SFTP server writes everything to a single temp file. It's not
+meant to preserve any data, just to test whether data transfer works via the
+SFTP protocol.
