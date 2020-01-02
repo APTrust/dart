@@ -290,15 +290,23 @@ class SFTPClient extends Plugin {
         return result;
     }
 
+    // Build the remote URL. Don't use path.join because on
+    // Windows, that gives us backslashes, and we want forward
+    // slashes for SFTP.
     _buildUrl(remoteFilepath) {
+        let bucket = this.storageService.bucket;
         let url = `sftp://${this.storageService.host}`;
         if (this.storageService.port) {
             url += `:${this.storageService.port}`;
         }
-        if (!remoteFilepath.startsWith('/')) {
+        if (!remoteFilepath.startsWith('/') &amp;&amp; !bucket.startsWith('/')) {
             url += '/';
         }
-        return `${url}${remoteFilepath}`;
+        if (!bucket.endsWith('/')) {
+            bucket += '/';
+        }
+        // Replace multiple slashes with single slash.
+        return url + `${bucket}${remoteFilepath}`.replace(/\/+/g, '/');
     }
 
     /**

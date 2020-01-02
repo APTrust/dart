@@ -170,7 +170,7 @@ also working.</p>
 <li>Creating bags in formats other than unserialized and tar. (You can build a
 bag as a directory or a tar file, but zip, gzip, and other formats are
 not yet supported.)</li>
-<li>Shipping files in protocols other than S3. We intend to support SFTP soon.</li>
+<li>Shipping files in protocols other than S3 or SFTP.</li>
 <li>APTrust has an internal list of a number of minor bugs, all of which
 affect workflows outside the normal APTrust workflow.</li>
 <li>We have not yet formally defined the plugin APIs for developers who want
@@ -255,6 +255,15 @@ on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.<
 <pre class="prettyprint source"><code>./jsdoc.sh
 </code></pre>
 <p>After running that, open the file <code>docs/DART/2.0.0/index.html</code> in your browser.</p>
+<h2>Testing Against a Local SFTP Server (dev mode only)</h2>
+<p>To test jobs against a local SFTP server, run the following in a new terminal,
+from the root of the DART project directory:</p>
+<p><code>node ./test/servers/sftp.js</code></p>
+<p>Note that this works only in dev mode, when you have the source files. This is
+not part of the release.</p>
+<p>The local test SFTP server writes everything to a single temp file. It's not
+meant to preserve any data, just to test whether data transfer works via the
+SFTP protocol.</p>
     </article>
   </section>
 
