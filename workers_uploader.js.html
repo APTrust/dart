@@ -168,6 +168,9 @@ class Uploader extends Worker {
      */
     doUpload(uploadOp) {
         let uploader = this;
+        // Clear prior upload results. They may cause the UI to
+        // report successful upload as failed, or vice-versa.
+        uploadOp.results = [];
         let ss = StorageService.find(uploadOp.storageServiceId);
         if (!ss) {
             uploadOp.results[0] = new OperationResult('upload', 'none');

@@ -178,6 +178,17 @@ function start(port = DEFAULT_PORT, debug = false) {
                 return fs.createReadStream(FILE_TO_READ).pipe(writestream);
             });
             return session.on("writefile", function(path, readstream) {
+                if (path == "permission-denied") {
+                    log("Returning permission denied")
+                    // param 1 is the request id, which should be 1 during
+                    // testing, because, there is only one open request
+                    // at a time on this server.
+                    //
+                    // param 3 is the ssh2-streams package error code for
+                    // "Permission denied". See
+                    // https://github.com/mscdex/ssh2-streams/blob/master/lib/sftp.js#L30
+                    return session.sftpStream.status(1, 3, "Permission denied");
+                }
                 log(`Writing file ${path} to hardcoded ${FILE_TO_WRITE}`);
                 let outfile = fs.createWriteStream(FILE_TO_WRITE);
                 return readstream.pipe(outfile);
@@ -191,6 +202,7 @@ function start(port = DEFAULT_PORT, debug = false) {
     server.on("error", function(err) {
         log(err);
         log('Server will continue to process requests.')
+        return(err);
         //throw `SFTP Server error: ${err}`
     });
     server.on("end", function() {
