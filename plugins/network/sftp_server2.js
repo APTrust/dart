@@ -38,14 +38,15 @@ function start(port = DEFAULT_PORT, debug = true) {
             var user = Buffer.from(ctx.username);
             if (user.length !== allowedUser.length
                 || !crypto.timingSafeEqual(user, allowedUser)) {
+                log("Bad user. Try 'user'");
                 return ctx.reject(['password']);
             }
-
             switch (ctx.method) {
             case 'password':
                 var password = Buffer.from(ctx.password);
                 if (password.length !== allowedPassword.length
                     || !crypto.timingSafeEqual(password, allowedPassword)) {
+                    log("Bad password. Try 'password'");
                     return ctx.reject(['password']);
                 }
                 break;
