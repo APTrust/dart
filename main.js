@@ -45,6 +45,7 @@ function run() {
 // Run in command-line mode.
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
+    Context.logger.info(Context.dartVersion());
     let stdinData = '';
     if (opts.stdin) {
         stdinData = fs.readFileSync(0, 'utf-8');
@@ -66,6 +67,7 @@ async function runWithoutUI(opts) {
 // See https://trello.com/c/ELW94mfF for more info.
 function makey18nWriteSafe() {
     Context.y18n.updateFiles = (process.DART_MODE == 'gui' && Context.isElectronDevMode());
+    Context.logger.info(Context.dartVersion());
     Context.logger.info("Y18 updateFiles = " + Context.y18n.updateFiles);
 }
 
