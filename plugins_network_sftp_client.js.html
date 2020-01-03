@@ -190,7 +190,6 @@ class SFTPClient extends Plugin {
         // cause this client to throw an error, so we can't handle
         // it in the normal Promise.error() handler below.
         client.on('close', function(err) {
-            Context.logger.info("Upload", succeeded ? "succeeded" : "failed");
             if (errorWasHandled) {
                 return;
             }
@@ -209,6 +208,12 @@ class SFTPClient extends Plugin {
             setTimeout(function() {
                 sftp.emit('finish', result);
             }, 500);
+        });
+        // This handles authentication errors, which will occur before we
+        // can even attempt an upload.
+        client.on('error', function(err) {
+            result.finish(err.message);
+            sftp.emit('error', result);
         });
         client.connect(connSettings)
             .then(() => {
@@ -268,6 +273,7 @@ class SFTPClient extends Plugin {
             username: this.storageService.login
         }
         if (!Util.isEmpty(this.storageService.loginExtra)) {
+            Context.logger.info(Context.y18n.__("Using private key at %s for SFTP connection", this.storageService.loginExtra));
             connSettings.privateKey = this._loadPrivateKey();
         } else if (!Util.isEmpty(this.storageService.password)) {
             Context.logger.info(Context.y18n.__("Using password for SFTP connection"));
