@@ -304,5 +304,7 @@
   "Using password for SFTP connection": "Using password for SFTP connection",
   "Upload succeeded": "Upload succeeded",
   "Checking %s for RSA key for SFTP connection": "Checking %s for RSA key for SFTP connection",
-  "Private key file %s is missing for storage service %s": "Private key file %s is missing for storage service %s"
+  "Private key file %s is missing for storage service %s": "Private key file %s is missing for storage service %s",
+  "Upload failed due to unknown error. The remote host may have terminated the connection.": "Upload failed due to unknown error. The remote host may have terminated the connection.",
+  "Must upload filepath or buffer": "Must upload filepath or buffer"
 }

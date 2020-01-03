@@ -148,7 +148,7 @@ class PackageOperation {
          *
          * @type {boolean}
          */
-        this.trimLeadingPaths = false;
+        this.trimLeadingPaths = true;
         /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the

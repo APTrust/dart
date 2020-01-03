@@ -7,11 +7,6 @@ const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
 
 
-// See https://stackoverflow.com/questions/45111061/sftp-server-for-reading-directory-using-node-js
-// for info on implementing a test server.
-//
-// Or, more simply: https://www.npmjs.com/package/ssh2-sftp-server
-
 const defaultPutOptions = {
   flags: 'w',
   encoding: null,
@@ -59,8 +54,8 @@ class SFTPClient extends Plugin {
      * of the {@link StorageService} passed in to this class'
      * constructor.
      *
-     * @param {string} filepath - The path to the local file to be uploaded
-     * to the SFTP server.
+     * @param {string} filepathOrBuffer - The path to the local file, or a
+     * data buffer to be uploaded to the SFTP server.
      *
      * @param {string} keyname - This name to assign the file on the remote
      * server. This parameter is optional. If not specified, it defaults to
@@ -68,13 +63,13 @@ class SFTPClient extends Plugin {
      * default to bagOfPhotos.tar.
      *
      */
-    upload(filepath, keyname) {
+    upload(filepathOrBuffer, keyname) {
         let sftp = this;
-        if (!filepath) {
-            throw new Error('Param filepath is required for upload.');
+        if (!filepathOrBuffer) {
+            throw new Error('Param filepathOrBuffer is required for upload.');
         }
-        if (!keyname) {
-            keyname = path.basename(filepath);
+        if (filepathOrBuffer instanceof String && !keyname) {
+            keyname = path.basename(filepathOrBuffer);
         }
         // Don't use path.join; force forward slash instead.
         let remoteFilepath =  keyname;
@@ -82,35 +77,55 @@ class SFTPClient extends Plugin {
             `${this.storageService.bucket}/${keyname}`;
         }
         let client = new Client();
-        let result = this._initUploadResult(filepath, remoteFilepath);
+        let result = this._initUploadResult(filepathOrBuffer, remoteFilepath);
         let connSettings = null;
+        let succeeded = false;
+        let errorWasHandled = false;
         try { connSettings = this._getConnSettings(); }
         catch (err) {
             result.finish(err);
             sftp.emit('error', result);
             return;
         }
+        // Catch unexpected socket closure. Somehow, that does not
+        // cause this client to throw an error, so we can't handle
+        // it in the normal Promise.error() handler below.
+        client.on('close', function(err) {
+            Context.logger.info("Upload", succeeded ? "succeeded" : "failed");
+            if (errorWasHandled) {
+                return;
+            }
+            if (err) {
+                result.finish(err.message);
+                sftp.emit('error', result);
+            } else if (!succeeded) {
+                result.finish(Context.y18n.__("Upload failed due to unknown error. The remote host may have terminated the connection."));
+                sftp.emit('error', result);
+            }
+            // We should just emit finish immediately, but when
+            // testing against local SFTP server, this closes
+            // the upload stream before the server is ready,
+            // causing ECONNRESET (even though the write has
+            // completed on the server end).
+            setTimeout(function() {
+                sftp.emit('finish', result);
+            }, 500);
+        });
         client.connect(connSettings)
             .then(() => {
                 // This library also has a fastPut method that comes
                 // with a warning about potential file corruption.
                 // Use put for initial release.
-                return client.put(filepath, remoteFilepath, defaultPutOptions);
+                return client.put(filepathOrBuffer, remoteFilepath);//, defaultPutOptions);
             })
             .then((response) => {
                 result.info = Context.y18n.__("Upload succeeded");
                 result.finish();
-                // We should just emit finish immediately, but when
-                // testing against local SFTP server, this closes
-                // the upload stream before the server is ready,
-                // causing ECONNRESET (even though the write has
-                // completed on the server end).
-                setTimeout(function() {
-                    sftp.emit('finish', result);
-                }, 500);
+                succeeded = true;
                 client.end();
             })
             .catch(err => {
+                errorWasHandled = true;
                 result.finish(err.message);
                 sftp.emit('error', result);
                 client.end();
@@ -188,13 +203,21 @@ class SFTPClient extends Plugin {
     }
 
 
-    _initUploadResult(filepath, remoteFilepath) {
+    _initUploadResult(filepathOrBuffer, remoteFilepath) {
         let result = new OperationResult('upload', 'SFTPClient');
         result.start();
-        let stats = fs.statSync(filepath);
-        result.filepath = filepath;
-        result.filesize = stats.size;
-        result.fileMtime = stats.mtime;
+        if (typeof filepathOrBuffer == 'string') {
+            let stats = fs.statSync(filepathOrBuffer);
+            result.filepath = filepathOrBuffer;
+            result.filesize = stats.size;
+            result.fileMtime = stats.mtime;
+        } else if (Buffer.isBuffer(filepathOrBuffer)) {
+            // This is used for tests only
+            result.filepathOrBuffer = "In-memory buffer";
+            result.filesize = filepathOrBuffer.length;
+        } else {
+            throw Context.y18n.__("Must upload filepath or buffer");
+        }
         result.remoteURL = this._buildUrl(remoteFilepath);
         return result;
     }

@@ -1,4 +1,4 @@
-const sftp = require('../../plugins/network/sftp_server.js')
+const sftp = require('../../plugins/network/sftp_server2.js')
 
 // Run a local SFTP server listening on localhost to test DART
 // jobs against an SFTP storage service for dev testing. This is

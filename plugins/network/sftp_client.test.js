@@ -1,6 +1,6 @@
 const { Context } = require('../../core/context');
 const path = require('path');
-const SFTPServer = require('./sftp_server');
+const SFTPServer = require('./sftp_server2');
 const SFTPClient = require('./sftp_client');
 const { StorageService } = require('../../core/storage_service');
 
@@ -8,11 +8,11 @@ var server = null;
 const remoteFileName = 'TestFileForSFTPUpload.xyz';
 
 beforeAll(() => {
-    server = SFTPServer.start(SFTPServer.PORT);
+    server = SFTPServer.start(SFTPServer.PORT, false);
 });
 
 afterAll(() => {
-    server.server.close();
+    server.close();
 });
 
 function getStorageService() {
@@ -103,10 +103,24 @@ test('Upload handles Permission denied', done => {
         done();
     });
     client.on('error', function(result) {
-        expect(result.errors).toEqual(["sftp.put: Permission denied permission-denied"]);
+        expect(result.errors).toEqual(["sftp.put: Permission denied TestFileForSFTPUpload.xyz"]);
         done();
     });
-    client.upload(__filename, "permission-denied");
+    client.upload(Buffer.from('Force permission denied', 'utf8'), remoteFileName);
+});
+
+test('Upload handles unspecfied failure', done => {
+    var ss = getStorageService();
+    var client = new SFTPClient(ss);
+    client.on('finish', function(result) {
+        throw "Should have fired error event, not finished."
+        done();
+    });
+    client.on('error', function(result) {
+        expect(result.errors).toEqual(["sftp.put: Failure TestFileForSFTPUpload.xyz"]);
+        done();
+    });
+    client.upload(Buffer.from('Force upload failure', 'utf8'), remoteFileName);
 });
 
 
