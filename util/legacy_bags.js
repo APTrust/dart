@@ -58,7 +58,16 @@ const LegacyBags = [
     'vwu.edu.twp-arc-new-mic',
     'vwu.edu.twp-arc-prg10-box3-pho-001-110',
     'vwu.edu.bag.twp-arc-yea',
-    'vwu.edu.twp-arc-dav-boxa-doc'
+    'vwu.edu.twp-arc-dav-boxa-doc',
+    'viul.virginia.edu.bag.archives',
+    'viul.virginia.edu.archives',
+    'viul.virginia.edu..archives',
+    'viul.virginia.edu.1828',
+    'viul.virginia.edu.bag.archives.dengrove',
+    'viul.virginia.edu.archives.facultypublications',
+    'viul.virginia.edu.archives.faculty-publications',
+    'viul.virginia.edu.bag.archives.faculty-publications',
+    'viul.virginia.edu.bag.archives.vlw-negatives'
 ]
 
 module.exports.LegacyBags = LegacyBags;
