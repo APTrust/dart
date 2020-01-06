@@ -1,5 +1,6 @@
 const { Context } = require('./context');
 const fs = require('fs');
+const { LegacyBags } = require('../util/legacy_bags')
 const { OperationResult } = require('./operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { Util } = require('./util');
@@ -121,8 +122,10 @@ class PackageOperation {
         this.skipFiles = [];
         /**
          * This indicates whether DART should trim common leading paths
-         * when packaging files. Let's assume you have the following in
-         * {@link sourceFiles}:
+         * when packaging files. Use the method {@link trimLeadingPaths}
+         * instead of accessing this directory.
+         *
+         * Let's assume you have the following in {@link sourceFiles}:
          *
          * * '/path/to/some/dir/photos'
          * * '/path/to/some/dir/audios'
@@ -148,7 +151,7 @@ class PackageOperation {
          *
          * @type {boolean}
          */
-        this.trimLeadingPaths = true;
+        this._trimLeadingPaths = true;
         /**
          * Contains information describing validation errors. Key is the
          * name of the invalid field. Value is a description of why the
@@ -241,6 +244,24 @@ class PackageOperation {
         }
         return writer;
     }
+
+    /**
+     * Returns true or false to describe whether we should trim leading
+     * path names when packaging files. Currently, only the bagger respects
+     * this. This simply returns the value of {@link _trimLeadingPaths},
+     * except in cases where DART thinks the user is rebagging a legacy
+     * bag that was first produced with DART 1.0 and then deposited into
+     * APTrust's production repo. For those bags (of which only about 30
+     * exist), this always returns false.
+     *
+     */
+    trimLeadingPaths() {
+        if (LegacyBags.includes(this.packageName)) {
+            return false;
+        }
+        return this._trimLeadingPaths;
+    }
+
 
     /**
      * This converts the JSON representation of a PackageOperation to a

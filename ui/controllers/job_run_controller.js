@@ -101,7 +101,7 @@ class JobRunController extends RunningJobsController {
 
     _getTrimPath() {
         let trimPath = '';
-        if (this.job.packageOp && this.job.packageOp.trimLeadingPaths) {
+        if (this.job.packageOp && this.job.packageOp.trimLeadingPaths()) {
             trimPath = Util.findCommonPathPrefix(this.job.packageOp.sourceFiles);
         }
         return trimPath;

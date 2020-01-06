@@ -42,7 +42,7 @@ function getJob() {
     var job = new Job();
     job.packageOp = new PackageOperation('TestBag', '/dev/null');
     job.packageOp.packageFormat = 'BagIt';
-    job.packageOp.trimLeadingPaths = false;
+    job.packageOp._trimLeadingPaths = false;
     job.packageOp.sourceFiles = [
         __dirname,
         path.join(__dirname, '..', 'forms')

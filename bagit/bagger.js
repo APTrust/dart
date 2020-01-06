@@ -402,7 +402,7 @@ class Bagger extends EventEmitter {
      */
     _getTrimPath() {
         if (this._pathToTrim === null) {
-            if (this.job.packageOp.trimLeadingPaths) {
+            if (this.job.packageOp.trimLeadingPaths()) {
                 this._pathToTrim = Util.findCommonPathPrefix(this.job.packageOp.sourceFiles);
             } else {
                 this._pathToTrim = '';

@@ -1,4 +1,5 @@
 const { Context } = require('./context');
+const { LegacyBags } = require('../util/legacy_bags')
 const { OperationResult } = require('./operation_result');
 const { PackageOperation } = require('./package_operation');
 const { PluginManager } = require('../plugins/plugin_manager');
@@ -106,4 +107,39 @@ test('inflateFrom()', () => {
 
     // Methods should be defined
     expect(typeof op.validate).toEqual('function');
+});
+
+test('trimLeadingBags()', () => {
+    let nonLegacy = [
+        "test.edu.bag1",
+        "test.edu.bag2",
+        "test.edu.bag3",
+    ];
+
+    // Should return whatever _trimLeadingPaths says
+    // for non-legacy bags.
+    for (let name of nonLegacy) {
+        let op = new PackageOperation(name, '/dev/null');
+        op._trimLeadingPaths = true;
+        expect(op.trimLeadingPaths()).toBe(true);
+    }
+    for (let name of nonLegacy) {
+        let op = new PackageOperation(name, '/dev/null');
+        op._trimLeadingPaths = false;
+        expect(op.trimLeadingPaths()).toBe(false);
+    }
+
+    // Should ALWAYS return false for legacy bags.
+    // no matter what _trimLeadingPaths says.
+    for (let name of LegacyBags) {
+        let op = new PackageOperation(name, '/dev/null');
+        op._trimLeadingPaths = true;
+        expect(op.trimLeadingPaths()).toBe(false);
+    }
+    for (let name of LegacyBags) {
+        let op = new PackageOperation(name, '/dev/null');
+        op._trimLeadingPaths = false;
+        expect(op.trimLeadingPaths()).toBe(false);
+    }
+
 });

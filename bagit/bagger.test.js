@@ -180,7 +180,7 @@ test('create() using FileSystemWriter', done => {
 test('_getTrimPath', () => {
     let job = new Job();
     job.packageOp.sourceFiles = getSourceFiles();
-    job.packageOp.trimLeadingPaths = true;
+    job.packageOp._trimLeadingPaths = true;
     let bagger = new Bagger(job);
     if (os.platform() == 'win32') {
         expect(bagger._getTrimPath()).toEqual('C:\\path\\to\\some\\');
@@ -192,7 +192,7 @@ test('_getTrimPath', () => {
 test('_trimAbsPath', () => {
     let job = new Job();
     job.packageOp.sourceFiles = getSourceFiles();
-    job.packageOp.trimLeadingPaths = true;
+    job.packageOp._trimLeadingPaths = true;
     let bagger = new Bagger(job);
     if (os.platform() == 'win32') {
         expect(bagger._trimAbsPath('C:\\path\\to\\some\\dir\\img.png')).toEqual('\\dir\\img.png');
