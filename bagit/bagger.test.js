@@ -118,6 +118,7 @@ test('create() with multiple dirs and files', done => {
             let bagInfoFile = validator.files['bag-info.txt'];
             expect(bagInfoFile).not.toBeNull();
             expect(bagInfoFile.keyValueCollection.first('Source-Organization')).toEqual('School of Hard Knocks');
+            expect(bagInfoFile.keyValueCollection.first('BagIt-Profile-Identifier')).toEqual('https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2');
             let aptInfoFile = validator.files['aptrust-info.txt'];
             expect(bagInfoFile).not.toBeNull();
             expect(aptInfoFile.keyValueCollection.first('Access')).toEqual('Institution');
