@@ -232,14 +232,14 @@ class PackageOperation {
          *
          * These all have a common leading path of '/path/to/some/dir',
          * which can be stripped off in the packaging process. So setting
-         * trimLeadingPaths to true would lead to these files being bagged
+         * _trimLeadingPaths to true would lead to these files being bagged
          * as:
          *
          * * 'data/photos'
          * * 'data/audios'
          * * 'data/videos'
          *
-         * If trimLeadingPaths is false, these will be bagged as:
+         * If _trimLeadingPaths is false, these will be bagged as:
          *
          * * 'data/path/to/some/dir/photos'
          * * 'data/path/to/some/dir/audios'
@@ -373,10 +373,18 @@ class PackageOperation {
     static inflateFrom(data) {
         // let op = "pay attention" in Dutch.
         let op = new PackageOperation();
+        // tlpFunction works around a problem where jobs saved
+        // prior to January 2020 have trimLeadingPaths saved
+        // as a boolean in the JSON database. It should be a
+        // fuction after January 2020. We don't want the bool
+        // to override the function. We can remove this tlpFunction
+        // hack in a few months.
+        let tlpFunction = op.trimLeadingPaths;
         Object.assign(op, data);
         if (data.result) {
             op.result = OperationResult.inflateFrom(data.result);
         }
+        op.trimLeadingPaths = tlpFunction;
         return op;
     }
 }

@@ -109,6 +109,7 @@ const { OperationResult } = require('../core/operation_result');
 const os = require('os');
 const path = require('path');
 const { PluginManager } = require('../plugins/plugin_manager');
+const { TagDefinition } = require('./tag_definition');
 const { Util } = require('../core/util');
 
 /**
@@ -512,7 +513,8 @@ class Bagger extends EventEmitter {
 
     /**
      * Sets some automatic values in the bag-info.txt file, including
-     * Bagging-Date, Bagging-Software, and Payload-Oxum.
+     * Bagging-Date, Bagging-Software, Payload-Oxum and
+     * BagItProfileIdentifier
      *
      * @private
      */
@@ -527,6 +529,22 @@ class Bagger extends EventEmitter {
         if (baggingSoftware) {
             baggingSoftware.userValue = Context.dartVersion();
         }
+
+        // This is an odd one, because the bagit-profiles spec at
+        // https://bagit-profiles.github.io/bagit-profiles-specification/
+        // says it's required, and yet the example specs do not require
+        // or even this tag.
+        var profileIdentifier = profile.firstMatchingTag('tagName', 'BagIt-Profile-Identifier')
+        if (profileIdentifier == null) {
+            profileIdentifier = new TagDefinition({
+                id: Util.uuid4(),
+                tagFile: "bag-info.txt",
+                tagName: "BagIt-Profile-Identifier",
+                required: true
+            });
+            profile.tags.push(profileIdentifier)
+        }
+        profileIdentifier.userValue = profile.bagItProfileInfo.bagItProfileIdentifier;
 
         var fileCount = 0;
         var byteCount = 0;
