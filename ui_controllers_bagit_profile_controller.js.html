@@ -282,7 +282,7 @@ class BagItProfileController extends BaseController {
             tagsByFile: tagsByFile
         }
         Object.assign(data, opts);
-        return this.formTemplate(data);
+        return this.formTemplate(data, Templates.renderOptions);
     }
 
     /**
