@@ -15,6 +15,15 @@ const compileOptions = {
     preventIndent: true
 }
 
+// Fix for handlebars breaking change described at
+// https://handlebarsjs.com/api-reference/runtime-options.html#options-to-control-prototype-access
+// This affects the rendering of the jobs controller and the bagit profile
+// controller.
+const renderOptions = {
+    allowProtoMethodsByDefault: true,
+    allowProtoPropertiesByDefault: true
+}
+
 function readFile(...args) {
     let filepath = path.join(templateDir, ...args)
     return fs.readFileSync(filepath, 'utf8');
@@ -142,6 +151,7 @@ module.exports.partials = handlebars.partials;
 module.exports.pluginsList = pluginsList;
 module.exports.remoteRepositoryForm = remoteRepositoryForm;
 module.exports.remoteRepositoryList = remoteRepositoryList;
+module.exports.renderOptions = renderOptions
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;
 module.exports.setupEnd = setupEnd;

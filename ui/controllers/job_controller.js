@@ -60,7 +60,7 @@ class JobController extends BaseController {
             alertMessage: this.alertMessage,
             items: jobs
         };
-        let html = this.listTemplate(data);
+        let html = this.listTemplate(data, Templates.renderOptions);
         return this.containerContent(html);
     }
 

@@ -170,7 +170,7 @@ class BaseController {
             nav: Templates.nav({
                 section: this.navSection,
                 workflows: workflows
-            }),
+            }, Templates.renderOptions),
             container: html
         }
     }
@@ -243,7 +243,7 @@ class BaseController {
      */
     new() {
         let form = new this.formClass(new this.model());
-        let html = this.formTemplate({ form: form });
+        let html = this.formTemplate({ form: form }, Templates.renderOptions);
         return this.containerContent(html);
     }
 
@@ -269,7 +269,7 @@ class BaseController {
         form.parseFromDOM();
         if (!form.obj.validate()) {
             form.setErrors();
-            let html = this.formTemplate({ form: form });
+            let html = this.formTemplate({ form: form }, Templates.renderOptions);
             return this.containerContent(html);
         }
         this.alertMessage = Context.y18n.__(
@@ -294,7 +294,7 @@ class BaseController {
             alertMessage: this.alertMessage,
             items: items
         };
-        let html = this.listTemplate(data);
+        let html = this.listTemplate(data, Templates.renderOptions);
         return this.containerContent(html);
     }
 

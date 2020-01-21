@@ -307,5 +307,7 @@
   "Private key file %s is missing for storage service %s": "Private key file %s is missing for storage service %s",
   "Upload failed due to unknown error. The remote host may have terminated the connection.": "Upload failed due to unknown error. The remote host may have terminated the connection.",
   "Must upload filepath or buffer": "Must upload filepath or buffer",
-  "Using private key at %s for SFTP connection": "Using private key at %s for SFTP connection"
+  "Using private key at %s for SFTP connection": "Using private key at %s for SFTP connection",
+  "TagDefinition_emptyOk_label": "TagDefinition_emptyOk_label",
+  "TagDefinition_emptyOk_help": "TagDefinition_emptyOk_help"
 }
