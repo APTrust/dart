@@ -212,6 +212,9 @@ class SFTPClient extends Plugin {
         // This handles authentication errors, which will occur before we
         // can even attempt an upload.
         client.on('error', function(err) {
+            if (err.message.includes("authentication methods failed")) {
+                errorWasHandled = true;
+            }
             result.finish(err.message);
             sftp.emit('error', result);
         });
