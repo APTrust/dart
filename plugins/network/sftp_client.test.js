@@ -66,9 +66,10 @@ test('Upload', done => {
         expect(result.errors).toEqual([]);
         done();
     });
-    client.on('error', function(err) {
+    client.on('error', function(result) {
         // Force failure
-        expect(err).toBeNull();
+        console.log(result);
+        expect(result.errors).toEqual([]);
         done();
     });
 
@@ -103,7 +104,7 @@ test('Upload handles Permission denied', done => {
         done();
     });
     client.on('error', function(result) {
-        expect(result.errors).toEqual(["sftp.put: Permission denied TestFileForSFTPUpload.xyz"]);
+        expect(result.errors).toEqual(["put: Permission denied TestFileForSFTPUpload.xyz"]);
         done();
     });
     client.upload(Buffer.from('Force permission denied', 'utf8'), remoteFileName);
@@ -117,7 +118,7 @@ test('Upload handles unspecfied failure', done => {
         done();
     });
     client.on('error', function(result) {
-        expect(result.errors).toEqual(["sftp.put: Failure TestFileForSFTPUpload.xyz"]);
+        expect(result.errors).toEqual(["put: Failure TestFileForSFTPUpload.xyz"]);
         done();
     });
     client.upload(Buffer.from('Force upload failure', 'utf8'), remoteFileName);

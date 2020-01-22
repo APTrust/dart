@@ -125,8 +125,7 @@ function start(port = DEFAULT_PORT, debug = true) {
                     }).on('STAT', onSTAT)
                         .on('LSTAT', onSTAT);
                     function onSTAT(reqid, path) {
-                        if (path !== '/tmp/foo.txt')
-                            return sftpStream.status(reqid, STATUS_CODE.FAILURE);
+                        // Note that this returns fake stats.
                         var mode = constants.S_IFREG; // Regular file
                         mode |= constants.S_IRWXU; // read, write, execute for user
                         mode |= constants.S_IRWXG; // read, write, execute for group
