@@ -8,10 +8,10 @@ const { Util } = require('../../core/util');
 
 
 const defaultPutOptions = {
-  flags: 'w',
-  encoding: null,
-  mode: 0o644,
-  autoClose: true
+    flags: 'w',
+    encoding: null,
+    mode: 0o644,
+    autoClose: true,
 }
 
 class SFTPClient extends Plugin {
@@ -74,7 +74,7 @@ class SFTPClient extends Plugin {
         // Don't use path.join; force forward slash instead.
         let remoteFilepath =  keyname;
         if (this.storageService.bucket) {
-            `${this.storageService.bucket}/${keyname}`;
+            remoteFilepath = `${this.storageService.bucket}/${keyname}`;
         }
         let client = new Client();
         let result = this._initUploadResult(filepathOrBuffer, remoteFilepath);
@@ -124,7 +124,8 @@ class SFTPClient extends Plugin {
                 // This library also has a fastPut method that comes
                 // with a warning about potential file corruption.
                 // Use put for initial release.
-                return client.put(filepathOrBuffer, remoteFilepath);//, defaultPutOptions);
+                Context.logger.info(`Uploading via sftp to ${remoteFilepath}`);
+                return client.put(filepathOrBuffer, remoteFilepath); // defaultPutOptions);
             })
             .then((response) => {
                 result.info = Context.y18n.__("Upload succeeded");
@@ -174,7 +175,8 @@ class SFTPClient extends Plugin {
         let connSettings = {
             host: this.storageService.host,
             port: this.storageService.port || 22,
-            username: this.storageService.login
+            username: this.storageService.login,
+            //debug: console.log,
         }
         if (!Util.isEmpty(this.storageService.loginExtra)) {
             Context.logger.info(Context.y18n.__("Using private key at %s for SFTP connection", this.storageService.loginExtra));
@@ -247,7 +249,7 @@ class SFTPClient extends Plugin {
             bucket += '/';
         }
         // Replace multiple slashes with single slash.
-        return url + `${bucket}${remoteFilepath}`.replace(/\/+/g, '/');
+        return url + `${remoteFilepath}`.replace(/\/+/g, '/');
     }
 
     /**

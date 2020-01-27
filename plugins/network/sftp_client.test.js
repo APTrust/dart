@@ -104,7 +104,7 @@ test('Upload handles Permission denied', done => {
         done();
     });
     client.on('error', function(result) {
-        expect(result.errors).toEqual(["put: Permission denied TestFileForSFTPUpload.xyz"]);
+        expect(result.errors).toEqual(["put: Permission denied files/uploads/TestFileForSFTPUpload.xyz"]);
         done();
     });
     client.upload(Buffer.from('Force permission denied', 'utf8'), remoteFileName);
@@ -118,7 +118,7 @@ test('Upload handles unspecfied failure', done => {
         done();
     });
     client.on('error', function(result) {
-        expect(result.errors).toEqual(["put: Failure TestFileForSFTPUpload.xyz"]);
+        expect(result.errors).toEqual(["put: Failure files/uploads/TestFileForSFTPUpload.xyz"]);
         done();
     });
     client.upload(Buffer.from('Force upload failure', 'utf8'), remoteFileName);
@@ -184,7 +184,7 @@ test('_loadPrivateKey', () => {
 test('_initUploadResult', () => {
     var ss = getStorageService();
     var client = new SFTPClient(ss);
-    var result = client._initUploadResult(__filename, remoteFileName);
+    var result = client._initUploadResult(__filename, `files/uploads/${remoteFileName}`);
     testCommonResultProperties(result, true);
 });
 
@@ -192,10 +192,12 @@ test('_buildUrl', () => {
     var ss = getStorageService();
     var client = new SFTPClient(ss);
     var url = client._buildUrl(remoteFileName);
+    expect(url).toEqual('sftp://localhost:8088/TestFileForSFTPUpload.xyz');
+
+    url = client._buildUrl(`files/uploads/${remoteFileName}`);
     expect(url).toEqual('sftp://localhost:8088/files/uploads/TestFileForSFTPUpload.xyz');
 
     // Make sure we get rid of multiple slashes
-    ss.bucket = '//files////uploads//'
-    url = client._buildUrl(remoteFileName);
+    url = client._buildUrl(`//files////uploads//${remoteFileName}`);
     expect(url).toEqual('sftp://localhost:8088/files/uploads/TestFileForSFTPUpload.xyz');
 });
