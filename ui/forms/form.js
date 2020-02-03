@@ -223,6 +223,11 @@ class Form {
                     formValue = formValue.trim();
                 }
             } catch (ex) {
+                // TODO: Unit tests log errors here.
+                // All null values come from select list.
+                // Can't figure out why. The following will
+                // show the HTML:
+                // console.log(document.body.innerHTML);
                 console.error(`Error processing form field '${name}': ${ex.toString()}`);
             }
             let newValue = this.castNewValueToType(oldValue, formValue);
