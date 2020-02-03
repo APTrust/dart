@@ -309,5 +309,11 @@
   "Must upload filepath or buffer": "Must upload filepath or buffer",
   "Using private key at %s for SFTP connection": "Using private key at %s for SFTP connection",
   "TagDefinition_emptyOk_label": "TagDefinition_emptyOk_label",
-  "TagDefinition_emptyOk_help": "TagDefinition_emptyOk_help"
+  "TagDefinition_emptyOk_help": "TagDefinition_emptyOk_help",
+  "Import Settings from Url": "Import Settings from Url",
+  "Settings JSON": "Settings JSON",
+  "Import Settings": "Import Settings",
+  "App Setting": "App Setting",
+  "Error importing settings: %s": "Error importing settings: %s",
+  "DART successfully imported the settings.": "DART successfully imported the settings."
 }
