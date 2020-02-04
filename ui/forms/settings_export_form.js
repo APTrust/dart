@@ -47,15 +47,20 @@ class SettingsExportForm extends Form {
     getSelectedItems() {
         //this.parseFromDOM();
         return {
-            appSettings: this.getChecked("appSettings"),
-            bagItProfiles: this.getChecked("bagItProfiles"),
-            remoteRepositories: this.getChecked("remoteRepositories"),
-            storageServices: this.getChecked("storageServices")
+            appSettings: this.getChecked("appSettings", AppSetting),
+            bagItProfiles: this.getChecked("bagItProfiles", BagItProfile),
+            remoteRepositories: this.getChecked("remoteRepositories", RemoteRepository),
+            storageServices: this.getChecked("storageServices", StorageService)
         }
     }
 
-    getChecked(name) {
-        return $(`input[name="${name}"]:checked`).each(cb => $(cb).value).get().map(cb => cb.value)
+    getChecked(name, objType) {
+        let checked = $(`input[name="${name}"]:checked`).each(cb => $(cb).value).get().map(cb => cb.value)
+        let objects = [];
+        for (let id of checked) {
+            objects.push(objType.find(id));
+        }
+        return objects;
     }
 }
 

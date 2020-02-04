@@ -33,11 +33,20 @@ class SettingsController extends BaseController {
         super(params, 'Settings');
     }
 
+    /**
+     * Shows the page where a user can import settings from text or a URL.
+     *
+     */
     import() {
         let html = Templates.settingsImport;
         return this.containerContent(html);
     }
 
+
+    /**
+     * Shows the page where a user can choose which settings to export.
+     *
+     */
     export() {
         let form = new SettingsExportForm();
         let data = { form: form };
@@ -45,8 +54,48 @@ class SettingsController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * Shows the exported settings in JSON format in a modal dialog.
+     *
+     */
     showExportJson() {
+        let form = new SettingsExportForm();
+        let items = form.getSelectedItems();
+        console.log(items);
+        let title = Context.y18n.__("Exported Settings");
+        let body = Templates.settingsExportResult({
+            json: JSON.stringify(items, this._jsonFilter, 2)
+        });
+        return this.modalContent(title, body);
+    }
 
+    /**
+     * Filters some security-sensitive and/or unnecessary settings from
+     * JSON output. This will replace fields 'login', 'password', 'userId',
+     * and 'apiToken' with empty strings unless the values begin with 'env:',
+     * which indicates they are environment variables.
+     *
+     * @private
+     */
+    _jsonFilter(key, value) {
+        let unsafe = ['login', 'password', 'userId', 'apiToken']
+        if (unsafe.includes(key)) {
+            if (!value.startsWith('env:')) {
+                value = '';
+            }
+        }
+        let exclude = ['userCanDelete', 'errors']
+        if (exclude.includes(key)) {
+            value = undefined;
+        }
+        // This is specific to DART PersistentObjects:
+        // suppress serialization of the required attrs array.
+        // We DO want to export required = true/false
+        // on BagItProfile TagDefinition objects.
+        if (key == 'required' && Array.isArray(value)) {
+            value = undefined;
+        }
+        return value;
     }
 
     /**
@@ -86,14 +135,9 @@ class SettingsController extends BaseController {
             $('#importSourceUrl').click(this._importSourceUrlClick);
             $('#importSourceTextArea').click(this._importSourceTextAreaClick);
             $('#btnImport').click(function() { controller._importSettings() });
-        } else if (fnName == 'export') {
-            $('#btnExport').click(function() { controller._exportSettings() });
         }
     }
 
-    _exportSettings() {
-        alert('Ouch');
-    }
 
     /**
      * This calls the correct function to import DART settings based

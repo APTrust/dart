@@ -328,5 +328,6 @@
   "App Settings": "App Settings",
   "BagIt Profiles": "BagIt Profiles",
   "Remote Repositories": "Remote Repositories",
-  "Storage Services": "Storage Services"
+  "Storage Services": "Storage Services",
+  "Exported Settings": "Exported Settings"
 }
