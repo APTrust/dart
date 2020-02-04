@@ -2,9 +2,15 @@
   <textarea id="txtJson" name="txtJson" class="form-control" rows="20">{{~ json ~}}</textarea>
 </div>
 
+<div class="mt-1 mb-1">
+  <div id="copied" class="text-success" style="display:none">
+    {{ translate "Data has been copied to the clipboard" }}
+  </div>
+</div>
 
 <div class="bottom-buttons">
   <div class="pull-right mr-5">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" id="btnCopyToClipboard">{{ translate "Copy to Clipboard" }}</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ translate "Close" }}</button>
   </div>
 </div>

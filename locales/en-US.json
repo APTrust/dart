@@ -329,5 +329,10 @@
   "BagIt Profiles": "BagIt Profiles",
   "Remote Repositories": "Remote Repositories",
   "Storage Services": "Storage Services",
-  "Exported Settings": "Exported Settings"
+  "Exported Settings": "Exported Settings",
+  "Please enter a valid URL.": "Please enter a valid URL.",
+  "Settings Url": "Settings Url",
+  "Data has been copied to the clipboard": "Data has been copied to the clipboard",
+  "Copy to Clipboard": "Copy to Clipboard",
+  "Close": "Close"
 }

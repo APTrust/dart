@@ -1,12 +1,15 @@
+const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const Dart = require('../../core');
 const { RemoteRepository } = require('../../core/remote_repository');
+const request = require('request');
 const { SettingsExportForm } = require('../forms/settings_export_form');
 const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
+const url = require('url');
 
 /**
  * SettingsController imports JSON settings from a URL or from
@@ -61,7 +64,6 @@ class SettingsController extends BaseController {
     showExportJson() {
         let form = new SettingsExportForm();
         let items = form.getSelectedItems();
-        console.log(items);
         let title = Context.y18n.__("Exported Settings");
         let body = Templates.settingsExportResult({
             json: JSON.stringify(items, this._jsonFilter, 2)
@@ -135,6 +137,8 @@ class SettingsController extends BaseController {
             $('#importSourceUrl').click(this._importSourceUrlClick);
             $('#importSourceTextArea').click(this._importSourceTextAreaClick);
             $('#btnImport').click(function() { controller._importSettings() });
+        } else if (fnName == 'showExportJson') {
+            $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
         }
     }
 
@@ -155,12 +159,11 @@ class SettingsController extends BaseController {
     }
 
     /**
-     * Imports a bagit-profile of Library of Congress style BagIt Profile
-     * from the URL the user specified.
+     * Imports settings from the URL the user specified.
      *
      * @private
      */
-    _importProfileFromUrl() {
+    _importSettingsFromUrl() {
         let controller = this;
         let settingsUrl = $("#txtUrl").val();
         try {
@@ -281,6 +284,13 @@ class SettingsController extends BaseController {
         return fullObj;
     }
 
+    _copyToClipboard() {
+        var copyText = document.querySelector("#txtJson");
+        copyText.select();
+        document.execCommand("copy");
+        $("#copied").show();
+        $("#copied").fadeOut({duration: 1800});
+    }
 }
 
 module.exports.SettingsController = SettingsController;
