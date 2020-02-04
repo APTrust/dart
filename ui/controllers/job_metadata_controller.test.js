@@ -47,7 +47,13 @@ function assertFormContainsAllTags(tags) {
 
 function setAllFormValues(tags, prefix) {
     for (let tag of tags) {
-        $(`#${tag.id}`).val(`${prefix}_${tag.tagName}`);
+        let value = `${prefix}_${tag.tagName}`
+        let control = $(`#${tag.id}`);
+        if(control.is('select')) {
+            control.append(new Option(value, value, true, true));
+        } else {
+            $(`#${tag.id}`).val(value);
+        }
     }
 }
 
@@ -63,14 +69,8 @@ function testFormValuesAreSaved(fnName) {
         throw "Whatchu talkin' bout, Willis?"
     }
     let job = Job.find(controller.job.id);
-    // Setting items with a list of allowed values is a little
-    // harder. We can come back to this later if need be.
-    let listItems = ['Access', 'Storage-Option', 'BagIt-Version',
-                     'Tag-File-Character-Encoding']
     for (let tag of job.bagItProfile.tags) {
-        if (!listItems.includes(tag.tagName)) {
-            expect(tag.getValue()).toMatch(/^ABC/);
-        }
+        expect(tag.getValue()).toMatch(/^ABC/);
     }
 }
 
@@ -108,6 +108,7 @@ test('back saves form values', () => {
 
 test('next does not move forward if tags are invalid', () => {
     let controller = getController();
+
     controller.job.save = jest.fn()
 
     let response = controller.next();
