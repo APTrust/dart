@@ -3,16 +3,43 @@
 <h2>{{ translate 'Export Settings' }}</h2>
 
 <form>
-  <h3>{{ translate "App Settings" }}</h3>
-  {{> inputCheckboxGroup field = form.fields.appSettings }}
 
-  <h3>{{ translate "BagIt Profiles" }}</h3>
-  {{> inputCheckboxGroup field = form.fields.bagItProfiles }}
+  <div class="card mb-3">
+    <div class="card-header">{{ translate "App Settings" }}</div>
+    <div class="card-body">
+      {{> inputCheckboxGroup field = form.fields.appSettings }}
+    </div>
+  </div>
 
-  <h3>{{ translate "Remote Repositories" }}</h3>
-  {{> inputCheckboxGroup field = form.fields.remoteRepositories }}
+  <div class="card mb-3">
+    <div class="card-header">{{ translate "BagIt Profiles" }}</div>
+    <div class="card-body">
+      {{> inputCheckboxGroup field = form.fields.bagItProfiles }}
+    </div>
+  </div>
 
-  <h3>{{ translate "Storage Services" }}</h3>
-  {{> inputCheckboxGroup field = form.fields.storageServices }}
+  <div class="card mb-3">
+    <div class="card-header">{{ translate "Remote Repositories" }}</div>
+    <div class="card-body">
+      {{> inputCheckboxGroup field = form.fields.remoteRepositories }}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">{{ translate "Storage Services" }}</div>
+    <div class="card-body">
+      {{> inputCheckboxGroup field = form.fields.storageServices }}
+    </div>
+  </div>
 
 </form>
+
+
+<div class="bottom-buttons">
+  <div class="pull-right">
+    <button class="btn btn-primary" type="button" id="btnExport">Export</button>
+  </div>
+  <div class="pull-right mr-3">
+    <a role="button" class="btn btn-secondary" href="#Dashboard/show">Cancel</a>
+  </div>
+</div>

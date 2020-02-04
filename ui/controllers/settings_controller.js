@@ -82,9 +82,17 @@ class SettingsController extends BaseController {
      */
     postRenderCallback(fnName) {
         let controller = this;
-        $('#importSourceUrl').click(this._importSourceUrlClick);
-        $('#importSourceTextArea').click(this._importSourceTextAreaClick);
-        $('#btnImport').click(function() { controller._importSettings() });
+        if (fnName == 'import') {
+            $('#importSourceUrl').click(this._importSourceUrlClick);
+            $('#importSourceTextArea').click(this._importSourceTextAreaClick);
+            $('#btnImport').click(function() { controller._importSettings() });
+        } else if (fnName == 'export') {
+            $('#btnExport').click(function() { controller._exportSettings() });
+        }
+    }
+
+    _exportSettings() {
+        alert('Ouch');
     }
 
     /**
