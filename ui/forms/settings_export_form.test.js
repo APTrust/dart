@@ -3,6 +3,7 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { RemoteRepository } = require('../../core/remote_repository');
 const { SettingsExportForm } = require('./settings_export_form');
 const { StorageService } = require('../../core/storage_service');
+const { TestUtil } = require('../../core/test_util');
 
 beforeEach(() => {
     cleanupPersistentData();
@@ -23,9 +24,9 @@ function cleanupPersistentData() {
 // IMPORT/EXPORT
 // TODO: Test
 
-// test('create()', () => {
+test('create()', () => {
 
-// });
+});
 
 // test('getSelectedItems()', () => {
 

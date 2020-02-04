@@ -6,6 +6,7 @@ const { Context } = require('../../core/context');
 const { SettingsController } = require('./settings_controller');
 const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
+const { TestUtil } = require('../../core/test_util');
 
 beforeEach(() => {
     cleanupPersistentData();
@@ -28,9 +29,9 @@ function cleanupPersistentData() {
 // TODO: Test!
 // TODO: 'Copy to Clipboard' button
 
-// test('import()', () => {
+test('import()', () => {
 
-// })
+})
 
 // test('export()', () => {
 
