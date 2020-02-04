@@ -148,7 +148,7 @@ function forkProcess(param, stdinData) {
 // Be safe about this. Don't delete anything outside the
 // tmp dir.
 function removeFile(filepath) {
-    if (filepath.startsWith(os.tmpdir())) {
+    if (filepath.startsWith(os.tmpdir())&& fs.existsSync(filepath)) {
         fs.unlinkSync(filepath);
     }
 }

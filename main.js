@@ -48,7 +48,7 @@ async function runWithoutUI(opts) {
     Context.logger.info(Context.dartVersion());
     let stdinData = '';
     if (opts.stdin) {
-        stdinData = fs.readFileSync(0, 'utf-8');
+        stdinData = await readStdin();
     }
     Context.logger.info('STDIN -> ', stdinData);
     let job = new JobLoader(opts, stdinData).loadJob();
@@ -69,6 +69,34 @@ function makey18nWriteSafe() {
     Context.y18n.updateFiles = (process.DART_MODE == 'gui' && Context.isElectronDevMode());
     Context.logger.info(Context.dartVersion());
     Context.logger.info("Y18 updateFiles = " + Context.y18n.updateFiles);
+}
+
+// The canonical way to read from STDIN in Node is:
+//
+//    stdinData = fs.readFileSync(0, 'utf-8');
+//
+// However, this seems to break and then get re-fixed in various
+// node versions. Run variations on this search in your favorite
+// search engine to see a few examples. Follow the links to see
+// even more examples:
+//
+//    node stdin eagain
+//
+// Since the EAGAIN error started appearing again in Node 13.7,
+// we implement our own async function to read from STDIN.
+// With this in place, all tests pass under Node 13.7.
+function readStdin() {
+    return new Promise((resolve, reject) => {
+        var chunks = [];
+        process.stdin
+            .on("data", function(chunk) {
+                chunks.push(chunk);
+            })
+            .on("end", function() {
+                resolve(chunks.join(""));
+            })
+            .setEncoding("utf8");
+    });
 }
 
 // And away we go...
