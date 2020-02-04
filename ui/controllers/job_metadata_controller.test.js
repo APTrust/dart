@@ -109,10 +109,16 @@ test('back saves form values', () => {
 test('next does not move forward if tags are invalid', () => {
     let controller = getController();
 
+    // Make sure this one required tag has an empty value
+    // on the HTML form.
+    for (let tag of controller.job.bagItProfile.tags) {
+        if (tag.tagName == 'Source-Organization') {
+            $(`#${tag.id}`).val('');
+        }
+    }
+
     controller.job.save = jest.fn()
-
     let response = controller.next();
-
     expect(controller.job.save).toHaveBeenCalled();
 
     // Some tag values are missing, so the controller
