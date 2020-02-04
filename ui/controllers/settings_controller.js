@@ -4,11 +4,12 @@ const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const Dart = require('../../core');
 const { RemoteRepository } = require('../../core/remote_repository');
+const { SettingsExportForm } = require('../forms/settings_export_form');
 const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 
 /**
- * SettingsImportController imports JSON settings from a URL or from
+ * SettingsController imports JSON settings from a URL or from
  * cut-and-pasted text. The settings JSON should be in the format below.
  * Note that each array is optional.
  *
@@ -26,15 +27,26 @@ const Templates = require('../common/templates');
  * @see {@link StorageService}
  *
  */
-class SettingsImportController extends BaseController {
+class SettingsController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
     }
 
-    show() {
+    import() {
         let html = Templates.settingsImport;
         return this.containerContent(html);
+    }
+
+    export() {
+        let form = new SettingsExportForm();
+        let data = { form: form };
+        let html = Templates.settingsExport(data);
+        return this.containerContent(html);
+    }
+
+    showExportJson() {
+
     }
 
     /**
@@ -219,4 +231,4 @@ class SettingsImportController extends BaseController {
 
 }
 
-module.exports.SettingsImportController = SettingsImportController;
+module.exports.SettingsController = SettingsController;

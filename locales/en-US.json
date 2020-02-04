@@ -315,5 +315,18 @@
   "Import Settings": "Import Settings",
   "App Setting": "App Setting",
   "Error importing settings: %s": "Error importing settings: %s",
-  "DART successfully imported the settings.": "DART successfully imported the settings."
+  "DART successfully imported the settings.": "DART successfully imported the settings.",
+  "Export Settings": "Export Settings",
+  "Object_appSettings_label": "Object_appSettings_label",
+  "Object_appSettings_help": "Object_appSettings_help",
+  "Object_bagItProfiles_label": "Object_bagItProfiles_label",
+  "Object_bagItProfiles_help": "Object_bagItProfiles_help",
+  "Object_remoteRepositories_label": "Object_remoteRepositories_label",
+  "Object_remoteRepositories_help": "Object_remoteRepositories_help",
+  "Object_storageServices_label": "Object_storageServices_label",
+  "Object_storageServices_help": "Object_storageServices_help",
+  "App Settings": "App Settings",
+  "BagIt Profiles": "BagIt Profiles",
+  "Remote Repositories": "Remote Repositories",
+  "Storage Services": "Storage Services"
 }
