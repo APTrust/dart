@@ -1,0 +1,89 @@
+{
+  "appSettings": [
+    {
+      "id": "7439d47a-4a38-45ca-a587-e8ef7d0ca192",
+      "name": "Institution Domain",
+      "value": "test.edu",
+      "help": "Your organization's internet domain name."
+    }
+  ],
+  "bagItProfiles": [],
+  "remoteRepositories": [
+    {
+      "id": "214db814-bd73-49d4-b988-4d7a5ad0d313",
+      "name": "APTrust Demo Repository",
+      "url": "https://demo.aptrust.org",
+      "userId": "env:APTRUST_DEMO_REPO_USER",
+      "apiToken": "env:APTRUST_DEMO_REPO_TOKEN",
+      "loginExtra": "",
+      "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    },
+    {
+      "id": "f95edae2-dff5-4ea7-bd3e-9546246d46e9",
+      "name": "APTrust Production Repository",
+      "url": "https://repo.aptrust.org",
+      "userId": "env:APTRUST_PROD_REPO_USER",
+      "apiToken": "env:APTRUST_PROD_REPO_TOKEN",
+      "loginExtra": "",
+      "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    }
+  ],
+  "storageServices": [
+    {
+      "id": "31b0846e-46f6-4925-bdba-1d3c1a0b2b73",
+      "name": "APTrust Demo Receiving Bucket",
+      "description": "Receiving bucket for ingest to the APTrust Demo repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.receiving.test.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+      "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+      "loginExtra": "",
+      "allowsUpload": true,
+      "allowsDownload": false
+    },
+    {
+      "id": "12c7c92f-daf6-448e-83f0-310f2df40874",
+      "name": "APTrust Demo Restoration Bucket",
+      "description": "Restoration bucket for the APTrust Demo repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.restore.test.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+      "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+      "loginExtra": "",
+      "allowsUpload": false,
+      "allowsDownload": true
+    },
+    {
+      "id": "b250bdfb-298d-4dc2-9816-3a5001604376",
+      "name": "APTrust Production Receiving Bucket",
+      "description": "Receiving bucket for ingest to the APTrust Production repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.receiving.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_PROD",
+      "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+      "loginExtra": "",
+      "allowsUpload": true,
+      "allowsDownload": false
+    },
+    {
+      "id": "dccf4a42-2281-4e93-aaaf-fb94e9458a0e",
+      "name": "APTrust Production Restoration Bucket",
+      "description": "Restoration bucket the APTrust Production repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.restore.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_PROD",
+      "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+      "loginExtra": "",
+      "allowsUpload": false,
+      "allowsDownload": true
+    }
+  ]
+}
