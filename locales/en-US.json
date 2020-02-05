@@ -334,5 +334,9 @@
   "Settings Url": "Settings Url",
   "Data has been copied to the clipboard": "Data has been copied to the clipboard",
   "Copy to Clipboard": "Copy to Clipboard",
-  "Close": "Close"
+  "Close": "Close",
+  "Error retrieving profile from %s: %s": "Error retrieving profile from %s: %s",
+  "Error retrieving profile": "Error retrieving profile",
+  "Please enter a valid URL": "Please enter a valid URL",
+  "Error importing settings": "Error importing settings"
 }

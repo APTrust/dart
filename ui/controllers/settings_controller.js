@@ -163,7 +163,7 @@ class SettingsController extends BaseController {
         if (importSource == 'URL') {
             this._importSettingsFromUrl($("#txtUrl").val());
         } else if (importSource == 'TextArea') {
-            this._importSettingsFromTextArea();
+            this._importWithErrHandling($("#txtJson").val(), null);
         }
     }
 
@@ -178,6 +178,7 @@ class SettingsController extends BaseController {
             new url.URL(settingsUrl);
         } catch (ex) {
             controller._showError(Context.y18n.__("Please enter a valid URL."));
+            return;
         }
         request(settingsUrl, function (error, response, body) {
             if (error) {
@@ -195,17 +196,6 @@ class SettingsController extends BaseController {
             }
         });
     }
-
-    /**
-     * Imports settings from the JSON in the textarea.
-     *
-     * @private
-     */
-    _importSettingsFromTextArea() {
-        let settingsJson = $("#txtJson").val();
-        this._importWithErrHandling(settingsJson, null);
-    }
-
 
     /**
      * This wraps the import process in a general error handler.

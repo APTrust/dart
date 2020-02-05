@@ -40,3 +40,4 @@ test('create()', () => {
 
 // Note: getSelectedItems is tested in
 // ui/controllers/settings_controller.test.js
+// test 'Get selected items for export'

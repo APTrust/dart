@@ -3,13 +3,17 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const fs = require('fs');
+const path = require('path');
 const { SettingsController } = require('./settings_controller');
+const { SettingsExportForm } = require('../forms/settings_export_form');
 const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 
 const SettingsUrl = 'https://raw.githubusercontent.com/APTrust/dart/master/test/fixtures/import_settings.json';
+const SettingsFile = path.join(__dirname, '..', '..', 'test', 'fixtures', 'import_settings.json');
 
 // These ids are in the settings at the URL above. They should be
 // loaded into the local DB after we import from the URL.
@@ -63,14 +67,6 @@ test('Show import page', () => {
 
 test('Import from URL', done => {
     let controller = new SettingsController();
-    UITestUtil.setDocumentBody(controller.import());
-    controller.postRenderCallback('import');
-    let containerHTML = $('#container').html();
-
-    //$('#importSurceUrl').attr('checked', true);
-    //$('#txtUrl').val(SettingsURL);
-    //$('#btnImport').click();
-
     controller._importSettingsFromUrl(SettingsUrl);
 
     setTimeout(() => {
@@ -78,42 +74,153 @@ test('Import from URL', done => {
         expect(RemoteRepository.find(RemoteRepoId)).toBeDefined()
         expect(StorageService.find(StorageServiceId)).toBeDefined()
         done();
-    }, 1200)
+    }, 1000)
 })
 
-test('Import from textarea', () => {
+test('Import from JSON text', () => {
+    let controller = new SettingsController();
+    var json = fs.readFileSync(SettingsFile, 'utf8');
+    expect(controller._importWithErrHandling(json, null)).toBe(true);
+    expect(AppSetting.find(AppSettingId)).toBeDefined()
+    expect(RemoteRepository.find(RemoteRepoId)).toBeDefined()
+    expect(StorageService.find(StorageServiceId)).toBeDefined()
+})
 
+test('Import from bad protocol', () => {
+    let controller = new SettingsController();
+    let response = controller.import()
+    UITestUtil.setDocumentBody(response);
+    controller._importSettingsFromUrl("xyz://not-valid");
+    let errMessage = $('#result').text();
+    expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
 })
 
 test('Import from invalid URL', () => {
-
+    let controller = new SettingsController();
+    let response = controller.import()
+    UITestUtil.setDocumentBody(response);
+    controller._importSettingsFromUrl(667);
+    let errMessage = $('#result').text();
+    expect(errMessage).toMatch(Context.y18n.__("Please enter a valid URL"));
 })
 
-test('Import unparsable data from valid URL', () => {
+test('Import unparsable data from valid URL', done => {
+    let controller = new SettingsController();
+    let response = controller.import()
+    UITestUtil.setDocumentBody(response);
+    controller._importSettingsFromUrl("https://google.com");
 
+    setTimeout(() => {
+        let errMessage = $('#result').text();
+        expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
+        done();
+    }, 1000)
 })
 
 test('Import unparsable JSON from text area', () => {
-
+    let controller = new SettingsController();
+    let response = controller.import()
+    UITestUtil.setDocumentBody(response);
+    var json = '<Not Valid>';
+    expect(controller._importWithErrHandling(json, null)).toBe(false);
+    let errMessage = $('#result').text();
+    expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
 })
 
 test('Import parsable JSON with invalid settings', () => {
-
+    // AppSetting.name cannot be null.
+    let invalidData = "{ appSettings: [{name: null}] }"
+    let controller = new SettingsController();
+    let response = controller.import()
+    UITestUtil.setDocumentBody(response);
+    expect(controller._importWithErrHandling(invalidData, null)).toBe(false);
+    let errMessage = $('#result').text();
+    expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
 })
 
 
-test('Show export page', () => {
-
+test('Export page lists all available items for export', () => {
+    let controller = new SettingsController();
+    let response = controller.export()
+    let items = ["App Setting", "BagIt Profile",
+                 "Remote Repository", "Storage Service"]
+    for (let item of items) {
+        for (let i = 0; i < 3; i++) {
+            expect(response.container).toMatch(`${item} ${i}`);
+        }
+    }
 })
 
 test('Get selected items for export', () => {
+    let controller = new SettingsController();
+    let response = controller.export()
+    UITestUtil.setDocumentBody(response);
 
+    // Check one box from each list
+    let listNames = [
+        'appSettings',
+        'bagItProfiles',
+        'remoteRepositories',
+        'storageServices'
+    ];
+    for (let listName of listNames) {
+        let cb = $(`input[name=${listName}]`)[1];
+        $(cb).attr('checked', true);
+    }
+    let form = new SettingsExportForm();
+    let items = form.getSelectedItems();
+    expect(items.appSettings.length).toEqual(1);
+    expect(items.bagItProfiles.length).toEqual(1);
+    expect(items.remoteRepositories.length).toEqual(1);
+    expect(items.storageServices.length).toEqual(1);
+
+    expect(items.appSettings[0].name).toEqual('App Setting 1');
+    expect(items.bagItProfiles[0].name).toEqual('BagIt Profile 1');
+    expect(items.remoteRepositories[0].name).toEqual('Remote Repository 1');
+    expect(items.storageServices[0].name).toEqual('Storage Service 1');
 })
 
 test('Show exported JSON', () => {
+    let controller = new SettingsController();
+    let response = controller.export()
+    UITestUtil.setDocumentBody(response);
 
+    // Check one box from each list
+    let listNames = [
+        'appSettings',
+        'bagItProfiles',
+        'remoteRepositories',
+        'storageServices'
+    ];
+    for (let listName of listNames) {
+        let cb = $(`input[name=${listName}]`)[1];
+        $(cb).attr('checked', true);
+    }
+
+    let modalResponse = controller.showExportJson();
+    expect(modalResponse.modalContent).toMatch('App Setting 1');
+    expect(modalResponse.modalContent).toMatch('BagIt Profile 1');
+    expect(modalResponse.modalContent).toMatch('Remote Repository 1');
+    expect(modalResponse.modalContent).toMatch('Storage Service 1');
 })
 
 test('JSON filter filters sensitive data', () => {
+    let controller = new SettingsController();
 
+    let unsafe = ['login', 'password', 'userId', 'apiToken']
+    let exclude = ['userCanDelete', 'errors']
+
+    // Filter credential values, unless they point to env vars.
+    for (let item of unsafe) {
+        expect(controller._jsonFilter(item, 'value')).toEqual('');
+        expect(controller._jsonFilter(item, 'env:value')).toEqual('env:value');
+    }
+    // We don't serialize these things at all.
+    for (let item of exclude) {
+        expect(controller._jsonFilter(item, 'value')).not.toBeDefined();
+    }
+    // We serialize 'required' as long as it's not an array.
+    expect(controller._jsonFilter('required', true)).toBe(true);
+    expect(controller._jsonFilter('required', false)).toBe(false);
+    expect(controller._jsonFilter('required', ['ha'])).not.toBeDefined();
 })
