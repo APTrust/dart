@@ -134,9 +134,18 @@ class SettingsController extends BaseController {
     postRenderCallback(fnName) {
         let controller = this;
         if (fnName == 'import') {
-            $('#importSourceUrl').click(this._importSourceUrlClick);
-            $('#importSourceTextArea').click(this._importSourceTextAreaClick);
-            $('#btnImport').click(function() { controller._importSettings() });
+            $('#importSourceUrl').click(() => {
+                controller._clearMessage();
+                controller._importSourceUrlClick();
+            });
+            $('#importSourceTextArea').click(() => {
+                controller._clearMessage();
+                controller._importSourceTextAreaClick();
+            });
+            $('#btnImport').click(function() {
+                controller._clearMessage();
+                controller._importSettings();
+            });
         } else if (fnName == 'showExportJson') {
             $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
         }
@@ -152,7 +161,7 @@ class SettingsController extends BaseController {
     _importSettings() {
         var importSource = $("input[name='importSource']:checked").val();
         if (importSource == 'URL') {
-            this._importSettingsFromUrl();
+            this._importSettingsFromUrl($("#txtUrl").val());
         } else if (importSource == 'TextArea') {
             this._importSettingsFromTextArea();
         }
@@ -163,19 +172,18 @@ class SettingsController extends BaseController {
      *
      * @private
      */
-    _importSettingsFromUrl() {
+    _importSettingsFromUrl(settingsUrl) {
         let controller = this;
-        let settingsUrl = $("#txtUrl").val();
         try {
             new url.URL(settingsUrl);
         } catch (ex) {
-            alert(Context.y18n.__("Please enter a valid URL."));
+            controller._showError(Context.y18n.__("Please enter a valid URL."));
         }
         request(settingsUrl, function (error, response, body) {
             if (error) {
                 let msg = Context.y18n.__("Error retrieving profile from %s: %s", settingsUrl, error);
                 Context.logger.error(msg);
-                alert(msg);
+                controller._showError(msg);
             } else if (response && response.statusCode == 200) {
                 // TODO: Make sure response is JSON, not HTML.
                 controller._importWithErrHandling(body, settingsUrl);
@@ -183,7 +191,7 @@ class SettingsController extends BaseController {
                 let statusCode = (response && response.statusCode) || Context.y18n.__('Unknown');
                 let msg = Context.y18n.__("Got response %s from %s", statusCode, settingsUrl);
                 Context.logger.error(msg);
-                alert(msg);
+                controller._showError(msg);
             }
         });
     }
@@ -207,13 +215,13 @@ class SettingsController extends BaseController {
     _importWithErrHandling(json, settingsUrl) {
         try {
             this._importSettingsJson(json, settingsUrl);
-            alert(Context.y18n.__("DART successfully imported the settings."));
+            this._showSuccess(Context.y18n.__("DART successfully imported the settings."));
             return true;
         } catch (ex) {
             let msg = Context.y18n.__("Error importing settings: %s", ex);
             Context.logger.error(msg);
             Context.logger.error(ex);
-            alert(msg);
+            this._showError(msg);
             return false;
         }
     }
@@ -255,7 +263,7 @@ class SettingsController extends BaseController {
             if (fullObj.validate()) {
                 fullObj.save()
             } else {
-                alert(Context.y18n.__(
+                controller._showError(Context.y18n.__(
                     "Error importing %s '%s': %s",
                     objType, obj.name, fullObj.errors.join("\n\n")));
             }
@@ -290,6 +298,27 @@ class SettingsController extends BaseController {
         document.execCommand("copy");
         $("#copied").show();
         $("#copied").fadeOut({duration: 1800});
+    }
+
+    _showSuccess(message) {
+        $('#result').hide();
+        $('#result').removeClass('text-danger');
+        $('#result').addClass('text-success');
+        $('#result').text(message);
+        $('#result').show();
+    }
+
+    _showError(message) {
+        $('#result').hide();
+        $('#result').addClass('text-danger');
+        $('#result').removeClass('text-success');
+        $('#result').text(message);
+        $('#result').show();
+    }
+
+    _clearMessage() {
+        $('#result').hide();
+        $('#result').text('');
     }
 }
 
