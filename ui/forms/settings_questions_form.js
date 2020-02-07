@@ -32,22 +32,22 @@ class SettingsQuestionsForm extends Form {
             "value"
         ];
         this.fieldsForType[remoteRepositoryName] = [
+            "apiToken",
+            "loginExtra",
             "name",
             "url",
-            "userId",
-            "apiToken",
-            "loginExtra"
+            "userId"
         ];
         this.fieldsForType[storageServiceName] = [
-            "name",
-            "description",
-            "protocol",
-            "host",
-            "port",
             "bucket",
+            "description",
+            "host",
             "login",
+            "loginExtra",
+            "name",
             "password",
-            "loginExtra"
+            "port",
+            "protocol"
         ];
         this.rowCount = 0;
         this._init(data);
@@ -85,13 +85,22 @@ class SettingsQuestionsForm extends Form {
             Context.y18n.__("Object Type"),
             ""
         );
+
+        let objTypeOptions = [];
+        if (this.obj.appSettings.length > 0) {
+            objTypeOptions.push(Context.y18n.__("App Setting"));
+        }
+        if (this.obj.bagItProfiles.length > 0) {
+            objTypeOptions.push(Context.y18n.__("BagIt Profile"));
+        }
+        if (this.obj.remoteRepositories.length > 0) {
+            objTypeOptions.push(Context.y18n.__("Remote Repository"));
+        }
+        if (this.obj.storageServices.length > 0) {
+            objTypeOptions.push(Context.y18n.__("Storage Service"));
+        }
         this.fields[objType].choices = Choice.makeList(
-            [
-                Context.y18n.__("App Setting"),
-                Context.y18n.__("BagIt Profile"),
-                Context.y18n.__("Remote Repository"),
-                Context.y18n.__("Storage Service"),
-            ],
+            objTypeOptions,
             null,
             true
         );
@@ -148,9 +157,18 @@ class SettingsQuestionsForm extends Form {
         if (selectedType == Context.y18n.__("BagIt Profile")) {
             let profileId = this.getSelectedName(rowNumber);
             let profile = BagItProfile.find(profileId);
-            return profile.tags.map(tag => { return { id: tag.id, name: tag.tagName }});
+            let opts =  profile.tags.map(tag => { return { id: tag.id, name: tag.tagName }});
+            return opts.sort((x,y) => {
+                if (x.name < y.name) {
+                    return -1;
+                }
+                if (x.name > y.name) {
+                    return 1;
+                }
+                return 0;
+            });
         }
-        return this.fieldsForType[selectedType];
+        return this.fieldsForType[selectedType].map(name => { return { id: name, name: name }});
     }
 
 }

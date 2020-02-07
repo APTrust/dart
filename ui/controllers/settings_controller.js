@@ -62,6 +62,11 @@ class SettingsController extends BaseController {
     showQuestionsForm() {
         let itemsForm = new SettingsExportForm();
         let items = itemsForm.getSelectedItems();
+        if (items.appSettings.length == 0 && items.bagItProfiles.length == 0 &&
+            items.remoteRepositories.length == 0 && items.storageServices.length == 0) {
+            alert(Context.y18n.__("You must select at least one item to export before you can add questions."));
+            return this.noContent();
+        }
         this.questionsForm = new SettingsQuestionsForm(items);
         let html = Templates.settingsQuestions({
             form: this.questionsForm
@@ -178,6 +183,7 @@ class SettingsController extends BaseController {
 
     _attachQuestionCallbacks(rowNumber) {
         let controller = this;
+        // When selected object type changes, update the object names list.
         $(`select[data-control-type=object-type][data-row-number=${rowNumber}]`).change(function() {
             let namesList = controller.questionsForm.getNamesList(rowNumber);
             $(`#objName_${rowNumber}`).empty();
@@ -186,9 +192,9 @@ class SettingsController extends BaseController {
                 $(`#objName_${rowNumber}`).append(new Option(opt.name, opt.id));
             }
         });
+        // When selected object name changes, updated the fields list.
         $(`select[data-control-type=object-name][data-row-number=${rowNumber}]`).change(function() {
             let fieldsList = controller.questionsForm.getFieldsList(rowNumber);
-            console.log(fieldsList);
             $(`#field_${rowNumber}`).empty();
             $(`#field_${rowNumber}`).append(new Option());
             for (let opt of fieldsList) {
