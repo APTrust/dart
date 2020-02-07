@@ -156,6 +156,12 @@ class SettingsController extends BaseController {
         return this.containerContent(html);
     }
 
+    showQuestionsForm() {
+        // TODO: Implement questions form.
+        let html = Templates.settingsQuestions();
+        return this.containerContent(html);
+    }
+
     /**
      * Shows the exported settings in JSON format in a modal dialog.
      *
@@ -245,6 +251,16 @@ class SettingsController extends BaseController {
                 controller._clearMessage();
                 controller._importSettings();
             });
+        } else if (fnName == 'export') {
+            $(`input[name="addQuestions"]`).click(() => {
+                if ($(`input[name="addQuestions"]`).is(':checked')) {
+                    $("#btnNext").text(Context.y18n.__("Add Questions"));
+                    $("#btnNext").attr("href", "#Settings/showQuestionsForm");
+                } else {
+                    $("#btnNext").text(Context.y18n.__("Export"));
+                    $("#btnNext").attr("href", "#Settings/showExportJson");
+                }
+            })
         } else if (fnName == 'showExportJson') {
             $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
         }
