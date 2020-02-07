@@ -67,6 +67,7 @@ var storageServiceList = compileHTML(readFile('storage_service', 'list.html'));
 var settingsExport = compileHTML(readFile('settings', 'export.html'));
 var settingsExportResult = compileHTML(readFile('settings', 'export_result.html'));
 var settingsImport = compileHTML(readFile('settings', 'import.html'));
+var settingsQuestions = compileHTML(readFile('settings', 'questions_form.html'));
 var setupEnd = compileHTML(readFile('setup', 'end.html'));
 var setupError = compileHTML(readFile('setup', 'error.html'));
 var setupList = compileHTML(readFile('setup', 'list.html'));
@@ -83,6 +84,7 @@ handlebars.registerPartial({
     dartProcess: readFile(path.join('partials', 'dart_process.html')),
     dashboardCard: readFile(path.join('partials', 'dashboard_card.html')),
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
+    inputCheckbox: readFile(path.join('partials', 'input_checkbox.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
     inputPassword: readFile(path.join('partials', 'input_password.html')),
@@ -160,6 +162,7 @@ module.exports.storageServiceList = storageServiceList;
 module.exports.settingsExport = settingsExport;
 module.exports.settingsExportResult = settingsExportResult;
 module.exports.settingsImport = settingsImport;
+module.exports.settingsQuestions = settingsQuestions;
 module.exports.setupEnd = setupEnd;
 module.exports.setupError = setupError;
 module.exports.setupList = setupList;

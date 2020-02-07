@@ -69,6 +69,7 @@ test('All partials are defined', () => {
         'dartProcess',
         'dashboardCard',
         'formButtons',
+        'inputCheckbox',
         'inputCheckboxGroup',
         'inputHidden',
         'inputPassword',

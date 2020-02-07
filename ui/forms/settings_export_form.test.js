@@ -32,9 +32,11 @@ function createTestObjects() {
 
 test('create()', () => {
     let form = new SettingsExportForm();
-    expect(Object.keys(form.fields).length).toEqual(4);
+    expect(Object.keys(form.fields).length).toEqual(5);
     for (let field of Object.values(form.fields)) {
-        expect(field.choices.length).toEqual(3);
+        if (field.name != "addQuestions") {
+            expect(field.choices.length).toEqual(3);
+        }
     }
 });
 

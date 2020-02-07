@@ -32,14 +32,21 @@
     </div>
   </div>
 
+  <div class="card mb-3">
+    <div class="card-header">{{ translate "Add Setup Questions?" }}</div>
+    <div class="card-body">
+      {{> inputCheckbox field = form.fields.addQuestions }}
+    </div>
+  </div>
+
 </form>
 
 
 <div class="bottom-buttons">
   <div class="pull-right">
-    <a role="button" class="btn btn-primary" id="btnExport" href="#Settings/showExportJson">Export</a>
+    <a role="button" class="btn btn-primary" id="btnNext" href="#Settings/showExportJson">{{ translate "Export" }}</a>
   </div>
   <div class="pull-right mr-3">
-    <a role="button" class="btn btn-secondary" href="#Dashboard/show">Cancel</a>
+    <a role="button" class="btn btn-secondary" href="#Dashboard/show">{{ translate "Cancel" }}</a>
   </div>
 </div>

@@ -42,6 +42,12 @@ class SettingsExportForm extends Form {
                 );
             }
         }
+        this.fields['addQuestions'] = new Field(
+            Util.uuid4(),
+            "addQuestions",
+            "Add questions to help users import these settings.",
+            "true"
+        );
     }
 
     getSelectedItems() {
@@ -61,6 +67,10 @@ class SettingsExportForm extends Form {
             objects.push(objType.find(id));
         }
         return objects;
+    }
+
+    userWantsToAddQuestions() {
+        return $(`input[name="addQuestions"]`).is(':checked')
     }
 }
 

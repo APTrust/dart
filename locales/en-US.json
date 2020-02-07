@@ -338,5 +338,10 @@
   "Error retrieving profile from %s: %s": "Error retrieving profile from %s: %s",
   "Error retrieving profile": "Error retrieving profile",
   "Please enter a valid URL": "Please enter a valid URL",
-  "Error importing settings": "Error importing settings"
+  "Error importing settings": "Error importing settings",
+  "Setup Questions": "Setup Questions",
+  "Add Setup Questions?": "Add Setup Questions?",
+  "Export": "Export",
+  "Cancel": "Cancel",
+  "Add Questions": "Add Questions"
 }
