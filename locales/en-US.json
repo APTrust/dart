@@ -343,5 +343,13 @@
   "Add Setup Questions?": "Add Setup Questions?",
   "Export": "Export",
   "Cancel": "Cancel",
-  "Add Questions": "Add Questions"
+  "Add Questions": "Add Questions",
+  "Copy the user's answer to this question to:": "Copy the user's answer to this question to:",
+  "BagIt Profile": "BagIt Profile",
+  "Remote Repository": "Remote Repository",
+  "Storage Service": "Storage Service",
+  "Question": "Question",
+  "Object Type": "Object Type",
+  "Object Name": "Object Name",
+  "Field": "Field"
 }

@@ -6,6 +6,8 @@ const { Form } = require('./form');
 const { NewBagItProfileForm } = require('./new_bagit_profile_form');
 const { RemoteRepositoryForm } = require('./remote_repository_form');
 const { TagDefinitionForm } = require('./tag_definition_form');
+const { SettingsExportForm } = require('./settings_export_form');
+const { SettingsQuestionsForm } = require('./settings_questions_form');
 const { SetupQuestion } = require('./setup_question');
 const { StorageServiceForm } = require('./storage_service_form');
 
@@ -17,5 +19,7 @@ module.exports.Form = Form;
 module.exports.NewBagItProfileForm = NewBagItProfileForm;
 module.exports.RemoteRepositoryForm = RemoteRepositoryForm;
 module.exports.TagDefinitionForm = TagDefinitionForm;
+module.exports.SettingsExportForm = SettingsExportForm;
+module.exports.SettingsQuestionsForm = SettingsQuestionsForm;
 module.exports.SetupQuestion = SetupQuestion;
 module.exports.StorageServiceForm = StorageServiceForm;

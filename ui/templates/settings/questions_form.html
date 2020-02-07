@@ -1,9 +1,26 @@
 <h2>Setup Questions</h2>
 
-<p>Instructions (textarea)</p>
+<div class="card mb-3">
+    <div class="card-header">Instructions</div>
+    <div class="card-body">
+        <p>In this section, you can define a list of questions for users who will be importing your settings. During the import process, DART will copy the user's answers to the fields you specify.</p>
+        <p>For example, DART does not export login names and passwords. If you export a Storage Service record for others to import, you can add questions here asking the user for their credentials to access that Storage Service.</p>
+        <p>You may ask "What is your password for the sftp server?", and tell DART to copy the user's response into the password field of the Storage Service called "SFTP demo server".</p>
+    </div>
+</div>
 
-<p>Questions</p>
-<ul>
-    <li>Question Text (textarea)</li>
-    <li>Copy Response to: (list obj type) (objName) (field)</li>
-</ul>
+
+<form>
+
+  <div class="card mb-3">
+      <div class="card-header">Question 1</div>
+      <div class="card-body">
+        {{> inputTextArea field = form.fields.question_1 }}
+        <p>{{ translate "Copy the user's answer to this question to:" }}</p>
+        {{> inputSelect field = form.fields.objType_1 }}
+        {{> inputSelect field = form.fields.objName_1 }}
+        {{> inputSelect field = form.fields.field_1 }}
+    </div>
+  </div>
+
+</form>

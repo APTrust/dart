@@ -7,6 +7,7 @@ const Dart = require('../../core');
 const { RemoteRepository } = require('../../core/remote_repository');
 const request = require('request');
 const { SettingsExportForm } = require('../forms/settings_export_form');
+const { SettingsQuestionsForm } = require('../forms/settings_questions_form');
 const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 const url = require('url');
@@ -34,6 +35,7 @@ class SettingsController extends BaseController {
 
     constructor(params) {
         super(params, 'Settings');
+        this.questionsForm = null;
     }
 
     /**
@@ -58,8 +60,12 @@ class SettingsController extends BaseController {
     }
 
     showQuestionsForm() {
-        // TODO: Implement questions form.
-        let html = Templates.settingsQuestions();
+        let itemsForm = new SettingsExportForm();
+        let items = itemsForm.getSelectedItems();
+        this.questionsForm = new SettingsQuestionsForm(items);
+        let html = Templates.settingsQuestions({
+            form: this.questionsForm
+        });
         return this.containerContent(html);
     }
 
@@ -164,7 +170,31 @@ class SettingsController extends BaseController {
             })
         } else if (fnName == 'showExportJson') {
             $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
+        } else if (fnName == 'showQuestionsForm') {
+            controller._attachQuestionCallbacks(1);
         }
+    }
+
+
+    _attachQuestionCallbacks(rowNumber) {
+        let controller = this;
+        $(`select[data-control-type=object-type][data-row-number=${rowNumber}]`).change(function() {
+            let namesList = controller.questionsForm.getNamesList(rowNumber);
+            $(`#objName_${rowNumber}`).empty();
+            $(`#objName_${rowNumber}`).append(new Option());
+            for (let opt of namesList) {
+                $(`#objName_${rowNumber}`).append(new Option(opt.name, opt.id));
+            }
+        });
+        $(`select[data-control-type=object-name][data-row-number=${rowNumber}]`).change(function() {
+            let fieldsList = controller.questionsForm.getFieldsList(rowNumber);
+            console.log(fieldsList);
+            $(`#field_${rowNumber}`).empty();
+            $(`#field_${rowNumber}`).append(new Option());
+            for (let opt of fieldsList) {
+                $(`#field_${rowNumber}`).append(new Option(opt.name, opt.id));
+            }
+        });
     }
 
 
