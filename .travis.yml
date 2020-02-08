@@ -38,7 +38,7 @@ env:
   - secure: eXxUI/kBtBodrxBa7aLeGaO/1Xb3TLRV7CrcZYsuYFHlnGFZyPkgCrkE+AloNPtKuBJEwMyeg5DxQgBYHbLAorDp0Vl7Kgy/0NUvYOD9NWdi3zcnnZtb89Ob53VpfBp5z2eqaXzu+jFKIeyvIUHd1wWnsGWGxLs98+CK3ioWkXbtGuqkqlo7tHy9HXv5lgSzNldvPbLajxzv9JKhCq5moQ5hJabnoly7d1DCFGzhSObRRfjAWJevwQ/cVxWWBuv88R8+Dn3VAJecex4Z+BOwz/AY0YiqyglO9tytFSQkiWRiSR2M5c9xbTYxua8rgHEquUHTAwkEx3ND5lq2I7thr1Uote8nCyK7P1PuJg9CBq0ep3F0OF0S/D5g5MFIhUhDrUr2qDHdT+Ye0MIeyOHrGMjGyoG6Hs+S3nsvLgGoP/7kFyDJ2fJIfvZlHWR9BkKBrwvvJLuyLrVD63gTjwsFUwUmnHPTQ0INqAgur3Ih8RjpxLATJy+Cd5kkouVAabfyXmD8/ZAaFYK8Z39NsBEfUt1QvcSzwNQk/BRH3AGEd96Zg+qvVhQ3TmSrLBVbkU0/R4ol55u+D6z4T/J4eqU897UMa1XTen2oclxiVca0yCfw6F5cmGJRgaXATKGF1FcPtqdmI26ppTL9eVQmPMynTf9/IHOSo1/4Ow6dKyu19dE=
 deploy:
   - provider: pages
-    cleanup: false
+    cleanup: true
     token: "$GH_TOKEN"
     keep_history: true
     verbose: true
@@ -49,7 +49,7 @@ deploy:
     secret_access_key:
         secure: YMhLsFzfjfHtUepEI2apqdS0tINyMNnCyDZbDxm3snICUDweKDq0Pe8Z7s1Ynk6QZy0GBEC78VKJ7XCJRgu1wl3fhDh7iYcum5N1gy5bY/HTN1ppNsgwRFM46fqB4GPoxYSrhnQF3eoWp+bfCdTkcMasu1dbiAoDjVSVYlwPVRUmajqk9VuvF9GFUYqmqAizdPjZuoy0Pb4Kq9TczqEuqnF3moEO36UhI8CYerGBY9zfdyNHSLgIX+RqHTu4Kxq55tzqW6rUBPg8nPn+qWlpyxu8nhpCvFa8wgK4dA0tDhIUfZ7kU+8c+eHJQ926PlR3L4W+xz0KtXa9WMj4v723og/01ZJbeAYE/SQcmPwpmpYWZ4OI9fWRBP1gJUWZMGU+Z2Jwh1XEsOKs/Ktybs6pAh9GC5KaEi5Psx42xR6HZbiiEzZrGBwFnuDY+d08rXddObBypYafYHK4bc1fDRyV37RBxIGC+ci8B5uQPdBVm0HMTMMQX75q7B07jxtLK83g+XnPvE2ShKigzy53qiyPFwGje2yx3YrFvUl9ihxHqj6n3ExpAXV4fUyyc8+GHwg6c9mlb9ZXXSENFWmlcS7c+MSEobeV4lqdKc/ndIaSyC2QF8bEUUxNIgMIiN4lC2IXGWvjOA9kFJZNtp+jb8MVzFGsgzif+GtpsDi504RNh8c=
     bucket: aptrust.public.download
-    cleanup: false
+    cleanup: true
     local_dir: dist
     upload_dir: DART
     acl: public_read
