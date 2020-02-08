@@ -1,12 +1,11 @@
 os: osx
-sudo: false
 language: node_js
 node_js:
   - lts/*
 cache:
   directories:
-  - node_modules
-  - "$HOME/.npm/_prebuilds"
+    - node_modules
+    - "$HOME/.npm/_prebuilds"
 addons:
   homebrew:
     packages:
@@ -39,20 +38,20 @@ env:
   - secure: eXxUI/kBtBodrxBa7aLeGaO/1Xb3TLRV7CrcZYsuYFHlnGFZyPkgCrkE+AloNPtKuBJEwMyeg5DxQgBYHbLAorDp0Vl7Kgy/0NUvYOD9NWdi3zcnnZtb89Ob53VpfBp5z2eqaXzu+jFKIeyvIUHd1wWnsGWGxLs98+CK3ioWkXbtGuqkqlo7tHy9HXv5lgSzNldvPbLajxzv9JKhCq5moQ5hJabnoly7d1DCFGzhSObRRfjAWJevwQ/cVxWWBuv88R8+Dn3VAJecex4Z+BOwz/AY0YiqyglO9tytFSQkiWRiSR2M5c9xbTYxua8rgHEquUHTAwkEx3ND5lq2I7thr1Uote8nCyK7P1PuJg9CBq0ep3F0OF0S/D5g5MFIhUhDrUr2qDHdT+Ye0MIeyOHrGMjGyoG6Hs+S3nsvLgGoP/7kFyDJ2fJIfvZlHWR9BkKBrwvvJLuyLrVD63gTjwsFUwUmnHPTQ0INqAgur3Ih8RjpxLATJy+Cd5kkouVAabfyXmD8/ZAaFYK8Z39NsBEfUt1QvcSzwNQk/BRH3AGEd96Zg+qvVhQ3TmSrLBVbkU0/R4ol55u+D6z4T/J4eqU897UMa1XTen2oclxiVca0yCfw6F5cmGJRgaXATKGF1FcPtqdmI26ppTL9eVQmPMynTf9/IHOSo1/4Ow6dKyu19dE=
 deploy:
   - provider: pages
-    skip-cleanup: true
-    github-token: "$GH_TOKEN"
-    keep-history: true
+    cleanup: false
+    token: "$GH_TOKEN"
+    keep_history: true
     verbose: true
-    local-dir: docs
+    local_dir: docs
   - provider: s3
     access_key_id:
          secure: dt81k+9NpnkhzS1RXkMqjl5xrThstXrq4uxs9c4JmYpDl4tvK+EGvgil7FJZ0b3MKycP7cddTD5+sKbqaD3itc7BIt+WZJbhRq/pxPSg0WnRVVJ96dYzQGeTHao4MTzWwlUa90Q1c3VVNxcMWSG/9ICEPK0K1c91NPzIypdZLXMybAox/DfiokUJhq1grfa/jyRKFDMpXvYe+YurHKMbpxjQ+1d1cLyvb4ayVFcAYLBMgImwLOWNXYjDxyQzx5qwy5f8VMXPZt5IFgp5KbzFeupVrd5FaQgjOlAoGUJ5A80cnxO23I3FlfyNBMrRKt5zH2h0IaZrcxrKSkVBQPbqFQD5ceimUzU9GaNCdSSiUN91buqZDochuDqJivFunXWGDGaLC0KTYqrjjx/3EXhw6OiCKIY8atkMulenEZeLiGToE6EP/h7cP/P+X7ddiZOdxT66bLISO+/LEqCE51tPZFmVL3e2ZfQfT8L8n8InA63ge190BGptPheaAM0/l2WxIazbvYCtzNm7WDI8TKp6HMS/QfdywXDQc+gWbQbKjb9wg69GR8teypbg6Ns/ZbUpYtmYxHhzabe4SLLtG1r3PVhkjHuhdbP/di+EsfZCrU+sCB+8ROHSuYXK4YILVAnObBbXcqMYLC9TdwoH1AEVhTHGPcTBsvjUQfNE61Wy9b8=
     secret_access_key:
         secure: YMhLsFzfjfHtUepEI2apqdS0tINyMNnCyDZbDxm3snICUDweKDq0Pe8Z7s1Ynk6QZy0GBEC78VKJ7XCJRgu1wl3fhDh7iYcum5N1gy5bY/HTN1ppNsgwRFM46fqB4GPoxYSrhnQF3eoWp+bfCdTkcMasu1dbiAoDjVSVYlwPVRUmajqk9VuvF9GFUYqmqAizdPjZuoy0Pb4Kq9TczqEuqnF3moEO36UhI8CYerGBY9zfdyNHSLgIX+RqHTu4Kxq55tzqW6rUBPg8nPn+qWlpyxu8nhpCvFa8wgK4dA0tDhIUfZ7kU+8c+eHJQ926PlR3L4W+xz0KtXa9WMj4v723og/01ZJbeAYE/SQcmPwpmpYWZ4OI9fWRBP1gJUWZMGU+Z2Jwh1XEsOKs/Ktybs6pAh9GC5KaEi5Psx42xR6HZbiiEzZrGBwFnuDY+d08rXddObBypYafYHK4bc1fDRyV37RBxIGC+ci8B5uQPdBVm0HMTMMQX75q7B07jxtLK83g+XnPvE2ShKigzy53qiyPFwGje2yx3YrFvUl9ihxHqj6n3ExpAXV4fUyyc8+GHwg6c9mlb9ZXXSENFWmlcS7c+MSEobeV4lqdKc/ndIaSyC2QF8bEUUxNIgMIiN4lC2IXGWvjOA9kFJZNtp+jb8MVzFGsgzif+GtpsDi504RNh8c=
     bucket: aptrust.public.download
-    skip-cleanup: true
-    local-dir: dist
-    upload-dir: DART
+    cleanup: false
+    local_dir: dist
+    upload_dir: DART
     acl: public_read
     on:
       repo: APTrust/dart
