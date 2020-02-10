@@ -354,5 +354,7 @@
   "Field": "Field",
   "You must select at least one item to export before you can add questions.": "You must select at least one item to export before you can add questions.",
   "Add Question": "Add Question",
-  "Delete": "Delete"
+  "Delete": "Delete",
+  "Object_questions_label": "Object_questions_label",
+  "Object_questions_help": "Object_questions_help"
 }

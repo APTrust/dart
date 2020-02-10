@@ -24,6 +24,7 @@ class SettingsExportForm extends Form {
         let data = {
             appSettings: AppSetting.list(null, listOptions),
             bagItProfiles: BagItProfile.list(null, listOptions),
+            questions: [],
             remoteRepositories: RemoteRepository.list(null, listOptions),
             storageServices: StorageService.list(null, listOptions),
         }
@@ -34,7 +35,7 @@ class SettingsExportForm extends Form {
     _init(data) {
         for (let [key, value] of Object.entries(data)) {
             // errors key is added in Form base constructor
-            if (key != 'errors') {
+            if (key != 'errors' && key != 'questions') {
                 this.fields[key].choices = Choice.makeList(
                     value,
                     [],
