@@ -94,35 +94,6 @@ class SettingsController extends BaseController {
     }
 
     /**
-     * Filters some security-sensitive and/or unnecessary settings from
-     * JSON output. This will replace fields 'login', 'password', 'userId',
-     * and 'apiToken' with empty strings unless the values begin with 'env:',
-     * which indicates they are environment variables.
-     *
-     * @private
-     */
-    _jsonFilter(key, value) {
-        let unsafe = ['login', 'password', 'userId', 'apiToken']
-        if (unsafe.includes(key)) {
-            if (!value.startsWith('env:')) {
-                value = '';
-            }
-        }
-        let exclude = ['userCanDelete', 'errors']
-        if (exclude.includes(key)) {
-            value = undefined;
-        }
-        // This is specific to DART PersistentObjects:
-        // suppress serialization of the required attrs array.
-        // We DO want to export required = true/false
-        // on BagItProfile TagDefinition objects.
-        if (key == 'required' && Array.isArray(value)) {
-            value = undefined;
-        }
-        return value;
-    }
-
-    /**
      * Handler for clicks on the radio button where user specifies
      * that they want to import a BagIt profile from a URL.
      *

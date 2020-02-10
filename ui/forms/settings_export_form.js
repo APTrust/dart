@@ -20,7 +20,6 @@ class SettingsExportForm extends Form {
             orderBy: 'name',
             sortDirection: 'asc'
         }
-        let filterFn = function(ss) { return ss.allowsUpload };
         let data = {
             appSettings: AppSetting.list(null, listOptions),
             bagItProfiles: BagItProfile.list(null, listOptions),

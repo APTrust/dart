@@ -1,0 +1,58 @@
+const { Constants } = require('./constants');
+const { ExportSettings } = require('./export_settings');
+const fs = require('fs');
+const path = require('path');
+const { TestUtil } = require('./test_util');
+const { Util } = require('./util');
+
+// beforeEach(() => {
+//     TestUtil.deleteJsonFile('ExportSettings');
+// });
+
+// afterAll(() => {
+//     TestUtil.deleteJsonFile('ExportSettings');
+// });
+
+test('Constructor sets expected properties', () => {
+    let obj = new ExportSettings();
+    expect(obj.id).toEqual(Constants.EMPTY_UUID);
+});
+
+test('toJson() produces expected JSON', () => {
+    let fixturePath = path.join(__dirname, "..", "test", "fixtures",
+                                "export_settings.json");
+    let jsonData = fs.readFileSync(fixturePath);
+    let obj = new ExportSettings(JSON.parse(jsonData))
+    expect(obj.toJson()).toEqual(jsonData.toString());
+})
+
+test('toJson() call _jsonFilter when appropriate', () => {
+    let fixturePath = path.join(__dirname, "..", "test", "fixtures",
+                                "export_settings.json");
+    let jsonData = fs.readFileSync(fixturePath);
+    let obj = new ExportSettings(JSON.parse(jsonData))
+
+    obj._jsonFilter = jest.fn()
+    obj.toJson();
+    expect(obj._jsonFilter).toHaveBeenCalled();
+})
+
+test('JSON filter filters sensitive data', () => {
+    let obj = new ExportSettings();
+    let unsafe = ['login', 'password', 'userId', 'apiToken']
+    let exclude = ['userCanDelete', 'errors']
+
+    // Filter credential values, unless they point to env vars.
+    for (let item of unsafe) {
+        expect(obj._jsonFilter(item, 'value')).toEqual('');
+        expect(obj._jsonFilter(item, 'env:value')).toEqual('env:value');
+    }
+    // We don't serialize these things at all.
+    for (let item of exclude) {
+        expect(obj._jsonFilter(item, 'value')).not.toBeDefined();
+    }
+    // We serialize 'required' as long as it's not an array.
+    expect(obj._jsonFilter('required', true)).toBe(true);
+    expect(obj._jsonFilter('required', false)).toBe(false);
+    expect(obj._jsonFilter('required', ['ha'])).not.toBeDefined();
+})

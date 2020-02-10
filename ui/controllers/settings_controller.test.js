@@ -203,24 +203,3 @@ test('Show exported JSON', () => {
     expect(modalResponse.modalContent).toMatch('Remote Repository 1');
     expect(modalResponse.modalContent).toMatch('Storage Service 1');
 })
-
-test('JSON filter filters sensitive data', () => {
-    let controller = new SettingsController();
-
-    let unsafe = ['login', 'password', 'userId', 'apiToken']
-    let exclude = ['userCanDelete', 'errors']
-
-    // Filter credential values, unless they point to env vars.
-    for (let item of unsafe) {
-        expect(controller._jsonFilter(item, 'value')).toEqual('');
-        expect(controller._jsonFilter(item, 'env:value')).toEqual('env:value');
-    }
-    // We don't serialize these things at all.
-    for (let item of exclude) {
-        expect(controller._jsonFilter(item, 'value')).not.toBeDefined();
-    }
-    // We serialize 'required' as long as it's not an array.
-    expect(controller._jsonFilter('required', true)).toBe(true);
-    expect(controller._jsonFilter('required', false)).toBe(false);
-    expect(controller._jsonFilter('required', ['ha'])).not.toBeDefined();
-})

@@ -81,6 +81,12 @@ const Constants =  {
      */
     DIRECTORY_WRITER_UUID: '92e69251-0e76-412d-95b6-987a79f6fa71',
     /**
+     * An empty UUID. This is used as the identifier for ExportSettings.
+     *
+     * @type {string}
+     */
+    EMPTY_UUID: "00000000-0000-0000-0000-000000000000",
+    /**
      * This regular expression matches the name of payload
      * manifest files, and includes a capture to extract the
      * checksum algorithm.
