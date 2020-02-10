@@ -2,8 +2,10 @@ const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const Dart = require('../../core');
+const { ExportSettings } = require('../../core/export_settings');
 const { RemoteRepository } = require('../../core/remote_repository');
 const request = require('request');
 const { SettingsExportForm } = require('../forms/settings_export_form');
@@ -53,7 +55,8 @@ class SettingsController extends BaseController {
      *
      */
     export() {
-        let form = new SettingsExportForm();
+        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
+        let form = new SettingsExportForm(settings);
         let data = { form: form };
         let html = Templates.settingsExport(data);
         return this.containerContent(html);
@@ -64,7 +67,7 @@ class SettingsController extends BaseController {
      *
      */
     showQuestionsForm() {
-        let itemsForm = new SettingsExportForm();
+        let itemsForm = new SettingsExportForm(new ExportSettings());
         let items = itemsForm.getSelectedItems();
         if (items.appSettings.length == 0 && items.bagItProfiles.length == 0 &&
             items.remoteRepositories.length == 0 && items.storageServices.length == 0) {
@@ -84,7 +87,7 @@ class SettingsController extends BaseController {
      *
      */
     showExportJson() {
-        let form = new SettingsExportForm();
+        let form = new SettingsExportForm(new ExportSettings());
         let items = form.getSelectedItems();
         let title = Context.y18n.__("Exported Settings");
         let body = Templates.settingsExportResult({

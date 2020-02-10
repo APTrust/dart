@@ -356,5 +356,19 @@
   "Add Question": "Add Question",
   "Delete": "Delete",
   "Object_questions_label": "Object_questions_label",
-  "Object_questions_help": "Object_questions_help"
+  "Object_questions_help": "Object_questions_help",
+  "ExportSettings_id_label": "ExportSettings_id_label",
+  "ExportSettings_id_help": "ExportSettings_id_help",
+  "ExportSettings_userCanDelete_label": "ExportSettings_userCanDelete_label",
+  "ExportSettings_userCanDelete_help": "ExportSettings_userCanDelete_help",
+  "ExportSettings_appSettings_label": "ExportSettings_appSettings_label",
+  "ExportSettings_appSettings_help": "ExportSettings_appSettings_help",
+  "ExportSettings_bagItProfiles_label": "ExportSettings_bagItProfiles_label",
+  "ExportSettings_bagItProfiles_help": "ExportSettings_bagItProfiles_help",
+  "ExportSettings_questions_label": "ExportSettings_questions_label",
+  "ExportSettings_questions_help": "ExportSettings_questions_help",
+  "ExportSettings_remoteRepositories_label": "ExportSettings_remoteRepositories_label",
+  "ExportSettings_remoteRepositories_help": "ExportSettings_remoteRepositories_help",
+  "ExportSettings_storageServices_label": "ExportSettings_storageServices_label",
+  "ExportSettings_storageServices_help": "ExportSettings_storageServices_help"
 }

@@ -3,6 +3,7 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const { ExportSettings } = require('../../core/export_settings');
 const fs = require('fs');
 const path = require('path');
 const { SettingsController } = require('./settings_controller');
@@ -167,7 +168,7 @@ test('Get selected items for export', () => {
         let cb = $(`input[name=${listName}]`)[1];
         $(cb).attr('checked', true);
     }
-    let form = new SettingsExportForm();
+    let form = new SettingsExportForm(new ExportSettings());
     let items = form.getSelectedItems();
     expect(items.appSettings.length).toEqual(1);
     expect(items.bagItProfiles.length).toEqual(1);

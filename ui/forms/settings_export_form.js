@@ -15,7 +15,7 @@ const { Util } = require('../../core/util');
  */
 class SettingsExportForm extends Form {
 
-    constructor() {
+    constructor(exportSettings) {
         let listOptions = {
             orderBy: 'name',
             sortDirection: 'asc'
@@ -27,7 +27,7 @@ class SettingsExportForm extends Form {
             remoteRepositories: RemoteRepository.list(null, listOptions),
             storageServices: StorageService.list(null, listOptions),
         }
-        super('SettingsExport', data);
+        super('SettingsExport', exportSettings);
         this._init(data);
     }
 
