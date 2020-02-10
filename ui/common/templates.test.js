@@ -80,6 +80,7 @@ test('All partials are defined', () => {
         'profileTags',
         'recentJobs',
         'runningJobs',
+        'settingsQuestion',
         'tableBottomLinks',
         'tagDefRow'
     ];

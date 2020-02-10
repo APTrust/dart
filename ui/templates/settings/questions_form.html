@@ -10,17 +10,21 @@
 </div>
 
 
-<form>
+<form id="settingsQuestionsForm">
 
-  <div class="card mb-3">
-      <div class="card-header">Question 1</div>
-      <div class="card-body">
-        {{> inputTextArea field = form.fields.question_1 }}
-        <p>{{ translate "Copy the user's answer to this question to:" }}</p>
-        {{> inputSelect field = form.fields.objType_1 }}
-        {{> inputSelect field = form.fields.objName_1 }}
-        {{> inputSelect field = form.fields.field_1 }}
-    </div>
-  </div>
+  {{> settingsQuestion }}
 
 </form>
+
+
+<div class="bottom-buttons">
+  <div class="pull-right">
+    <a role="button" class="btn btn-primary" id="btnNext" href="#Settings/showExportJson">{{ translate "Export" }}</a>
+  </div>
+  <div class="pull-right mr-3">
+      <button type="button" class="btn btn-primary" id="btnAdd">{{ translate "Add Question" }}</button>
+  </div>
+  <div class="pull-right mr-3">
+    <a role="button" class="btn btn-secondary" href="#Settings/export">{{ translate "Cancel" }}</a>
+  </div>
+</div>

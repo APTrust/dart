@@ -352,5 +352,6 @@
   "Object Type": "Object Type",
   "Object Name": "Object Name",
   "Field": "Field",
-  "You must select at least one item to export before you can add questions.": "You must select at least one item to export before you can add questions."
+  "You must select at least one item to export before you can add questions.": "You must select at least one item to export before you can add questions.",
+  "Add Question": "Add Question"
 }

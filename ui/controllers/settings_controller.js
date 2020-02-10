@@ -59,6 +59,10 @@ class SettingsController extends BaseController {
         return this.containerContent(html);
     }
 
+    /**
+     * Shows the form where a user can define setup questions.
+     *
+     */
     showQuestionsForm() {
         let itemsForm = new SettingsExportForm();
         let items = itemsForm.getSelectedItems();

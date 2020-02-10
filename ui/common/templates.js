@@ -95,6 +95,7 @@ handlebars.registerPartial({
     profileTags: readFile(path.join('partials', 'profile_tags.html')),
     recentJobs: readFile(path.join('partials', 'recent_jobs.html')),
     runningJobs: readFile(path.join('partials', 'running_jobs.html')),
+    settingsQuestion: readFile(path.join('settings', 'question.html')),
     tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
     tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
 });
