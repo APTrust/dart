@@ -3,8 +3,20 @@
       <div class="card-body">
         {{> inputTextArea field = form.fields.question_1 }}
         <p>{{ translate "Copy the user's answer to this question to:" }}</p>
-        {{> inputSelect field = form.fields.objType_1 }}
-        {{> inputSelect field = form.fields.objName_1 }}
-        {{> inputSelect field = form.fields.field_1 }}
-    </div>
+
+        <div class="row">
+            <div class="col">
+                {{> inputSelect field = form.fields.objType_1 }}
+            </div>
+            <div class="col">
+                {{> inputSelect field = form.fields.objName_1 }}
+            </div>
+            <div class="col">
+                {{> inputSelect field = form.fields.field_1 }}
+            </div>
+        </div>
+      </div>
+      <div class="card-footer">
+          <button type="button" class="btn btn-danger">{{ translate "Delete" }}</button>
+      </div>
   </div>

@@ -73,6 +73,7 @@ class SettingsController extends BaseController {
         }
         this.questionsForm = new SettingsQuestionsForm(items);
         let html = Templates.settingsQuestions({
+            questionNumber: 1,
             form: this.questionsForm
         });
         return this.containerContent(html);
