@@ -87,6 +87,23 @@ class ExportSettings extends PersistentObject {
         return value;
     }
 
+    /**
+     * Returns the ids of objects in the specified list.
+     */
+    getIds(listName) {
+        switch (listName) {
+        case "appSettings":
+            return this.appSettings.map(obj => obj.id);
+        case "bagItProfiles":
+            return this.bagItProfiles.map(obj => obj.id);
+        case "remoteRepositories":
+            return this.remoteRepositories.map(obj => obj.id);
+        case "storageServices":
+            return this.storageServices.map(obj => obj.id);
+        default:
+            return [];
+        }
+    }
 
 }
 

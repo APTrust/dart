@@ -5,14 +5,6 @@ const path = require('path');
 const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
-// beforeEach(() => {
-//     TestUtil.deleteJsonFile('ExportSettings');
-// });
-
-// afterAll(() => {
-//     TestUtil.deleteJsonFile('ExportSettings');
-// });
-
 test('Constructor sets expected properties', () => {
     let obj = new ExportSettings();
     expect(obj.id).toEqual(Constants.EMPTY_UUID);
@@ -26,7 +18,7 @@ test('toJson() produces expected JSON', () => {
     expect(obj.toJson()).toEqual(jsonData.toString());
 })
 
-test('toJson() call _jsonFilter when appropriate', () => {
+test('toJson() calls _jsonFilter when appropriate', () => {
     let fixturePath = path.join(__dirname, "..", "test", "fixtures",
                                 "export_settings.json");
     let jsonData = fs.readFileSync(fixturePath);
@@ -55,4 +47,23 @@ test('JSON filter filters sensitive data', () => {
     expect(obj._jsonFilter('required', true)).toBe(true);
     expect(obj._jsonFilter('required', false)).toBe(false);
     expect(obj._jsonFilter('required', ['ha'])).not.toBeDefined();
+})
+
+test('getIds() returns expected ids', () => {
+    let fixturePath = path.join(__dirname, "..", "test", "fixtures",
+                                "export_settings.json");
+    let jsonData = fs.readFileSync(fixturePath);
+    let obj = new ExportSettings(JSON.parse(jsonData))
+    expect(obj.getIds("appSettings")).toEqual(
+        ["7439d47a-4a38-45ca-a587-e8ef7d0ca192",
+         "00000000-0000-0000-0000-000000000100"]);
+    expect(obj.getIds("bagItProfiles")).toEqual(
+        ["09c834a7-6b51-49dd-9498-b310ee3e5a6a"]);
+    expect(obj.getIds("remoteRepositories")).toEqual([
+        "214db814-bd73-49d4-b988-4d7a5ad0d313",
+        "00000000-0000-0000-0000-000000000200"]);
+    expect(obj.getIds("storageServices")).toEqual([
+        "b3877424-296e-4693-a840-3577c1efe91b",
+        "00000000-0000-0000-0000-000000000300"]);
+    expect(obj.getIds("doesNotExist")).toEqual([]);
 })
