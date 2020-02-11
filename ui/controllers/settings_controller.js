@@ -87,7 +87,7 @@ class SettingsController extends BaseController {
      *
      */
     showExportJson() {
-        let settings = ExportSettings.find(Constants.EMPTY_UUID)
+        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
         let form = null;
         let fromPage = this.params.get("fromPage")
         if (fromPage == "export") {
