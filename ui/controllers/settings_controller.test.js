@@ -12,6 +12,7 @@ const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
+const url = require('url');
 
 const SettingsUrl = 'https://raw.githubusercontent.com/APTrust/dart/master/test/fixtures/import_settings.json';
 const SettingsFile = path.join(__dirname, '..', '..', 'test', 'fixtures', 'import_settings.json');
@@ -182,7 +183,8 @@ test('Get selected items for export', () => {
 })
 
 test('Show exported JSON', () => {
-    let controller = new SettingsController();
+    let params = new url.URLSearchParams({ fromPage: "export" });
+    let controller = new SettingsController(params);
     let response = controller.export()
     UITestUtil.setDocumentBody(response);
 

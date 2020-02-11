@@ -3,6 +3,7 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
+const { ExportQuestion } = require('../../core/export_question');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { RemoteRepository } = require('../../core/remote_repository');
@@ -134,6 +135,10 @@ class SettingsQuestionsForm extends Form {
         }
     }
 
+    getQuestionPrompt(rowNumber) {
+        return $(`#question_${rowNumber}`).val();
+    }
+
     getSelectedType(rowNumber) {
         return $(`#objType_${rowNumber}`).val();
     }
@@ -144,6 +149,16 @@ class SettingsQuestionsForm extends Form {
 
     getSelectedField(rowNumber) {
         return $(`#field_${rowNumber}`).val();
+    }
+
+    getQuestionFromForm(rowNumber) {
+        let form = this;
+        return new ExportQuestion({
+            prompt: form.getQuestionPrompt(rowNumber),
+            objType: form.getSelectedType(rowNumber),
+            objId: form.getSelectedName(rowNumber),
+            field: form.getSelectedField(rowNumber),
+        });
     }
 
     getNamesList(rowNumber) {
@@ -169,6 +184,14 @@ class SettingsQuestionsForm extends Form {
             });
         }
         return this.fieldsForType[selectedType].map(name => { return { id: name, name: name }});
+    }
+
+    parseQuestionsForExport() {
+        this.obj.questions = [];
+        let count = $("div[data-question-number]").length;
+        for (let i=0; i < count; i++) {
+            this.obj.questions.push(this.getQuestionFromForm(i + 1));
+        }
     }
 
 }

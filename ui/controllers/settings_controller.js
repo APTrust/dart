@@ -87,9 +87,16 @@ class SettingsController extends BaseController {
      *
      */
     showExportJson() {
-        let form = new SettingsExportForm(new ExportSettings());
-        form.parseItemsForExport();
-        console.log(form.obj);
+        let settings = ExportSettings.find(Constants.EMPTY_UUID)
+        let form = null;
+        let fromPage = this.params.get("fromPage")
+        if (fromPage == "export") {
+            form = new SettingsExportForm(settings);
+            form.parseItemsForExport();
+        } else { // fromPage == "questions"
+            form = new SettingsQuestionsForm(settings);
+            form.parseQuestionsForExport();
+        }
         form.obj.save();
         let title = Context.y18n.__("Exported Settings");
         let body = Templates.settingsExportResult({

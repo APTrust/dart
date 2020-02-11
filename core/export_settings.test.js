@@ -74,7 +74,6 @@ test('getIds() returns expected ids', () => {
 
 test('anythingSelected()', () => {
     let obj = new ExportSettings();
-    console.log(JSON.stringify(obj));
     expect(obj.anythingSelected()).toBe(false);
 
     obj.appSettings.push(new AppSetting());
