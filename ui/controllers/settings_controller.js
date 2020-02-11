@@ -68,13 +68,13 @@ class SettingsController extends BaseController {
      */
     showQuestionsForm() {
         let itemsForm = new SettingsExportForm(new ExportSettings());
-        let items = itemsForm.getSelectedItems();
-        if (items.appSettings.length == 0 && items.bagItProfiles.length == 0 &&
-            items.remoteRepositories.length == 0 && items.storageServices.length == 0) {
+        itemsForm.parseItemsForExport();
+        if (!itemsForm.obj.anythingSelected()) {
             alert(Context.y18n.__("You must select at least one item to export before you can add questions."));
             return this.noContent();
         }
-        this.questionsForm = new SettingsQuestionsForm(items);
+        itemsForm.obj.save();
+        this.questionsForm = new SettingsQuestionsForm(itemsForm.obj);
         let html = Templates.settingsQuestions({
             questionNumber: 1,
             form: this.questionsForm
@@ -88,10 +88,12 @@ class SettingsController extends BaseController {
      */
     showExportJson() {
         let form = new SettingsExportForm(new ExportSettings());
-        let items = form.getSelectedItems();
+        form.parseItemsForExport();
+        console.log(form.obj);
+        form.obj.save();
         let title = Context.y18n.__("Exported Settings");
         let body = Templates.settingsExportResult({
-            json: JSON.stringify(items, this._jsonFilter, 2)
+            json: JSON.stringify(form.obj, this._jsonFilter, 2)
         });
         return this.modalContent(title, body);
     }

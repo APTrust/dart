@@ -1,7 +1,11 @@
+const { AppSetting } = require('./app_setting');
+const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('./constants');
 const { ExportSettings } = require('./export_settings');
 const fs = require('fs');
 const path = require('path');
+const { RemoteRepository } = require('./remote_repository');
+const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
 
@@ -67,3 +71,27 @@ test('getIds() returns expected ids', () => {
         "00000000-0000-0000-0000-000000000300"]);
     expect(obj.getIds("doesNotExist")).toEqual([]);
 })
+
+test('anythingSelected()', () => {
+    let obj = new ExportSettings();
+    console.log(JSON.stringify(obj));
+    expect(obj.anythingSelected()).toBe(false);
+
+    obj.appSettings.push(new AppSetting());
+    expect(obj.anythingSelected()).toBe(true);
+    obj.appSettings = [];
+
+    obj.bagItProfiles.push(new BagItProfile());
+    expect(obj.anythingSelected()).toBe(true);
+    obj.bagItProfiles = [];
+
+    obj.remoteRepositories.push(new RemoteRepository());
+    expect(obj.anythingSelected()).toBe(true);
+    obj.remoteRepositories = [];
+
+    obj.storageServices.push(new StorageService());
+    expect(obj.anythingSelected()).toBe(true);
+    obj.storageServices = [];
+
+    expect(obj.anythingSelected()).toBe(false);
+});

@@ -50,14 +50,13 @@ class SettingsExportForm extends Form {
         );
     }
 
-    getSelectedItems() {
+    parseItemsForExport() {
         //this.parseFromDOM();
-        return {
-            appSettings: this.getChecked("appSettings", AppSetting),
-            bagItProfiles: this.getChecked("bagItProfiles", BagItProfile),
-            remoteRepositories: this.getChecked("remoteRepositories", RemoteRepository),
-            storageServices: this.getChecked("storageServices", StorageService)
-        }
+        this.obj.appSettings = this.getChecked("appSettings", AppSetting)
+        this.obj.bagItProfiles = this.getChecked("bagItProfiles", BagItProfile)
+        this.obj.remoteRepositories = this.getChecked("remoteRepositories", RemoteRepository)
+        this.obj.storageServices = this.getChecked("storageServices", StorageService)
+        return this.obj;
     }
 
     getChecked(name, objType) {

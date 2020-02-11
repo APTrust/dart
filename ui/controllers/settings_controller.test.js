@@ -169,16 +169,16 @@ test('Get selected items for export', () => {
         $(cb).attr('checked', true);
     }
     let form = new SettingsExportForm(new ExportSettings());
-    let items = form.getSelectedItems();
-    expect(items.appSettings.length).toEqual(1);
-    expect(items.bagItProfiles.length).toEqual(1);
-    expect(items.remoteRepositories.length).toEqual(1);
-    expect(items.storageServices.length).toEqual(1);
+    form.parseItemsForExport();
+    expect(form.obj.appSettings.length).toEqual(1);
+    expect(form.obj.bagItProfiles.length).toEqual(1);
+    expect(form.obj.remoteRepositories.length).toEqual(1);
+    expect(form.obj.storageServices.length).toEqual(1);
 
-    expect(items.appSettings[0].name).toEqual('App Setting 1');
-    expect(items.bagItProfiles[0].name).toEqual('BagIt Profile 1');
-    expect(items.remoteRepositories[0].name).toEqual('Remote Repository 1');
-    expect(items.storageServices[0].name).toEqual('Storage Service 1');
+    expect(form.obj.appSettings[0].name).toEqual('App Setting 1');
+    expect(form.obj.bagItProfiles[0].name).toEqual('BagIt Profile 1');
+    expect(form.obj.remoteRepositories[0].name).toEqual('Remote Repository 1');
+    expect(form.obj.storageServices[0].name).toEqual('Storage Service 1');
 })
 
 test('Show exported JSON', () => {

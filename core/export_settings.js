@@ -105,6 +105,15 @@ class ExportSettings extends PersistentObject {
         }
     }
 
+    /**
+     * Returns true if anything is selected for export.
+     */
+    anythingSelected() {
+        return (this.appSettings.length > 0 ||
+                this.bagItProfiles.length > 0 ||
+                this.remoteRepositories.length > 0 ||
+                this.storageServices.length > 0)
+    }
 }
 
 // Copy static methods from base

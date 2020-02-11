@@ -42,6 +42,5 @@ test('create()', () => {
     }
 });
 
-// Note: getSelectedItems is tested in
+// Note: getSelectedItems and parseItemsForExport are tested in
 // ui/controllers/settings_controller.test.js
-// test 'Get selected items for export'
