@@ -76,8 +76,7 @@ class SettingsController extends BaseController {
         itemsForm.obj.save();
         this.questionsForm = new SettingsQuestionsForm(itemsForm.obj);
         let html = Templates.settingsQuestions({
-            questionNumber: 1,
-            form: this.questionsForm
+            questions: this.questionsForm.getQuestionsAsArray()
         });
         return this.containerContent(html);
     }
@@ -164,7 +163,9 @@ class SettingsController extends BaseController {
         } else if (fnName == 'showExportJson') {
             $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
         } else if (fnName == 'showQuestionsForm') {
-            controller._attachQuestionCallbacks(1);
+            for (let i = 0; i < this.questionsForm.rowCount; i++) {
+                controller._attachQuestionCallbacks(i);
+            }
         }
     }
 

@@ -17,7 +17,11 @@ let storageServiceName = Context.y18n.__("Storage Service");
 
 /**
  * SettingsQuestionsForm allows the user to specify where Job
- * files will be uploaded.
+ * files will be uploaded. This is a highly customized descendant
+ * of the base {@link Form} and does not behave like most others
+ * because it requires questions to be logically grouped and
+ * repeated.
+ *
  */
 class SettingsQuestionsForm extends Form {
 
@@ -63,30 +67,36 @@ class SettingsQuestionsForm extends Form {
     }
 
     addRow() {
+        this._addPrompt();
+        this._addObjType();
+        this._addObjName();
+        this._addField();
         this.rowCount += 1;
-        // prompt, objType, objName, field
-        let question = `question_${this.rowCount}`
-        let objType = `objType_${this.rowCount}`
-        let objName = `objName_${this.rowCount}`
-        let field = `field_${this.rowCount}`
-        this.fields[question] = new Field(
-            question,
-            question,
+    }
+
+    _addPrompt() {
+        let prompt = `prompt_${this.rowCount}`
+        this.fields[prompt] = new Field(
+            prompt,
+            prompt,
             Context.y18n.__("Question"),
             ""
         );
-        this.fields[question].attrs = {
+        this.fields[prompt].attrs = {
             "data-row-number": this.rowCount,
-            "data-control-type": "question"
+            "data-control-type": "prompt"
         }
 
+    }
+
+    _addObjType() {
+        let objType = `objType_${this.rowCount}`
         this.fields[objType] = new Field(
             objType,
             objType,
             Context.y18n.__("Object Type"),
             ""
         );
-
         let objTypeOptions = [];
         if (this.obj.appSettings.length > 0) {
             objTypeOptions.push(Context.y18n.__("App Setting"));
@@ -109,7 +119,10 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "object-type"
         }
+    }
 
+    _addObjName() {
+        let objName = `objName_${this.rowCount}`
         this.fields[objName] = new Field(
             objName,
             objName,
@@ -121,7 +134,10 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "object-name"
         }
+    }
 
+    _addField() {
+        let field = `field_${this.rowCount}`
         this.fields[field] = new Field(
             field,
             field,
@@ -133,6 +149,20 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "field"
         }
+    }
+
+    getQuestionsAsArray() {
+        let form = this;
+        let questions = []
+        for (let i = 0; i < this.rowCount; i++) {
+            questions.push({
+                prompt: form.fields[`prompt_${i}`],
+                objType: form.fields[`objType_${i}`],
+                objName: form.fields[`objName_${i}`],
+                field: form.fields[`field_${i}`],
+            });
+        }
+        return questions;
     }
 
     getQuestionPrompt(rowNumber) {

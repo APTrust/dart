@@ -4,7 +4,9 @@
 
 <form id="settingsQuestionsForm">
 
-    {{> settingsQuestion }}
+  {{#each questions as |question|}}
+    {{> settingsQuestion questionNumber = @index question = question}}
+  {{/each}}
 
 </form>
 
