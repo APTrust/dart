@@ -166,7 +166,7 @@ class SettingsQuestionsForm extends Form {
     }
 
     getQuestionPrompt(rowNumber) {
-        return $(`#question_${rowNumber}`).val();
+        return $(`#prompt_${rowNumber}`).val();
     }
 
     getSelectedType(rowNumber) {
@@ -202,7 +202,7 @@ class SettingsQuestionsForm extends Form {
         if (selectedType == Context.y18n.__("BagIt Profile")) {
             let profileId = this.getSelectedName(rowNumber);
             let profile = BagItProfile.find(profileId);
-            let opts =  profile.tags.map(tag => { return { id: tag.id, name: tag.tagName }});
+            let opts =  profile.tags.filter(tagDef => !tagDef.systemMustSet()).map(tag => {return { id: tag.id, name: tag.tagName }});
             return opts.sort((x,y) => {
                 if (x.name < y.name) {
                     return -1;
@@ -220,8 +220,9 @@ class SettingsQuestionsForm extends Form {
         this.obj.questions = [];
         let count = $("div[data-question-number]").length;
         for (let i=0; i < count; i++) {
-            this.obj.questions.push(this.getQuestionFromForm(i + 1));
+            this.obj.questions.push(this.getQuestionFromForm(i));
         }
+        console.log(this.obj.questions);
     }
 
 }

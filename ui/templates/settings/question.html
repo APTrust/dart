@@ -1,5 +1,5 @@
   <div class="card mb-3" data-question-number="{{ questionNumber }}">
-      <div class="card-header">Question {{ questionNumber }}</div>
+      <div class="card-header">Question {{ add questionNumber 1 }}</div>
       <div class="card-body">
         {{> inputTextArea field = question.prompt }}
         <p>{{ translate "Copy the user's answer to this question to:" }}</p>

@@ -100,6 +100,10 @@ handlebars.registerPartial({
     tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
 });
 
+handlebars.registerHelper('add', function(a, b) {
+    return parseInt(a, 10) + parseInt(b, 10);
+});
+
 handlebars.registerHelper('eq', function(a, b) {
   return a === b;
 });
