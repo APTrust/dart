@@ -49,12 +49,6 @@ function createTestObjects() {
     }
 }
 
-
-// IMPORT/EXPORT
-// TODO: Post sample files (good and bad) to GitHub URL
-// TODO: Test!
-// TODO: 'Copy to Clipboard' button
-
 test('Show import page', () => {
     let controller = new SettingsController();
     UITestUtil.setDocumentBody(controller.import());
@@ -206,3 +200,7 @@ test('Show exported JSON', () => {
     expect(modalResponse.modalContent).toMatch('Remote Repository 1');
     expect(modalResponse.modalContent).toMatch('Storage Service 1');
 })
+
+// IMPORT/EXPORT
+// TODO: Post sample files (good and bad) to GitHub URL
+// Test all new question export features.
