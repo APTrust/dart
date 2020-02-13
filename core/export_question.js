@@ -55,7 +55,7 @@ class ExportQuestion {
         case Context.y18n.__("Remote Repository"):
             classToSet = RemoteRepository;
             break;
-        case Context.y18n.__("StorageService"):
+        case Context.y18n.__("Storage Service"):
             classToSet = StorageService;
             break;
         default:
@@ -65,7 +65,15 @@ class ExportQuestion {
         if (obj == null) {
             throw Context.y18n.__("Cannot find %s", classToSet.name);
         }
-        obj[this.field] = response;
+        if (this.objType == Context.y18n.__("BagIt Profile")) {
+            let tagDef = obj.firstMatchingTag("id", this.field);
+            if (tagDef == null) {
+                throw Context.y18n.__("BagIt Profile '%s' has no field with id %s", obj.name, this.field);
+            }
+            tagDef.defaultValue = response;
+        } else {
+            obj[this.field] = response;
+        }
         obj.save();
     }
 }

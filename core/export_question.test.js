@@ -42,7 +42,11 @@ test('copyResponseToObject', () => {
     let appSetting = new AppSetting(opts).save();
     let profile = new BagItProfile(opts).save();
     let repo = new RemoteRepository(opts).save();
-    let ss = new StorageService(opts).save();
+    let ss = new StorageService({
+        name: 'ss1',
+        protocol: 's3',
+        host: 'example.com',
+    }).save();
 
     // Make sure we can set AppSetting...
     let q = new ExportQuestion({
@@ -56,4 +60,29 @@ test('copyResponseToObject', () => {
     expect(appSetting.value).toEqual("User Response");
 
     // BagIt Profile
+    let tagDef = profile.firstMatchingTag("tagName", "Source-Organization");
+    expect(tagDef).not.toBeNull();
+    q.objType = Context.y18n.__("BagIt Profile");
+    q.objId = profile.id;
+    q.field = tagDef.id;
+    q.copyResponseToObject("Springfield Power Plant");
+    profile = BagItProfile.find(profile.id);
+    tagDef = profile.firstMatchingTag("tagName", "Source-Organization");
+    expect(tagDef.getValue()).toEqual("Springfield Power Plant");
+
+    // Remote Repository
+    q.objType = Context.y18n.__("Remote Repository");
+    q.objId = repo.id;
+    q.field = 'userId';
+    q.copyResponseToObject("homer");
+    repo = RemoteRepository.find(repo.id);
+    expect(repo.userId).toEqual("homer");
+
+    // Storage Service
+    q.objType = Context.y18n.__("Storage Service");
+    q.objId = ss.id;
+    q.field = 'description';
+    q.copyResponseToObject("banker's box");
+    ss = StorageService.find(ss.id);
+    expect(ss.description).toEqual("banker's box");
 });

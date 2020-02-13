@@ -370,5 +370,7 @@
   "ExportSettings_remoteRepositories_label": "ExportSettings_remoteRepositories_label",
   "ExportSettings_remoteRepositories_help": "ExportSettings_remoteRepositories_help",
   "ExportSettings_storageServices_label": "ExportSettings_storageServices_label",
-  "ExportSettings_storageServices_help": "ExportSettings_storageServices_help"
+  "ExportSettings_storageServices_help": "ExportSettings_storageServices_help",
+  "StorageService": "StorageService",
+  "Response must be assigned to an object": "Response must be assigned to an object"
 }
