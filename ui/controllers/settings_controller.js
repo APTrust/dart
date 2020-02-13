@@ -63,10 +63,10 @@ class SettingsController extends BaseController {
     }
 
     /**
-     * Shows the form where a user can define setup questions.
+     * Saves export settings, then redirects to the questions page.
      *
      */
-    showQuestionsForm() {
+    saveAndGoToQuestions() {
         let itemsForm = new SettingsExportForm(new ExportSettings());
         itemsForm.parseItemsForExport();
         if (!itemsForm.obj.anythingSelected()) {
@@ -74,7 +74,16 @@ class SettingsController extends BaseController {
             return this.noContent();
         }
         itemsForm.obj.save();
-        this.questionsForm = new SettingsQuestionsForm(itemsForm.obj);
+        return this.redirect("Settings", "showQuestionsForm", this.params);
+    }
+
+    /**
+     * Shows the form where a user can define setup questions.
+     *
+     */
+    showQuestionsForm() {
+        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
+        this.questionsForm = new SettingsQuestionsForm(settings);
         let html = Templates.settingsQuestions({
             questions: this.questionsForm.getQuestionsAsArray()
         });
@@ -154,7 +163,7 @@ class SettingsController extends BaseController {
             $(`input[name="addQuestions"]`).click(() => {
                 if ($(`input[name="addQuestions"]`).is(':checked')) {
                     $("#btnNext").text(Context.y18n.__("Add Questions"));
-                    $("#btnNext").attr("href", "#Settings/showQuestionsForm");
+                    $("#btnNext").attr("href", "#Settings/saveAndGoToQuestions");
                 } else {
                     $("#btnNext").text(Context.y18n.__("Export"));
                     $("#btnNext").attr("href", "#Settings/showExportJson");
@@ -166,9 +175,20 @@ class SettingsController extends BaseController {
             for (let i = 0; i < this.questionsForm.rowCount; i++) {
                 controller._attachQuestionCallbacks(i);
             }
+            $('#btnAdd').click(() => { controller._addQuestion() });
         }
     }
 
+    _addQuestion() {
+        this.questionsForm.parseQuestionsForExport();
+        this.questionsForm.addRow();
+        this.questionsForm.obj.save();
+        // let html = Templates.settingsQuestions({
+        //     questions: this.questionsForm.getQuestionsAsArray()
+        // });
+        // return this.containerContent(html);
+        this.redirect("Settings", "showQuestionsForm", this.params);
+    }
 
     _attachQuestionCallbacks(rowNumber) {
         let controller = this;

@@ -59,6 +59,9 @@ class SettingsQuestionsForm extends Form {
     }
 
     _init() {
+        for(let i=0; i < this.obj.questions.length; i++) {
+            this.addRow();
+        }
         this.addRow();
     }
 
@@ -67,26 +70,31 @@ class SettingsQuestionsForm extends Form {
     }
 
     addRow() {
-        this._addPrompt();
-        this._addObjType();
-        this._addObjName();
-        this._addField();
+        let row = {
+            prompt: this._addPrompt(),
+            objType: this._addObjType(),
+            objName: this._addObjName(),
+            field: this._addField(),
+        }
         this.rowCount += 1;
+        return row;
     }
 
     _addPrompt() {
         let prompt = `prompt_${this.rowCount}`
+        let question = this.obj.questions[this.rowCount];
+        let value = question ? question.prompt : "";
         this.fields[prompt] = new Field(
             prompt,
             prompt,
             Context.y18n.__("Question"),
-            ""
+            value
         );
         this.fields[prompt].attrs = {
             "data-row-number": this.rowCount,
             "data-control-type": "prompt"
         }
-
+        return this.fields[prompt];
     }
 
     _addObjType() {
@@ -119,6 +127,7 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "object-type"
         }
+        return this.fields[objType];
     }
 
     _addObjName() {
@@ -134,6 +143,7 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "object-name"
         }
+        return this.fields[objName];
     }
 
     _addField() {
@@ -149,6 +159,7 @@ class SettingsQuestionsForm extends Form {
             "data-row-number": this.rowCount,
             "data-control-type": "field"
         }
+        return this.fields[field];
     }
 
     getQuestionsAsArray() {
@@ -222,7 +233,6 @@ class SettingsQuestionsForm extends Form {
         for (let i=0; i < count; i++) {
             this.obj.questions.push(this.getQuestionFromForm(i));
         }
-        console.log(this.obj.questions);
     }
 
 }
