@@ -15,6 +15,13 @@ const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 const url = require('url');
 
+// TODO: Hook up question delete button.
+// TODO: Add button to clear form.
+// TODO: Finish tests for this controller.
+// TODO: Finish tests for SettingsQuestionsForm.
+// TODO: Copy responses on import.
+// TODO: Explicit confirmation on import.
+
 /**
  * SettingsController imports JSON settings from a URL or from
  * cut-and-pasted text. The settings JSON should be in the format below.
