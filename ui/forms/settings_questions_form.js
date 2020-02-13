@@ -59,10 +59,10 @@ class SettingsQuestionsForm extends Form {
     }
 
     _init() {
-        for(let i=0; i < this.obj.questions.length; i++) {
+        let questionsToShow = this.obj.questions.length || 1;
+        for(let i=0; i < questionsToShow; i++) {
             this.addRow();
         }
-        this.addRow();
     }
 
     getSelectedItems() {

@@ -5,6 +5,7 @@ const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const Dart = require('../../core');
+const { ExportQuestion } = require('../../core/export_question');
 const { ExportSettings } = require('../../core/export_settings');
 const { RemoteRepository } = require('../../core/remote_repository');
 const request = require('request');
@@ -63,11 +64,24 @@ class SettingsController extends BaseController {
     }
 
     /**
+     * Saves export settings, then redirects to the export settings page.
+     *
+     */
+    saveAndGoToExport() {
+        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
+        this.questionsForm = new SettingsQuestionsForm(settings);
+        this.questionsForm.parseQuestionsForExport();
+        this.questionsForm.obj.save();
+        return this.redirect("Settings", "export", this.params);
+    }
+
+    /**
      * Saves export settings, then redirects to the questions page.
      *
      */
     saveAndGoToQuestions() {
-        let itemsForm = new SettingsExportForm(new ExportSettings());
+        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
+        let itemsForm = new SettingsExportForm(settings);
         itemsForm.parseItemsForExport();
         if (!itemsForm.obj.anythingSelected()) {
             alert(Context.y18n.__("You must select at least one item to export before you can add questions."));
@@ -82,7 +96,7 @@ class SettingsController extends BaseController {
      *
      */
     showQuestionsForm() {
-        let settings = ExportSettings.find(Constants.EMPTY_UUID) || new ExportSettings();
+        let settings = ExportSettings.find(Constants.EMPTY_UUID);
         this.questionsForm = new SettingsQuestionsForm(settings);
         let html = Templates.settingsQuestions({
             questions: this.questionsForm.getQuestionsAsArray()
@@ -181,12 +195,8 @@ class SettingsController extends BaseController {
 
     _addQuestion() {
         this.questionsForm.parseQuestionsForExport();
-        this.questionsForm.addRow();
+        this.questionsForm.obj.questions.push(new ExportQuestion());
         this.questionsForm.obj.save();
-        // let html = Templates.settingsQuestions({
-        //     questions: this.questionsForm.getQuestionsAsArray()
-        // });
-        // return this.containerContent(html);
         this.redirect("Settings", "showQuestionsForm", this.params);
     }
 

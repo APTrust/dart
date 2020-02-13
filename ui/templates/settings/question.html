@@ -1,5 +1,9 @@
   <div class="card mb-3" data-question-number="{{ questionNumber }}">
-      <div class="card-header">Question {{ add questionNumber 1 }}</div>
+      <div class="card-header">Question {{ add questionNumber 1 }}
+          <div class="pull-right">
+              <button type="button" class="btn btn-danger" data-question-number="{{ questionNumber }}">{{ translate "Delete" }}</button>
+          </div>
+      </div>
       <div class="card-body">
         {{> inputTextArea field = question.prompt }}
         <p>{{ translate "Copy the user's answer to this question to:" }}</p>
@@ -15,8 +19,5 @@
                 {{> inputSelect field = question.field }}
             </div>
         </div>
-      </div>
-      <div class="card-footer">
-          <button type="button" class="btn btn-danger" data-question-number="{{ questionNumber }}">{{ translate "Delete" }}</button>
       </div>
   </div>
