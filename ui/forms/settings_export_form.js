@@ -15,6 +15,12 @@ const { Util } = require('../../core/util');
  */
 class SettingsExportForm extends Form {
 
+    /**
+     * Creates a new form to display settings for export.
+     * This is the form that lists checkboxes. Users check which
+     * items they want to export.
+     *
+     */
     constructor(exportSettings) {
         let listOptions = {
             orderBy: 'name',
@@ -30,6 +36,12 @@ class SettingsExportForm extends Form {
         this._init(data);
     }
 
+    /**
+     * Initializes the form by creating a list of items and checking
+     * those that are already included in the export settings list.
+     *
+     * @private
+     */
     _init(data) {
         for (let [key, value] of Object.entries(data)) {
             let checkedItems = this.obj.getIds(key);
@@ -47,6 +59,12 @@ class SettingsExportForm extends Form {
         );
     }
 
+    /**
+     * Parses the form, recirding the list of items the user wants to export.
+     * Check this.obj after calling this. For example, this.obj.appSettings
+     * will include all checked AppSettings.
+     *
+     */
     parseItemsForExport() {
         //this.parseFromDOM();
         this.obj.appSettings = this.getChecked("appSettings", AppSetting)
@@ -56,6 +74,18 @@ class SettingsExportForm extends Form {
         return this.obj;
     }
 
+    /**
+     * Returns a list of checked items.
+     *
+     * @param {string} name - The name of the checkbox group to examine for
+     * checked items.
+     *
+     * @param {object} objType - The class of object to add to the list.
+     * This should be one of {@link AppSetting}, {@link BagItProfile},
+     * {@link RemoteRepository} or {@link StorageService}.
+     *
+     * @returns {Array<PersistentObject>}
+     */
     getChecked(name, objType) {
         let checked = $(`input[name="${name}"]:checked`).each(cb => $(cb).value).get().map(cb => cb.value)
         let objects = [];

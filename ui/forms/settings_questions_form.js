@@ -25,8 +25,13 @@ let storageServiceName = Context.y18n.__("Storage Service");
  */
 class SettingsQuestionsForm extends Form {
 
-    constructor(data) {
-        super('SettingsQuestions', data);
+    /**
+     * Creates a new form to display export questions.
+     *
+     * @param {ExportSettings} exportSettings
+     */
+    constructor(exportSettings) {
+        super('SettingsQuestions', exportSettings);
         this.listNames = {};
         this.listNames[appSettingName] = "appSettings";
         this.listNames[bagItProfileName] = "bagItProfiles";
@@ -55,9 +60,15 @@ class SettingsQuestionsForm extends Form {
             "protocol"
         ];
         this.rowCount = 0;
-        this._init(data);
+        this._init();
     }
 
+    /**
+     * Initializes the form by creating the necessary fields and
+     * populating them with pre-existing data.
+     *
+     * @private
+     */
     _init() {
         let questionsToShow = this.obj.questions.length || 1;
         for(let i=0; i < questionsToShow; i++) {
@@ -65,10 +76,11 @@ class SettingsQuestionsForm extends Form {
         }
     }
 
-    getSelectedItems() {
-        //this.parseFromDOM();
-    }
-
+    /**
+     * Adds one new question to the form. The question takes up one
+     * row in the display.
+     *
+     */
     addRow() {
         let row = {
             prompt: this._addPrompt(),
@@ -80,6 +92,11 @@ class SettingsQuestionsForm extends Form {
         return row;
     }
 
+    /**
+     * Adds a form field for a question.prompt.
+     *
+     * @private
+     */
     _addPrompt() {
         let prompt = `prompt_${this.rowCount}`
         let question = this.obj.questions[this.rowCount];
@@ -97,6 +114,11 @@ class SettingsQuestionsForm extends Form {
         return this.fields[prompt];
     }
 
+    /**
+     * Adds a form field for question.objType.
+     *
+     * @private
+     */
     _addObjType() {
         let objType = `objType_${this.rowCount}`
         let question = this.obj.questions[this.rowCount];
@@ -132,6 +154,11 @@ class SettingsQuestionsForm extends Form {
         return this.fields[objType];
     }
 
+    /**
+     * Adds a form field for question.objId.
+     *
+     * @private
+     */
     _addObjId() {
         let objId = `objId_${this.rowCount}`
         let question = this.obj.questions[this.rowCount];
@@ -160,6 +187,11 @@ class SettingsQuestionsForm extends Form {
         return this.fields[objId];
     }
 
+    /**
+     * Adds a form field for question.field.
+     *
+     * @private
+     */
     _addField() {
         let field = `field_${this.rowCount}`
         let question = this.obj.questions[this.rowCount];
@@ -188,6 +220,12 @@ class SettingsQuestionsForm extends Form {
         return this.fields[field];
     }
 
+    /**
+     * Returns a list of questions as an array. Each question consists
+     * of four fields (prompt, objType, objId, and field). We need this
+     * to pass questions to the HTML templates that render them.
+     *
+     */
     getQuestionsAsArray() {
         let form = this;
         let questions = []
@@ -202,45 +240,83 @@ class SettingsQuestionsForm extends Form {
         return questions;
     }
 
+    /**
+     * Returns the user's response to quesion.prompt in the specified row.
+     *
+     * @returns {string}
+     */
     getQuestionPrompt(rowNumber) {
         return $(`#prompt_${rowNumber}`).val();
     }
 
+    /**
+     * Returns the user's response to quesion.objType in the specified row.
+     *
+     * @returns {string}
+     */
     getSelectedType(rowNumber) {
         let element = $(`#objType_${rowNumber}`);
         return element.length > 0 ? element.val() : this.fields[`objType_${rowNumber}`].value;
     }
 
-    getSelectedName(rowNumber) {
+    /**
+     * Returns the user's response to quesion.objId in the specified row.
+     *
+     * @returns {string}
+     */
+    getSelectedId(rowNumber) {
         let element = $(`#objId_${rowNumber}`);
         return element.length > 0 ? element.val() : this.fields[`objId_${rowNumber}`].value;
     }
 
+    /**
+     * Returns the user's response to quesion.field in the specified row.
+     *
+     * @returns {string}
+     */
     getSelectedField(rowNumber) {
         let element = $(`#field_${rowNumber}`);
         return element.length > 0 ? element.val() : this.fields[`field_${rowNumber}`].value;
     }
 
+    /**
+     * Returns the user's response to quesion in the specified row. Returns
+     * an object that includes prompt, objType, objId, field.
+     *
+     * @returns {ExportQuestion}
+     */
     getQuestionFromForm(rowNumber) {
         let form = this;
         return new ExportQuestion({
             prompt: form.getQuestionPrompt(rowNumber),
             objType: form.getSelectedType(rowNumber),
-            objId: form.getSelectedName(rowNumber),
+            objId: form.getSelectedId(rowNumber),
             field: form.getSelectedField(rowNumber),
         });
     }
 
+    /**
+     * Returns a list of names to display in the objId form field.
+     * Each option value is a UUID. The text is a name.
+     *
+     * @returns {Array<object>}
+     */
     getNamesList(rowNumber) {
         let selectedType = this.getSelectedType(rowNumber);
         let listName = this.listNames[selectedType];
         return this.obj[listName].map(obj => { return { id: obj.id, name: obj.name }});
     }
 
+    /**
+     * Returns a list of field names to display in the form's "field"
+     * select list.
+     *
+     * @returns {Array<string>}
+     */
     getFieldsList(rowNumber) {
         let selectedType = this.getSelectedType(rowNumber);
         if (selectedType == Context.y18n.__("BagIt Profile")) {
-            let profileId = this.getSelectedName(rowNumber);
+            let profileId = this.getSelectedId(rowNumber);
             let profile = BagItProfile.find(profileId);
             let opts =  profile.tags.filter(tagDef => !tagDef.systemMustSet()).map(tag => {return { id: tag.id, name: tag.tagName }});
             return opts.sort((x,y) => {
@@ -256,6 +332,11 @@ class SettingsQuestionsForm extends Form {
         return this.fieldsForType[selectedType].map(name => { return { id: name, name: name }});
     }
 
+    /**
+     * Returns a list of ExportQuestions parsed from the HTML form.
+     *
+     * @returns {Array<ExportQuestion>}
+     */
     parseQuestionsForExport() {
         this.obj.questions = [];
         let count = $("div[data-question-number]").length;

@@ -157,6 +157,7 @@ class SettingsController extends BaseController {
     /**
      * This attaches event handlers after the page loads.
      *
+     * @private
      */
     postRenderCallback(fnName) {
         let controller = this;
@@ -193,6 +194,11 @@ class SettingsController extends BaseController {
         }
     }
 
+    /**
+     * Adds a new, blank question to the export questions form.
+     *
+     * @private
+     */
     _addQuestion() {
         this.questionsForm.parseQuestionsForExport();
         this.questionsForm.obj.questions.push(new ExportQuestion());
@@ -200,6 +206,11 @@ class SettingsController extends BaseController {
         this.redirect("Settings", "showQuestionsForm", this.params);
     }
 
+    /**
+     * Attaches callbacks after the export questions form is rendered.
+     *
+     * @private
+     */
     _attachQuestionCallbacks(rowNumber) {
         let controller = this;
         // When selected object type changes, update the object names list.
@@ -331,6 +342,16 @@ class SettingsController extends BaseController {
         }
     }
 
+    /**
+     * Converts a vanilla object to a typed object.
+     *
+     * @param {Object} obj - An untyped JavaScript object (usually parsed
+     * from JSON).
+     *
+     * @param {string} objType - The type to which to convert the object.
+     *
+     * @private
+     */
     _inflateObject(obj, objType) {
         let fullObj = null;
         switch (objType) {
@@ -353,6 +374,11 @@ class SettingsController extends BaseController {
         return fullObj;
     }
 
+    /**
+     * Copies exported settings (JSON) to the system clipboard.
+     *
+     * @private
+     */
     _copyToClipboard() {
         var copyText = document.querySelector("#txtJson");
         copyText.select();
@@ -361,6 +387,11 @@ class SettingsController extends BaseController {
         $("#copied").fadeOut({duration: 1800});
     }
 
+    /**
+     * Displays a success message.
+     *
+     * @private
+     */
     _showSuccess(message) {
         $('#result').hide();
         $('#result').removeClass('text-danger');
@@ -369,6 +400,11 @@ class SettingsController extends BaseController {
         $('#result').show();
     }
 
+    /**
+     * Displays an error message
+     *
+     * @private
+     */
     _showError(message) {
         $('#result').hide();
         $('#result').addClass('text-danger');
@@ -377,6 +413,11 @@ class SettingsController extends BaseController {
         $('#result').show();
     }
 
+    /**
+     * Clears any success/error message from the display.
+     *
+     * @private
+     */
     _clearMessage() {
         $('#result').hide();
         $('#result').text('');
