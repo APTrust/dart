@@ -73,7 +73,7 @@ class SettingsQuestionsForm extends Form {
         let row = {
             prompt: this._addPrompt(),
             objType: this._addObjType(),
-            objName: this._addObjName(),
+            objId: this._addObjId(),
             field: this._addField(),
         }
         this.rowCount += 1;
@@ -99,11 +99,13 @@ class SettingsQuestionsForm extends Form {
 
     _addObjType() {
         let objType = `objType_${this.rowCount}`
+        let question = this.obj.questions[this.rowCount];
+        let value = question ? question.objType : "";
         this.fields[objType] = new Field(
             objType,
             objType,
             Context.y18n.__("Object Type"),
-            ""
+            value
         );
         let objTypeOptions = [];
         if (this.obj.appSettings.length > 0) {
@@ -120,7 +122,7 @@ class SettingsQuestionsForm extends Form {
         }
         this.fields[objType].choices = Choice.makeList(
             objTypeOptions,
-            null,
+            value,
             true
         );
         this.fields[objType].attrs = {
@@ -130,31 +132,55 @@ class SettingsQuestionsForm extends Form {
         return this.fields[objType];
     }
 
-    _addObjName() {
-        let objName = `objName_${this.rowCount}`
-        this.fields[objName] = new Field(
-            objName,
-            objName,
+    _addObjId() {
+        let objId = `objId_${this.rowCount}`
+        let question = this.obj.questions[this.rowCount];
+        let value = "";
+        let options = [];
+        if (question != null) {
+            value = question.objId;
+        }
+        this.fields[objId] = new Field(
+            objId,
+            objId,
             Context.y18n.__("Object Name"),
-            ""
+            value
         );
-        this.fields[objName].choices = Choice.makeList([], [], true);
-        this.fields[objName].attrs = {
+        if (question != null) {
+            options = this.getNamesList(this.rowCount);
+        }
+        this.fields[objId].choices = Choice.makeList(
+            options,
+            value,
+            true);
+        this.fields[objId].attrs = {
             "data-row-number": this.rowCount,
             "data-control-type": "object-name"
         }
-        return this.fields[objName];
+        return this.fields[objId];
     }
 
     _addField() {
         let field = `field_${this.rowCount}`
+        let question = this.obj.questions[this.rowCount];
+        let value = "";
+        let options = [];
+        if (question != null) {
+            value = question.field;
+        }
         this.fields[field] = new Field(
             field,
             field,
             Context.y18n.__("Field"),
-            ""
+            value
         );
-        this.fields[field].choices = Choice.makeList([], [], true);
+        if (question != null) {
+            options = this.getFieldsList(this.rowCount);
+        }
+        this.fields[field].choices = Choice.makeList(
+            options,
+            value,
+            true);
         this.fields[field].attrs = {
             "data-row-number": this.rowCount,
             "data-control-type": "field"
@@ -169,7 +195,7 @@ class SettingsQuestionsForm extends Form {
             questions.push({
                 prompt: form.fields[`prompt_${i}`],
                 objType: form.fields[`objType_${i}`],
-                objName: form.fields[`objName_${i}`],
+                objId: form.fields[`objId_${i}`],
                 field: form.fields[`field_${i}`],
             });
         }
@@ -181,15 +207,18 @@ class SettingsQuestionsForm extends Form {
     }
 
     getSelectedType(rowNumber) {
-        return $(`#objType_${rowNumber}`).val();
+        let element = $(`#objType_${rowNumber}`);
+        return element.length > 0 ? element.val() : this.fields[`objType_${rowNumber}`].value;
     }
 
     getSelectedName(rowNumber) {
-        return $(`#objName_${rowNumber}`).val();
+        let element = $(`#objId_${rowNumber}`);
+        return element.length > 0 ? element.val() : this.fields[`objId_${rowNumber}`].value;
     }
 
     getSelectedField(rowNumber) {
-        return $(`#field_${rowNumber}`).val();
+        let element = $(`#field_${rowNumber}`);
+        return element.length > 0 ? element.val() : this.fields[`field_${rowNumber}`].value;
     }
 
     getQuestionFromForm(rowNumber) {

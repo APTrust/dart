@@ -205,10 +205,10 @@ class SettingsController extends BaseController {
         // When selected object type changes, update the object names list.
         $(`select[data-control-type=object-type][data-row-number=${rowNumber}]`).change(function() {
             let namesList = controller.questionsForm.getNamesList(rowNumber);
-            $(`#objName_${rowNumber}`).empty();
-            $(`#objName_${rowNumber}`).append(new Option());
+            $(`#objId_${rowNumber}`).empty();
+            $(`#objId_${rowNumber}`).append(new Option());
             for (let opt of namesList) {
-                $(`#objName_${rowNumber}`).append(new Option(opt.name, opt.id));
+                $(`#objId_${rowNumber}`).append(new Option(opt.name, opt.id));
             }
         });
         // When selected object name changes, updated the fields list.
