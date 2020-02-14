@@ -1,6 +1,5 @@
 const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
-const { Context } = require('./context');
 const { ExportQuestion } = require('./export_question');
 const { RemoteRepository } = require('./remote_repository');
 const { StorageService } = require('./storage_service');
@@ -25,17 +24,23 @@ afterAll(() => {
 test('Constructor sets expected properties', () => {
     let obj = new ExportQuestion({
         prompt: "The prompt",
-        objType: "App Setting",
+        objType: "AppSetting",
         objId: "1234",
         field: "apiToken"
     });
     expect(obj.prompt).toEqual("The prompt");
-    expect(obj.objType).toEqual("App Setting");
+    expect(obj.objType).toEqual("AppSetting");
     expect(obj.objId).toEqual("1234");
     expect(obj.field).toEqual("apiToken");
 });
 
-// TODO: Test copyResponseToObject
+test('listNameFor', () => {
+    expect(ExportQuestion.listNameFor('AppSetting')).toEqual('appSettings');
+    expect(ExportQuestion.listNameFor('BagItProfile')).toEqual('bagItProfiles');
+    expect(ExportQuestion.listNameFor('RemoteRepository')).toEqual('remoteRepositories');
+    expect(ExportQuestion.listNameFor('StorageService')).toEqual('storageServices');
+});
+
 
 test('copyResponseToObject', () => {
     let opts = { name: "xx" };
@@ -51,7 +56,7 @@ test('copyResponseToObject', () => {
     // Make sure we can set AppSetting...
     let q = new ExportQuestion({
         prompt: "",
-        objType: Context.y18n.__("App Setting"),
+        objType: "AppSetting",
         objId: appSetting.id,
         field: "value"
     });
@@ -62,7 +67,7 @@ test('copyResponseToObject', () => {
     // BagIt Profile
     let tagDef = profile.firstMatchingTag("tagName", "Source-Organization");
     expect(tagDef).not.toBeNull();
-    q.objType = Context.y18n.__("BagIt Profile");
+    q.objType = "BagItProfile";
     q.objId = profile.id;
     q.field = tagDef.id;
     q.copyResponseToObject("Springfield Power Plant");
@@ -71,7 +76,7 @@ test('copyResponseToObject', () => {
     expect(tagDef.getValue()).toEqual("Springfield Power Plant");
 
     // Remote Repository
-    q.objType = Context.y18n.__("Remote Repository");
+    q.objType = "RemoteRepository";
     q.objId = repo.id;
     q.field = 'userId';
     q.copyResponseToObject("homer");
@@ -79,7 +84,7 @@ test('copyResponseToObject', () => {
     expect(repo.userId).toEqual("homer");
 
     // Storage Service
-    q.objType = Context.y18n.__("Storage Service");
+    q.objType = "StorageService";
     q.objId = ss.id;
     q.field = 'description';
     q.copyResponseToObject("banker's box");

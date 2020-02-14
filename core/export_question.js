@@ -4,6 +4,13 @@ const { Context } = require('./context');
 const { RemoteRepository } = require('./remote_repository');
 const { StorageService } = require('./storage_service');
 
+const ListNames = {
+    'AppSetting': 'appSettings',
+    'BagItProfile': 'bagItProfiles',
+    'RemoteRepository': 'remoteRepositories',
+    'StorageService': 'storageServices',
+}
+
 /**
 * ExportQuestion is a question added to {@link ExportSettings}.
 * Whoever imports the settings answers the question, and DART copies
@@ -37,6 +44,18 @@ class ExportQuestion {
     }
 
     /**
+     * Returns the list name (property name) for the specified type.
+     * For example, listNameFor('AppSetting') returns 'appSettings',
+     * which is the name of the property on this object that lists
+     * AppSettings selected for export.
+     *
+     * @returns {string}
+     */
+    static listNameFor(typeName) {
+        return ListNames[typeName];
+    }
+
+    /**
      * This copies the user's response to a field of some existing
      * setting ({@link AppSetting}, {@link BagItProfile},
      * {@link RemoteRepository} or {@link StorageService}) and saves
@@ -46,16 +65,16 @@ class ExportQuestion {
     copyResponseToObject(response) {
         let classToSet = AppSetting
         switch (this.objType) {
-        case Context.y18n.__("App Setting"):
+        case "AppSetting":
             classToSet = AppSetting;
             break;
-        case Context.y18n.__("BagIt Profile"):
+        case "BagItProfile":
             classToSet = BagItProfile;
             break;
-        case Context.y18n.__("Remote Repository"):
+        case "RemoteRepository":
             classToSet = RemoteRepository;
             break;
-        case Context.y18n.__("Storage Service"):
+        case "StorageService":
             classToSet = StorageService;
             break;
         default:
@@ -65,7 +84,7 @@ class ExportQuestion {
         if (obj == null) {
             throw Context.y18n.__("Cannot find %s", classToSet.name);
         }
-        if (this.objType == Context.y18n.__("BagIt Profile")) {
+        if (this.objType == "BagItProfile") {
             let tagDef = obj.firstMatchingTag("id", this.field);
             if (tagDef == null) {
                 throw Context.y18n.__("BagIt Profile '%s' has no field with id %s", obj.name, this.field);
