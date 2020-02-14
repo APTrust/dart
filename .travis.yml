@@ -28,16 +28,6 @@ before_script:
 - buildver="$(grep version package.json |sed "s/[^0-9.]//g").$(git log --format=%h
   -1)"
 script:
-- |
-  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    export CERTIFICATE_P12=Certificate.p12;
-    echo $CERTIFICATE_OSX_P12 | base64 - --decode > $CERTIFICATE_P12;
-    export KEYCHAIN=build.keychain;
-    security create-keychain -p mysecretpassword $KEYCHAIN;
-    security default-keychain -s $KEYCHAIN;
-    security unlock-keychain -p mysecretpassword $KEYCHAIN;
-    security import $CERTIFICATE_P12 -k $KEYCHAIN -P $CERTIFICATE_PASSWORD -T /usr/bin/codesign;
-   fi
 - npm test -- --runInBand
 - electron-builder . --publish never -m dmg --linux deb tar.gz
 - "./jsdoc.sh"
