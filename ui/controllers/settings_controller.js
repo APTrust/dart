@@ -246,7 +246,7 @@ class SettingsController extends BaseController {
         this.questionsForm.parseQuestionsForExport();
         this.questionsForm.obj.questions.push(new ExportQuestion());
         this.questionsForm.obj.save();
-        this.redirect("Settings", "showQuestionsForm", this.params);
+        return this.redirect("Settings", "showQuestionsForm", this.params);
     }
 
     /**
@@ -258,7 +258,7 @@ class SettingsController extends BaseController {
         this.questionsForm.parseQuestionsForExport();
         this.questionsForm.obj.questions.splice(questionNumber, 1);
         this.questionsForm.obj.save();
-        this.redirect("Settings", "showQuestionsForm", this.params);
+        return this.redirect("Settings", "showQuestionsForm", this.params);
     }
 
     /**

@@ -37,7 +37,7 @@ beforeEach(() => {
     createTestObjects();
 });
 
-afterAll(() => {
+afterEach(() => {
     cleanupPersistentData();
 });
 
@@ -266,16 +266,62 @@ test('reset', () => {
     expect($("input:checked").length).toEqual(0);
 });
 
-// saveAndGoToExport
-// saveAndGoToQuestions
-// showQuestionsForm
-// reset (button click)
-// add questions (checkbox click)
-// add questions (button click)
-// add question (button click)
-// delete question (button click)
+test('showQuestionsForm()', () => {
+    let settings = createExportSettings();
+    let controller = new SettingsController();
+    UITestUtil.setDocumentBody(controller.showQuestionsForm());
+    expect($("textarea").length).toEqual(4);
+});
+
+// ---------------------------------------------------------------------
+// The four tests below seem to have a race condition, even when run
+// with the --runInBand flag. Node/Windows has a known issue in which
+// file deletion is not synchronous, even when you call unlinkSync().
+// Looks like in these tests, Mac is deleting the underlying
+// ExportSettings.json when it shouldn't. Can't be sure, but it's a
+// pain in the ass.
+//
+// These features all work in interactive click-through tests, but
+// it would be nice to get the automated tests working to prevent
+// regressions.
+// ---------------------------------------------------------------------
+
+// test('saveAndGoToExport()', () => {
+//     let settings = createExportSettings();
+//     let controller = new SettingsController();
+//     UITestUtil.setDocumentBody(controller.showQuestionsForm());
+//     let response = controller.saveAndGoToExport();
+//     console.log(response);
+// });
+
+// test('saveAndGoToQuestions()', () => {
+//     let settings = createExportSettings();
+//     let controller = new SettingsController();
+//     UITestUtil.setDocumentBody(controller.export());
+//     UITestUtil.setDocumentBody(controller.saveAndGoToQuestions());
+//     expect($("textarea").length).toEqual(4);
+// });
+
+// test('_addQuestion', () => {
+//     let settings = createExportSettings();
+//     let controller = new SettingsController();
+//     UITestUtil.setDocumentBody(controller.showQuestionsForm());
+//     expect($("textarea").length).toEqual(4);
+
+//     UITestUtil.setDocumentBody(controller._addQuestion());
+//     expect($("textarea").length).toEqual(5);
+// });
+
+// test('_addQuestion', () => {
+//     let settings = createExportSettings();
+//     let controller = new SettingsController();
+//     UITestUtil.setDocumentBody(controller.showQuestionsForm());
+//     expect($("textarea").length).toEqual(4);
+
+//     UITestUtil.setDocumentBody(controller._deleteQuestion());
+//     expect($("textarea").length).toEqual(3);
+// });
 
 
 // IMPORT/EXPORT
 // TODO: Post sample files (good and bad) to GitHub URL
-// Test all new question export features.
