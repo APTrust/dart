@@ -71,6 +71,16 @@ class SettingsController extends BaseController {
     }
 
     /**
+     * Resets the settings export form by erasing all export settings and
+     * questions.
+     *
+     */
+    reset() {
+        new ExportSettings().save();
+        this.redirect('Settings', 'export', this.params);
+    }
+
+    /**
      * Saves export settings, then redirects to the export settings page.
      *
      */
@@ -189,6 +199,11 @@ class SettingsController extends BaseController {
                 } else {
                     $("#btnNext").text(Context.y18n.__("Export"));
                     $("#btnNext").attr("href", "#Settings/showExportJson");
+                }
+            })
+            $('#btnReset').click(() => {
+                if(confirm(Context.y18n.__("Do you want to clear this form and remove questions related to these settings?"))){
+                    location.href = '#Settings/reset';
                 }
             })
         } else if (fnName == 'showExportJson') {
