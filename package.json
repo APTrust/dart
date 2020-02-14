@@ -71,7 +71,7 @@
         "directories": {
             "output": "dist"
         },
-		"afterSign": "build/notarize.js"
+		"afterSign": "build/notarize.js",
 
         "mac": {
             "hardenedRuntime": true,
