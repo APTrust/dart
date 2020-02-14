@@ -204,3 +204,13 @@ test('Show exported JSON', () => {
 // IMPORT/EXPORT
 // TODO: Post sample files (good and bad) to GitHub URL
 // Test all new question export features.
+
+// reset
+// saveAndGoToExport
+// saveAndGoToQuestions
+// showQuestionsForm
+// reset (button click)
+// add questions (checkbox click)
+// add questions (button click)
+// add question (button click)
+// delete question (button click)

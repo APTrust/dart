@@ -15,10 +15,7 @@ const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 const url = require('url');
 
-// TODO: Hook up question delete button.
-// TODO: Add button to clear form.
 // TODO: Finish tests for this controller.
-// TODO: Finish tests for SettingsQuestionsForm.
 // TODO: Copy responses on import.
 // TODO: Explicit confirmation on import.
 
@@ -174,7 +171,6 @@ class SettingsController extends BaseController {
     /**
      * This attaches event handlers after the page loads.
      *
-     * @private
      */
     postRenderCallback(fnName) {
         let controller = this;
@@ -198,6 +194,11 @@ class SettingsController extends BaseController {
         }
     }
 
+    /**
+     * This attaches event handlers to the import page.
+     *
+     * @private
+     */
     _attachImportHandlers() {
         let controller = this;
         $('#importSourceUrl').click(() => {
@@ -214,6 +215,11 @@ class SettingsController extends BaseController {
         });
     }
 
+    /**
+     * This attaches event handlers to the export page.
+     *
+     * @private
+     */
     _attachExportHandlers() {
         $(`input[name="addQuestions"]`).click(() => {
             if ($(`input[name="addQuestions"]`).is(':checked')) {
