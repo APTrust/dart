@@ -11,6 +11,7 @@ const { RemoteRepository } = require('../../core/remote_repository');
 const request = require('request');
 const { SettingsExportForm } = require('../forms/settings_export_form');
 const { SettingsQuestionsForm } = require('../forms/settings_questions_form');
+const { SettingsResponseForm } = require('../forms/settings_response_form');
 const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 const url = require('url');
@@ -342,6 +343,7 @@ class SettingsController extends BaseController {
     _importWithErrHandling(json, settingsUrl) {
         try {
             this._importSettingsJson(json, settingsUrl);
+            this._showImportQuestions(json);
             this._showSuccess(Context.y18n.__("DART successfully imported the settings."));
             return true;
         } catch (ex) {
@@ -351,6 +353,22 @@ class SettingsController extends BaseController {
             this._showError(msg);
             return false;
         }
+    }
+
+    _showImportQuestions(json) {
+        let settings;
+        try {
+            settings = JSON.parse(json);
+        } catch (ex) {
+            throw Context.y18n.__("Error parsing JSON: %s. ", ex.message || ex);
+        }
+        if (!settings.questions || settings.questions.length == 0) {
+            return;
+        }
+        let form = new SettingsResponseForm(settings);
+        $('#questions').show();
+        $('#questions').html(Templates.settingsResponses({ form: form }));
+        // xxxxxxx
     }
 
     /**

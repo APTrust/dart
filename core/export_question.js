@@ -3,6 +3,7 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const { RemoteRepository } = require('./remote_repository');
 const { StorageService } = require('./storage_service');
+const { Util } = require('./util');
 
 const ListNames = {
     'AppSetting': 'appSettings',
@@ -37,6 +38,7 @@ class ExportQuestion {
      *
      */
     constructor(opts = {}) {
+        this.id = opts.id || Util.uuid4();
         this.prompt = opts.prompt || "";
         this.objType = opts.objType || "";
         this.objId = opts.objId || "";

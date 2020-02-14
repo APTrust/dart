@@ -376,5 +376,7 @@
   "Reset": "Reset",
   "Do you want to clear this form and remove questions related to these settings?": "Do you want to clear this form and remove questions related to these settings?",
   "ExportSettings_storageService_label": "ExportSettings_storageService_label",
-  "ExportSettings_storageService_help": "ExportSettings_storageService_help"
+  "ExportSettings_storageService_help": "ExportSettings_storageService_help",
+  "Object_userCanDelete_label": "Object_userCanDelete_label",
+  "Object_userCanDelete_help": "Object_userCanDelete_help"
 }

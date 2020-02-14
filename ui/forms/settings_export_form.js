@@ -10,8 +10,8 @@ const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
 
 /**
- * SettingsExportForm allows the user to specify where Job
- * files will be uploaded.
+ * SettingsExportForm allows the user to specify which settings
+ * they want to export.
  */
 class SettingsExportForm extends Form {
 
