@@ -50,6 +50,7 @@
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
         "electron": "^8.0.0",
         "electron-builder": "^22.3.2",
+        "electron-notarize": "^0.2.1",
         "electron-toolkit": "^1.0.24",
         "jest": "^25.1.0",
         "jsdoc": "^3.6.3",
