@@ -10,11 +10,6 @@ const { RemoteRepository } = require('../../core/remote_repository');
 const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
 
-let appSettingName = Context.y18n.__("App Setting");
-let bagItProfileName = Context.y18n.__("BagIt Profile");
-let remoteRepositoryName = Context.y18n.__("Remote Repository");
-let storageServiceName = Context.y18n.__("Storage Service");
-
 /**
  * SettingsQuestionsForm allows the user to specify where Job
  * files will be uploaded. This is a highly customized descendant
@@ -32,23 +27,18 @@ class SettingsQuestionsForm extends Form {
      */
     constructor(exportSettings) {
         super('SettingsQuestions', exportSettings);
-        this.listNames = {};
-        this.listNames[appSettingName] = "appSettings";
-        this.listNames[bagItProfileName] = "bagItProfiles";
-        this.listNames[remoteRepositoryName] = "remoteRepositories";
-        this.listNames[storageServiceName] = "storageServices";
         this.fieldsForType = {};
-        this.fieldsForType[appSettingName] = [
+        this.fieldsForType['AppSetting'] = [
             "value"
         ];
-        this.fieldsForType[remoteRepositoryName] = [
+        this.fieldsForType['RemoteRepository'] = [
             "apiToken",
             "loginExtra",
             "name",
             "url",
             "userId"
         ];
-        this.fieldsForType[storageServiceName] = [
+        this.fieldsForType['StorageService'] = [
             "bucket",
             "description",
             "host",
@@ -131,16 +121,28 @@ class SettingsQuestionsForm extends Form {
         );
         let objTypeOptions = [];
         if (this.obj.appSettings.length > 0) {
-            objTypeOptions.push(Context.y18n.__("App Setting"));
+            objTypeOptions.push({
+                id: "AppSetting",
+                name: Context.y18n.__("App Setting")
+            });
         }
         if (this.obj.bagItProfiles.length > 0) {
-            objTypeOptions.push(Context.y18n.__("BagIt Profile"));
+            objTypeOptions.push({
+                id: "BagItProfile",
+                name: Context.y18n.__("BagIt Profile")
+            });
         }
         if (this.obj.remoteRepositories.length > 0) {
-            objTypeOptions.push(Context.y18n.__("Remote Repository"));
+            objTypeOptions.push({
+                id: "RemoteRepository",
+                name: Context.y18n.__("Remote Repository")
+            });
         }
         if (this.obj.storageServices.length > 0) {
-            objTypeOptions.push(Context.y18n.__("Storage Service"));
+            objTypeOptions.push({
+                id: "StorageService",
+                name: Context.y18n.__("Storage Service")
+            });
         }
         this.fields[objType].choices = Choice.makeList(
             objTypeOptions,
@@ -303,7 +305,10 @@ class SettingsQuestionsForm extends Form {
      */
     getNamesList(rowNumber) {
         let selectedType = this.getSelectedType(rowNumber);
-        let listName = this.listNames[selectedType];
+        if (!selectedType) {
+            return [];
+        }
+        let listName = ExportQuestion.listNameFor(selectedType);
         return this.obj[listName].map(obj => { return { id: obj.id, name: obj.name }});
     }
 
@@ -315,7 +320,10 @@ class SettingsQuestionsForm extends Form {
      */
     getFieldsList(rowNumber) {
         let selectedType = this.getSelectedType(rowNumber);
-        if (selectedType == Context.y18n.__("BagIt Profile")) {
+        if (!selectedType) {
+            return [];
+        }
+        if (selectedType == "BagItProfile") {
             let profileId = this.getSelectedId(rowNumber);
             let profile = BagItProfile.find(profileId);
             let opts =  profile.tags.filter(tagDef => !tagDef.systemMustSet()).map(tag => {return { id: tag.id, name: tag.tagName }});
