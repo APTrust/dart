@@ -74,7 +74,7 @@ class SettingsController extends BaseController {
      */
     reset() {
         new ExportSettings().save();
-        this.redirect('Settings', 'export', this.params);
+        return this.redirect('Settings', 'export', this.params);
     }
 
     /**

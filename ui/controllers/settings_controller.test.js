@@ -3,6 +3,7 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const { ExportQuestion } = require('../../core/export_question');
 const { ExportSettings } = require('../../core/export_settings');
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +24,13 @@ const AppSettingId = "00000000-0000-0000-0000-000000000100";
 const RemoteRepoId = "00000000-0000-0000-0000-000000000200";
 const StorageServiceId = "00000000-0000-0000-0000-000000000300";
 
+const listNames = [
+    'appSettings',
+    'bagItProfiles',
+    'remoteRepositories',
+    'storageServices'
+];
+
 
 beforeEach(() => {
     cleanupPersistentData();
@@ -36,6 +44,7 @@ afterAll(() => {
 function cleanupPersistentData() {
     TestUtil.deleteJsonFile('AppSetting');
     TestUtil.deleteJsonFile('BagItProfile');
+    TestUtil.deleteJsonFile('ExportSettings');
     TestUtil.deleteJsonFile('RemoteRepository');
     TestUtil.deleteJsonFile('StorageService');
 }
@@ -47,6 +56,51 @@ function createTestObjects() {
         new RemoteRepository({name: `Remote Repository ${i}`}).save();
         new StorageService({name: `Storage Service ${i}`}).save();
     }
+}
+
+function createExportSettings() {
+    let settings = new ExportSettings();
+    settings.appSettings = AppSetting.list();
+    settings.bagItProfiles = BagItProfile.list();
+    settings.remoteRepositories = RemoteRepository.list();
+    settings.storageServices = StorageService.list();
+    settings.questions = getQuestions();
+    settings.save();
+    return settings;
+}
+
+function getQuestions() {
+    let appSetting = AppSetting.list()[0];
+    let profile = BagItProfile.inflateFrom(BagItProfile.list()[0]);
+    let repo = RemoteRepository.list()[0];
+    let ss = StorageService.list()[0];
+    let tagDef = profile.firstMatchingTag("tagName", "Source-Organization");
+    return [
+        new ExportQuestion({
+            prompt: "AppSetting question",
+            objType: "AppSetting",
+            objId: appSetting.id,
+            field: "value"
+        }),
+        new ExportQuestion({
+            prompt: "BagItProfile question",
+            objType: "BagItProfile",
+            objId: profile.id,
+            field: tagDef.id
+        }),
+        new ExportQuestion({
+            prompt: "RemoteRepository question",
+            objType: "RemoteRepository",
+            objId: repo.id,
+            field: "userId"
+        }),
+        new ExportQuestion({
+            prompt: "StorageService question",
+            objType: "StorageService",
+            objId: ss.id,
+            field: "bucket"
+        }),
+    ];
 }
 
 test('Show import page', () => {
@@ -183,12 +237,6 @@ test('Show exported JSON', () => {
     UITestUtil.setDocumentBody(response);
 
     // Check one box from each list
-    let listNames = [
-        'appSettings',
-        'bagItProfiles',
-        'remoteRepositories',
-        'storageServices'
-    ];
     for (let listName of listNames) {
         let cb = $(`input[name=${listName}]`)[1];
         $(cb).attr('checked', true);
@@ -201,11 +249,23 @@ test('Show exported JSON', () => {
     expect(modalResponse.modalContent).toMatch('Storage Service 1');
 })
 
-// IMPORT/EXPORT
-// TODO: Post sample files (good and bad) to GitHub URL
-// Test all new question export features.
 
-// reset
+test('reset', () => {
+    let settings = createExportSettings();
+    let controller = new SettingsController();
+    let response = controller.export()
+    UITestUtil.setDocumentBody(response);
+
+    // Should show form with all items checked on each list.
+    // Three items on each of four lists.
+    expect($("input:checked").length).toEqual(12);
+
+    // After reset, nothing should be checked.
+    response = controller.reset()
+    UITestUtil.setDocumentBody(response);
+    expect($("input:checked").length).toEqual(0);
+});
+
 // saveAndGoToExport
 // saveAndGoToQuestions
 // showQuestionsForm
@@ -214,3 +274,8 @@ test('Show exported JSON', () => {
 // add questions (button click)
 // add question (button click)
 // delete question (button click)
+
+
+// IMPORT/EXPORT
+// TODO: Post sample files (good and bad) to GitHub URL
+// Test all new question export features.
