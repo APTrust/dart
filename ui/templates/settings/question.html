@@ -1,7 +1,7 @@
   <div class="card mb-3" data-question-number="{{ questionNumber }}">
       <div class="card-header">Question {{ add questionNumber 1 }}
           <div class="pull-right">
-              <button type="button" class="btn btn-danger" data-question-number="{{ questionNumber }}">{{ translate "Delete" }}</button>
+              <button type="button" class="btn btn-danger" data-question-number="{{ questionNumber }}" data-action-type="delete-question">{{ translate "Delete" }}</button>
           </div>
       </div>
       <div class="card-body">

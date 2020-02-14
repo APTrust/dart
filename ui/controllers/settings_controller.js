@@ -179,41 +179,56 @@ class SettingsController extends BaseController {
     postRenderCallback(fnName) {
         let controller = this;
         if (fnName == 'import') {
-            $('#importSourceUrl').click(() => {
-                controller._clearMessage();
-                controller._importSourceUrlClick();
-            });
-            $('#importSourceTextArea').click(() => {
-                controller._clearMessage();
-                controller._importSourceTextAreaClick();
-            });
-            $('#btnImport').click(function() {
-                controller._clearMessage();
-                controller._importSettings();
-            });
+            this._attachImportHandlers();
         } else if (fnName == 'export') {
-            $(`input[name="addQuestions"]`).click(() => {
-                if ($(`input[name="addQuestions"]`).is(':checked')) {
-                    $("#btnNext").text(Context.y18n.__("Add Questions"));
-                    $("#btnNext").attr("href", "#Settings/saveAndGoToQuestions");
-                } else {
-                    $("#btnNext").text(Context.y18n.__("Export"));
-                    $("#btnNext").attr("href", "#Settings/showExportJson");
-                }
-            })
-            $('#btnReset').click(() => {
-                if(confirm(Context.y18n.__("Do you want to clear this form and remove questions related to these settings?"))){
-                    location.href = '#Settings/reset';
-                }
-            })
+            this._attachExportHandlers();
         } else if (fnName == 'showExportJson') {
-            $('#btnCopyToClipboard').click(function() { controller._copyToClipboard() });
+            $('#btnCopyToClipboard').click(function() {
+                controller._copyToClipboard()
+            });
         } else if (fnName == 'showQuestionsForm') {
             for (let i = 0; i < this.questionsForm.rowCount; i++) {
                 controller._attachQuestionCallbacks(i);
             }
             $('#btnAdd').click(() => { controller._addQuestion() });
+            $('button[data-action-type=delete-question]').click((e) => {
+                let questionNumber = parseInt($(e.currentTarget).attr('data-question-number'), 10);
+                controller._deleteQuestion(questionNumber);
+            });
         }
+    }
+
+    _attachImportHandlers() {
+        let controller = this;
+        $('#importSourceUrl').click(() => {
+            controller._clearMessage();
+            controller._importSourceUrlClick();
+        });
+        $('#importSourceTextArea').click(() => {
+            controller._clearMessage();
+            controller._importSourceTextAreaClick();
+        });
+        $('#btnImport').click(function() {
+            controller._clearMessage();
+            controller._importSettings();
+        });
+    }
+
+    _attachExportHandlers() {
+        $(`input[name="addQuestions"]`).click(() => {
+            if ($(`input[name="addQuestions"]`).is(':checked')) {
+                $("#btnNext").text(Context.y18n.__("Add Questions"));
+                $("#btnNext").attr("href", "#Settings/saveAndGoToQuestions");
+            } else {
+                $("#btnNext").text(Context.y18n.__("Export"));
+                $("#btnNext").attr("href", "#Settings/showExportJson");
+            }
+        })
+        $('#btnReset').click(() => {
+            if(confirm(Context.y18n.__("Do you want to clear this form and remove questions related to these settings?"))){
+                location.href = '#Settings/reset';
+            }
+        })
     }
 
     /**
@@ -224,6 +239,18 @@ class SettingsController extends BaseController {
     _addQuestion() {
         this.questionsForm.parseQuestionsForExport();
         this.questionsForm.obj.questions.push(new ExportQuestion());
+        this.questionsForm.obj.save();
+        this.redirect("Settings", "showQuestionsForm", this.params);
+    }
+
+    /**
+     * Adds a new, blank question to the export questions form.
+     *
+     * @private
+     */
+    _deleteQuestion(questionNumber) {
+        this.questionsForm.parseQuestionsForExport();
+        this.questionsForm.obj.questions.splice(questionNumber, 1);
         this.questionsForm.obj.save();
         this.redirect("Settings", "showQuestionsForm", this.params);
     }
