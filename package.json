@@ -43,7 +43,7 @@
         "vue": "^2.6.11",
         "vue-template-compiler": "^2.6.11",
         "winston": "^3.2.1",
-        "winston-console-for-electron": "0.0.6",
+        "winston-console-for-electron": "0.0.7",
         "y18n": "^4.0.0"
     },
     "devDependencies": {
