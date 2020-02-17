@@ -378,5 +378,6 @@
   "ExportSettings_storageService_label": "ExportSettings_storageService_label",
   "ExportSettings_storageService_help": "ExportSettings_storageService_help",
   "Object_userCanDelete_label": "Object_userCanDelete_label",
-  "Object_userCanDelete_help": "Object_userCanDelete_help"
+  "Object_userCanDelete_help": "Object_userCanDelete_help",
+  "DART imported the settings.": "DART imported the settings."
 }

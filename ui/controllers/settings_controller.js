@@ -17,8 +17,8 @@ const Templates = require('../common/templates');
 const url = require('url');
 
 // TODO: Finish tests for this controller.
-// TODO: Copy responses on import.
-// TODO: Explicit confirmation on import.
+
+// This controller got a little out of hand. Sorry.
 
 // This var is used to persist the imported settings object
 // between requests. We can theoretically pass the object in the URL
@@ -220,7 +220,9 @@ class SettingsController extends BaseController {
                 controller._deleteQuestion(questionNumber);
             });
         } else if (fnName == 'showImportResult') {
-            $('#btnSubmit').click(controller._processResponses);
+            $('#btnSubmit').click(() => {
+                controller._processResponses(controller);
+            });
         }
     }
 
@@ -322,7 +324,7 @@ class SettingsController extends BaseController {
      * This processes the user's responses to import questions.
      *
      */
-    _processResponses() {
+    _processResponses(controller) {
         let form = new SettingsResponseForm(importedSettings);
         let responses = form.getResponses();
         let hasEmptyAnswers = false;
@@ -341,6 +343,14 @@ class SettingsController extends BaseController {
                 errors += Context.y18n.__("DART could not save the answer to question %s %s", qNumber.toString(), "\n");
             }
             qNumber++;
+        }
+        if (errors.length) {
+            alert(errors);
+        } else {
+            let params = new url.URLSearchParams({
+                alertMessage: Context.y18n.__("DART imported the settings.")
+            });
+            controller.redirect('Dashboard', 'show', params);
         }
     }
 
