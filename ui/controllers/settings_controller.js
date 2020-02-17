@@ -128,6 +128,7 @@ class SettingsController extends BaseController {
 
     /**
      * Shows the exported settings in JSON format in a modal dialog.
+     * The user can copy the JSON to the system clipboard from here.
      *
      */
     showExportJson() {
@@ -148,6 +149,24 @@ class SettingsController extends BaseController {
         });
         return this.modalContent(title, body);
     }
+
+    /**
+     * Show the result of a successful import. This displays a list of
+     * imported settings and questions, if there are any.
+     *
+     */
+    showImportResult() {
+        let form = null;
+        if (importedSettings.questions && importedSettings.questions.length > 0) {
+            form = new SettingsResponseForm(importedSettings);
+        }
+        let html = Templates.importResult({
+            settings: importedSettings,
+            form: form,
+        });
+        return this.containerContent(html);
+    }
+
 
     /**
      * Handler for clicks on the radio button where user specifies
@@ -199,6 +218,8 @@ class SettingsController extends BaseController {
                 let questionNumber = parseInt($(e.currentTarget).attr('data-question-number'), 10);
                 controller._deleteQuestion(questionNumber);
             });
+        } else if (fnName == 'showImportResult') {
+            $('#btnSubmit').click(controller._processResponses);
         }
     }
 
@@ -296,6 +317,24 @@ class SettingsController extends BaseController {
         });
     }
 
+    /**
+     * This processes the user's responses to import questions.
+     *
+     */
+    _processResponses() {
+        // xxxxxxxxxxx
+        let form = new SettingsResponseForm(importedSettings);
+        let responses = form.getResponses();
+        console.log(responses);
+        console.log(importedSettings.questions);
+        for (let [id, userResponse] of Object.entries(responses)) {
+            let q = importedSettings.questions.find(q => q.id == id);
+            let question = new ExportQuestion(q);
+            console.log(question);
+            question.copyResponseToObject(userResponse);
+        }
+    }
+
 
     /**
      * This calls the correct function to import DART settings based
@@ -364,18 +403,6 @@ class SettingsController extends BaseController {
             this._showError(msg);
             return false;
         }
-    }
-
-    showImportResult() {
-        let form = null;
-        if (importedSettings.questions && importedSettings.questions.length > 0) {
-            form = new SettingsResponseForm(importedSettings);
-        }
-        let html = Templates.importResult({
-            settings: importedSettings,
-            form: form,
-        });
-        return this.containerContent(html);
     }
 
     /**
