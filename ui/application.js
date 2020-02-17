@@ -3,6 +3,7 @@
 // since we're running in the GUI context here.
 const DART = require('../dart');
 DART.UI = require('../ui');
+const electron = require('electron');
 
 // Now set everything up when the page loads.
 $(function() {
@@ -36,6 +37,12 @@ $(function() {
     });
 
     // Route clicks on table rows
+    $('#container').on('click', 'table tr.repository-clickable-row', function(e) {
+        let url = $(this).data('url');
+        electron.shell.openExternal(url);
+        e.stopPropagation();
+    });
+
     $('#container').on('click', 'table tr.clickable-row', function() {
         location.href = $(this).data('url');
     });

@@ -1,5 +1,5 @@
 /* Any clickable element */
-.clickable, .clickable-card, .clickable-row {
+.clickable, .clickable-card, .clickable-row, .repository-clickable-row {
     cursor: pointer;
 }
 .clickable-card:hover {
