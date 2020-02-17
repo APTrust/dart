@@ -32,7 +32,7 @@
         "os-locale": "^4.0.0",
         "popper.js": "^1.16.1",
         "readdirp": "^3.3.0",
-        "request": "^2.88.0",
+        "request": "^2.88.2",
         "require-dir": "^1.2.0",
         "ssh2": "^0.8.7",
         "ssh2-sftp-client": "^5.0.2",
@@ -48,7 +48,7 @@
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
-        "electron": "^8.0.0",
+        "electron": "^8.0.1",
         "electron-builder": "^22.3.2",
         "electron-toolkit": "^1.0.24",
         "jest": "^25.1.0",
