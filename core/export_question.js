@@ -65,21 +65,8 @@ class ExportQuestion {
      *
      */
     copyResponseToObject(response) {
-        let classToSet = AppSetting
-        switch (this.objType) {
-        case "AppSetting":
-            classToSet = AppSetting;
-            break;
-        case "BagItProfile":
-            classToSet = BagItProfile;
-            break;
-        case "RemoteRepository":
-            classToSet = RemoteRepository;
-            break;
-        case "StorageService":
-            classToSet = StorageService;
-            break;
-        default:
+        let classToSet = this.getTargetClass();
+        if (classToSet == null) {
             throw Context.y18n.__("Response must be assigned to an object");
         }
         let obj = classToSet.find(this.objId);
@@ -96,6 +83,57 @@ class ExportQuestion {
             obj[this.field] = response;
         }
         obj.save();
+    }
+
+    /**
+     * Try to get the existing value for the object/field this question
+     * refers to, so we can pre-populate the answer.
+     *
+     * @returns {string}
+     */
+    tryToGetValue() {
+        let classToGet = this.getTargetClass();
+        if (classToGet == null) {
+            return "";
+        }
+        let obj = classToGet.find(this.objId);
+        if (obj == null) {
+            return "";
+        }
+        if (this.objType == "BagItProfile") {
+            let tagDef = obj.firstMatchingTag("id", this.field);
+            if (tagDef == null) {
+                return "";
+            }
+            return tagDef.getValue();
+        }
+        return obj[this.field] || "";
+    }
+
+    /**
+     * Returns the class to which this question pertains. The returned
+     * class will be one of {@link AppSetting}, {@link BagItProfile},
+     * {@link RemoteRepository}, {@link StorageService} or null. If null,
+     * something is wrong with the question.
+     *
+     */
+    getTargetClass() {
+        let targetClass = null
+        switch (this.objType) {
+        case "AppSetting":
+            targetClass = AppSetting;
+            break;
+        case "BagItProfile":
+            targetClass = BagItProfile;
+            break;
+        case "RemoteRepository":
+            targetClass = RemoteRepository;
+            break;
+        case "StorageService":
+            targetClass = StorageService;
+            break;
+        }
+        return targetClass;
     }
 }
 

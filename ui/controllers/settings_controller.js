@@ -159,6 +159,7 @@ class SettingsController extends BaseController {
         let form = null;
         if (importedSettings.questions && importedSettings.questions.length > 0) {
             form = new SettingsResponseForm(importedSettings);
+            form.preloadValues();
         }
         let html = Templates.importResult({
             settings: importedSettings,
@@ -322,16 +323,24 @@ class SettingsController extends BaseController {
      *
      */
     _processResponses() {
-        // xxxxxxxxxxx
         let form = new SettingsResponseForm(importedSettings);
         let responses = form.getResponses();
-        console.log(responses);
-        console.log(importedSettings.questions);
+        let hasEmptyAnswers = false;
+        let errors = '';
+        let qNumber = 1;
         for (let [id, userResponse] of Object.entries(responses)) {
-            let q = importedSettings.questions.find(q => q.id == id);
-            let question = new ExportQuestion(q);
-            console.log(question);
-            question.copyResponseToObject(userResponse);
+            if (userResponse == '') {
+                hasEmptyAnswers = true;
+            }
+            try {
+                let q = importedSettings.questions.find(q => q.id == id);
+                let question = new ExportQuestion(q);
+                question.copyResponseToObject(userResponse);
+            } catch (ex) {
+                Context.logger.error(ex);
+                errors += Context.y18n.__("DART could not save the answer to question %s %s", qNumber.toString(), "\n");
+            }
+            qNumber++;
         }
     }
 

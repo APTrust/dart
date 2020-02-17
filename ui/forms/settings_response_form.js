@@ -3,6 +3,7 @@ const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
+const { ExportQuestion } = require('../../core/export_question');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { RemoteRepository } = require('../../core/remote_repository');
@@ -35,6 +36,14 @@ class SettingsResponseForm extends Form {
                 ""
             );
         }
+    }
+
+    preloadValues() {
+        for (let q of this.obj.questions) {
+            let question = new ExportQuestion(q);
+            this.fields[q.id].value = question.tryToGetValue();
+        }
+
     }
 
     /**

@@ -91,3 +91,67 @@ test('copyResponseToObject', () => {
     ss = StorageService.find(ss.id);
     expect(ss.description).toEqual("banker's box");
 });
+
+test('tryToGetValue', () => {
+    let appSetting = new AppSetting({ name: "one", value: "two" }).save();
+    let q = new ExportQuestion({
+        prompt: "",
+        objType: "AppSetting",
+        objId: appSetting.id,
+        field: "value"
+    });
+    expect(q.tryToGetValue()).toEqual("two");
+
+    let profile = new BagItProfile({ name: 'abc' });
+    let tagDef = profile.firstMatchingTag("tagName", "Source-Organization");
+    tagDef.userValue = "Moe's Tavern"
+    profile.save();
+    q = new ExportQuestion({
+        prompt: "",
+        objType: "BagItProfile",
+        objId: profile.id,
+        field: tagDef.id
+    });
+    expect(q.tryToGetValue()).toEqual("Moe's Tavern");
+
+    let repo = new RemoteRepository({
+        name: 'Some Repo',
+        url: 'https://repo.example.com'
+    }).save();
+    q = new ExportQuestion({
+        prompt: "",
+        objType: "RemoteRepository",
+        objId: repo.id,
+        field: "url"
+    });
+    expect(q.tryToGetValue()).toEqual("https://repo.example.com");
+
+    let ss = new StorageService({
+        name: 'ss1',
+        protocol: 's3',
+        host: 'example.com',
+    }).save();
+    q = new ExportQuestion({
+        prompt: "",
+        objType: "StorageService",
+        objId: ss.id,
+        field: "host"
+    });
+    expect(q.tryToGetValue()).toEqual("example.com");
+
+    q = new ExportQuestion({
+        prompt: "",
+        objType: "StorageService",
+        objId: ss.id,
+        field: "field-does-not-exist"
+    });
+    expect(q.tryToGetValue()).toEqual("");
+
+    q = new ExportQuestion({
+        prompt: "",
+        objType: "StorageService",
+        objId: 'id-does-not-exist',
+        field: "host"
+    });
+    expect(q.tryToGetValue()).toEqual("");
+});
