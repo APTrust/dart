@@ -31,8 +31,9 @@ before_script:
   -1)"
 script:
         #- npm test -- --runInBand
+- security find-identity -v
 - electron-builder . --publish never -m dmg --linux deb tar.gz
-- electron-osx-sign dist/mac/DART.app
+- electron-osx-sign dist/mac/DART.app --platform=darwin
   #- "./jsdoc.sh"
 notifications:
   slack:
