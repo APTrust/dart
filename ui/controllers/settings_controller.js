@@ -374,10 +374,6 @@ class SettingsController extends BaseController {
         let html = Templates.importResult({
             settings: importedSettings,
             form: form,
-            hasAppSettings: importedSettings.appSettings.length > 0,
-            hasProfiles: importedSettings.bagItProfiles.length > 0,
-            hasRepos: importedSettings.remoteRepositories.length > 0,
-            hasStorageServices: importedSettings.storageServices.length > 0,
         });
         return this.containerContent(html);
     }

@@ -2,45 +2,28 @@
 
 <h2>Import Result</h2>
 
-{{#if hasAppSettings}}
-<h3>App Settings</h3>
-<ul>
-    {{#each settings.appSettings as |s|}}
-      <li>{{ s.name }}<li>
-    {{/each}}
-</ul>
-{{/if}}
+<p>DART imported the following settings:</p>
 
-{{#if hasProfiles}}
-<h3>BagIt Profiles</h3>
-<ul>
-    {{#each settings.bagItProfiles as |p|}}
-      <li>{{ p.name }}<li>
-    {{/each}}
-</ul>
-{{/if}}
+{{#each settings.appSettings as |s|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>App Setting:</b> {{ s.name }}</p>
+{{/each}}
 
-{{#if hasRepos}}
-<h3>Remote Repositories</h3>
-<ul>
-    {{#each settings.remoteRepositories as |r|}}
-      <li>{{ r.name }}<li>
-    {{/each}}
-</ul>
-{{/if}}
+{{#each settings.bagItProfiles as |p|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>BagIt Profile:</b> {{ p.name }}</p>
+{{/each}}
 
-{{#if hasStorageServices}}
-<h3>Storage Services</h3>
-<ul>
-    {{#each settings.storageServices as |s|}}
-      <li>{{ s.name }}<li>
-    {{/each}}
-</ul>
-{{/if}}
+{{#each settings.remoteRepositories as |r|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>Remote Repository:</b> {{ r.name }}</p>
+{{/each}}
+
+{{#each settings.storageServices as |s|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>Storage Service:</b> {{ s.name }}</p>
+{{/each}}
 
 
 {{#if form }}
 <h2>Questions</h2>
+<p>Please answer the following questions to finish configuring the new settings.</p>
   <form id="settingsResponseForm">
 
     {{#each form.fields as |field|}}
