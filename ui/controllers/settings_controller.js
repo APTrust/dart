@@ -20,6 +20,12 @@ const url = require('url');
 // TODO: Copy responses on import.
 // TODO: Explicit confirmation on import.
 
+// This var is used to persist the imported settings object
+// between requests. We can theoretically pass the object in the URL
+// params, but the JSON can be 10-50 kb, which makes for a long
+// query string.
+var importedSettings = null;
+
 /**
  * SettingsController imports JSON settings from a URL or from
  * cut-and-pasted text. The settings JSON should be in the format below.
@@ -44,6 +50,7 @@ class SettingsController extends BaseController {
     constructor(params) {
         super(params, 'Settings');
         this.questionsForm = null;
+        this.importSucceeded = false;
     }
 
     /**
@@ -303,6 +310,9 @@ class SettingsController extends BaseController {
         } else if (importSource == 'TextArea') {
             this._importWithErrHandling($("#txtJson").val(), null);
         }
+        if (this.importSucceeded) {
+            return this.redirect('Settings', 'showImportResult', this.params);
+        }
     }
 
     /**
@@ -341,10 +351,11 @@ class SettingsController extends BaseController {
      * @private
      */
     _importWithErrHandling(json, settingsUrl) {
+        this.importSucceeded = false;
         try {
             this._importSettingsJson(json, settingsUrl);
-            this._showImportQuestions(json);
             this._showSuccess(Context.y18n.__("DART successfully imported the settings."));
+            this.importSucceeded = true;
             return true;
         } catch (ex) {
             let msg = Context.y18n.__("Error importing settings: %s", ex);
@@ -355,20 +366,20 @@ class SettingsController extends BaseController {
         }
     }
 
-    _showImportQuestions(json) {
-        let settings;
-        try {
-            settings = JSON.parse(json);
-        } catch (ex) {
-            throw Context.y18n.__("Error parsing JSON: %s. ", ex.message || ex);
+    showImportResult() {
+        let form = null;
+        if (importedSettings.questions && importedSettings.questions.length > 0) {
+            form = new SettingsResponseForm(importedSettings);
         }
-        if (!settings.questions || settings.questions.length == 0) {
-            return;
-        }
-        let form = new SettingsResponseForm(settings);
-        $('#questions').show();
-        $('#questions').html(Templates.settingsResponses({ form: form }));
-        // xxxxxxx
+        let html = Templates.importResult({
+            settings: importedSettings,
+            form: form,
+            hasAppSettings: importedSettings.appSettings.length > 0,
+            hasProfiles: importedSettings.bagItProfiles.length > 0,
+            hasRepos: importedSettings.remoteRepositories.length > 0,
+            hasStorageServices: importedSettings.storageServices.length > 0,
+        });
+        return this.containerContent(html);
     }
 
     /**
@@ -378,6 +389,7 @@ class SettingsController extends BaseController {
      * @private
      */
     _importSettingsJson(json, settingsUrl) {
+        importedSettings = null;
         let obj;
         try {
             obj = JSON.parse(json);
@@ -392,6 +404,7 @@ class SettingsController extends BaseController {
         this._importSettingsList(obj.bagItProfiles, 'BagIt Profile');
         this._importSettingsList(obj.remoteRepositories, 'Remote Repository');
         this._importSettingsList(obj.storageServices, 'Storage Service');
+        importedSettings = obj;
     }
 
     /**

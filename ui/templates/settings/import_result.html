@@ -1,0 +1,58 @@
+{{> bannerAlert message = alertMessage }}
+
+<h2>Import Result</h2>
+
+{{#if hasAppSettings}}
+<h3>App Settings</h3>
+<ul>
+    {{#each settings.appSettings as |s|}}
+      <li>{{ s.name }}<li>
+    {{/each}}
+</ul>
+{{/if}}
+
+{{#if hasProfiles}}
+<h3>BagIt Profiles</h3>
+<ul>
+    {{#each settings.bagItProfiles as |p|}}
+      <li>{{ p.name }}<li>
+    {{/each}}
+</ul>
+{{/if}}
+
+{{#if hasRepos}}
+<h3>Remote Repositories</h3>
+<ul>
+    {{#each settings.remoteRepositories as |r|}}
+      <li>{{ r.name }}<li>
+    {{/each}}
+</ul>
+{{/if}}
+
+{{#if hasStorageServices}}
+<h3>Storage Services</h3>
+<ul>
+    {{#each settings.storageServices as |s|}}
+      <li>{{ s.name }}<li>
+    {{/each}}
+</ul>
+{{/if}}
+
+
+{{#if form }}
+<h2>Questions</h2>
+  <form id="settingsResponseForm">
+
+    {{#each form.fields as |field|}}
+      {{> inputText field = field}}
+    {{/each}}
+
+    <div class="pull-right">
+      <button type="button" id="btnSubmit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+{{else}}
+    <div class="pull-right">
+      <a role="button" class="btn btn-primary" href="#Dashboard/show">Done</a>
+    </div>
+{{/if}}
