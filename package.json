@@ -48,7 +48,7 @@
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
-        "electron": "^8.0.0",
+        "electron": "^8.0.1",
         "electron-builder": "^22.3.2",
         "electron-notarize": "^0.2.1",
         "electron-toolkit": "^1.0.24",
@@ -64,20 +64,21 @@
         "sftp-server": "node ./test/servers/sftp.js"
     },
     "build": {
-        "appId": "com.electron.DART",
+        "appId": "org.aptrust.DART",
         "copyright": "Copyright © 2019 [object Object]",
         "productName": "DART",
         "asar": true,
         "directories": {
             "output": "dist"
         },
-		"afterSign": "build/notarize.js",
-
+        "afterSign": "./build/notarize.js",
         "mac": {
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
-            "entitlements": "build/entitlements.mac.plist",
-            "entitlementsInherit": "build/entitlements.mac.plist",
+            "entitlements": "./build/entitlements.mac.plist",
+            "entitlementsInherit": "./build/entitlements.mac.plist",
+            "provisioningProfile": "./build/DART_Mac_App.provisionprofile",
+            "type": "development",
             "target": [
                 {
                     "target": "dmg",
