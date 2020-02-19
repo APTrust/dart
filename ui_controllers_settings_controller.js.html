@@ -115,9 +115,9 @@ const { StorageService } = require('../../core/storage_service');
 const Templates = require('../common/templates');
 const url = require('url');
 
-// TODO: Finish tests for this controller.
-
 // This controller got a little out of hand. Sorry.
+// This should probably be split into two controllers,
+// one for export and one for import.
 
 // This var is used to persist the imported settings object
 // between requests. We can theoretically pass the object in the URL
@@ -460,15 +460,16 @@ class SettingsController extends BaseController {
      *
      * @private
      */
-    _importSettings() {
+    async _importSettings() {
+        let controller = this;
         var importSource = $("input[name='importSource']:checked").val();
         if (importSource == 'URL') {
-            this._importSettingsFromUrl($("#txtUrl").val());
+            await controller._importSettingsFromUrl($("#txtUrl").val());
         } else if (importSource == 'TextArea') {
-            this._importWithErrHandling($("#txtJson").val(), null);
+            controller._importWithErrHandling($("#txtJson").val(), null);
         }
-        if (this.importSucceeded) {
-            return this.redirect('Settings', 'showImportResult', this.params);
+        if (controller.importSucceeded) {
+            return controller.redirect('Settings', 'showImportResult', this.params);
         }
     }
 
@@ -479,26 +480,29 @@ class SettingsController extends BaseController {
      */
     _importSettingsFromUrl(settingsUrl) {
         let controller = this;
-        try {
-            new url.URL(settingsUrl);
-        } catch (ex) {
-            controller._showError(Context.y18n.__("Please enter a valid URL."));
-            return;
-        }
-        request(settingsUrl, function (error, response, body) {
-            if (error) {
-                let msg = Context.y18n.__("Error retrieving profile from %s: %s", settingsUrl, error);
-                Context.logger.error(msg);
-                controller._showError(msg);
-            } else if (response &amp;&amp; response.statusCode == 200) {
-                // TODO: Make sure response is JSON, not HTML.
-                controller._importWithErrHandling(body, settingsUrl);
-            } else {
-                let statusCode = (response &amp;&amp; response.statusCode) || Context.y18n.__('Unknown');
-                let msg = Context.y18n.__("Got response %s from %s", statusCode, settingsUrl);
-                Context.logger.error(msg);
-                controller._showError(msg);
+        return new Promise((resolve, reject) => {
+            try {
+                new url.URL(settingsUrl);
+            } catch (ex) {
+                controller._showError(Context.y18n.__("Please enter a valid URL."));
+                reject();
             }
+            request(settingsUrl, function (error, response, body) {
+                if (error) {
+                    let msg = Context.y18n.__("Error retrieving profile from %s: %s", settingsUrl, error);
+                    Context.logger.error(msg);
+                    controller._showError(msg);
+                } else if (response &amp;&amp; response.statusCode == 200) {
+                    // TODO: Make sure response is JSON, not HTML.
+                    resolve(controller._importWithErrHandling(body, settingsUrl));
+                } else {
+                    let statusCode = (response &amp;&amp; response.statusCode) || Context.y18n.__('Unknown');
+                    let msg = Context.y18n.__("Got response %s from %s", statusCode, settingsUrl);
+                    Context.logger.error(msg);
+                    controller._showError(msg);
+                }
+                reject()
+            });
         });
     }
 
@@ -562,9 +566,10 @@ class SettingsController extends BaseController {
             if (fullObj.validate()) {
                 fullObj.save()
             } else {
-                controller._showError(Context.y18n.__(
+                let errs = Object.entries(fullObj.errors).map((k,v) => `${k}: ${v}`)
+                alert(Context.y18n.__(
                     "Error importing %s '%s': %s",
-                    objType, obj.name, fullObj.errors.join("\n\n")));
+                    objType, obj.name, errs.join("\n\n")));
             }
         }
     }
