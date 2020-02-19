@@ -117,14 +117,16 @@ test('Show import page', () => {
 
 test('Import from URL', done => {
     let controller = new SettingsController();
-    controller._importSettingsFromUrl(SettingsUrl);
-
-    setTimeout(() => {
+    controller._importSettingsFromUrl(SettingsUrl).then(() => {
         expect(AppSetting.find(AppSettingId)).toBeDefined()
         expect(RemoteRepository.find(RemoteRepoId)).toBeDefined()
         expect(StorageService.find(StorageServiceId)).toBeDefined()
-        done();
-    }, 1000)
+        done()
+    }).catch((ex) => {
+        expect(AppSetting.find(AppSettingId)).toBeDefined()
+        expect(ex).not.toBeDefined()
+        done()
+    })
 })
 
 test('Import from JSON text', () => {
@@ -136,35 +138,52 @@ test('Import from JSON text', () => {
     expect(StorageService.find(StorageServiceId)).toBeDefined()
 })
 
-test('Import from bad protocol', () => {
+test('Import from bad protocol', done => {
     let controller = new SettingsController();
     let response = controller.import()
     UITestUtil.setDocumentBody(response);
-    controller._importSettingsFromUrl("xyz://not-valid");
-    let errMessage = $('#result').text();
-    expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
+    controller._importSettingsFromUrl("xyz://not-valid")
+        .then(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
+            done();
+        }).catch(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
+            done();
+        });
 })
 
-test('Import from invalid URL', () => {
+test('Import from invalid URL', done => {
     let controller = new SettingsController();
     let response = controller.import()
     UITestUtil.setDocumentBody(response);
-    controller._importSettingsFromUrl(667);
-    let errMessage = $('#result').text();
-    expect(errMessage).toMatch(Context.y18n.__("Please enter a valid URL"));
+    controller._importSettingsFromUrl(667)
+        .then(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
+            done();
+        }).catch(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error retrieving profile"));
+            done();
+        });
 })
 
 test('Import unparsable data from valid URL', done => {
     let controller = new SettingsController();
     let response = controller.import()
     UITestUtil.setDocumentBody(response);
-    controller._importSettingsFromUrl("https://google.com");
-
-    setTimeout(() => {
-        let errMessage = $('#result').text();
-        expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
-        done();
-    }, 1000)
+    controller._importSettingsFromUrl("https://google.com")
+        .then(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
+            done();
+        }).catch(() => {
+            let errMessage = $('#result').text();
+            expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
+            done();
+        });
 })
 
 test('Import unparsable JSON from text area', () => {
