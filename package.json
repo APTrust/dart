@@ -28,7 +28,7 @@
         "handlebars": "^4.7.3",
         "jquery": "^3.4.1",
         "minimatch": "^3.0.4",
-        "minio": "^7.0.13",
+        "minio": "^7.0.14",
         "os-locale": "^4.0.0",
         "popper.js": "^1.16.1",
         "readdirp": "^3.3.0",
