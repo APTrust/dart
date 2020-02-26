@@ -126,11 +126,13 @@ handlebars.registerHelper('toHumanSize', function(number) {
     return Util.toHumanSize(number);
 });
 
-handlebars.registerHelper('showPathWithTrim', function(fullpath, trimpath) {
-    let pattern = new RegExp('^' + trimpath);
+function showPathWithTrim(fullpath, trimpath) {
+    let pattern = new RegExp('^' + Util.escapeBackslashes(trimpath));
     let replacement = `<span style="color: #ccc;">${trimpath}</span>`;
     return fullpath.trim().replace(pattern, replacement)
-});
+}
+
+handlebars.registerHelper('showPathWithTrim', showPathWithTrim);
 
 // Pre-compile partials so they can be called from within JS.
 for(let [name, template] of Object.entries(handlebars.partials)) {
@@ -165,6 +167,7 @@ module.exports.pluginsList = pluginsList;
 module.exports.remoteRepositoryForm = remoteRepositoryForm;
 module.exports.remoteRepositoryList = remoteRepositoryList;
 module.exports.renderOptions = renderOptions
+module.exports.showPathWithTrim = showPathWithTrim; // exported so we can test
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;
 module.exports.settingsExport = settingsExport;
