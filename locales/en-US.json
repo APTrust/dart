@@ -382,5 +382,6 @@
   "DART imported the settings.": "DART imported the settings.",
   "DART could not save the answer to question %s %s": "DART could not save the answer to question %s %s",
   "Error importing %s '%s': %s": "Error importing %s '%s': %s",
-  "DART imported the following settings": "DART imported the following settings"
+  "DART imported the following settings": "DART imported the following settings",
+  "Empty Profile": "Empty Profile"
 }
