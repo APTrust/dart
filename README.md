@@ -36,11 +36,11 @@ a 2.0 pre-release, and DART itself as beta software. See
 
 ## Documentation
 
-User and developer docs are currently in progress at
-[https://aptrust.github.io/dart-docs](https://aptrust.github.io/dart-docs)
+[User and developer docs](https://aptrust.github.io/dart-docs)
 
-After every commit the API documentation is rebuilt and published at
-[https://aptrust.github.io/dart](https://aptrust.github.io/dart)
+[API documentation](https://aptrust.github.io/dart)
+
+[Change Log / Release Notes][ReleaseNotes.md]
 
 ## DART's Intended Core Features
 
@@ -61,19 +61,19 @@ After every commit the API documentation is rebuilt and published at
 
 ## Status of Core Features
 
-As of November 12, 2019, the core features required for APTrust depositors
+As of February 27, 2020, the core features required for APTrust depositors
 are working in both GUI and command-line mode. These include:
 
 * Creating bags that conform to a selected BagIt profile.
 * Validating those bags.
 * Sending bags to an S3 bucket. (Or any remote service that supports the
   S3 API).
+* Sending bags to an SFTP server.
 * Returning basic information from the APTrust repository, including:
   * A list of items recently ingested.
   * A list of pending or in-progress ingests.
-
-Some additional features, including BagIt profile import and export, are
-also working.
+* [Settings import/export](https://aptrust.github.io/dart-docs/users/settings/export/), which allows an admin to configure DART and then share settings with multiple users.
+* Defining and running basic [Workflows](https://aptrust.github.io/dart-docs/users/workflows/), which describe a repeatable sequence of bagging and upload steps.
 
 ### What's Not Working Yet
 
@@ -88,9 +88,7 @@ also working.
 
 ## Running Jobs on the Command-Line
 
-DART can run both Jobs and Workflows from the command line. Most users will
-want to run Workflows, because they're easier, but we'll start by discussing
-jobs.
+DART can run both Jobs and Workflows from the [command line](https://aptrust.github.io/dart-docs/users/command_line/). Most users will want to run Workflows, because they're easier, but we'll start by discussing jobs.
 
 There are several ways to pass job information to DART in command-line mode.
 Each of the examples below will run a job withouth launching the graphical
