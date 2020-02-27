@@ -113,7 +113,9 @@ class ManifestParser {
                     var fixityValue = line.split(spaces, 1)[0];
                     var filename = line.replace(fixityValue, '').trim();
                     //Context.logger.debug(`"${filename}" = "${fixityValue}"`);
-                    parser.bagItFile.keyValueCollection.add(filename, fixityValue);
+                    if (filename != '' && fixityValue != '') {
+                        parser.bagItFile.keyValueCollection.add(filename, fixityValue);
+                    }
                 }
             }
         });
