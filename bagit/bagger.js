@@ -445,7 +445,7 @@ class Bagger extends EventEmitter {
             });
             profile.tags.push(profileIdentifier)
         }
-        profileIdentifier.userValue = profile.bagItProfileInfo.bagItProfileIdentifier;
+        profileIdentifier.userValue = profile.bagItProfileInfo.bagItProfileIdentifier || 'https://example.com/profile.json';
 
         var fileCount = 0;
         var byteCount = 0;
