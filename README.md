@@ -40,7 +40,7 @@ a 2.0 pre-release, and DART itself as beta software. See
 
 [API documentation](https://aptrust.github.io/dart)
 
-[Change Log / Release Notes][ReleaseNotes.md]
+[Change Log / Release Notes](ReleaseNotes.md)
 
 ## DART's Intended Core Features
 
