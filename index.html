@@ -127,10 +127,9 @@ tool for creating archival packages and sending them to a remote repository.</p>
 a 2.0 pre-release, and DART itself as beta software. See
 <a href="#status-of-core-features">Status of Core Features</a> below for more info.</p>
 <h2>Documentation</h2>
-<p>User and developer docs are currently in progress at
-<a href="https://aptrust.github.io/dart-docs">https://aptrust.github.io/dart-docs</a></p>
-<p>After every commit the API documentation is rebuilt and published at
-<a href="https://aptrust.github.io/dart">https://aptrust.github.io/dart</a></p>
+<p><a href="https://aptrust.github.io/dart-docs">User and developer docs</a></p>
+<p><a href="https://aptrust.github.io/dart">API documentation</a></p>
+<p>[Change Log / Release Notes][ReleaseNotes.md]</p>
 <h2>DART's Intended Core Features</h2>
 <ul>
 <li>Create Submission Information Packages (SIPs) in BagIt format that conform
@@ -149,22 +148,23 @@ that non-technical users can operate with minimal learning curve.</li>
 they can be scripted using any scripting language.</li>
 </ul>
 <h2>Status of Core Features</h2>
-<p>As of November 12, 2019, the core features required for APTrust depositors
+<p>As of February 27, 2020, the core features required for APTrust depositors
 are working in both GUI and command-line mode. These include:</p>
 <ul>
 <li>Creating bags that conform to a selected BagIt profile.</li>
 <li>Validating those bags.</li>
 <li>Sending bags to an S3 bucket. (Or any remote service that supports the
 S3 API).</li>
+<li>Sending bags to an SFTP server.</li>
 <li>Returning basic information from the APTrust repository, including:
 <ul>
 <li>A list of items recently ingested.</li>
 <li>A list of pending or in-progress ingests.</li>
 </ul>
 </li>
+<li><a href="https://aptrust.github.io/dart-docs/users/settings/export/">Settings import/export</a>, which allows an admin to configure DART and then share settings with multiple users.</li>
+<li>Defining and running basic <a href="https://aptrust.github.io/dart-docs/users/workflows/">Workflows</a>, which describe a repeatable sequence of bagging and upload steps.</li>
 </ul>
-<p>Some additional features, including BagIt profile import and export, are
-also working.</p>
 <h3>What's Not Working Yet</h3>
 <ul>
 <li>Creating bags in formats other than unserialized and tar. (You can build a
@@ -177,9 +177,7 @@ affect workflows outside the normal APTrust workflow.</li>
 to write their own plugins.</li>
 </ul>
 <h2>Running Jobs on the Command-Line</h2>
-<p>DART can run both Jobs and Workflows from the command line. Most users will
-want to run Workflows, because they're easier, but we'll start by discussing
-jobs.</p>
+<p>DART can run both Jobs and Workflows from the <a href="https://aptrust.github.io/dart-docs/users/command_line/">command line</a>. Most users will want to run Workflows, because they're easier, but we'll start by discussing jobs.</p>
 <p>There are several ways to pass job information to DART in command-line mode.
 Each of the examples below will run a job withouth launching the graphical
 interface. All jobs log to the same log file as the DART UI.</p>
