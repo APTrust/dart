@@ -1,6 +1,9 @@
 /* Any clickable element */
-.clickable, .clickable-card, .clickable-row, .repository-clickable-row {
+.clickable, .clickable-card, .clickable-row, .repository-clickable-row, .local-file {
     cursor: pointer;
+}
+.local-file {
+    color: #007bff;
 }
 .clickable-card:hover {
     background-color: #f8f9fa;

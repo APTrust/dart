@@ -53,6 +53,12 @@ $(function() {
         e.stopPropagation();
     });
 
+    $('#container').on('click', 'div.local-file', function(e) {
+        let uri = $(this).data('url');
+        electron.shell.showItemInFolder(uri);
+        e.stopPropagation();
+    })
+
     // Load the inital nav.
     $('#nav').html(DART.UI.Common.Templates.nav({ section: 'Dashboard' }));
 
