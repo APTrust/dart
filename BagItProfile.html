@@ -1858,7 +1858,7 @@ correctly constructed BagItProfile object.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line783">line 783</a>
+          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line795">line 795</a>
         </li>
       </ul>
     </dd>
@@ -2201,7 +2201,7 @@ DART database).</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line756">line 756</a>
+          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line768">line 768</a>
         </li>
       </ul>
     </dd>
@@ -2925,6 +2925,11 @@ tag files.</p>
     <p>Chooses one or more manifest/tag manifest algorithms using
 the following rules:</p>
 <ul>
+<li>If the manifest of the other type (i.e. payload vs. tag manifest)
+is specified, choose the same algorithm that the other manifest
+is already using. (Per the spec at
+https://tools.ietf.org/html/rfc8493#section-2.2.1 - tag manifest
+algorithm should match payload manifest algorithm.)</li>
 <li>If the required list is non-empty, use the algorithms specified there.</li>
 <li>If required is empty and allowed is empty, use sha-512
 (per LOC recommendation)</li>
@@ -3031,7 +3036,7 @@ manifestsAllowed/manifestsRequired or tagManifestsAllowed/tagManifestsRequired.<
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line711">line 711</a>
+          <a href="bagit_bagit_profile.js.html">bagit/bagit_profile.js</a>, <a href="bagit_bagit_profile.js.html#line716">line 716</a>
         </li>
       </ul>
     </dd>
