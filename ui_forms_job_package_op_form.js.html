@@ -172,8 +172,14 @@ class JobPackageOpForm extends Form {
     _listBagItSerializations() {
         let none = Context.y18n.__('None');
         let formats = [{ id: '', name: none }];
+        let profile = null;
         if (this.fields.bagItProfileId.value) {
-            let profile = BagItProfile.find(this.fields.bagItProfileId.value);
+            profile = BagItProfile.find(this.fields.bagItProfileId.value);
+        }
+        if (profile == null) {
+            // Profile was deleted
+            this.fields.bagItProfileId.value = '';
+        } else {
             let accepted = [];
             for (let mimeType of profile.acceptSerialization) {
                 let extension = Constants.SERIALIZATION_EXTENSIONS[mimeType];
