@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 2.0.2 - Feb. 28, 2020
+
+* Added a migration to remove the DPN BagIt profile. This profile was used for internal testing and does not need to be public. Fixes issue [DPN-Object-ID and First-Version-Object-ID not generated](https://github.com/APTrust/dart/issues/224).
+* Fixed [mismatched manifest algorithms](https://github.com/APTrust/dart/issues/223) in generated bags.
+
 ## 2.0.1 - Feb. 27, 2020
 
 * Added a migration that installs a new "Empty Profile." This profile conforms to the base [BagIt Specification](https://tools.ietf.org/html/rfc8493) but does not require the user to fill in any tag values. This addresses issue #221 [Does BagIt Profile need to be mandatory](https://github.com/APTrust/dart/issues/221)
