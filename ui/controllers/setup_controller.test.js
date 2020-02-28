@@ -16,10 +16,10 @@ afterAll(() => {
 });
 
 const APTrustPluginId = 'd0a34f7f-a0f6-487b-86de-ece9b9a31189';
-const DPNPluginId = 'ba6cf526-f73a-454c-b0b3-6378edc3851a';
+// const DPNPluginId = 'ba6cf526-f73a-454c-b0b3-6378edc3851a';
 
 const aptPluginName = PluginManager.findById(APTrustPluginId).constructor.name;
-const dpnPluginName = PluginManager.findById(DPNPluginId).constructor.name;
+// const dpnPluginName = PluginManager.findById(DPNPluginId).constructor.name;
 
 // The Demo Login Email Address question is at index 6 in the
 // list of APTrust setup questions.
@@ -101,34 +101,33 @@ test('list()', () => {
     // The content that goes into the main page container
     // should include a card for each Setup plugin.
     expect(response.container).toMatch(`#Setup/start?id=${APTrustPluginId}`);
-    expect(response.container).toMatch(`#Setup/start?id=${DPNPluginId}`);
+    // expect(response.container).toMatch(`#Setup/start?id=${DPNPluginId}`);
 });
 
 test('_getLastRunDate()', () => {
     let controller = new SetupController(new URLSearchParams());
     expect(controller._getLastRunDate(aptPluginName)).toBe(null);
-    expect(controller._getLastRunDate(dpnPluginName)).toBe(null);
+    //expect(controller._getLastRunDate(dpnPluginName)).toBe(null);
 
     let now = new Date();
     new InternalSetting({ name: aptPluginName, value: now }).save();
-    new InternalSetting({ name: dpnPluginName, value: now }).save();
     expect(controller._getLastRunDate(aptPluginName)).toEqual(now);
-    expect(controller._getLastRunDate(dpnPluginName)).toEqual(now);
+    //new InternalSetting({ name: dpnPluginName, value: now }).save();
+    //expect(controller._getLastRunDate(dpnPluginName)).toEqual(now);
 });
 
 test('_formatLastRunDate()', () => {
     let controller = new SetupController(new URLSearchParams());
     let never = Context.y18n.__('Never');
     expect(controller._formatLastRunDate(aptPluginName)).toEqual(never);
-    expect(controller._formatLastRunDate(dpnPluginName)).toEqual(never);
+    //expect(controller._formatLastRunDate(dpnPluginName)).toEqual(never);
 
     let now = new Date();
     let nowStr = now.toDateString();
     new InternalSetting({ name: aptPluginName, value: now }).save();
-    new InternalSetting({ name: dpnPluginName, value: now }).save();
     expect(controller._formatLastRunDate(aptPluginName)).toEqual(nowStr);
-    expect(controller._formatLastRunDate(dpnPluginName)).toEqual(nowStr);
-
+    //new InternalSetting({ name: dpnPluginName, value: now }).save();
+    //expect(controller._formatLastRunDate(dpnPluginName)).toEqual(nowStr);
 });
 
 test('start()', () => {

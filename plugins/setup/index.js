@@ -3,4 +3,4 @@
 const APTrust = require('./aptrust');
 const DPN = require('./dpn');
 
-module.exports.Providers = [APTrust, DPN];
+module.exports.Providers = [APTrust];
