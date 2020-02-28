@@ -696,6 +696,11 @@ class BagItProfile extends PersistentObject {
      * Chooses one or more manifest/tag manifest algorithms using
      * the following rules:
      *
+     * * If the manifest of the other type (i.e. payload vs. tag manifest)
+     *   is specified, choose the same algorithm that the other manifest
+     *   is already using. (Per the spec at
+     *   https://tools.ietf.org/html/rfc8493#section-2.2.1 - tag manifest
+     *   algorithm should match payload manifest algorithm.)
      * * If the required list is non-empty, use the algorithms specified there.
      * * If required is empty and allowed is empty, use sha-512
      *   (per LOC recommendation)
@@ -714,12 +719,19 @@ class BagItProfile extends PersistentObject {
         }
         let required = this.manifestsRequired;
         let allowed = this.manifestsAllowed;
+        let otherTypeRequired = this.tagManifestsRequired;
+        let otherTypeAllowed = this.tagManifestsAllowed;
         if (whichType == 'tagmanifest') {
             required = this.tagManifestsRequired;
             allowed = this.tagManifestsAllowed;
+            otherTypeRequired = this.manifestsRequired;
+            otherTypeAllowed = this.manifestsAllowed;
         }
         if (Array.isArray(required) && required.length > 0) {
             return required;
+        }
+        if (Array.isArray(otherTypeRequired) && otherTypeRequired.length > 0) {
+            return otherTypeRequired;
         }
         if (!allowed || Util.isEmptyStringArray(allowed)) {
             return ["sha512"];
