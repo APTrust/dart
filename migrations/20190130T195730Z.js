@@ -40,12 +40,10 @@ function run() {
  */
 function loadBuiltInProfiles() {
     let profiles = {
-        'APTrust': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['aptrust']),
-        'DPN': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['dpn'])
+        'APTrust': BagItProfile.find(Constants.BUILTIN_PROFILE_IDS['aptrust'])
     };
     let jsonFiles = {
-        'APTrust': 'aptrust',
-        'DPN': 'dpn'
+        'APTrust': 'aptrust'
     }
     for (let [name, profile] of Object.entries(profiles)) {
         if (!profile) {
