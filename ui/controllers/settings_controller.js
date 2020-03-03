@@ -145,7 +145,7 @@ class SettingsController extends BaseController {
         form.obj.save();
         let title = Context.y18n.__("Exported Settings");
         let body = Templates.settingsExportResult({
-            json: JSON.stringify(form.obj, this._jsonFilter, 2)
+            json: form.obj.toJson()
         });
         return this.modalContent(title, body);
     }
