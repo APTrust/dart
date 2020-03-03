@@ -1,5 +1,11 @@
 # DART Release Notes
 
+## 2.0.3 - March 3, 2020
+
+* Added Beyond the Repository (BTR) BagIt profile to the default installation.
+* Removed Setup Modules. The settings import/export system serves the same function and is easier to set up and distribute.
+* Fixed the filter on sensitive data export. When exporting settings, DART will not export logins, passwords, or API tokens, unless they refer to environment variables.
+
 ## 2.0.2 - Feb. 28, 2020
 
 * Added a migration to remove the DPN BagIt profile. This profile was used for internal testing and does not need to be public. Fixes issue [DPN-Object-ID and First-Version-Object-ID not generated](https://github.com/APTrust/dart/issues/224).

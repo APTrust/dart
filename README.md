@@ -26,9 +26,9 @@ tool for creating archival packages and sending them to a remote repository.
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
-* [Mac OSX v2.0.2](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.2.dmg)
-* [Windows v2.0.2](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.2.exe)
-* [Linux v2.0.2](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.2_amd64.deb)
+* [Mac OSX v2.0.3](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.3.dmg)
+* [Windows v2.0.3](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.3.exe)
+* [Linux v2.0.3](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.3_amd64.deb)
 
 While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
@@ -207,3 +207,26 @@ not part of the release.
 The local test SFTP server writes everything to a single temp file. It's not
 meant to preserve any data, just to test whether data transfer works via the
 SFTP protocol.
+
+If you have docker and want to test against a more robust SFTP server,
+follow these steps:
+
+1. Get an SFTP container image from https://hub.docker.com/r/atmoz/sftp/.
+1. Add a Storage Service record to your DART installation with the following
+   settings:
+   ```
+   {
+		"name": "Docker SFTP",
+		"description": "Local docker sftp server",
+		"protocol": "sftp",
+		"host": "localhost",
+		"port": 0,
+		"bucket": "upload",
+		"login": "foo",
+		"password": "pass",
+		"loginExtra": "",
+		"allowsUpload": true,
+		"allowsDownload": true
+	}
+   ```
+1. Run `docker start <container id>`
