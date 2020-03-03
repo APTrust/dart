@@ -25,7 +25,9 @@
 		"sourceOrganization": "aptrust.org",
 		"version": "2.2"
 	},
-	"manifestsRequired": [],
+	"manifestsRequired": [
+		"md5"
+    ],
 	"manifestsAllowed": [
 		"md5",
 		"sha256"
