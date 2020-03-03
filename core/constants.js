@@ -140,6 +140,7 @@ const Constants =  {
      */
     BUILTIN_PROFILE_IDS: {
         "aptrust": "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca",
+        "btr": "3fe09f70-84f2-4dae-a928-a846eea29648",
         "dpn": "09c834a7-6b51-49dd-9498-b310ee3e5a6a",
         "empty": "73d1b307-4d6b-494b-b0c9-a8595222ae5a"
     },
