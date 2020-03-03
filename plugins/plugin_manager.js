@@ -2,7 +2,6 @@ const FormatReaders = require("./formats/read");
 const FormatWriters = require("./formats/write");
 const NetworkClient = require("./network");
 const Repository = require("./repository");
-const Setup = require("./setup");
 const { Util } = require('../core/util');
 
 /**
@@ -22,10 +21,9 @@ const { Util } = require('../core/util');
  *   example, an APTrust repository plugin can tell you the status of objects
  *   uploaded to APTrust. A Fedora plugin (if someone writes one) could do the
  *   same by talking to a Fedora REST service.
- * - Setup provides a simple walk-through setup for a repository backend.
  *
  */
-const pluginTypes = ['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository', 'Setup'];
+const pluginTypes = ['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository'];
 
 /**
  * PluginManager keeps track of available plugins and helps the DART core find
@@ -67,9 +65,6 @@ class PluginManager {
               break;
             case 'Repository':
               modules = Repository.Providers;
-              break;
-            case 'Setup':
-              modules = Setup.Providers;
               break;
             default:
               throw `Param 'type' must be one of: Array.join(pluginTypes, ', ')`;
@@ -155,20 +150,6 @@ class PluginManager {
      */
     static talksTo(repoType) {
         return PluginManager.pluginProvides('Repository', 'talksToRepository', repoType)
-    }
-
-    /**
-     * This returns a list of all plugins that provide setup services for
-     * the specified configuration. For example, 'aptrust' provides setup
-     * services to get the basic APTrust configuration in place.
-     *
-     * @param {string} what - A string specifying what kind of setup you're
-     * looking for. This should be all lowercase, such as 'aptrust'.
-     *
-     * @returns {Array<Plugin>}
-     */
-    static setsUp(what) {
-        return PluginManager.pluginProvides('Setup', 'setsUp', what)
     }
 
     /**

@@ -1,9 +1,0 @@
-[
-    {
-        "id": "7439d47a-4a38-45ca-a587-e8ef7d0ca192",
-        "name": "Institution Domain",
-        "value": "example.org",
-        "userCanDelete": false,
-        "help": "Your organization's internet domain name."
-    }
-]

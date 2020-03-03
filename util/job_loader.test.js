@@ -17,7 +17,7 @@ const tarPluginId = '90110710-1ff9-4650-a086-d7b23772238f';
 
 beforeAll(() => {
     TestUtil.loadFixtures('AppSetting_DevNull', AppSetting, true);
-    TestUtil.loadProfilesFromSetup('aptrust')[0].save();
+    TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
     TestUtil.loadFixtures('Job_001', Job, true);
     TestUtil.loadFixtures(['StorageService_001', 'StorageService_002'], StorageService, true);
     TestUtil.loadFixtures('Workflow_001', Workflow, true);

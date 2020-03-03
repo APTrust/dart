@@ -11,7 +11,6 @@ test('Constructor sets expected properies', () => {
     expect(field.choices).toEqual([]);
     expect(field.cssClasses).toEqual([]);
     expect(field.attrs).toEqual({});
-    expect(field.validator).toBeNull();
 });
 
 test('getSelected()', () => {

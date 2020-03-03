@@ -7,7 +7,7 @@ const { TestUtil } = require('../../core/test_util');
 
 function getJobWithBagItProfile() {
     let job = new Job();
-    job.bagItProfile = TestUtil.loadProfilesFromSetup('aptrust')[0];
+    job.bagItProfile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
     return job;
 }
 

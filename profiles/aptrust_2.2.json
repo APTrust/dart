@@ -83,7 +83,7 @@
 			"required": true,
 			"values": [],
 			"defaultValue": null,
-			"userValue": "Test University",
+			"userValue": "",
 			"help": "The name of the organization that produced this bag, or is responsible for its contents.",
 			"isBuiltIn": true,
 			"isUserAddedFile": false,

@@ -47,8 +47,8 @@ const infoFields = [
 ];
 
 function preloadProfiles() {
-    let aptProfile = TestUtil.loadProfilesFromSetup('aptrust')[0];
-    let dpnProfile = TestUtil.loadProfilesFromSetup('dpn')[0];
+    let aptProfile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
+    let dpnProfile = TestUtil.loadFromProfilesDir('dpn.json');
     let invalidProfile = TestUtil.loadProfile('invalid_profile.json');
     aptProfile.save();
     dpnProfile.save();

@@ -48,8 +48,6 @@ test('All templates are defined', () => {
         // "newTagFileForm",
         "remoteRepositoryForm",
         "remoteRepositoryList",
-        // "setup",
-        // "setupQuestion",
         "tagDefinitionForm",
         "tagFileForm",
         "storageServiceForm",

@@ -287,7 +287,7 @@ test('mustBeTarred()', () => {
 });
 
 test('fromJson()', () => {
-    let jsonFile = path.join(__dirname, '..', 'plugins', 'setup', 'aptrust', 'bagit_profiles.json');
+    let jsonFile = path.join(__dirname, '..', 'profiles', 'aptrust_2.2.json');
     let jsonString = fs.readFileSync(jsonFile).toString();
     // Remove array brackets so this is not a JSON array.
     jsonString = jsonString.replace(/^\s*\[/, '').replace(/\]\s*$/, '');
