@@ -48,12 +48,15 @@
     },
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
+        "bufferutil": "^4.0.1",
+        "canvas": "^2.6.1",
         "electron": "^8.1.0",
         "electron-builder": "^22.4.0",
         "electron-toolkit": "^1.0.24",
         "jest": "^25.1.0",
         "jsdoc": "^3.6.3",
-        "node-sftp-server": "^0.3.0"
+        "node-sftp-server": "^0.3.0",
+        "utf-8-validate": "^5.0.2"
     },
     "scripts": {
         "electron-toolkit": "electron ./node_modules/electron-toolkit",
