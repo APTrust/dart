@@ -24,6 +24,7 @@ install:
   - rm -rf node_modules
   - rm package-lock.json
   - npm install --global npm@latest
+  - npm install --global --production windows-build-tools
   - set PATH=%APPVEYOR_BUILD_FOLDER%/node_modules/.bin;%APPVEYOR_BUILD_FOLDER%/node_modules/;C:\Users\appveyor\AppData\Roaming\npm\node_modules;%PATH%
   - npm install
   - npm ls
