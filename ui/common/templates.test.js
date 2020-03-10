@@ -69,6 +69,7 @@ test('All partials are defined', () => {
         'formButtons',
         'inputCheckbox',
         'inputCheckboxGroup',
+        'inputFile',
         'inputHidden',
         'inputPassword',
         'inputSelect',

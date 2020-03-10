@@ -1,0 +1,15 @@
+<h2>Bag Validation</h2>
+
+{{> bannerAlert message = alertMessage }}
+
+<form method="post" action="#" id="{{ form.id }}">
+
+    {{> inputSelect field = form.fields.bagItProfile }}
+    {{> inputFile field = form.fields.pathToBag }}
+    {{> inputHidden field = form.fields.id }}
+
+</form>
+
+<div class="pull-right" id="btnNextDiv">
+  <a class="btn btn-primary" href="#JobPackaging/next?id={{ job.id }}" role="button">Next &gt;&gt;</a>
+</div>

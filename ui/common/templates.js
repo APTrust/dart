@@ -46,6 +46,7 @@ var bagItProfileForm = compileHTML(readFile('bagit_profile', 'form.html'));
 var bagItProfileNew = compileHTML(readFile('bagit_profile', 'new.html'));
 var bagItProfileExport = compileHTML(readFile('bagit_profile', 'export.html'));
 var bagItProfileImport = compileHTML(readFile('bagit_profile', 'import.html'));
+var bagValidationForm = compileHTML(readFile('bag_validation', 'form.html'));
 var dartProcessList = compileHTML(readFile('dart_process', 'list.html'));
 var dashboard = compileHTML(readFile('dashboard', 'show.html'));
 var importResult = compileHTML(readFile('settings', 'import_result.html'));
@@ -83,6 +84,7 @@ handlebars.registerPartial({
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckbox: readFile(path.join('partials', 'input_checkbox.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
+    inputFile: readFile(path.join('partials', 'input_file.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
     inputPassword: readFile(path.join('partials', 'input_password.html')),
     inputSelect: readFile(path.join('partials', 'input_select.html')),
@@ -142,6 +144,7 @@ module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
 module.exports.bagItProfileExport = bagItProfileExport;
 module.exports.bagItProfileImport = bagItProfileImport;
+module.exports.bagValidationForm = bagValidationForm;
 module.exports.compile = compile;
 module.exports.dashboard = dashboard;
 module.exports.dartProcessList = dartProcessList;
