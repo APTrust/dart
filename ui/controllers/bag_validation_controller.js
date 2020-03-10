@@ -1,10 +1,11 @@
 const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
+const { BagValidationForm } = require('../forms/bag_validation_form');
 const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const fs = require('fs');
 const { Job } = require('../../core/job');
-const { BagValidationForm } = require('../forms/bag_validation_form');
 const path = require('path');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
@@ -45,7 +46,23 @@ class BagValidationController extends BaseController {
 
     validateBag() {
         this.form.parseFromDOM();
-        console.log(this.form.obj);
+        let job = this.form.obj;
+        // let tmpFile = Util.tmpFilePath();
+        // fs.writeFileSync(tmpFile, JSON.stringify(job));
+        // let modulePath = path.join(__dirname, '..', '..', 'main.js');
+        // this.childProcess = fork(
+        //         modulePath,
+        //         ['--job', tmpFile]
+        // );
+        // this.dartProcess = new DartProcess(
+        //     this.job.title,
+        //     this.job.id,
+        //     this.childProcess
+        // );
+        // //this.initRunningJobDisplay(this.dartProcess);
+        // Context.childProcesses[this.dartProcess.id] = this.dartProcess;
+        // $('#btnValidate').prop('disabled', true);
+        // return this.noContent();
     }
 
     postRenderCallback(fnName) {
