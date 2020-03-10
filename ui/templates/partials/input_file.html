@@ -1,9 +1,9 @@
-<div class="form-group {{ field.formGroupClass }}">
-  <label class="control-label {{#if field.help }}clickable{{/if}}" for="{{ field.id }}"
-         {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{/if}} {{#if field.help}}<i class="fas fa-question-circle text-primary"></i>{{/if}}</label>
-  <input type="file" id="{{ field.id }}" name="{{ field.name }}" value="{{ field.value }}"
-         class="form-control {{#each field.cssClasses }}{{ this }} {{/each }}"
+<div class="custom-file {{ field.formGroupClass }}">
+  <input type="file" id="{{ field.id }}" name="{{ field.name }}"
+         class="custom-file-input {{#each field.cssClasses }}{{ this }} {{/each }}"
          {{#each field.attrs }}{{ @key }}="{{ this }}" {{/each }} />
+  <label class="custom-file-label {{#if field.help }}clickable{{/if}}" for="{{ field.id }}"
+         {{#if field.help }}data-toggle="popover" data-trigger="hover" title="{{ field.label }}" data-content="{{field.help}}"{{/if}}>{{ field.label }} {{#if field.attrs.required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{/if}} {{#if field.help}}<i class="fas fa-question-circle text-primary"></i>{{/if}}</label>
   <small id="{{ field.id }}Error" class="form-text text-danger">
     {{ field.error }}
   </small>

@@ -42,6 +42,15 @@ class BagValidationController extends BaseController {
         return this.containerContent(html);
     }
 
+    postRenderCallback(fnName) {
+        if (fnName == 'show') {
+            $('#pathToBag').on('change',function(e){
+                var filename = document.getElementById('pathToBag').files[0].path
+                $(this).next('.custom-file-label').html(filename);
+            })
+        }
+    }
+
 }
 
 module.exports.BagValidationController = BagValidationController;

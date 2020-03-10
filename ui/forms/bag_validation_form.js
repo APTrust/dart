@@ -16,16 +16,15 @@ class BagValidationForm extends Form {
 
     constructor(job) {
         super('Job', job);
-        console.log(job)
         this._init();
     }
 
     _init() {
+        this.fields['pathToBag'] = new Field("pathToBag", "pathToBag", "Choose a file...", "");
         this._listBagItProfiles();
     }
 
     _listBagItProfiles() {
-        console.log(this);
         var profiles = BagItProfile.list(null, {
             limit: 0,
             offset: 0,
