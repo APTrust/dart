@@ -25,7 +25,8 @@ class BagValidationController extends BaseController {
     constructor(params) {
         super(params, 'Jobs');
         this.model = Job;
-        this.job = Job.find(this.params.get('id')) || new Job();
+        this.job = new Job();
+        this.form = null;
     }
 
     /**
@@ -33,22 +34,27 @@ class BagValidationController extends BaseController {
      * a profile.
      */
     show() {
-        let form = new BagValidationForm(this.job);
+        this.form = new BagValidationForm(this.job);
         let data = {
             job: this.job,
-            form: form
+            form: this.form
         }
         let html = Templates.bagValidationForm(data);
         return this.containerContent(html);
     }
 
+    validateBag() {
+        this.form.parseFromDOM();
+        console.log(this.form.obj);
+    }
+
     postRenderCallback(fnName) {
-        if (fnName == 'show') {
-            $('#pathToBag').on('change',function(e){
-                var filename = document.getElementById('pathToBag').files[0].path
-                $(this).next('.custom-file-label').html(filename);
-            })
-        }
+        let controller = this;
+        $('#pathToBag').on('change',function(e){
+            var filename = document.getElementById('pathToBag').files[0].path
+            $(this).next('.custom-file-label').html(filename);
+        })
+        $('#btnValidate').on('click', () => { controller.validateBag() })
     }
 
 }

@@ -6,6 +6,7 @@ const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { Job } = require('../../core/job');
+const { ValidationOperation } = require('../../core/validation_operation');
 
 /**
  * BagValidationForm can present and parse the form that allows
@@ -33,12 +34,22 @@ class BagValidationForm extends Form {
         });
         this.fields['bagItProfile'].choices = Choice.makeList(
             profiles,
-            this.obj.bagItProfileId,
-            true
+            Constants.BUILTIN_PROFILE_IDS['empty'],
+            false
         );
-        this.fields['bagItProfile'].help = Context.y18n.__('JobValidationOp_bagItProfileId_help');
+        this.fields['bagItProfile'].help = Context.y18n.__('Choose a profile against which to validate this bag. If you just want to validate against the BagIt specification, choose the Empty Profile.');
     }
 
+    parseFromDOM() {
+        // This is required for jest tests.
+        if ($ === undefined) {
+            var $ = require('jquery');
+        }
+        let profileId = $('#jobForm_bagItProfile').val();
+        this.obj.bagItProfile = BagItProfile.find(profileId)
+        this.obj.validationOp = new ValidationOperation();
+        this.obj.validationOp.pathToBag = document.getElementById('pathToBag').files[0].path;
+    }
 }
 
 module.exports.BagValidationForm = BagValidationForm;
