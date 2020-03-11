@@ -48,7 +48,12 @@ class BagValidationController extends RunningJobsController {
     }
 
     validateBag() {
-        let controller = this;
+        this._startValidationJob()
+        this._initResultsDiv()
+        this._attachEvents()
+    }
+
+    _startValidationJob() {
         this.form.parseFromDOM();
         let job = this.form.obj;
         let tmpFile = Util.tmpFilePath();
@@ -64,24 +69,23 @@ class BagValidationController extends RunningJobsController {
             this.childProcess
         );
         Context.childProcesses[this.dartProcess.id] = this.dartProcess;
+    }
 
-        //this.initRunningJobDisplay(this.dartProcess);
+    _initResultsDiv() {
+        $('#btnValidate').prop('disabled', true);
         let processDiv = $('#dartProcessContainer');
         let html = Templates.partials['dartProcess']({ item: this.dartProcess });
         processDiv.html(html);
         this.initProgressBar(this.dartProcess, 'validationInfo');
         $(`#${this.dartProcess.id} div.validationInfo`).show();
         processDiv.show();
+    }
 
+    _attachEvents() {
+        let controller = this;
         this.dartProcess.process.on('message', (data) => {
             controller.renderValidationInfo(data, this.dartProcess);
         });
-
-        // let errors = [];
-        // this.dartProcess.process.on('error', (error) => {
-        //     console.log(error);
-        //     errors.push(error);
-        // });
 
         this.dartProcess.process.on('exit', (code, signal) => {
             Context.logger.info(`Process ${this.dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
@@ -94,21 +98,17 @@ class BagValidationController extends RunningJobsController {
             } else {
                 let msg = Context.y18n.__('The bag is not valid according to the selected profile.')
                 Context.logger.error(msg);
-                //this.logFailedOps(job);
                 msg += `<br/>${job.getRunErrors().join("<br/>")}`
                 this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
             }
             // Button exists on job "Review and Run" page, not dashboard.
-            $('#btnRunJob').prop('disabled', false);
+            $('#btnValidate').prop('disabled', false);
 
             // The child process stores a record of the job in the
             // Jobs db. Delete that DB copy, so validation jobs don't
             // cause too much clutter.
             job.delete();
         });
-
-        // $('#btnValidate').prop('disabled', true);
-        // return this.noContent();
     }
 
     postRenderCallback(fnName) {
