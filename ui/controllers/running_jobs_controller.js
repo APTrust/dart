@@ -232,6 +232,8 @@ class RunningJobsController extends BaseController {
         detailDiv.html(message);
         if (progressBar) {
             progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.attr("aria-valuenow", 100);
+            progressBar.css("width", '100%');
             progressBar.addClass("bg-danger");
         }
     }

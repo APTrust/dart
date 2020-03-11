@@ -424,5 +424,10 @@
   "Job_4dfb0bfb-25c6-4dca-a468-301ecc35262b_help": "Job_4dfb0bfb-25c6-4dca-a468-301ecc35262b_help",
   "JobValidationOp_bagItProfileId_help": "JobValidationOp_bagItProfileId_help",
   "Choose a profile against which to validate this bag. If you just want to validate against the BagIt specification, choose the Empty Profile.": "Choose a profile against which to validate this bag. If you just want to validate against the BagIt specification, choose the Empty Profile.",
-  "The bag is not valid according to the selected profile.": "The bag is not valid according to the selected profile."
+  "The bag is not valid according to the selected profile.": "The bag is not valid according to the selected profile.",
+  "Choose a tar file or an unserialized bag. DART will support more serialization formats, such as zip and gzip, in the future.": "Choose a tar file or an unserialized bag. DART will support more serialization formats, such as zip and gzip, in the future.",
+  "Bag is a tar file": "Bag is a tar file",
+  "Bag is a directory": "Bag is a directory",
+  "Choose a file...": "Choose a file...",
+  "Choose a directory...": "Choose a directory..."
 }

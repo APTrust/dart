@@ -90,25 +90,28 @@ class BagValidationController extends RunningJobsController {
         this.dartProcess.process.on('exit', (code, signal) => {
             Context.logger.info(`Process ${this.dartProcess.process.pid} exited with code ${code}, signal ${signal}`);
             delete Context.childProcesses[this.dartProcess.id];
-            //controller.renderOutcome(this.dartProcess, code);
-            let job = Job.find(this.job.id)
-            let [detailDiv, progressBar] = this.getDivs(this.dartProcess, 'outcome');
-            if (code == 0) {
-                this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
-            } else {
-                let msg = Context.y18n.__('The bag is not valid according to the selected profile.')
-                Context.logger.error(msg);
-                msg += `<br/>${job.getRunErrors().join("<br/>")}`
-                this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
-            }
-            // Button exists on job "Review and Run" page, not dashboard.
-            $('#btnValidate').prop('disabled', false);
-
-            // The child process stores a record of the job in the
-            // Jobs db. Delete that DB copy, so validation jobs don't
-            // cause too much clutter.
-            job.delete();
+            controller._renderOutcome(code)
         });
+    }
+
+    _renderOutcome(code) {
+        let job = Job.find(this.job.id)
+        let [detailDiv, progressBar] = this.getDivs(this.dartProcess, 'outcome');
+        if (code == 0) {
+            this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
+        } else {
+            let msg = Context.y18n.__('The bag is not valid according to the selected profile.')
+            Context.logger.error(msg);
+            msg += `<br/>${job.getRunErrors().join("<br/>")}`
+            this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
+        }
+        // Button exists on job "Review and Run" page, not dashboard.
+        $('#btnValidate').prop('disabled', false);
+
+        // The child process stores a record of the job in the
+        // Jobs db. Delete that DB copy, so validation jobs don't
+        // cause too much clutter.
+        job.delete();
     }
 
     postRenderCallback(fnName) {
@@ -117,8 +120,36 @@ class BagValidationController extends RunningJobsController {
             let element = document.getElementById('pathToBag');
             if (element && element.files && element.files[0]) {
                 var filename = document.getElementById('pathToBag').files[0].path
+                // Our form includes attr webkitdirectory on the file input.
+                // If user selects a directory, it will have more than one
+                // file. If we see that, change filename to the dirname.
+                // User could not have manually selected multiple files because
+                // we did not set the multiple attribute on the file input.
+                if (element.files.length > 1) {
+                    filename = path.dirname(filename);
+                }
                 $(this).next('.custom-file-label').html(filename);
+                $('#btnValidate').prop('disabled', false);
+                $('#dartProcessContainer').html('');
             }
+        })
+        $('#bagTypeFile').on('click',function(e){
+            let fileInput = $('#pathToBag');
+            fileInput.files = [];
+            fileInput.removeAttr('webkitdirectory');
+            fileInput.attr('accept', '.tar');
+            $(fileInput).next('.custom-file-label').html(
+                Context.y18n.__("Choose a file...")
+            );
+        })
+        $('#bagTypeDirectory').on('click',function(e){
+            let fileInput = $('#pathToBag');
+            fileInput.files = [];
+            fileInput.attr('webkitdirectory', true);
+            fileInput.removeAttr('accept');
+            $(fileInput).next('.custom-file-label').html(
+                Context.y18n.__("Choose a directory...")
+            );
         })
         $('#btnValidate').on('click', () => { controller.validateBag() })
     }

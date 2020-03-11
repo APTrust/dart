@@ -6,6 +6,7 @@ const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { Job } = require('../../core/job');
+const path = require('path');
 const { ValidationOperation } = require('../../core/validation_operation');
 
 /**
@@ -48,7 +49,13 @@ class BagValidationForm extends Form {
         let profileId = $('#jobForm_bagItProfile').val();
         this.obj.bagItProfile = BagItProfile.find(profileId)
         this.obj.validationOp = new ValidationOperation();
-        this.obj.validationOp.pathToBag = document.getElementById('pathToBag').files[0].path;
+        let files = document.getElementById('pathToBag').files
+        let filename = files[0].path;
+        // If user selected directory, use the dir name.
+        if (files.length > 1) {
+            filename = path.dirname(files[0].path);
+        }
+        this.obj.validationOp.pathToBag = filename;
     }
 }
 
