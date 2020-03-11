@@ -13,9 +13,14 @@
 		"1.0"
 	],
 	"acceptSerialization": [
-		"application/tar"
+        "application/x-7z-compressed",
+        "application/tar",
+        "application/zip",
+        "application/gzip",
+        "application/x-rar-compressed",
+        "application/tar+gzip"
 	],
-	"allowFetchTxt": false,
+	"allowFetchTxt": true,
 	"bagItProfileInfo": {
 		"bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/dart/tree/master/profiles/empty_profile.json",
 		"bagItProfileVersion": "",
@@ -26,7 +31,7 @@
 		"version": ""
 	},
 	"manifestsRequired": [
-		"sha256"
+
 	],
 	"manifestsAllowed": [
 		"md5",
@@ -37,7 +42,7 @@
 		"sha512"
 	],
 	"tagManifestsRequired": [
-		"sha256"
+
 	],
 	"tagManifestsAllowed": [
 		"md5",
@@ -310,7 +315,7 @@
 			"errors": {}
 		}
 	],
-	"serialization": "required",
+	"serialization": "optional",
 	"baseProfileId": null,
 	"isBuiltIn": false,
 	"tarDirMustMatchName": false
