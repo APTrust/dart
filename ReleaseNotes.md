@@ -1,5 +1,13 @@
 # DART Release Notes
 
+## 2.0.4 - March 12, 2020
+
+* Added validation-only jobs for users who simply want to validate an existing bag.
+* Fixed the "empty" BagIt profile, which allows validation against the basic BagIt spec. Fixed include:
+    1. sha256 manifest and sha256 tag manifest are no longer required.
+    2. Serialization is no longer required.
+    3. fetch.txt is now allowed.
+
 ## 2.0.3 - March 3, 2020
 
 * Added Beyond the Repository (BTR) BagIt profile to the default installation.

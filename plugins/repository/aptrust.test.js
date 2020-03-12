@@ -115,7 +115,7 @@ test('_getHeaders()', () => {
     let expected =  {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "User-Agent": "DART 2.0.3 / Node.js request",
+        "User-Agent": "DART 2.0.4 / Node.js request",
         "X-Pharos-API-Key": "1234-5678",
         "X-Pharos-API-User": "marge@example.com",
     }
