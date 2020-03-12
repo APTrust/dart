@@ -1,0 +1,36 @@
+<h2>Bag Validation</h2>
+
+{{> bannerAlert message = alertMessage }}
+
+<form method="post" action="#" id="{{ form.id }}">
+
+    {{> inputSelect field = form.fields.bagItProfile }}
+
+    <div class="form-group" id="bagTypeContainer">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="bagType" id="bagTypeFile" value="file" checked>
+            <label class="form-check-label" for="bagTypeFile">
+                {{ translate 'Bag is a tar file' }}
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="bagType" id="bagTypeDirectory" value="directory">
+            <label class="form-check-label" for="bagTypeDirectory">
+                {{ translate 'Bag is a directory' }}
+            </label>
+        </div>
+    </div>
+
+
+    {{> inputFile field = form.fields.pathToBag }}
+    {{> inputHidden field = form.fields.id }}
+
+</form>
+
+<div class="row" id="dartProcessContainer">
+
+</div>
+
+<div class="pull-right" id="divBtnValidate">
+  <button type="button" class="btn btn-primary" id="btnValidate">Validate</button>
+</div>

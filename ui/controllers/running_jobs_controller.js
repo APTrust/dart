@@ -22,7 +22,9 @@ class RunningJobsController extends BaseController {
 
     initRunningJobDisplay(dartProcess) {
         let job = Job.find(dartProcess.jobId);
+
         this.showDivs(job, dartProcess);
+        $('#output-path-link').removeClass('local-file')
         let controller = this;
 
         // If user moves from JobRunController to DashboardController
@@ -96,6 +98,7 @@ class RunningJobsController extends BaseController {
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.markSuccess(detailDiv, progressBar, data.msg);
+                $('#output-path-link').addClass('local-file')
             } else {
                 this.markFailed(detailDiv, progressBar, data.msg);
             }
@@ -229,6 +232,8 @@ class RunningJobsController extends BaseController {
         detailDiv.html(message);
         if (progressBar) {
             progressBar.removeClass("progress-bar-striped progress-bar-animated");
+            progressBar.attr("aria-valuenow", 100);
+            progressBar.css("width", '100%');
             progressBar.addClass("bg-danger");
         }
     }

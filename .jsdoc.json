@@ -6,7 +6,7 @@
     },
     "plugins": ["plugins/markdown"],
     "templates": {
-        "referenceTitle": "DART (Digital Asset Routing Tool)",
+        "referenceTitle": "DART (Digital Archivists' Resource Tool)",
         "disableSort": false,
         "collapse": true,
 	    "resources": {

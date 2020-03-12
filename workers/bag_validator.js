@@ -64,7 +64,7 @@ class BagValidator extends Worker {
                     bagValidator.job.validationOp.result.errors = validator.errors;
                     bagValidator.completedWithError(validator.errors);
                 } else {
-                    bagValidator.completedSuccess('Bag is valid');
+                    bagValidator.completedSuccess(Context.y18n.__('Bag is valid'));
                 }
                 resolve(bagValidator.job.validationOp.result);
             });
@@ -95,7 +95,7 @@ class BagValidator extends Worker {
                 result.fileMtime = stats.mtime;
             }
         } catch (ex) {
-            result.finish(Context.y18n.__('Error gathering info about bag: %s', ex.message));
+            result.finish(Context.y18n.__(Context.y18n.__('Error gathering info about bag: %s'), ex.message));
         }
     }
 
@@ -112,7 +112,7 @@ class BagValidator extends Worker {
         this.job.validationOp.validate();
         let errors = Object.values(this.job.validationOp.errors);
         if (!this.job.bagItProfile) {
-            errors.push("Cannot validate bag because job has no BagItProfile.");
+            errors.push(Context.y18n.__("Cannot validate bag because job has no BagItProfile."));
         } else if (!this.job.bagItProfile.validate()) {
             for (let err of Object.values(this.job.bagItProfile.errors)) {
                 errors.push(err);

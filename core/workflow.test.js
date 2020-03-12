@@ -12,7 +12,7 @@ const tarPluginId = '90110710-1ff9-4650-a086-d7b23772238f';
 let storageServices = [];
 
 beforeAll(() => {
-    TestUtil.loadProfilesFromSetup('aptrust')[0].save();
+    TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
     storageServices.push(new StorageService({
         name: 'SS 1',
         protocol: 's3',

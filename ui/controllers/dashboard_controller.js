@@ -40,6 +40,7 @@ class DashboardController extends RunningJobsController {
 
         // Assemble the HTML
         let html = Templates.dashboard({
+            alertMessage: this.params.get('alertMessage'),
             reportRows: reportRows,
             runningJobs: Object.values(Context.childProcesses),
             recentJobs: this._getRecentJobSummaries()

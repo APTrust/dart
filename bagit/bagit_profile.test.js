@@ -287,7 +287,7 @@ test('mustBeTarred()', () => {
 });
 
 test('fromJson()', () => {
-    let jsonFile = path.join(__dirname, '..', 'plugins', 'setup', 'aptrust', 'bagit_profiles.json');
+    let jsonFile = path.join(__dirname, '..', 'profiles', 'aptrust_2.2.json');
     let jsonString = fs.readFileSync(jsonFile).toString();
     // Remove array brackets so this is not a JSON array.
     jsonString = jsonString.replace(/^\s*\[/, '').replace(/\]\s*$/, '');
@@ -528,9 +528,19 @@ test('chooseManifestAlgorithms()', () => {
     expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['md5']);
     expect(profile.chooseManifestAlgorithms('tagmanifest')).toEqual(['md5']);
 
+    // In this case, no manifests are required, but tag manifest must
+    // be md5. The function should return md5 because BagIt spec section
+    // 2.2.1 at https://tools.ietf.org/html/rfc8493#section-2.2.1 says
+    // algorithms for payload manifest and tag manifest should match.
     profile.manifestsRequired = [];
+    expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['md5']);
+
+    // In this case, with no guidance on manifests or tag manifests,
+    // we should get the LOC recommended sha512.
+    profile.tagManifestsRequired = [];
     expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha512']);
 
+    // Should get sha256, because it's preferred for security.
     profile.manifestsAllowed = ["md5", "sha256"];
     expect(profile.chooseManifestAlgorithms('manifest')).toEqual(['sha256']);
 

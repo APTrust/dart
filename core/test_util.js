@@ -39,32 +39,21 @@ class TestUtil {
     }
 
     /**
-     * This loads a BagItProfile from the builtin directory or from
-     * the test/profiles directory. Throws an exception if the path does
-     * not exist or cannot be read.
+     * This loads a BagItProfile from the profiles directory.
      *
-     * @param {string} dirname - The name of the directory beneath
-     * plugins/setup from which to load. For example, if dirname is
-     * 'aptrust', this will load the bagit_profiles.json file from
-     * plugins/setup/aptrust
+     * @param {string} filename - The file name of the BagIt profile to
+     * load. For example, "my_profile.json".
      *
-     * @returns {Array<BagItProfile>}
+     * @returns {BagItProfile}
      */
-    static loadProfilesFromSetup(dirname) {
-        let profilePath = path.join(__dirname, "..", "plugins", "setup", dirname, "bagit_profiles.json");
-        let data = JSON.parse(fs.readFileSync(profilePath));
-        let profiles = [];
-        for (let obj of data) {
-            profiles.push(BagItProfile.inflateFrom(obj));
-        }
-        return profiles;
+    static loadFromProfilesDir(filename) {
+        let profilePath = path.join(__dirname, "..", "profiles", filename);
+        return BagItProfile.load(profilePath);
     }
 
     /**
      * This loads fixtures from the test/fixtures directory and optionally
-     * saves them. It returns an array of the objects it loaded. To load
-     * {@link BagItProfile} fixtures, see
-     * {@link TestUtil.loadProfilesFromSetup}.
+     * saves them. It returns an array of the objects it loaded.
      *
      * @param {string|Array<string>} filenames - A string or array of strings
      * speficying which files to load. These should be the names of files

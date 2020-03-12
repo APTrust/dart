@@ -45,7 +45,9 @@ class JobRunner {
                 // The output clutters Jest test output,
                 // so suppress in test, but allow in dev/production.
             } else {
-                console.error(ex)
+                // Save, so the result w/error is attached to the job record.
+                this.job.save();
+                console.error(ex);
             }
             returnCode = Constants.EXIT_RUNTIME_ERROR;
         }

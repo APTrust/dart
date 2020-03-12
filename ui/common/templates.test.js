@@ -48,8 +48,6 @@ test('All templates are defined', () => {
         // "newTagFileForm",
         "remoteRepositoryForm",
         "remoteRepositoryList",
-        // "setup",
-        // "setupQuestion",
         "tagDefinitionForm",
         "tagFileForm",
         "storageServiceForm",
@@ -71,6 +69,7 @@ test('All partials are defined', () => {
         'formButtons',
         'inputCheckbox',
         'inputCheckboxGroup',
+        'inputFile',
         'inputHidden',
         'inputPassword',
         'inputSelect',
@@ -80,6 +79,7 @@ test('All partials are defined', () => {
         'profileTags',
         'recentJobs',
         'runningJobs',
+        'settingsQuestion',
         'tableBottomLinks',
         'tagDefRow'
     ];
@@ -90,3 +90,33 @@ test('All partials are defined', () => {
         expect(compiledPartialNames).toContain(name);
     }
 });
+
+test('showPathWithTrim', () => {
+    let fullpath = "/Users/joe/Desktop/"
+    let trimpath = "/Users/joe/"
+
+    expect(Templates.showPathWithTrim(fullpath, trimpath)).toEqual(
+        '<span style="color: #ccc;">/Users/joe/</span>Desktop/'
+    );
+
+    fullpath = "/Users/joe/Desktop"
+    trimpath = "/Users/joe/"
+
+    expect(Templates.showPathWithTrim(fullpath, trimpath)).toEqual(
+        '<span style="color: #ccc;">/Users/joe/</span>Desktop'
+    );
+
+    fullpath = "C:\\Users\\joe\\Desktop\\"
+    trimpath = "C:\\Users\\joe\\"
+
+    expect(Templates.showPathWithTrim(fullpath, trimpath)).toEqual(
+        '<span style="color: #ccc;">C:\\Users\\joe\\</span>Desktop\\'
+    );
+
+    fullpath = "C:\\Users\\joe\\Desktop"
+    trimpath = "C:\\Users\\joe\\"
+
+    expect(Templates.showPathWithTrim(fullpath, trimpath)).toEqual(
+        '<span style="color: #ccc;">C:\\Users\\joe\\</span>Desktop'
+    );
+})

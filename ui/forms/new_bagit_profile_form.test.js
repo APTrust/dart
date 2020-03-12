@@ -14,8 +14,8 @@ afterAll(() => {
 test('create()', () => {
 
     // Throw a couple of profiles into the test DB.
-    TestUtil.loadProfilesFromSetup('aptrust')[0].save();
-    TestUtil.loadProfilesFromSetup('dpn')[0].save();
+    TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
+    TestUtil.loadFromProfilesDir('dpn.json').save();
 
     let form = new NewBagItProfileForm();
     expect(Object.keys(form.fields).length).toEqual(1);

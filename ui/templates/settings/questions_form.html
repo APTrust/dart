@@ -1,9 +1,24 @@
 <h2>Setup Questions</h2>
 
-<p>Instructions (textarea)</p>
+<p><a href="#About/openExternal?url=https://aptrust.github.io/dart-docs/users/settings/export/#export-questions">Need help?</a></p>
 
-<p>Questions</p>
-<ul>
-    <li>Question Text (textarea)</li>
-    <li>Copy Response to: (list obj type) (objName) (field)</li>
-</ul>
+<form id="settingsQuestionsForm">
+
+  {{#each questions as |question|}}
+    {{> settingsQuestion questionNumber = @index question = question}}
+  {{/each}}
+
+</form>
+
+
+<div class="bottom-buttons">
+  <div class="pull-right">
+    <a role="button" class="btn btn-primary" id="btnNext" href="#Settings/showExportJson?fromPage=questions">{{ translate "Export" }}</a>
+  </div>
+  <div class="pull-right mr-3">
+      <button type="button" class="btn btn-primary" id="btnAdd">{{ translate "Add Question" }}</button>
+  </div>
+  <div class="pull-right mr-3">
+    <a role="button" class="btn btn-secondary" href="#Settings/saveAndGoToExport">{{ translate "Cancel" }}</a>
+  </div>
+</div>

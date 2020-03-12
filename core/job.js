@@ -323,14 +323,16 @@ class Job extends PersistentObject {
         if (this.packageOp) {
             this.packageOp.validate();
             Object.assign(this.errors, this.packageOp.errors);
-            // TODO: Require BagItProfile if packaging op is BagIt.
+            if (this.packageOp.packageFormat == 'BagIt' && this.bagItProfile == null) {
+                result.errors['Job.bagItProfile'] = Context.y18n.__('BagIt packaging requires a BagItProfile. Make sure the profile has not been deleted.');
+            }
             // TODO: Mechanism for signifying this is a BagIt job (as opposed to just tar or zip)
         }
         if (this.validationOp) {
             this.validationOp.validate();
             Object.assign(this.errors, this.validationOp.errors);
-            if (!this.bagItProfile) {
-                result.errors['Job.bagItProfile'] = 'Validation requires a BagItProfile.';
+            if (!this.bagItProfile && !result.errors['Job.bagItProfile']) {
+                result.errors['Job.bagItProfile'] = Context.y18n.__('Validation requires a BagItProfile.');
             }
         }
         var opNum = 0;

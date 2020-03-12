@@ -46,8 +46,10 @@ var bagItProfileForm = compileHTML(readFile('bagit_profile', 'form.html'));
 var bagItProfileNew = compileHTML(readFile('bagit_profile', 'new.html'));
 var bagItProfileExport = compileHTML(readFile('bagit_profile', 'export.html'));
 var bagItProfileImport = compileHTML(readFile('bagit_profile', 'import.html'));
+var bagValidationForm = compileHTML(readFile('bag_validation', 'form.html'));
 var dartProcessList = compileHTML(readFile('dart_process', 'list.html'));
 var dashboard = compileHTML(readFile('dashboard', 'show.html'));
+var importResult = compileHTML(readFile('settings', 'import_result.html'));
 var internalSettingList = compileHTML(readFile('internal_setting', 'list.html'));
 var jobFileRow = compileHTML(readFile('job', 'file_row.html'));
 var jobFiles = compileHTML(readFile('job', 'files.html'));
@@ -68,11 +70,7 @@ var settingsExport = compileHTML(readFile('settings', 'export.html'));
 var settingsExportResult = compileHTML(readFile('settings', 'export_result.html'));
 var settingsImport = compileHTML(readFile('settings', 'import.html'));
 var settingsQuestions = compileHTML(readFile('settings', 'questions_form.html'));
-var setupEnd = compileHTML(readFile('setup', 'end.html'));
-var setupError = compileHTML(readFile('setup', 'error.html'));
-var setupList = compileHTML(readFile('setup', 'list.html'));
-var setupStart = compileHTML(readFile('setup', 'start.html'));
-var setupQuestion = compileHTML(readFile('setup', 'question.html'));
+var settingsResponses = compileHTML(readFile('settings', 'responses.html'));
 var tagDefinitionForm = compileHTML(readFile('tag_definition', 'form.html'));
 var tagFileForm = compileHTML(readFile('tag_file', 'form.html'));
 var workflowForm = compileHTML(readFile('workflow', 'form.html'));
@@ -86,6 +84,7 @@ handlebars.registerPartial({
     formButtons: readFile(path.join('partials', 'form_buttons.html')),
     inputCheckbox: readFile(path.join('partials', 'input_checkbox.html')),
     inputCheckboxGroup: readFile(path.join('partials', 'input_checkbox_group.html')),
+    inputFile: readFile(path.join('partials', 'input_file.html')),
     inputHidden: readFile(path.join('partials', 'input_hidden.html')),
     inputPassword: readFile(path.join('partials', 'input_password.html')),
     inputSelect: readFile(path.join('partials', 'input_select.html')),
@@ -95,8 +94,13 @@ handlebars.registerPartial({
     profileTags: readFile(path.join('partials', 'profile_tags.html')),
     recentJobs: readFile(path.join('partials', 'recent_jobs.html')),
     runningJobs: readFile(path.join('partials', 'running_jobs.html')),
+    settingsQuestion: readFile(path.join('settings', 'question.html')),
     tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
     tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
+});
+
+handlebars.registerHelper('add', function(a, b) {
+    return parseInt(a, 10) + parseInt(b, 10);
 });
 
 handlebars.registerHelper('eq', function(a, b) {
@@ -119,11 +123,13 @@ handlebars.registerHelper('toHumanSize', function(number) {
     return Util.toHumanSize(number);
 });
 
-handlebars.registerHelper('showPathWithTrim', function(fullpath, trimpath) {
-    let pattern = new RegExp('^' + trimpath);
+function showPathWithTrim(fullpath, trimpath) {
+    let pattern = new RegExp('^' + Util.escapeBackslashes(trimpath));
     let replacement = `<span style="color: #ccc;">${trimpath}</span>`;
     return fullpath.trim().replace(pattern, replacement)
-});
+}
+
+handlebars.registerHelper('showPathWithTrim', showPathWithTrim);
 
 // Pre-compile partials so they can be called from within JS.
 for(let [name, template] of Object.entries(handlebars.partials)) {
@@ -138,9 +144,11 @@ module.exports.bagItProfileList = bagItProfileList;
 module.exports.bagItProfileNew = bagItProfileNew;
 module.exports.bagItProfileExport = bagItProfileExport;
 module.exports.bagItProfileImport = bagItProfileImport;
+module.exports.bagValidationForm = bagValidationForm;
 module.exports.compile = compile;
 module.exports.dashboard = dashboard;
 module.exports.dartProcessList = dartProcessList;
+module.exports.importResult = importResult;
 module.exports.internalSettingList = internalSettingList;
 module.exports.jobFileRow = jobFileRow;
 module.exports.jobFiles = jobFiles;
@@ -157,17 +165,14 @@ module.exports.pluginsList = pluginsList;
 module.exports.remoteRepositoryForm = remoteRepositoryForm;
 module.exports.remoteRepositoryList = remoteRepositoryList;
 module.exports.renderOptions = renderOptions
+module.exports.showPathWithTrim = showPathWithTrim; // exported so we can test
 module.exports.storageServiceForm = storageServiceForm;
 module.exports.storageServiceList = storageServiceList;
 module.exports.settingsExport = settingsExport;
 module.exports.settingsExportResult = settingsExportResult;
 module.exports.settingsImport = settingsImport;
 module.exports.settingsQuestions = settingsQuestions;
-module.exports.setupEnd = setupEnd;
-module.exports.setupError = setupError;
-module.exports.setupList = setupList;
-module.exports.setupQuestion = setupQuestion;
-module.exports.setupStart = setupStart;
+module.exports.settingsResponses = settingsResponses;
 module.exports.tagDefinitionForm = tagDefinitionForm;
 module.exports.tagFileForm = tagFileForm;
 module.exports.workflowForm = workflowForm;

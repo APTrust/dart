@@ -1,0 +1,182 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "userCanDelete": true,
+  "required": [
+    "id"
+  ],
+  "errors": {},
+  "appSettings": [
+    {
+      "id": "7439d47a-4a38-45ca-a587-e8ef7d0ca192",
+      "userCanDelete": false,
+      "required": [
+        "name",
+        "id"
+      ],
+      "errors": {},
+      "name": "Institution Domain",
+      "value": "test.edu",
+      "help": "Your organization's internet domain name."
+    }
+  ],
+  "bagItProfiles": [],
+  "questions": [
+    {
+      "id": "df99fb6c-ed50-42e4-975f-1f1be13f1ecf",
+      "prompt": "What is your institution's domain name? (e.g. virginia.edu, ncsu.edu, etc.)",
+      "objType": "AppSetting",
+      "objId": "7439d47a-4a38-45ca-a587-e8ef7d0ca192",
+      "field": "value"
+    },
+    {
+      "id": "610dde2b-d359-49ec-a65f-fedf6e738679",
+      "prompt": "What is your AWS Access key for the demo system?",
+      "objType": "StorageService",
+      "objId": "31b0846e-46f6-4925-bdba-1d3c1a0b2b73",
+      "field": "login"
+    },
+    {
+      "id": "441d3460-4dda-4fd1-aab8-1bc69d435318",
+      "prompt": "What is your AWS secret key for the demo system?",
+      "objType": "StorageService",
+      "objId": "31b0846e-46f6-4925-bdba-1d3c1a0b2b73",
+      "field": "password"
+    },
+    {
+      "id": "37b307a9-24d4-49a1-8aa9-ad8f83d6720e",
+      "prompt": "What email address do you use to log in to demo.aptrust.org?",
+      "objType": "RemoteRepository",
+      "objId": "214db814-bd73-49d4-b988-4d7a5ad0d313",
+      "field": "userId"
+    },
+    {
+      "id": "437bc9b0-90bd-418b-be79-b0adfb544b17",
+      "prompt": "What is your API key for demo.aptrust.org?",
+      "objType": "RemoteRepository",
+      "objId": "214db814-bd73-49d4-b988-4d7a5ad0d313",
+      "field": "apiToken"
+    }
+  ],
+  "remoteRepositories": [
+    {
+      "id": "214db814-bd73-49d4-b988-4d7a5ad0d313",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Demo Repository",
+      "url": "https://demo.aptrust.org",
+      "userId": "dart-demo@aptrust.org",
+      "apiToken": "",
+      "loginExtra": "",
+      "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    },
+    {
+      "id": "f95edae2-dff5-4ea7-bd3e-9546246d46e9",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Production Repository",
+      "url": "https://repo.aptrust.org",
+      "userId": "",
+      "apiToken": "",
+      "loginExtra": "",
+      "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd"
+    }
+  ],
+  "storageServices": [
+    {
+      "id": "31b0846e-46f6-4925-bdba-1d3c1a0b2b73",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "protocol",
+        "host",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Demo Receiving Bucket",
+      "description": "Receiving bucket for ingest to the APTrust Demo repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.receiving.test.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+      "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+      "loginExtra": "",
+      "allowsUpload": true,
+      "allowsDownload": false
+    },
+    {
+      "id": "12c7c92f-daf6-448e-83f0-310f2df40874",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "protocol",
+        "host",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Demo Restoration Bucket",
+      "description": "Restoration bucket for the APTrust Demo repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.restore.test.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_DEMO",
+      "password": "env:AWS_SECRET_ACCESS_KEY_DEMO",
+      "loginExtra": "",
+      "allowsUpload": false,
+      "allowsDownload": true
+    },
+    {
+      "id": "b250bdfb-298d-4dc2-9816-3a5001604376",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "protocol",
+        "host",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Production Receiving Bucket",
+      "description": "Receiving bucket for ingest to the APTrust Production repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.receiving.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_PROD",
+      "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+      "loginExtra": "",
+      "allowsUpload": true,
+      "allowsDownload": false
+    },
+    {
+      "id": "dccf4a42-2281-4e93-aaaf-fb94e9458a0e",
+      "userCanDelete": true,
+      "required": [
+        "name",
+        "protocol",
+        "host",
+        "id"
+      ],
+      "errors": {},
+      "name": "APTrust Production Restoration Bucket",
+      "description": "Restoration bucket the APTrust Production repository",
+      "protocol": "s3",
+      "host": "s3.amazonaws.com",
+      "port": 0,
+      "bucket": "aptrust.restore.test.edu",
+      "login": "env:AWS_ACCESS_KEY_ID_PROD",
+      "password": "env:AWS_SECRET_ACCESS_KEY_PROD",
+      "loginExtra": "",
+      "allowsUpload": false,
+      "allowsDownload": true
+    }
+  ]
+}

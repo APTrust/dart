@@ -81,6 +81,12 @@ const Constants =  {
      */
     DIRECTORY_WRITER_UUID: '92e69251-0e76-412d-95b6-987a79f6fa71',
     /**
+     * An empty UUID. This is used as the identifier for ExportSettings.
+     *
+     * @type {string}
+     */
+    EMPTY_UUID: "00000000-0000-0000-0000-000000000000",
+    /**
      * This regular expression matches the name of payload
      * manifest files, and includes a capture to extract the
      * checksum algorithm.
@@ -134,7 +140,9 @@ const Constants =  {
      */
     BUILTIN_PROFILE_IDS: {
         "aptrust": "043f1c22-c9ff-4112-86f8-8f8f1e6a2dca",
-        "dpn": "09c834a7-6b51-49dd-9498-b310ee3e5a6a"
+        "btr": "3fe09f70-84f2-4dae-a928-a846eea29648",
+        "dpn": "09c834a7-6b51-49dd-9498-b310ee3e5a6a",
+        "empty": "73d1b307-4d6b-494b-b0c9-a8595222ae5a"
     },
     /**
      * Regular Expression to match OSX DS_Store files. We often

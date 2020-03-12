@@ -1,6 +1,7 @@
 const { Context } = require('../../core/context')
 const electron = require('electron');
 const Templates = require('../common/templates');
+const url = require('url');
 const { Util } = require('../../core/util');
 const { Workflow } = require('../../core/workflow');
 
@@ -34,7 +35,7 @@ class BaseController {
          *
          * @type {url.URLSearchParams}
          */
-        this.params = params;
+        this.params = params || new url.URLSearchParams();
         /**
          * The typeMap describes how values in this.params should be converted,
          * if they do need to be converted. Because {@link url.URLSearchParams}
@@ -208,6 +209,7 @@ class BaseController {
      */
     openExternal() {
         electron.shell.openExternal(this.params.get('url'));
+        return this.noContent();
     }
 
     /**

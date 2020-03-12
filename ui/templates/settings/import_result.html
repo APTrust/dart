@@ -1,0 +1,41 @@
+{{> bannerAlert message = alertMessage }}
+
+<h2>Import Result</h2>
+
+<p>DART imported the following settings:</p>
+
+{{#each settings.appSettings as |s|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>App Setting:</b> {{ s.name }}</p>
+{{/each}}
+
+{{#each settings.bagItProfiles as |p|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>BagIt Profile:</b> {{ p.name }}</p>
+{{/each}}
+
+{{#each settings.remoteRepositories as |r|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>Remote Repository:</b> {{ r.name }}</p>
+{{/each}}
+
+{{#each settings.storageServices as |s|}}
+<p><i class="fas fa-check text-success mr-1"></i><b>Storage Service:</b> {{ s.name }}</p>
+{{/each}}
+
+
+{{#if form }}
+<h2>Questions</h2>
+<p>Please answer the following questions to finish configuring the new settings.</p>
+  <form id="settingsResponseForm">
+
+    {{#each form.fields as |field|}}
+      {{> inputText field = field}}
+    {{/each}}
+
+    <div class="pull-right">
+      <button type="button" id="btnSubmit" class="btn btn-primary">Finish</button>
+    </div>
+  </form>
+{{else}}
+    <div class="pull-right">
+      <a role="button" class="btn btn-primary" href="#Dashboard/show">Done</a>
+    </div>
+{{/if}}

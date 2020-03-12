@@ -105,7 +105,7 @@ class BagItUtil {
      *   profile, like the example at [other-project-profile.json](https://github.com/LibraryOfCongress/bagger/blob/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/other-project-profile.json)
      * * "loc_ordered" - An ordered Library of Congress profile, like the
      *   [SANC State Profile](https://github.com/LibraryOfCongress/bagger/blob/master/bagger-business/src/main/resources/gov/loc/repository/bagger/profiles/SANC-state-profile.json)
-     * * "dart" - A DART BagIt profile, like the [APTrust BagIt Profile](https://github.com/APTrust/dart/blob/master/plugins/setup/aptrust/bagit_profiles.json)
+     * * "dart" - A DART BagIt profile, like the [APTrust BagIt Profile](https://github.com/APTrust/dart/blob/master/profiles/aptrust_2.2.json)
      * * "unknown" - Cannot identify profile type.
      *
      * The great thing about standards is that there are so many of them.

@@ -15,8 +15,7 @@ afterAll(() => {
 
 function getJobWithOps() {
     let job = new Job();
-    let profiles = TestUtil.loadProfilesFromSetup('aptrust');
-    job.bagItProfile = profiles[0];
+    job.bagItProfile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
 
     setTag(job.bagItProfile, 'Title', 'Title 1');
     setTag(job.bagItProfile, 'Internal-Sender-Identifier', 'Internal-Sender-Identifier 1');

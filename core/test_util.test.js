@@ -23,13 +23,12 @@ test('loadProfile', () => {
     }
 });
 
-test('loadProfilesFromSetup', () => {
-    let aptrust = TestUtil.loadProfilesFromSetup('aptrust');
-    expect(aptrust.length).toEqual(1);
-    expect(aptrust[0].name).toEqual("APTrust");
-    expect(aptrust[0].tags.length).toEqual(14);
+test('loadFromProfilesDir', () => {
+    let aptrust = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
+    expect(aptrust.name).toEqual("APTrust");
+    expect(aptrust.tags.length).toEqual(14);
     expect(function() {
-        TestUti.loadProfilesFromSetup('dir_does_not_exist');
+        TestUti.loadFromProfilesDir('dir_does_not_exist');
     }).toThrow();
 });
 

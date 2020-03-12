@@ -27,8 +27,8 @@ const outputPath = '/dev/null';
 const profileId = Constants.BUILTIN_PROFILE_IDS.aptrust;
 
 function loadProfileIntoDB() {
-    let profiles = TestUtil.loadProfilesFromSetup('aptrust');
-    profiles[0].save();
+    let profile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
+    profile.save();
 }
 
 function getJobWithPackageOp() {

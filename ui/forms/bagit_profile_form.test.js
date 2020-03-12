@@ -28,7 +28,7 @@ const expectedFields = [
 ];
 
 test('create()', () => {
-    let profile = TestUtil.loadProfilesFromSetup('aptrust')[0];
+    let profile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
     let form = new BagItProfileForm(profile);
     expect(Object.keys(form.fields).length).toEqual(expectedFields.length);
 
@@ -48,8 +48,8 @@ test('create()', () => {
 });
 
 test('parseFromDOM()', () => {
-    let profile = TestUtil.loadProfilesFromSetup('aptrust')[0];
-    let dpnProfile = TestUtil.loadProfilesFromSetup('dpn')[0];
+    let profile = TestUtil.loadFromProfilesDir('aptrust_2.2.json');
+    let dpnProfile = TestUtil.loadFromProfilesDir('dpn.json');
     let form = new BagItProfileForm(profile);
 
     // Create the HTML form and put it in the DOM.

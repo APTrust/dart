@@ -27,7 +27,7 @@ test('Constructor sets initial properties', () => {
 });
 
 test('file type methods return correct items', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     let taskCount = 0;
     validator.on('error', function(err) {
         // Force failure & stop test.
@@ -46,7 +46,7 @@ test('file type methods return correct items', done => {
 });
 
 test('_cleanEntryRelPath()', () => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     let relPayloadPath = "example.edu.tagsample_good/data/sample.txt";
     let relManifestPath = "example.edu.tagsample_good/manifest-sha256.txt";
     expect(validator._cleanEntryRelPath(relPayloadPath)).toEqual("data/sample.txt");
@@ -54,7 +54,7 @@ test('_cleanEntryRelPath()', () => {
 });
 
 test('_validateProfile()', () => {
-    var validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    var validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     expect(validator._validateProfile()).toEqual(true);
     expect(validator.errors).toEqual([]);
 
@@ -68,18 +68,18 @@ test('_validateProfile()', () => {
 });
 
 test('readingFromTar()', () => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     expect(validator.readingFromTar()).toEqual(true);
 
-    validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
     expect(validator.readingFromTar()).toEqual(false);
 });
 
 test('readingFromDir()', () => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     expect(validator.readingFromDir()).toEqual(false);
 
-    validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
     expect(validator.readingFromDir()).toEqual(true);
 });
 
@@ -98,11 +98,11 @@ test('fileExtension()', () => {
 });
 
 test('getNewReader()', () => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     let reader = validator.getNewReader();
     expect(reader instanceof TarReader).toEqual(true);
 
-    validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
     reader = validator.getNewReader();
     expect(reader instanceof FileSystemReader).toEqual(true);
 });
@@ -113,8 +113,8 @@ function getValidator(profileName, bagDir, bagName) {
     let testDir = path.join(__dirname, "..", "test");
     let bagPath = path.join(testDir, "bags", bagDir, bagName)
     let profile;
-    if (profileName == 'aptrust' || profileName == 'dpn') {
-        profile = TestUtil.loadProfilesFromSetup(profileName)[0];
+    if (profileName == 'aptrust_2.2.json' || profileName == 'dpn.json') {
+        profile = TestUtil.loadFromProfilesDir(profileName);
     } else {
         profile = TestUtil.loadProfile(profileName);
     }
@@ -122,7 +122,7 @@ function getValidator(profileName, bagDir, bagName) {
 }
 
 test('Validator emits error if bag does not exist', done => {
-    let validator = getValidator("aptrust", "aptrust", "BagDoesNotExist.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "BagDoesNotExist.tar");
     validator.on('error', function(message) {
         expect(message).toMatch(Context.y18n.__('File does not exist at'));
         expect(validator.errors.length).toEqual(1);
@@ -137,7 +137,7 @@ test('Validator emits error if bag does not exist', done => {
 
 // Uses TarReader
 test('Validator emits expected events for tarred APTrust bag', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good.tar");
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
         taskCount++;
@@ -160,7 +160,7 @@ test('Validator emits expected events for tarred APTrust bag', done => {
 });
 
 test('Validator accepts valid APTrust bag with additional tags', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     validator.on('error', function(err) {
         // Force failure & stop test.
         expect(err).toBeNull();
@@ -178,7 +178,7 @@ test('Validator accepts valid APTrust bag with additional tags', done => {
 // This test uses the FileSystemReader instead of the TarReader.
 test('Validator emits expected events for untarred APTrust bag', done => {
 
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
 
     // APTrust profile requires tarred bags.
     // Tell the validator to ignore the bag forma
@@ -203,7 +203,7 @@ test('Validator emits expected events for untarred APTrust bag', done => {
 });
 
 test('Validator accepts valid DPN bag', done => {
-    let validator = getValidator("dpn", "dpn", "a9f7cbab-b531-4eb7-b532-770f592629ba.tar");
+    let validator = getValidator("dpn.json", "dpn", "a9f7cbab-b531-4eb7-b532-770f592629ba.tar");
     let taskCount = 0;
     validator.on('task', function(taskDesc) {
         taskCount++;
@@ -222,7 +222,7 @@ test('Validator accepts valid DPN bag', done => {
 });
 
 test('Validator rejects bad DPN bag', done => {
-    let validator = getValidator("dpn", "dpn", "020c8edd-d043-4204-a6b8-26b6fb8bda5d.tar");
+    let validator = getValidator("dpn.json", "dpn", "020c8edd-d043-4204-a6b8-26b6fb8bda5d.tar");
     let expected = [
         "File 'data/Users/diamond/go/src/golang.org/x/net/html/atom/gen.go' in manifest-sha256.txt is missing from bag.",
         "Bad sha256 digest for 'dpn-tags/dpn-info.txt': manifest says '935e01c6f9ecf565c67c32760a9cec966d2f24bf2654533394d44924e19ecda2', file digest is 'cfab0747e203bc0d419d331b6fca48b66c8a5f045738fbf4608d2424ff28823e'.",
@@ -248,7 +248,7 @@ test('Validator rejects bad DPN bag', done => {
 
 // This particular bag lets us test bad digests, missing files, and bad tag values.
 test('Validator identifies errors in bad APTrust bag', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_bad.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_bad.tar");
     let expected = [
         "Bad sha256 digest for 'data/datastream-descMetadata': manifest says 'This-checksum-is-bad-on-purpose.-The-validator-should-catch-it!!', file digest is 'cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7'.",
         "File 'data/file-not-in-bag' in manifest-sha256.txt is missing from bag.",
@@ -274,7 +274,7 @@ test('Validator identifies errors in bad APTrust bag', done => {
 });
 
 test('Validator identifies missing payload file', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_missing_data_file.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_missing_data_file.tar");
     let expected = ["File 'data/datastream-DC' in manifest-md5.txt is missing from bag.",
                     "Required tag Access is missing from aptrust-info.txt",
                     "Required tag Storage-Option is missing from aptrust-info.txt"];
@@ -293,7 +293,7 @@ test('Validator identifies missing payload file', done => {
 });
 
 test('Validator identifies missing tag file', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_no_bag_info.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_no_bag_info.tar");
     let expected = ["Required tag file bag-info.txt is missing",
                     "Required tag Access is missing from aptrust-info.txt",
                     "Required tag Storage-Option is missing from aptrust-info.txt"];
@@ -312,7 +312,7 @@ test('Validator identifies missing tag file', done => {
 });
 
 test('Validator identifies missing data dir', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_no_data_dir.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_no_data_dir.tar");
     let expected = [
         "File 'data/datastream-DC' in manifest-md5.txt is missing from bag.",
         "File 'data/datastream-descMetadata' in manifest-md5.txt is missing from bag.",
@@ -334,7 +334,7 @@ test('Validator identifies missing data dir', done => {
 });
 
 test('Validator identifies missing manifest', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_no_md5_manifest.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_no_md5_manifest.tar");
     // Add a required profile to be sure validator checks for it.
     validator.profile.manifestsRequired = ["md5"];
     let expected = ["Bag is missing required manifest manifest-md5.txt",
@@ -354,7 +354,7 @@ test('Validator identifies missing manifest', done => {
 });
 
 test('Validator identifies wrong folder name', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_wrong_folder_name.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_wrong_folder_name.tar");
     let expected = ["Bag should untar to directory 'example.edu.sample_wrong_folder_name', not 'wrong_folder_name'"];
 
     validator.on('error', function(err) {
@@ -371,7 +371,7 @@ test('Validator identifies wrong folder name', done => {
 });
 
 test('Validator rejects unserialized bag if profile says it must be serialized', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
     let expected = [Context.y18n.__("Profile says bag must be serialized, but it is a directory.")];
 
     validator.on('error', function(err) {
@@ -388,7 +388,7 @@ test('Validator rejects unserialized bag if profile says it must be serialized',
 });
 
 test('Validator ignores serialization rules when disableSerializationCheck is true', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_good");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_good");
     validator.disableSerializationCheck = true;
 
     validator.on('error', function(err) {
@@ -406,7 +406,7 @@ test('Validator ignores serialization rules when disableSerializationCheck is tr
 });
 
 test('Validator finds bad Payload-Oxum', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.sample_bad_oxum.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.sample_bad_oxum.tar");
     let expected = [
         "Payload-Oxum says there should be 24 files in the payload, but validator found 4.",
         "Payload-Oxum says there should be 99999 bytes in the payload, but validator found 13821."]
@@ -426,7 +426,7 @@ test('Validator finds bad Payload-Oxum', done => {
 });
 
 test('Validator identifies illegal manifests', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     validator.profile.manifestsAllowed = ["sha384"];
     validator.on('error', function(err) {
         // Force failure & stop test.
@@ -443,7 +443,7 @@ test('Validator identifies illegal manifests', done => {
 });
 
 test('Validator identifies illegal tag manifests', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     validator.profile.tagManifestsAllowed = [];
     validator.on('error', function(err) {
         // Force failure & stop test.
@@ -460,7 +460,7 @@ test('Validator identifies illegal tag manifests', done => {
 });
 
 test('Validator identifies illegal tag files', done => {
-    let validator = getValidator("aptrust", "aptrust", "example.edu.tagsample_good.tar");
+    let validator = getValidator("aptrust_2.2.json", "aptrust", "example.edu.tagsample_good.tar");
     // bagit.txt is always allowed.
     validator.profile.tagFilesAllowed = [
         "bag-info.txt",

@@ -15,7 +15,7 @@ var writerFiles = fs.readdirSync(writerDir).filter(fileFilter);
 
 
 test('types()', () => {
-    expect(PluginManager.types()).toEqual(['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository', 'Setup']);
+    expect(PluginManager.types()).toEqual(['FormatReader', 'FormatWriter', 'NetworkClient', 'Repository']);
 });
 
 test('getModuleCollection()', () => {
@@ -80,17 +80,4 @@ test('talksTo()', () => {
         }
     }
     expect(foundAPTrustClient).toEqual(true);
-});
-
-test('setsUp()', () => {
-    var plugins = PluginManager.setsUp('aptrust');
-    expect(plugins).toBeDefined();
-    expect(plugins.length).toBeGreaterThan(0);
-    var foundAPTrustSetup = false;
-    for (var plugin of plugins) {
-        if (plugin.description().name === 'APTrustSetup') {
-            foundAPTrustSetup = true;
-        }
-    }
-    expect(foundAPTrustSetup).toEqual(true);
 });
