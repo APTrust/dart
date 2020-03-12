@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>
-      ui/controllers/dart_process_controller.js - Documentation
+      ui/forms/bag_validation_form.js - Documentation
   </title>
 
   <link href="https://www.braintreepayments.com/images/favicon-ccda0b14.png" rel="icon" type="image/png">
@@ -88,7 +88,7 @@
   <div id="main">
     
       <h1 class="page-title">
-        ui/controllers/dart_process_controller.js
+        ui/forms/bag_validation_form.js
       </h1>
     
 
@@ -97,57 +97,68 @@
 
 <section>
   <article>
-    <pre class="prettyprint source linenums"><code>const { BaseController } = require('./base_controller');
+    <pre class="prettyprint source linenums"><code>const $ = require('jquery');
+const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Choice } = require('./choice');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
-const { DartProcess } = require('../../core/dart_process');
-const Templates = require('../common/templates');
+const { Field } = require('./field');
+const { Form } = require('./form');
+const { Job } = require('../../core/job');
+const path = require('path');
+const { ValidationOperation } = require('../../core/validation_operation');
 
 /**
- * The DartProcessController displays information about the DART child
- * processes used to package, validate, and/or upload files.
- *
- * @param {URLSearchParams} params - The URL search params parsed
- * from the URL used to reach this page. This should contain at
- * least the DartProcess Id.
- *
- * @param {string} params.id - The id of the DartProcess to display.
- * DartProcess.id is a UUID string.
+ * BagValidationForm can present and parse the form that allows
+ * the user to specify a bag to be validated and a profile to validate
+ * against.
  */
-class DartProcessController extends BaseController {
+class BagValidationForm extends Form {
 
-    constructor(params) {
-        super(params, 'Jobs');
-        this.model = DartProcess;
-        this.listTemplate = Templates.dartProcessList;
-        this.nameProperty = 'name';
-        this.defaultOrderBy = 'startedAt';
-        this.defaultSortDirection = 'desc';
-        this.dartProcess = DartProcess.find(this.params.get('id'));
+    constructor(job) {
+        super('Job', job);
+        this._init();
     }
 
-    /**
-     * Displays a summary of the process.
-     */
-    list() {
-        let data = {
-            items: this.getRunningProcesses()
-        };
-        return this.containerContent(Templates.dartProcessList(data));
+    _init() {
+        this.fields['pathToBag'] = new Field("pathToBag", "pathToBag", "Choose a file...", "");
+        this._listBagItProfiles();
     }
 
-    getRunningProcesses() {
-        let idsOfRunningProcs = Object.keys(Context.childProcesses);
-        let opts = {
-            orderBy: this.defaultOrderBy,
-            sortDirection: this.defaultSortDirection
-        };
-        let filterFn = (obj) => { idsOfRunningProcs.includes(obj.id) };
-        return DartProcess.list(filterFn, opts);
+    _listBagItProfiles() {
+        var profiles = BagItProfile.list(null, {
+            limit: 0,
+            offset: 0,
+            orderBy: 'name',
+            sortDirection: 'asc'
+        });
+        this.fields['bagItProfile'].choices = Choice.makeList(
+            profiles,
+            Constants.BUILTIN_PROFILE_IDS['empty'],
+            false
+        );
+        this.fields['bagItProfile'].help = Context.y18n.__('Choose a profile against which to validate this bag. If you just want to validate against the BagIt specification, choose the Empty Profile.');
     }
 
+    parseFromDOM() {
+        // This is required for jest tests.
+        if ($ === undefined) {
+            var $ = require('jquery');
+        }
+        let profileId = $('#jobForm_bagItProfile').val();
+        this.obj.bagItProfile = BagItProfile.find(profileId)
+        this.obj.validationOp = new ValidationOperation();
+        let files = document.getElementById('pathToBag').files
+        let filename = files[0].path;
+        // If user selected directory, use the dir name.
+        if (files.length > 1) {
+            filename = path.dirname(files[0].path);
+        }
+        this.obj.validationOp.pathToBag = filename;
+    }
 }
 
-module.exports.DartProcessController = DartProcessController;
+module.exports.BagValidationForm = BagValidationForm;
 </code></pre>
   </article>
 </section>
