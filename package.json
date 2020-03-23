@@ -31,7 +31,7 @@
         "minio": "^7.0.15",
         "os-locale": "^4.0.0",
         "popper.js": "^1.16.1",
-        "readdirp": "^3.3.0",
+        "readdirp": "^3.4.0",
         "request": "^2.88.2",
         "require-dir": "^1.2.0",
         "ssh2": "^0.8.8",
