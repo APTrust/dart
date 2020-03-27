@@ -68,16 +68,15 @@
         "copyright": "Copyright © 2019 [object Object]",
         "productName": "DART",
         "asar": true,
+    	"afterSign": "./build/notarize.js",
         "directories": {
             "output": "dist"
         },
-        "afterSign": "./build/notarize.js",
         "mac": {
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
             "entitlements": "./build/entitlements.mac.plist",
             "entitlementsInherit": "./build/entitlements.mac.plist",
-            "provisioningProfile": "./build/DART_Mac_App.provisionprofile",
             "type": "development",
             "target": [
                 {
