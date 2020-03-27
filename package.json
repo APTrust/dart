@@ -65,7 +65,7 @@
     },
     "build": {
         "appId": "org.aptrust.DART",
-        "copyright": "Copyright © 2019 [object Object]",
+        "copyright": "Copyright © 2020 [object Object]",
         "productName": "DART",
         "asar": true,
     	"afterSign": "./build/notarize.js",
