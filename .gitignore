@@ -8,3 +8,4 @@ tsconfig.json
 apps/bin/*
 aptrust.org/*.tar
 .env
+.DS_Store
