@@ -20,7 +20,7 @@
         "conf": "git+https://github.com/APTrust/conf.git",
         "dateformat": "^3.0.3",
         "electron-context-menu": "^0.16.0",
-        "electron-log": "^4.1.0",
+        "electron-log": "^4.1.1",
         "electron-store": "^5.1.1",
         "es6-error": "^4.1.1",
         "glob": "^7.1.6",
