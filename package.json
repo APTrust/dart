@@ -17,7 +17,7 @@
         "archiver": "^3.1.1",
         "asar": "^3.0.2",
         "braintree-jsdoc-template": "^3.3.0",
-        "conf": "git+https://github.com/APTrust/conf.git",
+        "conf": "^6.2.1",
         "dateformat": "^3.0.3",
         "electron-context-menu": "^0.16.0",
         "electron-log": "^4.1.1",
