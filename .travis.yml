@@ -34,7 +34,7 @@ before_script:
 script:
         #- npm test -- --runInBand
 - security find-identity -v
-- electron-builder . --publish never -m dmg --linux deb tar.gz --config build/electron-builder-mac-ci.yml
+- electron-builder . --config build/electron-builder-mac-ci.yml
   #- "./jsdoc.sh"
 notifications:
   slack:
