@@ -17,7 +17,7 @@
         "archiver": "^3.1.1",
         "asar": "^2.1.0",
         "braintree-jsdoc-template": "^3.3.0",
-        "conf": "git+https://github.com/APTrust/conf.git",
+        "conf": "^6.2.1",
         "dateformat": "^3.0.3",
         "electron-context-menu": "^0.16.0",
         "electron-log": "^4.0.7",
@@ -68,7 +68,7 @@
         "copyright": "Copyright © 2020 [object Object]",
         "productName": "DART",
         "asar": true,
-    	"afterSign": "./build/notarize.js",
+        "afterSign": "./build/notarize.js",
         "directories": {
             "output": "dist"
         },
@@ -77,7 +77,7 @@
             "gatekeeperAssess": false,
             "entitlements": "./build/entitlements.mac.plist",
             "entitlementsInherit": "./build/entitlements.mac.plist",
-            "type": "development",
+            "type": "distribution",
             "target": [
                 {
                     "target": "dmg",
