@@ -68,7 +68,6 @@
         "copyright": "Copyright © 2020 [object Object]",
         "productName": "DART",
         "asar": true,
-        "afterSign": "./build/notarize.js",
         "directories": {
             "output": "dist"
         },
@@ -77,7 +76,7 @@
             "gatekeeperAssess": false,
             "entitlements": "./build/entitlements.mac.plist",
             "entitlementsInherit": "./build/entitlements.mac.plist",
-            "type": "distribution",
+            "type": "development",
             "target": [
                 {
                     "target": "dmg",
