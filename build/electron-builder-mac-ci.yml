@@ -1,0 +1,26 @@
+directories:
+  output: dist
+  buildResources: build
+appId: org.aptrust.DART
+copyright: 'Copyright © 2020 [object Object]'
+productName: DART
+asar: true
+afterSign: ./build/notarize.js
+mac:
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: ./build/entitlements.mac.plist
+  entitlementsInherit: ./build/entitlements.mac.plist
+  type: distribution
+  target:
+    - target: dmg
+      arch:
+        - x64
+  category: public.app-category.productivity
+linux:
+  target:
+    - target: deb
+      arch:
+        - x64
+  category: Utility
+electronVersion: 8.0.1

@@ -50,6 +50,7 @@
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
         "electron": "^8.2.0",
         "electron-builder": "^22.4.1",
+        "electron-notarize": "^0.2.1",
         "electron-toolkit": "^1.0.24",
         "jest": "^25.2.3",
         "jsdoc": "^3.6.3",
@@ -63,14 +64,19 @@
         "sftp-server": "node ./test/servers/sftp.js"
     },
     "build": {
-        "appId": "com.electron.DART",
-        "copyright": "Copyright © 2019 [object Object]",
+        "appId": "org.aptrust.DART",
+        "copyright": "Copyright © 2020 [object Object]",
         "productName": "DART",
         "asar": true,
         "directories": {
             "output": "dist"
         },
         "mac": {
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "./build/entitlements.mac.plist",
+            "entitlementsInherit": "./build/entitlements.mac.plist",
+            "type": "development",
             "target": [
                 {
                     "target": "dmg",
