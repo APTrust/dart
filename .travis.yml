@@ -31,10 +31,20 @@ before_script:
   -1)"
 - if [ "$TRAVIS_OS_NAME" = osx ]; then chmod +x ./build/add-osx-cert.sh; fi
 - if [ "$TRAVIS_OS_NAME" = osx ]; then ./build/add-osx-cert.sh; fi
+jobs:
+  include:
+    - stage: "Tests"
+      name: "Unit Tests"
+      script: npm test -- --runInBand
+    - stage: "Build"
+      name: "Build App"
+      script: electron-builder . --config build/electron-builder-mac-ci.yml
+    - stage: "Build documentation"
+      name: "Build Documentation"
+      script: ./jsdoc.sh
 script:
         #- npm test -- --runInBand
-- security find-identity -v
-- electron-builder . --config build/electron-builder-mac-ci.yml
+  - security find-identity -v
   #- "./jsdoc.sh"
 notifications:
   slack:
