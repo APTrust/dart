@@ -17,7 +17,7 @@
         "archiver": "^3.1.1",
         "asar": "^3.0.3",
         "braintree-jsdoc-template": "^3.3.0",
-        "conf": "^6.2.1",
+        "conf": "^6.2.3",
         "dateformat": "^3.0.3",
         "electron-context-menu": "^0.16.0",
         "electron-log": "^4.1.1",
