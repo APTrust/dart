@@ -18,7 +18,8 @@ environment:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
 
 install:
-  - ps: Update-NodeJsInstallation 12.16.1
+        #- ps: Update-NodeJsInstallation 12.16.1
+  - ps: Install-Product node LTS
   - node --version
   - git reset --hard HEAD
   - rm -rf node_modules
