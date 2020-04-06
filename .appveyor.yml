@@ -18,8 +18,8 @@ environment:
     secure: "0muZEDVGEpw8OhnyWFnafYkUgrt+7kl6MdWEA2guW8oLX6s3dMoRrhQjuF3Sbpi5"
 
 install:
-        #  - ps: Install-Product node 12.13.0
   - ps: Update-NodeJsInstallation 12.16.1
+  - node --version
   - git reset --hard HEAD
   - rm -rf node_modules
   - rm package-lock.json
