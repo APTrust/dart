@@ -73,6 +73,17 @@
             "help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags."
         },
         {
+            "id": "2138ec69-0d75-4f0a-bd0d-35f9e8f6cf0d",
+            "tagFile": "bag-info.txt",
+            "tagName": "Bag-Size",
+            "required": false,
+            "values": [],
+            "defaultValue": null,
+            "userValue": "",
+            "isBuiltIn": true,
+            "help": "The approximate size of the bag's payload in a human-readable format. E.g. 16.6 MB. This is calculated and set by the bagging software."
+        },
+        {
             "id": "41b75504-e54d-49a1-aad4-c8a4921d15ce",
             "tagFile": "bag-info.txt",
             "tagName": "Bagging-Date",

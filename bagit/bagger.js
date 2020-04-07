@@ -459,6 +459,11 @@ class Bagger extends EventEmitter {
             }
             payloadOxum.userValue = `${byteCount}.${fileCount}`;
         }
+
+        var bagSize = profile.firstMatchingTag('tagName', 'Bag-Size');
+        if (bagSize && payloadOxum) {
+            bagSize.userValue = Util.toHumanSize(byteCount);
+        }
     }
 
     /**

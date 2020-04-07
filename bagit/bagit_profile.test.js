@@ -315,7 +315,7 @@ test('load()', () => {
     expect(profile.description).toEqual('Modified version of APTrust 2.2 BagIt profile that includes two required manifest and tag manifest algorithms. This profile is for testing, not for production.');
     expect(profile.acceptBagItVersion).toEqual(['0.97', '1.0']);
     expect(profile.acceptSerialization).toEqual(['application/tar']);
-    expect(profile.tags.length).toEqual(14);
+    expect(profile.tags.length).toEqual(15);
     expect(profile.bagItProfileInfo.contactEmail).toEqual('support@aptrust.org');
 });
 

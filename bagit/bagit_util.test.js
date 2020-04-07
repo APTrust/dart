@@ -242,6 +242,9 @@ function expectedStandardObject() {
         "Bag-Count": {
           "required": false
         },
+        "Bag-Size": {
+          "required": false
+        },
         "Bagging-Date": {
           "required": false
         },
