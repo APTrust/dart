@@ -121,7 +121,7 @@ test('create() with multiple dirs and files', done => {
             expect(bagInfoFile.keyValueCollection.first('BagIt-Profile-Identifier')).toEqual('https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2');
             // Payload-Oxum should be ~400kb with 33 files.
             // Something like 406132.33
-            expect(bagInfoFile.keyValueCollection.first('Payload-Oxum')).toMatch(/40\d{4}.33/);
+            expect(bagInfoFile.keyValueCollection.first('Payload-Oxum')).toMatch(/4\d{5}.33/);
             // Bag-Size will be around 396.75KB
             expect(bagInfoFile.keyValueCollection.first('Bag-Size')).toMatch(/\d{3}\.\d{2} KB/);
 
