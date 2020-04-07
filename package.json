@@ -53,7 +53,7 @@
         "electron-notarize": "^0.3.0",
         "electron-toolkit": "^1.0.24",
         "jest": "^25.2.7",
-        "jsdoc": "^3.6.3",
+        "jsdoc": "^3.6.4",
         "node-sftp-server": "^0.3.0"
     },
     "scripts": {
