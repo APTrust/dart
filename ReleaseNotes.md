@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 2.0.5 - April 7, 2020
+
+* Fixed [Bag-Size not written to bag-info.txt](https://github.com/APTrust/dart/issues/247)
+* Security updates for a number npm dependencies
+
 ## 2.0.4 - March 12, 2020
 
 * Added validation-only jobs for users who simply want to validate an existing bag.
