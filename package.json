@@ -65,7 +65,7 @@
     },
     "build": {
         "appId": "org.aptrust.DART",
-        "copyright": "Copyright © 2020 [object Object]",
+        "copyright": "Copyright © 2020 Academic Preservation Trust",
         "productName": "DART",
         "asar": true,
         "directories": {
