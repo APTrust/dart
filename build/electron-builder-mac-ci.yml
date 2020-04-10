@@ -2,8 +2,6 @@ directories:
   output: dist
   buildResources: build
 appId: org.aptrust.DART
-copyright: 'Copyright © 2020 [object Object]'
-productName: DART
 asar: true
 afterSign: ./build/notarize.js
 mac:
