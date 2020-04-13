@@ -26,7 +26,7 @@
         "glob": "^7.1.6",
         "graceful-fs": "^4.2.3",
         "handlebars": "^4.7.6",
-        "jquery": "^3.4.1",
+        "jquery": "^3.5.0",
         "minimatch": "^3.0.4",
         "minio": "^7.0.15",
         "os-locale": "^5.0.0",
