@@ -441,7 +441,8 @@ class S3Client extends Plugin {
             endPoint:  this.storageService.host,
             port: this.storageService.port || 443,
             accessKey: this.storageService.getValue('login'),
-            secretKey: this.storageService.getValue('password')
+            secretKey: this.storageService.getValue('password'),
+            useSSL: this.storageService.host != 'localhost' &amp;&amp; this.storageService.host != '127.0.0.1',
         });
         // TODO: This is too specialized to go in a general-use client.
         // Where should this go?
