@@ -51,13 +51,11 @@
         "electron": "^8.2.5",
         "electron-builder": "^22.6.0",
         "electron-notarize": "^0.3.0",
-        "electron-toolkit": "^1.0.24",
         "jest": "^25.5.4",
         "jsdoc": "^3.6.4",
         "node-sftp-server": "^0.3.0"
     },
     "scripts": {
-        "electron-toolkit": "electron ./node_modules/electron-toolkit",
         "start": "set NODE_ENV=dev && electron .",
         "release": "build",
         "test": "jest",
