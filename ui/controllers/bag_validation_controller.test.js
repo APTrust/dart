@@ -2,8 +2,8 @@ const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
-//const { Job } = require('../../core/job');
 const { BagValidationController } = require('./bag_validation_controller');
+const os = require('os');
 const path = require('path');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
@@ -45,10 +45,12 @@ function testValidateBag(bagpath, profileName, done) {
 
     controller.validateBag();
 
+    // Longer timeout for AppVeyor tests
+    timeout = os.platform() == 'win32' ? 2000 : 1000;
     setTimeout(function() {
         expect($('#dartProcessContainer').html()).toMatch(Context.y18n.__('Job completed successfully.'));
         done();
-    }, 1000)
+    }, timeout)
 }
 
 test('constructor', () => {
