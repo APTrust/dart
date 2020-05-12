@@ -250,6 +250,8 @@ class BagItUtil {
         obj["Accept-Serialization"] = p.acceptSerialization;
         obj["Allow-Fetch.txt"] = p.allowFetchTxt;
         obj["Serialization"] = p.serialization;
+        obj["Manifests-Allowed"] = p.manifestsAllowed;
+        obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
         obj["Manifests-Required"] = p.manifestsRequired;
         obj["Tag-Manifests-Required"] = p.tagManifestsRequired;
 

@@ -215,6 +215,22 @@ function expectedStandardObject() {
       ],
       "Allow-Fetch.txt": false,
       "Serialization": "required",
+      "Manifests-Allowed": [
+        "md5",
+        "sha1",
+        "sha224",
+        "sha256",
+        "sha384",
+        "sha512"
+      ],
+      "Tag-Manifests-Allowed": [
+        "md5",
+        "sha1",
+        "sha224",
+        "sha256",
+        "sha384",
+        "sha512"
+      ],
       "Manifests-Required": [
         "md5",
         "sha256"
