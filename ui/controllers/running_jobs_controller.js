@@ -5,6 +5,7 @@ const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
 const { UIConstants } = require('../common/ui_constants');
+const { Util } = require('../../core/util');
 
 /**
  * This controller is never instantiated or called directly.
@@ -93,7 +94,8 @@ class RunningJobsController extends BaseController {
     renderPackageInfo(data, dartProcess) {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'packageInfo');
         if (data.action == 'fileAdded') {
-            detailDiv.text(Context.y18n.__('Added file %s', data.msg));
+            let shortName = Util.trimToLength(data.msg, 80, 'middle');
+            detailDiv.text(Context.y18n.__('Added file %s', shortName));
             this.setProgressBar(progressBar, data);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
@@ -110,7 +112,8 @@ class RunningJobsController extends BaseController {
     renderValidationInfo(data, dartProcess) {
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'validationInfo');
         if (data.action == 'checksum') {
-            detailDiv.text(Context.y18n.__('Validating %s', data.msg));
+            let shortName = Util.trimToLength(data.msg, 80, 'middle');
+            detailDiv.text(Context.y18n.__('Validating %s', shortName));
             this.setProgressBar(progressBar, data);
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
@@ -150,6 +153,9 @@ class RunningJobsController extends BaseController {
         let job = Job.find(dartProcess.jobId);
         let [detailDiv, progressBar] = this.getDivs(dartProcess, 'outcome');
         if (code == 0) {
+            if (job.packageOp) {
+                this.ensureValidationMarkedComplete(dartProcess)
+            }
             this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
         } else {
             let msg = Context.y18n.__('Job did not complete due to errors.')
@@ -160,6 +166,14 @@ class RunningJobsController extends BaseController {
         }
         // Button exists on job "Review and Run" page, not dashboard.
         $('#btnRunJob').prop('disabled', false);
+    }
+
+    ensureValidationMarkedComplete(dartProcess) {
+        // For some bags with thousands of files, validation isn't
+        // marked complete after validation succeeds. This happens
+        // occasionally, not consistently. Race condition between
+        // process exit and event firing?
+        this.renderValidationInfo({action: 'completed', status: Constants.OP_SUCCEEDED, msg: Context.y18n.__('Bag is valid')}, dartProcess);
     }
 
     getDivs(dartProcess, section) {

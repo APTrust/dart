@@ -354,3 +354,9 @@ test('Util.findCommonPathPrefix()', () => {
     expect(Util.findCommonPathPrefix(windowsPaths, '\\')).toEqual("c:\\path\\to\\some\\");
     expect(Util.findCommonPathPrefix(nothingInCommon, '/')).toEqual('');
 });
+
+test('Util.trimToLength()', () => {
+    let str = "Did the solution require a complex prediction, or is the solution clear and closely related to the problem?";
+    expect(Util.trimToLength(str, 30, 'end')).toEqual("Did the solution require a co...");
+    expect(Util.trimToLength(str, 30, 'middle')).toEqual("Did the sol...to the problem?");
+});

@@ -575,7 +575,7 @@ class Util {
      * Returns true if the file at filepath is readable by
      * the current user/application.
      *
-     * @params {string} filepath - The path the the file.
+     * @param {string} filepath - The path the the file.
      * @returns {boolean}
      */
     static canRead(filepath) {
@@ -659,6 +659,36 @@ class Util {
             lastPrefix = prefix;
         }
         return prefix;
+    }
+
+    /**
+     * Returns str trimmed to the specified length, with trimmed characters
+     * replaced by '...'. If str is already less than or equal to len
+     * characters, this returns the string unchanged. If len is too short,
+     * the return value will likely be '...'.
+     *
+     * @param {string} str - The string to trim.
+     * @param {number} len - The length to trim to.
+     * @param {string} trimFrom - Where to trim the excess characters from.
+     * Valid values are 'end' and 'middle'. Any other value is interpreted
+     * as 'middle'.
+     * @returns {string}
+     */
+    static trimToLength(str, len, trimFrom) {
+        let trimmedStr = '';
+        if (str.length <= len) {
+            return str
+        }
+        if (trimFrom == 'end') {
+            trimmedStr = str.substring(0, len-1) + '...';
+        } else {
+            let endOfStart = Math.max(((len / 2) - 4), 4);
+            let start = str.substring(0, endOfStart);
+            let endIndex = Math.max(0, str.length - (len / 2));
+            let end = str.substring(endIndex, str.length)
+            trimmedStr = start + '...' + end;
+        }
+        return trimmedStr;
     }
 
 }
