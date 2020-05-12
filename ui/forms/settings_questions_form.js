@@ -326,6 +326,9 @@ class SettingsQuestionsForm extends Form {
         if (selectedType == "BagItProfile") {
             let profileId = this.getSelectedId(rowNumber);
             let profile = BagItProfile.find(profileId);
+            if (profile == null) {
+                return [];
+            }
             let opts =  profile.tags.filter(tagDef => !tagDef.systemMustSet()).map(tag => {return { id: tag.id, name: tag.tagName }});
             return opts.sort((x,y) => {
                 if (x.name < y.name) {
