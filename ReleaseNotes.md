@@ -1,5 +1,13 @@
 # DART Release Notes
 
+## 2.0.6 - May 12, 2020
+
+* Exported BagIt profiles now include Manifests-Allowed and Tag-Maifests-Allowed
+* Settings export no long fails on missing BagIt profiles.
+* Progress bars on Job Run page no longer bounce when a bag contains long file names.
+* Validation progress bar on Job Run page is marked complete when job succeeds.
+* Security updates to underlying npm libraries
+
 ## 2.0.5 - April 7, 2020
 
 * Fixed [Bag-Size not written to bag-info.txt](https://github.com/APTrust/dart/issues/247)
