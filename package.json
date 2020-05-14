@@ -1,6 +1,6 @@
 {
     "name": "DART",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "description": "",
     "main": "main.js",
     "repository": {
@@ -59,7 +59,8 @@
         "start": "set NODE_ENV=dev && electron .",
         "release": "build",
         "test": "jest",
-        "sftp-server": "node ./test/servers/sftp.js"
+        "sftp-server": "node ./test/servers/sftp.js",
+        "bump": "node ./util/bump_version.js"
     },
     "build": {
         "appId": "org.aptrust.DART",

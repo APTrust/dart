@@ -1,7 +1,7 @@
 const APTrustClient = require('./aptrust');
+const { Context } = require('../../core/context');
 const { PluginManager } = require('../plugin_manager');
 const { RemoteRepository } = require('../../core/remote_repository');
-
 
 
 const aptrustPluginId = 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd';
@@ -12,7 +12,6 @@ const repo = new RemoteRepository({
     apiToken: '1234-5678',
     pluginId: aptrustPluginId
 });
-
 
 
 test('Constructor sets expected properties', () => {
@@ -115,7 +114,7 @@ test('_getHeaders()', () => {
     let expected =  {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "User-Agent": "DART 2.0.6 / Node.js request",
+        "User-Agent": `DART ${Context.dartReleaseNumber()} / Node.js request`,
         "X-Pharos-API-Key": "1234-5678",
         "X-Pharos-API-User": "marge@example.com",
     }
