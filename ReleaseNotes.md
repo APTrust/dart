@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 2.0.7 - May 14, 2020
+
+* Settings import question now displays a password field instead of a regular text input for passwords.
+* (Internal) Added `npm run bump` to simplify version changes.
+
 ## 2.0.6 - May 12, 2020
 
 * Exported BagIt profiles now include Manifests-Allowed and Tag-Maifests-Allowed
