@@ -27,7 +27,11 @@
   <form id="settingsResponseForm">
 
     {{#each form.fields as |field|}}
-      {{> inputText field = field}}
+      {{#if field.attrs.maskField }}
+        {{> inputPassword field = field}}
+      {{else}}
+        {{> inputText field = field}}
+      {{/if}}
     {{/each}}
 
     <div class="pull-right">

@@ -35,6 +35,11 @@ class SettingsResponseForm extends Form {
                 q.prompt,
                 ""
             );
+            // If this field will contain sensitive data,
+            // mask it (i.e. present it as a password field).
+            if (q.field == "password") {
+                this.fields[q.id].attrs["maskField"] = true
+            }
         }
     }
 
