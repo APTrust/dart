@@ -186,6 +186,9 @@ on a Mac, it will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
 
 You can run the binary directly from there.
 
+Note that you can bump the version for new releases with the bump_version
+script. For example, to bump from 2.0.6 to 2.0.7, run `npm run bump 2.0.6 2.0.7`
+
 ## Building the Docs
 
 ```
