@@ -119,9 +119,9 @@ tool for creating archival packages and sending them to a remote repository.</p>
 <h2>Installation</h2>
 <p>Download the DART installer for your system and then check out our <a href="https://aptrust.github.io/dart-docs/users/getting_started/">Getting Started</a> page.</p>
 <ul>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.6.dmg">Mac OSX v2.0.6</a></li>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.6.exe">Windows v2.0.6</a></li>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.6_amd64.deb">Linux v2.0.6</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.7.dmg">Mac OSX v2.0.7</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.7.exe">Windows v2.0.7</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.7_amd64.deb">Linux v2.0.7</a></li>
 </ul>
 <p>While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
@@ -249,6 +249,8 @@ the top-level directory of the project.</p>
 <p>The binary will appear in the /dist folder. For example, when building
 on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
 <p>You can run the binary directly from there.</p>
+<p>Note that you can bump the version for new releases with the bump_version
+script. For example, to bump from 2.0.6 to 2.0.7, run <code>npm run bump 2.0.6 2.0.7</code></p>
 <h2>Building the Docs</h2>
 <pre class="prettyprint source"><code>./jsdoc.sh
 </code></pre>
