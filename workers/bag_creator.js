@@ -1,5 +1,7 @@
 const { Bagger } = require('../bagit/bagger');
 const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
+const fs = require('fs');
 const { Job } = require('../core/job');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
@@ -37,6 +39,13 @@ class BagCreator extends Worker {
                 reject(creator.validationError(errors));
             });
         }
+        let dirError = creator.errorOnExistingDir(this.job.packageOp.outputPath)
+        if (dirError != null) {
+            return new Promise(function(resolve, reject) {
+                reject(creator.runtimeError('start', dirError.Message, dirError));
+            });
+        }
+
         var bagger = new Bagger(this.job);
         bagger.on('packageStart', function(message) {
             creator.info('start', Constants.OP_IN_PROGRESS, message, 0, false);
@@ -67,6 +76,25 @@ class BagCreator extends Worker {
         });
         bagger.create();
         return promise;
+    }
+
+    /**
+     * errorOnExistingDir causes the bag creator to stop with an error
+     * if the directory to which we're writing this bag already exists and
+     * contains files. Writing a bag into a non-empty directory will usually
+     * cause bag validation to fail, as described in
+     * https://github.com/APTrust/dart/issues/280
+     *
+     * @param outputPath {string} - The path to which the bag will be written.
+     *
+     * @returns {Error}
+     */
+    errorOnExistingDir(outputPath) {
+        if (Util.isNonEmptyDirectory(outputPath)) {
+            let msg = Context.y18n.__("Output directory %s already exists and contains files. You must delete it before writing a new bag into it.", outputPath)
+            return new Error(msg)
+        }
+        return null
     }
 }
 

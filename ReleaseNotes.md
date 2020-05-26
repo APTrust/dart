@@ -2,6 +2,12 @@
 
 ## 2.0.7 - May 14, 2020
 
+* Fixed [Unserialized bags which match existing path are invalid](https://github.com/APTrust/dart/issues/280)
+* Updated to Electron 9.0.0
+* Updated several npm dependencies
+
+## 2.0.7 - May 14, 2020
+
 * Settings import question now displays a password field instead of a regular text input for passwords.
 * (Internal) Added `npm run bump` to simplify version changes.
 

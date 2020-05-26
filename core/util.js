@@ -606,6 +606,21 @@ class Util {
     }
 
     /**
+     * Returns true if dirpath is a non-empty directory.
+     *
+     * @path {string} dirpath - The path to check
+     *
+     * @returns {boolean}
+     */
+    static isNonEmptyDirectory(dirpath) {
+        let files = []
+        if (fs.existsSync(dirpath) && fs.lstatSync(dirpath).isDirectory()) {
+            files = fs.readdirSync(dirpath)
+        }
+        return files.length > 0
+    }
+
+    /**
      * Given a list of file paths, this returns the prefix common
      * to all paths. This function probably has worse than 0n^2
      * efficiency, so it's OK if paths.length < 10, but it probably

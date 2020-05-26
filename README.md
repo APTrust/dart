@@ -26,9 +26,9 @@ tool for creating archival packages and sending them to a remote repository.
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
-* [Mac OSX v2.0.7](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.7.dmg)
-* [Windows v2.0.7](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.7.exe)
-* [Linux v2.0.7](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.7_amd64.deb)
+* [Mac OSX v2.0.8](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.8.dmg)
+* [Windows v2.0.8](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.8.exe)
+* [Linux v2.0.8](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.8_amd64.deb)
 
 While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
@@ -187,7 +187,7 @@ on a Mac, it will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
 You can run the binary directly from there.
 
 Note that you can bump the version for new releases with the bump_version
-script. For example, to bump from 2.0.6 to 2.0.7, run `npm run bump 2.0.6 2.0.7`
+script. For example, to bump from 2.x.x to 2.y.y, run `npm run bump 2.x.x to 2.y.y`
 
 ## Building the Docs
 

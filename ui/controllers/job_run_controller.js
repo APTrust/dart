@@ -59,6 +59,9 @@ class JobRunController extends RunningJobsController {
      * Runs the Job in a separate process.
      */
     run() {
+        if (!this._checkOutputPath()) {
+            return this.noContent()
+        }
         // Grey this out while job is running.
         // Run job in separate process, so user can
         // navigate to other screens without disrupting it.
@@ -97,6 +100,25 @@ class JobRunController extends RunningJobsController {
             prevController = 'JobMetadata';
         }
         return this.redirect(prevController, 'show', this.params);
+    }
+
+    /**
+     * If the output path is a non-empty directory, prompt the user to
+     * delete it. We call this before running a job.
+     */
+    _checkOutputPath() {
+        let okToRunJob = true
+        if (this.job.packageOp && Util.isNonEmptyDirectory(this.job.packageOp.outputPath)) {
+            let okToDelete = confirm(Context.y18n.__("You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.", this.job.packageOp.outputPath))
+            if (okToDelete) {
+                // Note that this will throw an exception if outputPath is
+                // something like "/" or "C:\Users"
+                Util.deleteRecursive(this.job.packageOp.outputPath)
+            } else {
+                okToRunJob = false
+            }
+        }
+        return okToRunJob
     }
 
     _getTrimPath() {

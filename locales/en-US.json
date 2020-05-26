@@ -429,5 +429,6 @@
   "Bag is a tar file": "Bag is a tar file",
   "Bag is a directory": "Bag is a directory",
   "Choose a file...": "Choose a file...",
-  "Choose a directory...": "Choose a directory..."
+  "Choose a directory...": "Choose a directory...",
+  "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.": "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop."
 }

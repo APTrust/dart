@@ -333,6 +333,12 @@ test('Util.canWrite()', () => {
     expect(Util.canWrite(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
 });
 
+test('Util.isNonEmptyDirectory()', () => {
+    expect(Util.isNonEmptyDirectory(__dirname)).toBe(true)
+    expect(Util.isNonEmptyDirectory(__dirname + 'zzzz8080')).toBe(false)
+    expect(Util.isNonEmptyDirectory('')).toBe(false)
+});
+
 test('Util.findCommonPathPrefix()', () => {
     let posixPaths = [
         "/path/to/some/file.txt",
