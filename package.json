@@ -1,101 +1,105 @@
 {
-    "name": "DART",
-    "version": "2.0.8",
-    "description": "",
-    "main": "main.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/APTrust/dart.git"
+  "name": "DART",
+  "version": "2.0.8",
+  "description": "",
+  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/APTrust/dart.git"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Andrew Diamond",
+    "email": "dev@aptrust.org"
+  },
+  "dependencies": {
+    "ajv": "^6.12.2",
+    "archiver": "^4.0.1",
+    "asar": "^3.0.3",
+    "braintree-jsdoc-template": "^3.3.0",
+    "conf": "^6.2.4",
+    "dateformat": "^3.0.3",
+    "electron-context-menu": "^2.0.1",
+    "electron-log": "^4.2.0",
+    "electron-store": "^5.1.1",
+    "es6-error": "^4.1.1",
+    "glob": "^7.1.6",
+    "graceful-fs": "^4.2.4",
+    "handlebars": "^4.7.6",
+    "jquery": "^3.5.1",
+    "minimatch": "^3.0.4",
+    "minio": "^7.0.16",
+    "os-locale": "^5.0.0",
+    "popper.js": "^1.16.1",
+    "readdirp": "^3.4.0",
+    "request": "^2.88.2",
+    "require-dir": "^1.2.0",
+    "ssh2": "^0.8.9",
+    "ssh2-sftp-client": "^5.1.2",
+    "tail": "^2.0.3",
+    "tar-stream": "^2.1.1",
+    "tmp": "0.2.1",
+    "typescript": "^3.9.3",
+    "vue": "^2.6.11",
+    "vue-template-compiler": "^2.6.11",
+    "winston": "^3.2.1",
+    "winston-console-for-electron": "0.0.7",
+    "y18n": "^4.0.0",
+    "snyk": "^1.332.0"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-async-generator-functions": "^6.24.1",
+    "electron": "^9.0.0",
+    "electron-builder": "^22.6.1",
+    "electron-notarize": "^0.3.0",
+    "jest": "^26.0.1",
+    "jsdoc": "^3.6.4",
+    "node-sftp-server": "^0.3.0"
+  },
+  "scripts": {
+    "start": "set NODE_ENV=dev && electron .",
+    "release": "build",
+    "test": "jest",
+    "sftp-server": "node ./test/servers/sftp.js",
+    "bump": "node ./util/bump_version.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "build": {
+    "appId": "org.aptrust.DART",
+    "copyright": "Copyright © 2020 Academic Preservation Trust",
+    "productName": "DART",
+    "asar": true,
+    "directories": {
+      "output": "dist"
     },
-    "license": "Apache-2.0",
-    "author": {
-        "name": "Andrew Diamond",
-        "email": "dev@aptrust.org"
-    },
-    "dependencies": {
-        "ajv": "^6.12.2",
-        "archiver": "^4.0.1",
-        "asar": "^3.0.3",
-        "braintree-jsdoc-template": "^3.3.0",
-        "conf": "^6.2.4",
-        "dateformat": "^3.0.3",
-        "electron-context-menu": "^2.0.1",
-        "electron-log": "^4.2.0",
-        "electron-store": "^5.1.1",
-        "es6-error": "^4.1.1",
-        "glob": "^7.1.6",
-        "graceful-fs": "^4.2.4",
-        "handlebars": "^4.7.6",
-        "jquery": "^3.5.1",
-        "minimatch": "^3.0.4",
-        "minio": "^7.0.16",
-        "os-locale": "^5.0.0",
-        "popper.js": "^1.16.1",
-        "readdirp": "^3.4.0",
-        "request": "^2.88.2",
-        "require-dir": "^1.2.0",
-        "ssh2": "^0.8.9",
-        "ssh2-sftp-client": "^5.1.2",
-        "tail": "^2.0.3",
-        "tar-stream": "^2.1.1",
-        "tmp": "0.2.1",
-        "typescript": "^3.9.3",
-        "vue": "^2.6.11",
-        "vue-template-compiler": "^2.6.11",
-        "winston": "^3.2.1",
-        "winston-console-for-electron": "0.0.7",
-        "y18n": "^4.0.0"
-    },
-    "devDependencies": {
-        "babel-plugin-transform-async-generator-functions": "^6.24.1",
-        "electron": "^9.0.0",
-        "electron-builder": "^22.6.1",
-        "electron-notarize": "^0.3.0",
-        "jest": "^26.0.1",
-        "jsdoc": "^3.6.4",
-        "node-sftp-server": "^0.3.0"
-    },
-    "scripts": {
-        "start": "set NODE_ENV=dev && electron .",
-        "release": "build",
-        "test": "jest",
-        "sftp-server": "node ./test/servers/sftp.js",
-        "bump": "node ./util/bump_version.js"
-    },
-    "build": {
-        "appId": "org.aptrust.DART",
-        "copyright": "Copyright © 2020 Academic Preservation Trust",
-        "productName": "DART",
-        "asar": true,
-        "directories": {
-            "output": "dist"
-        },
-        "mac": {
-            "hardenedRuntime": true,
-            "gatekeeperAssess": false,
-            "entitlements": "./build/entitlements.mac.plist",
-            "entitlementsInherit": "./build/entitlements.mac.plist",
-            "type": "development",
-            "target": [
-                {
-                    "target": "dmg",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ],
-            "category": "public.app-category.productivity"
-        },
-        "linux": {
-            "target": [
-                {
-                    "target": "deb",
-                    "arch": [
-                        "x64"
-                    ]
-                }
-            ],
-            "category": "Utility"
+    "mac": {
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "./build/entitlements.mac.plist",
+      "entitlementsInherit": "./build/entitlements.mac.plist",
+      "type": "development",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64"
+          ]
         }
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Utility"
     }
+  },
+  "snyk": true
 }
