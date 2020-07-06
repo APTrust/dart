@@ -30,7 +30,7 @@ install:
 
 build_script:
   - npm test -- --runInBand
-  - electron-builder . --publish never
+  - electron-builder --publish never
 
 after_build:
   - ps: Get-ChildItem .\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }

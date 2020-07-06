@@ -33,7 +33,7 @@ before_script:
 script:
   - npm test -- --runInBand
   - security find-identity -v
-  - electron-builder . --config build/electron-builder-mac-ci.yml -ml --publish never
+  - electron-builder --config build/electron-builder-mac-ci.yml -ml --publish never
   - ls -alr dist
   - ./jsdoc.sh
 notifications:
