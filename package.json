@@ -18,6 +18,7 @@
         "asar": "^3.0.3",
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "^6.2.4",
+        "csv-parse": "^4.10.1",
         "dateformat": "^3.0.3",
         "electron-context-menu": "^2.0.1",
         "electron-log": "^4.2.2",
