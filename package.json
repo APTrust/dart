@@ -19,7 +19,7 @@
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "^7.0.1",
         "dateformat": "^3.0.3",
-        "electron-context-menu": "^2.0.1",
+        "electron-context-menu": "^2.2.0",
         "electron-log": "^4.2.2",
         "electron-store": "^5.2.0",
         "es6-error": "^4.1.1",
