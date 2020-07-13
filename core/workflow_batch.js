@@ -5,6 +5,7 @@ const { Workflow } = require('./workflow');
 class WorkflowBatch extends PersistentObject {
 
     constructor(opts = {}) {
+        opts.required = ['workflowId', 'pathToCSVFile'];
         super(opts);
         this.workflowId = opts.workflowId;
         this.pathToCSVFile = opts.pathToCSVFile;

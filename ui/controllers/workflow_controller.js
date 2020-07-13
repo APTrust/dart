@@ -93,11 +93,27 @@ class WorkflowController extends BaseController {
      *
      */
     batch() {
-        let batch = new WorkflowBatch();
-        let form = new WorkflowBatchForm(batch);
+        let form = new WorkflowBatchForm(new WorkflowBatch());
         let html = Templates.workflowBatch({ form: form });
         return this.containerContent(html);
     }
+
+    /**
+     *
+     *
+     */
+    validateBatch() {
+        let form = new WorkflowBatchForm(new WorkflowBatch());
+        form.parseFromDOM();
+        if (!form.obj.validate()) {
+            form.setErrors();
+            let html = Templates.workflowBatch({ form: form });
+            return this.containerContent(html);
+        }
+        alert('Form is valid');
+        return this.noContent();
+    }
+
 
     /**
      *

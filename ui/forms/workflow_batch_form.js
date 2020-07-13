@@ -23,7 +23,12 @@ class WorkflowBatchForm extends Form {
     }
 
     _initPathToCSVFile() {
-        this.fields['pathToCSVFile'].label = Context.y18n.__("Choose CSV file");
+        this.fields['pathToCSVFile'] = new Field("pathToCSVFile", "pathToCSVFile", "Choose CSV file", "");
+        this.fields['pathToCSVFile'].attrs = {
+            accept: '.csv',
+            required: true,
+        }
+        this.fields['pathToCSVFile'].error = this.obj.errors['pathToCSVFile'];
     }
 
     _initWorkflowList() {
@@ -32,6 +37,7 @@ class WorkflowBatchForm extends Form {
             sortDirection: 'asc'
         }
         this.fields['workflowId'].label = Context.y18n.__("Choose a workflow");
+        this.fields['workflowId'].required = true;
         this.fields['workflowId'].choices = Choice.makeList(
             Workflow.list(null, listOptions),
             this.obj.workflowId,
@@ -43,7 +49,11 @@ class WorkflowBatchForm extends Form {
     parseFromDOM() {
         super.parseFromDOM();
         let files = document.getElementById('pathToCSVFile').files
-        this.obj.pathToCSVFile = files[0].path;
+        if (files.length > 0) {
+            this.obj.pathToCSVFile = files[0].path;
+        } else {
+            this.obj.pathToCSVFile = '';
+        }
     }
 
 }
