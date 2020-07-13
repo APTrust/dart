@@ -72,6 +72,7 @@ var settingsImport = compileHTML(readFile('settings', 'import.html'));
 var settingsQuestions = compileHTML(readFile('settings', 'questions_form.html'));
 var tagDefinitionForm = compileHTML(readFile('tag_definition', 'form.html'));
 var tagFileForm = compileHTML(readFile('tag_file', 'form.html'));
+var workflowBatch = compileHTML(readFile('workflow', 'batch.html'));
 var workflowForm = compileHTML(readFile('workflow', 'form.html'));
 var workflowList = compileHTML(readFile('workflow', 'list.html'));
 
@@ -173,5 +174,6 @@ module.exports.settingsImport = settingsImport;
 module.exports.settingsQuestions = settingsQuestions;
 module.exports.tagDefinitionForm = tagDefinitionForm;
 module.exports.tagFileForm = tagFileForm;
+module.exports.workflowBatch = workflowBatch;
 module.exports.workflowForm = workflowForm;
 module.exports.workflowList = workflowList;

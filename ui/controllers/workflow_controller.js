@@ -4,7 +4,9 @@ const { Job } = require('../../core/job');
 const { JobParams } = require('../../core/job_params');
 const Templates = require('../common/templates');
 const { Workflow } = require('../../core/workflow');
+const { WorkflowBatch } = require('../../core/workflow_batch');
 const { WorkflowForm } = require('../forms/workflow_form');
+const { WorkflowBatchForm } = require('../forms/workflow_batch_form');
 
 const typeMap = {
     userCanDelete: 'boolean',  // part of Workflow
@@ -81,6 +83,28 @@ class WorkflowController extends BaseController {
                 $('#jobProfileContainer').hide();
             }
         }
+    }
+
+    /**
+     * This presents a view where the user can choose a workflow from a list
+     * and can choose a CSV file containing information about files to be
+     * bagged. The user can then run all of the items in the CSV file through
+     * the selected workflow.
+     *
+     */
+    batch() {
+        let batch = new WorkflowBatch();
+        let form = new WorkflowBatchForm(batch);
+        let html = Templates.workflowBatch({ form: form });
+        return this.containerContent(html);
+    }
+
+    /**
+     *
+     *
+     */
+    runBatch() {
+
     }
 
     /**

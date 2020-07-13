@@ -15,6 +15,8 @@ const { StorageService } = require('./storage_service');
 const { UploadOperation } = require('./upload_operation');
 const { Util } = require('./util');
 const { ValidationOperation } = require('./validation_operation');
+const { Workflow } = require('./workflow');
+const { WorkflowBatch } = require('./workflow_batch');
 
 module.exports.AppSetting = AppSetting;
 module.exports.Config = Config;
@@ -33,3 +35,5 @@ module.exports.StorageService = StorageService;
 module.exports.UploadOperation = UploadOperation;
 module.exports.Util = Util;
 module.exports.ValidationOperation = ValidationOperation;
+module.exports.Workflow = Workflow;
+module.exports.WorkflowBatch = WorkflowBatch;

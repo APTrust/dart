@@ -10,6 +10,8 @@ const { SettingsExportForm } = require('./settings_export_form');
 const { SettingsQuestionsForm } = require('./settings_questions_form');
 const { SettingsResponseForm } = require('./settings_response_form');
 const { StorageServiceForm } = require('./storage_service_form');
+const { WorkflowForm } = require('./workflow_form');
+const { WorkflowBatchForm } = require('./workflow_batch_form');
 
 module.exports.AppSettingForm = AppSettingForm;
 module.exports.BagItProfileForm = BagItProfileForm;
@@ -23,3 +25,5 @@ module.exports.SettingsExportForm = SettingsExportForm;
 module.exports.SettingsQuestionsForm = SettingsQuestionsForm;
 module.exports.SettingsResponseForm = SettingsResponseForm;
 module.exports.StorageServiceForm = StorageServiceForm;
+module.exports.WorkflowForm = WorkflowForm;
+module.exports.WorkflowBatchForm = WorkflowBatchForm;

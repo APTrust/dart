@@ -1,0 +1,13 @@
+{{> bannerAlert message = alertMessage }}
+
+<h2>Workflow Batch</h2>
+
+<p>{{ translate "Run all of the directories listed in a spreadsheet through the same workflow. For more information, see DART's " }} <a href="#Help/openExternal?url=https://aptrust.github.io/dart-docs/">{{ translate "batch workflow documentation" }}</a>.</p>
+
+<form method="post" action="#" id="{{ form.id }}">
+
+  {{> inputSelect field = form.fields.workflowId }}
+
+  {{> inputFile field = form.fields.pathToCSVFile }}
+
+</form>
