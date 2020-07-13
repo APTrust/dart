@@ -15,6 +15,10 @@ let app;
 // We don't load the heavyweight Electron requirements unless
 // we're running in GUI mode.
 function run() {
+    process.on('uncaughtException', function (error) {
+        console.error(error);
+        Context.logger.error(error);
+    });
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
         boolean: ['d', 'debug', 'h', 'help', 'v', 'version',
@@ -39,6 +43,7 @@ function run() {
         win = ui.win;
         app = ui.app;
     }
+    console.log(`DART is logging to ${Context.config.logDir}`);
     Context.logger.info(`DART started (${process.DART_MODE} mode)`);
 }
 
