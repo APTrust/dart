@@ -35,7 +35,7 @@
         "request": "^2.88.2",
         "require-dir": "^1.2.0",
         "ssh2": "^0.8.9",
-        "ssh2-sftp-client": "^5.1.2",
+        "ssh2-sftp-client": "^5.2.1",
         "tail": "^2.0.4",
         "tar-stream": "^2.1.1",
         "tmp": "0.2.1",
