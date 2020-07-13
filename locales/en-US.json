@@ -430,5 +430,22 @@
   "Bag is a directory": "Bag is a directory",
   "Choose a file...": "Choose a file...",
   "Choose a directory...": "Choose a directory...",
-  "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.": "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop."
+  "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.": "You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.",
+  "WorkflowBatch_id_label": "WorkflowBatch_id_label",
+  "WorkflowBatch_id_help": "WorkflowBatch_id_help",
+  "WorkflowBatch_userCanDelete_label": "WorkflowBatch_userCanDelete_label",
+  "WorkflowBatch_userCanDelete_help": "WorkflowBatch_userCanDelete_help",
+  "WorkflowBatch_workflowId_label": "WorkflowBatch_workflowId_label",
+  "WorkflowBatch_workflowId_help": "WorkflowBatch_workflowId_help",
+  "WorkflowBatch_pathToCSVFile_label": "WorkflowBatch_pathToCSVFile_label",
+  "WorkflowBatch_pathToCSVFile_help": "WorkflowBatch_pathToCSVFile_help",
+  "WorkflowBatch_succeeded_label": "WorkflowBatch_succeeded_label",
+  "WorkflowBatch_succeeded_help": "WorkflowBatch_succeeded_help",
+  "WorkflowBatch_failed_label": "WorkflowBatch_failed_label",
+  "WorkflowBatch_failed_help": "WorkflowBatch_failed_help",
+  "Choose CSV file": "Choose CSV file",
+  "Choose a workflow": "Choose a workflow",
+  "The workflow you choose will be applied to each item in the CSV file.": "The workflow you choose will be applied to each item in the CSV file.",
+  "Run all of the directories listed in a spreadsheet through the same workflow. For more information, see DART's ": "Run all of the directories listed in a spreadsheet through the same workflow. For more information, see DART's ",
+  "batch workflow documentation": "batch workflow documentation"
 }
