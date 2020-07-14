@@ -55,6 +55,13 @@ function fixPaths() {
     fs.writeFileSync(tempCSVFile, csvData.replace(/\/home\/dev\/dart/g, dartRoot))
 }
 
+// Delete some required tags from the CSV file.
+function breakTags() {
+    fixPaths()
+    let csvData = fs.readFileSync(tempCSVFile, 'utf8');
+    fs.writeFileSync(tempCSVFile, csvData.replace(/Institution/g, 'xyz'))
+}
+
 test('Constructor sets expected properties', () => {
     let batch = new WorkflowBatch(opts);
     expect(batch.workflowId).toEqual(opts.workflowId);
@@ -88,8 +95,32 @@ test('validateCSVFile() with good paths', () => {
         workflowId: GoodWorkflowId,
         pathToCSVFile: tempCSVFile,
     });
-    expect(batch.validateCSVFile()).toEqual(true);
+    batch.validateCSVFile()
+    //expect(batch.validateCSVFile()).toEqual(true);
     expect(batch.errors).toEqual({});
+});
+
+
+test('validateCSVFile() with bad Access tag values', () => {
+    // Replace Access tag values with invalid values.
+    breakTags();
+    let batch = new WorkflowBatch({
+        workflowId: GoodWorkflowId,
+        pathToCSVFile: tempCSVFile,
+    });
+
+    let expected = {
+        "10-aptrust-info.txt/Access": "Value xyz for tag Access on line 10 is not in the list of allowed values.",
+        "2-aptrust-info.txt/Access": "Value xyz for tag Access on line 2 is not in the list of allowed values.",
+        "3-aptrust-info.txt/Access": "Value xyz for tag Access on line 3 is not in the list of allowed values.",
+        "4-aptrust-info.txt/Access": "Value xyz for tag Access on line 4 is not in the list of allowed values.",
+        "5-aptrust-info.txt/Access": "Value xyz for tag Access on line 5 is not in the list of allowed values.",
+        "8-aptrust-info.txt/Access": "Value xyz for tag Access on line 8 is not in the list of allowed values.",
+        "9-aptrust-info.txt/Access": "Value xyz for tag Access on line 9 is not in the list of allowed values.",
+    }
+
+    expect(batch.validateCSVFile()).toEqual(false);
+    expect(batch.errors).toEqual(expected);
 });
 
 

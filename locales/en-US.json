@@ -451,5 +451,8 @@
   "DART cannot find the workflow you want to run.": "DART cannot find the workflow you want to run.",
   "Workflow has missing or invalid attributes": "Workflow has missing or invalid attributes",
   "Name cannot be empty.": "Name cannot be empty.",
-  "Line %s: path does not exist: %s": "Line %s: path does not exist: %s"
+  "Line %s: path does not exist: %s": "Line %s: path does not exist: %s",
+  "Required tag %s on line %s has empty value": "Required tag %s on line %s has empty value",
+  "Required tag %s on line %s is missing": "Required tag %s on line %s is missing",
+  "Value %s for tag %s on line %s is not in the list of allowed values.": "Value %s for tag %s on line %s is not in the list of allowed values."
 }

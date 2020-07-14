@@ -3,6 +3,7 @@ const { Context } = require('./context');
 const { CSVBatchParser } = require('../util/csv_batch_parser');
 const fs = require('fs');
 const { PersistentObject } = require('./persistent_object');
+const { Util } = require('./util');
 const { Workflow } = require('./workflow');
 
 class WorkflowBatch extends PersistentObject {
@@ -92,21 +93,31 @@ class WorkflowBatch extends PersistentObject {
 
     _checkTagsRequiredByProfile(profile, jobParamsArray) {
         // Get a list of required tags whose values must appear in the CSV file.
-        let requiredTags = profile.tags.filter((t) => t.required && t.defaultValue == '' && !t.systemMustSet());
         for (let i=0; i < jobParamsArray.length; i++) {
             let params = jobParamsArray[i];
-            for (let requiredTag of requiredTags) {
-                let paramTag = params.tags.filter((pt) => pt.tagFile == requireTag.tagFile && pt.tagName == requiredTag.tagName);
-                let tagName = `${requiredTag.tagFile}/${requiredTag.tagname}`;
-                let lineNumber = (i + 1).toString();
-                if (paramTag == null) {
-                    this.errors[tagName] = Context.y18n.__("Required tag %s on line %s is missing", tagName, lineNumber);
-                } else if (paramTag.userValue == null || paramTag.userValue.toString().trim() == '') {
-                    this.errors[tagName] = Context.y18n.__("Required tag %s on line %s has empty value", tagName, lineNumber);
+            for (let tag of profile.tags) {
+                if (tag.tagFile == 'bagit.txt') {
+                    continue;
+                }
+                let tagName = `${tag.tagFile}/${tag.tagName}`;
+                let lineNumber = (i + 2).toString();
+                let key = `${lineNumber}-${tagName}`
+                let paramTags = params.tags.filter((pt) => pt.tagFile == tag.tagFile && pt.tagName == tag.tagName);
+                let paramTag = null;
+                if (paramTags.length > 0) {
+                    paramTag = paramTags[0];
+                }
+                if (tag.required && paramTag == null) {
+                    this.errors[key] = Context.y18n.__("Required tag %s on line %s is missing", tagName, lineNumber);
+                } else if (tag.required && (paramTag.userValue == null || paramTag.userValue.toString().trim() == '')) {
+                    this.errors[key] = Context.y18n.__("Required tag %s on line %s has empty value", tagName, lineNumber);
+                } else if (tag.values.length > 0 && !Util.listContains(tag.values, paramTag.userValue)) {
+                    this.errors[key] = Context.y18n.__("Value %s for tag %s on line %s is not in the list of allowed values.", paramTag.userValue, paramTag.tagName, lineNumber);
                 }
             }
         }
     }
 }
+
 
 module.exports.WorkflowBatch = WorkflowBatch;
