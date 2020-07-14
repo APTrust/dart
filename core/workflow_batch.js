@@ -1,5 +1,7 @@
+const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const { CSVBatchParser } = require('../util/csv_batch_parser');
+const fs = require('fs');
 const { PersistentObject } = require('./persistent_object');
 const { Workflow } = require('./workflow');
 
@@ -35,15 +37,17 @@ class WorkflowBatch extends PersistentObject {
 
     validateCSVFile() {
         try {
+            let workflow = this.getWorkflow();
             let parser = new CSVBatchParser({
                 pathToFile: this.pathToCSVFile,
-                workflowName: this.workflow.name,
+                workflowName: workflow.name,
             });
             let jobParamsArray = parser.parseAll();
             this.checkPaths(jobParamsArray);
             this.checkRequiredTags(jobParamsArray);
         } catch (ex) {
             Context.logger.error(ex);
+            console.error(ex);
             this.errors['csvFile'] = ex.message;
         }
         return Object.keys(this.errors).length == 0;
@@ -64,7 +68,7 @@ class WorkflowBatch extends PersistentObject {
     checkPaths(jobParamsArray) {
         let lineNumber = 1;
         for (let params of jobParamsArray) {
-            for (let filePath of files) {
+            for (let filePath of params.files) {
                 if (!fs.existsSync(filePath)) {
                     this.errors[filePath] = Context.y18n.__("Line %s: path does not exist: %s", lineNumber.toString(), filePath);
                 }
@@ -83,10 +87,10 @@ class WorkflowBatch extends PersistentObject {
             this.errors['bagItProfile'] = Context.y18n.__("Cannot find BagIt profile for workflow '%s'", workflow.name);
             return false;
         }
-        this._checkTagsRequiredByProfile(profile);
+        this._checkTagsRequiredByProfile(profile, jobParamsArray);
     }
 
-    _checkTagsRequiredByProfile(profile) {
+    _checkTagsRequiredByProfile(profile, jobParamsArray) {
         // Get a list of required tags whose values must appear in the CSV file.
         let requiredTags = profile.tags.filter((t) => t.required && t.defaultValue == '' && !t.systemMustSet());
         for (let i=0; i < jobParamsArray.length; i++) {

@@ -450,5 +450,6 @@
   "batch workflow documentation": "batch workflow documentation",
   "DART cannot find the workflow you want to run.": "DART cannot find the workflow you want to run.",
   "Workflow has missing or invalid attributes": "Workflow has missing or invalid attributes",
-  "Name cannot be empty.": "Name cannot be empty."
+  "Name cannot be empty.": "Name cannot be empty.",
+  "Line %s: path does not exist: %s": "Line %s: path does not exist: %s"
 }

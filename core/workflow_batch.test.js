@@ -1,7 +1,9 @@
 const { Constants } = require('./constants');
 const { Context } = require('./context');
+const fs = require('fs');
 const path = require('path');
 const { TestUtil } = require('./test_util');
+const tmp = require('tmp');
 const { Workflow } = require('./workflow');
 const { WorkflowBatch } = require('./workflow_batch');
 
@@ -12,6 +14,7 @@ const opts = {
     workflowId: GoodWorkflowId,
     pathToCSVFile: CSVFile,
 }
+var tempCSVFile = '';
 
 beforeAll(() => {
     let badWorkflow = new Workflow();
@@ -32,6 +35,25 @@ beforeAll(() => {
 afterAll(() => {
     TestUtil.deleteJsonFile('Workflow');
 });
+
+afterEach(() => {
+    if (tempCSVFile != '' && fs.existsSync(tempCSVFile)) {
+        fs.unlinkSync(tempCSVFile);
+    }
+});
+
+// The CSV file has placeholder pathsin the Root-Directory column.
+// Replace them with paths that point to DART source files.
+function fixPaths() {
+    let dartRoot = path.normalize(path.join(__dirname, '..'));
+
+    let tmpfile = tmp.fileSync();
+    tempCSVFile = tmpfile.name
+    tmpfile.removeCallback();
+
+    let csvData = fs.readFileSync(CSVFile, 'utf8');
+    fs.writeFileSync(tempCSVFile, csvData.replace(/\/home\/dev\/dart/g, dartRoot))
+}
 
 test('Constructor sets expected properties', () => {
     let batch = new WorkflowBatch(opts);
@@ -57,4 +79,33 @@ test('validateWorkflow', () => {
         'name': Context.y18n.__('Name cannot be empty.'),
         'workflow': Context.y18n.__("DART cannot find the workflow you want to run."),
     });
+});
+
+test('validateCSVFile() with good paths', () => {
+    // Fix paths in CSV file to point to DART source dir
+    fixPaths();
+    let batch = new WorkflowBatch({
+        workflowId: GoodWorkflowId,
+        pathToCSVFile: tempCSVFile,
+    });
+    expect(batch.validateCSVFile()).toEqual(true);
+    expect(batch.errors).toEqual({});
+});
+
+
+test('validateCSVFile() with bad paths', () => {
+    let expectedErrors =     {
+      '/home/dev/dart/bagit': 'Line 1: path does not exist: /home/dev/dart/bagit',
+      '/home/dev/dart/core': 'Line 2: path does not exist: /home/dev/dart/core',
+      '/home/dev/dart/migrations': 'Line 3: path does not exist: /home/dev/dart/migrations',
+      '/home/dev/dart/plugins': 'Line 4: path does not exist: /home/dev/dart/plugins',
+      '/home/dev/dart/profiles': 'Line 5: path does not exist: /home/dev/dart/profiles',
+      '/home/dev/dart/settings': 'Line 6: path does not exist: /home/dev/dart/settings',
+      '/home/dev/dart/ui': 'Line 7: path does not exist: /home/dev/dart/ui',
+      '/home/dev/dart/util': 'Line 8: path does not exist: /home/dev/dart/util',
+      '/home/dev/dart/workers': 'Line 9: path does not exist: /home/dev/dart/workers'
+    }
+    let batch = new WorkflowBatch(opts);
+    expect(batch.validateCSVFile()).toEqual(false);
+    expect(batch.errors).toEqual(expectedErrors);
 });
