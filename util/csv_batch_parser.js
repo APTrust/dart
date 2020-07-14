@@ -110,7 +110,7 @@ class CSVBatchParser {
                     tags: parser._parseTags(entry),
                 }));
         }
-        return jobParamsArray
+        return jobParamsArray;
     }
 
     /**
