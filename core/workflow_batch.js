@@ -40,6 +40,7 @@ class WorkflowBatch extends PersistentObject {
                 workflowName: this.workflow.name,
             });
             let jobParamsArray = parser.parseAll();
+            this.checkPaths(jobParamsArray);
             this.checkRequiredTags(jobParamsArray);
         } catch (ex) {
             Context.logger.error(ex);
@@ -50,12 +51,26 @@ class WorkflowBatch extends PersistentObject {
 
     getWorkflow() {
         let workflow = Workflow.find(this.workflowId)
-        if (worflow == null) {
+        if (workflow == null) {
             this.errors['workflow'] = Context.y18n.__('DART cannot find the workflow you want to run.');
         } else if (workflow.validate() == false) {
             this.errors = workflow.errors;
+            this.errors['workflow'] = Context.y18n.__('Workflow has missing or invalid attributes');
+            Context.logger.error(JSON.stringify(this.errors));
         }
         return workflow;
+    }
+
+    checkPaths(jobParamsArray) {
+        let lineNumber = 1;
+        for (let params of jobParamsArray) {
+            for (let filePath of files) {
+                if (!fs.existsSync(filePath)) {
+                    this.errors[filePath] = Context.y18n.__("Line %s: path does not exist: %s", lineNumber.toString(), filePath);
+                }
+            }
+            lineNumber++;
+        }
     }
 
     checkRequiredTags(jobParamsArray) {

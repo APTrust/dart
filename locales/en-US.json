@@ -447,5 +447,8 @@
   "Choose a workflow": "Choose a workflow",
   "The workflow you choose will be applied to each item in the CSV file.": "The workflow you choose will be applied to each item in the CSV file.",
   "Run all of the directories listed in a spreadsheet through the same workflow. For more information, see DART's ": "Run all of the directories listed in a spreadsheet through the same workflow. For more information, see DART's ",
-  "batch workflow documentation": "batch workflow documentation"
+  "batch workflow documentation": "batch workflow documentation",
+  "DART cannot find the workflow you want to run.": "DART cannot find the workflow you want to run.",
+  "Workflow has missing or invalid attributes": "Workflow has missing or invalid attributes",
+  "Name cannot be empty.": "Name cannot be empty."
 }
