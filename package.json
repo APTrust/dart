@@ -13,7 +13,7 @@
         "email": "dev@aptrust.org"
     },
     "dependencies": {
-        "ajv": "^6.12.2",
+        "ajv": "^6.12.3",
         "archiver": "^4.0.1",
         "asar": "^3.0.3",
         "async": "^3.2.0",
