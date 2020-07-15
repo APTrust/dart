@@ -55,6 +55,12 @@ test('create() with one dir', done => {
 
     bagger.on('finish', function() {
         let result = bagger.job.packageOp.result;
+
+        // Debugging for Travis / AppVeyor
+        if (result.errors.length > 0) {
+            console.log(result.errors)
+        }
+
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded()).toEqual(true);
         expect(result.started).not.toBeNull();

@@ -134,6 +134,12 @@ test('run() completes when all job operations are valid', done => {
 
     jobRunner.run().then(function(returnCode) {
 
+        // Debugging for Travis / AppVeyor
+        if (returnCode != Constants.EXIT_SUCCESS) {
+            job = Job.find(job.id);
+            console.log(JSON.stringify(job))
+        }
+
         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
 
         // Ensure bag was created
