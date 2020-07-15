@@ -60,7 +60,7 @@ class BaseWriter extends Plugin {
          * @type {BagItFile}
          *
          */
-        this._queue.drain = function () {
+        this._queue.drain(function() {
             let intervalCount = 0;
             let doneInterval = setInterval(function() {
                 intervalCount += 1;
@@ -72,7 +72,7 @@ class BaseWriter extends Plugin {
                     clearInterval(doneInterval);
                 }
             }, 50);
-        }
+        });
 
         /**
          * @event FileSystemWriter#error - This event fires when a write
@@ -82,14 +82,14 @@ class BaseWriter extends Plugin {
          *
          * @type {string}
          */
-        this._queue.error = function(err, task) {
+        this._queue.error(function(err, task) {
             if (err) {
                 writer._queue.pause();  // stop processing
                 writer._queue.kill();   // empty the queue & remove drain fn
                 writer.emit('error', `${this.name}: ${err.message}`);
                 writer.emit('finish');
             }
-        }
+        });
 
         /**
          * The total number of files added to the write queue.

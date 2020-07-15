@@ -16,6 +16,7 @@
         "ajv": "^6.12.2",
         "archiver": "^4.0.1",
         "asar": "^3.0.3",
+        "async": "^3.2.0",
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "^7.0.1",
         "csv-parse": "^4.10.1",
