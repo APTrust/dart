@@ -20,6 +20,7 @@ const { SettingsController } = require('./settings_controller');
 const { StorageServiceController } = require('./storage_service_controller');
 const { TagDefinitionController } = require('./tag_definition_controller');
 const { WorkflowController } = require('./workflow_controller');
+const { WorkflowBatchController } = require('./workflow_batch_controller');
 
 module.exports.AboutController = AboutController;
 module.exports.AppSettingController = AppSettingController;
@@ -43,3 +44,4 @@ module.exports.SettingsController = SettingsController;
 module.exports.StorageServiceController = StorageServiceController;
 module.exports.TagDefinitionController = TagDefinitionController;
 module.exports.WorkflowController = WorkflowController;
+module.exports.WorkflowBatchController = WorkflowBatchController;
