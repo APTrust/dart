@@ -49,40 +49,50 @@ var options = {
     // Log straight to console, with pretty colors.
     // This is the system console, not the electron console.
     console: {
-        level: 'debug',
+        level: 'error',
         handleExceptions: true,
-        format: winston.format.combine(winston.format.colorize(), logFormat),
-        json: false,
-        colorize: true,
+        format: winston.format.combine(
+            winston.format.printf(({ level, message, timestamp, stack }) => {
+                if (stack) {
+                    // print log trace
+                    return `${level}: ${message} - ${stack}`;
+                }
+                if (typeof message == 'object') {
+                    message = JSON.stringify(message);
+                }
+                return `${level}: ${message}`;
+            }),
+        ),
     },
 };
 
 // The transports array tells us where to write our logs.
 // For the user environment, we log to the user log file.
 var transports;
+var logFile = '';
 // For Jest tests, use the test log
 if (process.env.TRAVIS_OS_NAME) {
     mkdirp(path.dirname(options.travisLogFile.filename));
+    logFile = options.travisLogFile.filename;
     transports = [ new winston.transports.File(options.travisLogFile) ];
 } else if (process.env.NODE_ENV=='test') {
     mkdirp(path.dirname(options.testLogFile.filename));
+    logFile = options.testLogFile.filename;
     transports = [ new winston.transports.File(options.testLogFile) ];
 } else {
     mkdirp(path.dirname(options.userLogFile.filename));
+    logFile = options.userLogFile.filename;
     transports = [ new winston.transports.File(options.userLogFile) ];
 }
 
-// In dev mode, log to the console as well. This makes our life
-// a lot easier.
-if (process.env.NODE_ENV=='dev' && process.DART_MODE == 'gui') {
-    let { ConsoleForElectron } = require('winston-console-for-electron');
-    transports.push(new ConsoleForElectron({
-        level: 'debug',
-        handleExceptions: true,
-        format: logFormat,
-        colorize: true
-    }));
+if (typeof window != undefined && process.env.NODE_ENV != 'test') {
+    try {
+        transports.push(new winston.transports.Console(options.console));
+    } catch (ex) {
+        // Shh!
+    }
 }
+
 
 // instantiate a new Winston Logger with the settings defined above
 var logger = winston.createLogger({
@@ -91,11 +101,7 @@ var logger = winston.createLogger({
 });
 
 logger.pathToLogFile = function() {
-    for (let transport of logger.transports) {
-        if (transport.constructor.name === 'File') {
-            return path.join(transport.dirname, transport.filename);
-        }
-    }
+    return logFile;
 }
 
 module.exports = logger;
