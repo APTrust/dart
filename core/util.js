@@ -1,6 +1,9 @@
-const path = require('path');
+const { fork } = require('child_process');
 const fs = require('fs');
+const path = require('path');
 const os = require('os');
+
+
 /**
  * Util contains a number of static utility functions used throughout
  * the DART application. It has no constructor. Simply call Util.<method>(<args>)
@@ -704,6 +707,37 @@ class Util {
             trimmedStr = start + '...' + end;
         }
         return trimmedStr;
+    }
+
+    /**
+     * Launches a Job in a separate process. Returns an object with
+     * keys childProcess and dartProcess.
+     *
+     * @param {Job} job - The job to run in the child process.
+     *
+     * @returns {Object}
+     */
+    static forkJobProcess(job) {
+        const { DartProcess } = require('./dart_process');
+        let tmpFile = Util.tmpFilePath();
+        fs.writeFileSync(tmpFile, JSON.stringify(job));
+
+        // Need to change npm command outside of dev env.
+        let modulePath = path.join(__dirname, '..', 'main.js');
+        let childProcess = fork(
+                modulePath,
+                ['--job', tmpFile]
+        );
+
+        let dartProcess = new DartProcess(
+            job.title,
+            job.id,
+            childProcess
+        );
+        return {
+            childProcess: childProcess,
+            dartProcess: dartProcess,
+        }
     }
 
 }

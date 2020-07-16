@@ -40,6 +40,12 @@ class WorkflowBatchController extends BaseController {
             return this.containerContent(html);
         }
         alert('Form is valid');
+
+        // TODO: Abstract code from JobRunController#run
+        // See also RunningJobsController.
+        // Maybe stash JobParams list in storage or in global var and run,
+        // or just run from here and embed the views on this page.
+
         return this.noContent();
     }
 

@@ -62,27 +62,9 @@ class JobRunController extends RunningJobsController {
         if (!this._checkOutputPath()) {
             return this.noContent()
         }
-        // Grey this out while job is running.
-        // Run job in separate process, so user can
-        // navigate to other screens without disrupting it.
-        let tmpFile = Util.tmpFilePath();
-        fs.writeFileSync(tmpFile, JSON.stringify(this.job));
-
-        // Need to change npm command outside of dev env.
-        let modulePath = path.join(__dirname, '..', '..', 'main.js');
-        this.childProcess = fork(
-                modulePath,
-                ['--job', tmpFile]
-        );
-
-        // TODO: Do we still need this? It's job is to keep
-        // track of running jobs for the UI.
-        // Looks like it's used in a number of places, but confirm.
-        this.dartProcess = new DartProcess(
-            this.job.title,
-            this.job.id,
-            this.childProcess
-        );
+        let proc = Util.forkJobProcess(this.job);
+        this.childProcess = proc.childProcess;
+        this.dartProcess = proc.dartProcess;
         this.initRunningJobDisplay(this.dartProcess);
         Context.childProcesses[this.dartProcess.id] = this.dartProcess;
         $('#btnRunJob').prop('disabled', true);
