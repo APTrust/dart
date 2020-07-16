@@ -48,7 +48,6 @@ class WorkflowBatch extends PersistentObject {
             this.checkRequiredTags(jobParamsArray);
         } catch (ex) {
             Context.logger.error(ex);
-            console.error(ex);
             this.errors['csvFile'] = ex.message;
         }
         return Object.keys(this.errors).length == 0;
@@ -67,7 +66,7 @@ class WorkflowBatch extends PersistentObject {
     }
 
     checkPaths(jobParamsArray) {
-        let lineNumber = 1;
+        let lineNumber = 2;
         for (let params of jobParamsArray) {
             for (let filePath of params.files) {
                 if (!fs.existsSync(filePath)) {

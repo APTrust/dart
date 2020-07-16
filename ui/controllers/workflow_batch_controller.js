@@ -25,42 +25,24 @@ class WorkflowBatchController extends BaseController {
 
 
     /**
-     * This presents a view where the user can choose a workflow from a list
-     * and can choose a CSV file containing information about files to be
-     * bagged. The user can then run all of the items in the CSV file through
-     * the selected workflow.
-     *
-     */
-    // batch() {
-    //     let form = new WorkflowBatchForm(new WorkflowBatch());
-    //     let html = Templates.workflowBatch({ form: form });
-    //     return this.containerContent(html);
-    // }
-
-    /**
      *
      *
      */
-    validateBatch() {
+    runBatch() {
         let form = new WorkflowBatchForm(new WorkflowBatch());
         form.parseFromDOM();
         if (!form.obj.validate()) {
             form.setErrors();
-            let html = Templates.workflowBatch({ form: form });
+            let html = Templates.workflowBatch({
+                form: form,
+                batchErrors: Object.values(form.obj.errors),
+            });
             return this.containerContent(html);
         }
         alert('Form is valid');
         return this.noContent();
     }
 
-
-    /**
-     *
-     *
-     */
-    runBatch() {
-
-    }
 
     /**
      * The postRenderCallback attaches event handlers to elements

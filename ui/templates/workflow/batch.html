@@ -12,16 +12,25 @@
 
   <div class="bottom-buttons">
     <div class="pull-right">
-      <a class="btn btn-primary" href="#Workflow/validateBatch" role="button">Validate</a>
+      <a class="btn btn-primary" href="#WorkflowBatch/runBatch" role="button">Run</a>
     </div>
   </div>
 
 </form>
 
-<div id="batchValidation" style="display:none">
+{{#if batchErrors }}
+<div id="batchValidation">
+  <h3>Errors</h3>
+  <ul>
+    {{#each batchErrors as |err| }}
+    <li>{{ err }}</li>
+    {{/each}}
+  </ul>
+</div>
+{{/if}}
+
+{{#if batchOutput}}
+<div id="batchOutput">
 
 </div>
-
-<div id="batchOutput" style="display:none">
-
-</div>
+{{/if}}
