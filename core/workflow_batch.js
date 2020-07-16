@@ -19,16 +19,16 @@ class WorkflowBatch extends PersistentObject {
     validate() {
         this.errors = {};
         super.validate();
-        // if (!this.validateWorkflow()) {
-        //     Context.logger.error(this.errors);
-        //     return false;
-        // }
-        // if (!this.validateCSVFile()) {
-        //     Context.logger.error(this.errors);
-        //     return false;
-        // }
-        // Context.logger.error(this.errors);
-        // return Object.keys(this.errors).length == 0;
+        if (!this.validateWorkflow()) {
+            Context.logger.error(this.errors);
+            return false;
+        }
+        if (!this.validateCSVFile()) {
+            Context.logger.error(this.errors);
+            return false;
+        }
+        Context.logger.error(this.errors);
+        return Object.keys(this.errors).length == 0;
     }
 
     validateWorkflow() {
@@ -80,7 +80,7 @@ class WorkflowBatch extends PersistentObject {
 
     checkRequiredTags(jobParamsArray) {
         let workflow = this.getWorkflow();
-        if (Object.keys(this.errors).length > 0) {
+        if (workflow == null) {
             return false;
         }
         let profile = BagItProfile.find(workflow.bagItProfileId);

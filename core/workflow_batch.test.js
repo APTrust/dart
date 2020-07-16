@@ -56,9 +56,13 @@ function fixPaths() {
 }
 
 // Delete some required tags from the CSV file.
-function breakTags() {
-    fixPaths()
-    let csvData = fs.readFileSync(tempCSVFile, 'utf8');
+function breakTags(fixPathsFirst) {
+    let filePath = CSVFile;
+    if (fixPathsFirst) {
+        fixPaths()
+        filePath = tempCSVFile
+    }
+    let csvData = fs.readFileSync(filePath, 'utf8');
     fs.writeFileSync(tempCSVFile, csvData.replace(/Institution/g, 'xyz'))
 }
 
@@ -68,7 +72,7 @@ test('Constructor sets expected properties', () => {
     expect(batch.pathToCSVFile).toEqual(opts.pathToCSVFile);
 });
 
-test('validateWorkflow', () => {
+test('validateWorkflow()', () => {
     let batch = new WorkflowBatch(opts);
     expect(batch.validateWorkflow()).toEqual(true);
 
@@ -95,15 +99,14 @@ test('validateCSVFile() with good paths', () => {
         workflowId: GoodWorkflowId,
         pathToCSVFile: tempCSVFile,
     });
-    batch.validateCSVFile()
-    //expect(batch.validateCSVFile()).toEqual(true);
+    expect(batch.validateCSVFile()).toEqual(true);
     expect(batch.errors).toEqual({});
 });
 
 
 test('validateCSVFile() with bad Access tag values', () => {
     // Replace Access tag values with invalid values.
-    breakTags();
+    breakTags(true);
     let batch = new WorkflowBatch({
         workflowId: GoodWorkflowId,
         pathToCSVFile: tempCSVFile,
@@ -139,4 +142,26 @@ test('validateCSVFile() with bad paths', () => {
     let batch = new WorkflowBatch(opts);
     expect(batch.validateCSVFile()).toEqual(false);
     expect(batch.errors).toEqual(expectedErrors);
+});
+
+test('validate() good', () => {
+    fixPaths();
+    let batch = new WorkflowBatch({
+        workflowId: GoodWorkflowId,
+        pathToCSVFile: tempCSVFile,
+    });
+    expect(batch.validate()).toEqual(true);
+    expect(Object.keys(batch.errors).length).toEqual(0);
+});
+
+test('validate() bad', () => {
+    breakTags(false);
+    let batch = new WorkflowBatch({
+        workflowId: GoodWorkflowId,
+        pathToCSVFile: tempCSVFile,
+    });
+
+    // Should get 7 bad tag value errors and 9 bad paths
+    expect(batch.validate()).toEqual(false);
+    expect(Object.keys(batch.errors).length).toEqual(16);
 });
