@@ -25,7 +25,7 @@ class WorkflowBatchController extends BaseController {
 
 
     /**
-     *
+     * Validate the batch and run it.
      *
      */
     runBatch() {
@@ -39,10 +39,10 @@ class WorkflowBatchController extends BaseController {
             });
             return this.containerContent(html);
         }
-        alert('Form is valid');
+        alert('Form is valid, but batch feature is not ready yet.');
 
-        // TODO: Abstract code from JobRunController#run
-        // See also RunningJobsController.
+        // TODO: Use Util.forkJobProcess for each job.
+        // See also RunningJobsController. Maybe that should be a helper?
         // Maybe stash JobParams list in storage or in global var and run,
         // or just run from here and embed the views on this page.
 
