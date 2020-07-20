@@ -1,4 +1,5 @@
 const { BaseController } = require('./base_controller');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobParams } = require('../../core/job_params');
@@ -58,12 +59,17 @@ class WorkflowBatchController extends RunningJobsController {
             console.log(job);
             job.save();
             let proc = Util.forkJobProcess(job);
+            $('#dartProcessContainer').html(Templates.partials['dartProcess']({ item: proc.dartProcess }));
             this.initRunningJobDisplay(proc.dartProcess);
             Context.childProcesses[proc.dartProcess.id] = proc.dartProcess;
             proc.dartProcess.process.on('exit', (code, signal) => {
                 // No need to handle resolve/reject conditions.
                 // RunningJobsController.initRunningJobsDisplay
                 // handles that.
+                if (code != Constants.EXIT_SUCCESS) {
+                    Context.logger.error(`${job.name} exited with ${code}. Errors: ${JSON.stringify(job.errors)}`)
+                }
+                job.delete();
                 resolve(code);
             });
         });
