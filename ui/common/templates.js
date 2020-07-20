@@ -96,7 +96,9 @@ handlebars.registerPartial({
     runningJobs: readFile(path.join('partials', 'running_jobs.html')),
     settingsQuestion: readFile(path.join('settings', 'question.html')),
     tableBottomLinks: readFile(path.join('partials', 'table_bottom_links.html')),
-    tagDefRow: readFile(path.join('partials', 'tag_def_row.html'))
+    tagDefRow: readFile(path.join('partials', 'tag_def_row.html')),
+    workflowJobFailed: readFile(path.join('partials', 'workflow_job_failed.html')),
+    workflowJobSucceeded: readFile(path.join('partials', 'workflow_job_succeeded.html'))
 });
 
 handlebars.registerHelper('add', function(a, b) {
@@ -147,6 +149,7 @@ module.exports.bagItProfileImport = bagItProfileImport;
 module.exports.bagValidationForm = bagValidationForm;
 module.exports.compile = compile;
 module.exports.dashboard = dashboard;
+module.exports.dartProcess = handlebars.partials['dartProcess'];
 module.exports.dartProcessList = dartProcessList;
 module.exports.importResult = importResult;
 module.exports.internalSettingList = internalSettingList;
@@ -176,4 +179,6 @@ module.exports.tagDefinitionForm = tagDefinitionForm;
 module.exports.tagFileForm = tagFileForm;
 module.exports.workflowBatch = workflowBatch;
 module.exports.workflowForm = workflowForm;
+module.exports.workflowJobFailed = handlebars.partials['workflowJobFailed'];
+module.exports.workflowJobSucceeded = handlebars.partials['workflowJobSucceeded'];
 module.exports.workflowList = workflowList;

@@ -44,22 +44,21 @@ class WorkflowBatchController extends RunningJobsController {
         }
         // For clarity, so we remember what type of object we're dealing with.
         let workflowBatch = form.obj;
-        for (let jobParams of workflowBatch.jobParamsArray) {
-            let exitCode = await this.runJob(jobParams);
+        for (let i = 0; i < workflowBatch.jobParamsArray.length; i++) {
+            let jobParams = workflowBatch.jobParamsArray[i];
+            let exitCode = await this.runJob(jobParams, i + 1);
         }
         return this.noContent();
     }
 
 
-    runJob(jobParams) {
+    runJob(jobParams, lineNumber) {
         return new Promise((resolve, reject) => {
             let job = jobParams.toJob();
             // validate job?
-            console.log(jobParams);
-            console.log(job);
             job.save();
             let proc = Util.forkJobProcess(job);
-            $('#dartProcessContainer').html(Templates.partials['dartProcess']({ item: proc.dartProcess }));
+            $('#dartProcessContainer').html(Templates.dartProcess({ item: proc.dartProcess }));
             this.initRunningJobDisplay(proc.dartProcess);
             Context.childProcesses[proc.dartProcess.id] = proc.dartProcess;
             proc.dartProcess.process.on('exit', (code, signal) => {
@@ -67,7 +66,9 @@ class WorkflowBatchController extends RunningJobsController {
                 // RunningJobsController.initRunningJobsDisplay
                 // handles that.
                 if (code != Constants.EXIT_SUCCESS) {
-                    Context.logger.error(`${job.name} exited with ${code}. Errors: ${JSON.stringify(job.errors)}`)
+                    this._showJobFailed(job, proc.dartProcess.name, lineNumber);
+                } else {
+                    this._showJobSucceeded(job, proc.dartProcess.name, lineNumber);
                 }
                 job.delete();
                 resolve(code);
@@ -75,6 +76,23 @@ class WorkflowBatchController extends RunningJobsController {
         });
     }
 
+    _showJobSucceeded(job, jobName, lineNumber) {
+        Context.logger.info(`${job.name} Succeeded`)
+        $('#workflowResults').append(Templates.workflowJobSucceeded({
+            job: job,
+            jobName: jobName,
+            lineNumber: lineNumber,
+        }));
+    }
+
+    _showJobFailed(job, jobName, lineNumber) {
+        Context.logger.error(`${job.name} exited with ${code}. Errors: ${JSON.stringify(job.errors)}`)
+        $('#workflowResults').append(Templates.workflowJobFailed({
+            job: job,
+            jobName: jobName,
+            lineNumber: lineNumber,
+        }));
+    }
 
     /**
      * The postRenderCallback attaches event handlers to elements

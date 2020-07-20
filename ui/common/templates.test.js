@@ -81,7 +81,9 @@ test('All partials are defined', () => {
         'runningJobs',
         'settingsQuestion',
         'tableBottomLinks',
-        'tagDefRow'
+        'tagDefRow',
+        'workflowJobFailed',
+        'workflowJobSucceeded'
     ];
     let compiledPartialNames = Object.keys(handlebars.partials);
     expect(compiledPartialNames.length).toEqual(expectedPartialNames.length);
