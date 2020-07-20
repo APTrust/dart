@@ -397,6 +397,35 @@ class JobParams {
             job.packageOp.packageFormat = this._workflowObj.packageFormat;
             job.packageOp.pluginId = this._workflowObj.packagePluginId;
             job.packageOp.sourceFiles = this.files;
+            this._setSerialization(job);
+        }
+    }
+
+    /**
+     * This sets the bagItSerialization attribute of the job's
+     * PackageOperation, if necessary. Because DART supports only tar
+     * serialization (as of July, 2020), this only looks for and sets
+     * the values 'application/tar' or 'application/x-tar'.
+     *
+     * This method will need to be revisited in the future as DART
+     * supports more serialization formats.
+     *
+     */
+    _setSerialization(job) {
+        if (job.packageOp == null || job.bagItProfile == null) {
+            return;
+        }
+        let profile = job.bagItProfile;
+        let formats = profile.acceptSerialization;
+        let serializationOK = (profile.serialization == 'required' ||
+                               profile.serialization == 'optional');
+        let supportsTar = (formats.includes('application/tar') ||
+                           formats.includes('application/x-tar'))
+        if (serializationOK && supportsTar) {
+            job.packageOp.bagItSerialization = '.tar';
+            if (!job.packageOp.outputPath.endsWith('.tar')) {
+                job.packageOp.outputPath += '.tar';
+            }
         }
     }
 

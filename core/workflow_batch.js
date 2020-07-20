@@ -13,9 +13,20 @@ class WorkflowBatch extends PersistentObject {
         super(opts);
         this.workflowId = opts.workflowId;
         this.pathToCSVFile = opts.pathToCSVFile;
+        this.jobParamsArray = [];
         this.errors = {};
     }
 
+    /**
+     * Validate the WorkflowBatch, ensuring that the workflow exists
+     * and the CSV file contains valid and complete data. Note that
+     * validation triggers CSV parsing. After you call this method,
+     * this.jobParamsArray will be populated. Check to ensure this returns
+     * true before executing the batch because jobParamsArray may contain
+     * valid or invalid data. If this returns false, this.errors will
+     * contain a list of specific errors.
+     *
+     */
     validate() {
         this.errors = {};
         super.validate();
@@ -43,9 +54,9 @@ class WorkflowBatch extends PersistentObject {
                 pathToFile: this.pathToCSVFile,
                 workflowName: workflow.name,
             });
-            let jobParamsArray = parser.parseAll();
-            this.checkPaths(jobParamsArray);
-            this.checkRequiredTags(jobParamsArray);
+            this.jobParamsArray = parser.parseAll();
+            this.checkPaths(this.jobParamsArray);
+            this.checkRequiredTags(this.jobParamsArray);
         } catch (ex) {
             Context.logger.error(ex);
             this.errors['csvFile'] = ex.message;

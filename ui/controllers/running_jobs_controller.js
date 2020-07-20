@@ -25,7 +25,9 @@ class RunningJobsController extends BaseController {
         let job = Job.find(dartProcess.jobId);
 
         this.showDivs(job, dartProcess);
-        $('#output-path-link').removeClass('local-file')
+        if ($('#output-path-link').length) {
+            $('#output-path-link').removeClass('local-file')
+        }
         let controller = this;
 
         // If user moves from JobRunController to DashboardController
@@ -100,7 +102,9 @@ class RunningJobsController extends BaseController {
         } else if (data.action == 'completed') {
             if (data.status == Constants.OP_SUCCEEDED) {
                 this.markSuccess(detailDiv, progressBar, data.msg);
-                $('#output-path-link').addClass('local-file')
+                if ($('#output-path-link').length) {
+                    $('#output-path-link').addClass('local-file')
+                }
             } else {
                 this.markFailed(detailDiv, progressBar, data.msg);
             }
@@ -165,7 +169,9 @@ class RunningJobsController extends BaseController {
             this.markFailed(detailDiv, progressBar, msg.replace(/\n/g, '<br/>'));
         }
         // Button exists on job "Review and Run" page, not dashboard.
-        $('#btnRunJob').prop('disabled', false);
+        if($('#btnRunJob').length) {
+            $('#btnRunJob').prop('disabled', false);
+        }
     }
 
     ensureValidationMarkedComplete(dartProcess) {

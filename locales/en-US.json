@@ -454,5 +454,7 @@
   "Line %s: path does not exist: %s": "Line %s: path does not exist: %s",
   "Required tag %s on line %s has empty value": "Required tag %s on line %s has empty value",
   "Required tag %s on line %s is missing": "Required tag %s on line %s is missing",
-  "Value %s for tag %s on line %s is not in the list of allowed values.": "Value %s for tag %s on line %s is not in the list of allowed values."
+  "Value %s for tag %s on line %s is not in the list of allowed values.": "Value %s for tag %s on line %s is not in the list of allowed values.",
+  "WorkflowBatch_jobParamsArray_label": "WorkflowBatch_jobParamsArray_label",
+  "WorkflowBatch_jobParamsArray_help": "WorkflowBatch_jobParamsArray_help"
 }

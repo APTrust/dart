@@ -2,13 +2,15 @@ const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobParams } = require('../../core/job_params');
+const { RunningJobsController } = require('./running_jobs_controller');
 const Templates = require('../common/templates');
+const { Util } = require('../../core/util');
 const { Workflow } = require('../../core/workflow');
 const { WorkflowBatch } = require('../../core/workflow_batch');
 const { WorkflowForm } = require('../forms/workflow_form');
 const { WorkflowBatchForm } = require('../forms/workflow_batch_form');
 
-class WorkflowBatchController extends BaseController {
+class WorkflowBatchController extends RunningJobsController {
 
     constructor(params) {
         super(params, 'Workflows');
@@ -28,7 +30,7 @@ class WorkflowBatchController extends BaseController {
      * Validate the batch and run it.
      *
      */
-    runBatch() {
+    async runBatch() {
         let form = new WorkflowBatchForm(new WorkflowBatch());
         form.parseFromDOM();
         if (!form.obj.validate()) {
@@ -39,14 +41,32 @@ class WorkflowBatchController extends BaseController {
             });
             return this.containerContent(html);
         }
-        alert('Form is valid, but batch feature is not ready yet.');
-
-        // TODO: Use Util.forkJobProcess for each job.
-        // See also RunningJobsController. Maybe that should be a helper?
-        // Maybe stash JobParams list in storage or in global var and run,
-        // or just run from here and embed the views on this page.
-
+        // For clarity, so we remember what type of object we're dealing with.
+        let workflowBatch = form.obj;
+        for (let jobParams of workflowBatch.jobParamsArray) {
+            let exitCode = await this.runJob(jobParams);
+        }
         return this.noContent();
+    }
+
+
+    runJob(jobParams) {
+        return new Promise((resolve, reject) => {
+            let job = jobParams.toJob();
+            // validate job?
+            console.log(jobParams);
+            console.log(job);
+            job.save();
+            let proc = Util.forkJobProcess(job);
+            this.initRunningJobDisplay(proc.dartProcess);
+            Context.childProcesses[proc.dartProcess.id] = proc.dartProcess;
+            proc.dartProcess.process.on('exit', (code, signal) => {
+                // No need to handle resolve/reject conditions.
+                // RunningJobsController.initRunningJobsDisplay
+                // handles that.
+                resolve(code);
+            });
+        });
     }
 
 
