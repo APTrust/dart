@@ -22,6 +22,8 @@ class RunningJobsController extends BaseController {
     }
 
     initRunningJobDisplay(dartProcess) {
+        // Clear this on each init
+        this.completedUploads = [];
         let job = Job.find(dartProcess.jobId);
 
         this.showDivs(job, dartProcess);

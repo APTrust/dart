@@ -1,6 +1,7 @@
 const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const fs = require('fs');
 const { Job } = require('../../core/job');
 const { JobParams } = require('../../core/job_params');
 const { RunningJobsController } = require('./running_jobs_controller');
@@ -31,7 +32,7 @@ class WorkflowBatchController extends RunningJobsController {
      * Validate the batch and run it.
      *
      */
-    async runBatch() {
+    runBatch() {
         let form = new WorkflowBatchForm(new WorkflowBatch());
         form.parseFromDOM();
         if (!form.obj.validate()) {
@@ -42,15 +43,17 @@ class WorkflowBatchController extends RunningJobsController {
             });
             return this.containerContent(html);
         }
-        // For clarity, so we remember what type of object we're dealing with.
-        let workflowBatch = form.obj;
+        // form.obj is a WorkflowBatch
+        this._runBatchAsync(form.obj);
+        return this.noContent();
+    }
+
+    async _runBatchAsync(workflowBatch) {
         for (let i = 0; i < workflowBatch.jobParamsArray.length; i++) {
             let jobParams = workflowBatch.jobParamsArray[i];
             let exitCode = await this.runJob(jobParams, i + 1);
         }
-        return this.noContent();
     }
-
 
     runJob(jobParams, lineNumber) {
         return new Promise((resolve, reject) => {
@@ -69,6 +72,9 @@ class WorkflowBatchController extends RunningJobsController {
                     this._showJobFailed(job, proc.dartProcess.name, lineNumber);
                 } else {
                     this._showJobSucceeded(job, proc.dartProcess.name, lineNumber);
+                }
+                if (fs.existsSync(job.packageOp.outputPath) && fs.lstatSync(job.packageOp.outputPath).isFile()) {
+                    fs.unlinkSync(job.packageOp.outputPath);
                 }
                 job.delete();
                 resolve(code);
