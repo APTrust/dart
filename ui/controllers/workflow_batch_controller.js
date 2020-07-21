@@ -43,7 +43,8 @@ class WorkflowBatchController extends RunningJobsController {
             });
             return this.containerContent(html);
         }
-        // form.obj is a WorkflowBatch
+        $('#workflowResults').show();
+        this._clearErrorMessages();
         this._runBatchAsync(form.obj);
         return this.noContent();
     }
@@ -80,6 +81,14 @@ class WorkflowBatchController extends RunningJobsController {
                 resolve(code);
             });
         });
+    }
+
+    // If form is invalid at first, then user fixes the problems and
+    // clicks Run again, the error messages will remain until we
+    // explicitly clear them.
+    _clearErrorMessages() {
+        $('#batchValidation').html('');
+        $('small.form-text.text-danger').text('');
     }
 
     _showJobSucceeded(job, jobName, lineNumber) {
