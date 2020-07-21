@@ -138,7 +138,15 @@ class WorkflowBatchController extends RunningJobsController {
      * that this controller has just rendered.
      */
     postRenderCallback(fnName) {
-
+        // Our file input does not replace the placeholder text with the
+        // path to the selected file. We have to do that ourselves.
+        $('#pathToCSVFile').on('change',function(e){
+            let element = document.getElementById('pathToCSVFile');
+            if (element && element.files && element.files[0]) {
+                var filename = document.getElementById('pathToCSVFile').files[0].path
+                $(this).next('.custom-file-label').html(filename);
+            }
+        });
     }
 
 }
