@@ -456,5 +456,7 @@
   "Required tag %s on line %s is missing": "Required tag %s on line %s is missing",
   "Value %s for tag %s on line %s is not in the list of allowed values.": "Value %s for tag %s on line %s is not in the list of allowed values.",
   "WorkflowBatch_jobParamsArray_label": "WorkflowBatch_jobParamsArray_label",
-  "WorkflowBatch_jobParamsArray_help": "WorkflowBatch_jobParamsArray_help"
+  "WorkflowBatch_jobParamsArray_help": "WorkflowBatch_jobParamsArray_help",
+  "Leave DART open and stay on this page until all jobs in the batch are complete.": "Leave DART open and stay on this page until all jobs in the batch are complete.",
+  "All jobs have completed. Check the results below.": "All jobs have completed. Check the results below."
 }

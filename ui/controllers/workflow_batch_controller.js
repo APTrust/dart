@@ -33,6 +33,7 @@ class WorkflowBatchController extends RunningJobsController {
      *
      */
     runBatch() {
+        this._resetDisplayBeforeValidation();
         let form = new WorkflowBatchForm(new WorkflowBatch());
         form.parseFromDOM();
         if (!form.obj.validate()) {
@@ -43,20 +44,22 @@ class WorkflowBatchController extends RunningJobsController {
             });
             return this.containerContent(html);
         }
-        $('#workflowResults').show();
+        this._resetDisplayBeforeRunning();
         this._clearErrorMessages();
         this._runBatchAsync(form.obj);
         return this.noContent();
     }
 
     async _runBatchAsync(workflowBatch) {
+        let lastJobNumber = workflowBatch.jobParamsArray.length;
         for (let i = 0; i < workflowBatch.jobParamsArray.length; i++) {
             let jobParams = workflowBatch.jobParamsArray[i];
-            let exitCode = await this.runJob(jobParams, i + 1);
+            let exitCode = await this.runJob(jobParams, i + 1, lastJobNumber);
         }
     }
 
-    runJob(jobParams, lineNumber) {
+    runJob(jobParams, lineNumber, lastJobNumber) {
+        let controller = this;
         return new Promise((resolve, reject) => {
             let job = jobParams.toJob();
             // validate job?
@@ -69,18 +72,47 @@ class WorkflowBatchController extends RunningJobsController {
                 // No need to handle resolve/reject conditions.
                 // RunningJobsController.initRunningJobsDisplay
                 // handles that.
-                if (code != Constants.EXIT_SUCCESS) {
-                    this._showJobFailed(job, proc.dartProcess.name, lineNumber);
-                } else {
-                    this._showJobSucceeded(job, proc.dartProcess.name, lineNumber);
+                job = Job.find(job.id);
+                let data = {
+                    code: code,
+                    jobId: job.id,
+                    jobName: proc.dartProcess.name,
+                    lineNumber: lineNumber,
+                    errors: job.getRunErrors(),
                 }
-                if (fs.existsSync(job.packageOp.outputPath) && fs.lstatSync(job.packageOp.outputPath).isFile()) {
-                    fs.unlinkSync(job.packageOp.outputPath);
+                if (code != Constants.EXIT_SUCCESS) {
+                    this._showJobFailed(data);
+                } else {
+                    this._showJobSucceeded(data);
+                }
+                let bagPath = job.packageOp.outputPath;
+                if (fs.existsSync(bagPath) && fs.lstatSync(bagPath).isFile()) {
+                    fs.unlinkSync(bagPath);
                 }
                 job.delete();
+                if (lineNumber == lastJobNumber) {
+                    controller._showCompleted();
+                }
                 resolve(code);
             });
         });
+    }
+
+    _showCompleted() {
+        $('#batchRunning').hide();
+        $('#batchCompleted').show();
+    }
+
+    _resetDisplayBeforeValidation() {
+        $('#batchRunning').hide();
+        $('#batchCompleted').hide();
+        $('#workflowResults').hide();
+    }
+
+    _resetDisplayBeforeRunning() {
+        $('#batchRunning').show();
+        $('#workflowResults').show();
+        $('div.batch-result').remove();
     }
 
     // If form is invalid at first, then user fixes the problems and
@@ -91,22 +123,14 @@ class WorkflowBatchController extends RunningJobsController {
         $('small.form-text.text-danger').text('');
     }
 
-    _showJobSucceeded(job, jobName, lineNumber) {
-        Context.logger.info(`${job.name} Succeeded`)
-        $('#workflowResults').append(Templates.workflowJobSucceeded({
-            job: job,
-            jobName: jobName,
-            lineNumber: lineNumber,
-        }));
+    _showJobSucceeded(data) {
+        Context.logger.info(`${data.jobName} Succeeded`)
+        $('#workflowResults').append(Templates.workflowJobSucceeded(data));
     }
 
-    _showJobFailed(job, jobName, lineNumber) {
-        Context.logger.error(`${job.name} exited with ${code}. Errors: ${JSON.stringify(job.errors)}`)
-        $('#workflowResults').append(Templates.workflowJobFailed({
-            job: job,
-            jobName: jobName,
-            lineNumber: lineNumber,
-        }));
+    _showJobFailed(data) {
+        Context.logger.error(`${data.jobName} exited with ${data.code}. Errors: ${JSON.stringify(data.errors)}`)
+        $('#workflowResults').append(Templates.workflowJobFailed(data));
     }
 
     /**

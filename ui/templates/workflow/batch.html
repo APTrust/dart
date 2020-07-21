@@ -34,6 +34,14 @@
 
 </div>
 
+<div class="alert alert-warning" role="alert" id="batchRunning" style="display:none;">
+  {{ translate 'Leave DART open and stay on this page until all jobs in the batch are complete.' }}
+</div>
+
+<div class="alert alert-success" role="alert" id="batchCompleted" style="display:none;">
+  {{ translate 'All jobs have completed. Check the results below.' }}
+</div>
+
 <div class="container mt-2" id="workflowResults" style="display:none;">
   <h3>Results</h3>
 </div>
