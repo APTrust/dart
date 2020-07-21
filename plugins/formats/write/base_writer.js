@@ -1,4 +1,5 @@
 const async = require('async');
+const { Context } = require('../../../core/context');
 const { Plugin } = require('../../plugin');
 
 /**
