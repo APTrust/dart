@@ -364,7 +364,7 @@ class Job extends PersistentObject {
                 }
             }
         }
-        return errs;
+        return errs.map(e => Util.formatError(e));
     }
 
     /**

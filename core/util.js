@@ -1,3 +1,4 @@
+const { Context } = require('./context');
 const { fork } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -738,6 +739,29 @@ class Util {
             childProcess: childProcess,
             dartProcess: dartProcess,
         }
+    }
+
+    /**
+     * Returns a human-readable version of an error. This works for
+     * native JavaScript Error object and Node.js's syscall errors.
+     * If err is a string, it returns err unchanged. If it's none of
+     * those types, this returns a JSON string of the error.
+     *
+     * @param {Object} err - An Error, Node SystemError, or other object.
+     *
+     * @returns {string}
+     */
+    static formatError(err) {
+        if (typeof err === 'string') {
+            return err;
+        }
+        if (err.message) {
+            return err.message;
+        }
+        if (err.code && err.syscall && err.path) {
+            return Context.y18n.__("%s: Cannot %s %s", err.code, err.syscall, err.path)
+        }
+        return JSON.stringify(err);
     }
 
 }

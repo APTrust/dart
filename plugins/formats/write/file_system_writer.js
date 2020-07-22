@@ -1,4 +1,5 @@
 const { BaseWriter } = require('./base_writer');
+const { Context } = require('../../../core/context');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const path = require('path');
@@ -92,6 +93,9 @@ class FileSystemWriter extends BaseWriter {
             endFn: () => {
                 fsWriter.onFileWritten();
                 fsWriter.emit('fileAdded', bagItFile, fsWriter.percentComplete());
+            },
+            errFn: (err) => {
+                fsWriter.emit('error', err);
             }
         };
         this._queue.push(data);
@@ -115,6 +119,9 @@ function writeIntoArchive(data, done) {
     try {
         _writeIntoArchive(data, done);
     } catch (err) {
+        Context.logger.error(err);
+        Context.logger.error(err.stack);
+        data.errFn(err);
         done(err, data);
     }
 }
@@ -139,7 +146,15 @@ function _writeIntoArchive(data, done) {
     } else {
         // Udderwize, pipe the data through the crypto hashes
         var reader = fs.createReadStream(data.bagItFile.absSourcePath);
+        reader.on('error', function(err) {
+            data.errFn(err);
+        });
+
         var writer = fs.createWriteStream(data.dest);
+        writer.on('error', function(err) {
+            data.errFn(err);
+        });
+
         var cb = function() {
             data.endFn();
             done();

@@ -7,6 +7,8 @@ const logFormat = winston.format.printf(function(info) {
     return `${new Date().toISOString()} - ${info.level}: ${info.message}`;
 });
 
+// NOTE: Set handleExceptions: false on all transports because these
+// log exceptions without meaningful context.
 
 // Define the custom settings for each transport.
 // TODO: Make some of these into AppSettings or internal settings
@@ -17,7 +19,7 @@ var options = {
         level: 'debug',
         filename: path.join(Config.test.logDir, "dart.log"),
         format: logFormat,
-        handleExceptions: true,
+        handleExceptions: false,
         json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
@@ -28,7 +30,7 @@ var options = {
         level: 'debug',
         filename: path.join(__dirname, "logs", "dart.log"),
         format: logFormat,
-        handleExceptions: true,
+        handleExceptions: false,
         json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
@@ -40,7 +42,7 @@ var options = {
         level: 'info',
         filename: path.join(Config.user.logDir, "dart.log"),
         format: logFormat,
-        handleExceptions: true,
+        handleExceptions: false,
         json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
@@ -50,7 +52,7 @@ var options = {
     // This is the system console, not the electron console.
     console: {
         level: 'error',
-        handleExceptions: true,
+        handleExceptions: false,
         format: winston.format.combine(
             winston.format.printf(({ level, message, timestamp, stack }) => {
                 if (stack) {

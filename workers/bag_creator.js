@@ -69,6 +69,7 @@ class BagCreator extends Worker {
                 if (typeof err == 'string') {
                     creator.runtimeError('fileAdded', [err], null);
                 } else {
+                    result.finish(err);
                     creator.runtimeError('fileAdded', null, err);
                 }
                 reject(result);

@@ -289,6 +289,7 @@ class Bagger extends EventEmitter {
         });
         fsReader.on('error', function(err) {
             packOp.result.errors.push(err.toString());
+            bagger.emit('error', err);
         });
         fsReader.list();
         return new Promise(function(resolve, reject) {

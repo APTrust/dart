@@ -366,3 +366,22 @@ test('Util.trimToLength()', () => {
     expect(Util.trimToLength(str, 30, 'end')).toEqual("Did the solution require a co...");
     expect(Util.trimToLength(str, 30, 'middle')).toEqual("Did the sol...to the problem?");
 });
+
+test('Util.formatError()', () => {
+    expect(Util.formatError('abc')).toEqual('abc')
+    let err = new Error("Normal JS error");
+    expect(Util.formatError(err)).toEqual("Normal JS error")
+    let sysError = {
+        code: 'Jenny',
+        syscall: '867-5309',
+        path: 'I got your number'
+    }
+    expect(Util.formatError(sysError)).toContain("Jenny")
+    expect(Util.formatError(sysError)).toContain("I got your number")
+    expect(Util.formatError(sysError)).toContain("867-5309")
+    let randomObj = {
+        one: 1,
+        two: 2
+    }
+    expect(Util.formatError(randomObj)).toEqual(`{"one":1,"two":2}`)
+});

@@ -458,5 +458,6 @@
   "WorkflowBatch_jobParamsArray_label": "WorkflowBatch_jobParamsArray_label",
   "WorkflowBatch_jobParamsArray_help": "WorkflowBatch_jobParamsArray_help",
   "Leave DART open and stay on this page until all jobs in the batch are complete.": "Leave DART open and stay on this page until all jobs in the batch are complete.",
-  "All jobs have completed. Check the results below.": "All jobs have completed. Check the results below."
+  "All jobs have completed. Check the results below.": "All jobs have completed. Check the results below.",
+  "%s: Cannot %s %s": "%s: Cannot %s %s"
 }

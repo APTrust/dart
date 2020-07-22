@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { Context } = require('../../../core/context');
 const { DummyReader } = require('../../../util/file/dummy_reader');
 const EventEmitter = require('events');
 const { PassThrough } = require('stream');
@@ -188,7 +189,14 @@ class FileSystemReader extends Plugin {
             var readable = null;
             if (entry.stats.isFile()) {
                 fsReader.fileCount += 1;
-                readable = fs.createReadStream(entry.fullPath);
+                try {
+                    readable = fs.createReadStream(entry.fullPath);
+                } catch (err) {
+                    Context.logger.error(err);
+                    Context.logger.error(err.stack);
+                    fsReader.emit('error', err);
+                    return;
+                }
             } else {
                 readable = new DummyReader();
                 if (entry.stats.isDirectory()) {

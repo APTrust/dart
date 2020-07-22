@@ -188,6 +188,9 @@ class TarWriter extends BaseWriter {
             endFn: () => {
                 tarWriter.onFileWritten();
                 tarWriter.emit('fileAdded', bagItFile, tarWriter.percentComplete());
+            },
+            errFn: (err) => {
+                tarWriter.emit('error', err);
             }
         };
         this._queue.push(data);
@@ -236,6 +239,9 @@ class TarWriter extends BaseWriter {
             hashes: [],
             endFn: () => {
                 tarWriter.emit('directoryAdded', bagItFile);
+            },
+            errFn: (err) => {
+                tarWriter.emit('error', err);
             }
         };
         this._queue.push(data);
@@ -321,6 +327,10 @@ function writeFile(data, done) {
     try {
         var reader = fs.createReadStream(data.bagItFile.absSourcePath);
 
+        reader.on('error', function(err) {
+            data.errFn(err);
+        });
+
         // For testing dashboard process management, slow down writes
         let writer;
         if (Context.slowMotionDelay > 0) {
@@ -329,7 +339,11 @@ function writeFile(data, done) {
             writer = data.tar.entry(data.header, done);
         }
 
+        writer.on('error', function(err) {
+            data.errFn(err);
+        });
         writer.on('finish', data.endFn);
+
         reader.pause();
         for (var h of data.hashes) {
             reader.pipe(h)
@@ -337,6 +351,9 @@ function writeFile(data, done) {
         reader.pipe(writer);
         reader.resume();
     } catch (err) {
+        Context.logger.error(err);
+        Context.logger.error(err.stack);
+        data.errFn(err);
         done(err, data);
     }
 }
@@ -346,6 +363,8 @@ function writeDirectory(data, done) {
         let writer = data.tar.entry(data.header, done);
         writer.on('finish', data.endFn);
     } catch (err) {
+        Context.logger.error(err);
+        data.errFn(err);
         done(err, data);
     }
 }
