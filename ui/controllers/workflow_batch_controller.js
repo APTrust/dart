@@ -26,6 +26,10 @@ class WorkflowBatchController extends RunningJobsController {
         this.nameProperty = 'name';
         this.defaultOrderBy = 'name';
         this.defaultSortDirection = 'asc';
+
+        // This is for unit tests only, since browsers will not
+        // let us programmatically set value of a file input.
+        this._injectesCSVFilePath = null;
     }
 
 
@@ -37,6 +41,10 @@ class WorkflowBatchController extends RunningJobsController {
         this._resetDisplayBeforeValidation();
         let form = new WorkflowBatchForm(new WorkflowBatch());
         form.parseFromDOM();
+        if (this._injectedCSVFilePath) {
+            // For testing. See note above.
+            form.obj.pathToCSVFile = this._injectedCSVFilePath;
+        }
         if (!form.obj.validate()) {
             form.setErrors();
             let html = Templates.workflowBatch({

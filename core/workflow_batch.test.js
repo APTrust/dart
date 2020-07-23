@@ -31,7 +31,7 @@ test('validateWorkflow()', () => {
     let batch = new WorkflowBatch(t.batchOpts);
     expect(batch.validateWorkflow()).toEqual(true);
 
-    batch.workflowId = t.badWorkflowId;
+    batch.workflowId = t.noNameWorkflowId;
     expect(batch.validateWorkflow()).toEqual(false);
     expect(batch.errors).toEqual({
         'name': Context.y18n.__('Name cannot be empty.'),

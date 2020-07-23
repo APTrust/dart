@@ -9,7 +9,8 @@ const { WorkflowBatch } = require('../core/workflow_batch');
 class BatchTestUtil {
 
     constructor() {
-        this.badWorkflowId = '067eeeba-7192-41cc-a1fb-fdd210bdb826';
+        this.noNameWorkflowId = '7bf8398d-3bc2-4484-a9b7-2c791c5fbf9f';
+        this.emptyWorkflowId = '067eeeba-7192-41cc-a1fb-fdd210bdb826';
         this.goodWorkflowId = 'abd9a873-c31a-4349-970d-e3abb4d62342';
         this.csvFile = path.join(__dirname, '..', 'test', 'fixtures', 'batch_for_testing.csv')
         this.batchOpts = {
@@ -20,9 +21,15 @@ class BatchTestUtil {
     }
 
     saveGoodAndBadWorkflows() {
-        let badWorkflow = new Workflow();
-        badWorkflow.id = this.badWorkflowId;
-        badWorkflow.save();
+        let noNameWorkflow = new Workflow();
+        noNameWorkflow.id = this.noNameWorkflowId
+        noNameWorkflow.bagItProfileId = Constants.BUILTIN_PROFILE_IDS['empty'];
+        noNameWorkflow.save();
+
+        let emptyWorkflow = new Workflow();
+        emptyWorkflow.id = this.emptyWorkflowId;
+        emptyWorkflow.name = 'Invalid Workflow for Batch Testing';
+        emptyWorkflow.save();
 
         TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
         let goodWorkflow = new Workflow({
