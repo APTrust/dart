@@ -1,3 +1,4 @@
+const $ = require('jquery');
 const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
