@@ -1,35 +1,14 @@
+const { BatchTestUtil } = require('../util/batch_test_util');
 const { Constants } = require('./constants');
 const { Context } = require('./context');
 const fs = require('fs');
-const path = require('path');
 const { TestUtil } = require('./test_util');
-const tmp = require('tmp');
-const { Workflow } = require('./workflow');
 const { WorkflowBatch } = require('./workflow_batch');
 
-const BadWorkflowId = '067eeeba-7192-41cc-a1fb-fdd210bdb826';
-const GoodWorkflowId = 'abd9a873-c31a-4349-970d-e3abb4d62342';
-const CSVFile = path.join(__dirname, '..', 'test', 'fixtures', 'batch_for_testing.csv')
-const opts = {
-    workflowId: GoodWorkflowId,
-    pathToCSVFile: CSVFile,
-}
-var tempCSVFile = '';
+var t = new BatchTestUtil();
 
 beforeAll(() => {
-    let badWorkflow = new Workflow();
-    badWorkflow.id = BadWorkflowId;
-    badWorkflow.save();
-
-    TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
-    let goodWorkflow = new Workflow({
-        name: 'CSV Test Workflow',
-        packageFormat: 'BagIt',
-        packagePluginId: 'BagIt',
-        bagItProfileId: Constants.BUILTIN_PROFILE_IDS['aptrust'],
-    });
-    goodWorkflow.id = GoodWorkflowId
-    goodWorkflow.save();
+    t.saveGoodAndBadWorkflows()
 });
 
 afterAll(() => {
@@ -37,46 +16,22 @@ afterAll(() => {
 });
 
 afterEach(() => {
-    if (tempCSVFile != '' && fs.existsSync(tempCSVFile)) {
-        fs.unlinkSync(tempCSVFile);
+    if (t.tempCSVFile != '' && fs.existsSync(t.tempCSVFile)) {
+        fs.unlinkSync(t.tempCSVFile);
     }
 });
 
-// The CSV file has placeholder pathsin the Root-Directory column.
-// Replace them with paths that point to DART source files.
-function fixPaths() {
-    let dartRoot = path.normalize(path.join(__dirname, '..'));
-
-    let tmpfile = tmp.fileSync();
-    tempCSVFile = tmpfile.name
-    tmpfile.removeCallback();
-
-    let csvData = fs.readFileSync(CSVFile, 'utf8');
-    fs.writeFileSync(tempCSVFile, csvData.replace(/\/home\/dev\/dart/g, dartRoot))
-}
-
-// Delete some required tags from the CSV file.
-function breakTags(fixPathsFirst) {
-    let filePath = CSVFile;
-    if (fixPathsFirst) {
-        fixPaths()
-        filePath = tempCSVFile
-    }
-    let csvData = fs.readFileSync(filePath, 'utf8');
-    fs.writeFileSync(tempCSVFile, csvData.replace(/Institution/g, 'xyz'))
-}
-
 test('Constructor sets expected properties', () => {
-    let batch = new WorkflowBatch(opts);
-    expect(batch.workflowId).toEqual(opts.workflowId);
-    expect(batch.pathToCSVFile).toEqual(opts.pathToCSVFile);
+    let batch = new WorkflowBatch(t.batchOpts);
+    expect(batch.workflowId).toEqual(t.batchOpts.workflowId);
+    expect(batch.pathToCSVFile).toEqual(t.batchOpts.pathToCSVFile);
 });
 
 test('validateWorkflow()', () => {
-    let batch = new WorkflowBatch(opts);
+    let batch = new WorkflowBatch(t.batchOpts);
     expect(batch.validateWorkflow()).toEqual(true);
 
-    batch.workflowId = BadWorkflowId;
+    batch.workflowId = t.badWorkflowId;
     expect(batch.validateWorkflow()).toEqual(false);
     expect(batch.errors).toEqual({
         'name': Context.y18n.__('Name cannot be empty.'),
@@ -94,10 +49,10 @@ test('validateWorkflow()', () => {
 
 test('validateCSVFile() with good paths', () => {
     // Fix paths in CSV file to point to DART source dir
-    fixPaths();
+    t.fixPaths();
     let batch = new WorkflowBatch({
-        workflowId: GoodWorkflowId,
-        pathToCSVFile: tempCSVFile,
+        workflowId: t.goodWorkflowId,
+        pathToCSVFile: t.tempCSVFile,
     });
     expect(batch.validateCSVFile()).toEqual(true);
     expect(batch.errors).toEqual({});
@@ -106,10 +61,10 @@ test('validateCSVFile() with good paths', () => {
 
 test('validateCSVFile() with bad Access tag values', () => {
     // Replace Access tag values with invalid values.
-    breakTags(true);
+    t.breakTags(true);
     let batch = new WorkflowBatch({
-        workflowId: GoodWorkflowId,
-        pathToCSVFile: tempCSVFile,
+        workflowId: t.goodWorkflowId,
+        pathToCSVFile: t.tempCSVFile,
     });
 
     let expected =     {
@@ -129,26 +84,26 @@ test('validateCSVFile() with bad paths', () => {
         "/home/dev/dart/core": "Line 3: path does not exist: /home/dev/dart/core",
         "/home/dev/dart/migrations": "Line 4: path does not exist: /home/dev/dart/migrations"
     }
-    let batch = new WorkflowBatch(opts);
+    let batch = new WorkflowBatch(t.batchOpts);
     expect(batch.validateCSVFile()).toEqual(false);
     expect(batch.errors).toEqual(expectedErrors);
 });
 
 test('validate() good', () => {
-    fixPaths();
+    t.fixPaths();
     let batch = new WorkflowBatch({
-        workflowId: GoodWorkflowId,
-        pathToCSVFile: tempCSVFile,
+        workflowId: t.goodWorkflowId,
+        pathToCSVFile: t.tempCSVFile,
     });
     expect(batch.validate()).toEqual(true);
     expect(Object.keys(batch.errors).length).toEqual(0);
 });
 
 test('validate() bad', () => {
-    breakTags(false);
+    t.breakTags(false);
     let batch = new WorkflowBatch({
-        workflowId: GoodWorkflowId,
-        pathToCSVFile: tempCSVFile,
+        workflowId: t.goodWorkflowId,
+        pathToCSVFile: t.tempCSVFile,
     });
 
     // Should get 3 bad tag value errors and 3 bad paths
