@@ -112,14 +112,10 @@ test('validateCSVFile() with bad Access tag values', () => {
         pathToCSVFile: tempCSVFile,
     });
 
-    let expected = {
-        "10-aptrust-info.txt/Access": "Value xyz for tag Access on line 10 is not in the list of allowed values.",
-        "2-aptrust-info.txt/Access": "Value xyz for tag Access on line 2 is not in the list of allowed values.",
-        "3-aptrust-info.txt/Access": "Value xyz for tag Access on line 3 is not in the list of allowed values.",
-        "4-aptrust-info.txt/Access": "Value xyz for tag Access on line 4 is not in the list of allowed values.",
-        "5-aptrust-info.txt/Access": "Value xyz for tag Access on line 5 is not in the list of allowed values.",
-        "8-aptrust-info.txt/Access": "Value xyz for tag Access on line 8 is not in the list of allowed values.",
-        "9-aptrust-info.txt/Access": "Value xyz for tag Access on line 9 is not in the list of allowed values.",
+    let expected =     {
+      '2-aptrust-info.txt/Access': 'Value xyz for tag Access on line 2 is not in the list of allowed values.',
+      '3-aptrust-info.txt/Access': 'Value xyz for tag Access on line 3 is not in the list of allowed values.',
+      '4-aptrust-info.txt/Access': 'Value xyz for tag Access on line 4 is not in the list of allowed values.'
     }
 
     expect(batch.validateCSVFile()).toEqual(false);
@@ -131,13 +127,7 @@ test('validateCSVFile() with bad paths', () => {
     let expectedErrors =     {
         "/home/dev/dart/bagit": "Line 2: path does not exist: /home/dev/dart/bagit",
         "/home/dev/dart/core": "Line 3: path does not exist: /home/dev/dart/core",
-        "/home/dev/dart/migrations": "Line 4: path does not exist: /home/dev/dart/migrations",
-        "/home/dev/dart/plugins": "Line 5: path does not exist: /home/dev/dart/plugins",
-        "/home/dev/dart/profiles": "Line 6: path does not exist: /home/dev/dart/profiles",
-        "/home/dev/dart/settings": "Line 7: path does not exist: /home/dev/dart/settings",
-        "/home/dev/dart/ui": "Line 8: path does not exist: /home/dev/dart/ui",
-        "/home/dev/dart/util": "Line 9: path does not exist: /home/dev/dart/util",
-        "/home/dev/dart/workers": "Line 10: path does not exist: /home/dev/dart/workers",
+        "/home/dev/dart/migrations": "Line 4: path does not exist: /home/dev/dart/migrations"
     }
     let batch = new WorkflowBatch(opts);
     expect(batch.validateCSVFile()).toEqual(false);
@@ -161,7 +151,7 @@ test('validate() bad', () => {
         pathToCSVFile: tempCSVFile,
     });
 
-    // Should get 7 bad tag value errors and 9 bad paths
+    // Should get 3 bad tag value errors and 3 bad paths
     expect(batch.validate()).toEqual(false);
-    expect(Object.keys(batch.errors).length).toEqual(16);
+    expect(Object.keys(batch.errors).length).toEqual(6);
 });

@@ -2,9 +2,3 @@ Bag-Name,Root-Directory,aptrust-info.txt/Title,aptrust-info.txt/Description,aptr
 dart-bagit,/home/dev/dart/bagit,DART BagIt,Bagit source code files from DART,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-01,apple
 dart-core,/home/dev/dart/core,DART Core,DART core source files,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-02,orange
 dart-migrations,/home/dev/dart/migrations,DART Migrations,DART migration source files,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-03,cherry
-dart-plugins,/home/dev/dart/plugins,DART Plugins,DART plugin JS files,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-04,blackberry
-dart-profiles,/home/dev/dart/profiles,DART Profiles,DART BagIt profiles,Consortia,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-05,guava
-dart-settings,/home/dev/dart/settings,DART Settings,DART settings files,Restricted,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-06,canteloupe
-dart-ui,/home/dev/dart/ui,DART UI,DART UI source files,Institution,Glacier-Deep-VA,test.edu,dart-source-test,dart-js-07,honeydew
-dart-util,/home/dev/dart/util,DART Utilities,DART utility source files,Institution,Glacier-Deep-VA,test.edu,dart-source-test,dart-js-08,mango
-dart-workers,/home/dev/dart/workers,DART Workers,DART worker source files,Institution,Glacier-Deep-VA,test.edu,dart-source-test,dart-js-08,lemon
