@@ -1,5 +1,8 @@
+const { AppSetting } = require('../core/app_setting');
 const { Constants } = require('../core/constants');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
+const os = require('os');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const tmp = require('tmp');
@@ -40,6 +43,19 @@ class BatchTestUtil {
         });
         goodWorkflow.id = this.goodWorkflowId
         goodWorkflow.save();
+    }
+
+    // This is required if one of our tests is going to make a bag.
+    createBaggingDirectory() {
+        this.baggingTempDir = path.join(os.tmpdir(), 'dart-bagger-test');
+        if (!fs.existsSync(this.baggingTempDir)) {
+            mkdirp.sync(this.baggingTempDir, { mode: 0o755 });
+        }
+        let setting = new AppSetting({
+            name: 'Bagging Directory',
+            value: this.baggingTempDir,
+        });
+        setting.save();
     }
 
     // The CSV file has placeholder pathsin the Root-Directory column.

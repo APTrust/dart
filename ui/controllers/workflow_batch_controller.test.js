@@ -1,19 +1,23 @@
 const $ = require('jquery');
 const { BatchTestUtil } = require('../../util/batch_test_util');
 const { Context } = require('../../core/context');
-const { WorkflowBatch } = require('../../core/workflow_batch');
-const { WorkflowBatchController } = require('./workflow_batch_controller');
+const EventEmitter = require('events');
+const fs = require('fs');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
+const { WorkflowBatch } = require('../../core/workflow_batch');
+const { WorkflowBatchController } = require('./workflow_batch_controller');
 
 var t = new BatchTestUtil();
 
 beforeAll(() => {
-    t.saveGoodAndBadWorkflows()
+    t.saveGoodAndBadWorkflows();
+    t.createBaggingDirectory();
 });
 
 afterAll(() => {
     TestUtil.deleteJsonFile('Workflow');
+    TestUtil.deleteJsonFile('AppSettings');
 });
 
 afterEach(() => {
@@ -38,6 +42,7 @@ test('new() displays form with workflows and file chooser', done => {
 test('runBatch with missing workflow and batch', done => {
     let controller = new WorkflowBatchController()
     UITestUtil.setDocumentBody(controller.new());
+
     setTimeout(function() {
         UITestUtil.setDocumentBody(controller.runBatch());
     }, 500);
@@ -87,10 +92,46 @@ test('runBatch with invalid workflow', done => {
     }, 1000);
 });
 
-test('runBatch with missing files', () => {
+test('runBatch with valid workflow and files', done => {
+    let controller = new WorkflowBatchController()
 
-});
+    // Set file paths in the CSV file to actual existing paths.
+    t.fixPaths();
 
-test('runBatch with valid workflow and files', () => {
+    UITestUtil.setDocumentBody(controller.new());
+    setTimeout(function() {
+        // Choose a workflow with no name and missing/invalid attributes
+        $("#workflowBatchForm_workflowId").val(t.goodWorkflowId)
+        controller._injectedCSVFilePath = t.tempCSVFile
+        // This action does not return new HTML. It alters the existing DOM.
+        controller.runBatch();
+    }, 200);
 
+    // This is where we check the actual results.
+    // We need controllers or ui/application.js to emit events
+    // so we can stop using setTimeout.
+    setTimeout(function() {
+        let alertDiv = $('#batchCompleted');
+        expect(alertDiv.length).toEqual(1);
+        expect(alertDiv.css('display')).toEqual('block');
+        expect($(alertDiv).text().trim()).toEqual(Context.y18n.__("All jobs have completed. Check the results below."));
+
+        let resultsDiv = $('#workflowResults');
+        expect(resultsDiv.length).toEqual(1);
+        expect(resultsDiv.css('display')).toEqual('block');
+
+        // There are three jobs in this batch.
+        let specificResults = $('div.row.batch-result');
+        expect(specificResults.length).toEqual(3);
+
+        // Results include a green icon for each success
+        // and a red icon for each failure. They should all be green.
+        // See ui/templates/partials/workflow_job_succeeded.html
+        // and ui/templates/partials/workflow_job_failed.html
+        let resultsHTML = $(resultsDiv).html();
+        expect(resultsHTML).toContain("color: green;");
+        expect(resultsHTML).not.toContain("color: red;");
+
+        done();
+    }, 4000);
 });
