@@ -133,5 +133,5 @@ test('runBatch with valid workflow and files', done => {
         expect(resultsHTML).not.toContain("color: red;");
 
         done();
-    }, 4000);
+    }, 4500);
 });
