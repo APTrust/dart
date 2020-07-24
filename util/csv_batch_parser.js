@@ -37,42 +37,8 @@ const parse = require('csv-parse/lib/sync')
  * the bagging process requires a lot of disk I/O. Running 2-4 jobs at once
  * may be sane. Running 100 will lead to disk thrashing.
  *
- * The code in the example below runs one job at a time from the CSV file.
- *
- * @example
- *
- * const {CSVBatchParser} = require('./util/csv_batch_parser');
- *
- * let parser = new CSVBatchParser({
- *     pathToFile: 'home/joe/batch_job.csv',
- *     workflowName: 'APTrust Demo Glacier-OH',
- * });
- *
- * try {
- *    let jobParamsArray = parser.parseAll();
- *    jobParamsArray.forEach(function(params) {
- *      let exitCode = runJob(params);
- *      if (exitCode == Constants.EXIT_SUCCESS) {
- *        // Good times :)
- *      } else {
- *        // Very stable genius :(
- *      }
- *    }
- * }
- * catch (ex) {
- *    // Handle exception. Usually file doesn't exist, is not readable,
- *    // or is not parsable.
- * }
- *
- * async function runJob(jobParams) {
- *    let job = jobParams.toJob();
- *    if (job == null) {
- *      throw "Invalid Job"
- *    }
- *    let jobRunner = new JobRunner(job);
- *    let exitCode = await jobRunner.run();
- *    return exitCode;
- * }
+ * For an example of how to run a batch, see the
+ * {@link WorkflowBatchController}
  *
  * @param {string} opts.pathToFile - The path to the CSV file you want to
  * parse.
@@ -121,7 +87,9 @@ class CSVBatchParser {
         let parserOptions = {
             bom: true,      // detect byte order marker from Excel exports
             columns: true,  // column names in first row
-            skip_empty_lines: true
+            skip_empty_lines: true,
+            skip_lines_with_empty_values: true,
+            trim: true,
         };
         let csvData = fs.readFileSync(this.pathToFile);
         return parse(csvData, parserOptions);
