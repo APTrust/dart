@@ -13,6 +13,16 @@ const { WorkflowBatch } = require('../../core/workflow_batch');
 const { WorkflowForm } = require('../forms/workflow_form');
 const { WorkflowBatchForm } = require('../forms/workflow_batch_form');
 
+/**
+ * WorkflowBatchController runs a workflow against a batch of files
+ * listed in a CSV file. See
+ * https://aptrust.github.io/dart-docs/users/workflows/batch_jobs/
+ * for more information.
+ *
+ * Note that this controller descends from RunningJobsController,
+ * which handles the display of running job progress.
+ *
+ */
 class WorkflowBatchController extends RunningJobsController {
 
     constructor(params) {
@@ -59,6 +69,13 @@ class WorkflowBatchController extends RunningJobsController {
         return this.noContent();
     }
 
+    /**
+     * Runs each job, one at a time.
+     *
+     * @param {WorkflowBatch} workflowBatch
+     *
+     * @private
+     */
     async _runBatchAsync(workflowBatch) {
         let lastJobNumber = workflowBatch.jobParamsArray.length;
         for (let i = 0; i < workflowBatch.jobParamsArray.length; i++) {
@@ -67,6 +84,20 @@ class WorkflowBatchController extends RunningJobsController {
         }
     }
 
+    /**
+     * Runs a single job from the batch in a separate process and wire up
+     * the dartProcess display to track the progress of the external process.
+     *
+     * @param {JobParams} jobParams - Describes the job to run.
+     *
+     * @param {number} lineNumber - The line number from the CSV file
+     * that describes this job.
+     *
+     * @param {number} lastJobNumber - The number of the last line
+     * of the CSV file. The function uses this to know when it has completed
+     * the last job in the batch.
+     *
+     */
     runJob(jobParams, lineNumber, lastJobNumber) {
         let controller = this;
         return new Promise((resolve, reject) => {
@@ -107,36 +138,67 @@ class WorkflowBatchController extends RunningJobsController {
         });
     }
 
+    /**
+     * Display a message saying all jobs in the batch have completed.
+     *
+     * @private
+     */
     _showCompleted() {
         $('#batchRunning').hide();
         $('#batchCompleted').show();
     }
 
+    /**
+     * Clear any old validation messages from the display before running
+     * validation.
+     *
+     * @private
+     */
     _resetDisplayBeforeValidation() {
         $('#batchRunning').hide();
         $('#batchCompleted').hide();
         $('#workflowResults').hide();
     }
 
+    /**
+     * Clear any old results from the display before running the batch job.
+     *
+     * @private
+     */
     _resetDisplayBeforeRunning() {
         $('#batchRunning').show();
         $('#workflowResults').show();
         $('div.batch-result').remove();
     }
 
-    // If form is invalid at first, then user fixes the problems and
-    // clicks Run again, the error messages will remain until we
-    // explicitly clear them.
+    /**
+     * Clear error messages from the display.
+     * If form is invalid at first, then user fixes the problems and
+     * clicks Run again, the error messages will remain until we
+     * explicitly clear them.
+     *
+     * @private
+     */
     _clearErrorMessages() {
         $('#batchValidation').html('');
         $('small.form-text.text-danger').text('');
     }
 
+    /**
+     * Display a message saying a single job from the batch has succeeded.
+     *
+     * @private
+     */
     _showJobSucceeded(data) {
         Context.logger.info(`${data.jobName} Succeeded`)
         $('#workflowResults').append(Templates.workflowJobSucceeded(data));
     }
 
+    /**
+     * Display a message saying a single job from the batch has failed.
+     *
+     * @private
+     */
     _showJobFailed(data) {
         Context.logger.error(`${data.jobName} exited with ${data.code}. Errors: ${JSON.stringify(data.errors)}`)
         $('#workflowResults').append(Templates.workflowJobFailed(data));
@@ -144,11 +206,11 @@ class WorkflowBatchController extends RunningJobsController {
 
     /**
      * The postRenderCallback attaches event handlers to elements
-     * that this controller has just rendered.
+     * that this controller has just rendered. In this case,
+     * our file input does not replace the placeholder text with the
+     * path to the selected file. We have to do that ourselves.
      */
     postRenderCallback(fnName) {
-        // Our file input does not replace the placeholder text with the
-        // path to the selected file. We have to do that ourselves.
         $('#pathToCSVFile').on('change',function(e){
             let element = document.getElementById('pathToCSVFile');
             if (element && element.files && element.files[0]) {
