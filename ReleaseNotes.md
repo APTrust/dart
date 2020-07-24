@@ -1,6 +1,11 @@
 # DART Release Notes
 
-## 2.0.7 - May 14, 2020
+## 2.0.9 - July 24, 2020
+
+* Added Batch Jobs - Run a workflow batch to create and ship hundreds of bags at once.
+  See the documentation at <https://aptrust.github.io/dart-docs/users/workflows/batch_jobs/>
+
+## 2.0.8 - May 26, 2020
 
 * Fixed [Unserialized bags which match existing path are invalid](https://github.com/APTrust/dart/issues/280)
 * Updated to Electron 9.0.0
