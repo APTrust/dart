@@ -14,7 +14,7 @@
     },
     "dependencies": {
         "ajv": "^6.12.3",
-        "archiver": "^4.0.2",
+        "archiver": "^5.0.0",
         "asar": "^3.0.3",
         "async": "^3.2.0",
         "braintree-jsdoc-template": "^3.3.0",
