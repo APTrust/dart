@@ -190,7 +190,7 @@ class PersistentObject {
     static mergeDefaultOpts(opts) {
         // Don't overwrite opts. Caller may want to reuse it.
         var mergedOpts = Object.assign({}, opts);
-        mergedOpts.limit = mergedOpts.limit || 10;
+        mergedOpts.limit = mergedOpts.limit || 50;
         mergedOpts.offset = mergedOpts.offset || 0;
         mergedOpts.orderBy = mergedOpts.orderBy || null;
         mergedOpts.sortDirection = mergedOpts.sortDirection || 'asc';
