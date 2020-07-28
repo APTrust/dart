@@ -74,13 +74,13 @@ class Util {
 
     /**
       * Returns true if str matches the regex for a URL beginning
-      * with http or https.
+      * with http or https and looks like a valid URL.
       *
       * @param {string} str - The string to test.
       * @returns {boolean}
       */
     static looksLikeHypertextURL(str) {
-        let regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+        let regex = /(^http:\/\/localhost)|(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/;
         return Util.stringMatchesRegex(str, regex);
     }
 

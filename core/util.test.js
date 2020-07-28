@@ -27,6 +27,7 @@ test('Util.looksLikeUUID()', () => {
 
 test('Util.looksLikeHyperTextURL()', () => {
     expect(Util.looksLikeHypertextURL("http://example.com/api")).toEqual(true);
+    expect(Util.looksLikeHypertextURL("http://localhost/api")).toEqual(true);
     expect(Util.looksLikeHypertextURL("https://repo.example.com/api/v2")).toEqual(true);
     expect(Util.looksLikeHypertextURL("ftp://example.com/upload")).toEqual(false);
     expect(Util.looksLikeHypertextURL("ταὐτὰ παρίσταταί")).toEqual(false);
