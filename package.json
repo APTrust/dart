@@ -29,6 +29,7 @@
         "graceful-fs": "^4.2.4",
         "handlebars": "^4.7.6",
         "jquery": "^3.5.1",
+        "make-dir": "^3.1.0",
         "minimatch": "^3.0.4",
         "minio": "^7.0.16",
         "os-locale": "^5.0.0",
