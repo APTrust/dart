@@ -89,6 +89,9 @@ test('Upload with bad credentials', done => {
         testCommonResultProperties(result);
         expect(result.info).toBeNull();
         expect(result.warning).toBeNull();
+        if (result.errors.length > 1) {
+            console.log(result.errors);
+        }
         expect(result.errors.length).toEqual(1);
         expect(result.errors[0]).toMatch(/authentication methods failed/);
         done();
