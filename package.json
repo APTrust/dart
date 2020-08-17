@@ -21,7 +21,7 @@
         "conf": "^7.1.1",
         "csv-parse": "^4.12.0",
         "dateformat": "^3.0.3",
-        "electron-context-menu": "^2.2.0",
+        "electron-context-menu": "^2.3.0",
         "electron-log": "^4.2.2",
         "electron-store": "^6.0.0",
         "es6-error": "^4.1.1",
