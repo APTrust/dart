@@ -270,7 +270,9 @@
 				"Glacier-VA",
 				"Glacier-Deep-OH",
 				"Glacier-Deep-OR",
-				"Glacier-Deep-VA"
+				"Glacier-Deep-VA",
+				"Wasabi-VA",
+				"Wasabi-OR"
 			],
 			"defaultValue": "Standard",
 			"userValue": "",
