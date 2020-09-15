@@ -61,7 +61,6 @@ test("We should be able to write to the log", () => {
 
 test("Context has y18n", () => {
     expect(Context.y18n).toBeDefined();
-    expect(Context.y18n.directory).toEqual(path.join(__dirname, '..', 'locales'));
     expect(Context.y18n.locale).toBeDefined();
     expect(Context.y18n.locale.length).toBeGreaterThan(1);
 });
