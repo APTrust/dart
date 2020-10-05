@@ -55,7 +55,7 @@
         "electron": "^10.1.2",
         "electron-builder": "^22.8.1",
         "electron-notarize": "^1.0.0",
-        "jest": "^26.4.2",
+        "jest": "^26.5.0",
         "jsdoc": "^3.6.6",
         "node-sftp-server": "^0.3.0"
     },
