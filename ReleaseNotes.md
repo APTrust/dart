@@ -1,5 +1,11 @@
 # DART Release Notes
 
+## 2.0.10 - October 15, 2020
+
+* Export BagIt Profiles to match version 1.3.0 of the [BagIt Profile Specification](https://bagit-profiles.github.io/bagit-profiles-specification/)
+* Fixed regressions: Electron 10+ broke the Help > About and Help > Logs popup
+  windows.
+
 ## 2.0.9 - July 24, 2020
 
 * Added Batch Jobs - Run a workflow batch to create and ship hundreds of bags at once.
