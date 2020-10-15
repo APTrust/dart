@@ -14,7 +14,7 @@ class BagItProfileInfo {
         this.bagItProfileIdentifier = "https://example.com/profile.json";
         /**
          * The version of the BagItProfile specification to which this
-         * profile conforms. For example, "1.1.0", "1.2.0", etc.
+         * profile conforms. For example, "1.2.0", "1.3.0", etc.
          *
          * This may be (and will likely be) empty for profiles created
          * within DART, since DART BagItProfiles differ somewhat from
