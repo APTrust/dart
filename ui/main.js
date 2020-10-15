@@ -13,7 +13,10 @@ function createWindow() {
     win = new BrowserWindow({
         width: 1200,
         height: 900,
-        webPreferences: { nodeIntegration: true },
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true,
+        },
         icon: path.join(__dirname, 'include/img/dart.png')
     });
 
