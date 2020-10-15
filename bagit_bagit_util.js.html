@@ -354,11 +354,8 @@ class BagItUtil {
         obj["Manifests-Required"] = p.manifestsRequired;
         obj["Tag-Manifests-Required"] = p.tagManifestsRequired;
 
-        // The following two are not yet supported in BagIt Profiles v1.2.0
-        // spec. We have an open pull request to include them.
-        //
-        //obj["Manifests-Allowed"] = p.manifestsAllowed;
-        //obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
+        obj["Manifests-Allowed"] = p.manifestsAllowed;
+        obj["Tag-Manifests-Allowed"] = p.tagManifestsAllowed;
 
         obj["Tag-Files-Allowed"] = p.tagFilesAllowed;
 
