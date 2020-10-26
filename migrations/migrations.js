@@ -1,5 +1,8 @@
 const glob = require('glob');
 const path = require('path');
+const { Context } = require('../core/context');
+const { InternalSetting } = require('../core/internal_setting');
+
 
 /**
   * This runs all migrations in the migrations directory.
@@ -18,11 +21,36 @@ const path = require('path');
 function runAll() {
     let filePattern = path.join(__dirname, '*.js')
     glob.sync(filePattern).forEach( function( file ) {
-        if (!file.endsWith('migrations.js')) {
+        let basename = path.parse(file).name;
+        console.log(basename)
+        let name = `Migration_${basename}`
+        if (basename.startsWith('20') && !hasAlreadyRun(name)) {
             var migration = require(path.resolve(file));
-            migration.run()
+            Context.logger.info(`Starting migration ${name}`);
+            let ok = migration.run(name)
+            if (ok) {
+                Context.logger.info(`Finished ${name}`);
+                markAsRun(name)
+            } else {
+                Context.logger.info(`Failed: ${name}`);
+            }
         }
     });
+}
+
+function hasAlreadyRun(name) {
+    let record = InternalSetting.firstMatching('name', name);
+    return (record && record.value)
+}
+
+function markAsRun(name) {
+    let now = new Date().toISOString();
+    let migrationRecord = new InternalSetting({
+        name: name,
+        value: now,
+        userCanDelete: false
+    });
+    migrationRecord.save();
 }
 
 module.exports.runAll = runAll;

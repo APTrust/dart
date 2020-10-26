@@ -10,25 +10,7 @@ const { TestUtil } = require('../core/test_util');
  *
  */
 function run() {
-    let migration = path.parse(__filename).name;
-    let migrationName = `Migration_${migration}`;
-    let record = InternalSetting.firstMatching('name', migrationName);
-    if (record && record.value) {
-        return;
-    }
-    Context.logger.info(`Starting migration ${migration}`);
-
-    // This is the meat of the work...
-    loadEmptyProfile();
-
-    Context.logger.info(`Finished ${migration}`);
-    let now = new Date().toISOString();
-    let migrationRecord = new InternalSetting({
-        name: migrationName,
-        value: now,
-        userCanDelete: false
-    });
-    migrationRecord.save();
+    return loadEmptyProfile();
 }
 
 function loadEmptyProfile() {
@@ -43,6 +25,7 @@ function loadEmptyProfile() {
     } else {
         Context.logger.info(`'Empty Profile' is already installed`);
     }
+    return true
 }
 
 module.exports.run = run;

@@ -13,29 +13,7 @@ const aptrustProfileId = Constants.BUILTIN_PROFILE_IDS["aptrust"];
  *
  */
 function run() {
-    let migration = path.parse(__filename).name;
-    let migrationName = `Migration_${migration}`;
-    let record = InternalSetting.firstMatching('name', migrationName);
-    if (record && record.value) {
-        //Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
-        return;
-    }
-    Context.logger.info(`Starting migration ${migration}`);
-
-    let succeeded = updateAPTrustBagItProfiles();
-
-    if (succeeded) {
-        Context.logger.info(`Finished ${migration}`);
-        let now = new Date().toISOString();
-        let migrationRecord = new InternalSetting({
-            name: migrationName,
-            value: now,
-            userCanDelete: false
-        });
-        migrationRecord.save();
-    } else {
-        Context.logger.warn(`Migration ${migration} failed`);
-    }
+    return updateAPTrustBagItProfiles();
 }
 
 function updateAPTrustBagItProfiles() {

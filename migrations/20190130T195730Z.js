@@ -11,26 +11,7 @@ const { TestUtil } = require('../core/test_util');
  *
  */
 function run() {
-    let migration = path.parse(__filename).name;
-    let migrationName = `Migration_${migration}`;
-    let record = InternalSetting.firstMatching('name', migrationName);
-    if (record && record.value) {
-        //Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
-        return;
-    }
-    Context.logger.info(`Starting migration ${migration}`);
-
-    // This is the meat of the work...
-    loadBuiltInProfiles();
-
-    Context.logger.info(`Finished ${migration}`);
-    let now = new Date().toISOString();
-    let migrationRecord = new InternalSetting({
-        name: migrationName,
-        value: now,
-        userCanDelete: false
-    });
-    migrationRecord.save();
+    return loadBuiltInProfiles();
 }
 
 /**
@@ -50,6 +31,7 @@ function loadBuiltInProfiles() {
     } else {
         Context.logger.info(`APTrust BagIt profile is already installed`);
     }
+    return true
 }
 
 module.exports.run = run;

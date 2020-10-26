@@ -10,24 +10,8 @@ const { TestUtil } = require('../core/test_util');
  *
  */
 function run() {
-    let migration = path.parse(__filename).name;
-    let migrationName = `Migration_${migration}`;
-    let record = InternalSetting.firstMatching('name', migrationName);
-    if (record && record.value) {
-        return;
-    }
-    Context.logger.info(`Starting migration ${migration}`);
-
     loadBTRProfile();
-
-    Context.logger.info(`Finished ${migration}`);
-    let now = new Date().toISOString();
-    let migrationRecord = new InternalSetting({
-        name: migrationName,
-        value: now,
-        userCanDelete: false
-    });
-    migrationRecord.save();
+    return true;
 }
 
 function loadBTRProfile() {
