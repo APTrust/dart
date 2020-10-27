@@ -124,7 +124,7 @@ test('create() with multiple dirs and files', done => {
             let bagInfoFile = validator.files['bag-info.txt'];
             expect(bagInfoFile).not.toBeNull();
             expect(bagInfoFile.keyValueCollection.first('Source-Organization')).toEqual('School of Hard Knocks');
-            expect(bagInfoFile.keyValueCollection.first('BagIt-Profile-Identifier')).toEqual('https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2');
+            expect(bagInfoFile.keyValueCollection.first('BagIt-Profile-Identifier')).toEqual('https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json');
             // Payload-Oxum should be ~400kb with 33 files.
             // Something like 406132.33
             expect(bagInfoFile.keyValueCollection.first('Payload-Oxum')).toMatch(/4\d{5}.\d{2}/);

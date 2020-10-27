@@ -243,7 +243,7 @@ function expectedStandardObject() {
         "*"
       ],
       "BagIt-Profile-Info": {
-        "BagIt-Profile-Identifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
+        "BagIt-Profile-Identifier": "https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json",
         "BagIt-Profile-Version": "",
         "Contact-Email": "support@aptrust.org",
         "Contact-Name": "A. Diamond",

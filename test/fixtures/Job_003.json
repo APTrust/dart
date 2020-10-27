@@ -9,7 +9,7 @@
         ],
         "allowFetchTxt": false,
         "bagItProfileInfo": {
-            "bagItProfileIdentifier": "https://wiki.aptrust.org/APTrust_BagIt_Profile-2.2",
+            "bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json",
             "contactEmail": "support@aptrust.org",
             "contactName": "A. Diamond",
             "externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
