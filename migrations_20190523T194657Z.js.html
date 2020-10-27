@@ -110,16 +110,6 @@ const path = require('path');
  *
  */
 function run() {
-    let migration = path.parse(__filename).name;
-    let migrationName = `Migration_${migration}`;
-    let record = InternalSetting.firstMatching('name', migrationName);
-    if (record &amp;&amp; record.value) {
-        //Context.logger.info(`Skipping migration ${migrationName}: was run on ${record.value}`);
-        return;
-    }
-    Context.logger.info(`Starting migration ${migration}`);
-
-    // This is the meat of the work...
     let appSetting = new AppSetting({
         name: 'Bagging Directory',
         value: path.join(os.homedir(), '.dart', 'bags')
@@ -128,15 +118,7 @@ function run() {
     appSetting.help = "Where should DART put the bags it builds?";
     appSetting.userCanDelete = false;
     appSetting.save();
-
-    Context.logger.info(`Finished ${migration}`);
-    let now = new Date().toISOString();
-    let migrationRecord = new InternalSetting({
-        name: migrationName,
-        value: now,
-        userCanDelete: false
-    });
-    migrationRecord.save();
+    return true
 }
 
 module.exports.run = run;
