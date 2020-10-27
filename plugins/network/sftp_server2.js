@@ -152,9 +152,9 @@ function start(port = DEFAULT_PORT, debug = true) {
 }
 
 function log(message) {
-    if (_debug) {
+    //if (_debug) {
         console.log(message)
-    }
+    //}
 }
 
 
