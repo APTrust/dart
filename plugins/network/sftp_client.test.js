@@ -27,6 +27,7 @@ function shouldSkip() {
     if (process.env.TRAVIS_OS_NAME) {
         if (!skipMessagePrinted) {
             console.log("Skipping SFTP tests on Travis")
+            skipMessagePrinted = true
         }
         skip = true
     }

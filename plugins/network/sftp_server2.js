@@ -1,3 +1,7 @@
+//
+// This code is used only for testing the SFTP client.
+// We need to replace this with something better.
+//
 // Adapted from https://github.com/mscdex/ssh2/blob/master/examples/sftp-server-download-only.js
 // See also https://github.com/mscdex/ssh2-streams/blob/master/SFTPStream.md
 // and https://github.com/mscdex/ssh2/blob/37c6193ec64fb07e5ac7d3ac9d7797116e8a01ae/README.md
