@@ -140,6 +140,10 @@ test('Upload handles Permission denied', done => {
 });
 
 test('Upload handles unspecfied failure', done => {
+    if (shouldSkip()) {
+        done();
+        return;
+    }
     var ss = getStorageService();
     var client = new SFTPClient(ss);
     client.on('finish', function(result) {
