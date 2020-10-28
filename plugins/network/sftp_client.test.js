@@ -96,6 +96,7 @@ test('Upload', done => {
 
 test('Upload with bad credentials', done => {
     if (shouldSkip()) {
+        done();
         return;
     }
     var ss = getStorageService();
@@ -122,6 +123,7 @@ test('Upload with bad credentials', done => {
 
 test('Upload handles Permission denied', done => {
     if (shouldSkip()) {
+        done();
         return;
     }
     var ss = getStorageService();
