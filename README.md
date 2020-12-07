@@ -204,8 +204,7 @@ from the root of the DART project directory:
 
 `node ./test/servers/sftp.js`
 
-Note that this works only in dev mode, when you have the source files. This is
-not part of the release.
+Note that this works only in dev mode, when you have the source files. This is not part of the release.
 
 The local test SFTP server writes everything to a single temp file. It's not
 meant to preserve any data, just to test whether data transfer works via the
