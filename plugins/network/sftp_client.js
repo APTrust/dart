@@ -141,6 +141,11 @@ class SFTPClient extends Plugin {
                 if (client && client.sftp) {
                     try { client.end(); }
                     catch(ex) {}
+                } else {
+                    // AppVeyor seems to hit this condition frequently.
+                    // If the connection failed and we can't call
+                    // client.end(), we still need to emit the finish event.
+                    sftp.emit('finish', result);
                 }
             });
     }
