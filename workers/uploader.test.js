@@ -74,4 +74,4 @@ test('run() using S3 client', done => {
         }
         done();
     });
-}, 10000);
+});

@@ -134,4 +134,4 @@ test('runBatch with valid workflow and files', done => {
 
         done();
     }, 4500);
-});
+}, 10000);

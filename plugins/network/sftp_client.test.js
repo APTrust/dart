@@ -143,7 +143,7 @@ test('Upload handles Permission denied', done => {
         done();
     });
     client.upload(Buffer.from('Force permission denied', 'utf8'), remoteFileName);
-});
+}, 10000);
 
 test('Upload handles unspecfied failure', done => {
     if (shouldSkip()) {
@@ -161,7 +161,7 @@ test('Upload handles unspecfied failure', done => {
         done();
     });
     client.upload(Buffer.from('Force upload failure', 'utf8'), remoteFileName);
-});
+}, 10000);
 
 
 test('upload emits error instead of throwing on bad private key file', done => {
