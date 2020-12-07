@@ -137,7 +137,9 @@ class SFTPClient extends Plugin {
                 errorWasHandled = true;
                 result.finish(err.message);
                 sftp.emit('error', result);
-                client.end();
+                // client.end() can fail if conn is not established
+                try { client.end(); }
+                catch(ex) {}
             });
     }
 

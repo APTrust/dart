@@ -112,9 +112,9 @@ test('Upload with bad credentials', done => {
         testCommonResultProperties(result);
         expect(result.info).toBeNull();
         expect(result.warning).toBeNull();
-        if (result.errors.length > 1) {
-            console.log(result.errors);
-        }
+        // if (result.errors.length > 1) {
+        //     console.log(result.errors);
+        // }
         // Mac and Linux return one error, Windows returns two
         // (same error twice on Windows)
         // 'All configured authentication methods failed'
