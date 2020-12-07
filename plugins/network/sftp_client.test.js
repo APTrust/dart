@@ -24,9 +24,9 @@ afterAll(() => {
 // convoluted sftp server for node. Good luck in that.
 function shouldSkip() {
     let skip = false;
-    if (process.env.TRAVIS_OS_NAME) {
+    if (process.env.TRAVIS_OS_NAME || process.env.APPVEYOR) {
         if (!skipMessagePrinted) {
-            console.log("Skipping SFTP tests on Travis")
+            console.log("Skipping SFTP tests on Travis/AppVeyor")
             skipMessagePrinted = true
         }
         skip = true
