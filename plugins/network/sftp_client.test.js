@@ -115,8 +115,13 @@ test('Upload with bad credentials', done => {
         if (result.errors.length > 1) {
             console.log(result.errors);
         }
-        expect(result.errors.length).toEqual(1);
-        expect(result.errors[0]).toMatch(/authentication methods failed/);
+        // Mac and Linux return one error, Windows returns two
+        // (same error twice on Windows)
+        // 'All configured authentication methods failed'
+        expect(result.errors.length).toBeGreaterThanOrEqual(1);
+        for (let err of result.errors) {
+            expect(err).toMatch(/authentication methods failed/);
+        }
         done();
     });
     client.upload(__filename, remoteFileName);
