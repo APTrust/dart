@@ -265,11 +265,7 @@ function expectedStandardObject() {
           "required": false
         },
         "Bagging-Software": {
-          "required": false,
-          "values": [
-            "DART",
-            "TRAD"
-          ]
+          "required": false
         },
         "Bag-Group-Identifier": {
           "required": false
