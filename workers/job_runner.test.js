@@ -392,7 +392,7 @@ test('run() fails gracefully if 1 of 1 uploads fails', done => {
         expect(result.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
         done();
     });
-});
+}, 10000);
 
 
 test('run() fails gracefully if 1 of 3 uploads fails', done => {
@@ -440,7 +440,7 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
 
         done();
     });
-});
+}, 10000);
 
 // Test with non-existent upload target. This can happen if
 // user saves a job with an StorageService, then deletes the
@@ -466,4 +466,4 @@ test('run() fails gracefully if StorageService does not exist', done => {
 
         done();
     });
-});
+}, 10000);
