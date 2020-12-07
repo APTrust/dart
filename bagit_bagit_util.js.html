@@ -368,12 +368,6 @@ class BagItUtil {
         obj["BagIt-Profile-Info"]["Source-Organization"] = p.bagItProfileInfo.sourceOrganization;
         obj["BagIt-Profile-Info"]["Version"] = p.bagItProfileInfo.version;
 
-        // Add values to one tag in this profile, so we can test...
-        p.firstMatchingTag("tagName", "Bagging-Software").values = [
-            "DART",
-            "TRAD"
-        ];
-
         // Tags
         obj["Bag-Info"] = {};
         obj["Tag-Files-Required"] = [];
