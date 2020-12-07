@@ -1,5 +1,14 @@
 # DART Release Notes
 
+## 2.0.11 - December 7, 2020
+
+* Fixed a typo in the "files to package" screen.
+* Removed list of allowed values in the bag-info.txt/Bagging-Software tag.
+  That had caused some user-defined custom BagIt Profiles to generate bags
+  that would not validate.
+* Extended timeout on a few async tests that sporadically timed out.
+
+
 ## 2.0.10 - October 15, 2020
 
 * Export BagIt Profiles to match version 1.3.0 of the [BagIt Profile Specification](https://bagit-profiles.github.io/bagit-profiles-specification/)
