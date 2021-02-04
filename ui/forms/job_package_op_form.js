@@ -67,6 +67,7 @@ class JobPackageOpForm extends Form {
             this.obj.bagItProfileId,
             true
         );
+        this.fields['bagItProfileId'].label = Context.y18n.__('JobPackageOp_bagItProfileId_label');
         this.fields['bagItProfileId'].help = Context.y18n.__('JobPackageOp_bagItProfileId_help');
     }
 
