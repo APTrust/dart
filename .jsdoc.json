@@ -6,7 +6,7 @@
     },
     "plugins": ["plugins/markdown"],
     "templates": {
-        "referenceTitle": "DART (Digital Archivists' Resource Tool)",
+        "referenceTitle": "DART (Digital Archivists' Routing Tool)",
         "disableSort": false,
         "collapse": true,
 	    "resources": {
