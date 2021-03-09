@@ -28,7 +28,7 @@
         "glob": "^7.1.6",
         "graceful-fs": "^4.2.6",
         "handlebars": "^4.7.7",
-        "jquery": "^3.5.1",
+        "jquery": "^3.6.0",
         "make-dir": "^3.1.0",
         "minimatch": "^3.0.4",
         "minio": "^7.0.18",
@@ -53,7 +53,7 @@
     "devDependencies": {
         "babel-plugin-transform-async-generator-functions": "^6.24.1",
         "electron": "^12.0.0",
-        "electron-builder": "^22.9.1",
+        "electron-builder": "^22.10.5",
         "electron-notarize": "^1.0.0",
         "jest": "^26.6.3",
         "jsdoc": "^3.6.6"
