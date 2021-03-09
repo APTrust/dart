@@ -72,16 +72,14 @@
         "asar": true,
         "icon": "build/dart.png",
         "directories": {
-            "output": "dist",
-            "buildResources": "build"
+            "output": "dist"
         },
         "mac": {
-            "afterSign": "./build/notarize.js",
             "hardenedRuntime": true,
             "gatekeeperAssess": false,
             "entitlements": "./build/entitlements.mac.plist",
             "entitlementsInherit": "./build/entitlements.mac.plist",
-            "type": "distribution",
+            "type": "development",
             "target": [
                 {
                     "target": "dmg",
