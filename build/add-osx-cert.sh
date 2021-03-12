@@ -15,10 +15,6 @@ security default-keychain -s $KEY_CHAIN
 # Unlock the keychain
 security unlock-keychain -p travis $KEY_CHAIN
 
-# Import Apple Worldwide Developer Relations Certification Authority
-# which signed our developer cert, below...
-security import ./build/AppleWorldwideDevCertAuthority.cer -k $KEY_CHAIN
-
 # Import our developer cert.
 security import $CERTIFICATE_P12 -k $KEY_CHAIN -P $CERTIFICATE_PASSWORD -T /usr/bin/codesign;
 
