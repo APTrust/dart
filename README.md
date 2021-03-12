@@ -26,9 +26,11 @@ tool for creating archival packages and sending them to a remote repository.
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
-* [Mac OSX v2.0.11](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.11.dmg)
+Note - March 12, 2021 - The current Windows version is 2.0.11. For Mac and Linux, please use version 2.0.10 while we try to resolve code signing problems.
+
+* ~~[Mac OSX v2.0.11](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.11.dmg)~~ [Mac OSX v2.0.10](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.10.dmg)
 * [Windows v2.0.11](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.11.exe)
-* [Linux v2.0.11](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.11_amd64.deb)
+* ~~[Linux v2.0.11](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.11_amd64.deb)~~ [Linux v2.0.10](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.10_amd64.deb)
 
 While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
