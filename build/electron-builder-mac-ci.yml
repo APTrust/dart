@@ -22,4 +22,4 @@ linux:
       arch:
         - x64
   category: Utility
-electronVersion: 12.0.0
+electronVersion: 11.3.0
