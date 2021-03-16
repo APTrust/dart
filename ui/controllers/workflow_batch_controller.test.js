@@ -40,6 +40,7 @@ test('new() displays form with workflows and file chooser', done => {
 });
 
 test('runBatch with missing workflow and batch', done => {
+    jest.setTimeout(10000);
     let controller = new WorkflowBatchController()
     UITestUtil.setDocumentBody(controller.new());
 
@@ -59,10 +60,11 @@ test('runBatch with missing workflow and batch', done => {
         let errors = $('#batchValidation ul li');
         expect(errors.length).toEqual(3);
         done();
-    }, 1000);
+    }, 1500);
 });
 
 test('runBatch with invalid workflow', done => {
+    jest.setTimeout(10000);
     let expected = [
 	    'Line 2: path does not exist: /home/dev/dart/bagit',
 	    'Line 3: path does not exist: /home/dev/dart/core',
@@ -76,7 +78,7 @@ test('runBatch with invalid workflow', done => {
         $("#workflowBatchForm_workflowId").val(t.emptyWorkflowId)
         controller._injectedCSVFilePath = t.csvFile
         UITestUtil.setDocumentBody(controller.runBatch());
-    }, 500);
+    }, 1500);
     setTimeout(function() {
         let div = $('#batchValidation');
         expect(div.length).toEqual(1);
@@ -89,10 +91,11 @@ test('runBatch with invalid workflow', done => {
             expect(actualMsg).toEqual(expectedMsg);
         }
         done();
-    }, 1000);
+    }, 2000);
 });
 
 test('runBatch with valid workflow and files', done => {
+    jest.setTimeout(10000);
     let controller = new WorkflowBatchController()
 
     // Set file paths in the CSV file to actual existing paths.
@@ -105,7 +108,7 @@ test('runBatch with valid workflow and files', done => {
         controller._injectedCSVFilePath = t.tempCSVFile
         // This action does not return new HTML. It alters the existing DOM.
         controller.runBatch();
-    }, 200);
+    }, 1500);
 
     // This is where we check the actual results.
     // We need controllers or ui/application.js to emit events
@@ -133,5 +136,5 @@ test('runBatch with valid workflow and files', done => {
         expect(resultsHTML).not.toContain("color: red;");
 
         done();
-    }, 4500);
+    }, 5500);
 }, 10000);

@@ -28,6 +28,7 @@ function loadProfiles() {
 }
 
 function testValidateBag(bagpath, profileName, done) {
+    jest.setTimeout(10000);
     let controller = new BagValidationController();
     let response = controller.show();
     UITestUtil.setDocumentBody(response);
@@ -46,7 +47,7 @@ function testValidateBag(bagpath, profileName, done) {
     controller.validateBag();
 
     // Longer timeout for AppVeyor tests
-    timeout = os.platform() == 'win32' ? 2000 : 1000;
+    timeout = os.platform() == 'win32' ? 2300 : 2000;
     setTimeout(function() {
         expect($('#dartProcessContainer').html()).toMatch(Context.y18n.__('Job completed successfully.'));
         done();
