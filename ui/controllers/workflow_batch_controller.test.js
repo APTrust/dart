@@ -95,7 +95,7 @@ test('runBatch with invalid workflow', done => {
 });
 
 test('runBatch with valid workflow and files', done => {
-    jest.setTimeout(10000);
+    //jest.setTimeout(10000);
     let controller = new WorkflowBatchController()
 
     // Set file paths in the CSV file to actual existing paths.
@@ -108,7 +108,7 @@ test('runBatch with valid workflow and files', done => {
         controller._injectedCSVFilePath = t.tempCSVFile
         // This action does not return new HTML. It alters the existing DOM.
         controller.runBatch();
-    }, 1500);
+    }, 1000);
 
     // This is where we check the actual results.
     // We need controllers or ui/application.js to emit events
@@ -136,5 +136,5 @@ test('runBatch with valid workflow and files', done => {
         expect(resultsHTML).not.toContain("color: red;");
 
         done();
-    }, 5500);
+    }, 7500);
 }, 10000);
