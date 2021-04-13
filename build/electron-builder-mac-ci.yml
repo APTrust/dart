@@ -3,6 +3,7 @@ directories:
   buildResources: build
 appId: org.aptrust.DART
 asar: true
+icon: ./build/dart.png
 afterSign: ./build/notarize.js
 mac:
   hardenedRuntime: true
@@ -21,4 +22,4 @@ linux:
       arch:
         - x64
   category: Utility
-electronVersion: 8.0.1
+electronVersion: 11.4.2

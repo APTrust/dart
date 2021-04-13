@@ -1,5 +1,5 @@
 os: osx
-osx_image: xcode11.3
+osx_image: xcode12.2
 language: node_js
 node_js:
   - lts/*
@@ -32,6 +32,7 @@ before_script:
 - if [ "$TRAVIS_OS_NAME" = osx ]; then ./build/add-osx-cert.sh; fi
 script:
   - npm test -- --runInBand
+after_success:
   - security find-identity -v
   - electron-builder --config build/electron-builder-mac-ci.yml -ml --publish never
   - ls -alr dist
