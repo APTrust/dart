@@ -39,9 +39,9 @@ deploy:
   provider: S3
   name: S3-public-deployment
   access_key_id:
-   secure: +CPOfuqSZqr6JabkdzEXkzETYje2+2FPBh2Ffl7VQV0=
+   secure: Ftjof6Ssg2Mt94VyNcUSawjGKm7VKiHx35cGbXzqy58=
   secret_access_key:
-   secure: JGoa9ePta/2baJSIfAVSwPBQAMJAbFTND2bV/0dmk+nK2vApmMbHoXjdYTk/PI0u
+   secure: z4agUrd9hU8g49gUaP5wiTxnOTpH7QSS+UQVCGQoW1rXYuW8/d8C7NAtiES7uFbt
   bucket: aptrust.public.download
   region: us-east-1
   set_public: true
