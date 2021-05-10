@@ -1,0 +1,28 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "04:00"
+    timezone: America/New_York
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: electron
+    versions:
+    - ">= 12.a, < 13"
+  - dependency-name: conf
+    versions:
+    - 10.0.1
+  - dependency-name: tail
+    versions:
+    - 2.2.1
+  - dependency-name: y18n
+    versions:
+    - 5.0.6
+  - dependency-name: dateformat
+    versions:
+    - 4.5.0
+  - dependency-name: electron-store
+    versions:
+    - 7.0.0
