@@ -22,7 +22,7 @@
         "csv-parse": "^4.15.4",
         "dateformat": "^4.5.1",
         "electron-context-menu": "^3.0.0",
-        "electron-log": "^4.3.5",
+        "electron-log": "^4.4.1",
         "electron-store": "^8.0.0",
         "es6-error": "^4.1.1",
         "glob": "^7.1.7",
