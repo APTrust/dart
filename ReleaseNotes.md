@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 2.0.12 - August 9, 2021
+
+* Fixed [Dart not accepting files](https://github.com/APTrust/dart/issues/476) in [commit eb75c3f](https://github.com/APTrust/dart/commit/eb75c3f0c044f93ea56016a6b5c5f769a647729c).
+
 ## 2.0.11 - December 7, 2020
 
 * Fixed a typo in the "files to package" screen.
