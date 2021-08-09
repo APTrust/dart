@@ -334,6 +334,12 @@ test('Util.canWrite()', () => {
     expect(Util.canWrite(path.join(testDir, 'does-not-exist.txt'))).toBe(false);
 });
 
+test('Util.isDirectory()', () => {
+    expect(Util.isDirectory(__dirname)).toBe(true)
+    expect(Util.isDirectory(__dirname + 'zzzz8080')).toBe(false)
+    expect(Util.isDirectory('')).toBe(false)
+});
+
 test('Util.isNonEmptyDirectory()', () => {
     expect(Util.isNonEmptyDirectory(__dirname)).toBe(true)
     expect(Util.isNonEmptyDirectory(__dirname + 'zzzz8080')).toBe(false)

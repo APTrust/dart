@@ -332,7 +332,7 @@ class JobFilesController extends BaseController {
     findContainingItem(filepath) {
         if (Array.isArray(this.job.packageOp.sourceFiles)) {
             for (let item of this.job.packageOp.sourceFiles) {
-                if (filepath.startsWith(item)) {
+                if (item === filepath || (filepath.startsWith(item) && Util.isDirectory(item))) {
                     return item;
                 }
             }

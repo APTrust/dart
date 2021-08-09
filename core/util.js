@@ -610,6 +610,17 @@ class Util {
     }
 
     /**
+     * Returns true if dirpath is a directory.
+     *
+     * @path {string} dirpath - The path to check
+     *
+     * @returns {boolean}
+     */
+    static isDirectory(dirpath) {
+        return fs.existsSync(dirpath) && fs.lstatSync(dirpath).isDirectory()
+    }
+
+    /**
      * Returns true if dirpath is a non-empty directory.
      *
      * @path {string} dirpath - The path to check

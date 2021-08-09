@@ -183,3 +183,19 @@ test('deleting a file removes it from the UI and job', done => {
         done();
     }, timeout);
 });
+
+// https://github.com/APTrust/dart/issues/476
+test('findContainingItem', () => {
+    let job = new Job()
+    job.packageOp = new PackageOperation('test', 'testy/test.tar')
+    job.packageOp.sourceFiles = [
+        __dirname,
+        "D:/Baby Jan",
+    ]
+    let controller = new JobFilesController(new URLSearchParams())
+    controller.job = job
+
+    expect(controller.findContainingItem(path.join(__dirname, "photos", "image1"))).not.toBeNull()
+    expect(controller.findContainingItem("D:/Baby Jan")).not.toBeNull()
+    expect(controller.findContainingItem("D:/Baby Jan and Grandpa")).toBeNull()
+});
