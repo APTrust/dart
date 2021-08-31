@@ -49,7 +49,7 @@ deploy:
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
     bucket: aptrust.public.download
-    cleanup: false
+    skip_cleanup: true
     local_dir: dist
     upload_dir: DART
     acl: public_read
