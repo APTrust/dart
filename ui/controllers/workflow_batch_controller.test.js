@@ -95,6 +95,13 @@ test('runBatch with invalid workflow', done => {
 });
 
 test('runBatch with valid workflow and files', done => {
+
+    if (process.env.TRAVIS_OS_NAME) {
+        console.log('Skipping workflow batch test because Travis is too slow to run it.')
+        done()
+        return
+    }
+
     //jest.setTimeout(10000);
     let controller = new WorkflowBatchController()
 
