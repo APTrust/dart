@@ -45,17 +45,17 @@ env:
   - secure: yufxN+orgKMu4xSawX8oz6NeAtaTJSfOoTQuxGTI/W2vrkCadBu6p7yC2f7CiWGzGMzPCTG+HjT0+P6m1vFoFZgMZyFVvzGDA2Ec9exL3ZWZHwGVKm9C5SqiAzpzCZz7e5TBpv22hhBTP2JN0upNNd2KwN9sSpJUD5KNIMHLKYpbAl303y6po+sYkGKiw6WYZqPVpt27py6XLtgzlkj6LqGB4NP/uhQfxyRV9vXSFG6YenLBekKlYlSlaEMyvwezUthmyi9xyPSKLPg1xODayVlG7dXLEL6wjXjZQIWtokb2ogNCc9o47uDJbfesDfHingDhk4TYLDbF7TlE65mu2AToaPV7rZ5sPIJ4mhy7IO/jOPQiAgUFmky9rojfzOfGjSN6yMkuFbdnv1WnR6z/6kt4CfF4wHVoe2FLvZBGIE6TuIOdFG2LRSdoyZIK4cHLea3fVGHOLAS83V88gA72NOz+xNDKTvdBHSusNFrVSjjJq3m8mbGqg3shdzoi9/vUMgMh0nJ388TeSyKvchi0D3W3PfLWRy9FIEMV+TnSER4f83a02NIOtn2BVI2tSGzPbFDuzAlakq9nqklkX5WouyW791YcO/6tmP+V4ahFzX39NAgWguvqPEgwEOfG3JSvVDvMfGyoXyuoHvWPUD4aTWZ5lTITrJ3KiayYh/KoFiU=
   - secure: eXxUI/kBtBodrxBa7aLeGaO/1Xb3TLRV7CrcZYsuYFHlnGFZyPkgCrkE+AloNPtKuBJEwMyeg5DxQgBYHbLAorDp0Vl7Kgy/0NUvYOD9NWdi3zcnnZtb89Ob53VpfBp5z2eqaXzu+jFKIeyvIUHd1wWnsGWGxLs98+CK3ioWkXbtGuqkqlo7tHy9HXv5lgSzNldvPbLajxzv9JKhCq5moQ5hJabnoly7d1DCFGzhSObRRfjAWJevwQ/cVxWWBuv88R8+Dn3VAJecex4Z+BOwz/AY0YiqyglO9tytFSQkiWRiSR2M5c9xbTYxua8rgHEquUHTAwkEx3ND5lq2I7thr1Uote8nCyK7P1PuJg9CBq0ep3F0OF0S/D5g5MFIhUhDrUr2qDHdT+Ye0MIeyOHrGMjGyoG6Hs+S3nsvLgGoP/7kFyDJ2fJIfvZlHWR9BkKBrwvvJLuyLrVD63gTjwsFUwUmnHPTQ0INqAgur3Ih8RjpxLATJy+Cd5kkouVAabfyXmD8/ZAaFYK8Z39NsBEfUt1QvcSzwNQk/BRH3AGEd96Zg+qvVhQ3TmSrLBVbkU0/R4ol55u+D6z4T/J4eqU897UMa1XTen2oclxiVca0yCfw6F5cmGJRgaXATKGF1FcPtqdmI26ppTL9eVQmPMynTf9/IHOSo1/4Ow6dKyu19dE=
 deploy:
-  # - provider: pages
-  #   skip-cleanup: true
-  #   token: "$GH_TOKEN"
-  #   keep_history: true
-  #   verbose: true
-  #   local_dir: docs
+  - provider: pages
+    cleanup: true
+    token: "$GH_TOKEN"
+    keep_history: true
+    verbose: true
+    local_dir: docs
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
     bucket: aptrust.public.download
-    skip-cleanup: true
+    cleanup: false
     local_dir: dist
     upload_dir: DART
     acl: public_read
