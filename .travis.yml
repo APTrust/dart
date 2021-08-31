@@ -51,6 +51,7 @@ deploy:
     bucket: aptrust.public.download
     skip_cleanup: true
     local_dir: dist
+    glob: "*.(dmg|deb)"
     upload_dir: DART
     acl: public_read
     on:
