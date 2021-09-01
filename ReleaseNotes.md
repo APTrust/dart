@@ -1,5 +1,13 @@
 # DART Release Notes
 
+## 2.0.13 - September 1, 2021
+
+* This release includes security updates but no new features.
+* Upgraded path-parse library to v1.0.7 to fix CVE-2021-23343.
+* Upgraded csv-parse to v4.16.2.
+* Fixed Apple code signing and notarization to stop "unknown author" warnings on Mac OS.
+* Added [BSD license](LICENSE).
+
 ## 2.0.12 - August 9, 2021
 
 * Fixed [Dart not accepting files](https://github.com/APTrust/dart/issues/476) in [commit eb75c3f](https://github.com/APTrust/dart/commit/eb75c3f0c044f93ea56016a6b5c5f769a647729c).
