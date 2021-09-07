@@ -1,0 +1,13 @@
+# DART Dependabot config. Setting open-pull-requests-limit to zero
+# should turn off Dependabot updates.
+#
+# Why turn them off? We get breaking changes every week for depenedencies
+# we have no need to upgrade. Useless Dependabot builds chew through
+# hundreds of $ per month of CI credits.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
