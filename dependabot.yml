@@ -4,6 +4,15 @@
 # Why turn them off? We get breaking changes every week for depenedencies
 # we have no need to upgrade. Useless Dependabot builds chew through
 # hundreds of $ per month of CI credits.
+#
+# Try ignoring * too.
+#
+# We see the behavior reported in this issue:
+# https://github.com/dependabot/dependabot-core/issues/2097
+#
+# Namely, there is no way to turn dependabot off, despite GitHub's
+# documentation. Dependabot also ignores the open-pull-requests-limit
+# setting.
 version: 2
 updates:
   - package-ecosystem: "npm"
@@ -11,3 +20,5 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "*"
