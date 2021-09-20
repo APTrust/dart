@@ -6,7 +6,7 @@ updates:
     interval: weekly
     time: "04:00"
     timezone: America/New_York
-  open-pull-requests-limit: 10
+  open-pull-requests-limit: 0
   ignore:
   - dependency-name: electron
     versions:
