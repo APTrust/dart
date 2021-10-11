@@ -38,7 +38,7 @@ after_success:
     security find-identity -v
     electron-builder --config build/electron-builder-mac-ci.yml -ml --publish never
     ls -alr dist
-    # ./jsdoc.sh
+    ./jsdoc.sh
   fi
 notifications:
   slack:
@@ -60,9 +60,9 @@ deploy:
     on:
       repo: APTrust/dart
       branch: master
-  # - provider: pages
-  #   cleanup: true
-  #   token: "$GH_TOKEN"
-  #   keep_history: true
-  #   verbose: true
-  #   local_dir: docs
+  - provider: pages
+    cleanup: true
+    token: "$GH_TOKEN"
+    keep_history: true
+    verbose: true
+    local_dir: docs
