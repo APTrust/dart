@@ -1,5 +1,12 @@
 <h2>Workflow</h2>
 
+<div class="clearfix">
+  <div class="pull-right">
+    <a class="btn btn-primary mb-3" href="#{{ form.objType }}/showExportJson?id={{ form.fields.id.value }}" role="button">Export</a>
+  </div>
+</div>
+
+
 <form method="post" action="#" id="{{ form.id }}">
 
   {{> inputText field = form.fields.name }}

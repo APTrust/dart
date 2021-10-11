@@ -179,6 +179,30 @@ class StorageService extends PersistentObject {
     }
 
     /**
+     * Returns true if this storage service setting contains a
+     * plaintext password. When exporting workflows, storage service
+     * should use "env:VAR_NAME" to read passwords from the environment.
+     *
+     * @returns {boolean}
+     *
+     */
+    hasPlaintextPassword() {
+        return this.password.trim() != "" && !this.password.startsWith('env:')
+    }
+
+    /**
+     * Returns true if this storage service setting contains a
+     * plaintext login. When exporting workflows, storage service
+     * should use "env:VAR_NAME" to read passwords from the environment.
+     *
+     * @returns {boolean}
+     *
+     */
+    hasPlaintextLogin() {
+        return this.login.trim() != "" && !this.login.startsWith('env:')
+    }
+
+    /**
      * This converts a generic object into an StorageService
      * object. this is useful when loading objects from JSON.
      *

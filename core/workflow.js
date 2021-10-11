@@ -225,6 +225,30 @@ class Workflow extends PersistentObject {
     }
 
     /**
+     * Returns a JSON version of this workflow suitable for use in
+     * dart-runner. Note the exported JSON contains full representations
+     * of the BagIt profile and storage services, instead of just containing
+     * their IDs. This makes the JSON workflow self-contained and able to
+     * be run on any dart-runner installation.
+     *
+     * @returns {string}
+     */
+    exportJson() {
+        let workflow = this;
+        let data = {
+            id: workflow.id,
+            name: workflow.name,
+            description: workflow.description,
+            packageFormat: workflow.packageFormat,
+            packagePluginId: workflow.packagePluginId,
+            packagePluginName: workflow.packagePluginName(),
+            bagItProfile: workflow.bagItProfile(),
+            storageServices: workflow.storageServices()
+        }
+        return JSON.stringify(data, null, 2)
+    }
+
+    /**
      * Given a {@link Job} object, this returns a Workflow that has
      * the same pattern as the Job.
      *

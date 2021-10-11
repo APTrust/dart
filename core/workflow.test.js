@@ -195,3 +195,33 @@ test('inflateFrom()', () => {
     expect(workflow.name).toEqual(data.name);
     expect(workflow.description).toEqual(data.description);
 });
+
+test('exportJson()', () => {
+    let workflow = new Workflow(opts);
+    let services = workflow.storageServices();
+
+    let jsonData = workflow.exportJson();
+    let data = JSON.parse(jsonData)
+
+    // Exported JSON is not quite the same as the original
+    // workflow object, so we can't do a direct comparison.
+    // The exported JSON contains the full BagIt profile and
+    // storage service records, not just their IDs.
+    //
+    // Tests ensure we got a BagItProfile object and StorageService
+    // objects. (Not just IDs.)
+    expect(data.bagItProfile).toMatchObject({
+        bagItProfileInfo: expect.any(Object),
+        tags: expect.any(Array)
+    })
+    expect(data.bagItProfile.tags.length).toEqual(14)
+
+    expect(data.storageServices[0]).toMatchObject({
+        name: 'SS 1',
+        protocol: 's3',
+    })
+    expect(data.storageServices[1]).toMatchObject({
+        name: 'SS 2',
+        protocol: 'ftp',
+    })
+});

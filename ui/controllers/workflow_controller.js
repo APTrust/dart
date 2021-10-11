@@ -85,6 +85,27 @@ class WorkflowController extends BaseController {
         }
     }
 
+    /**
+     * Shows the exported workflow in JSON format in a modal dialog.
+     * The user can copy the JSON to the system clipboard from here.
+     *
+     */
+    showExportJson() {
+        let id = this.params.get("id")
+        let workflow = Workflow.find(id)
+        let title = Context.y18n.__("Workflow Export");
+        let body = Templates.settingsExportResult({
+            json: workflow.exportJson()
+        });
+        for (let ss of workflow.storageServices()) {
+            if (ss.hasPlaintextLogin() || ss.hasPlaintextPassword()) {
+                alert(Context.y18n.__('Warning: One or more storage service records in this workflow contains a plaintext password. This workflow will still run, but for safety, you should use environment variables such as "env:AWS_SECRET_API_KEY". For more info see:\n\nhttps://aptrust.github.io/dart-docs/users/settings/storage_services/#password'))
+                break
+            }
+        }
+        return this.modalContent(title, body);
+    }
+
 
     /**
      * The postRenderCallback attaches event handlers to elements
@@ -93,6 +114,14 @@ class WorkflowController extends BaseController {
     postRenderCallback(fnName) {
         if (fnName == 'newFromJob') {
             $("select[name=packageFormat]").change(this.onFormatChange());
+        } else if (fnName == 'showExportJson') {
+            $('#btnCopyToClipboard').click(function() {
+                var copyText = document.querySelector("#txtJson");
+                copyText.select();
+                document.execCommand("copy");
+                $("#copied").show();
+                $("#copied").fadeOut({duration: 1800});
+            });
         }
     }
 

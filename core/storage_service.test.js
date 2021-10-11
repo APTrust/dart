@@ -62,6 +62,24 @@ test('url()', () => {
     expect(obj.url('bag.tar')).toEqual('ftp://example.com:5678/uploads/bag.tar');
 });
 
+test('hasPlaintextLogin()', () => {
+    let ss = new StorageService();
+    expect(ss.hasPlaintextLogin()).toBe(false)
+    ss.login = "env:API_LOGIN"
+    expect(ss.hasPlaintextLogin()).toBe(false)
+    ss.login = "user@example.com"
+    expect(ss.hasPlaintextLogin()).toBe(true)
+});
+
+test('hasPlaintextPassword()', () => {
+    let ss = new StorageService();
+    expect(ss.hasPlaintextPassword()).toBe(false)
+    ss.password = "env:API_PASSWORD"
+    expect(ss.hasPlaintextPassword()).toBe(false)
+    ss.password = "user@example.com"
+    expect(ss.hasPlaintextPassword()).toBe(true)
+});
+
 test('find()', () => {
     let objs = makeObjects(3);
     let obj = objs[1];
