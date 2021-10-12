@@ -33,13 +33,13 @@ before_script:
 script:
   - npm test -- --runInBand
 after_success:
-- |
-  if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
-    security find-identity -v
-    electron-builder --config build/electron-builder-mac-ci.yml -ml --publish never
-    ls -alr dist
-   # ./jsdoc.sh
-  fi
+# - |
+#   if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+#     security find-identity -v
+#     electron-builder --config build/electron-builder-mac-ci.yml -ml --publish never
+#     ls -alr dist
+#    # ./jsdoc.sh
+#   fi
 - ./jsdoc.sh
 notifications:
   slack:
@@ -62,7 +62,7 @@ deploy:
       repo: APTrust/dart
       branch: master
   - provider: pages
-    cleanup: true
+    skip_cleanup: true
     token: "$GH_TOKEN"
     keep_history: true
     verbose: true
