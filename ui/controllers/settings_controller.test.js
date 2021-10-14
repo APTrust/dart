@@ -174,7 +174,7 @@ test('Import unparsable data from valid URL', done => {
     let controller = new SettingsController();
     let response = controller.import()
     UITestUtil.setDocumentBody(response);
-    controller._importSettingsFromUrl("https://google.com")
+    controller._importSettingsFromUrl("https://start.duckduckgo.com/")
         .then(() => {
             let errMessage = $('#result').text();
             expect(errMessage).toMatch(Context.y18n.__("Error importing settings"));
