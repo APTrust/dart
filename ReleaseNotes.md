@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 2.0.14 - October 14, 2021
+
+* Added Workflow Export feature to work with [DART runner](https://github.com/APTrust/dart-runner).
+
 ## 2.0.13 - September 1, 2021
 
 * This release includes security updates but no new features.
