@@ -1,0 +1,48 @@
+# This is an action file to wruna  workflow mirroring the repo to gitlab
+name: gitlab mirroring
+
+on: [push, pull_request]
+
+jobs:
+  to_gitlab:
+    runs-on: ubuntu-latest
+    steps:                                              # <-- must use actions/checkout@v1 before mirroring!
+    - uses: actions/checkout@v1
+    - uses: pixta-dev/repository-mirroring-action@v1
+      with:
+        target_repo_url: git@gitlab.com:aptrust/dart.git  
+        ssh_private_key: ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}   # <-- currently a private public key used with apt-deploy
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
