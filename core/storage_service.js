@@ -172,6 +172,9 @@ class StorageService extends PersistentObject {
      */
     validate() {
         super.validate();
+        if (Util.isEmpty(this.port)) {
+            this.port = 0
+        }
         if (!Util.isEmpty(this.port) && this.port != 0 && parseInt(this.port, 10) != this.port) {
             this.errors["port"] = "Port must be a whole number, or leave at zero to use the default port.";
         }

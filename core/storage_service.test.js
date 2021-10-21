@@ -41,9 +41,26 @@ test('validate()', () => {
     obj.host = 's3.amazonaws.com';
     obj.port = null;
     expect(obj.validate()).toEqual(true);
-    obj.port = 443;  // port can be empty or a valid integer
+    obj.port = 443;
     expect(obj.validate()).toEqual(true);
 });
+
+test('validate() forces empty port to zero', () => {
+    let obj = new StorageService();
+    obj.port = ""
+    expect(obj.port).toBe("")
+
+    // We're testing a specific side-effect here.
+    // validate(), which is always called before save,
+    // forces empty string to zero. We do this so that
+    // workflows containing storage service records don't
+    // serialize the port as "". dart-runner expects an
+    // integer in this field, not a string. If it doesn't
+    // find an int, it won't run the worklfow.
+    obj.validate()
+    expect(obj.port).toBe(0)
+});
+
 
 test('url()', () => {
     let obj = new StorageService();
