@@ -1,5 +1,11 @@
 # DART Release Notes
 
+## 2.0.15 - October 21, 2021
+
+* Fixed a bug that caused empty StorageService.port to be serialized
+as an empty string instead of zero. This was not a problem for DART,
+but it was for DART runner, which expects an integer.
+
 ## 2.0.14 - October 14, 2021
 
 * Added Workflow Export feature to work with [DART runner](https://github.com/APTrust/dart-runner).
