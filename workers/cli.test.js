@@ -128,19 +128,29 @@ function forkProcess(param, stdinData) {
         params,
         { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
     );
-    if (stdinData) {
-        proc.stdin.write(stdinData + "\n");
-        proc.stdin.end();
-    }
     proc.on('message', (data) => {
-         console.log(data.toString());
+        // console.log(data.toString());
     });
     proc.stdout.on('data', function(data) {
-        console.log(data.toString());
+        // console.log(data.toString());
     });
     proc.stderr.on('data', function(data) {
-        console.error(data.toString());
+        // console.error(data.toString());
     });
+    // When sending job json to the child process' stdin,
+    // we have to wait till it's ready, or it reads only
+    // the last N bytes of the input. Node processes do not
+    // emit a 'started' or 'ready' event, so we have to
+    // give it some time to load before sending data to stdin.
+    // The load time below is a guess, and varies from system
+    // to system. Not sure why fork returns a process that isn't
+    // fully initialized. :(
+    if (stdinData) {
+        setTimeout(function() {
+            proc.stdin.write(stdinData + "\n");
+            proc.stdin.end();
+        }, 800)
+    }
     expect(proc).toBeTruthy();
     return proc;
 }
