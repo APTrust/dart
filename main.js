@@ -52,15 +52,27 @@ async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
     Context.logger.info(Context.dartVersion());
     let stdinData = '';
+	// https://github.com/APTrust/dart/issues/504
+	// Try reading stdin both ways.
     if (opts.stdin) {
-        stdinData = await readStdin();
+		try {
+			stdinData = fs.readFileSync(0, 'utf-8');
+		} catch (ex) {
+			stdinData = await readStdin();
+		}
     }
     Context.logger.info('STDIN -> ', stdinData);
-    let job = new JobLoader(opts, stdinData).loadJob();
-    let jobRunner = new JobRunner(job);
-    let exitCode = await jobRunner.run();
-    Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
-    process.exit(exitCode);
+	try {
+		let job = new JobLoader(opts, stdinData).loadJob();
+		let jobRunner = new JobRunner(job);
+		let exitCode = await jobRunner.run();
+		Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
+		process.exit(exitCode);
+	} catch (err) {
+		Context.logger.error(err);
+		console.error(err);
+		process.exit(Constants.EXIT_RUNTIME_ERROR);
+	}
 }
 
 // This prevents a bug where y18n may wipe out locale files.
@@ -89,9 +101,10 @@ function makey18nWriteSafe() {
 //
 // Since the EAGAIN error started appearing again in Node 13.7,
 // we implement our own async function to read from STDIN.
+// This is used as a fallback, in case the standard method fails.
 // With this in place, all tests pass under Node 13.7.
 function readStdin() {
-    return new Promise((resolve, reject) => {
+    let promise = new Promise((resolve, reject) => {
         var chunks = [];
         process.stdin
             .on("data", function(chunk) {
@@ -102,6 +115,11 @@ function readStdin() {
             })
             .setEncoding("utf8");
     });
+	promise.catch((err) => {
+		console.log(err)
+		process.exit(1)
+	});
+	return promise
 }
 
 // And away we go...
