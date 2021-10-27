@@ -145,11 +145,15 @@ function forkProcess(param, stdinData) {
     // The load time below is a guess, and varies from system
     // to system. Not sure why fork returns a process that isn't
     // fully initialized. :(
+    //
+    // Longer timeout for AppVeyor tests
+    let timeout = os.platform() == 'win32' ? 1500 : 800;
+    console.log(timeout)
     if (stdinData) {
         setTimeout(function() {
             proc.stdin.write(stdinData + "\n");
             proc.stdin.end();
-        }, 800)
+        }, timeout)
     }
     expect(proc).toBeTruthy();
     return proc;
