@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 2.0.16 - October 27, 2021
+
+* Fixed [Issue 504: Unable to use command line with job params on Windows](https://github.com/APTrust/dart/issues/504)
+
 ## 2.0.15 - October 21, 2021
 
 * Fixed a bug that caused empty StorageService.port to be serialized
