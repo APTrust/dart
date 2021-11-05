@@ -129,13 +129,13 @@ function forkProcess(param, stdinData) {
         { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] }
     );
     proc.on('message', (data) => {
-        // console.log(data.toString());
+        console.log(data.toString());
     });
     proc.stdout.on('data', function(data) {
-        // console.log(data.toString());
+        console.log(data.toString());
     });
-    proc.stderr.on('data', function(data) {
-        // console.error(data.toString());
+    proc.stderr.on('error', function(data) {
+        console.error(data.toString());
     });
     // When sending job json to the child process' stdin,
     // we have to wait till it's ready, or it reads only
