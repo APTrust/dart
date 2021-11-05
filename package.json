@@ -61,7 +61,6 @@
         "start": "set NODE_ENV=dev && electron .",
         "release": "build",
         "test": "jest",
-        "sftp-server": "node ./test/servers/sftp.js",
         "bump": "node ./util/bump_version.js"
     },
     "build": {
