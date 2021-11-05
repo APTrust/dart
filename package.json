@@ -69,6 +69,7 @@
         "productName": "DART",
         "asar": true,
         "icon": "build/dart.png",
+        "buildDependenciesFromSource": false,
         "directories": {
             "output": "dist"
         },
