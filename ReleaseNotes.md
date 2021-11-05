@@ -1,5 +1,17 @@
 # DART Release Notes
 
+## 2.0.17 - November 5, 2021
+
+This release contains a number of security fixes, but no new features.
+
+* Upgraded Electron from 11.4.10 to 11.5.0 to fix [thumbnail vulnerability](https://github.com/advisories/GHSA-mpjm-v997-c4h4).
+* Upgraded ssh2 from 0.8.9 to 1.5.0 to mitigate [CVE-2020-26301 - OS command injection](https://github.com/advisories/GHSA-652h-xwhf-q4h6).
+
+The remaining [ansi-regex](https://github.com/advisories/GHSA-93q8-gq69-wqmw)
+and [set-value](https://github.com/advisories/GHSA-4jqc-8m5r-9rpr) affect
+libraries used only in development and testing. These libraries are not
+included in the DART distribution.
+
 ## 2.0.16 - October 27, 2021
 
 * Fixed [Issue 504: Unable to use command line with job params on Windows](https://github.com/APTrust/dart/issues/504)
