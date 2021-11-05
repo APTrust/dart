@@ -35,11 +35,14 @@ build_script:
 after_build:
   - ps: Get-ChildItem .\dist\*.exe | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name -DeploymentName S3-public-deployment }
 
+# Deploy to S3 only on new tag.
+# See https://www.appveyor.com/docs/branches/
+
 deploy:
   provider: S3
   name: S3-public-deployment
   on:
-    branch: master
+    APPVEYOR_REPO_TAG: true
   access_key_id:
    secure: Ftjof6Ssg2Mt94VyNcUSawjGKm7VKiHx35cGbXzqy58=
   secret_access_key:
