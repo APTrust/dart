@@ -71,6 +71,7 @@
         "icon": "build/dart.png",
         "buildDependenciesFromSource": false,
         "nodeGypRebuild": false,
+        "npmRebuild": false,
         "directories": {
             "output": "dist"
         },
