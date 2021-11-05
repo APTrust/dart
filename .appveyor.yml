@@ -38,6 +38,8 @@ after_build:
 deploy:
   provider: S3
   name: S3-public-deployment
+  on:
+    branch: master
   access_key_id:
    secure: Ftjof6Ssg2Mt94VyNcUSawjGKm7VKiHx35cGbXzqy58=
   secret_access_key:
