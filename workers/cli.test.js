@@ -147,7 +147,7 @@ function forkProcess(param, stdinData) {
     // fully initialized. :(
     //
     // Adjust timeout for AppVeyor tests
-    let timeout = os.platform() == 'win32' ? 200 : 800;
+    let timeout = os.platform() == 'win32' ? 200 : 1000;
     if (stdinData) {
         setTimeout(function() {
             proc.stdin.write(stdinData + "\n");
