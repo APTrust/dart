@@ -7,6 +7,8 @@ const { StorageService } = require('../../core/storage_service');
 
 var skipMessagePrinted = false;
 var server = null;
+
+// filename is the name of the file we'll try to upload
 const filename = path.join(__dirname, '../../test/servers/sftp.js')
 const remoteFileName = 'TestFileForSFTPUpload.xyz';
 
@@ -17,14 +19,11 @@ const remoteFileName = 'TestFileForSFTPUpload.xyz';
 var serverProcess = null;
 
 beforeAll(() => {
-    //serverProcess = fork(path.join(__dirname, '../../test/servers/sftp.js'))
     SFTPServer.start()
 });
 
 afterAll(() => {
-    //serverProcess.kill('SIGINT')
     SFTPServer.stop()
-    //SFTPServer.close()
 });
 
 
@@ -125,5 +124,33 @@ test('Upload', done => {
         done();
     });
 
+    client.upload(filename, remoteFileName);
+});
+
+test('Upload with bad credentials', done => {
+    var ss = getStorageService();
+    ss.login = 'BAD-LOGIN';
+    ss.password = 'BAD-PASSWORD';
+    var client = new SFTPClient(ss);
+    client.on('finish', function(result) {
+        throw "Bad credentials should have thrown an exception."
+        done();
+    });
+    client.on('error', function(result) {
+        testCommonResultProperties(result);
+        expect(result.info).toBeNull();
+        expect(result.warning).toBeNull();
+        // if (result.errors.length > 1) {
+        //     console.log(result.errors);
+        // }
+        // Mac and Linux return one error, Windows returns two
+        // (same error twice on Windows)
+        // 'All configured authentication methods failed'
+        expect(result.errors.length).toBeGreaterThanOrEqual(1);
+        for (let err of result.errors) {
+            expect(err).toMatch(/authentication methods failed/);
+        }
+        done();
+    });
     client.upload(filename, remoteFileName);
 });
