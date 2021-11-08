@@ -154,3 +154,23 @@ test('Upload with bad credentials', done => {
     });
     client.upload(filename, remoteFileName);
 });
+
+
+test('upload emits error instead of throwing on bad private key file', done => {
+    var ss = getStorageService();
+    // For SFTP, loginExtra is path to private key file.
+    ss.loginExtra = '/bad/path/to/key.file';
+    var client = new SFTPClient(ss);
+
+    client.on('error', function(result) {
+        testCommonResultProperties(result);
+        expect(result.info).toBeNull();
+        expect(result.warning).toBeNull();
+        expect(result.errors.length).toEqual(1);
+        expect(result.errors[0]).toEqual(
+            Context.y18n.__("Private key file %s is missing for storage service %s", ss.loginExtra, ss.name)
+        );
+        done();
+    });
+    client.upload(filename, remoteFileName);
+});
