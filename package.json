@@ -1,6 +1,6 @@
 {
     "name": "DART",
-    "version": "2.0.17",
+    "version": "2.0.18",
     "description": "DART bags files and sends them to S3 buckets and SFTP servers.",
     "main": "main.js",
     "repository": {

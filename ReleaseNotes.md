@@ -1,5 +1,11 @@
 # DART Release Notes
 
+## 2.0.18 - March 30, 2022
+
+* Fixed [Bagit Profile Export issue with cancelling adding questions](https://github.com/APTrust/dart/issues/514)
+* Fixed [security issue](https://github.com/APTrust/dart/security/dependabot/8), bumping plist from 3.0.4 to 3.0.5
+* Fixed [security issue](https://github.com/APTrust/dart/security/dependabot/5), bumping minimist from 1.2.5 to 1.2.6
+
 ## 2.0.17 - November 5, 2021
 
 This release contains a number of security fixes, but no new features.
