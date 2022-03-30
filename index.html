@@ -244,8 +244,12 @@ transformations with the following command:</p>
 <h2>Building</h2>
 <p>To build the DART application into a standalone binary, run this command from
 the top-level directory of the project.</p>
-<pre class="prettyprint source"><code>./node_modules/.bin/electron-builder
+<pre class="prettyprint source"><code>CSC_LINK=&quot;file:///&lt;path to p12>&quot; CSC_KEY_PASSWORD='&lt;secret>' PYTHON_PATH='/usr/local/bin/python' ./node_modules/.bin/electron-builder -ml
 </code></pre>
+<p>This produces a signed, notarized Apple build as well as a Linux build in .deb format.
+You need Python 2 on your Mac for this build to work, because some moron hard-coded
+that into the Electron build utilities. They hard-coded the path too, so you need to
+correct it with PYTHON_PATH.</p>
 <p>The binary will appear in the /dist folder. For example, when building
 on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
 <p>You can run the binary directly from there.</p>
