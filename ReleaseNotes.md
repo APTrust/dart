@@ -5,6 +5,8 @@
 * Fixed [Bagit Profile Export issue with cancelling adding questions](https://github.com/APTrust/dart/issues/514)
 * Fixed [security issue](https://github.com/APTrust/dart/security/dependabot/8), bumping plist from 3.0.4 to 3.0.5
 * Fixed [security issue](https://github.com/APTrust/dart/security/dependabot/5), bumping minimist from 1.2.5 to 1.2.6
+* Bumped ssh2-sftp-client from 7.1.0 to 7.2.3.
+* Updated some build dependencies that don't make into the distributable package (electron-build and xcode version).
 
 ## 2.0.17 - November 5, 2021
 

@@ -178,8 +178,13 @@ To build the DART application into a standalone binary, run this command from
 the top-level directory of the project.
 
 ```
-./node_modules/.bin/electron-builder
+CSC_LINK="file:///<path to p12>" CSC_KEY_PASSWORD='<secret>' PYTHON_PATH='/usr/local/bin/python' ./node_modules/.bin/electron-builder -ml
 ```
+
+This produces a signed, notarized Apple build as well as a Linux build in .deb format.
+You need Python 2 on your Mac for this build to work, because some moron hard-coded
+that into the Electron build utilities. They hard-coded the path too, so you need to
+correct it with PYTHON_PATH.
 
 The binary will appear in the /dist folder. For example, when building
 on a Mac, it will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
