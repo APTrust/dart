@@ -55,6 +55,8 @@ class ExportSettings extends PersistentObject {
      * data filtered out.
      */
     toJson() {
+        let nonEmptyQuestions = this.questions.filter((q) => q.prompt.trim() != "")
+        this.questions = nonEmptyQuestions
         return JSON.stringify(this, this._jsonFilter, 2)
     }
 

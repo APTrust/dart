@@ -8,6 +8,8 @@ const { RemoteRepository } = require('./remote_repository');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
 const { Util } = require('./util');
+const { outputJson } = require('fs-extra');
+const { ExportQuestion } = require('./export_question');
 
 test('Constructor sets expected properties', () => {
     let obj = new ExportSettings();
@@ -51,6 +53,20 @@ test('JSON filter filters sensitive data', () => {
     expect(obj._jsonFilter('required', true)).toBe(true);
     expect(obj._jsonFilter('required', false)).toBe(false);
     expect(obj._jsonFilter('required', ['ha'])).not.toBeDefined();
+})
+
+test('toJson() calls filters empty questions', () => {
+    let fixturePath = path.join(__dirname, "..", "test", "fixtures",
+                                "export_settings.json");
+    let jsonData = fs.readFileSync(fixturePath);
+    let obj = new ExportSettings(JSON.parse(jsonData))
+    obj.questions.push(new ExportQuestion())
+    obj.questions.push(new ExportQuestion({prompt: "This question has a prompt."}))
+    obj.questions.push(new ExportQuestion())
+
+    let objFromJson = JSON.parse(obj.toJson())
+    expect(objFromJson.questions.length).toEqual(1)
+    expect(objFromJson.questions[0].prompt).toEqual("This question has a prompt.")
 })
 
 test('getIds() returns expected ids', () => {
