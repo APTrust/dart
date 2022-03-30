@@ -13,7 +13,6 @@ addons:
   homebrew:
     packages:
     - jq
-    - openssl@1.1
 before_install:
 - |
   if [ "$TRAVIS_OS_NAME" == "osx" ]; then

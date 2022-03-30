@@ -19,7 +19,6 @@
         "async": "^3.2.0",
         "braintree-jsdoc-template": "^3.3.0",
         "conf": "^10.0.1",
-        "cpu-features": "^0.0.3",
         "csv-parse": "^4.16.2",
         "dateformat": "^4.5.1",
         "electron-context-menu": "^3.0.0",
