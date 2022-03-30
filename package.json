@@ -33,6 +33,7 @@
         "minimatch": "^3.0.4",
         "minio": "^7.0.18",
         "os-locale": "^5.0.0",
+        "plist": "^3.0.5",
         "popper.js": "^1.16.1",
         "readdirp": "^3.6.0",
         "request": "^2.88.2",
