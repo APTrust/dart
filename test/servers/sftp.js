@@ -25,7 +25,8 @@ function start() {
                 writestream.end()
             });
             session.on("writefile",function (path,readstream) {
-                let nowhere = fs.createWriteStream('/dev/null')
+                let throwawayFile = process.platform == 'win32' ? 'nul' : '/dev/null'
+                let nowhere = fs.createWriteStream(throwawayFile)
                 return readstream.pipe(nowhere)
             });
         })
