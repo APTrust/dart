@@ -5,6 +5,7 @@ const { JobLoader } = require('./util/job_loader');
 const { JobRunner } = require('./workers/job_runner');
 const minimist = require('minimist');
 const process = require('process');
+const osLocale = require('os-locale');
 
 // Electron wants these vars to be global, so we defined them here.
 // They will be assigned only if we're running in GUI mode.
@@ -86,6 +87,9 @@ function makey18nWriteSafe() {
     Context.y18n.updateFiles = (process.DART_MODE == 'gui' && Context.isElectronDevMode());
     Context.logger.info(Context.dartVersion());
     Context.logger.info("Y18 updateFiles = " + Context.y18n.updateFiles);
+    if (Context.y18n.getLocale() != osLocale.sync()) {
+        Context.logger.info(`DART could not find a suitable translation file for locale ${osLocale.sync()} so it's currently using ${Context.y18n.getLocale()}`)
+    }
 }
 
 // The canonical way to read from STDIN in Node is:

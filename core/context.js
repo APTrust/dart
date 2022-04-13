@@ -1,13 +1,17 @@
 const { Config } = require('./config');
+const fs = require('fs');
 const { JsonStore } = require('./json_store');
 const logger = require('../util/logger.js');
 const os = require('os');
 const osLocale = require('os-locale');
 const path = require('path');
+const { fstat } = require('fs');
 
 const y18n = require('y18n')({
     directory: path.join(__dirname, '..', 'locales'),
-    locale: osLocale.sync()
+    locale: getLocale(),
+    fallbackToLanguage: true,
+    updateFiles: false,
 });
 
 /**
@@ -181,6 +185,37 @@ class GlobalContext {
         }
         return pkg.version;
     }
+}
+
+/**
+ * getLocale returns the user's current locale, or "en-US" if DART has
+ * no matching file for the user's actual locale.
+ * 
+ * This fixes bug https:* github.com/APTrust/dart/issues/516
+ * 
+ * This is actually a bug in y18n, which does not correctly fall back
+ * to language-only files. Creating file locales/en.json should cause
+ * any English locale to fall back to en.json if it doesn't have a specific
+ * territory file like en-IE or en-GB. However, in testing, fallback never
+ * works. Note that the os-locale package normalizes all locales to use
+ * dashes instead of underscores. So if system says locale is en_NZ, os-locale
+ * reports en-NZ. 
+ * 
+ * Anyhoo, since resetting the locale using y18n.setLocale()
+ * does not load the specified locale file as expected, we have to 
+ * set this right from the get-go.
+ * 
+ * When DART gets non-English translation files, we'll have to revisit this.
+ * 
+ * @returns {string}
+ */
+function getLocale() {
+    let locale = osLocale.sync()
+    let localeFile = path.join(__dirname, '..', 'locales', locale + ".json")
+    if (!fs.existsSync(localeFile)) {
+        return "en-US"
+    }
+    return locale
 }
 
 const Context = new GlobalContext();
