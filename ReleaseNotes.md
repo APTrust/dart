@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 2.0.19 - April 14, 2022
+
+* Fixed [broken translation/localization](https://github.com/APTrust/dart/issues/516)
+* Updated async library to fix [security bug](https://nvd.nist.gov/vuln/detail/CVE-2021-43138)
+
 ## 2.0.18 - March 30, 2022
 
 * Fixed [Bagit Profile Export issue with cancelling adding questions](https://github.com/APTrust/dart/issues/514)
