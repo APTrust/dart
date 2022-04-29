@@ -20,13 +20,11 @@
 	],
 	"allowFetchTxt": false,
 	"bagItProfileInfo": {
-		"bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/dart/master/profiles/btr-v0.1.json",
-		"bagItProfileVersion": "1.3.0",
-		"contactEmail": "fake-email@example.com",
-		"contactName": "Hope Fully Apersonsname",
-		"externalDescription": "Bagit Profile for Consistent Deposit to Distributed Digital Preservation Services",
-		"sourceOrganization": "Beyond the Repository Bagit Profile Group",
-		"version": "0.1"
+        "sourceOrganization": "Beyond the Repository Bagit Profile Group",
+        "externalDescription": "Bagit Profile for Consistent Deposit to Distributed Digital Preservation Services",
+        "version": "1.0",
+        "bagItProfileIdentifier": "https://github.com/dpscollaborative/btr_bagit_profile/releases/download/1.0/btr-bagit-profile.json",
+        "bagItProfileVersion": "1.3.0"
 	},
 	"manifestsRequired": [],
 	"manifestsAllowed": [

@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## Pending for 2.0.20 (not yet released)
+
+* Fixed BagIt-Profile-Info for [BTR profile](https://github.com/dpscollaborative/btr_bagit_profile/blob/master/btr-bagit-profile.json). (Migration 20220429T182345Z.js)
+
 ## 2.0.19 - April 14, 2022
 
 * Fixed [broken translation/localization](https://github.com/APTrust/dart/issues/516)
