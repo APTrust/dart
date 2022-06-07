@@ -9,6 +9,7 @@ const { JobPackageOpForm } = require('../forms/job_package_op_form');
 const path = require('path');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
+const { constants } = require('buffer');
 
 /**
  * The JobPackaingController presents the page that allows users
@@ -185,7 +186,7 @@ class JobPackagingController extends BaseController {
         let selectedValue = $('select[name=bagItSerialization]').val();
         let none = Context.y18n.__('None');
         let formats = [{ id: '', name: none }];
-        let accepted = profile.acceptSerialization.sort();
+        let accepted = profile.acceptSerialization.filter(format => format in Constants.SUPPORTED_SERIALIZATION_EXTENSIONS).sort()
         if (accepted.length == 1 && profile.serialization == 'required') {
             // Only one format, and it's required
             formats = accepted;

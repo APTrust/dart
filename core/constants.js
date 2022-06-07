@@ -121,15 +121,29 @@ const Constants =  {
      * to file extensions. The bagger and other classes can use
      * this to assign a file extension based on a given mime type.
      *
+     * 
      * @type {Object<string, string>}
      */
     SERIALIZATION_EXTENSIONS: {
         "application/x-7z-compressed": ".7z",
-        "application/tar": ".tar",
+        "application/tar": ".tar", 
         "application/zip": ".zip",
         "application/gzip": ".gz",
         "application/x-rar-compressed": ".rar",
         "application/tar+gzip": ".tar.gz"
+    },
+    /**
+     * This is a map of our currently supported serializations, 
+     * as of June, 2022. We plan to support all SERIALIZATION_EXTENSIONS
+     * in future, but we're not there yet, and we don't want to display
+     * options we don't support on the job packaging page. We'll get
+     * rid of this when we support all SERIALIZATION_EXTENSIONS above.
+     * 
+     * 
+     * @type {Object<string, string>}
+     */
+    SUPPORTED_SERIALIZATION_EXTENSIONS: {
+        "application/tar": ".tar"
     },
     /**
      * This maps serialization formats found in BagItProfiles

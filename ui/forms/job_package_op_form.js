@@ -84,8 +84,10 @@ class JobPackageOpForm extends Form {
         } else {
             let accepted = [];
             for (let mimeType of profile.acceptSerialization) {
-                let extension = Constants.SERIALIZATION_EXTENSIONS[mimeType];
-                accepted.push(extension);
+                let extension = Constants.SUPPORTED_SERIALIZATION_EXTENSIONS[mimeType];
+                if (extension) { 
+                    accepted.push(extension);
+                }
             }
             if (accepted.length == 1 && profile.serialization == 'required') {
                 // Only one format, and it's required
