@@ -8,6 +8,9 @@ const path = require('path');
  * Migration 20190523194657Z adds the AppSetting "Bagging Directory",
  * which is required for bagging. This tells DART where to put the
  * bags it creates.
+ * 
+ * Note: This changes in a the migration of 2022-06-07, per user request.
+ * https://github.com/APTrust/dart/issues/520
  *
  */
 function run() {
