@@ -152,6 +152,7 @@ class JobPackagingController extends BaseController {
         $("select[name=packageFormat]").change(this.onFormatChange());
         $("select[name=bagItProfileId]").change(this.onProfileChange());
         $('#jobPackageOpForm_packageName').on('keyup', this.onPackageNameKeyUp());
+        $('select[name=bagItSerialization]').change(this.onSerializationChange);
     }
 
     /**
@@ -174,6 +175,10 @@ class JobPackagingController extends BaseController {
         }
     }
 
+    /**
+     * This updates the options in the serialization list based on 
+     * the allowed serialization values in the selected BagIt profile.
+     */
     updateSerializationOptions() {
         let controller = this;
         let profile = controller.job.bagItProfile;
@@ -197,6 +202,23 @@ class JobPackagingController extends BaseController {
         }
     }
 
+    /**
+     * This fires when the serialization select list option changes.
+     * It sets the file extension of the output path to match the 
+     * selected serialization option.
+     */
+    onSerializationChange() {
+        let extension = $('select[name=bagItSerialization]').val().trim()
+        if (extension == "undefined" || typeof(extension) == "undefined") {
+            extension = ""
+        }
+        let baggingDir = AppSetting.firstMatching('name', 'Bagging Directory').value
+        let packageName = $('#jobPackageOpForm_packageName').val().trim()
+        if (packageName) {
+            packageName = path.basename(packageName) + extension
+            $('#jobPackageOpForm_outputPath').val(path.join(baggingDir, packageName));
+        }
+    }
 
     /**
      * This function shows or hides a list of BagIt profiles, based

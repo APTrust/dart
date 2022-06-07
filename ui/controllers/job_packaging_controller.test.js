@@ -147,4 +147,7 @@ test('postRenderCallback attached change event', () => {
     let onChange = $._data($('select[name=packageFormat]')[0], "events").change[0].handler;
     expect(typeof onChange).toEqual('function');
 
+    let onSerializationChange = $._data($('select[name=bagItSerialization]')[0], "events").change[0].handler;
+    expect(typeof onSerializationChange).toEqual('function');
+
 });
