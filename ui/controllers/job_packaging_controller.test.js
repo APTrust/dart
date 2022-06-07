@@ -64,8 +64,13 @@ function assertFormFieldsPresent() {
     expect($('#jobPackageOpForm_outputPath').length).toEqual(1);
     expect($('#jobPackageOpForm_bagItProfileId').length).toEqual(1);
     expect($('#jobPackageOpForm_id').length).toEqual(1);
-    expect($('#jobPackageOpForm_packageFormat option').length).toBeGreaterThan(2);
     expect($('#jobPackageOpForm_bagItProfileId option').length).toEqual(2);
+
+    // A.D. June 7, 2022
+    // Package formats had included .tar, but that's disabled for now
+    // because it's not producing proper output. If we re-enable .tar,
+    // this should go back up to 2.
+    expect($('#jobPackageOpForm_packageFormat option').length).toBeGreaterThan(1);
 }
 
 test('constructor', () => {

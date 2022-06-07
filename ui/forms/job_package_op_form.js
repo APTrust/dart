@@ -37,6 +37,14 @@ class JobPackageOpForm extends Form {
                 name: 'BagIt'
             }
         ];
+
+        /*
+         * A.D. June 7, 2022 - 
+         * 
+         * Stop showing tar package format because it's producing empty output.
+         * We can re-enable this when it's working, but it will be some time before
+         * we have the resources to fully look into this.
+         * 
         for (let writer of PluginManager.getModuleCollection('FormatWriter')) {
             let description = writer.description();
             for (let format of description.writesFormats) {
@@ -48,6 +56,8 @@ class JobPackageOpForm extends Form {
                 }
             };
         }
+        */
+
         this.fields['packageFormat'].choices = Choice.makeList(
             formats,
             this.obj.pluginId,
