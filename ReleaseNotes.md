@@ -1,8 +1,13 @@
 # DART Release Notes
 
-## Pending for 2.0.20 (not yet released)
+## Pending for 2.0.20 - June 10, 2022
 
 * Fixed BagIt-Profile-Info for [BTR profile](https://github.com/dpscollaborative/btr_bagit_profile/blob/master/btr-bagit-profile.json). (Migration 20220429T182345Z.js)
+* Default bagging directory is no longer hidden in ~/home/.dart. A new migration sets the bagging directory to ~/Documents/DART, unless user has previously changed this setting on their own. Fixes [Make default bagging directory not hidden?](https://github.com/APTrust/dart/issues/520)
+* Fixed [File extension in output path does not update in Packaging window when changing serialisation](https://github.com/APTrust/dart/issues/519)
+* Stopped showing unsupported output formats (zip, gzip, rar, 7z) in list of job packaging format options. We'll re-add these when we support the formats.
+* Temporarily disabled tar as a standalone output format (though tarred bags are still supported). This feature is not fully implemented. We'll return it as an option when it's ready. This is a temporary fix to [.tar packaging producing no output](https://github.com/APTrust/dart/issues/513)
+
 
 ## 2.0.19 - April 14, 2022
 
