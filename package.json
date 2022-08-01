@@ -74,6 +74,7 @@
         "buildDependenciesFromSource": false,
         "nodeGypRebuild": false,
         "npmRebuild": false,
+        "afterSign": "build/notarize.js",
         "directories": {
             "output": "dist"
         },
