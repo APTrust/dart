@@ -1,6 +1,15 @@
 # DART Release Notes
 
-## Pending for 2.0.20 - June 10, 2022
+## 2.0.21 - August 12, 2022
+
+* Fixed [Date Modified not preserved on Windows](https://github.com/APTrust/dart/issues/530)
+* Fixed [DART batch job without upload should not delete bags](https://github.com/APTrust/dart/issues/531)
+* Fixed [Certificate expired error when connecting to remote repositories](https://github.com/APTrust/dart/issues/532)
+* Updated Electron from 11.5.0 to 20.0.0
+* Updated a number of dependencies that Dependabot flagged as vulnerable
+
+
+## 2.0.20 - June 10, 2022
 
 * Fixed BagIt-Profile-Info for [BTR profile](https://github.com/dpscollaborative/btr_bagit_profile/blob/master/btr-bagit-profile.json). (Migration 20220429T182345Z.js)
 * Default bagging directory is no longer hidden in ~/home/.dart. A new migration sets the bagging directory to ~/Documents/DART, unless user has previously changed this setting on their own. Fixes [Make default bagging directory not hidden?](https://github.com/APTrust/dart/issues/520)
