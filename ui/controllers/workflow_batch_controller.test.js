@@ -3,10 +3,12 @@ const { BatchTestUtil } = require('../../util/batch_test_util');
 const { Context } = require('../../core/context');
 const EventEmitter = require('events');
 const fs = require('fs');
+const path = require('path');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
 const { WorkflowBatch } = require('../../core/workflow_batch');
 const { WorkflowBatchController } = require('./workflow_batch_controller');
+const { AppSetting } = require('../../core/app_setting');
 
 var t = new BatchTestUtil();
 
@@ -18,13 +20,34 @@ beforeAll(() => {
 afterAll(() => {
     TestUtil.deleteJsonFile('Workflow');
     TestUtil.deleteJsonFile('AppSettings');
+    cleanBaggingDir()
 });
 
 afterEach(() => {
     if (t.tempCSVFile != '' && fs.existsSync(t.tempCSVFile)) {
         fs.unlinkSync(t.tempCSVFile);
     }
+    cleanBaggingDir()
 });
+
+function cleanBaggingDir() {
+    let dir = AppSetting.firstMatching("name", "Bagging Directory")
+    try {
+        fs.unlinkSync(path.join(dir.value, "dart-bagit.tar"))
+    } catch (ex) {
+
+    }
+    try {
+        fs.unlinkSync(path.join(dir.value, "dart-core.tar"))
+    } catch (ex) {
+
+    }
+    try {
+        fs.unlinkSync(path.join(dir.value, "dart-migrations.tar"))
+    } catch (ex) {
+        
+    }
+}
 
 test('new() displays form with workflows and file chooser', done => {
     let controller = new WorkflowBatchController()
