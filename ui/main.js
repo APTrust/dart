@@ -15,6 +15,7 @@ function createWindow() {
         height: 900,
         webPreferences: {
             nodeIntegration: true,
+            contextIsolation: false,
             enableRemoteModule: true,
         },
         icon: path.join(__dirname, 'include/img/dart.png')
