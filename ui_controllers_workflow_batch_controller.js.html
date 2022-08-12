@@ -225,7 +225,7 @@ class WorkflowBatchController extends RunningJobsController {
                     this._showJobSucceeded(data);
                 }
                 let bagPath = job.packageOp.outputPath;
-                if (fs.existsSync(bagPath) &amp;&amp; fs.lstatSync(bagPath).isFile()) {
+                if (fs.existsSync(bagPath) &amp;&amp; fs.lstatSync(bagPath).isFile() &amp;&amp; job.uploadOps.length > 0) {
                     fs.unlinkSync(bagPath);
                 }
                 job.delete();
