@@ -219,9 +219,9 @@ class TarWriter extends BaseWriter {
         var header = {
             name: bagItFile.relDestPath,
             type: 'directory',
-            mode: bagItFile.mode,
-            uid: bagItFile.uid,
-            gid: bagItFile.gid,
+            mode: Number(bagItFile.mode),
+            uid: Number(bagItFile.uid),
+            gid: Number(bagItFile.gid),
             mtime: bagItFile.mtime
         };
 
