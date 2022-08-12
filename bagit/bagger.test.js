@@ -61,6 +61,10 @@ test('create() with one dir', done => {
             console.log(result.errors)
         }
 
+        // DEBUG
+        // console.log(bagger.formatWriter.directories)
+        // DEBUG
+
         expect(result.errors.length).toEqual(0);
         expect(result.succeeded()).toEqual(true);
         expect(result.started).not.toBeNull();

@@ -104,10 +104,21 @@ class TarWriter extends BaseWriter {
         let dir = '';
         for (let i=0; i < parts.length -1; i++) {
             dir = dir + parts[i] + '/';
+            // We cached the stats for the directory in the
+            // directories map. The key is relDestPath, minus
+            // the bag name, with no traling slash. E.g. key for
+            // "MyBag/data/subdir/" is "/data/subdir".
+            var key = ""
+            if (i > 0) {
+                key = dir.split("/").slice(1).join("/").replace(/\/$/, "")
+            }
             if (!this._directoriesAdded.has(dir)) {
-                let data = Object.assign({}, template);
+                var data = this.directories[key]
+                if (!data) {
+                    data = Object.assign({}, template);
+                    data.mtime = new Date();
+                } 
                 data.relDestPath = dir;
-                data.mtime = new Date();
                 this._mkdir(data);
             }
         }

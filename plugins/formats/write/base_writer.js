@@ -106,6 +106,16 @@ class BaseWriter extends Plugin {
          * @type {number}
          */
         this.filesWritten = 0;
+
+        /**
+         * This is a map of directory stats. Key is relDestPath,
+         * value is fs.Stats object. For example, key will be
+         * "/data/subdir". Value will be the stats of the original
+         * directory being bagged. This allows us to preserve directory
+         * attributes such as uid, gid, mode, and mtime when creating
+         * tar files.
+         */
+        this.directories = {};
     }
 
     /**

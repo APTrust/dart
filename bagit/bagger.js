@@ -198,6 +198,7 @@ class Bagger extends EventEmitter {
                 // Wait until entire directory is added before
                 // attaching finish listener, else queue will
                 // drain more than once.
+                this.formatWriter.directories[relDestPath] = stats;
                 await this._addDirectory(absPath, relDestPath, stats);
             }
         }
@@ -285,6 +286,8 @@ class Bagger extends EventEmitter {
             let relDestPath = bagger._getRelDestPath(fullPath);
             if (entry.fileStat.isFile()) {
                 bagger._addFile(fullPath, relDestPath, entry.fileStat);
+            } else if (entry.fileStat.isDirectory()) {
+                bagger.formatWriter.directories[relDestPath] = entry.fileStat;
             }
         });
         fsReader.on('error', function(err) {
