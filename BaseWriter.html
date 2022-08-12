@@ -386,6 +386,78 @@ in <a href="TarWriter.html">TarWriter</a> and <a href="FileSystemWriter.html">Fi
         
             
 
+<h4 class="name" id="directories">
+  <span class="type-signature"></span>directories<span class="type-signature"></span>
+</h4>
+
+
+
+
+  <div class="description">
+    <p>This is a map of directory stats. Key is relDestPath,
+value is fs.Stats object. For example, key will be
+&quot;/data/subdir&quot;. Value will be the stats of the original
+directory being bagged. This allows us to preserve directory
+attributes such as uid, gid, mode, and mtime when creating
+tar files.</p>
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line118">line 118</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
+        
+            
+
 <h4 class="name" id="filesAdded">
   <span class="type-signature"></span>filesAdded<span class="type-signature"> :number</span>
 </h4>
@@ -657,7 +729,7 @@ debugging purposes.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line116">line 116</a>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line126">line 126</a>
         </li>
       </ul>
     </dd>
@@ -846,7 +918,7 @@ like this:</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line183">line 183</a>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line193">line 193</a>
         </li>
       </ul>
     </dd>
@@ -960,7 +1032,7 @@ In the BaseWriter, init() is a noop.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line135">line 135</a>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line145">line 145</a>
         </li>
       </ul>
     </dd>
@@ -1052,7 +1124,7 @@ count of how many files have been written. See <a href="TarWriter.html">TarWrite
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line192">line 192</a>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line202">line 202</a>
         </li>
       </ul>
     </dd>
@@ -1144,7 +1216,7 @@ This will be a number between 0 and 100. E.g. 42.833.</p>
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line145">line 145</a>
+          <a href="plugins_formats_write_base_writer.js.html">plugins/formats/write/base_writer.js</a>, <a href="plugins_formats_write_base_writer.js.html#line155">line 155</a>
         </li>
       </ul>
     </dd>
