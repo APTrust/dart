@@ -1,7 +1,9 @@
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const electron = require('electron');
+const fs = require('fs')
 const path = require('path');
+const readLastLines = require('read-last-lines');
 const { Tail } = require('tail');
 const url = require('url');
 
@@ -17,34 +19,45 @@ class LogController extends BaseController {
     }
 
     show() {
-        if (logWindow == null) {
-            logWindow = new BrowserWindow({
-                width: 800,
-                height: 600,
-                webPreferences: {
-                    nodeIntegration: true
-                }
-            });
-            let logUrl = url.format({
-                pathname: path.join(__dirname, '..', 'log_window.html'),
-                protocol: 'file:',
-                slashes: true
-            });
-            logWindow.loadURL(logUrl);
-            logWindow.on('closed', () => { logWindow = null });
-            logWindow.show();
-            logWindow.webContents.on('did-finish-load', () => {
-                logWindow.webContents.send('loadfile', Context.logger.pathToLogFile());
-            });
-            return this.noContent();
+        if (logWindow == null || logWindow.name != "Log Window") {
+            logWindow = window.open()
+            logWindow.name = "Log Window"
+            let title = logWindow.document.createElement('h3')
+            title.innerText = Context.logger.pathToLogFile()
+            logWindow.document.body.append(title)
+
+            let note = logWindow.document.createElement('p')
+            note.innerText = "Showing last 100 lines plus new messages as they appear."
+            logWindow.document.body.append(note)
+
+            let div = logWindow.document.createElement('div')
+            div.style.lineHeight = '1.5rem'
+            div.id = 'output'
+            logWindow.document.body.append(div)
+
+            readLastLines.read(Context.logger.pathToLogFile(), 100)
+                .then(function (lines) {
+                    div.innerText = lines
+                    div.append(logWindow.document.createElement("hr"))
+                    let newMarker = logWindow.document.createElement("p")
+                    newMarker.innerText = "New messages will follow..."
+                    div.append(newMarker)
+                    div.append(logWindow.document.createElement("hr"))
+                });
         }
+        console.log("Calling focus")
+        logWindow.focus()
+        console.log("Called focus")
+        return this.noContent();
     }
 
     postRenderCallback(fnName) {
         if (logWindow) {
+            let output = logWindow.document.getElementById('output')
             let tail = new Tail(Context.logger.pathToLogFile());
             tail.on("line", function(data) {
-                logWindow.webContents.send('append', data + "\n");
+                output.append(data + "\n")
+                output.append(logWindow.document.createElement('br'))
             });
         }
     }
