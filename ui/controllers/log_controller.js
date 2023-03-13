@@ -4,7 +4,7 @@ const electron = require('electron');
 const fs = require('fs')
 const path = require('path');
 const readLastLines = require('read-last-lines');
-const { Tail } = require('tail');
+const Tail = require('tail').Tail;
 const url = require('url');
 
 // In Jest tests, electron.remote will not be defined.
@@ -45,9 +45,7 @@ class LogController extends BaseController {
                     div.append(logWindow.document.createElement("hr"))
                 });
         }
-        console.log("Calling focus")
         logWindow.focus()
-        console.log("Called focus")
         return this.noContent();
     }
 
@@ -55,9 +53,13 @@ class LogController extends BaseController {
         if (logWindow) {
             let output = logWindow.document.getElementById('output')
             let tail = new Tail(Context.logger.pathToLogFile());
-            tail.on("line", function(data) {
+            tail.on("line", function (data) {
+                console.log(data)
                 output.append(data + "\n")
                 output.append(logWindow.document.createElement('br'))
+            });
+            tail.on("error", function (error) {
+                console.log('Tail error: ', error);
             });
         }
     }
