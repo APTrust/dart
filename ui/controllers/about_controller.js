@@ -1,5 +1,6 @@
 const { BaseController } = require('./base_controller');
 const Dart = require('../../core');
+const { InternalSetting } = require('../../core/internal_setting')
 const Templates = require('../common/templates');
 
 class AboutController extends BaseController {
@@ -9,11 +10,10 @@ class AboutController extends BaseController {
     }
 
     show() {
-        var app = require('electron').remote.app;
         let data = {
             version: Dart.Context.dartVersion(),
-            appPath: app.getAppPath(),
-            userDataPath: app.getPath('userData'),
+            appPath: InternalSetting.firstMatching('name', 'AppPath').value,
+            userDataPath: InternalSetting.firstMatching('name', 'UserDataPath').value,
             logFilePath: Dart.Context.logger.pathToLogFile()
         }
         let html = Templates.about(data);

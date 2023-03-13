@@ -3,6 +3,7 @@ const contextMenu = require('electron-context-menu');
 const path = require('path');
 const process = require('process');
 const url = require('url');
+const { InternalSetting } = require('../core/internal_setting');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -40,6 +41,20 @@ function createWindow() {
         // when you should delete the corresponding element.
         win = null
     })
+
+    // We have to save these now, because we can no longer
+    // access electron.app outside of main.js.
+    new InternalSetting({
+        id: 'ec0c9c5c-5568-4cf2-a881-1cbb5eff4578',
+        name: "AppPath",
+        value: app.getAppPath(),
+    }).save()
+    new InternalSetting({
+        id: '6ab9c4af-53d0-48a2-963b-481d6ef775d9',
+        name: "UserDataPath",
+        value: app.getPath('userData'),
+    }).save()
+
 }
 
 // Quit when all windows are closed.
