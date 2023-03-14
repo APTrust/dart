@@ -194,6 +194,10 @@ You can run the binary directly from there.
 Note that you can bump the version for new releases with the bump_version
 script. For example, to bump from 2.x.x to 2.y.y, run `npm run bump 2.x.x to 2.y.y`
 
+### Building on Windows & Linux
+
+`./node_modules/.bin/electron-builder --publish never`
+
 ## Building the Docs
 
 ```
