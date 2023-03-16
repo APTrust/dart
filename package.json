@@ -30,6 +30,7 @@
         "handlebars": "^4.7.7",
         "jquery": "^3.6.0",
         "make-dir": "^3.1.0",
+		"mkdirp": "^1.0.4",
         "minimatch": "^3.0.4",
         "minio": "^7.0.18",
         "os-locale": "^5.0.0",
