@@ -14,7 +14,7 @@ mac:
   target:
     - target: dmg
       arch:
-        - x64
+        - universal
   category: public.app-category.productivity
 linux:
   target:
@@ -22,4 +22,4 @@ linux:
       arch:
         - x64
   category: Utility
-electronVersion: 11.5.0
+electronVersion: 20.0.1

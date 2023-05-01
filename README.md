@@ -174,25 +174,37 @@ git config --local core.autocrlf false
 
 ## Building
 
+Note that you can bump the version for new releases with the bump_version
+script. For example, to bump from 2.x.x to 2.y.y, run `npm run bump 2.x.x to 2.y.y`
+
 To build the DART application into a standalone binary, run this command from
 the top-level directory of the project.
 
 ```
-CSC_LINK="file:///<path to p12>" CSC_KEY_PASSWORD='<secret>' PYTHON_PATH='/usr/local/bin/python' ./node_modules/.bin/electron-builder -ml
+CSC_LINK="file:///<path to p12>" CSC_KEY_PASSWORD='<secret>' ./node_modules/.bin/electron-builder -mwl
 ```
 
-This produces a signed, notarized Apple build as well as a Linux build in .deb format.
-You need Python 2 on your Mac for this build to work, because some moron hard-coded
-that into the Electron build utilities. They hard-coded the path too, so you need to
-correct it with PYTHON_PATH.
+This produces a signed, notarized Apple build as well as a Linux build in .deb format
+and a Windows build, complete with installer. (Note that the build instruction above
+is intended to be run on a Mac to take advantage of Apple code signing.)
 
-The binary will appear in the /dist folder. For example, when building
-on a Mac, it will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
+You need Python 2 on your Mac for this build to work, because some moron hard-coded
+that into the Electron build utilities. They hard-coded the path too, so you may need to
+correct it with PYTHON_PATH. (E.g. `PYTHON_PATH='/usr/local/bin/python'`)
+
+The binaries and installers will appear in the /dist folder. For example, 
+the Mac binary will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
 
 You can run the binary directly from there.
 
-Note that you can bump the version for new releases with the bump_version
-script. For example, to bump from 2.x.x to 2.y.y, run `npm run bump 2.x.x to 2.y.y`
+The installers will appear in the dist directory. The important ones are:
+
+| Name | Description |
+| ---- | ----------- |
+| DART Setup 2.0.22.exe | Windows installer for 64-bit Intel platforms. |
+| DART-2.0.22-universal.dmg | Mac universal binary installer. Should run on both Intel and ARM platforms. |
+| DART_2.0.22_amd64.deb | Linux installer for 64-bit Intel platforms. (Debian/Ubuntu package format.) |
+
 
 ### Building on Windows & Linux
 
