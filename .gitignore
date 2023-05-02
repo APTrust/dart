@@ -9,3 +9,4 @@ apps/bin/*
 aptrust.org/*.tar
 .env
 .DS_Store
+resources/dart*

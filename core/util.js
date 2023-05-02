@@ -1,5 +1,5 @@
 const { Context } = require('./context');
-const { fork } = require('child_process');
+const { fork, exec, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -746,6 +746,48 @@ class Util {
             job.id,
             childProcess
         );
+
+        const appRootPath = require('app-root-path').toString()
+        console.log(appRootPath)
+        const fixedRootPath = path.dirname(appRootPath)
+        const exePath = path.join(fixedRootPath, "..", "Resources", "bin", "dart-runner")
+        console.log(exePath)
+        const cmd = `${exePath} --help`
+        console.log(cmd)
+
+        try {
+            let stdout = execSync(cmd, (err, stdout, stderr) => {
+                console.error(err)
+                console.log("STDOUT:")
+                console.log(stdout)
+                console.log("STDERR:")
+                console.log(stderr)
+            });
+            console.log(new TextDecoder().decode(stdout))
+        } catch (ex) {
+            console.error(ex)
+        }
+
+
+        const spawnSync = require( 'child_process' ).spawnSync
+        try {
+            let runner = spawnSync( exePath, ['--help'])
+            console.log(runner)
+            console.log("Runner stdout:")
+            console.log(new TextDecoder().decode(runner.stdout))
+            console.log("Runner stderr:")
+            console.log(new TextDecoder().decode(runner.stderr))
+            // runner.stdout.on( 'data', data => {
+            //      console.log( `stdout: ${data}` );
+            // });
+            // runner.stderr.on( 'data', data => {
+            //     console.log( `stderr: ${data}` );
+            // });        
+        } catch (ex) {
+            console.error(ex)
+        }
+        
+
         return {
             childProcess: childProcess,
             dartProcess: dartProcess,
