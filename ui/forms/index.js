@@ -1,5 +1,6 @@
 const { AppSettingForm } = require('./app_setting_form');
 const { BagItProfileForm } = require('./bagit_profile_form');
+const { BagUploadForm } = require('./bag_upload_form');
 const { Choice } = require('./choice');
 const { Field } = require('./field');
 const { Form } = require('./form');
@@ -15,6 +16,7 @@ const { WorkflowBatchForm } = require('./workflow_batch_form');
 
 module.exports.AppSettingForm = AppSettingForm;
 module.exports.BagItProfileForm = BagItProfileForm;
+module.exports.BagUploadForm = BagUploadForm;
 module.exports.Choice = Choice;
 module.exports.Field = Field;
 module.exports.Form = Form;
