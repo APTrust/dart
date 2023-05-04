@@ -56,8 +56,10 @@ class BagUploadController extends RunningJobsController {
     _startUploadJob() {
         this.form.parseFromDOM();
         let job = this.job = this.form.obj;
+
+        console.log(job.uploadOps[0].validate())
         console.log(job)
-        console.log(job.validate())
+
         let tmpFile = Util.tmpFilePath();
         fs.writeFileSync(tmpFile, JSON.stringify(job));
         let modulePath = path.join(__dirname, '..', '..', 'main.js');
