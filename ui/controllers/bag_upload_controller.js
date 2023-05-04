@@ -57,8 +57,8 @@ class BagUploadController extends RunningJobsController {
         this.form.parseFromDOM();
         let job = this.job = this.form.obj;
 
-        console.log(job.uploadOps[0].validate())
-        console.log(job)
+        //console.log(job.uploadOps[0].validate())
+        //console.log(job)
 
         let tmpFile = Util.tmpFilePath();
         fs.writeFileSync(tmpFile, JSON.stringify(job));
@@ -101,8 +101,8 @@ class BagUploadController extends RunningJobsController {
     _renderOutcome(code) {
         let job = Job.find(this.job.id)
 
-        console.log(this.job.id)
-        console.log(job)
+        //console.log(this.job.id)
+        //console.log(job)
 
         let [detailDiv, progressBar] = this.getDivs(this.dartProcess, 'outcome');
         if (code == 0) {
