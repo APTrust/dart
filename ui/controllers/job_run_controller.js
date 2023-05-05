@@ -1,16 +1,8 @@
 const $ = require('jquery');
-//const { BagItProfile } = require('../../bagit/bagit_profile');
-//const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
-//const { DartProcess } = require('../../core/dart_process');
-//const { fork } = require('child_process');
-//const fs = require('fs');
 const { Job } = require('../../core/job');
-//const { JobRunner } = require('../../workers/job_runner');
-//const path = require('path');
 const { RunningJobsController } = require('./running_jobs_controller');
 const Templates = require('../common/templates');
-//const { UIConstants } = require('../common/ui_constants');
 const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
 
