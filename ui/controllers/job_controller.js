@@ -1,6 +1,4 @@
-const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
-const { Context } = require('../../core/context');
 const dateFormat = require('dateformat');
 const { Job } = require('../../core/job');
 const Templates = require('../common/templates');

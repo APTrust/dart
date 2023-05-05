@@ -7,7 +7,6 @@ const { PackageOperation } = require('../../core/package_operation');
 const path = require('path');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
-const { Util } = require('../../core/util');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('Job');

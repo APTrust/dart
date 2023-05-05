@@ -1,6 +1,4 @@
 const Controllers = require('../controllers');
-const fs = require('fs');
-const path = require('path');
 const url = require('url');
 
 class RequestHandler {

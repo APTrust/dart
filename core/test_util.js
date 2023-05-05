@@ -2,7 +2,6 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 
 /**
  * TestUtil contains a number of static utility functions used in testing.

@@ -1,9 +1,7 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
-const { InternalSetting } = require('../core/internal_setting');
 const path = require('path');
-const { TestUtil } = require('../core/test_util');
 
 /**
  * Migration 20200227T120404Z.js adds the BTR BagIt profile.

@@ -1,8 +1,6 @@
-const $ = require('jquery');
 const { Job } = require('../../core/job');
 const { JobController } = require('./job_controller');
 const { TestUtil } = require('../../core/test_util');
-const { UITestUtil } = require('../common/ui_test_util');
 const { Util } = require('../../core/util');
 
 beforeEach(() => {

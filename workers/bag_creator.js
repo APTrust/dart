@@ -1,8 +1,6 @@
 const { Bagger } = require('../bagit/bagger');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
-const fs = require('fs');
-const { Job } = require('../core/job');
 const { Util } = require('../core/util');
 const { Worker } = require('./worker');
 

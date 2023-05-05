@@ -1,10 +1,7 @@
 const { BagItFile } = require('./bagit_file');
 const { Constants } = require('../core/constants');
-const crypto = require('crypto');
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
-const { Util } = require('../core/util');
 
 test('Constructor sets initial properties', () => {
     let stats = fs.statSync(__filename);

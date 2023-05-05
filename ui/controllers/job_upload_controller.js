@@ -1,7 +1,4 @@
-const $ = require('jquery');
-const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
-const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const { JobUploadForm } = require('../forms/job_upload_form');
 const Templates = require('../common/templates');

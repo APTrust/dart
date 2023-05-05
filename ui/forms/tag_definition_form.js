@@ -1,7 +1,5 @@
-const { TagDefinition } = require('../../bagit/tag_definition');
 const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
-const { Field } = require('./field');
 const { Form } = require('./form');
 
 class TagDefinitionForm extends Form {

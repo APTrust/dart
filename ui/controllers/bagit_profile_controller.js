@@ -7,7 +7,6 @@ const { BaseController } = require('./base_controller');
 const { NewBagItProfileForm } = require('../forms/new_bagit_profile_form');
 const request = require('request');
 const { TagDefinition } = require('../../bagit/tag_definition');
-const { TagDefinitionForm } = require('../forms/tag_definition_form');
 const { TagFileForm } = require('../forms/tag_file_form');
 const Templates = require('../common/templates');
 const url = require('url');

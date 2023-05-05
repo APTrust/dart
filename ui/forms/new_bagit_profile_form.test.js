@@ -1,7 +1,6 @@
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { NewBagItProfileForm } = require('./new_bagit_profile_form');
 const { TestUtil } = require('../../core/test_util');
-const { UITestUtil } = require('../common/ui_test_util');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('BagItProfile');

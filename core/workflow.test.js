@@ -1,8 +1,6 @@
-const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('./constants');
 const { Job } = require('./job');
 const path = require('path');
-const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
 const { UploadOperation } = require('./upload_operation');

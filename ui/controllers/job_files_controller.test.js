@@ -1,5 +1,4 @@
 const $ = require('jquery');
-const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
 const { Job } = require('../../core/job');
 const { JobFilesController } = require('./job_files_controller');
 const { PackageOperation } = require('../../core/package_operation');

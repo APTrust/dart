@@ -1,4 +1,3 @@
-const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Job } = require('../../core/job');
 const { JobRunController } = require('./job_run_controller');
@@ -6,9 +5,7 @@ const { PackageOperation } = require('../../core/package_operation');
 const path = require('path');
 const { StorageService } = require('../../core/storage_service');
 const { TestUtil } = require('../../core/test_util');
-const { UITestUtil } = require('../common/ui_test_util');
 const { UploadOperation } = require('../../core/upload_operation');
-const { Util } = require('../../core/util');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('Job');

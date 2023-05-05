@@ -1,14 +1,10 @@
 const $ = require('jquery');
-const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
 const { ExportQuestion } = require('../../core/export_question');
 const { Field } = require('./field');
 const { Form } = require('./form');
-const { RemoteRepository } = require('../../core/remote_repository');
-const { StorageService } = require('../../core/storage_service');
-const { Util } = require('../../core/util');
 
 /**
  * SettingsQuestionsForm allows the user to specify where Job

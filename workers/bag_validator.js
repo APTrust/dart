@@ -1,6 +1,5 @@
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
-const dateFormat = require('dateformat');
 const fs = require('fs');
 const { OperationResult } = require('../core/operation_result');
 const { Validator } = require('../bagit/validator');

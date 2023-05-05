@@ -4,7 +4,6 @@ const { ExportQuestion } = require('./export_question');
 const { RemoteRepository } = require('./remote_repository');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');
-const { Util } = require('./util');
 
 beforeAll(() => {
     TestUtil.deleteJsonFile('AppSetting');

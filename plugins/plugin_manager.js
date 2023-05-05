@@ -2,7 +2,6 @@ const FormatReaders = require("./formats/read");
 const FormatWriters = require("./formats/write");
 const NetworkClient = require("./network");
 const Repository = require("./repository");
-const { Util } = require('../core/util');
 
 /**
  * pluginTypes describe the types of DART plugins.

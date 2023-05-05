@@ -1,8 +1,5 @@
 const $ = require('jquery');
-const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BagValidationForm } = require('../forms/bag_validation_form');
-const { BaseController } = require('./base_controller');
-const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { DartProcess } = require('../../core/dart_process');
 const { fork } = require('child_process');

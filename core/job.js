@@ -1,4 +1,3 @@
-const { AppSetting } = require('./app_setting');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const dateFormat = require('dateformat');

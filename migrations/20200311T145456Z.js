@@ -1,8 +1,6 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
-const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const path = require('path');
-const { TestUtil } = require('../core/test_util');
 
 /**
  * Migration 20200311T145456Z.js fixes the empty BagIt profile added

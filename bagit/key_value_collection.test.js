@@ -1,5 +1,4 @@
 const { KeyValueCollection } = require('./key_value_collection');
-const { Util } = require('../core/util');
 
 test('Constructor sets initial properties', () => {
     let collection = new KeyValueCollection();

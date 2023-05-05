@@ -1,5 +1,3 @@
-const $ = require('jquery');
-const { Choice } = require('./choice');
 const { Job } = require('../../core/job');
 const { JobTagsForm } = require('./job_tags_form');
 const Templates = require('../common/templates');

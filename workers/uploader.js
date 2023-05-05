@@ -8,7 +8,6 @@ const { StorageService } = require('../core/storage_service');
 const { Util } = require('../core/util');
 const { UIConstants } = require('../ui/common')
 const { Worker } = require('./worker');
-//const { file } = require('tmp');
 
 // This implementation is convoluted and messy...
 

@@ -1,12 +1,10 @@
 const $ = require('jquery');
 const { BatchTestUtil } = require('../../util/batch_test_util');
 const { Context } = require('../../core/context');
-const EventEmitter = require('events');
 const fs = require('fs');
 const path = require('path');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
-const { WorkflowBatch } = require('../../core/workflow_batch');
 const { WorkflowBatchController } = require('./workflow_batch_controller');
 const { AppSetting } = require('../../core/app_setting');
 

@@ -1,7 +1,5 @@
-const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { Context } = require('../../core/context');
-const { Field } = require('./field');
 const { Form } = require('./form');
 const { InternalSetting } = require('../../core/internal_setting');
 const osLocale = require('os-locale');

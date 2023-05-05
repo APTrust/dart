@@ -1,9 +1,7 @@
-const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { ExportQuestion } = require('../../core/export_question');
 const { ExportSettings } = require('../../core/export_settings');
 const { RemoteRepository } = require('../../core/remote_repository');
-const { StorageService } = require('../../core/storage_service');
 const { SettingsQuestionsForm } = require('./settings_questions_form');
 const { TestUtil } = require('../../core/test_util');
 

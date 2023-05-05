@@ -2,7 +2,6 @@ const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const EventEmitter = require('events');
 const { JobStatus } = require('../core/job_status');
-const { Util } = require('../core/util');
 
 class Worker extends EventEmitter {
     constructor(operation) {

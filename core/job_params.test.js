@@ -4,7 +4,6 @@ const { Context } = require('./context');
 const fs = require('fs');
 const { Job } = require('./job');
 const { JobParams } = require('./job_params');
-const os = require('os');
 const path = require('path');
 const { StorageService } = require('./storage_service');
 const { TestUtil } = require('./test_util');

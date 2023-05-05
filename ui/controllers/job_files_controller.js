@@ -1,11 +1,9 @@
 const $ = require('jquery');
-const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const FileSystemReader = require('../../plugins/formats/read/file_system_reader');
 const fs = require('fs');
 const { Job } = require('../../core/job');
-const { JobTagsForm } = require('../forms/job_tags_form');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
 

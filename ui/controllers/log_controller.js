@@ -1,11 +1,8 @@
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
 const electron = require('electron');
-const fs = require('fs')
-const path = require('path');
 const readLastLines = require('read-last-lines');
 const Tail = require('tail').Tail;
-const url = require('url');
 
 // In Jest tests, electron.remote will not be defined.
 // Otherwise it will.

@@ -1,7 +1,6 @@
 const { Job } = require('../../core/job');
 const path = require('path');
 const { TestUtil } = require('../../core/test_util');
-const { UITestUtil } = require('../common/ui_test_util');
 const url = require('url');
 const { Workflow } = require('../../core/workflow');
 const { WorkflowController } = require('./workflow_controller');

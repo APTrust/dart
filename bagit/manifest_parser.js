@@ -1,4 +1,3 @@
-const { Context } = require('../core/context');
 const { KeyValueCollection } = require('./key_value_collection');
 const { PassThrough } = require('stream');
 

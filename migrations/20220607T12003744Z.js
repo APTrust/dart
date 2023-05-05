@@ -1,6 +1,4 @@
 const { AppSetting } = require('../core/app_setting');
-const { Context } = require('../core/context');
-const { InternalSetting } = require('../core/internal_setting');
 const os = require('os');
 const path = require('path');
 

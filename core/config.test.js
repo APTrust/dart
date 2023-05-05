@@ -2,7 +2,6 @@ const os = require('os');
 const path = require('path');
 const { Config } = require('./config');
 
-const envPaths = require('env-paths');
 
 test('Config returns correct data', () => {
     expect(Config.user).not.toBeNull();

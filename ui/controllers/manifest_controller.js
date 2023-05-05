@@ -1,5 +1,4 @@
 const { BaseController } = require('./base_controller');
-const Templates = require('../common/templates');
 
 class ManifestController extends BaseController {
 

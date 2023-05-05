@@ -1,12 +1,10 @@
 const { Constants } = require('../core/constants');
-const { Context } = require('../core/context');
 const { Job } = require('../core/job');
 const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const { Uploader } = require('./uploader');
 const { UploadOperation } = require('../core/upload_operation');
 const { UploadTestHelper } = require('../util/upload_test_helper');
-const { Util } = require('../core/util');
 
 let helper = new UploadTestHelper();
 let testBagDir = path.join(__dirname, '..', 'test', 'bags', 'aptrust');
