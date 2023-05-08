@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 2.x.x - Upcoming
+
+* Added support for upload-only jobs.
+* Updated APTrust client to talk to the new Registry API.
+
 ## 2.0.22 - March 14, 2022
 
 * Fixed ["Show Logs" and "About" links not working](https://github.com/APTrust/dart/issues/534).
