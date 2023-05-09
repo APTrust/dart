@@ -77,7 +77,7 @@ class S3Client extends Plugin {
             id: '23a8f0af-a03a-418e-89a4-6d07799882b6',
             name: 'S3Client',
             description: 'Built-in DART S3 network client',
-            version: '0.1',
+            version: '1.1',
             readsFormats: [],
             writesFormats: [],
             implementsProtocols: ['s3'],
@@ -158,9 +158,22 @@ class S3Client extends Plugin {
     }
 
     /**
-     * Lists files in a remote S3 bucket. NOT YET IMPLEMENTED.
+     * Lists files in a remote s3 bucket. The name of the remote bucket is
+     * determined by the {@link StorageService} passed in to this class'
+     * constructor. This currently does NOT do a recursive list.
      *
-     */
+     * After calling this, listen for the "listcompleted" event.
+     * You'll get a {@link ListResult} object in which you can check the
+     * "error" and "files" attributes.
+     * 
+     * Note that this is a naive implementation for now. It waits until 
+     * it has retrieved the full list before returning, so don't list
+     * huge buckets without a prefix. We'll revisit this later.
+     * 
+     * @param {string} prefix - List files starting with this prefix. Use
+     * an empty string ('') to list all files. 
+     *
+     */    
     list(prefix) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
@@ -170,11 +183,11 @@ class S3Client extends Plugin {
             result.addFile(file)
         })
         stream.on('end', function(obj) { 
-            s3Client.emit('finish', result)
+            s3Client.emit('listcompleted', result)
         })
         stream.on('error', function(err) { 
             result.error = err 
-            s3Client.emit('finish', result)
+            s3Client.emit('listcompleted', result)
         })
     }
 
@@ -378,6 +391,10 @@ class S3Client extends Plugin {
      * @event S3Client#finish
      * @type {OperationResult} Contains information about the outcome of
      * an upload or download operation.
+     * 
+     * @event S3Client#listcompleted
+     * @type {ListResult} Contains a list of {NetworkFile} objects describing
+     * objects in the bucket.
      */
 
 }
