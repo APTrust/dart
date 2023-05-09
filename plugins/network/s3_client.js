@@ -1,5 +1,6 @@
 const { Context } = require('../../core/context');
 const fs = require('fs');
+const { ListResult } = require('./list_result');
 const Minio = require('minio');
 const { Plugin } = require('../plugin');
 const { S3Transfer } = require('./s3_transfer');
@@ -160,12 +161,21 @@ class S3Client extends Plugin {
      * Lists files in a remote S3 bucket. NOT YET IMPLEMENTED.
      *
      */
-    list() {
-        throw 'S3Client.list() is not yet implemented.';
-        // var minioClient = this.getClient();
-        // var stream = minioClient.listObjects(this.storageService.bucket, '', false);
-        // stream.on('data', function(obj) { console.log(obj) } )
-        // stream.on('error', function(err) { console.log("Error: " + err) } )
+    list(prefix) {
+        var s3Client = this;
+        var minioClient = s3Client._getClient();
+        var result = new ListResult('s3')
+        var stream = minioClient.listObjectsV2(this.storageService.bucket, prefix, false);
+        stream.on('data', function(file) { 
+            result.addFile(file)
+        })
+        stream.on('end', function(obj) { 
+            s3Client.emit('finish', result)
+        })
+        stream.on('error', function(err) { 
+            result.error = err 
+            s3Client.emit('finish', result)
+        })
     }
 
     /**

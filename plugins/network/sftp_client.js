@@ -174,8 +174,6 @@ class SFTPClient extends Plugin {
      *
      */
     list(path) {
-        // throw 'SFTPClient.list() is not yet implemented.';
-
         let sftp = this;
         let result = new ListResult('sftp')
         let client = new Client();
