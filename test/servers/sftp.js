@@ -29,6 +29,21 @@ function start() {
                 let nowhere = fs.createWriteStream(throwawayFile)
                 return readstream.pipe(nowhere)
             });
+            session.on('readdir', function(path, responder) {
+                let data = [
+                    {"name": "file1.txt", "size": 42, "mtime": 167564536, "uid": 888},
+                    {"name": "file2.txt", "size": 84, "mtime": 167564538, "uid": 999},
+                ]
+                let i = 0
+                responder.on("dir", function() {
+                    if (data[i]) {
+                        responder.file(data[i].name, data[i])
+                        i++
+                    } else {
+                        return responder.end()
+                    }
+                  });
+            });
         })
     })
     server.listen(9999)

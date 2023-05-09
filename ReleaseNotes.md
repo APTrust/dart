@@ -4,6 +4,7 @@
 
 * Added support for upload-only jobs.
 * Updated APTrust client to talk to the new Registry API.
+* On storage service form, re-label Login/Password to Access Key Id/Secret Access Key for s3 protocol.
 
 ## 2.0.22 - March 14, 2022
 
