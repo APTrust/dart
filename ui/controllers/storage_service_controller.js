@@ -95,13 +95,17 @@ class StorageServiceController extends BaseController {
         document.getElementById('storageServiceForm_protocol').addEventListener("change", function(event) {
             let loginLabel = document.querySelector('label[for=storageServiceForm_login]')
             let passwordLabel = document.querySelector('label[for=storageServiceForm_password]')
+            let bucketLabel = document.querySelector('label[for=storageServiceForm_bucket]')
             let protocol = document.getElementById('storageServiceForm_protocol').value 
             if (protocol == 's3') {
                 loginLabel.innerText = Context.y18n.__('Access Key Id')
                 passwordLabel.innerText = Context.y18n.__('Secret Access Key')
+                bucketLabel.innerText = Context.y18n.__('Bucket')
+
             } else {
                 loginLabel.innerText = Context.y18n.__('Login')
                 passwordLabel.innerText = Context.y18n.__('Password')
+                bucketLabel.innerText = Context.y18n.__('Folder')
             }
         });
     }
