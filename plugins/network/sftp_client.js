@@ -188,6 +188,7 @@ class SFTPClient extends Plugin {
         let connSettings = null;
         try { connSettings = this._getConnSettings(); }
         catch (err) {
+            Context.logger.error(Context.y18n.__("sftp list error: %s", err.toString()))
             sftp.emit('error', err)
             return;
         }
@@ -203,11 +204,12 @@ class SFTPClient extends Plugin {
                     if (!file.mtime && file.attrs && file.attrs.mtime) {
                         nf.lastModified = file.attrs.mtime
                     }
+                    Context.logger.info(Context.y18n.__("sftp list: %s", file.name))
                     sftp.emit('listdata', nf)
                 })
             }
         }).then(() => {
-            sftp.emit('finish', 'OK')
+            sftp.emit('finish', Context.y18n.__('OK'))
             if (client && client.sftp) {
                 try { client.end(); }
                 catch(ex) {}
@@ -217,6 +219,7 @@ class SFTPClient extends Plugin {
                 try { client.end(); }
                 catch(ex) {}
             }
+            Context.logger.error(Context.y18n.__("sftp list error: %s", err.toString()))
             sftp.emit('error', err)
             sftp.emit('finish', Context.y18n.__('Completed with error: ' + err))
         });
@@ -228,12 +231,23 @@ class SFTPClient extends Plugin {
         let connSettings = null;
         try { connSettings = this._getConnSettings(); }
         catch (err) {
+            Context.logger.error(Context.y18n.__('SFTP connection test to %s/%s failed with error %s', 
+                this.storageService.host,
+                this.storageService.bucket,
+                err.toString()))            
             sftp.emit('error', err)
             return;
         }
         client.connect(connSettings).then(() => {
+            Context.logger.info(Context.y18n.__('SFTP connection test to %s/%s succeeded', 
+                    this.storageService.host,
+                    this.storageService.bucket))
             sftp.emit('connected', Context.y18n.__('Success'))
         }).catch(err => {
+            Context.logger.error(Context.y18n.__('SFTP connection test to %s/%s failed with error %s', 
+                this.storageService.host,
+                this.storageService.bucket,
+                err.toString()))  
             sftp.emit('error', err)
         }).finally(() => {
             if (client && client.sftp) {
