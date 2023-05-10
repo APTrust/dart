@@ -57,7 +57,7 @@ class ListResult {
         if (this.serviceType == 'sftp') {
             nf.name = file.name
             nf.size = file.size 
-            nf.lastModified = file.mtime 
+            nf.lastModified = new Date(file.mtime)
             if (!file.mtime && file.attrs && file.attrs.mtime) {
                 nf.lastModified = file.attrs.mtime
             }
@@ -65,7 +65,7 @@ class ListResult {
             nf.name = file.name
             nf.size = file.size 
             nf.etag = file.etag
-            nf.lastModified = file.lastModified
+            nf.lastModified = new Date(file.lastModified)
         }
         this.files.push(file)
     } 

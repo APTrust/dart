@@ -180,7 +180,7 @@ class SFTPClient extends Plugin {
      * @param {string} path - The path of the folder to list.
      * Some sftp servers may return an error for an empty path.
      * If so, use "/" to designate the root path.
-     *
+     * 
      */
     list(path) {
         let sftp = this;
