@@ -28,7 +28,6 @@ class BagUploadForm extends Form {
     _init(job) {
         this.fields['pathToBag'] = new Field("pathToBag", "pathToBag", "Choose a file...", "");
         this.fields['pathToBag'].required = true
-        this.fields['pathToBag'].attrs = { "webkitdirectory": true }
         let selectedTargets = job.uploadOps.map(op => op.storageServiceId).filter(id => id != '');
         this.fields['uploadTargets'].choices = Choice.makeList(
             this.allTargets,
