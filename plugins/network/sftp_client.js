@@ -85,7 +85,7 @@ class SFTPClient extends Plugin {
         try { connSettings = this._getConnSettings(); }
         catch (err) {
             result.finish(err);
-            sftp.emit('error', result);
+            sftp.emit('error', result.error);
             return;
         }
         // Catch unexpected socket closure. Somehow, that does not
@@ -274,7 +274,7 @@ class SFTPClient extends Plugin {
             Context.logger.info(Context.y18n.__("Using password for SFTP connection"));
             connSettings.password = this.storageService.password
         } else {
-            let msg = Context.y18n.__("Storage service %s has no password or key file to connect to remote server", this.storageService.name);
+            let msg = Context.y18n.__("Storage service '%s' has no password or key file to connect to remote server", this.storageService.name);
             Context.logger.error(msg);
             throw msg;
         }
