@@ -1,7 +1,7 @@
 const { Context } = require('../../core/context');
 const fs = require('fs');
-const { ListResult } = require('./list_result');
 const Minio = require('minio');
+const { NetworkFile } = require('./network_file');
 const { Plugin } = require('../plugin');
 const { S3Transfer } = require('./s3_transfer');
 
@@ -162,9 +162,8 @@ class S3Client extends Plugin {
      * determined by the {@link StorageService} passed in to this class'
      * constructor. This currently does NOT do a recursive list.
      *
-     * After calling this, listen for the "listcompleted" event.
-     * You'll get a {@link ListResult} object in which you can check the
-     * "error" and "files" attributes.
+     * After calling this, listen for "listdata" events.
+     * You'll get a {@link NetworkFile} object each time that event fires.
      * 
      * Note that this is a naive implementation for now. It waits until 
      * it has retrieved the full list before returning, so don't list
@@ -177,17 +176,21 @@ class S3Client extends Plugin {
     list(prefix) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
-        var result = new ListResult('s3')
         var stream = minioClient.listObjectsV2(this.storageService.bucket, prefix, false);
         stream.on('data', function(file) { 
-            result.addFile(file)
+            let nf = new NetworkFile()
+            nf.name = file.name
+            nf.size = file.size 
+            nf.etag = file.etag
+            nf.lastModified = new Date(file.lastModified)            
+            s3Client.emit('listdata', nf)
         })
         stream.on('end', function(obj) { 
-            s3Client.emit('listcompleted', result)
+            s3Client.emit('finish', 'OK')
         })
         stream.on('error', function(err) { 
-            result.error = err 
-            s3Client.emit('listcompleted', result)
+            s3Client.emit('error', err)
+            s3Client.emit('finish', Context.y18n.__('Completed with error: ' + err))
         })
     }
 
@@ -392,9 +395,15 @@ class S3Client extends Plugin {
      * @type {OperationResult} Contains information about the outcome of
      * an upload or download operation.
      * 
-     * @event S3Client#listcompleted
-     * @type {ListResult} Contains a list of {NetworkFile} objects describing
-     * objects in the bucket.
+     * @event SFTPClient#connected
+     * @type {string} Emitted by testConnection() only on successful 
+     * connection. The string should say "Success" in the local language. 
+     * Otherwise, check the error event.
+     *
+     * @event SFTPClient#listdata
+     * @type {NetworkFile} Emitted by the list() function each time it gets a
+     * new file or object record from the remote service. Contains a {NetworkFile} 
+     * object describing an item in the remote folder.
      */
 
 }

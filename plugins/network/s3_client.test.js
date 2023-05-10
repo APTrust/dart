@@ -184,17 +184,18 @@ test('upload()', done => {
     ss.login = process.env.AWS_ACCESS_KEY_ID;
     ss.password = process.env.AWS_SECRET_ACCESS_KEY;
     var client = new S3Client(ss);
-    client.on('listcompleted', function(result) {
-        // If credentials and bucket name are valid, 
-        // we'll get no error. 
-        expect(result.error).toBeNull()
-        result.files.forEach((file) => {
-            expect(file.name).toBeTruthy()
-            expect(file.lastModified).toBeTruthy()
-            expect(file.size).toBeTruthy()
-            expect(file.etag).toBeTruthy()
-        })
-        done()
+    client.on('listdata', function(file) {
+        expect(file.name).toBeTruthy()
+        expect(file.lastModified).toBeTruthy()
+        expect(file.size).toBeTruthy()
+        expect(file.etag).toBeTruthy()
     });
+    client.on('error', function(err) {
+        expect(err).toBeNull()
+    })
+    client.on('finish', function(message) {
+        expect(message).toEqual('OK')
+        done()
+    })
     client.list('')
 });
