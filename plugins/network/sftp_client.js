@@ -85,7 +85,7 @@ class SFTPClient extends Plugin {
         try { connSettings = this._getConnSettings(); }
         catch (err) {
             result.finish(err);
-            sftp.emit('error', result.error);
+            sftp.emit('error', result);
             return;
         }
         // Catch unexpected socket closure. Somehow, that does not
