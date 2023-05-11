@@ -92,6 +92,13 @@ class JobMetadataController extends BaseController {
      * dialog.
      */
     saveNewTag() {
+        
+        // Save the existing form data before we try to
+        // add the new tag, because user may have unsaved
+        // changes here. Fixes https://trello.com/c/lOronZpj
+        this._parseMetadataForm();
+        this.job.save();
+
         let form = new TagDefinitionForm(new TagDefinition());
         form.parseFromDOM();
         form.obj.errors = {};
