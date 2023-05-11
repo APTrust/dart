@@ -13,7 +13,7 @@ class AboutController extends BaseController {
         let data = {
             version: Dart.Context.dartVersion(),
             appPath: InternalSetting.firstMatching('name', 'AppPath').value,
-            userDataPath: InternalSetting.firstMatching('name', 'UserDataPath').value,
+            userDataPath: Dart.Context.config.dataDir,
             logFilePath: Dart.Context.logger.pathToLogFile()
         }
         let html = Templates.about(data);

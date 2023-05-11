@@ -1,9 +1,12 @@
 const {app, BrowserWindow} = require('electron');
 const contextMenu = require('electron-context-menu');
+const envPaths = require('env-paths');
 const path = require('path');
 const process = require('process');
 const url = require('url');
 const { InternalSetting } = require('../core/internal_setting');
+
+const dartPaths = envPaths('DART', { suffix: ''});
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -52,7 +55,7 @@ function createWindow() {
     new InternalSetting({
         id: '6ab9c4af-53d0-48a2-963b-481d6ef775d9',
         name: "UserDataPath",
-        value: app.getPath('userData'),
+        value: dartPaths.data,
     }).save()
 
 }
