@@ -28,6 +28,7 @@ class BagUploadController extends RunningJobsController {
         this.model = Job;
         this.job = new Job();
         this.form = null;
+        this.tempFile = "";
     }
 
     /**
@@ -53,16 +54,12 @@ class BagUploadController extends RunningJobsController {
     _startUploadJob() {
         this.form.parseFromDOM();
         let job = this.job = this.form.obj;
-
-        //console.log(job.uploadOps[0].validate())
-        //console.log(job)
-
-        let tmpFile = Util.tmpFilePath();
-        fs.writeFileSync(tmpFile, JSON.stringify(job));
+        this.tempFile = Util.tmpFilePath();
+        fs.writeFileSync(this.tempFile, JSON.stringify(job));
         let modulePath = path.join(__dirname, '..', '..', 'main.js');
         this.childProcess = fork(
                 modulePath,
-                ['--job', tmpFile]
+                ['--job', this.tempFile]
         );
         this.dartProcess = new DartProcess(
             this.job.title,
@@ -73,8 +70,17 @@ class BagUploadController extends RunningJobsController {
     }
 
     _initResultsDiv() {
+        // this.completedUploads is part of super class,
+        // RunningJobsController. We need to clear this list,
+        // or it will display prior uploads in addition to 
+        // the current upload. This issue occurs when user
+        // runs multiple consecutive upload jobs without leaving
+        // the current page.
+        this.completedUploads = [];
+
         $('#btnUpload').prop('disabled', true);
         let processDiv = $('#dartProcessContainer');
+        processDiv.empty();
         let html = Templates.partials['dartProcess']({ item: this.dartProcess });
         processDiv.html(html);
         this.initProgressBar(this.dartProcess, 'uploadInfo');
@@ -97,10 +103,6 @@ class BagUploadController extends RunningJobsController {
 
     _renderOutcome(code) {
         let job = Job.find(this.job.id)
-
-        //console.log(this.job.id)
-        //console.log(job)
-
         let [detailDiv, progressBar] = this.getDivs(this.dartProcess, 'outcome');
         if (code == 0) {
             this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
@@ -117,6 +119,17 @@ class BagUploadController extends RunningJobsController {
         // Jobs db. Delete that DB copy, so validation jobs don't
         // cause too much clutter.
         job.delete();
+
+        if (this.tempFile != "" && !Util.isDirectory(this.tempFile)) {
+            try {
+                console.log("Deleting " + this.tempFile)
+                fs.remove(this.tempFile)
+            } catch(ex) {
+                // ignore
+            } finally {
+                this.tempFile = null
+            }
+        }
     }
 
     postRenderCallback(fnName) {
@@ -138,24 +151,24 @@ class BagUploadController extends RunningJobsController {
                 $('#dartProcessContainer').html('');
             }
         })
-        // $('#bagTypeFile').on('click',function(e){
-        //     let fileInput = $('#pathToBag');
-        //     fileInput.files = [];
-        //     fileInput.removeAttr('webkitdirectory');
-        //     fileInput.attr('accept', '.tar');
-        //     $(fileInput).next('.custom-file-label').html(
-        //         Context.y18n.__("Choose a file...")
-        //     );
-        // })
-        // $('#bagTypeDirectory').on('click',function(e){
-        //     let fileInput = $('#pathToBag');
-        //     fileInput.files = [];
-        //     fileInput.attr('webkitdirectory', true);
-        //     fileInput.removeAttr('accept');
-        //     $(fileInput).next('.custom-file-label').html(
-        //         Context.y18n.__("Choose a directory...")
-        //     );
-        // })
+        $('#bagTypeFile').on('click',function(e){
+            let fileInput = $('#pathToBag');
+            fileInput.files = [];
+            fileInput.removeAttr('webkitdirectory');
+            fileInput.attr('accept', '.*');
+            $(fileInput).next('.custom-file-label').html(
+                Context.y18n.__("Choose a file...")
+            );
+        })
+        $('#bagTypeDirectory').on('click',function(e){
+            let fileInput = $('#pathToBag');
+            fileInput.files = [];
+            fileInput.attr('webkitdirectory', true);
+            fileInput.removeAttr('accept');
+            $(fileInput).next('.custom-file-label').html(
+                Context.y18n.__("Choose a directory...")
+            );
+        })
         $('#btnUpload').on('click', () => { controller.uploadBag() })
     }
 

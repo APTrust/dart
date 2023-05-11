@@ -459,5 +459,8 @@
   "Connection Test": "Connection Test",
   "Storage service '%s' has no password or key file to connect to remote server": "Storage service '%s' has no password or key file to connect to remote server",
   "SFTP connection test to %s/%s failed with error %s": "SFTP connection test to %s/%s failed with error %s",
-  "S3 connection test to %s/%s failed with error %s": "S3 connection test to %s/%s failed with error %s"
+  "S3 connection test to %s/%s failed with error %s": "S3 connection test to %s/%s failed with error %s",
+  "Upload a file": "Upload a file",
+  "Upload a directory": "Upload a directory",
+  "Upload failed.": "Upload failed."
 }
