@@ -7,6 +7,7 @@
 * Added "Test Connection" to storage service page to test S3 and SFTP connections.
 * On storage service form, re-label Login/Password to Access Key Id/Secret Access Key for s3 protocol, and re-label "Bucket" to "Folder" for sftp protocol.
 * Fixed: About dialog showed wrong data directory on Windows and Linux.
+* Fixed: When adding new tag on job metadata page, DART now preserves unsaved changes.
 
 ## 2.0.22 - March 14, 2022
 
