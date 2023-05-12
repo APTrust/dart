@@ -160,6 +160,13 @@ test('run() completes when all job operations are valid', done => {
 test('run() deletes bag after upload when specified', done => {
     let job = getJob();
     job.deleteBagAfterUpload = true
+
+    // Make sure there isn't a copy of this left over
+    // from a prior test.
+    fs.unlinkSync(job.packageOp.outputPath)
+
+    // Now let's run the job and make sure it cleans up
+    // after itself.
     let jobRunner = new JobRunner(job);
 
     jobRunner.run().then(function(returnCode) {
