@@ -469,5 +469,7 @@
   "Job_deleteBagAfterUpload_help": "Job_deleteBagAfterUpload_help",
   "Job_bagWasDeletedAfterUpload_label": "Job_bagWasDeletedAfterUpload_label",
   "Job_bagWasDeletedAfterUpload_help": "Job_bagWasDeletedAfterUpload_help",
-  "Bag was deleted after upload": "Bag was deleted after upload"
+  "Bag was deleted after upload": "Bag was deleted after upload",
+  "Local copy of bag was deleted after upload": "Local copy of bag was deleted after upload",
+  "Delete local copy of bag after upload?": "Delete local copy of bag after upload?"
 }
