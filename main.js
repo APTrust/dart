@@ -70,7 +70,7 @@ async function runWithoutUI(opts) {
 		Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
 		process.exit(exitCode);
 	} catch (err) {
-		Context.logger.error(err);
+		Context.logger.error(`Finished DART command-line mode pid ${process.pid} with error ${err}`);
 		console.error(err);
 		process.exit(Constants.EXIT_RUNTIME_ERROR);
 	}

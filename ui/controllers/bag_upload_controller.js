@@ -123,7 +123,7 @@ class BagUploadController extends RunningJobsController {
         if (this.tempFile != "" && !Util.isDirectory(this.tempFile)) {
             try {
                 console.log("Deleting " + this.tempFile)
-                fs.remove(this.tempFile)
+                fs.unlinkSync(this.tempFile)
             } catch(ex) {
                 // ignore
             } finally {

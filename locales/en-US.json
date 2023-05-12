@@ -462,5 +462,12 @@
   "S3 connection test to %s/%s failed with error %s": "S3 connection test to %s/%s failed with error %s",
   "Upload a file": "Upload a file",
   "Upload a directory": "Upload a directory",
-  "Upload failed.": "Upload failed."
+  "Upload failed.": "Upload failed.",
+  "Object_deleteBagAfterUpload_label": "Object_deleteBagAfterUpload_label",
+  "Object_deleteBagAfterUpload_help": "Object_deleteBagAfterUpload_help",
+  "Job_deleteBagAfterUpload_label": "Job_deleteBagAfterUpload_label",
+  "Job_deleteBagAfterUpload_help": "Job_deleteBagAfterUpload_help",
+  "Job_bagWasDeletedAfterUpload_label": "Job_bagWasDeletedAfterUpload_label",
+  "Job_bagWasDeletedAfterUpload_help": "Job_bagWasDeletedAfterUpload_help",
+  "Bag was deleted after upload": "Bag was deleted after upload"
 }

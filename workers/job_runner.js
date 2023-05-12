@@ -2,9 +2,11 @@ const { BagCreator } = require('./bag_creator');
 const { BagValidator } = require('./bag_validator');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const fs = require('fs')
 const { Job } = require('../core/job');
 const { OperationResult } = require('../core/operation_result');
 const { Uploader } = require('./uploader');
+const { Util } = require('../core/util');
 const { ValidationOperation } = require('../core/validation_operation');
 
 /**
@@ -101,13 +103,16 @@ class JobRunner {
                 // uploadOp.results[i].errors, and will be handled
                 // above like any other worker error.
             }
+            var lastResult = null
             for (let op of this.job.uploadOps) {
                 for (let result of op.results) {
                     if (result.hasErrors()) {
                         returnCode = Constants.EXIT_RUNTIME_ERROR;
                     }
+                    lastResult = result
                 }
             }
+            this.deleteBagAfterUpload(this.job, lastResult)
             this.job.save();
             return returnCode;
         }
@@ -132,6 +137,37 @@ class JobRunner {
             }
         }
     }
+
+    /**
+     * This deletes a bag after successful upload if job.deleteBagAfterUpload
+     * is true.
+     * 
+     * @param {Job} job
+     * @param {OperationResult} result 
+     * 
+     * @returns {void}
+     */
+    deleteBagAfterUpload(job, result) {
+        if (!job.deleteBagAfterUpload) {
+            return
+        }
+        let bag = job.packageOp.outputPath
+        try {
+            if (Util.isDirectory(bag)) {
+               Util.deleteRecursive(bag)
+            } else {
+               fs.unlinkSync(bag)
+            }
+            job.bagWasDeletedAfterUpload = true
+        } catch(ex) {
+            job.bagWasDeletedAfterUpload = false
+            if (result) {
+                result.errors.push(`Upload completed but cound not delete bag ${bag}. Error: ${ex}`)
+            }
+        }
+    }    
+
+
 }
 
 module.exports.JobRunner = JobRunner;
