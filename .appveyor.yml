@@ -21,8 +21,7 @@ install:
         #- ps: Update-NodeJsInstallation 12.16.1
   - ps: Install-Product node LTS
   - node --version
-  #- git reset --hard HEAD
-  - git checkout tags/v2.0.22
+  - git reset --hard HEAD
   - rm -rf node_modules
   - rm package-lock.json
   - npm install --global npm@latest
