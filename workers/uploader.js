@@ -85,7 +85,10 @@ class Uploader extends Worker {
         }
         let providerClass = this.getProvider(ss.protocol);
         let promises = [];
-        for (let filepath of uploadOp.sourceFiles) {
+
+        //for (let filepath of uploadOp.sourceFiles) {
+        for (let i = 0; i < uploadOp.sourceFiles.length; i++) {
+            let filepath = uploadOp.sourceFiles[i]
             let f = path.basename(filepath)
             let provider = new providerClass(ss);
             var promise = new Promise(function(resolve, reject) {
@@ -139,7 +142,10 @@ class Uploader extends Worker {
                 });
             });
             promises.push(promise);
-            provider.upload(filepath, path.basename(filepath));
+            let keyname = path.basename(filepath)
+            try { keyname = uploadOp.sourceKeys[i] }
+            catch(ex) { /* If not specified, stick with basename. */ } 
+            provider.upload(filepath, keyname);
         }
         return promises;
     }

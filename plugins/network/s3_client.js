@@ -2,6 +2,7 @@ const { Context } = require('../../core/context');
 const fs = require('fs');
 const Minio = require('minio');
 const { NetworkFile } = require('./network_file');
+const path = require('path');
 const { Plugin } = require('../plugin');
 const { S3Transfer } = require('./s3_transfer');
 
@@ -111,7 +112,7 @@ class S3Client extends Plugin {
         try {
             if (xfer.localStat == null || !(xfer.localStat.isFile() || xfer.localStat.isSymbolicLink())) {
                 xfer.result.finish(Context.y18n.__('%s is not a file', filepath));
-                this.emit('error', xfer.result);
+                this.emit('warning', xfer.result);
                 return;
             }
             Context.logger.info(Context.y18n.__('Starting upload'));

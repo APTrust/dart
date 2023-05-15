@@ -342,8 +342,11 @@ class Util {
      * The returned list will not include links, only files.
      *
      * @param {string} dir - Path to directory.
-     * @param {filterFunction} filterFunction - A function to filter out items that should not go into filelist.
-     * @returns {string[]} A list of file paths under dir that pass the filter.
+     * @param {filterFunction} filterFunction - A function to filter out items 
+     * that should not go into filelist.
+     * @returns {Object[]} A list of file paths under dir that pass the filter. 
+     * Each object contains absPath (string: the absolute path to the file) and
+     * stats (the fs.stats object for the file).
     */
     static walkSync(dir, filterFunction) {
         var files = fs.readdirSync(dir);
@@ -354,18 +357,22 @@ class Util {
         //filterFunction = filterFunction || function(file) { return true };
         files.forEach(function(file) {
             var absPath = path.join(dir, file);
-            if (!fs.existsSync(absPath)) {
-                return;  // Symlinks give ENOENT error
-            }
             var stats = fs.statSync(absPath);
-            if (stats.isDirectory()) {
-                filelist = Util.walkSync(absPath, filelist, filterFunction);
-            }
-            else if (stats.isFile() && filterFunction(absPath)) {
+            if (stats.isDirectory() && file != dir) {
+                if (filterFunction(absPath)) {
+                    filelist.push({
+                        absPath: absPath,
+                        stats: stats
+                    })
+                    filelist = filelist.concat(Util.walkSync(absPath, filterFunction))
+                }
+            } else if (stats.isFile() && filterFunction(absPath)) {
                 filelist.push({
                     absPath: absPath,
                     stats: stats
                 });
+            } else {
+                console.log("*********" + absPath)
             }
         });
         return filelist;

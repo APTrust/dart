@@ -188,6 +188,7 @@ test('run() deletes bag after upload when specified', done => {
         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
 
         // Ensure bag was deleted after successful run
+        console.log(job.packageOp.outputPath)
         expect(fs.existsSync(job.packageOp.outputPath)).toBe(false)
 
         done();
