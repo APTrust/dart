@@ -15,7 +15,7 @@ let app;
 // This runs the app in either CLI or GUI mode.
 // We don't load the heavyweight Electron requirements unless
 // we're running in GUI mode.
-function run() {
+async function run() {
     process.on('uncaughtException', function (error) {
         console.error(error);
         Context.logger.error(error);
@@ -23,7 +23,7 @@ function run() {
     let opts = minimist(process.argv.slice(2), {
         string: ['j', 'job'],
         boolean: ['d', 'debug', 'h', 'help', 'v', 'version',
-                 's', 'stdin'],
+                  's', 'stdin'],
         default: { d: false, debug: false,
                    h: false, help: false,
                    s: false, stdin: false,
@@ -51,6 +51,12 @@ function run() {
 // Run in command-line mode.
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
+    console.log(opts)
+    if (opts.fromgui) {
+        console.log("main.js: called from gui")
+        Context.logger.info("Job was called from DART GUI");
+        Context.calledFromDartGui = true
+    }
     Context.logger.info(Context.dartVersion());
     let stdinData = '';
 	// https://github.com/APTrust/dart/issues/504
@@ -67,6 +73,7 @@ async function runWithoutUI(opts) {
 		let job = new JobLoader(opts, stdinData).loadJob();
 		let jobRunner = new JobRunner(job);
 		let exitCode = await jobRunner.run();
+        Context.logger.info("+++++++" + Context.calledFromDartGui)
 		Context.logger.info(`Finished DART command-line mode pid: ${process.pid}, job: ${opts.job}. Exit Code: ${exitCode}`);
 		process.exit(exitCode);
 	} catch (err) {
