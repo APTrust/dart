@@ -51,12 +51,6 @@ async function run() {
 // Run in command-line mode.
 async function runWithoutUI(opts) {
     Context.logger.info(`Starting DART command-line mode pid: ${process.pid}, job: ${opts.job}`);
-    console.log(opts)
-    if (opts.fromgui) {
-        console.log("main.js: called from gui")
-        Context.logger.info("Job was called from DART GUI");
-        Context.calledFromDartGui = true
-    }
     Context.logger.info(Context.dartVersion());
     let stdinData = '';
 	// https://github.com/APTrust/dart/issues/504

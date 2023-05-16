@@ -61,6 +61,12 @@ class Job extends PersistentObject {
     constructor(opts = {}) {
         super(opts);
         this.bagItProfile = opts.bagItProfile || null;
+
+        /**
+         * Should DART delete the bag after successful upload?
+         * 
+         * @type {boolean}
+         */
         this.deleteBagAfterUpload = opts.deleteBagAfterUpload || false;
         this.packageOp = opts.packageOp || new PackageOperation();
         this.validationOp = opts.validationOp || null;
