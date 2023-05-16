@@ -187,9 +187,14 @@ test('list()', done => {
     var client = new S3Client(ss);
     client.on('listdata', function(file) {
         expect(file.name).toBeTruthy()
-        expect(file.lastModified).toBeTruthy()
-        expect(file.size).toBeTruthy()
-        expect(file.etag).toBeTruthy()
+        if (file.type == "file") {
+            expect(file.lastModified).toBeTruthy()
+            expect(file.size).toBeTruthy()
+            expect(file.etag).toBeTruthy()
+        } else {
+            // type "prefix" is the name of a folder in the S3 bucket
+            expect(file.size).toEqual(0)
+        }
     });
     client.on('error', function(err) {
         expect(err).toBeNull()

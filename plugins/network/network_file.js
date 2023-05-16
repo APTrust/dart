@@ -37,6 +37,16 @@ class NetworkFile {
          * @type {Date}
          */
         this.lastModified = new Date(0)
+
+        /**
+         * Indicates the S3 object type. This will be either "file"
+         * or "prefix", with prefix indicating it's a folder within
+         * the S3 bucket. Note that prefix entries have a size of zero
+         * and no modtime.
+         * 
+         * @type {string}
+         */
+        this.type = "file"
     }
 }
 
