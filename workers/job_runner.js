@@ -35,6 +35,7 @@ class JobRunner {
             }
             if (returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.uploadFiles();
+                console.log("Completed uploads")
             }
             return returnCode;
         } catch (ex) {
@@ -98,7 +99,14 @@ class JobRunner {
             let uploader = new Uploader(this.job);
             try {
                 console.log("STARTING")
-                await uploader.run();
+                // NOTE: We are awaiting here, but if we use the await keyword
+                // in front of the call to uploader.run(), the program exits
+                // without warning and reports code EXIT_SUCCESS, even 
+                // though it does not complete the job. Even the debugger
+                // can't track what happens when we use await here.
+                // So we're omitting it inside this async function, and it
+                // works just fine. WTF, JavaScript??
+                uploader.run();
                 console.log("DONE")
             } catch (ex) {
                 console.log("ERROR")
@@ -106,6 +114,8 @@ class JobRunner {
                 // Note that the error will already be recorded in
                 // uploadOp.results[i].errors, and will be handled
                 // above like any other worker error.
+            } finally {
+                console.log("Now we're in the finally block")
             }
             console.log("NEXT")
             var lastResult = null

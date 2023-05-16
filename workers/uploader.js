@@ -42,12 +42,14 @@ class Uploader extends Worker {
         let uploader = this;
         let errors = this.validateParams();
         if (errors.length > 0) {
+            console.log("Got some errors in uploader.run()")
             return Promise.all([new Promise(function(resolve, reject) {
                 reject(uploader.validationError(errors));
             })]);
         }
         let promises = [];
         for (let op of this.job.uploadOps) {
+            console.log("Adding upload task...")
             promises = promises.concat(this.doUpload(op));
         }
         return Promise.all(promises);
@@ -96,6 +98,7 @@ class Uploader extends Worker {
                 provider.on('start', function(result) {
                     // Note: percentComplete is -1 because we don't
                     // yet have a way of getting that info.
+                    console.log("Starting upload")
                     uploader.info('start',
                                   Constants.OP_IN_PROGRESS,
                                   `${ss.name}: ${f}`,
@@ -105,8 +108,11 @@ class Uploader extends Worker {
                 provider.on('finish', function(result) {
                     uploadOp.results.push(result);
                     if (result.errors.length > 0) {
+                        console.log("Upload completed with errors")
+                        console.log(result.errors)
                         uploader.completedWithError(result.errors);
-                    } else {                        
+                    } else {                      
+                        console.log("Upload completed successfully")  
                         uploader.completedSuccess(`${UIConstants.GREEN_CHECK_CIRCLE} ${f} -> ${ss.name}`, false);
                     }
                     resolve(result);
@@ -116,6 +122,8 @@ class Uploader extends Worker {
                     // to fail. We want to let other pending promises
                     // complete instead of stopping the chain. We will
                     // handle retries elsewhere.
+                    console.log("Upload error:")
+                    console.log(result)
                     uploadOp.results.push(result);
                     uploader.runtimeError('completed', result.errors);
                     resolve(result);
@@ -145,6 +153,7 @@ class Uploader extends Worker {
             let keyname = path.basename(filepath)
             try { keyname = uploadOp.sourceKeys[i] }
             catch(ex) { /* If not specified, stick with basename. */ } 
+            console.log(`Uploading ${filepath} as ${keyname}`)
             provider.upload(filepath, keyname);
         }
         return promises;
