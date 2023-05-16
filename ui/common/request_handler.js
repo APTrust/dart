@@ -20,6 +20,20 @@ class RequestHandler {
         }
         let [hash, queryString] = hashAndQueryString.split('?');
         let params = new url.URLSearchParams(queryString);
+        // This is for debugging, and is especially helpful for jobs.
+        // You can use this uuid to run a job from the command line
+        // and see console output. Just grab the UUID and run the 
+        // following in the VS code terminal (not the system terminal):
+        //
+        // node --inspect ./main.js --job <uuid>
+        //
+        // For this to work, make sure your .vscode/settings.json has
+        // the following line:
+        //
+        // "debug.javascript.autoAttachFilter": "onlyWithFlag" 
+        if (window && params) {
+            window.dartObjectId = params.get("id")
+        }
         let [controller, fn] = hash.split('/');
         if (!controller || !fn) {
             throw `Invalid URL: '${this.href}' is missing controller or function name.`;
