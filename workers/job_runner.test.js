@@ -24,6 +24,7 @@ let pathToValidTestBag = path.join(__dirname, '..', 'test', 'bags', 'aptrust', '
 let helper = new UploadTestHelper();
 let skipMessagePrinted = false;
 
+
 function deleteTmpBagFile() {
     try { fs.unlinkSync(tmpBagFile); }
     catch (ex) { }
@@ -188,7 +189,7 @@ test('run() deletes bag after upload when specified', done => {
         expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
 
         // Ensure bag was deleted after successful run
-        console.log(job.packageOp.outputPath)
+        //console.log(job.packageOp.outputPath)
         expect(fs.existsSync(job.packageOp.outputPath)).toBe(false)
 
         done();
