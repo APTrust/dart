@@ -6,6 +6,7 @@ const fs = require('fs')
 const { Job } = require('../core/job');
 const { OperationResult } = require('../core/operation_result');
 const path = require('path')
+const process = require('process')
 const { Uploader } = require('./uploader');
 const { Util } = require('../core/util');
 const { ValidationOperation } = require('../core/validation_operation');
@@ -100,13 +101,20 @@ class JobRunner {
             try {
                 console.log("STARTING")
                 // NOTE: We are awaiting here, but if we use the await keyword
-                // in front of the call to uploader.run(), the program exits
-                // without warning and reports code EXIT_SUCCESS, even 
+                // in front of the call to uploader.run() in cli mode, the program 
+                // exits without warning and reports code EXIT_SUCCESS, even 
                 // though it does not complete the job. Even the debugger
                 // can't track what happens when we use await here.
-                // So we're omitting it inside this async function, and it
-                // works just fine. WTF, JavaScript??
-                uploader.run();
+                //
+                // When DART is in GUI mode (the Electron window is running), 
+                // then the async keyword is required.
+                //
+                // WTF, JavaScript??
+
+                // TODO: Pass in command-line flag to indicate DART
+                // GUI is the caller.
+
+                uploader.run()
                 console.log("DONE")
             } catch (ex) {
                 console.log("ERROR")
