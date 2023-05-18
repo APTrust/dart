@@ -300,7 +300,7 @@
   "Failed to import profile": "Failed to import profile",
   "None": "None",
   "JobPackageOp_bagItSerialization_label": "Serialization",
-  "JobPackageOp_bagItSerialization_help": "How should this bag be serialized or compressed?",
+  "JobPackageOp_bagItSerialization_help": "How should this bag be serialized or compressed? Leave this empty if you don't want your bag to be serialized or compressed.",
   "Using password for SFTP connection": "Using password for SFTP connection",
   "Upload succeeded": "Upload succeeded",
   "Checking %s for RSA key for SFTP connection": "Checking %s for RSA key for SFTP connection",

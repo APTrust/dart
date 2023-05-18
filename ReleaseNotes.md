@@ -2,7 +2,8 @@
 
 ## 2.x.x - Upcoming
 
-* Added support for upload-only jobs.
+* Added feature to created and upload unserialized bags (BagIt package as folder). 
+* Added support for upload-only jobs. 
 * Updated APTrust client to talk to the new Registry API.
 * Added "Test Connection" to storage service page to test S3 and SFTP connections.
 * Added option to delete bag after successful upload. 
