@@ -3,6 +3,7 @@ const { Context } = require('../../core/context');
 const fs = require('fs');
 const { NetworkFile } = require('./network_file');
 const { OperationResult } = require('../../core/operation_result');
+const path = require('path')
 const { Plugin } = require('../plugin');
 const { StorageService } = require('../../core/storage_service');
 const { Util } = require('../../core/util');
@@ -73,7 +74,7 @@ class SFTPClient extends Plugin {
             keyname = path.basename(filepathOrBuffer);
         }
         // Don't use path.join; force forward slash instead.
-        let remoteFilepath =  keyname;
+        let remoteFilepath = keyname;
         if (this.storageService.bucket) {
             remoteFilepath = `${this.storageService.bucket}/${keyname}`;
         }
@@ -107,9 +108,9 @@ class SFTPClient extends Plugin {
             // the upload stream before the server is ready,
             // causing ECONNRESET (even though the write has
             // completed on the server end).
-            setTimeout(function() {
-                sftp.emit('finish', result);
-            }, 500);
+            //setTimeout(function() {
+            //    sftp.emit('finish', result);
+            //}, 500);
         });
         // This handles authentication errors, which will occur before we
         // can even attempt an upload.
@@ -126,13 +127,35 @@ class SFTPClient extends Plugin {
                 // with a warning about potential file corruption.
                 // Use put for initial release.
                 Context.logger.info(`Uploading via sftp to ${remoteFilepath}`);
-                return client.put(filepathOrBuffer, remoteFilepath); // defaultPutOptions);
+                let dirname = path.dirname(remoteFilepath)
+
+                // Note the two catches in the chain below. The recursive mkdir 
+                // call can fail if some part of the directory hierarchy already 
+                // exists. That failure won't prevent us writing the file.
+                // Ideally, we would construct the nested SFTP path bit by bit,
+                // checking each time to see if each part of the path already 
+                // exists. Or, we would parse out the directory creation errors
+                // to see if the failure was due permissions, directory already
+                // existing, etc. That gets ugly as hell in a series of chained
+                // promises. So screw it. If the recursive mkdir fails, let's 
+                // assume it's because the remote dir is already there and we
+                // can proceed. If it's truly a permission error (or full disk,
+                // or some other unrecoverable problem), we'll hit it again when
+                // we try to write the file, and the last catch block will capture
+                // the exception without having to send a million bits across the 
+                // wire.
+                return client.mkdir(path.dirname(remoteFilepath), true)
+                    .then(() => client.put(filepathOrBuffer, remoteFilepath))
+                    .catch(() => client.put(filepathOrBuffer, remoteFilepath))
+                    .catch((ex) => { result.finish(err.toString()) } ); 
+                // defaultPutOptions);
             })
             .then((response) => {
                 result.info = Context.y18n.__("Upload succeeded");
                 result.finish();
                 succeeded = true;
                 client.end();
+                sftp.emit('finish', result);
             })
             .catch(err => {
                 errorWasHandled = true;
@@ -150,7 +173,6 @@ class SFTPClient extends Plugin {
                 }
             });
     }
-
 
     /**
      * Downloads a file from the remote server. The name of the default

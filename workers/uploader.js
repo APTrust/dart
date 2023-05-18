@@ -143,8 +143,14 @@ class Uploader extends Worker {
             });
             promises.push(promise);
             let keyname = path.basename(filepath)
-            try { keyname = uploadOp.sourceKeys[i] }
-            catch(ex) { /* If not specified, stick with basename. */ } 
+            // If caller set explicit source key, use that.
+            if (uploadOp.sourceKeys && uploadOp.sourceKeys.length > i) {
+                try { keyname = uploadOp.sourceKeys[i] }
+                catch (ex) {}
+                if (!keyname) {
+                    keyname = path.basename(filepath)
+                }
+            }
             provider.upload(filepath, keyname);
         }
         return promises;
