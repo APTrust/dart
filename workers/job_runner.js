@@ -54,7 +54,6 @@ class JobRunner {
             } else {
                 // Save, so the result w/error is attached to the job record.
                 this.job.save();
-                //console.error(ex) 
             }
             returnCode = Constants.EXIT_RUNTIME_ERROR;
         }
@@ -116,6 +115,9 @@ class JobRunner {
                         // if necessary. Note the conditions below.
                         if (completedCount == fileCount) {
                             runner.job.save();
+                            if (!runner.job.uploadSucceeded()) {
+                                returnCode = Constants.EXIT_RUNTIME_ERROR
+                            }
                             return resolve(returnCode);
                         }
                     }                    

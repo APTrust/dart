@@ -440,7 +440,7 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
         done();
         return;
     }
-    let job = getJob();;
+    let job = getJob();
     let jobRunner = new JobRunner(job);
     jobRunner.job.packageOp = null;
     jobRunner.job.validationOp = null;
@@ -476,7 +476,7 @@ test('run() fails gracefully if 1 of 3 uploads fails', done => {
         expect(secondResult.errors.join('')).toEqual(Context.y18n.__("S3Error: The AWS Access Key Id you provided does not exist in our records."));
 
         let thirdResult = jobRunner.job.uploadOps[2].results[0];
-        expect(firstResult.errors.length).toEqual(0);
+        expect(thirdResult.errors.length).toEqual(0);
 
         done();
     });
