@@ -32,8 +32,10 @@ class JobRunner {
         let runner = this
         let returnCode = Constants.EXIT_SUCCESS;
         try {
-            returnCode = await this.createPackage();
-            if (returnCode == Constants.EXIT_SUCCESS) {
+            if (!runner.job.skipPackaging) {
+                returnCode = await this.createPackage();
+            }
+            if (!runner.job.skipValidation && returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.validatePackage();
             }
             if (returnCode == Constants.EXIT_SUCCESS) {
@@ -42,6 +44,9 @@ class JobRunner {
                      runner.deleteBagAfterUpload(runner.job)
                 }
             }
+            runner.job.skipPackaging = false
+            runner.job.skipValidation = false
+            runner.job.save()
             return returnCode;
         } catch (ex) {
             // Caller collects messages from STDERR.

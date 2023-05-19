@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const { Context } = require('../../core/context');
+const fs = require('fs');
 const { Job } = require('../../core/job');
 const { RunningJobsController } = require('./running_jobs_controller');
 const Templates = require('../common/templates');
@@ -22,7 +23,12 @@ class JobRunController extends RunningJobsController {
     constructor(params) {
         super(params, 'Jobs');
         this.model = Job;
+        
         this.job = Job.find(this.params.get('id'));
+        // Reset these flags each time we load the page
+        this.job.skipPackaging = false
+        this.job.skipValidation = false
+
         this.dartProcess = null;
         this.childProcess = null;
         this.reachedEndOfOutput = false;
@@ -48,19 +54,33 @@ class JobRunController extends RunningJobsController {
     }
 
     /**
-     * Runs the Job in a separate process.
+     * 
+     * Determines how to run the job and runs it, if appropriate.
+     * 
+     * @returns {Object} An empty object.
      */
     run() {
-        if (!this._checkOutputPath()) {
-            return this.noContent()
+        let rerunModal = this._checkForRerun()
+        if (rerunModal) {
+            return rerunModal
         }
+        return this.runJob()
+    }
+
+    /**
+     * Runs the Job in a separate process.
+     * 
+     * @returns {Object} An empty object.
+     * 
+     * */
+    runJob() {
         let proc = Util.forkJobProcess(this.job);
         this.childProcess = proc.childProcess;
         this.dartProcess = proc.dartProcess;
         this.initRunningJobDisplay(this.dartProcess);
         Context.childProcesses[this.dartProcess.id] = this.dartProcess;
         $('#btnRunJob').prop('disabled', true);
-        return this.noContent();
+        return this.noContent();        
     }
 
     /**
@@ -77,22 +97,19 @@ class JobRunController extends RunningJobsController {
     }
 
     /**
-     * If the output path is a non-empty directory, prompt the user to
-     * delete it. We call this before running a job.
+     * If the bag exists from a prior run, ask the user if they want to 
+     * run the entire job again or just upload the existing bag.
      */
-    _checkOutputPath() {
-        let okToRunJob = true
-        if (this.job.packageOp && Util.isNonEmptyDirectory(this.job.packageOp.outputPath)) {
-            let okToDelete = confirm(Context.y18n.__("You must delete the non-empty directory already at %s before running this job. Click OK to delete it or Cancel to stop.", this.job.packageOp.outputPath))
-            if (okToDelete) {
-                // Note that this will throw an exception if outputPath is
-                // something like "/" or "C:\Users"
-                Util.deleteRecursive(this.job.packageOp.outputPath)
-            } else {
-                okToRunJob = false
+    _checkForRerun() {
+        if (this.job.packageOp && fs.existsSync(this.job.packageOp.outputPath)) {
+            let data = {
+                job: this.job
             }
+            let html = Templates.jobRerunModal(data);
+            return this.modalContent('Bag Exists', html);    
+        } else {
+            return null
         }
-        return okToRunJob
     }
 
     _getTrimPath() {
@@ -104,7 +121,28 @@ class JobRunController extends RunningJobsController {
     }
 
     postRenderCallback(fnName) {
-
+        let controller = this
+        if(fnName == 'run') {
+            let btnRerun = document.getElementById('btnRerun')
+            if (btnRerun) {
+                btnRerun.addEventListener('click', function(e) {
+                    console.log("Clicked re-run")
+                    if (controller.job.packageOp && Util.isNonEmptyDirectory(controller.job.packageOp.outputPath)) {
+                        Util.deleteRecursive(controller.job.packageOp.outputPath)
+                    }
+                    controller.runJob()
+                })
+            }
+            let btnUploadOnly = document.getElementById('btnUploadOnly')
+            if (btnUploadOnly) {
+                btnUploadOnly.addEventListener('click', function(e) {
+                    controller.job.skipPackaging = true
+                    controller.job.skipValidation = true
+                    controller.job.save()
+                    controller.runJob()                        
+                })
+            }
+        }
     }
 }
 

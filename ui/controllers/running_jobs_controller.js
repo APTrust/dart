@@ -65,9 +65,11 @@ class RunningJobsController extends BaseController {
             processDiv.html(html);
         }
         if (job.packageOp && job.packageOp.outputPath) {
-            this.initProgressBar(dartProcess, 'packageInfo');
-            $(`#${dartProcess.id} div.packageInfo`).show();
-            if (job.packageOp.packageFormat == 'BagIt') {
+            if (!job.skipPackaging) {
+                this.initProgressBar(dartProcess, 'packageInfo');
+                $(`#${dartProcess.id} div.packageInfo`).show();
+            }
+            if (job.packageOp.packageFormat == 'BagIt' && !job.skipValidation) {
                 this.initProgressBar(dartProcess, 'validationInfo');
                 $(`#${dartProcess.id} div.validationInfo`).show();
             }

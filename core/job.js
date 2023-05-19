@@ -60,6 +60,12 @@ class Job extends PersistentObject {
      */
     constructor(opts = {}) {
         super(opts);
+
+        /**
+         * The profile to use when creating the bag in the PackageOperation.
+         * 
+         * @type {BagItProfile}
+         */
         this.bagItProfile = opts.bagItProfile || null;
 
         /**
@@ -68,9 +74,36 @@ class Job extends PersistentObject {
          * @type {boolean}
          */
         this.deleteBagAfterUpload = opts.deleteBagAfterUpload || false;
+
+        /**
+         * The job's PackageOperation, describing which files to bag
+         * and which BagIt profile to use.
+         * 
+         * @type {PackageOperation}
+         */
         this.packageOp = opts.packageOp || new PackageOperation();
+
+        /**
+         * The job's ValidationOperation, describing which bag to
+         * validate and which BagIt profile to use.
+         * 
+         * @type {ValidationOperation}
+         */
         this.validationOp = opts.validationOp || null;
+
+        /**
+         * The job's upload operations, describing what files to 
+         * upload and where they should go.
+         * 
+         * @type {Array<UploadOperation>}
+         */
         this.uploadOps = opts.uploadOps || [];
+
+        /**
+         * A timestamp indicating when this job was created.
+         * 
+         * @type {Date}
+         */
         this.createdAt = opts.createdAt || new Date();
 
         /**
@@ -135,6 +168,29 @@ class Job extends PersistentObject {
          * @default -1
          */
         this.byteCount = -1;
+
+        /**
+         * If this is set to true, DART will skip this job's packaging
+         * step. This flag is used primarily when the user wants to 
+         * upload an existing bag whose upload failed on the last job
+         * run. DART will reset this flag to false after the job completes.
+         * 
+         * @type {boolean}
+         * @default false
+         */
+        this.skipPackaging = false;
+
+        /**
+         * If this is set to true, DART will skip this job's validation
+         * step. This flag is used primarily when the user wants to 
+         * upload an existing bag whose upload failed on the last job
+         * run. DART will reset this flag to false after the job completes.
+         * 
+         * @type {boolean}
+         * @default false
+         */
+        this.skipValidation = false;
+
 
         /**
          * The id of the workflow from which this job was created.

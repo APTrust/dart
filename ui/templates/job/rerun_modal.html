@@ -1,0 +1,17 @@
+<div class="row about">
+    <p>
+        A bag already exists at {{ job.packageOp.outputPath }}.
+        Do you want to rebuild the bag from scratch, or just upload
+        the existing bag?
+    </p>
+</div>
+
+<div class="mt-5 mr-5 ml-5">
+    <div class="pull-left">
+        <button id="btnRerun" class="btn btn-primary" role="button" data-dismiss="modal">Re-run entire job</button>
+    </div>
+
+    <div class="pull-right">
+        <button id="btnUploadOnly" class="btn btn-primary" role="button" data-dismiss="modal">Upload existing bag</button>
+    </div>
+</div>
