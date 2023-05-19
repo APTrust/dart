@@ -158,6 +158,42 @@ test('run() completes when all job operations are valid', done => {
 });
 
 
+test('run() handles skip flags correctly', done => {
+    if (!helper.envHasS3Credentials()) {
+        if (!skipMessagePrinted) {
+            console.log('Skipping upload-only jobt: no AWS credentials in environment.');
+        } 
+    }
+    let job = getJob();
+    job.skipPackaging = true
+    job.skipValidation = true
+    job.packageOp.outputPath = tmpBagFile
+    job.save()
+    let jobRunner = new JobRunner(job);
+
+    jobRunner.run().then(function(returnCode) {
+
+        job = Job.find(job.id);
+
+        // Debugging for Travis / AppVeyor
+        if (returnCode != Constants.EXIT_SUCCESS) {            
+            console.log(JSON.stringify(job))
+        }
+
+        expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
+        expect(job.packageOp.result).toBeNull()
+        expect(job.validationOp.result).toBeNull()
+        checkUploadResults(jobRunner.job);
+
+        // Make sure these flags were cleared
+        expect(job.skipPackaging).toBe(false)
+        expect(job.skipValidation).toBe(false)
+
+        done();
+    });
+});
+
+
 test('run() deletes bag after upload when specified', done => {
     if (os.platform == 'win32') {
         console.log("Skipping delete-after-upload test because Windows won't permit deletion of temp files.");
