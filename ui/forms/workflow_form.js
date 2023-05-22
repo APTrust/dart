@@ -1,6 +1,7 @@
 const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
@@ -47,6 +48,11 @@ class WorkflowForm extends Form {
             this.obj.packageFormat,
             false
         );
+        this.fields['skipBagCreation'].choices = Choice.makeList(
+            Constants.YES_NO,
+            this.obj.skipBagCreation,
+            false);
+        this.fields['skipBagCreation'].help = Context.y18n.__('Workflow_skipBagCreation_help')
     }
 
     _initBagItProfileList() {
