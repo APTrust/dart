@@ -34,9 +34,18 @@ class JobFilesController extends BaseController {
      * and drop files.
      */
     show() {
+        let verb = "package"
+        if (this.job.skipPackaging) {
+            if (this.job.skipValidation) {
+                verb = "upload"
+            } else {
+                verb = "validate/upload"
+            }
+        }
         let data = {
             alertMessage: this.alertMessage,
-            job: this.job
+            job: this.job,
+            verb: verb
         }
         this.alertMessage = null;
         let html = Templates.jobFiles(data);

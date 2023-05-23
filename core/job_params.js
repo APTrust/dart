@@ -385,6 +385,7 @@ class JobParams {
         job.bagItProfile = this._bagItProfile;
         job.workflowId = this._workflowObj.id;
         job.skipPackaging = this._workflowObj.skipBagCreation
+        job.skipValidation = (typeof job.bagItProfile == 'undefined' || job.bagItProfile == null)
         if (!job.skipPackaging) {
             this._makePackageOp(job)
         }

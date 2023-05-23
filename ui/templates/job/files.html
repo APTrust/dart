@@ -3,7 +3,7 @@
   <div id="dropZone" class="drop-zone">
 
       <div class="text-center upload-icon-div" id="uploadIcon">
-          <p>Drag and drop the items you want to package.</p>
+          <p>Drag and drop the items you want to {{ verb }}.</p>
           <img src="include/img/upload.png"/>
       </div>
 
@@ -46,5 +46,9 @@
 </div>
 
 <div class="pull-right" id="btnJobPackagingDiv">
+  {{#if job.skipPackaging }}
+  <a class="btn btn-primary" href="#JobUpload/show?id={{ job.id }}" role="button">Next &gt;&gt;</a>
+  {{else }}
   <a class="btn btn-primary" href="#JobPackaging/show?id={{ job.id }}" role="button">Next &gt;&gt;</a>
+  {{/if }}
 </div>
