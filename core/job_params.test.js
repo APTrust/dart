@@ -26,11 +26,13 @@ afterAll(() => {
 
 const TarWriterPluginId = "90110710-1ff9-4650-a086-d7b23772238f";
 const OutputDir = '/dev/null';
-const BagsPath = path.join(__dirname, '..', 'test', 'bags');
-const FixturesPath = path.join(__dirname, '..', 'test', 'fixtures');
-const ProfilesPath = path.join(__dirname, '..', 'test', 'profiles');
+const BagsPath = path.join(__dirname, '..', 'test', 'bags', 'aptrust');
 
-const Files = [ BagsPath, FixturesPath, ProfilesPath ];
+const Files = [ 
+    path.join(BagsPath, "example.edu.sample_good.tar"), 
+    path.join(BagsPath, "example.edu.tagsample_good.tar"), 
+    path.join(BagsPath, "example.edu.sample_no_md5_manifest.tar")
+];
 const GroupedTagKeys = [
     'bag-info.txt:Bag-Group-Identifier',
     'aptrust-info.txt:Title',

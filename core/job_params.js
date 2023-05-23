@@ -1,5 +1,4 @@
 const { AppSetting } = require('./app_setting');
-const { Bagger } = require('../bagit/bagger');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const fs = require('fs');
@@ -471,12 +470,9 @@ class JobParams {
                 // This is an individual file
                 files = this.files
             }
-            console.log(files)
             let pathParts = this.files[0].split(path.sep).filter((part) => part != "")
             let leadingDirNames = pathParts.slice(0, pathParts.length - 1)
-            console.log(leadingDirNames)
             let pathPrefix = path.join(...leadingDirNames) + path.sep
-            console.log(pathPrefix)
             files.forEach((file) => {
                 if (isDir) {
                     sourceKeys.push(file.replace(pathPrefix, "").replace(path.sep, ""))
@@ -484,7 +480,6 @@ class JobParams {
                     sourceKeys.push(path.basename(file))
                 }
             })
-            console.log(sourceKeys)
         }
         for (let ssid of this._workflowObj.storageServiceIds) {
             let uploadOp = new UploadOperation(ssid, files)

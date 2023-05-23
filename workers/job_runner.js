@@ -121,7 +121,7 @@ class JobRunner {
                         // if necessary. Note the conditions below.
                         if (completedCount == fileCount) {
                             runner.job.save();
-                            Context.logger.info(job)
+                            //Context.logger.info(runner.job)
                             if (!runner.job.uploadSucceeded()) {
                                 returnCode = Constants.EXIT_RUNTIME_ERROR
                             }
