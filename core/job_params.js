@@ -1,4 +1,5 @@
 const { AppSetting } = require('./app_setting');
+const { Bagger } = require('../bagit/bagger');
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const fs = require('fs');
@@ -7,7 +8,9 @@ const { PackageOperation } = require('./package_operation');
 const path = require('path');
 const { TagDefinition } = require('../bagit/tag_definition');
 const { UploadOperation } = require('./upload_operation');
+const { Util } = require('./util');
 const { Workflow } = require('./workflow');
+const { ValidationOperation } = require('./validation_operation');
 
 /**
  * The JobParams class provides a way of converting a simple set of
@@ -371,14 +374,25 @@ class JobParams {
      * @returns {Job}
      */
     _buildJob() {
-        // Note: No need to create job.validationOp. The JobRunner will
-        // create that if the package format is BagIt and the package was
-        // successfully created. See workers/job_runner.js#createPackage().
+        // Note: In most cases, there is no need to create job.validationOp. 
+        // The JobRunner will create that if the package format is BagIt and 
+        // the package was successfully created. 
+        // See workers/job_runner.js#createPackage().
+        //
+        // However, if it's a non-bagging job and it includes a BagIt
+        // profile, we should validate against that profile.
         let job = new Job();
         job.name = this._workflowObj.packageName || Job.genericName();
         job.bagItProfile = this._bagItProfile;
         job.workflowId = this._workflowObj.id;
-        this._makePackageOp(job);
+        job.skipPackaging = this._workflowObj.skipBagCreation
+        if (!job.skipPackaging) {
+            this._makePackageOp(job)
+        }
+        if (job.skipPackaging && job.bagItProfile) {
+            //console.log(`Creating validation op with file ${this.files[0]}`)
+            job.validationOp = new ValidationOperation(this.files[0])        
+        }
         this._makeUploadOps(job);
         this._mergeTags(job);
         return job;
@@ -400,6 +414,7 @@ class JobParams {
             this._setSerialization(job);
         }
     }
+
 
     /**
      * This sets the bagItSerialization attribute of the job's
@@ -441,15 +456,40 @@ class JobParams {
             return;
         }
         let files = [];
+        let sourceKeys = [];
+        let isDir = false;
         if (job.packageOp && job.packageOp.outputPath) {
             // We want to upload the result of the package operation.
             files = [job.packageOp.outputPath];
         } else {
             // No packaging step. We want to upload the files themselves.
-            files = this.files;
+            if (Util.isDirectory(this.files[0])) {
+                // Add the directory and all its contents to the upload source files
+                files = Util.walkSync(this.files[0]).filter((f) => !f.stats.isDirectory()).map((f) => f.absPath)
+                isDir = true
+            } else {
+                // This is an individual file
+                files = this.files
+            }
+            console.log(files)
+            let pathParts = this.files[0].split(path.sep).filter((part) => part != "")
+            let leadingDirNames = pathParts.slice(0, pathParts.length - 1)
+            console.log(leadingDirNames)
+            let pathPrefix = path.join(...leadingDirNames) + path.sep
+            console.log(pathPrefix)
+            files.forEach((file) => {
+                if (isDir) {
+                    sourceKeys.push(file.replace(pathPrefix, "").replace(path.sep, ""))
+                } else {
+                    sourceKeys.push(path.basename(file))
+                }
+            })
+            console.log(sourceKeys)
         }
         for (let ssid of this._workflowObj.storageServiceIds) {
-            job.uploadOps.push(new UploadOperation(ssid, files));
+            let uploadOp = new UploadOperation(ssid, files)
+            uploadOp.sourceKeys = sourceKeys
+            job.uploadOps.push(uploadOp);
         }
     }
 

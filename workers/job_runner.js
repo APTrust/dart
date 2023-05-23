@@ -40,6 +40,7 @@ class JobRunner {
             }
             if (returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.uploadFiles();
+                //Context.logger.info(`Upload return code = ${returnCode}`)
                 if (returnCode == Constants.EXIT_SUCCESS && this.job.deleteBagAfterUpload) {
                      runner.deleteBagAfterUpload(runner.job)
                 }
@@ -51,7 +52,7 @@ class JobRunner {
         } catch (ex) {
             // Caller collects messages from STDERR.
             if (ex instanceof Error) {
-                console.error(ex.stack);
+                console.error(ex);
             } else if (ex instanceof OperationResult && Context.isTestEnv) {
                 // These come from rejected promises.
                 // The output clutters Jest test output,
@@ -106,13 +107,13 @@ class JobRunner {
         let returnCode = Constants.EXIT_SUCCESS;
         if (this.job.uploadOps.length > 0) {
             this.assignUploadSources();
+            //Context.logger.info(JSON.stringify(this.job))
             let uploader = new Uploader(this.job);
             var promise = new Promise(function (resolve, reject) {
                 let fileCount = runner.job.uploadOps[0].sourceFiles.length
                 let completedCount = 0
                 uploader.on('message', function (message) {
                     if (message.action == "completed") {
-                        //console.log(message.status)
                         completedCount += 1;
                         // Note that completed does not mean succeeded. It just means
                         // the uploader is done working on this upload. When all uploads
@@ -120,6 +121,7 @@ class JobRunner {
                         // if necessary. Note the conditions below.
                         if (completedCount == fileCount) {
                             runner.job.save();
+                            Context.logger.info(job)
                             if (!runner.job.uploadSucceeded()) {
                                 returnCode = Constants.EXIT_RUNTIME_ERROR
                             }
@@ -159,7 +161,7 @@ class JobRunner {
                     for (let i=0; i < uploadOp.sourceFiles.length; i++) {
                         let absPath = uploadOp.sourceFiles[i]
                         uploadOp.sourceKeys[i] = absPath.replace(path.dirname(this.job.packageOp.outputPath) + path.sep, "")
-                        //console.log(absPath)
+                        console.log(`JobRunner assigned source key ${uploadOp.sourceKeys[i]} to ${absPath}`)
                     }
                 } else {
                     // This is an individual file
@@ -218,6 +220,7 @@ class JobRunner {
             }
             job.bagWasDeletedAfterUpload = true
         } catch(ex) {
+            console.error("Bag deletion error follows")
             console.error(ex)
             job.bagWasDeletedAfterUpload = false
             if (lastResult) {

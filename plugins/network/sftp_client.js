@@ -147,7 +147,10 @@ class SFTPClient extends Plugin {
                 return client.mkdir(path.dirname(remoteFilepath), true)
                     .then(() => client.put(filepathOrBuffer, remoteFilepath))
                     .catch(() => client.put(filepathOrBuffer, remoteFilepath))
-                    .catch((ex) => { result.finish(err.toString()) } ); 
+                    .catch((ex) => { 
+                        Context.logger.error(ex)
+                        result.finish(ex.toString()) 
+                    }); 
                 // defaultPutOptions);
             })
             .then((response) => {

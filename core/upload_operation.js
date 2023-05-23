@@ -15,7 +15,7 @@ class UploadOperation {
      * @param {string} storageServiceId - The id of the {@link StorageService}
      * to which we'll be sending files.
      *
-     * @param {string} sourceFiles - A list of files to upload. Each entry
+     * @param {Array<string>} sourceFiles - A list of files to upload. Each entry
      * in this list should be an absolute path.
      *
      */

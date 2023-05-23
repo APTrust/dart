@@ -87,14 +87,15 @@ class WorkflowBatch extends PersistentObject {
      */
     parseNonBaggingBatchFile() {
         let workflow = this.getWorkflow()
+        let workflowBatch = this
         try {
-            let parser = new SimpleLineParser(this.pathToCSVFile)
+            let parser = new SimpleLineParser(workflowBatch.pathToCSVFile)
             let bagPaths = parser.getLines(true)
             let lineNumber = 0
             bagPaths.forEach(function (bagPath) {
                 lineNumber++
                 if (!fs.existsSync(bagPath)) {
-                    this.errors[bagPath] = Context.y18n.__("Line %s: path does not exist: %s", lineNumber.toString(), bagPath);
+                    workflowBatch.errors[bagPath] = Context.y18n.__("Line %s: path does not exist: %s", lineNumber.toString(), bagPath);
                     return
                 }
                 let packageName = path.basename(bagPath)
@@ -102,13 +103,14 @@ class WorkflowBatch extends PersistentObject {
                     packageName = path.dirname(bagPath)
                 }
                 let jobParams = new JobParams({
-                    workflowName: workflow.Name,
+                    workflowName: workflow.name,
                     packageName: packageName,
                     files: [bagPath]
                 })
-                this.jobParamsArray.push(jobParams)
+                workflowBatch.jobParamsArray.push(jobParams)
             })
         } catch (ex) {
+            //console.error(ex)
             this.errors['batchFile'] = ex.toString()
         }
         return Object.keys(this.errors).length == 0
