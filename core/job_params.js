@@ -388,7 +388,7 @@ class JobParams {
         if (!job.skipPackaging) {
             this._makePackageOp(job)
         }
-        if (job.skipPackaging && job.bagItProfile) {
+        if (job.skipPackaging && job.bagItProfile && this.files) {
             //console.log(`Creating validation op with file ${this.files[0]}`)
             job.validationOp = new ValidationOperation(this.files[0])        
         }
@@ -452,6 +452,12 @@ class JobParams {
     _makeUploadOps(job) {
         if (!this._workflowObj.storageServiceIds || this._workflowObj.storageServiceIds.length == 0) {
             // No storage services specified, so no uploads to perform.
+            return;
+        }
+        if (!this.files) {
+            // No files to upload, so nothing to do here.
+            // This case occurs when user chooses Workloads > Run Workload X from the DART menu.
+            // In that case, the user will drag in files or folders to put through the workflow.
             return;
         }
         let files = [];
