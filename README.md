@@ -218,38 +218,3 @@ The installers will appear in the dist directory. The important ones are:
 
 After running that, open the file `docs/DART/2.0.5/index.html` in your browser.
 
-## Testing Against a Local SFTP Server (dev mode only)
-
-To test jobs against a local SFTP server, run the following in a new terminal,
-from the root of the DART project directory:
-
-`node ./test/servers/sftp.js`
-
-Note that this works only in dev mode, when you have the source files. This is not part of the release.
-
-The local test SFTP server writes everything to a single temp file. It's not
-meant to preserve any data, just to test whether data transfer works via the
-SFTP protocol.
-
-If you have docker and want to test against a more robust SFTP server,
-follow these steps:
-
-1. Get an SFTP container image from https://hub.docker.com/r/atmoz/sftp/.
-1. Add a Storage Service record to your DART installation with the following
-   settings:
-   ```
-   {
-		"name": "Docker SFTP",
-		"description": "Local docker sftp server",
-		"protocol": "sftp",
-		"host": "localhost",
-		"port": 0,
-		"bucket": "upload",
-		"login": "foo",
-		"password": "pass",
-		"loginExtra": "",
-		"allowsUpload": true,
-		"allowsDownload": true
-	}
-   ```
-1. Run `docker start <container id>`
