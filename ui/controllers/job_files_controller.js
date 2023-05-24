@@ -45,6 +45,7 @@ class JobFilesController extends BaseController {
         let data = {
             alertMessage: this.alertMessage,
             job: this.job,
+            workflowName: this.job.workflowName,
             verb: verb
         }
         this.alertMessage = null;
