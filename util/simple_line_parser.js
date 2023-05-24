@@ -24,15 +24,12 @@ class SimpleLineParser {
      * and then splits it up. This is not intended to be used on large
      * (multi-megabyte) files.
      * 
-     * This will throw an exception is file does not exist or if you
-     * lack read permission.
-     * 
      * @param {boolean} omitEmpty 
      * @returns {Array<string>}
      */
     getLines(omitEmpty) {
         let lines = []
-        let contents = fs.readFileSync(this.pathToFile).toString().split("\n")
+        let contents = fs.readSync(this.pathToFile).toString().split("\n")
         contents.forEach(function (line) {
             let l = line.trim()
             if (!omitEmpty || l != '') {
