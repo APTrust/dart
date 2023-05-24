@@ -2,10 +2,7 @@ const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const { CSVBatchParser } = require('../util/csv_batch_parser');
 const fs = require('fs');
-const { JobParams } = require('./job_params');
-const path = require('path')
 const { PersistentObject } = require('./persistent_object');
-const { SimpleLineParser } = require('../util/simple_line_parser');
 const { Util } = require('./util');
 const { Workflow } = require('./workflow');
 
@@ -33,24 +30,11 @@ class WorkflowBatch extends PersistentObject {
     validate() {
         this.errors = {};
         super.validate();
-        let workflow = this.getWorkflow()
-        if (Object.keys(this.errors).length > 0) {
+        if (!this.validateWorkflow()) {
             Context.logger.error(this.errors);
             return false;
         }
-        // If this is a non-bagging job, our batch file
-        // only needs to contain a list of file paths.
-        // Make sure they exist.
-        if (workflow.skipBagCreation) {            
-            if (!this.parseNonBaggingBatchFile()) {
-                Context.logger.error(this.errors);
-                return false;    
-            }
-        } else if (!this.validateCSVFile()) {
-            // Otherwise, this workflow creates bags. We need
-            // to verify that the CSV file defines what to bag
-            // and contains a complete and valid set of tag
-            // info for each bag we'll create.
+        if (!this.validateCSVFile()) {
             Context.logger.error(this.errors);
             return false;
         }
@@ -58,75 +42,11 @@ class WorkflowBatch extends PersistentObject {
         return Object.keys(this.errors).length == 0;
     }
 
-    /**
-     * Call this to ensure the workflow is valid. If this returns
-     * false, check WorkflowBatch.errors for a list of problems.
-     * 
-     * @returns {boolean} True or false, indicating whether
-     * the bag is valid.
-     */
     validateWorkflow() {
         let throwaway = this.getWorkflow()
         return Object.keys(this.errors).length == 0;
     }
 
-
-    /**
-     * Parse a batch file for a non-bagging workflow. This 
-     * should be a plain text file containing one path per
-     * line. Each path should point to a bag, which can be
-     * a tar file or a directory.
-     * 
-     * Check the value of WorkflowBatch.errors after this
-     * call. The errors hash will tell you which, if any,
-     * paths are bad.
-     * 
-     * 
-     * @returns {boolean} Returns true if parsing succeeded
-     * and all paths exist; false otherwise.
-     */
-    parseNonBaggingBatchFile() {
-        let workflow = this.getWorkflow()
-        try {
-            let parser = new SimpleLineParser(this.pathToCSVFile)
-            let bagPaths = parser.getLines(true)
-            let lineNumber = 0
-            bagPaths.forEach(function (bagPath) {
-                lineNumber++
-                if (!fs.existsSync(bagPath)) {
-                    this.errors[bagPath] = Context.y18n.__("Line %s: path does not exist: %s", lineNumber.toString(), bagPath);
-                    return
-                }
-                let packageName = path.basename(bagPath)
-                if (Util.isDirectory(bagPath)) {
-                    packageName = path.dirname(bagPath)
-                }
-                let jobParams = new JobParams({
-                    workflowName: workflow.Name,
-                    packageName: packageName,
-                    files: [bagPath]
-                })
-                this.jobParamsArray.push(jobParams)
-            })
-        } catch (ex) {
-            this.errors['batchFile'] = ex.toString()
-        }
-        return Object.keys(this.errors).length == 0
-    }
-
-    /**
-     * This call is for workflows that create bags. It parses the CSV
-     * file that describes the batch of bags to be created. It ensures that
-     * for each bag mentioned in the CSV file, we have a bag name, a directory
-     * name (the directory of files to bag up), and a complete and valid set
-     * of required tags. The BagIt profile determines which tags are required
-     * and what values are valid for each tag.
-     * 
-     * For non-bagging workflows, see {@link parseNonBaggingBatchFile}.
-     * 
-     * @returns {boolean} True or false, indicating whether all entries
-     * in the CSV file contain sufficient info to run this workflow. 
-     */
     validateCSVFile() {
         try {
             let workflow = this.getWorkflow();
@@ -144,17 +64,9 @@ class WorkflowBatch extends PersistentObject {
         return Object.keys(this.errors).length == 0;
     }
 
-    /**
-     * This returns the workflow with the ID specified in WorkflowBatch.workflowId.
-     * Check the contents of WorkflowBatch.errors after this call. If there's no
-     * such workflow, or if the workflow is invalid, the errors hash will describe
-     * specific problems. 
-     * 
-     * @returns {Workflow}
-     */
     getWorkflow() {
         let workflow = Workflow.find(this.workflowId)
-        if (!workflow) {
+        if (workflow == null) {
             this.errors['workflow'] = Context.y18n.__('DART cannot find the workflow you want to run.');
         } else if (workflow.validate() == false) {
             this.errors = workflow.errors;
@@ -164,14 +76,6 @@ class WorkflowBatch extends PersistentObject {
         return workflow;
     }
 
-    /**
-     * This checks to ensure that all paths to existing bags or
-     * files-to-be-bagged in the JobParams array actually exist.
-     * Check the contents of WorkflowBatch.errors after this call
-     * to see which paths are missing/non-existent.
-     * 
-     * @param {Array<JobParams} 
-     */
     checkPaths(jobParamsArray) {
         let lineNumber = 2;
         for (let params of jobParamsArray) {
@@ -184,18 +88,6 @@ class WorkflowBatch extends PersistentObject {
         }
     }
 
-    /**
-     * This checks that tags required by this workflow's BagIt profile
-     * are present in the job params read in from the CSV file.
-     * 
-     * Check the value of WorkflowBatch.errors after calling this to see
-     * a hash of specific problems, if there are any. 
-     * 
-     * This call is not required for non-bagging jobs.
-     * 
-     * @param {Array<JobParams>} jobParamsArray
-     * 
-     */
     checkRequiredTags(jobParamsArray) {
         let workflow = this.getWorkflow();
         if (workflow == null) {
@@ -209,19 +101,6 @@ class WorkflowBatch extends PersistentObject {
         this._checkTagsRequiredByProfile(profile, jobParamsArray);
     }
 
-    /**
-     * This checks that tags required by this workflow's BagIt profile
-     * are present in the job params read in from the CSV file and that
-     * they contain valid values.
-     * 
-     * Check the value of WorkflowBatch.errors after calling this to see
-     * a hash of specific problems, if there are any. 
-     * 
-     * This call is not required for non-bagging jobs.
-     * 
-     * @param {Array<JobParams>} jobParamsArray
-     * 
-     */
     _checkTagsRequiredByProfile(profile, jobParamsArray) {
         // Get a list of required tags whose values must appear in the CSV file.
         for (let i=0; i < jobParamsArray.length; i++) {

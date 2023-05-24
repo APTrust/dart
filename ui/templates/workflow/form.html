@@ -16,11 +16,9 @@
 
   {{> inputSelect field = form.fields.packageFormat }}
 
-  <!-- div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};" -->
+  <div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};">
     {{> inputSelect field = form.fields.bagItProfileId }}
-  <!-- /div -->
-
-  {{> inputSelect field = form.fields.skipBagCreation }}
+  </div>
 
   <p>Upload To</p>
 

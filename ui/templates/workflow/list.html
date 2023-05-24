@@ -9,7 +9,6 @@
     <tr>
       <th>Name</th>
       <th>Description</th>
-      <th>Type</th>
     </tr>
   </thead>
   <tbody>
@@ -17,7 +16,6 @@
     <tr class="clickable-row" data-url="#Workflow/edit?id={{ id }}">
       <td>{{ name }}</td>
       <td>{{ description }}</td>
-      <td>{{#if skipBagCreation }} {{translate "Non-bagging"}} {{else}} {{ translate "Bagging" }} {{/if }}</td>
     </tr>
     {{/each }}
   </tbody>
