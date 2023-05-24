@@ -16,7 +16,6 @@
 
   {{> inputSelect field = form.fields.packageFormat }}
 
-  <!-- We generally want this to show now. Keep commented code until we're sure it's OK to remove.  -->
   <!-- div id="jobProfileContainer" style="display: {{#if (eq form.fields.packageFormat.value 'BagIt')}} block {{else}} none {{/if}};" -->
     {{> inputSelect field = form.fields.bagItProfileId }}
   <!-- /div -->
