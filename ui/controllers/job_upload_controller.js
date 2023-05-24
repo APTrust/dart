@@ -41,6 +41,11 @@ class JobUploadController extends BaseController {
         let form = new JobUploadForm(this.job);
         form.copyFormValuesToJob(this.job);
         this.job.save();
+        if (this.job.skipPackaging) {
+            // This is an upload-only or validate and upload job.
+            // These usually come from workflows.
+            return this.redirect('JobFiles', 'show', this.params);
+        }
         if (this.job.packageOp.packageFormat == 'BagIt') {
             return this.redirect('JobMetadata', 'show', this.params);
         }
@@ -54,10 +59,25 @@ class JobUploadController extends BaseController {
     next() {
         let form = new JobUploadForm(this.job);
         form.copyFormValuesToJob(this.job);
+        this.setUploadSourceFiles();
         this.job.save();
         return this.redirect('JobRun', 'show', this.params);
     }
 
+    /**
+     * If this is a non-packaging job, i.e. an upload-only or validate
+     * and upload only job, we need to make sure the upload operation 
+     * includes whatever files the user dragged into the drag-and-drop
+     * files list. 
+     */
+    setUploadSourceFiles() {
+        let job = this.job
+        let hasPackageOpSources = (job.packageOp != null && job.packageOp.sourceFiles.length > 0)
+        let hasEmptyUploadOps = (job.uploadOps.length > 0 && job.uploadOps[0].sourceFiles.length == 0)
+        if (job.skipPackaging && hasPackageOpSources && hasEmptyUploadOps) {
+            job.uploadOps.forEach(op => op.sourceFiles = job.packageOp.sourceFiles)
+        }
+    }
 }
 
 module.exports.JobUploadController = JobUploadController;
