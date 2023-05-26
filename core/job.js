@@ -8,6 +8,7 @@ const { PersistentObject } = require('./persistent_object');
 const { ValidationOperation } = require('./validation_operation');
 const { UploadOperation } = require('./upload_operation');
 const { Util } = require('./util');
+const { Workflow } = require('./workflow');
 
 /**
  * This is a list of BagItProfile tags to check to try to find a
@@ -244,6 +245,22 @@ class Job extends PersistentObject {
         }
         return Util.truncateString(name, 40);
     }
+
+    /**
+     * Returns this job's workflow name, if there is one.
+     * For standalone jobs not based on a workflow (which is most jobs),
+     * this will return an empty string.
+     * 
+     * @returns {string}
+     */
+    get workflowName() {
+        let workflow = Workflow.find(this.workflowId)
+        if (workflow && workflow.name) {
+            return workflow.name
+        }
+        return ""
+    }
+
 
     /**
      * Returns the datetime on which this job's package operation completed.

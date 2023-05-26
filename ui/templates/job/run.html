@@ -1,5 +1,9 @@
 <h2>Review and Run</h2>
 
+{{#if workflowName }}
+<p class="text-muted">{{ workflowName }}</p>
+{{/if}}
+
 {{#if job.packageOp }}
 <div class="row">
   <div class="col text-right font-weight-bold">Package Name</div>

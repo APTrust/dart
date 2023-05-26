@@ -1,5 +1,9 @@
 <h2>Upload Targets</h2>
 
+{{#if workflowName }}
+<p class="text-muted">{{ workflowName }}</p>
+{{/if}}
+
 <form>
 
   {{> inputCheckboxGroup field = form.fields.uploadTargets }}
