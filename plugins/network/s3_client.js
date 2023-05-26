@@ -288,6 +288,10 @@ class S3Client extends Plugin {
         //     'Original-Path': xfer.localPath,
         //     'Size': xfer.localStat.size
         // };
+
+        // Reset this on each retry.
+        // https://trello.com/c/pCK9hDLu
+        xfer.bytesTransferred = 0;
         xfer.result.info = `Uploading ${xfer.localPath} to ${xfer.host} ${xfer.bucket}/${xfer.key}`;
         this.emit('start', xfer.result)
         let fileStream = fs.createReadStream(xfer.localPath);

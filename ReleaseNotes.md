@@ -11,6 +11,7 @@
 * On storage service form, re-label Login/Password to Access Key Id/Secret Access Key for s3 protocol, and re-label "Bucket" to "Folder" for sftp protocol.
 * Jobs created from workflows now show workflow name on files, packaging and other job pages.
 * Users can now delete jobs from the job list page.
+* Fixed: Upload progress bar was going above 100% when DART retried interrupted uploads.
 * Fixed: About dialog showed wrong data directory on Windows and Linux.
 * Fixed: When adding new tag on job metadata page, DART now preserves unsaved changes.
 
