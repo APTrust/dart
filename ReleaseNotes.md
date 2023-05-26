@@ -9,6 +9,8 @@
 * Added "smart retry." If a job's bagging and validation steps succeeded, but upload failed, you can now choose to re-try the upload without having to bag and validate again. This is especially helpful for large bags (100GB+) which take a long time to re-bag and are the most likely to have upload failures.
 * Updated APTrust client to talk to the new Registry API.
 * On storage service form, re-label Login/Password to Access Key Id/Secret Access Key for s3 protocol, and re-label "Bucket" to "Folder" for sftp protocol.
+* Jobs created from workflows now show workflow name on files, packaging and other job pages.
+* Users can now delete jobs from the job list page.
 * Fixed: About dialog showed wrong data directory on Windows and Linux.
 * Fixed: When adding new tag on job metadata page, DART now preserves unsaved changes.
 
