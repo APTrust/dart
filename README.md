@@ -26,7 +26,7 @@ tool for creating archival packages and sending them to a remote repository.
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
-* [Mac OSX v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.1.0.dmg)
+* [Mac OSX v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.1.0-universal.dmg)
 * [Windows v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.1.0.exe)
 * [Linux v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.1.0_amd64.deb)
 
@@ -192,7 +192,7 @@ You need Python 2 on your Mac for this build to work, because some moron hard-co
 that into the Electron build utilities. They hard-coded the path too, so you may need to
 correct it with PYTHON_PATH. (E.g. `PYTHON_PATH='/usr/local/bin/python'`)
 
-The binaries and installers will appear in the /dist folder. For example, 
+The binaries and installers will appear in the /dist folder. For example,
 the Mac binary will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
 
 You can run the binary directly from there.
@@ -217,4 +217,3 @@ The installers will appear in the dist directory. The important ones are:
 ```
 
 After running that, open the file `docs/DART/2.0.5/index.html` in your browser.
-
