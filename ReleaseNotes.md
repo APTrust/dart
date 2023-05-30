@@ -1,11 +1,11 @@
 # DART Release Notes
 
-## 2.x.x - Upcoming
+## 2.1.0 - May 30, 2023
 
-* Added feature to create and upload unserialized bags (BagIt package as folder). 
+* Added feature to create and upload unserialized bags (BagIt package as folder).
 * Added support for upload-only jobs. Can create from Jobs menu.
 * Added "Test Connection" to storage service page to test S3 and SFTP connections.
-* Added option to delete bag after successful upload. 
+* Added option to delete bag after successful upload.
 * Added "smart retry." If a job's bagging and validation steps succeeded, but upload failed, you can now choose to re-try the upload without having to bag and validate again. This is especially helpful for large bags (100GB+) which take a long time to re-bag and are the most likely to have upload failures.
 * Updated APTrust client to talk to the new Registry API.
 * On storage service form, re-label Login/Password to Access Key Id/Secret Access Key for s3 protocol, and re-label "Bucket" to "Folder" for sftp protocol.
