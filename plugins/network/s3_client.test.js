@@ -1,4 +1,3 @@
-const { Context } = require('../../core/context');
 const fs = require('fs');
 const Minio = require('minio');
 const os = require('os');
@@ -175,7 +174,7 @@ test('download()', done => {
     client.download(tmpFile, 'DartUnitTestFile.js');
 });
 
-test('list()', done => {
+test('upload()', done => {
     if (!helper.envHasS3Credentials()) {
         console.log('Skipping S3 upload test for S3Client: no credentials in ENV.');
         done();
@@ -199,33 +198,4 @@ test('list()', done => {
         done()
     })
     client.list('')
-});
-
-test('testConnection()', done => {
-    if (!helper.envHasS3Credentials()) {
-        console.log('Skipping S3 upload test for S3Client: no credentials in ENV.');
-        done();
-        return;
-    }
-    var ss = helper.getStorageService();
-    ss.login = process.env.AWS_ACCESS_KEY_ID;
-    ss.password = process.env.AWS_SECRET_ACCESS_KEY;
-    var client = new S3Client(ss);
-    var gotSuccess = false
-
-    client.on('connected', function(message) {
-        expect(message).toEqual(Context.y18n.__('Success'))
-        gotSuccess = (message == Context.y18n.__('Success'))
-        done()
-    });
-    client.on('error', function(err) {
-        console.log(err)
-        expect(err).toBeNull()
-        done()
-    })
-    client.on('finish', function(err) {
-        expect(gotSuccess).toBe(true)
-        done()
-    })
-    client.testConnection()
 });

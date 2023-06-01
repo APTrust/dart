@@ -165,6 +165,10 @@ class S3Client extends Plugin {
      * After calling this, listen for "listdata" events.
      * You'll get a {@link NetworkFile} object each time that event fires.
      * 
+     * Note that this is a naive implementation for now. It waits until 
+     * it has retrieved the full list before returning, so don't list
+     * huge buckets without a prefix. We'll revisit this later.
+     * 
      * @param {string} prefix - List files starting with this prefix. Use
      * an empty string ('') to list all files. 
      *
@@ -172,42 +176,21 @@ class S3Client extends Plugin {
     list(prefix) {
         var s3Client = this;
         var minioClient = s3Client._getClient();
-        var stream = minioClient.listObjectsV2(this.storageService.bucket, prefix, false)
+        var stream = minioClient.listObjectsV2(this.storageService.bucket, prefix, false);
         stream.on('data', function(file) { 
             let nf = new NetworkFile()
             nf.name = file.name
             nf.size = file.size 
             nf.etag = file.etag
-            nf.lastModified = new Date(file.lastModified)
-            Context.logger.info(Context.y18n.__("s3 list: %s", file.name))          
+            nf.lastModified = new Date(file.lastModified)            
             s3Client.emit('listdata', nf)
         })
         stream.on('end', function(obj) { 
-            s3Client.emit('finish', Context.y18n.__('OK'))
+            s3Client.emit('finish', 'OK')
         })
         stream.on('error', function(err) { 
-            Context.logger.error(Context.y18n.__("s3 list error: %s", err.toString()))
             s3Client.emit('error', err)
             s3Client.emit('finish', Context.y18n.__('Completed with error: ' + err))
-        })
-    }
-
-    testConnection() {
-        var s3Client = this;
-        var minioClient = s3Client._getClient();
-        minioClient.bucketExists(this.storageService.bucket, function(err, stat) {
-            if (err) {
-                Context.logger.error(Context.y18n.__('S3 connection test to %s/%s failed with error %s', 
-                    s3Client.storageService.host,
-                    s3Client.storageService.bucket,
-                    err.toString()))
-                    s3Client.emit('error', err)
-            } else {
-                Context.logger.info(Context.y18n.__('S3 connection test to %s/%s succeeded', 
-                    s3Client.storageService.host,
-                    s3Client.storageService.bucket))
-                s3Client.emit('connected', Context.y18n.__('Success'))
-            }
         })
     }
 
