@@ -473,7 +473,7 @@
   "Local copy of bag was deleted after upload": "Local copy of bag was deleted after upload",
   "Delete local copy of bag after upload?": "Delete local copy of bag after upload?",
   "Workflow_skipBagCreation_label": "Workflow_skipBagCreation_label",
-  "Workflow_skipBagCreation_help": "Set this to Yes if your workflow will not be creating bags. That is, if the workflow is only for validating and/or uploading existing bags.",
+  "Workflow_skipBagCreation_help": "Set this to Yes if your workflow will not be creating bags. That is, if the workflow is only for validating and/or uploading bags.",
   "Bagging": "Bagging",
   "Non-bagging": "Non-bagging",
   "Job_skipPackaging_label": "Job_skipPackaging_label",
