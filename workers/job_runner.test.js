@@ -158,12 +158,6 @@ test('run() completes when all job operations are valid', done => {
 
 
 test('run() deletes bag after upload when specified', done => {
-    if (os.platform == 'win32') {
-        console.log("Skipping delete-after-upload test because Windows won't permit deletion of temp files.");
-        done();
-        return;    
-    }
-
     let job = getJob();
     job.deleteBagAfterUpload = true
 
