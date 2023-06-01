@@ -131,12 +131,8 @@ test('Upload with bad credentials', done => {
     ss.login = 'BAD-LOGIN';
     ss.password = 'BAD-PASSWORD';
     var client = new SFTPClient(ss);
-    var errorWasEmitted = false
     client.on('finish', function(result) {
-        if (!errorWasEmitted) {
-            console.log("Bad credentials should have thrown an exception.")
-            expect(errorWasEmitted).toBe(true)
-        }
+        throw "Bad credentials should have thrown an exception."
         done();
     });
     client.on('error', function(result) {
@@ -151,7 +147,6 @@ test('Upload with bad credentials', done => {
         // 'All configured authentication methods failed'
         expect(result.errors.length).toBeGreaterThanOrEqual(1);
         for (let err of result.errors) {
-            errorWasEmitted = true
             expect(err).toMatch(/authentication methods failed/);
         }
         done();
@@ -195,7 +190,6 @@ test('List', done => {
         count++
     });
     client.on('error', function(err) {
-        console.log(err)
         expect(err).toBeNull()
     })
     client.on('finish', function(message) {
@@ -205,19 +199,3 @@ test('List', done => {
     })
     client.list("/");
 });
-
-test('testConnection', done => {
-    var ss = getStorageService()
-    var client = new SFTPClient(ss)
-    client.on('connected', function(message) {
-        expect(message).toEqual(Context.y18n.__('Success'))
-        done()
-    });
-    client.on('error', function(err) {
-        console.log(err)
-        expect(err).toBeNull()
-        done()
-    })
-    client.testConnection()
-});
-

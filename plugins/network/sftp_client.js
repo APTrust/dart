@@ -226,21 +226,37 @@ class SFTPClient extends Plugin {
         let sftp = this;
         let client = new Client();
         let connSettings = null;
+        let successEmitted = false;
         try { connSettings = this._getConnSettings(); }
         catch (err) {
+            result.error = err
             sftp.emit('error', err)
             return;
         }
         client.connect(connSettings).then(() => {
-            sftp.emit('connected', Context.y18n.__('Success'))
-        }).catch(err => {
-            sftp.emit('error', err)
-        }).finally(() => {
+            return client.list(path)
+        }).then((data) => {
+            if (data) {
+                sftp.emit('connected', Context.y18n.__('Success'))
+                successEmitted = true
+            }
+        }).then(() => {
+            if (!successEmitted) {
+                sftp.emit('connected', Context.y18n.__('Success'))
+                successEmitted = true
+            }
             if (client && client.sftp) {
                 try { client.end(); }
                 catch(ex) {}
             }
-        });
+        }).catch(err => {
+            result.error = err
+            if (client && client.sftp) {
+                try { client.end(); }
+                catch(ex) {}
+            }
+            sftp.emit('error', err)
+        });        
     }
 
     _getConnSettings() {
