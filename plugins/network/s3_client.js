@@ -176,14 +176,11 @@ class S3Client extends Plugin {
         var stream = minioClient.listObjectsV2(this.storageService.bucket, prefix, false)
         stream.on('data', function(file) { 
             let nf = new NetworkFile()
-            nf.name = file.name || file.prefix
+            nf.name = file.name
             nf.size = file.size 
             nf.etag = file.etag
             nf.lastModified = new Date(file.lastModified)
-            if (nf.name == file.prefix) {
-                nf.type = "prefix"
-            }
-            Context.logger.info(Context.y18n.__("s3 list: %s", nf.name))
+            Context.logger.info(Context.y18n.__("s3 list: %s", file.name))          
             s3Client.emit('listdata', nf)
         })
         stream.on('end', function(obj) { 

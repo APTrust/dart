@@ -109,11 +109,9 @@ class JobRunner {
                 //
                 // WTF, JavaScript?? This has to be a bug in the Node.js runtime.
 
-                if (process.env['SPAWNED_FROM_DART_GUI'] == 'true' || Context.isTestEnv) {
-                    // Some external listener is waiting on us.
+                if (process.env['SPAWNED_FROM_DART_GUI'] == 'true') {
                     await uploader.run()
                 } else {
-                    // No external listeners.
                     uploader.run().catch(function(err){
                         console.log(err)
                     })
