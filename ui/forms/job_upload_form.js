@@ -1,7 +1,6 @@
 const $ = require('jquery');
 const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
-const { Context } = require('../../core/context');
 const { Form } = require('./form');
 const { StorageService } = require('../../core/storage_service');
 const { UploadOperation } = require('../../core/upload_operation');
@@ -38,7 +37,6 @@ class JobUploadForm extends Form {
             Constants.YES_NO,
             job.deleteBagAfterUpload,
             false);
-        this.fields['deleteBagAfterUpload'].label = Context.y18n.__("Delete local copy of bag after upload?")
     }
 
     copyFormValuesToJob(job) {

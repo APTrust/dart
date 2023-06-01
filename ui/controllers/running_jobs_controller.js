@@ -25,7 +25,6 @@ class RunningJobsController extends BaseController {
         this.completedUploads = [];
         let job = Job.find(dartProcess.jobId);
 
-        $('#bag-deleted-message').hide()
         this.showDivs(job, dartProcess);
         if ($('#output-path-link').length) {
             $('#output-path-link').removeClass('local-file')
@@ -163,9 +162,6 @@ class RunningJobsController extends BaseController {
                 this.ensureValidationMarkedComplete(dartProcess)
             }
             this.markSuccess(detailDiv, progressBar, Context.y18n.__('Job completed successfully.'));
-            if (job.deleteBagAfterUpload && job.bagWasDeletedAfterUpload) {
-                $('#bag-deleted-message').show()
-            }
         } else {
             let msg = Context.y18n.__('Job did not complete due to errors.')
             Context.logger.error(msg);
