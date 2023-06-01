@@ -26,11 +26,13 @@ class BatchTestUtil {
         let noNameWorkflow = new Workflow();
         noNameWorkflow.id = this.noNameWorkflowId
         noNameWorkflow.bagItProfileId = Constants.BUILTIN_PROFILE_IDS['empty'];
+        noNameWorkflow.skipBagCreation = false;
         noNameWorkflow.save();
 
         let emptyWorkflow = new Workflow();
         emptyWorkflow.id = this.emptyWorkflowId;
         emptyWorkflow.name = 'Invalid Workflow for Batch Testing';
+        emptyWorkflow.skipBagCreation = false;
         emptyWorkflow.save();
 
         TestUtil.loadFromProfilesDir('aptrust_2.2.json').save();
@@ -41,6 +43,7 @@ class BatchTestUtil {
             bagItProfileId: Constants.BUILTIN_PROFILE_IDS['aptrust'],
         });
         goodWorkflow.id = this.goodWorkflowId
+        goodWorkflow.skipBagCreation = false
         goodWorkflow.save();
     }
 

@@ -93,6 +93,17 @@ class Workflow extends PersistentObject {
          * @type {string}
          */
         this.storageServiceIds = opts.storageServiceIds || [];
+
+        /**
+         * If this is true, the workflow is for validation and/or
+         * upload only, and the workflow batch controller won't
+         * expect to find tag definitions in the CSV file describing
+         * the batch of files upon which to run this workflow.
+         * 
+         * This is a new setting as of DART 2.1, and will be undefined
+         * in older DART workflows.
+         */
+        this.skipBagCreation = false;
     }
 
     /**
@@ -275,7 +286,7 @@ class Workflow extends PersistentObject {
     }
 
     /**
-     * This converts a generic object into an Workflow
+     * This converts a generic object into a Workflow
      * object. this is useful when loading objects from JSON.
      *
      * @param {object} data - An object you want to convert to
@@ -285,9 +296,14 @@ class Workflow extends PersistentObject {
      *
      */
     static inflateFrom(data) {
-        let setting = new Workflow();
-        Object.assign(setting, data);
-        return setting;
+        let workflow = new Workflow();
+        Object.assign(workflow, data);
+        if (typeof workflow.skipBagCreation == 'undefined' || !workflow.skipBagCreation) {
+            // This won't be defined for workflows created before DART 2.1.
+            // Let's set it explicitly.
+            workflow.skipBagCreation = false
+        }
+        return workflow;
     }
 
 }
