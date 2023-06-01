@@ -24,13 +24,6 @@ function start() {
                 writestream.write(path + "\n")
                 writestream.end()
             });
-            session.on("mkdir", function(path, responder) {
-                return responder.end()
-            });
-            // session.on("stat", function(path, someUnknownObject) {
-            //  // WT effing F is this effing code???   
-            //  return ""
-            // });                        
             session.on("writefile",function (path,readstream) {
                 let throwawayFile = process.platform == 'win32' ? 'nul' : '/dev/null'
                 let nowhere = fs.createWriteStream(throwawayFile)
