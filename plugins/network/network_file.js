@@ -32,11 +32,14 @@ class NetworkFile {
 
         /**
          * The file's last modification timestamp. This may be empty,
-         * depending on the remote service. 
+         * depending on the remote service. Some sftp servers may return
+         * a Unix timestamp, which is the number of seconds or milliseconds 
+         * since Jan 1, 1970. S3 services will typically return a timestamp
+         * in ISO 8601 format.
          * 
-         * @type {Date}
+         * @type {number|string|Date}
          */
-        this.lastModified = new Date(0)
+        this.lastModified = 0
     }
 }
 
