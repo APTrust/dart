@@ -1,7 +1,7 @@
 const Client = require('ssh2-sftp-client');
 const { Context } = require('../../core/context');
 const fs = require('fs');
-const { NetworkFile } = require('./network_file');
+const { ListResult } = require('./list_result');
 const { OperationResult } = require('../../core/operation_result');
 const { Plugin } = require('../plugin');
 const { StorageService } = require('../../core/storage_service');
@@ -173,9 +173,9 @@ class SFTPClient extends Plugin {
      * List the contents of the remote folder at path.
      * To list the root folder, use "/" for the path.
      * 
-     * After calling this, listen for "listdata" events.
-     * You'll get a {@link NetworkFile} object each time that
-     * event fires.
+     * After calling this, listen for the "listcompleted" event.
+     * You'll get a {@link ListResult} object in which you can check the
+     * "error" and "files" attributes.
      * 
      * @param {string} path - The path of the folder to list.
      * Some sftp servers may return an error for an empty path.
@@ -184,80 +184,37 @@ class SFTPClient extends Plugin {
      */
     list(path) {
         let sftp = this;
+        let result = new ListResult('sftp')
         let client = new Client();
         let connSettings = null;
         try { connSettings = this._getConnSettings(); }
         catch (err) {
-            sftp.emit('error', err)
+            result.error = err
+            sftp.emit('listcompleted', result)
             return;
         }
         client.connect(connSettings).then(() => {
             return client.list(path)
         }).then((data) => {
             if (data) {
-                data.forEach(file => {
-                    let nf = new NetworkFile()
-                    nf.name = file.name
-                    nf.size = file.size 
-                    nf.lastModified = new Date(file.mtime)
-                    if (!file.mtime && file.attrs && file.attrs.mtime) {
-                        nf.lastModified = file.attrs.mtime
-                    }
-                    sftp.emit('listdata', nf)
-                })
+                data.forEach(file => result.addFile(file))
             }
         }).then(() => {
-            sftp.emit('finish', 'OK')
+            sftp.emit('listcompleted', result)
             if (client && client.sftp) {
                 try { client.end(); }
                 catch(ex) {}
             }
         }).catch(err => {
+            result.error = err
             if (client && client.sftp) {
                 try { client.end(); }
                 catch(ex) {}
             }
-            sftp.emit('error', err)
-            sftp.emit('finish', Context.y18n.__('Completed with error: ' + err))
+            sftp.emit('listcompleted', result)
         });
-    }
+}
 
-    testConnection() {
-        let sftp = this;
-        let client = new Client();
-        let connSettings = null;
-        let successEmitted = false;
-        try { connSettings = this._getConnSettings(); }
-        catch (err) {
-            result.error = err
-            sftp.emit('error', err)
-            return;
-        }
-        client.connect(connSettings).then(() => {
-            return client.list(path)
-        }).then((data) => {
-            if (data) {
-                sftp.emit('connected', Context.y18n.__('Success'))
-                successEmitted = true
-            }
-        }).then(() => {
-            if (!successEmitted) {
-                sftp.emit('connected', Context.y18n.__('Success'))
-                successEmitted = true
-            }
-            if (client && client.sftp) {
-                try { client.end(); }
-                catch(ex) {}
-            }
-        }).catch(err => {
-            result.error = err
-            if (client && client.sftp) {
-                try { client.end(); }
-                catch(ex) {}
-            }
-            sftp.emit('error', err)
-        });        
-    }
 
     _getConnSettings() {
         if (!this.storageService) {
@@ -359,15 +316,9 @@ class SFTPClient extends Plugin {
      * @type {OperationResult} Contains information about the outcome of
      * an upload or download operation.
      * 
-     * @event SFTPClient#connected
-     * @type {string} Emitted by testConnection() only on successful 
-     * connection. The string should say "Success" in the local language. 
-     * Otherwise, check the error event.
-     *
-     * @event SFTPClient#listdata
-     * @type {NetworkFile} Emitted by the list() function each time it gets a
-     * new file or object record from the remote service. Contains a {NetworkFile} 
-     * object describing an item in the remote folder.
+     * @event SFTPClient#listcompleted
+     * @type {ListResult} Contains a list of {NetworkFile} objects describing
+     * objects in the remote folder.
      */
 }
 
