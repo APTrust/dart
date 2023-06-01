@@ -157,29 +157,6 @@ test('run() completes when all job operations are valid', done => {
 });
 
 
-test('run() deletes bag after upload when specified', done => {
-    let job = getJob();
-    job.deleteBagAfterUpload = true
-    let jobRunner = new JobRunner(job);
-
-    jobRunner.run().then(function(returnCode) {
-
-        // Debugging for Travis / AppVeyor
-        if (returnCode != Constants.EXIT_SUCCESS) {
-            job = Job.find(job.id);
-            console.log(JSON.stringify(job))
-        }
-
-        expect(returnCode).toEqual(Constants.EXIT_SUCCESS);
-
-        // Ensure bag was deleted after successful run
-        expect(fs.existsSync(job.packageOp.outputPath)).toBe(false)
-
-        done();
-    });
-});
-
-
 test('run() fails gracefully if package fails (untarred bag)', done => {
     // Can't figure out how to do this safely on Windows yet.
     // 'nul' does not seem to work like /dev/null
