@@ -36,6 +36,7 @@ class JobRunner {
             }
             if (returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.uploadFiles();
+                console.log("Completed uploads")
             }
             return returnCode;
         } catch (ex) {
@@ -98,6 +99,7 @@ class JobRunner {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
             try {
+                console.log("STARTING")
                 // NOTE: We are awaiting here, but if we use the await keyword
                 // in front of the call to uploader.run() in cli mode, the program 
                 // exits without warning and reports code EXIT_SUCCESS, even 
@@ -109,18 +111,27 @@ class JobRunner {
                 //
                 // WTF, JavaScript?? This has to be a bug in the Node.js runtime.
 
+                console.log(process.env)
                 if (process.env['SPAWNED_FROM_DART_GUI'] == 'true') {
+                    console.log("***** CALLED FROM GUI ********")
+                    Context.logger.info("Called from DART GUI - using await");
                     await uploader.run()
                 } else {
-                    uploader.run().catch(function(err){
-                        console.log(err)
-                    })
+                    console.log("***** NO GUI ********")
+                    Context.logger.info("No GUI, no await");
+                    uploader.run()
                 }
+                console.log("DONE")
             } catch (ex) {
+                console.log("ERROR")
+                console.error(ex);
                 // Note that the error will already be recorded in
                 // uploadOp.results[i].errors, and will be handled
                 // above like any other worker error.
+            } finally {
+                console.log("Now we're in the finally block")
             }
+            console.log("NEXT")
             var lastResult = null
             for (let op of this.job.uploadOps) {
                 for (let result of op.results) {
@@ -130,6 +141,8 @@ class JobRunner {
                     lastResult = result
                 }
             }
+            console.log(lastResult)
+            console.log(returnCode)
             if (returnCode == Constants.EXIT_SUCCESS && this.job.deleteBagAfterUpload) {
                 this.deleteBagAfterUpload(this.job, lastResult)
             }
@@ -165,6 +178,8 @@ class JobRunner {
                     uploadOp.sourceFiles.push(packOp.outputPath);
                 }
             }
+            // console.log(uploadOp.sourceFiles)
+            // console.log(uploadOp.sourceKeys)
         }
     }
 
@@ -178,14 +193,21 @@ class JobRunner {
      * @returns {void}
      */
     deleteBagAfterUpload(job, result) {
+        console.log("1")
         if (!job.deleteBagAfterUpload) {
+            console.log("2")
             return
         }
+        console.log("3")
         let bag = job.packageOp.outputPath
+        console.log("4")
         try {
+            console.log("5")
             if (Util.isDirectory(bag)) {
+                console.log("6")
                 Util.deleteRecursive(bag)
             } else {
+                console.log("7")
                 fs.unlinkSync(bag)
             }
             job.bagWasDeletedAfterUpload = true
