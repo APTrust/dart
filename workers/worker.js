@@ -128,9 +128,9 @@ class Worker extends EventEmitter {
         // the parent process & cannot receive, so use emit for Jest.
         if (typeof process.send == 'function' && !Context.isTestEnv) {
             process.send(jobStatus);
-        } //else {
+        } else {
             this.emit('message', jobStatus);
-        //}
+        }
     }
 
 }

@@ -50,7 +50,7 @@ class JobRunner {
             } else {
                 // Save, so the result w/error is attached to the job record.
                 this.job.save();
-                //console.error(ex) 
+                console.error(ex);
             }
             returnCode = Constants.EXIT_RUNTIME_ERROR;
         }
@@ -99,20 +99,16 @@ class JobRunner {
         if (this.job.uploadOps.length > 0) {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
-            var promise = new Promise(function (resolve, reject) {
+            try {
                 let fileCount = runner.job.uploadOps[0].sourceFiles.length
                 let completedCount = 0
-                uploader.on('message', function (message) {
+                uploader.on('message', function(message) { 
                     if (message.action == "completed") {
-                        //console.log(message.status)
+                        console.log(message.status)
                         completedCount += 1;
-                        // Note that completed does not mean succeeded. It just means
-                        // the uploader is done working on this upload. When all uploads
-                        // are complete, we'll delete the local copy of the bag, 
-                        // if necessary. Note the conditions below.
                         if (completedCount == fileCount) {
-                            // console.log("FileCount = " + fileCount + " Completed Count = " + completedCount)
-                            // console.log("All uploads complete")
+                            console.log("FileCount = " + fileCount + " Completed Count = " + completedCount)
+                            console.log("All uploads complete")
                             var lastResult = null
                             for (let op of runner.job.uploadOps) {
                                 for (let result of op.results) {
@@ -126,17 +122,20 @@ class JobRunner {
                                 runner.deleteBagAfterUpload(runner.job, lastResult)
                             }
                             runner.job.save();
-                            return resolve(returnCode);
-                        }
-                    }                    
-                })                
-            })
-            await uploader.run()
-            return promise
+                            return returnCode;                            
+                        }    
+                    }
+                })
+                return uploader.run()
+            } catch (ex) {
+                // Note that the error will already be recorded in
+                // uploadOp.results[i].errors, and will be handled
+                // above like any other worker error.
+            }            
         } else {
-            return new Promise(function(resolve, reject) {
-                resolve(returnCode)
-            })
+            let p = new Promise()
+            p.resolve(returnCode)
+            return p
         }
     }
 
@@ -153,15 +152,15 @@ class JobRunner {
         // User will upload either package sourcefiles or package output.
         let packOp = this.job.packageOp;
         for (let uploadOp of this.job.uploadOps) {
-            //uploadOp.sourceFiles = []
-            if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
+            uploadOp.sourceFiles = []
+            if (packOp && packOp.outputPath) { //} && uploadOp.sourceFiles.length == 0) {
                 if (Util.isDirectory(packOp.outputPath)) {
                     // Add the directory and all its contents to the upload source files
                     uploadOp.sourceFiles = Util.walkSync(packOp.outputPath).filter((f) => !f.stats.isDirectory()).map((f) => f.absPath)
                     for (let i=0; i < uploadOp.sourceFiles.length; i++) {
                         let absPath = uploadOp.sourceFiles[i]
                         uploadOp.sourceKeys[i] = absPath.replace(path.dirname(this.job.packageOp.outputPath) + path.sep, "")
-                        //console.log(absPath)
+                        console.log(absPath)
                     }
                 } else {
                     // This is an individual file
