@@ -30,7 +30,6 @@ class StorageServiceController extends BaseController {
     }
 
     testConnection() {
-        let controller = this
         let ss = this.model.find(this.params.get('id')) || new this.model();
         let form = new this.formClass(ss);
         form.parseFromDOM();
@@ -49,31 +48,15 @@ class StorageServiceController extends BaseController {
         }
         let provider = new providerClass(ss);
 
-        let showTestResult = function(message, color) {
-            let element = document.getElementById('ssConnectionTestResult')
-            if (element) {
-                element.innerText = message
-                element.style.color = color
-            }
-        }
         provider.on('connected', function(message) {
-            showTestResult(message, 'green')
+            alert(message)
         })
         provider.on('error', function(err) {
-            showTestResult(err, 'red')
+            alert(err)
         })
 
-        // Set this as an object-level property, so we
-        // can reference it in the postRenderCallback.
-        // We can't call it until the modal dialog is
-        // loaded and the ssConnectionTestResult element
-        // is present.
-        controller.providerToTest = provider
-
-        let title = Context.y18n.__("Connection Test")
-        let html = Templates.storageServiceTest({ storageService: ss })
-
-        return this.modalContent(title, html)
+        provider.testConnection()
+        return this.noContent()
     }
 
     /**
@@ -85,9 +68,8 @@ class StorageServiceController extends BaseController {
         if (fnName == 'edit' || fnName == 'new') {
             this.attachProtocolChangeEvents()
         }
-        if (fnName == 'testConnection' && this.providerToTest) {
-            // Test the connection here, after the modal is rendered.
-            this.providerToTest.testConnection()
+        if (fnName == 'testConnection') {
+            // TODO: test the connection here, after the page is rendered.
         }
     }
 
