@@ -186,7 +186,7 @@ class JobRunner {
         let bag = job.packageOp.outputPath
         try {
             if (Util.isDirectory(bag)) {
-                fs.rmSync(bag, {recursive: true})
+                Util.deleteRecursive(bag)
             } else {
                 fs.unlinkSync(bag)
             }
