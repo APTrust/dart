@@ -1,6 +1,5 @@
 const { BaseController } = require('./base_controller');
 const { Context } = require('../../core/context');
-const { PluginManager } = require('../../plugins/plugin_manager');
 const { StorageService } = require('../../core/storage_service');
 const { StorageServiceForm } = require('../forms/storage_service_form');
 const Templates = require('../common/templates');
@@ -39,24 +38,10 @@ class StorageServiceController extends BaseController {
             return this.containerContent(html);
         }
         ss.save();
-        let providerClass = this.getProvider(ss.protocol);
-        try {
-            providerClass = this.getProvider(ss.protocol); 
-        } catch (err) {
-            alert(err.toString())
-            return
-        }
+        let providerClass = this.getProvider(ss.protocol); 
         let provider = new providerClass(ss);
 
-        provider.on('connected', function(message) {
-            alert(message)
-        })
-        provider.on('error', function(err) {
-            alert(err)
-        })
-
-        provider.testConnection()
-        return this.noContent()
+        // Call the list method here. If it returns no error, connection is OK.
     }
 
     /**
@@ -67,9 +52,6 @@ class StorageServiceController extends BaseController {
     postRenderCallback(fnName) {
         if (fnName == 'edit' || fnName == 'new') {
             this.attachProtocolChangeEvents()
-        }
-        if (fnName == 'testConnection') {
-            // TODO: test the connection here, after the page is rendered.
         }
     }
 
@@ -87,21 +69,6 @@ class StorageServiceController extends BaseController {
             }
         });
     }
-
-    /**
-     * This returns the first network provider plugin that implements the
-     * S3 protocol. If it can't find a plugin for the S3 protocol, it throws
-     * an exception.
-     *
-     * @returns {Plugin}
-     */
-    getProvider(protocol) {
-        let providers = PluginManager.implementsProtocol(protocol);
-        if (providers.length == 0) {
-            throw `Cannot find a plugin that implements the ${protocol} protocol.`
-        }
-        return providers[0];
-    }    
 }
 
 module.exports.StorageServiceController = StorageServiceController;
