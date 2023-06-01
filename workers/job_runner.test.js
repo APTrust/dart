@@ -163,9 +163,7 @@ test('run() deletes bag after upload when specified', done => {
 
     // Make sure there isn't a copy of this left over
     // from a prior test.
-    if (fs.existsSync(job.packageOp.outputPath)) {
-        fs.unlinkSync(job.packageOp.outputPath)
-    }
+    fs.unlinkSync(job.packageOp.outputPath)
 
     // Now let's run the job and make sure it cleans up
     // after itself.
