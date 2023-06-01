@@ -177,7 +177,7 @@ test('upload emits error instead of throwing on bad private key file', done => {
 test('List', done => {
     var ss = getStorageService()
     var client = new SFTPClient(ss)
-    client.on('listcompleted', function(result) {
+    client.on('finish', function(result) {
         expect(result.error).toBeNull()
         expect(result.files.length).toEqual(2)
         expect(result.files[0].name).toEqual("file1.txt")
@@ -185,7 +185,7 @@ test('List', done => {
         //expect(result.files[0].lastModified).toEqual(1675645360000)
         expect(result.files[1].name).toEqual("file2.txt")
         expect(result.files[1].size).toEqual(84)
-        //expect(result.files[1].lastModified).toEqual(1675645369999)
+        //expect(result.files[0].lastModified).toEqual(1675645369999)
         done()
     });
     client.list("/");

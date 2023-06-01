@@ -184,7 +184,7 @@ test('upload()', done => {
     ss.login = process.env.AWS_ACCESS_KEY_ID;
     ss.password = process.env.AWS_SECRET_ACCESS_KEY;
     var client = new S3Client(ss);
-    client.on('listcompleted', function(result) {
+    client.on('finish', function(result) {
         // If credentials and bucket name are valid, 
         // we'll get no error. 
         expect(result.error).toBeNull()

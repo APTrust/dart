@@ -40,7 +40,7 @@ class SFTPClient extends Plugin {
             id: 'aa7bb977-59b9-4f08-99a9-dfcc16632728',
             name: 'SFTPClient',
             description: 'Built-in DART SFTP network client',
-            version: '1.1',
+            version: '0.1',
             readsFormats: [],
             writesFormats: [],
             implementsProtocols: ['sftp'],
@@ -170,16 +170,7 @@ class SFTPClient extends Plugin {
     }
 
     /**
-     * List the contents of the remote folder at path.
-     * To list the root folder, use "/" for the path.
-     * 
-     * After calling this, listen for the "listcompleted" event.
-     * You'll get a {@link ListResult} object in which you can check the
-     * "error" and "files" attributes.
-     * 
-     * @param {string} path - The path of the folder to list.
-     * Some sftp servers may return an error for an empty path.
-     * If so, use "/" to designate the root path.
+     * @returns {@link ListResult}
      *
      */
     list(path) {
@@ -190,7 +181,7 @@ class SFTPClient extends Plugin {
         try { connSettings = this._getConnSettings(); }
         catch (err) {
             result.error = err
-            sftp.emit('listcompleted', result)
+            sftp.emit('finish', result)
             return;
         }
         client.connect(connSettings).then(() => {
@@ -200,7 +191,7 @@ class SFTPClient extends Plugin {
                 data.forEach(file => result.addFile(file))
             }
         }).then(() => {
-            sftp.emit('listcompleted', result)
+            sftp.emit('finish', result)
             if (client && client.sftp) {
                 try { client.end(); }
                 catch(ex) {}
@@ -211,7 +202,7 @@ class SFTPClient extends Plugin {
                 try { client.end(); }
                 catch(ex) {}
             }
-            sftp.emit('listcompleted', result)
+            sftp.emit('finish', result)
         });
 }
 
@@ -315,10 +306,6 @@ class SFTPClient extends Plugin {
      * @event SFTPClient#finish
      * @type {OperationResult} Contains information about the outcome of
      * an upload or download operation.
-     * 
-     * @event SFTPClient#listcompleted
-     * @type {ListResult} Contains a list of {NetworkFile} objects describing
-     * objects in the remote folder.
      */
 }
 
