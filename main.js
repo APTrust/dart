@@ -134,6 +134,4 @@ function readStdin() {
 }
 
 // And away we go...
-(async function () {
-    await run();
-})();
+run();
