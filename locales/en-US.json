@@ -446,18 +446,5 @@
   "%s: Cannot %s %s": "%s: Cannot %s %s",
   "Cannot find BagIt profile for workflow '%s'": "Cannot find BagIt profile for workflow '%s'",
   "Workflow Export": "Workflow Export",
-  "Warning: One or more storage service records in this workflow contains a plaintext password. This workflow will still run, but for safety, you should use environment variables such as \"env:AWS_SECRET_API_KEY\". For more info see:\n\nhttps://aptrust.github.io/dart-docs/users/settings/storage_services/#password": "Warning: One or more storage service records in this workflow contains a plaintext password. This workflow will still run, but for safety, you should use environment variables such as \"env:AWS_SECRET_API_KEY\". For more info see:\n\nhttps://aptrust.github.io/dart-docs/users/settings/storage_services/#password",
-  "sftp list: %s": "sftp list: %s",
-  "OK": "OK",
-  "SFTP connection test to %s/%s succeeded": "SFTP connection test to %s/%s succeeded",
-  "Success": "Success",
-  "s3 list: %s": "s3 list: %s",
-  "S3 connection test to %s/%s succeeded": "S3 connection test to %s/%s succeeded",
-  "Access Key Id": "Access Key Id",
-  "Secret Access Key": "Secret Access Key",
-  "Folder": "Folder",
-  "Connection Test": "Connection Test",
-  "Storage service '%s' has no password or key file to connect to remote server": "Storage service '%s' has no password or key file to connect to remote server",
-  "SFTP connection test to %s/%s failed with error %s": "SFTP connection test to %s/%s failed with error %s",
-  "S3 connection test to %s/%s failed with error %s": "S3 connection test to %s/%s failed with error %s"
+  "Warning: One or more storage service records in this workflow contains a plaintext password. This workflow will still run, but for safety, you should use environment variables such as \"env:AWS_SECRET_API_KEY\". For more info see:\n\nhttps://aptrust.github.io/dart-docs/users/settings/storage_services/#password": "Warning: One or more storage service records in this workflow contains a plaintext password. This workflow will still run, but for safety, you should use environment variables such as \"env:AWS_SECRET_API_KEY\". For more info see:\n\nhttps://aptrust.github.io/dart-docs/users/settings/storage_services/#password"
 }
