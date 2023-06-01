@@ -26,9 +26,9 @@ tool for creating archival packages and sending them to a remote repository.
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
-* [Mac OSX v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.1.0.dmg)
-* [Windows v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.1.0.exe)
-* [Linux v2.1.0](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.1.0_amd64.deb)
+* [Mac OSX v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.22.dmg)
+* [Windows v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.22.exe)
+* [Linux v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.22_amd64.deb)
 
 While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
@@ -201,9 +201,9 @@ The installers will appear in the dist directory. The important ones are:
 
 | Name | Description |
 | ---- | ----------- |
-| DART Setup 2.1.0.exe | Windows installer for 64-bit Intel platforms. |
-| DART-2.1.0-universal.dmg | Mac universal binary installer. Should run on both Intel and ARM platforms. |
-| DART_2.1.0_amd64.deb | Linux installer for 64-bit Intel platforms. (Debian/Ubuntu package format.) |
+| DART Setup 2.0.22.exe | Windows installer for 64-bit Intel platforms. |
+| DART-2.0.22-universal.dmg | Mac universal binary installer. Should run on both Intel and ARM platforms. |
+| DART_2.0.22_amd64.deb | Linux installer for 64-bit Intel platforms. (Debian/Ubuntu package format.) |
 
 
 ### Building on Windows & Linux
