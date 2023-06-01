@@ -10,7 +10,7 @@
     {{#each items}}
     <tr class="repository-clickable-row" data-url="{{ this.url }}"
         data-toggle="popover"
-        data-content="<p><b>Size:</b> {{ this.humanSize }}</p><p><b>Etag:</b> {{ this.etag }}</p><p><b>Updated:</b> {{ this.displayDate }}</p><p><b>Note:</b> {{ this.escaped_note }}</p>">
+        data-content="<p>Size: {{ this.size }}</p><p>Etag: {{ this.etag }}</p><p>Updated: {{ this.updated_at }}</p><p>Note: {{ this.escaped_note }}</p>">
       <td>{{ this.name }}</td>
       <td>{{ this.action }}</td>
       <td>{{ this.status }}</td>

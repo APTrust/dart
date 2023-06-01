@@ -129,7 +129,7 @@ class APTrustClient extends RepositoryBase {
         let aptrust = this;
         return this._doRequest(this.objectsUrl, (data) => {
             data.results.forEach((item) => {
-                item.url = `${aptrust.repo.url}/objects/show/${encodeURIComponent(item.id)}`;
+                item.url = `${aptrust.repo.url}/objects/${encodeURIComponent(item.identifier)}`;
                 item.escapedTitle = item.title.replace(/"/g, "'");
                 item.displayDate = item.updated_at.split('T')[0];
             });
@@ -151,10 +151,8 @@ class APTrustClient extends RepositoryBase {
         let aptrust = this;
         return this._doRequest(this.itemsUrl, (data) => {
             data.results.forEach((item) => {
-                item.url = `${aptrust.repo.url}/work_items/show/${item.id}`;
+                item.url = `${aptrust.repo.url}/items/${item.id}`;
                 item.escaped_note = item.note.replace(/"/g, "'");
-                item.displayDate = item.updated_at.split('.')[0] + ' UTC';
-                item.humanSize = Util.toHumanSize(item.size);
             });
             return aptrust.itemsTemplate({ items: data.results })
         });
