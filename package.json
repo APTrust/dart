@@ -69,7 +69,7 @@
     },
     "build": {
         "appId": "org.aptrust.DART",
-        "copyright": "Copyright © 2018-2023 Academic Preservation Trust",
+        "copyright": "Copyright © 2018-2022 Academic Preservation Trust",
         "productName": "DART",
         "asar": true,
         "icon": "build/dart.png",
