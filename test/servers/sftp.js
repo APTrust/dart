@@ -20,18 +20,6 @@ function start() {
             return auth.reject(['password'], false)
         }
         return auth.accept(function(session) {
-
-            // Overwrite the server's do_stat function so it stops
-            // printing stupid messages to the console. 
-            // node-sftp-server is the worst code I've ever seen.
-            session.do_stat = function(reqid, path, kind) {
-                  return this.sftpStream.attrs(reqid, {
-                    filename: path,
-                    longname: path,
-                    attrs: {}
-                  });
-              };
-
             session.on("readfile", function(path, writestream) {
                 writestream.write(path + "\n")
                 writestream.end()
