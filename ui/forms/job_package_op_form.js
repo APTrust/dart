@@ -5,7 +5,6 @@ const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Form } = require('./form');
-const { PluginManager } = require('../../plugins/plugin_manager');
 
 /**
  * JobPackageOpForm can present and parse the form that allows
@@ -44,7 +43,6 @@ class JobPackageOpForm extends Form {
          * We can re-enable this when it's working, but it will be some time before
          * we have the resources to fully look into this.
          * 
-         */
         for (let writer of PluginManager.getModuleCollection('FormatWriter')) {
             let description = writer.description();
             for (let format of description.writesFormats) {
@@ -56,7 +54,7 @@ class JobPackageOpForm extends Form {
                 }
             };
         }
-        
+        */
 
         this.fields['packageFormat'].choices = Choice.makeList(
             formats,

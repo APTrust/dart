@@ -54,11 +54,6 @@ class JobRunController extends RunningJobsController {
         if (!this._checkOutputPath()) {
             return this.noContent()
         }
-
-        // *********** DEBUG **************
-        console.log(JSON.stringify(this.job))
-        // *********** DEBUG **************
-
         let proc = Util.forkJobProcess(this.job);
         this.childProcess = proc.childProcess;
         this.dartProcess = proc.dartProcess;

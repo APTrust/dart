@@ -35,31 +35,6 @@ class UploadOperation {
          */
         this.sourceFiles = sourceFiles || [];
         /**
-         * A list of key names to assign to uploaded files. 
-         * There should be one entry per source file. Usually,
-         * this just trims off some of the absoulte path prefix.
-         * 
-         * For example, if sourceFiles is
-         * 
-         * [ 
-         *      '/home/josie/bag1/bag-info.txt',
-         *      '/home/josie/bag1/manifest-sha256.txt',
-         *      '/home/josie/bag1/data/photo.jpg
-         *  ]
-         * 
-         * Then sourceKeys would look something like this:
-         * 
-         * [ 
-         *      'bag1/bag-info.txt',
-         *      'bag1/manifest-sha256.txt',
-         *      'bag1/data/photo.jpg
-         *  ]
-         * 
-         *
-         * @type {Array<string>}
-         */
-        this.sourceKeys = sourceFiles || [];
-        /**
          * This describes the result of DART's attempt to upload the files.
          *
          * @type {OperationResult}

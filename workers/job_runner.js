@@ -5,7 +5,6 @@ const { Context } = require('../core/context');
 const fs = require('fs')
 const { Job } = require('../core/job');
 const { OperationResult } = require('../core/operation_result');
-const path = require('path')
 const { Uploader } = require('./uploader');
 const { Util } = require('../core/util');
 const { ValidationOperation } = require('../core/validation_operation');
@@ -97,17 +96,13 @@ class JobRunner {
             this.assignUploadSources();
             let uploader = new Uploader(this.job);
             try {
-                console.log("STARTING")
                 await uploader.run();
-                console.log("DONE")
             } catch (ex) {
-                console.log("ERROR")
-                console.error(ex);
+                // console.error(ex);
                 // Note that the error will already be recorded in
                 // uploadOp.results[i].errors, and will be handled
                 // above like any other worker error.
             }
-            console.log("NEXT")
             var lastResult = null
             for (let op of this.job.uploadOps) {
                 for (let result of op.results) {
@@ -117,11 +112,7 @@ class JobRunner {
                     lastResult = result
                 }
             }
-            console.log(lastResult)
-            console.log(returnCode)
-            if (returnCode == Constants.EXIT_SUCCESS && this.job.deleteBagAfterUpload) {
-                this.deleteBagAfterUpload(this.job, lastResult)
-            }
+            this.deleteBagAfterUpload(this.job, lastResult)
             this.job.save();
             return returnCode;
         }
@@ -142,20 +133,8 @@ class JobRunner {
         let packOp = this.job.packageOp;
         for (let uploadOp of this.job.uploadOps) {
             if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
-                if (Util.isDirectory(packOp.outputPath)) {
-                    // Add the directory and all its contents to the upload source files
-                    uploadOp.sourceFiles = Util.walkSync(packOp.outputPath).map((f) => f.absPath)
-                    for (let i=0; i < uploadOp.sourceFiles.length; i++) {
-                        let absPath = uploadOp.sourceFiles[i]
-                        uploadOp.sourceKeys[i] = absPath.replace(path.dirname(this.job.packageOp.outputPath) + path.sep, "")
-                    }
-                } else {
-                    // This is an individual file
-                    uploadOp.sourceFiles.push(packOp.outputPath);
-                }
+                uploadOp.sourceFiles.push(packOp.outputPath);
             }
-            // console.log(uploadOp.sourceFiles)
-            // console.log(uploadOp.sourceKeys)
         }
     }
 
@@ -169,26 +148,18 @@ class JobRunner {
      * @returns {void}
      */
     deleteBagAfterUpload(job, result) {
-        console.log("1")
         if (!job.deleteBagAfterUpload) {
-            console.log("2")
             return
         }
-        console.log("3")
         let bag = job.packageOp.outputPath
-        console.log("4")
         try {
-            console.log("5")
             if (Util.isDirectory(bag)) {
-                console.log("6")
-                Util.deleteRecursive(bag)
+               Util.deleteRecursive(bag)
             } else {
-                console.log("7")
-                fs.unlinkSync(bag)
+               fs.unlinkSync(bag)
             }
             job.bagWasDeletedAfterUpload = true
         } catch(ex) {
-            console.error(ex)
             job.bagWasDeletedAfterUpload = false
             if (result) {
                 result.errors.push(`Upload completed but cound not delete bag ${bag}. Error: ${ex}`)
