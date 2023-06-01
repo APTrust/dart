@@ -40,8 +40,6 @@ class StorageServiceController extends BaseController {
         ss.save();
         let providerClass = this.getProvider(ss.protocol); 
         let provider = new providerClass(ss);
-
-        // Call the list method here. If it returns no error, connection is OK.
     }
 
     /**

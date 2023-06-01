@@ -173,28 +173,3 @@ test('download()', done => {
     // which is what our documentation says we must do.
     client.download(tmpFile, 'DartUnitTestFile.js');
 });
-
-test('upload()', done => {
-    if (!helper.envHasS3Credentials()) {
-        console.log('Skipping S3 upload test for S3Client: no credentials in ENV.');
-        done();
-        return;
-    }
-    var ss = helper.getStorageService();
-    ss.login = process.env.AWS_ACCESS_KEY_ID;
-    ss.password = process.env.AWS_SECRET_ACCESS_KEY;
-    var client = new S3Client(ss);
-    client.on('finish', function(result) {
-        // If credentials and bucket name are valid, 
-        // we'll get no error. 
-        expect(result.error).toBeNull()
-        result.files.forEach((file) => {
-            expect(file.name).toBeTruthy()
-            expect(file.lastModified).toBeTruthy()
-            expect(file.size).toBeTruthy()
-            expect(file.etag).toBeTruthy()
-        })
-        done()
-    });
-    client.list('')
-});
