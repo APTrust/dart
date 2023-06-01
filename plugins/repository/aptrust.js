@@ -34,7 +34,7 @@ class APTrustClient extends RepositoryBase {
          * @type {string}
          * @private
          */
-        this.objectsUrl = `${this.repo.url}/member-api/v3/objects?page=1&per_page=50&sort=updated_at__desc&state=A`
+        this.objectsUrl = `${this.repo.url}/member-api/v2/objects/?page=1&per_page=50&sort=date&state=A`
         /**
          * The Pharos URL to query for a list of currently active and recently
          * active WorkItems.
@@ -42,7 +42,7 @@ class APTrustClient extends RepositoryBase {
          * @type {string}
          * @private
          */
-        this.itemsUrl = `${this.repo.url}/member-api/v3/items?page=1&per_page=50&sort=date_processed__desc`
+        this.itemsUrl = `${this.repo.url}/member-api/v2/items/?page=1&per_page=50&sort=date`
         /**
          * This is the path to the Handlebars template used to format results
          * from the object query. (Recently ingested items.)
@@ -70,8 +70,8 @@ class APTrustClient extends RepositoryBase {
         return {
             id: 'c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd',
             name: 'APTrustClient',
-            description: 'APTrust repository client. This allows DART to talk to the APTrust demo and/or production repository. (Updated May, 2023 to talk to Registry.)',
-            version: '2.0',
+            description: 'APTrust repository client. This allows DART to talk to the APTrust demo and/or production repository.',
+            version: '0.1',
             readsFormats: [],
             writesFormats: [],
             implementsProtocols: [],
@@ -253,10 +253,10 @@ class APTrustClient extends RepositoryBase {
             if (res.statusCode == 200) {
                 onSuccess(JSON.parse(body));
             } else {
-                var errMsg = "(unknown)"
+                let errMsg = res.headers.status;
                 try {
                     let data = JSON.parse(body);
-                    errMsg = data.Error
+                    errMsg += ` - ${data.error}`
                 } catch (ex) {}
                 Context.logger.error(`Unexpected response from ${url}: ${errMsg}`);
                 onError(errMsg);

@@ -17,8 +17,8 @@ const repo = new RemoteRepository({
 test('Constructor sets expected properties', () => {
     let client = new APTrustClient(repo);
     expect(client.repo).toEqual(repo);
-    expect(client.objectsUrl).toEqual('https://example.com/member-api/v3/objects?page=1&per_page=50&sort=updated_at__desc&state=A');
-    expect(client.itemsUrl).toEqual('https://example.com/member-api/v3/items?page=1&per_page=50&sort=date_processed__desc');
+    expect(client.objectsUrl).toEqual('https://example.com/member-api/v2/objects/?page=1&per_page=50&sort=date&state=A');
+    expect(client.itemsUrl).toEqual('https://example.com/member-api/v2/items/?page=1&per_page=50&sort=date');
     expect(typeof client.objectsTemplate).toEqual('function');
     expect(typeof client.itemsTemplate).toEqual('function');
 });
