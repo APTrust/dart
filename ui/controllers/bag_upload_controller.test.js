@@ -1,4 +1,6 @@
 const $ = require('jquery');
+//const { BagItProfile } = require('../../bagit/bagit_profile');
+//const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { BagUploadController } = require('./bag_upload_controller');
 const os = require('os');
@@ -8,6 +10,7 @@ const { UITestUtil } = require('../common/ui_test_util');
 const { Util } = require('../../core/util');
 const { UploadOperation } = require('../../core/upload_operation');
 const { UploadTestHelper } = require('../../util/upload_test_helper');
+const { StorageService } = require('../../core');
 
 beforeEach(() => {
     TestUtil.deleteJsonFile('Job');
