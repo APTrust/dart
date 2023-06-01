@@ -744,13 +744,11 @@ class Util {
 
         // Need to change npm command outside of dev env.
         let modulePath = path.join(__dirname, '..', 'main.js');
-        let childEnv = process.env
-        childEnv['SPAWNED_FROM_DART_GUI'] = 'true'
         let childProcess = fork(
                 modulePath,
                 ['--job', tmpFile],
                 {
-                    env: childEnv
+                    env: { 'SPAWNED_FROM_DART_GUI': 'true' }
                 }
         );
 
