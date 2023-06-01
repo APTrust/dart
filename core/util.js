@@ -348,10 +348,7 @@ class Util {
     static walkSync(dir, filterFunction) {
         var files = fs.readdirSync(dir);
         var filelist = [];
-        if (typeof(filterFunction) != 'function') {
-            filterFunction = function(file) { return true };
-        }
-        //filterFunction = filterFunction || function(file) { return true };
+        filterFunction = filterFunction || function(file) { return true };
         files.forEach(function(file) {
             var absPath = path.join(dir, file);
             if (!fs.existsSync(absPath)) {

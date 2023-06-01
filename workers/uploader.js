@@ -87,7 +87,6 @@ class Uploader extends Worker {
         let providerClass = this.getProvider(ss.protocol);
         let promises = [];
         for (let filepath of uploadOp.sourceFiles) {
-            let f = path.basename(filepath)
             let provider = new providerClass(ss);
             var promise = new Promise(function(resolve, reject) {
                 let lastPercentComplete = 0;
@@ -96,7 +95,7 @@ class Uploader extends Worker {
                     // yet have a way of getting that info.
                     uploader.info('start',
                                   Constants.OP_IN_PROGRESS,
-                                  `${ss.name}: ${f}`,
+                                  ss.name,
                                   -1,
                                   false);
                 });
@@ -104,7 +103,9 @@ class Uploader extends Worker {
                     uploadOp.results.push(result);
                     if (result.errors.length > 0) {
                         uploader.completedWithError(result.errors);
-                    } else {                        
+                    } else {
+                        let f = path.basename(filepath)
+                        console.log(UIConstants)
                         uploader.completedSuccess(`${UIConstants.GREEN_CHECK_CIRCLE} ${f} -> ${ss.name}`, false);
                     }
                     resolve(result);
@@ -123,7 +124,7 @@ class Uploader extends Worker {
                     // Note: percentComplete is -1 because we don't
                     // yet have a way of getting that info.
                     uploader.info('upload', Constants.OP_IN_PROGRESS,
-                                  ` ${f} ${result.warning}`, -1, false);
+                                  result.warning, -1, false);
                 });
                 provider.on('status', function(xfer) {
                     // Uploader reads faster than it writes, so fudge this.
@@ -133,7 +134,7 @@ class Uploader extends Worker {
                     let pctComplete = xfer.percentComplete() * 0.985;
                     if (pctComplete - lastPercentComplete > 1) {
                         uploader.info('status', Constants.OP_IN_PROGRESS,
-                                      `${ss.name } - ${f} - ${pctComplete.toFixed(2)}%`,
+                                      `${ss.name } - ${pctComplete.toFixed(2)}%`,
                                       pctComplete, false);
                         lastPercentComplete = pctComplete;
                     }
