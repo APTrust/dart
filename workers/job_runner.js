@@ -29,7 +29,6 @@ class JobRunner {
      *
      */
     async run() {
-        let runner = this
         let returnCode = Constants.EXIT_SUCCESS;
         try {
             returnCode = await this.createPackage();
@@ -38,9 +37,6 @@ class JobRunner {
             }
             if (returnCode == Constants.EXIT_SUCCESS) {
                 returnCode = await this.uploadFiles();
-                if (returnCode == Constants.EXIT_SUCCESS && this.job.deleteBagAfterUpload) {
-                     runner.deleteBagAfterUpload(runner.job)
-                }
             }
             return returnCode;
         } catch (ex) {
@@ -115,6 +111,20 @@ class JobRunner {
                         // are complete, we'll delete the local copy of the bag, 
                         // if necessary. Note the conditions below.
                         if (completedCount == fileCount) {
+                            // console.log("FileCount = " + fileCount + " Completed Count = " + completedCount)
+                            // console.log("All uploads complete")
+                            var lastResult = null
+                            for (let op of runner.job.uploadOps) {
+                                for (let result of op.results) {
+                                    if (result.hasErrors()) {
+                                        returnCode = Constants.EXIT_RUNTIME_ERROR;
+                                    }
+                                    lastResult = result
+                                }
+                            }
+                            if (returnCode == Constants.EXIT_SUCCESS && this.job.deleteBagAfterUpload) {
+                                runner.deleteBagAfterUpload(runner.job, lastResult)
+                            }
                             runner.job.save();
                             return resolve(returnCode);
                         }
@@ -147,7 +157,6 @@ class JobRunner {
             if (packOp && packOp.outputPath && uploadOp.sourceFiles.length == 0) {
                 if (Util.isDirectory(packOp.outputPath)) {
                     // Add the directory and all its contents to the upload source files
-                    // let filter = (f) => !f.stats.isDirectory()
                     uploadOp.sourceFiles = Util.walkSync(packOp.outputPath).filter((f) => !f.stats.isDirectory()).map((f) => f.absPath)
                     for (let i=0; i < uploadOp.sourceFiles.length; i++) {
                         let absPath = uploadOp.sourceFiles[i]
@@ -171,35 +180,8 @@ class JobRunner {
      * 
      * @returns {void}
      */
-    deleteBagAfterUpload(job) {
+    deleteBagAfterUpload(job, result) {
         if (!job.deleteBagAfterUpload) {
-            return
-        }
-        let lastResult = null;
-        let someUploadDidNotComplete = false
-        for (let i=0; i < job.uploadOps.length; i++) {
-            let uploadOp = job.uploadOps[i]
-
-            // If no results, this particular upload
-            // hasn't been attempted yet.
-            if (uploadOp.results.length == 0) {
-                someUploadDidNotComplete = true
-                break
-            }
-            // Check whether any part of an upload failed.
-            for (let j=0; j < uploadOp.results.length; j++) {
-                let result = uploadOp.results[j]
-                if (!result.succeeded()) {
-                    someUploadDidNotComplete = true
-                }
-                lastResult = result
-            }
-        }
-        // If this is true, either 1) some upload failed, 
-        // or 2) the job has other pending uploads. In 
-        // either case, we don't want to delete the local
-        // copy of the bag.
-        if (someUploadDidNotComplete) {
             return
         }
         let bag = job.packageOp.outputPath
@@ -213,8 +195,8 @@ class JobRunner {
         } catch(ex) {
             console.error(ex)
             job.bagWasDeletedAfterUpload = false
-            if (lastResult) {
-                lastResult.errors.push(`Upload completed but cound not delete bag ${bag}. Error: ${ex}`)
+            if (result) {
+                result.errors.push(`Upload completed but cound not delete bag ${bag}. Error: ${ex}`)
             }
         }
     }    

@@ -100,7 +100,7 @@ You can debug DART from Visual Studio code simply by hitting **F5** or choosing 
 
 To debug standalone jobs using VS Code, do the following:
 
-1. Follow the [ VS Code node debugging instructions](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to set Auto Attach to `onlyWithFlag`. Note that you may have to kill and restart your VS Code terminal for the debug settings to take effect.
+1. Follow the [node debugging instructions](https://code.visualstudio.com/docs/nodejs/nodejs-debugging) to set Auto Attach to `onlyWithFlag`.
 2. In DART, click on the Job you want to debug.
 3. Right click anywhere in the DART window and choose **Inspect Element** from context menu.
 4. When the Developer Tools pane opens in DART, click the **Console** tab to get a JavaScript console.
