@@ -28,20 +28,6 @@ class StorageServiceController extends BaseController {
         this.defaultSortDirection = 'asc';
     }
 
-    testConnection() {
-        let ss = this.model.find(this.params.get('id')) || new this.model();
-        let form = new this.formClass(ss);
-        form.parseFromDOM();
-        if (!form.obj.validate()) {
-            form.setErrors();
-            let html = this.formTemplate({ form: form }, Templates.renderOptions);
-            return this.containerContent(html);
-        }
-        ss.save();
-        let providerClass = this.getProvider(ss.protocol); 
-        let provider = new providerClass(ss);
-    }
-
     /**
      * This attaches required events to the Job files UI and
      * adds the list of files and folders to be packaged to

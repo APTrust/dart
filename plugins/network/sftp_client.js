@@ -1,7 +1,6 @@
 const Client = require('ssh2-sftp-client');
 const { Context } = require('../../core/context');
 const fs = require('fs');
-const { ListResult } = require('./list_result');
 const { OperationResult } = require('../../core/operation_result');
 const { Plugin } = require('../plugin');
 const { StorageService } = require('../../core/storage_service');
@@ -170,43 +169,12 @@ class SFTPClient extends Plugin {
     }
 
     /**
-     * @returns {@link ListResult}
+     * Lists files on a remote SFTP server. NOT YET IMPLEMENTED.
      *
      */
-    list(path) {
-        // throw 'SFTPClient.list() is not yet implemented.';
-
-        let sftp = this;
-        let result = new ListResult('sftp')
-        let client = new Client();
-        let connSettings = null;
-        try { connSettings = this._getConnSettings(); }
-        catch (err) {
-            result.error = err
-            sftp.emit('finish', result)
-            return;
-        }
-        client.connect(connSettings).then(() => {
-            return client.list(path)
-        }).then((data) => {
-            if (data) {
-                data.forEach(file => result.addFile(file))
-            }
-        }).then(() => {
-            sftp.emit('finish', result)
-            if (client && client.sftp) {
-                try { client.end(); }
-                catch(ex) {}
-            }
-        }).catch(err => {
-            result.error = err
-            if (client && client.sftp) {
-                try { client.end(); }
-                catch(ex) {}
-            }
-            sftp.emit('finish', result)
-        });
-}
+    list() {
+        throw 'SFTPClient.list() is not yet implemented.';
+    }
 
 
     _getConnSettings() {
