@@ -82,11 +82,8 @@ test('show', () => {
     let fileInput = $('#pathToBag')
     expect(fileInput.length).toEqual(1)    
 
-    // Should have 4 form-check divs here:
-    // 2 to select file/folder
-    // 2 for our 2 storage services
     let uploadTargets = $('div.form-check')
-    expect(uploadTargets.length).toEqual(4)
+    expect(uploadTargets.length).toEqual(2)
 });
 
 test('upload serialized bag', done => {
