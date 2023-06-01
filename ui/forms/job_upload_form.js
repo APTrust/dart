@@ -1,6 +1,5 @@
 const $ = require('jquery');
 const { Choice } = require('./choice');
-const { Constants } = require('../../core/constants');
 const { Form } = require('./form');
 const { StorageService } = require('../../core/storage_service');
 const { UploadOperation } = require('../../core/upload_operation');
@@ -32,11 +31,6 @@ class JobUploadForm extends Form {
             selectedTargets,
             false
         );
-        this._initField('deleteBagAfterUpload', job.deleteBagAfterUpload)
-        this.fields['deleteBagAfterUpload'].choices = Choice.makeList(
-            Constants.YES_NO,
-            job.deleteBagAfterUpload,
-            false);
     }
 
     copyFormValuesToJob(job) {
@@ -50,7 +44,6 @@ class JobUploadForm extends Form {
             op.storageServiceId = targetId;
             job.uploadOps.push(op);
         }
-        job.deleteBagAfterUpload = ($('#jobUploadForm_deleteBagAfterUpload').val() == 'Yes')
     }
 }
 

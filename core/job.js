@@ -42,10 +42,6 @@ class Job extends PersistentObject {
      * @param {BagItProfile} opts.bagItProfile - A BagItProfile object.
      * This is required only for bagging and validation jobs.
      *
-     * @param {boolean} opts.deleteBagAfterUpload - If true, DART will
-     * delete the bag after successful upload. This defaults to false
-     * and does not apply if the job has no upload step.
-     *
      * @param {PackageOperation} opts.packageOp - An object describing
      * what this job is supposed to package. The is relevant only to
      * jobs that involving bagging or other forms of packaging.
@@ -61,7 +57,6 @@ class Job extends PersistentObject {
     constructor(opts = {}) {
         super(opts);
         this.bagItProfile = opts.bagItProfile || null;
-        this.deleteBagAfterUpload = opts.deleteBagAfterUpload || false;
         this.packageOp = opts.packageOp || new PackageOperation();
         this.validationOp = opts.validationOp || null;
         this.uploadOps = opts.uploadOps || [];
@@ -76,16 +71,6 @@ class Job extends PersistentObject {
          * or {@link UploadOperation}.
          */
         this.errors = {};
-
-        /**
-         * If deleteBagAfterUpload is true for this job, this property will
-         * be set to true after the job has run successfully and the bag
-         * was deleted.
-         * 
-         * @type {boolean}
-         * @default false
-         */
-        this.bagWasDeletedAfterUpload = false
 
         /**
          * The total number of files to be packaged and/or uploaded
