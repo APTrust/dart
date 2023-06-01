@@ -7,11 +7,9 @@ const path = require('path');
 const { TestUtil } = require('./test_util');
 const { UploadOperation } = require('./upload_operation');
 const { ValidationOperation } = require('./validation_operation');
-const { Workflow } = require('./workflow');
 
 afterAll(() => {
     Object.keys(Context.childProcesses).forEach(k => delete Context.childProcesses[k])
-    TestUtil.deleteJsonFile('Workflow')
 });
 
 function getJobWithOps() {
@@ -89,17 +87,6 @@ test('title', () => {
     setTag(job.bagItProfile, 'Description', '');
     expect(job.title.startsWith('Job of')).toBe(true);
     expect(job.title.length).toBeGreaterThan(20);
-});
-
-test('workflowName', () => {
-    let job = getJobWithOps();
-    expect(job.workflowName).toEqual('')
-
-    let workflow = new Workflow({ name: "Sean Connery" })
-    workflow.save()
-
-    job.workflowId = workflow.id
-    expect(job.workflowName).toEqual('Sean Connery')
 });
 
 test('packagedAt()', () => {

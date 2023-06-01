@@ -28,11 +28,7 @@ class JobUploadController extends BaseController {
      */
     show() {
         let form = new JobUploadForm(this.job);
-        let data = { 
-            job: this.job, 
-            form: form,
-            workflowName: this.job.workflowName
-        };
+        let data = { job: this.job, form: form };
         return this.containerContent(Templates.jobUpload(data));
     }
 

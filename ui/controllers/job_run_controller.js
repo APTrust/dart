@@ -48,8 +48,7 @@ class JobRunController extends RunningJobsController {
         let data = {
             job: this.job,
             uploadTargets: uploadTargets,
-            trimPath: this._getTrimPath(),
-            workflowName: this.job.workflowName
+            trimPath: this._getTrimPath()
         }
         return this.containerContent(Templates.jobRun(data));
     }

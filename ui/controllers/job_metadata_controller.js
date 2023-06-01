@@ -36,11 +36,7 @@ class JobMetadataController extends BaseController {
      */
     show() {
         let form = new JobTagsForm(this.job);
-        let data = { 
-            job: this.job, 
-            form: form,
-            workflowName: this.job.workflowName 
-        };
+        let data = { job: this.job, form: form };
         return this.containerContent(Templates.jobMetadata(data));
     }
 

@@ -45,8 +45,7 @@ class JobPackagingController extends BaseController {
     _renderPackagingForm(form) {
         let data = {
             job: this.job,
-            form: form,
-            workflowName: this.job.workflowName
+            form: form
         }
         let html = Templates.jobPackaging(data);
         return this.containerContent(html);

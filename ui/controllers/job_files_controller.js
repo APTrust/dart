@@ -36,8 +36,7 @@ class JobFilesController extends BaseController {
     show() {
         let data = {
             alertMessage: this.alertMessage,
-            job: this.job,
-            workflowName: this.job.workflowName,
+            job: this.job
         }
         this.alertMessage = null;
         let html = Templates.jobFiles(data);
