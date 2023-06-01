@@ -3,6 +3,7 @@ const Minio = require('minio');
 const os = require('os');
 const path = require('path');
 const S3Client = require('./s3_client');
+const { StorageService } = require('../../core/storage_service');
 const { UploadTestHelper } = require('../../util/upload_test_helper');
 
 let helper = new UploadTestHelper();

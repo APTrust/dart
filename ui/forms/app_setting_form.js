@@ -1,3 +1,6 @@
+const { AppSetting } = require('../../core/app_setting');
+const { Choice } = require('./choice');
+const { Field } = require('./field');
 const { Form } = require('./form');
 
 class AppSettingForm extends Form {

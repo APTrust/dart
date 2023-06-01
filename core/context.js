@@ -5,6 +5,7 @@ const logger = require('../util/logger.js');
 const os = require('os');
 const osLocale = require('os-locale');
 const path = require('path');
+const { fstat } = require('fs');
 
 const y18n = require('y18n')({
     directory: path.join(__dirname, '..', 'locales'),

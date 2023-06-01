@@ -7,6 +7,7 @@ const path = require('path');
 const { TestUtil } = require('../core/test_util');
 const tmp = require('tmp');
 const { Workflow } = require('../core/workflow');
+const { WorkflowBatch } = require('../core/workflow_batch');
 
 class BatchTestUtil {
 

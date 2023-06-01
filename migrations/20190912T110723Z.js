@@ -1,6 +1,9 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
+const { InternalSetting } = require('../core/internal_setting');
+const os = require('os');
+const path = require('path');
 
 const aptrustProfileId = Constants.BUILTIN_PROFILE_IDS["aptrust"];
 

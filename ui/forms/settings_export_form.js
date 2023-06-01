@@ -2,6 +2,7 @@ const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
+const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
 const { RemoteRepository } = require('../../core/remote_repository');

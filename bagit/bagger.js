@@ -4,6 +4,7 @@ const { Context } = require('../core/context');
 const dateFormat = require('dateformat');
 const EventEmitter = require('events');
 const fs = require('fs');
+const { KeyValueCollection } = require('./key_value_collection');
 const mkdirp = require('mkdirp');
 const { OperationResult } = require('../core/operation_result');
 const os = require('os');

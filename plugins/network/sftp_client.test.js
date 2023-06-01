@@ -1,4 +1,5 @@
 const { Context } = require('../../core/context');
+const fork = require('child_process').fork;
 const path = require('path');
 const SFTPClient = require('./sftp_client');
 const SFTPServer = require('../../test/servers/sftp.js');

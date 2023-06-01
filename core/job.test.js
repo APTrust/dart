@@ -1,3 +1,4 @@
+const { BagItProfile } = require('../bagit/bagit_profile');
 const { Context } = require('./context');
 const { DartProcess } = require('./dart_process');
 const { Job } = require('./job');

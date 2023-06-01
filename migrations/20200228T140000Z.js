@@ -1,5 +1,9 @@
 const { BagItProfile } = require('../bagit/bagit_profile');
 const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
+const { InternalSetting } = require('../core/internal_setting');
+const path = require('path');
+const { TestUtil } = require('../core/test_util');
 
 /**
  * Migration 20190130T190816Z removes the DPN BagIt profile.

@@ -1,8 +1,13 @@
 const $ = require('jquery');
+const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
+const { Context } = require('../../core/context');
+const { Field } = require('./field');
 const { Form } = require('./form');
+const { PluginManager } = require('../../plugins/plugin_manager');
 const { StorageService } = require('../../core/storage_service');
 const { UploadOperation } = require('../../core/upload_operation');
+const { Util } = require('../../core/util');
 
 /**
  * JobUploadForm allows the user to specify where Job

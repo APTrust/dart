@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+const { Context } = require('./context');
 const { ManifestEntry } = require('./manifest_entry');
 const { TestUtil } = require('./test_util');
 const { Util } = require('./util');

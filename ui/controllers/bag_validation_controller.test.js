@@ -7,6 +7,7 @@ const os = require('os');
 const path = require('path');
 const { TestUtil } = require('../../core/test_util');
 const { UITestUtil } = require('../common/ui_test_util');
+const { Util } = require('../../core/util');
 const { ValidationOperation } = require('../../core/validation_operation');
 
 beforeAll(() => {

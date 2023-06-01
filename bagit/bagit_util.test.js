@@ -1,4 +1,5 @@
 const { BagItUtil } = require('./bagit_util');
+const { Constants } = require('../core/constants');
 const { Context } = require('../core/context');
 const fs = require('fs');
 const path = require('path');

@@ -2,9 +2,11 @@ const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
+const { Field } = require('./field');
 const { Form } = require('./form');
 const { PluginManager } = require('../../plugins/plugin_manager');
 const { StorageService } = require('../../core/storage_service');
+const { Util } = require('../../core/util');
 
 /**
  * WorkflowForm allows the user to define a workflow.

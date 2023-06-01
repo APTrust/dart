@@ -1,4 +1,5 @@
 const { Constants } = require('../core/constants');
+const { Context } = require('../core/context');
 const { Worker } = require('./worker');
 
 test('Constructor sets expected properties', () => {

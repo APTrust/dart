@@ -9,6 +9,7 @@ const { JobPackageOpForm } = require('../forms/job_package_op_form');
 const path = require('path');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
+const { constants } = require('buffer');
 
 /**
  * The JobPackaingController presents the page that allows users

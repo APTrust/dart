@@ -1,7 +1,9 @@
+const $ = require('jquery');
 const { Choice } = require('./choice');
 const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
+const { Util } = require('../../core/util');
 const { Workflow } = require('../../core/workflow');
 
 /**

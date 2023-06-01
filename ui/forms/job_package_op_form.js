@@ -4,7 +4,9 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const { Field } = require('./field');
 const { Form } = require('./form');
+const { PluginManager } = require('../../plugins/plugin_manager');
 
 /**
  * JobPackageOpForm can present and parse the form that allows

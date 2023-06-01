@@ -1,4 +1,5 @@
 const fs = require('fs');
+const EventEmitter = require('events');
 const { FileStat } = require('../../../util/file/filestat');
 const { PassThrough } = require('stream');
 const { Plugin } = require('../../plugin');

@@ -1,9 +1,11 @@
+const $ = require('jquery');
 const { BagItProfile } = require('../../bagit/bagit_profile');
 const { Choice } = require('./choice');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Field } = require('./field');
 const { Form } = require('./form');
+const { Job } = require('../../core/job');
 const path = require('path');
 const { ValidationOperation } = require('../../core/validation_operation');
 

@@ -4,6 +4,7 @@ const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { Job } = require('../../core/job');
 const Templates = require('../common/templates');
+const { UIConstants } = require('../common/ui_constants');
 const { Util } = require('../../core/util');
 
 /**

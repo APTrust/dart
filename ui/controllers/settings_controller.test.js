@@ -1,6 +1,7 @@
 const $ = require('jquery');
 const { AppSetting } = require('../../core/app_setting');
 const { BagItProfile } = require('../../bagit/bagit_profile');
+const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const { ExportQuestion } = require('../../core/export_question');
 const { ExportSettings } = require('../../core/export_settings');

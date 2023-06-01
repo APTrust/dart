@@ -4,6 +4,7 @@ const { BagItProfile } = require('../../bagit/bagit_profile');
 const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
+const Dart = require('../../core');
 const { ExportQuestion } = require('../../core/export_question');
 const { ExportSettings } = require('../../core/export_settings');
 const { RemoteRepository } = require('../../core/remote_repository');

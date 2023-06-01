@@ -1,6 +1,8 @@
 const fs = require('fs');
 const { Context } = require('../../../core/context');
 const { DummyReader } = require('../../../util/file/dummy_reader');
+const EventEmitter = require('events');
+const { PassThrough } = require('stream');
 const { Plugin } = require('../../plugin');
 const readdirp = require('readdirp');
 

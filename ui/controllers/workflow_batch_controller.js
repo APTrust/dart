@@ -1,4 +1,5 @@
 const $ = require('jquery');
+const { BaseController } = require('./base_controller');
 const { Constants } = require('../../core/constants');
 const { Context } = require('../../core/context');
 const fs = require('fs');
@@ -7,7 +8,9 @@ const { JobParams } = require('../../core/job_params');
 const { RunningJobsController } = require('./running_jobs_controller');
 const Templates = require('../common/templates');
 const { Util } = require('../../core/util');
+const { Workflow } = require('../../core/workflow');
 const { WorkflowBatch } = require('../../core/workflow_batch');
+const { WorkflowForm } = require('../forms/workflow_form');
 const { WorkflowBatchForm } = require('../forms/workflow_batch_form');
 
 /**
