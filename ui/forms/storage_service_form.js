@@ -39,9 +39,6 @@ class StorageServiceForm extends Form{
             this.fields['login'].label = Context.y18n.__('Access Key Id')
             this.fields['password'].label = Context.y18n.__('Secret Access Key')
         }
-        if (this.obj.protocol == 'sftp') {
-            this.fields['bucket'].label = Context.y18n.__('Folder')
-        }
     }
 
 }
