@@ -107,20 +107,14 @@ class JobRunner {
                 // can't track what happens when we use await here.
                 //
                 // When DART is in GUI mode (the Electron window is running), 
-                // then the await keyword is required.
+                // then the async keyword is required.
                 //
-                // WTF, JavaScript?? This has to be a bug in the Node.js runtime.
+                // WTF, JavaScript??
 
-                console.log(process.env)
-                if (process.env['SPAWNED_FROM_DART_GUI'] == 'true') {
-                    console.log("***** CALLED FROM GUI ********")
-                    Context.logger.info("Called from DART GUI - using await");
-                    await uploader.run()
-                } else {
-                    console.log("***** NO GUI ********")
-                    Context.logger.info("No GUI, no await");
-                    uploader.run()
-                }
+                // TODO: Pass in command-line flag to indicate DART
+                // GUI is the caller.
+
+                uploader.run()
                 console.log("DONE")
             } catch (ex) {
                 console.log("ERROR")

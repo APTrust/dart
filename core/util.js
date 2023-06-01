@@ -741,17 +741,14 @@ class Util {
      */
     static forkJobProcess(job) {
         const { DartProcess } = require('./dart_process');
-        //let tmpFile = Util.tmpFilePath();
-        //fs.writeFileSync(tmpFile, JSON.stringify(job));
+        let tmpFile = Util.tmpFilePath();
+        fs.writeFileSync(tmpFile, JSON.stringify(job));
 
         // Need to change npm command outside of dev env.
         let modulePath = path.join(__dirname, '..', 'main.js');
         let childProcess = fork(
                 modulePath,
-                ['--job', job.id],
-                {
-                    env: { 'SPAWNED_FROM_DART_GUI': 'true' }
-                }
+                ['--job', tmpFile]
         );
 
         let dartProcess = new DartProcess(
