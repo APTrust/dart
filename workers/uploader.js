@@ -6,9 +6,7 @@ const { OperationResult } = require('../core/operation_result');
 const { PluginManager } = require('../plugins/plugin_manager');
 const { StorageService } = require('../core/storage_service');
 const { Util } = require('../core/util');
-const { UIConstants } = require('../ui/common')
 const { Worker } = require('./worker');
-const { file } = require('tmp');
 
 // This implementation is convoluted and messy...
 
@@ -104,9 +102,7 @@ class Uploader extends Worker {
                     if (result.errors.length > 0) {
                         uploader.completedWithError(result.errors);
                     } else {
-                        let f = path.basename(filepath)
-                        console.log(UIConstants)
-                        uploader.completedSuccess(`${UIConstants.GREEN_CHECK_CIRCLE} ${f} -> ${ss.name}`, false);
+                        uploader.completedSuccess(ss.name, false);
                     }
                     resolve(result);
                 });

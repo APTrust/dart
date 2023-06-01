@@ -9,8 +9,6 @@ const { Job } = require('../../core/job');
 const path = require('path');
 const { StorageService } = require('../../core/storage_service');
 const { UploadOperation } = require('../../core/upload_operation');
-const { Util } = require("../../core/util");
-const { Exception } = require('handlebars');
 
 /**
  * BagUploadForm can present and parse the form that allows
@@ -34,37 +32,36 @@ class BagUploadForm extends Form {
 
     _init(job) {
         this.fields['pathToBag'] = new Field("pathToBag", "pathToBag", "Choose a file...", "");
-        this.fields['pathToBag'].required = true
-        this.fields['pathToBag'].attrs = { "webkitdirectory": true }
         let selectedTargets = job.uploadOps.map(op => op.storageServiceId).filter(id => id != '');
         this.fields['uploadTargets'].choices = Choice.makeList(
             this.allTargets,
             selectedTargets,
             false
         );
-        this.fields['uploadTargets'].required = true
     }
 
     parseFromDOM() {
         // This is required for jest tests.
         if ($ === undefined) {
-            var $ = require('jquery')
+            var $ = require('jquery');
         }
         this.obj = new Job();
         let files = document.getElementById('pathToBag').files
-        let allFileNames = files.length ? [ files[0].path ] : []
+        let filename = files[0].path;
+        // If user selected directory, use the dir name.
         if (files.length > 1) {
-            for (let i = 0; i < files.length ; i++) {
-                allFileNames[i] = files[i].path
-            }
-        }  
+            filename = path.dirname(files[0].path);
+        }
+
         let uploadTargets = $('input[name="uploadTargets"]:checked').each(cb => $(cb).value).get().map(cb => cb.value)
+        // This is a problem, because it deletes the upload result
+        // along with the upload target. Hmm...
         this.obj.uploadOps = [];
         for (let targetId of uploadTargets) {
-            let op = new UploadOperation()
-            op.storageServiceId = targetId
-            op.sourceFiles = allFileNames
-            this.obj.uploadOps.push(op)
+            let op = new UploadOperation();
+            op.storageServiceId = targetId;
+            op.sourceFiles = [ filename ]
+            this.obj.uploadOps.push(op);
         }
     }
 }
