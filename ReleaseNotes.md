@@ -1,6 +1,6 @@
 # DART Release Notes
 
-## 2.0.22 - March 14, 2022
+## 2.0.22 - March 14, 2023
 
 * Fixed ["Show Logs" and "About" links not working](https://github.com/APTrust/dart/issues/534).
 * Updated Electron to 20.0.1
