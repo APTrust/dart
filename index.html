@@ -119,9 +119,9 @@ tool for creating archival packages and sending them to a remote repository.</p>
 <h2>Installation</h2>
 <p>Download the DART installer for your system and then check out our <a href="https://aptrust.github.io/dart-docs/users/getting_started/">Getting Started</a> page.</p>
 <ul>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.21.dmg">Mac OSX v2.0.21</a></li>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.21.exe">Windows v2.0.21</a></li>
-<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.21_amd64.deb">Linux v2.0.21</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.22.dmg">Mac OSX v2.0.22</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.22.exe">Windows v2.0.22</a></li>
+<li><a href="https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.22_amd64.deb">Linux v2.0.22</a></li>
 </ul>
 <p>While these installers are labeled as version 2.0, you should consider them
 a 2.0 pre-release, and DART itself as beta software. See
@@ -242,19 +242,46 @@ transformations with the following command:</p>
 <pre class="prettyprint source"><code>git config --local core.autocrlf false
 </code></pre>
 <h2>Building</h2>
-<p>To build the DART application into a standalone binary, run this command from
-the top-level directory of the project.</p>
-<pre class="prettyprint source"><code>CSC_LINK=&quot;file:///&lt;path to p12>&quot; CSC_KEY_PASSWORD='&lt;secret>' PYTHON_PATH='/usr/local/bin/python' ./node_modules/.bin/electron-builder -ml
-</code></pre>
-<p>This produces a signed, notarized Apple build as well as a Linux build in .deb format.
-You need Python 2 on your Mac for this build to work, because some moron hard-coded
-that into the Electron build utilities. They hard-coded the path too, so you need to
-correct it with PYTHON_PATH.</p>
-<p>The binary will appear in the /dist folder. For example, when building
-on a Mac, it will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
-<p>You can run the binary directly from there.</p>
 <p>Note that you can bump the version for new releases with the bump_version
 script. For example, to bump from 2.x.x to 2.y.y, run <code>npm run bump 2.x.x to 2.y.y</code></p>
+<p>To build the DART application into a standalone binary, run this command from
+the top-level directory of the project.</p>
+<pre class="prettyprint source"><code>CSC_LINK=&quot;file:///&lt;path to p12>&quot; CSC_KEY_PASSWORD='&lt;secret>' ./node_modules/.bin/electron-builder -mwl
+</code></pre>
+<p>This produces a signed, notarized Apple build as well as a Linux build in .deb format
+and a Windows build, complete with installer. (Note that the build instruction above
+is intended to be run on a Mac to take advantage of Apple code signing.)</p>
+<p>You need Python 2 on your Mac for this build to work, because some moron hard-coded
+that into the Electron build utilities. They hard-coded the path too, so you may need to
+correct it with PYTHON_PATH. (E.g. <code>PYTHON_PATH='/usr/local/bin/python'</code>)</p>
+<p>The binaries and installers will appear in the /dist folder. For example,
+the Mac binary will appear in <code>dist/mac/DART.app/Contents/MacOS/DART</code>.</p>
+<p>You can run the binary directly from there.</p>
+<p>The installers will appear in the dist directory. The important ones are:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DART Setup 2.0.22.exe</td>
+<td>Windows installer for 64-bit Intel platforms.</td>
+</tr>
+<tr>
+<td>DART-2.0.22-universal.dmg</td>
+<td>Mac universal binary installer. Should run on both Intel and ARM platforms.</td>
+</tr>
+<tr>
+<td>DART_2.0.22_amd64.deb</td>
+<td>Linux installer for 64-bit Intel platforms. (Debian/Ubuntu package format.)</td>
+</tr>
+</tbody>
+</table>
+<h3>Building on Windows &amp; Linux</h3>
+<p><code>./node_modules/.bin/electron-builder --publish never</code></p>
 <h2>Building the Docs</h2>
 <pre class="prettyprint source"><code>./jsdoc.sh
 </code></pre>
