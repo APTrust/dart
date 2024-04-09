@@ -30,9 +30,9 @@ Download the DART installer for your system and then check out our [Getting Star
 * [Windows v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.22.exe)
 * [Linux v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.22_amd64.deb)
 
-While these installers are labeled as version 2.0, you should consider them
-a 2.0 pre-release, and DART itself as beta software. See
-[Status of Core Features](#status-of-core-features) below for more info.
+> [!NOTE]
+> While DART 2.0.22 is the current stable version, an early alpha version of DART 3 is available. Future development will occur in DART 3, but for now, it's not quite ready for production use. We welcome testers and feedback on the new version. If you're interested in learning more, take a look at the [DART 3 README](https://github.com/APTrust/dart-runner/blob/master/server/README.md).
+
 
 ## Documentation
 
@@ -192,7 +192,7 @@ You need Python 2 on your Mac for this build to work, because some moron hard-co
 that into the Electron build utilities. They hard-coded the path too, so you may need to
 correct it with PYTHON_PATH. (E.g. `PYTHON_PATH='/usr/local/bin/python'`)
 
-The binaries and installers will appear in the /dist folder. For example, 
+The binaries and installers will appear in the /dist folder. For example,
 the Mac binary will appear in `dist/mac/DART.app/Contents/MacOS/DART`.
 
 You can run the binary directly from there.
