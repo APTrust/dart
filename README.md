@@ -1,8 +1,28 @@
 # APTrust DART
 
+
+## DART 3
+
+<mark><strong>We plan on releasing an alpha version of DART 3 in the first half of 2025.</strong></mark>
+
+DART 3 includes new features such as support for gzipped bags, improved
+uploading, and saving local copies of artifacts such as tag files and manifests.
+More importantly, we will be rolling fixes for DART 2 issues into DART 3, which
+will be the platform on which we build future features.
+
+For info on DART 3's status and rationale, see [DART 3 branch](https://github.com/APTrust/dart/tree/dart3)
+of this repository.
+
+If you want to help alpha test DART 3, please contact us at info@aptrust.org,
+or just download the latest release when it's available. We will post download
+links on the [DART 3 branch](https://github.com/APTrust/dart/tree/dart3).
+
+## DART 2 (Current Version)
+
 [![Build Status](https://travis-ci.com/APTrust/dart.svg?branch=master)](https://travis-ci.org/APTrust/dart)
 [![Build status](https://ci.appveyor.com/api/projects/status/i5d8hrlan9kph5np?svg=true)](https://ci.appveyor.com/project/aptrust/dart/branch/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/8b51be47cf6ed6aaa698/maintainability)](https://codeclimate.com/github/APTrust/dart/maintainability)
+
 
 In 2018, APTrust opened its services to depositors at smaller institutions
 that did not have the technical resources to package and upload digital
