@@ -1,0 +1,24 @@
+{{ define "error/show.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Oops!</h2>
+
+<p>{{ .error }} [<a data-toggle="collapse" href="#errorDetail" aria-expanded="false" aria-controls="errorDetail">Show Details</a>]</p>
+
+
+  <div class="collapse" id="errorDetail">
+    <div class="card card-body">
+        <pre>
+            {{ .stackTrace }}
+        </pre>
+    </div>
+  </div>
+
+
+
+<button type="button" class="btn btn-primary mt-3 mb-5" onclick="history.back()" role="button"><< Go Back</button>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

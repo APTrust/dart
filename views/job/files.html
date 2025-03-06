@@ -1,0 +1,153 @@
+{{ define "job/files.html" }}
+
+{{ template "partials/page_header.html" . }}
+
+<div class="row" id="jobFilesTitle">
+    <div class="col-12">
+        <h2>Files
+        <span style="font-size: 1rem;"
+            data-toggle="popover"
+            data-trigger="hover"
+            title="Choosing Files"
+            data-content="Click the name of a folder to open it. Drag any file or folder icon to the right to include it in this job.">
+            <i class="fas fa-question-circle text-primary"></i></span>
+        </h2>
+    </div>
+</div>
+
+<div class="row" id="jobFilesContainer">
+
+    <div class="col-4">
+        {{ template "partials/file_browser.html" . }}
+    </div>
+
+
+    <div class="col-8">
+        {{ if .workflow }}
+            <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+        {{ end }}
+        <div id="dropZone" class="drop-zone">
+            <div class="text-center upload-icon-div" id="uploadIcon">
+                <p>{{ .dragDropInstructions }}</p>
+                <img src="/assets/img/upload.png" alt="Drop files here">
+            </div>
+
+
+            <div class="panel panel-default" id="filesPanel" style="display:{{ if .showJobFiles }} block {{ else }} none {{ end }};background-color:inherit;">
+                <div class="panel-body">
+                    <table class="table table-hover" id="filesTable">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>File Path</th>
+                                <th>Directories</th>
+                                <th>Files</th>
+                                <th>Total Size</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ $fileDeletionUrl := .fileDeletionUrl }}
+                            {{ $currentDir := .currentDir }}
+                            {{ range $index, $filepath := .sourceFiles }}
+                                {{ template "job/file_row.html"  dict "filepath" $filepath "fileDeletionUrl" $fileDeletionUrl "currentDir" $currentDir }}
+                            {{ end }}
+                            <tr id="fileTotals">
+                                <td>Totals</td>
+                                <td id="totalDirCount" data-total="0"></td>
+                                <td id="totalFileCount" data-total="0"></td>
+                                <td id="totalByteCount" data-total="0"></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-danger" role="alert" id="fileWarningContainer" style="display: none">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <div id="fileWarning"></div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3 mb-3">
+    <div class="col-12">
+        <div class="float-left">
+            <button class="btn btn-danger" onclick="confirmForegroundDeletion('Do you want to delete this job? Doing so will also delete associated artifacts such as manifests and tag files.', {{ .jobDeletionUrl }})" role="button">Delete Job</button>
+        </div>
+
+        <div class="float-right" id="btnJobPackagingDiv">
+            <a class="btn btn-primary" href="{{ .nextButtonUrl }}" role="button">Next &gt;&gt;</a>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // NOTE!!!
+    //
+    // Trying to log e.dataTransfer to the console results
+    // in e.dataTransfer being set to null. This is a long-standing
+    // bug (or security feature?).
+    //
+    // See:
+    //
+    // https://stackoverflow.com/questions/11573710/event-datatransfer-files-is-empty-when-ondrop-is-fired
+    function attachDragAndDropEvents() {
+        document.querySelectorAll("[draggable='true']").forEach(item =>
+        item.addEventListener('dragstart', function(e){
+            var target = e.originalTarget || e.target
+            e.dataTransfer.dropEffect = "copy";
+            e.dataTransfer.setData("fullPath", target.dataset.fullPath);
+        }))
+        var dropZone = document.querySelector('#dropZone')
+        dropZone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            let fullPath = e.dataTransfer.getData("fullPath")
+            let fileBrowserPath = document.getElementById("currentDir").attributes.getNamedItem("title").value
+            console.log(fullPath)
+            e.currentTarget.classList.remove('drop-zone-over');
+
+            // TODO: Display the item in the drop zone.
+            // Also consider a mechanism to specify the item
+            // as payload file (99.99999% of the time) or as
+            // a custom tag file.
+            //
+            // See https://github.com/APTrust/dart/issues/550
+            let url = {{ .addFileUrl }}
+            let data = {
+                "fullPath": fullPath,
+                "directory": fileBrowserPath,
+            }
+            postForm(url, data)
+
+            return false;
+        });
+        dropZone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            e.currentTarget.classList.add('drop-zone-over');
+            return false;
+        });
+        dropZone.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drop-zone-over');
+            return false;
+        });
+        dropZone.addEventListener('dragend', function (e) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drop-zone-over');
+            return false;
+        });
+        // console.log("Attached drag and drop events")
+    }
+    attachDragAndDropEvents();
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

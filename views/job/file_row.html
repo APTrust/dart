@@ -1,0 +1,19 @@
+{{ define "job/file_row.html" }}
+
+{{ $dirStats := dirStats .filepath }}
+
+<tr class="filepath" data-filepath="{{ .filepath }}" title="{{ .filepath }}">
+    {{ if $dirStats.RootIsFile }}
+    <td>{{ fileIconFor .filepath }} {{ $dirStats.BaseName }}</td>
+    {{ else }}
+    <td><i class="far fa-folder"></i> {{ $dirStats.BaseName }}</td>
+    {{ end }}
+    <td class="dirCount">{{ $dirStats.DirCount }}</td>
+    <td class="fileCount">{{ $dirStats.FileCount }}</td>
+    <td class="fileSize" data-bytes="{{ $dirStats.TotalBytes }}">{{ $dirStats.TotalBytes }}</td>
+    <td class="clickable delete-file" onclick="confirmForegroundDeletion('Do you want to remove this item?', {{ .fileDeletionUrl }}, { 'fullPath': '{{ .filepath }}', 'directory': '{{ .currentDir }}' })">
+      <i class="fas fa-times text-danger" title="Delete {{ .filepath }}"></i>
+    </td>
+</tr>
+
+{{ end }}

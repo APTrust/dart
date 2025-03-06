@@ -1,0 +1,28 @@
+{{ define "upload_job/choose_targets.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Upload Targets</h2>
+
+<form method="post" action="/upload_jobs/targets/{{ .uploadJob.ID }}" id="{{ .uploadJob.ID }}">
+
+    {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.StorageServiceIDs }}
+
+
+  <input type="hidden" name="direction" value="next"/>
+
+
+  <div class="float-left mt-5 mb-5" id="btnBackDiv">
+    <button type="submit" onclick="document.forms['{{ .uploadJob.ID }}'].direction.value='previous'" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+  </div>
+  
+  <div class="float-right mt-5 mb-5" id="btnNextDiv">
+    <button type="submit" onclick="document.forms['{{ .uploadJob.ID }}'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+  </div>
+
+</form>
+
+{{ template "partials/page_footer.html" .}}
+
+
+{{ end }}

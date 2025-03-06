@@ -1,0 +1,86 @@
+{{ define "job/list.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Jobs</h2>
+<div class="float-right mt-1 mb-3">
+  <a class="btn btn-primary" href="/jobs/new" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Artifacts</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $index, $job := .jobs }}
+    <tr>
+      <td><a href="/jobs/files/{{ $job.ID }}">{{ $job.Name }}</a></td>
+      <td>
+        {{ displayDate $job.Outcome.LastActivity}}<br/>
+        
+        <!-- Packaging Info -->
+        {{ if $job.PackageAttempted }}
+          {{ if $job.PackageSucceeded }}
+            <i class="fa fa-check mr-2" aria-hidden="true" style="color: green;"></i> Packaged 
+              {{ if $job.Outcome.BagItProfileName }}
+              with profile {{ $job.Outcome.BagItProfileName }} 
+              {{ end }}
+              <br/>
+          {{ else }}
+            <i class="fa fa-times mr-2" aria-hidden="true" style="color: red;"></i> Packaging failed <br/>
+          {{ end }}
+        {{ end }}
+
+        <!-- Validation Info -->
+        {{ if $job.ValidationAttempted }}
+          {{ if $job.ValidationSucceeded }}
+            <i class="fa fa-check mr-2" aria-hidden="true" style="color: green;"></i> Validation succeeded <br/>
+          {{ else }}
+            <i class="fa fa-times mr-2" aria-hidden="true" style="color: red;"></i> Validation failed <br/>
+          {{ end }}
+        {{ end }}
+
+        <!-- Upload info -->
+        {{ range $a, $uploadTarget := $job.Outcome.SuccessfulUploads }}
+          <i class="fa fa-check mr-2" aria-hidden="true" style="color: green;"></i> Uploaded to {{ $uploadTarget }} <br/>
+        {{ end }}
+        {{ range $a, $uploadTarget := $job.Outcome.FailedUploads }}
+          <i class="fa fa-times mr-2" aria-hidden="true" style="color: red;"></i>  Upload to {{ $uploadTarget }} failed <br/>
+        {{ end }}
+        {{ $job.Outcome.Message }}
+      </td>
+      <td>
+        {{ if $job.Outcome.JobWasRun }}
+        <a href="/jobs/artifacts/list/{{ $job.ID }}">View Artifacts</a>
+        {{ end }}
+      </td>
+      <td><a href="javascript:confirmForegroundDeletion('Delete job {{ $job.Name }}? Doing so will also delete associated artifacts like manifests and tag files.', '/jobs/delete/{{ $job.ID }}')" title="Delete job {{ $job.Name }}"><i class="fa fa-times text-danger" aria-hidden="true"></i></a></td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
+
+{{ template "partials/table_bottom_links.html" . }}
+
+
+{{ template "partials/pager.html" . }}
+
+<script>
+$(function(){
+  $('select[data-action="show-artifact"]').on("change", function(){
+    let artifactId = $(this).val()
+    if (artifactId != "") {
+      let url = `/jobs/artifact/${artifactId}`
+      loadIntoModal('get', 'Job Artifact', url)
+    }
+  })
+})
+</script>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

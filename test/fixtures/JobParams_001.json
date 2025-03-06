@@ -1,9 +1,0 @@
-{
-	"workflowName": "Test Workflow",
-	"packageName": "Bag of Stuff",
-	"files": ["file1", "file2"],
-	"tags": [],
-	"_workflowObj": null,
-	"_bagItProfile": null,
-	"errors": {}
-}

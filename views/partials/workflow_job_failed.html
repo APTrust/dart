@@ -1,0 +1,12 @@
+{{ define "partials/workflow_job_failed.html" }}
+
+<div class="row batch-result" id="{{ .job.id }}">
+  <i class="fa fa-times mr-2" aria-hidden="true" style="color: red;"></i> Line {{ .lineNumber }} - {{ .jobName }}
+  <ul>
+    {{ range $index, $err := .errors }}
+    <li class="text-danger">{{ $err }}</li>
+    {{ end }}
+  </ul>
+</div>
+
+{{ end }}

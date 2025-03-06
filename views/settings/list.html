@@ -1,0 +1,30 @@
+{{ define "settings/list.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Settings for Export and Sharing</h2>
+<div class="float-right mt-1 mb-3">
+  <a class="btn btn-primary" href="/settings/export/new" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $index, $item := .items }}
+    <tr class="clickable-row" onclick="location.href='/settings/export/edit/{{ $item.ID }}'">
+      <td><a href="/settings/export/edit/{{ $item.ID }}">{{ $item.Name }}</a></td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
+
+{{ template "partials/table_bottom_links.html" . }}
+
+{{ template "partials/pager.html" . }}
+
+{{ template "partials/page_footer.html" .}} 
+
+{{ end }}

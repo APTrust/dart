@@ -1,0 +1,42 @@
+{{ define "settings/export_result.html" }}
+
+
+<h2>{{ .settings.Name }}</h2>
+
+<div class="form-group">
+  <textarea id="txtJson" name="txtJson" class="form-control" rows="20">{{- .json -}}</textarea>
+</div>
+
+<div class="mt-1 mb-1 p-4 alert-danger" style="display:{{ .displayPlaintextWarning }}">
+
+    <h3>Warning</h3>
+
+    {{ if .displayPasswordWarning }}
+    <p>One or more storage service records in these settings contains a plaintext password. </p> 
+    {{ end }}
+
+    {{ if .displayTokenWarning }}
+    <p>One or more repository records in these settings contains a plaintext API token. </p> 
+    {{ end }}
+
+    <p>Do not post these settings publicly, and be careful who you share them with.</p>
+    <p>For more info see
+    <a target="_blank" href="https://aptrust.github.io/dart-docs/users/settings/storage_services/#password">
+    https://aptrust.github.io/dart-docs/users/settings/storage_services/#password</a></p>
+</div>
+
+
+<div class="mt-1 mb-1">
+  <div id="copied" class="text-success" style="display:none">
+    Data has been copied to the clipboard.
+  </div>
+</div>
+
+<div class="bottom-buttons">
+  <div class="float-right mr-5">
+    <button type="button" class="btn btn-primary" id="btnCopyToClipboard" onclick="copyToClipboard('#txtJson', '#copied')">Copy to Clipboard</button>
+    <a role="button" class="btn btn-secondary" href="/settings/export">Done</a>
+  </div>
+</div>
+
+{{ end }}

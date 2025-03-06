@@ -1,0 +1,6 @@
+Source-Organization: virginia.edu
+Bagging-Date: 2014-04-14T11:55:26.17-0400
+Bag-Count: 1 of 1
+Bag-Group-Identifier: Charley Horse
+Internal-Sender-Description: so much depends upon a red wheel barrow glazed with rain water beside the white chickens
+Internal-Sender-Identifier: uva-internal-id-0001

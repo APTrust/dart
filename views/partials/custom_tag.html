@@ -1,0 +1,9 @@
+{{ define "partials/custom_tag.html" }}
+
+<div class="form-group" data-custom-tag-id="{{ .field.id }}">
+    <input type="text" id="{{ .field.id }}-name" value="{{ .field.name }}" class="form-control custom-tag custom-tag-name" placeholder="Tag name" data-tag-id="{{ .field.id }}"/>
+    <input type="text" id="{{ .field.id }}-value" value="{{ .field.value }}" class="form-control custom-tag custom-tag-value" placeholder="Tag value" data-tag-id="{{ .field.id }}"/>
+    <a href="#" class="deleteCustomTag" data-tag-id="{{ .field.id }}"><i class="far fa-times-circle text-danger"></i></a>
+</div>
+
+{{ end }}

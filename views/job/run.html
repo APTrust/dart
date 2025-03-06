@@ -1,0 +1,37 @@
+{{ define "job/run.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Review and Run</h2>
+
+{{ if .workflow }}
+    <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+{{ end }}
+
+<!--
+This template contains the HTML and JavaScript to display
+job details and progress.
+-->
+{{ template "partials/job_run.html" . }}
+
+<div class="mt-5">
+  <div class="float-left" id="btnBackDiv">
+    <a class="btn btn-primary" href="{{ .backButtonUrl }}" role="button">&lt;&lt; Back</a>
+  </div>
+
+
+
+  <div class="float-right" id="btnNextDiv">
+    {{ if not .workflowID }}
+    <button class="btn btn-info mr-5" onclick="postDataInBackground('/workflows/from_job/{{ .jobID }}')" role="button">Create Workflow</button>
+    {{  end }}
+
+    <!-- Though it acts like a link, this has to be a button so we can disable it after click. -->
+    <button id="btnRunJob" class="btn btn-success ml-5" onclick="runJob({{ .jobRunUrl }}, '{{ .jobID }}')" role="button">Run Job</button>
+  </div>
+</div>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

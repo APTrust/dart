@@ -1,0 +1,14 @@
+  {
+    "id": "d250eda9-d761-4c03-ab5b-266bacc40f3f",
+    "allowsDownload": false,
+    "allowsUpload": true,
+    "bucket": "uploads",
+    "description": "Local SFTP service using password authentication",
+    "host": "127.0.0.1",
+    "login": "pw_user",
+    "loginExtra": "",
+    "name": "Local SFTP (password)",
+    "password": "password",
+    "port": 2222,
+    "protocol": "sftp"
+}

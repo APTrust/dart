@@ -1,4 +1,0 @@
-556e11368ca756c19ca2b992d6f5b96c data/ORIGINAL/1
-a4d9c67041d961bb8e003fdc2a3b65e8 data/ORIGINAL/1-metadata.xml
-6e0b29e5db54537ef9b6892c4bbda08b data/metadata.xml
-121d1298c46e5dd6e97f62d01a33f0df data/object.properties

@@ -1,0 +1,28 @@
+{{ define "validation_job/choose_profile.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>BagIt Profile</h2>
+
+<form method="post" action="/validation_jobs/profiles/{{ .valJob.ID }}" id="validationProfileForm">
+
+    <div id="jobProfileContainer" style='display:block;'>
+        {{ template "partials/input_select.html" dict "field" .form.Fields.BagItProfileID }}        
+    </div>
+
+    <input type="hidden" name="direction" value="next"/>
+
+    <div class="float-left" id="btnBackDiv">
+        <button type="submit" onclick="document.forms['validationProfileForm'].direction.value='previous'" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+    </div>
+
+    <div class="float-right" id="btnNextDiv">
+        <button type="submit" onclick="document.forms['validationProfileForm'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+    </div>
+
+</form>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

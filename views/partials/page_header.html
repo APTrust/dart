@@ -1,0 +1,36 @@
+{{ define "partials/page_header.html" }}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <title>DART</title>
+    <!-- link href="/assets/css/bootstrap-yeti.min.css" rel="stylesheet" -->
+    <link href="/assets/fontawesome-free-5.7.0-web/css/fontawesome.min.css" rel="stylesheet">
+    <link href="/assets/css/jquery-ui.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/jquery.json-viewer.css" rel="stylesheet">
+    <link href="/assets/css/dart.css" rel="stylesheet">
+
+    <script src="/assets/js/jquery-3.2.1.min.js" onload="window.$ = window.jQuery;"></script>
+    <script src="/assets/js/jquery-ui.min.js"></script>
+    <script src="/assets/js/popper.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/fontawesome-free-5.7.0-web/js/all.js"></script>
+    <script src="/assets/js/bootbox.js"></script>
+    <script src="/assets/js/jquery.json-viewer.js"></script>
+    <script src="/assets/js/application.js"></script>
+</head>
+<body>
+
+  {{ template "partials/nav.html" .}}
+
+  {{ template "partials/banner_alert.html" . }}
+
+  <!-- Begin "container" div with main content. This div is closed in partials/page_footer.html -->
+  <div class="container pt-3" id="container">
+
+
+{{ end }}

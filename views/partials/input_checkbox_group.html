@@ -1,0 +1,20 @@
+{{ define "partials/input_checkbox_group.html" }}
+
+{{ $field := .field }}
+{{ range $index, $option := .field.Choices }}
+<div class="form-check {{ template "partials/classes.html" $field }} {{ $field.FormGroupClass }}"
+     {{ template "partials/attrs.html" $field }}
+     {{ if $field.Hide }}style="display:none;"{{ end }}>
+  <label class="form-check-label">
+    <input class="form-check-input" type="checkbox" name="{{ $field.Name }}" value="{{ $option.Value }}" 
+    {{ if $option.Selected }}checked{{ end }} />
+    {{ $option.Label }}
+  </label>
+</div>
+{{ end }}
+
+<small id="{{ .field.ID }}Error" class="form-text text-danger">
+    {{ .field.Error }}
+</small>
+
+{{ end }}

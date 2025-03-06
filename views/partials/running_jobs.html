@@ -1,0 +1,21 @@
+{{ define "partials/running_jobs.html" }}
+
+<!-- DEPRECATED. Delete this file when we're sure we're no longer using it. -->
+
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-header">Running Jobs</div>
+    <div class="card-body dashboard-card-body" id="dartProcessContainer">
+      {{ if .items }}
+        {{ range $index, $item := .items }}
+          {{ template "partials/dart_process.html" $item }}
+        {{ end }}
+      {{else }}
+      <p>No running jobs.</p>
+      {{ end }}
+    </div>
+  </div>
+</div>
+
+
+{{ end }}

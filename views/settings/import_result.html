@@ -1,0 +1,39 @@
+{{ define "settings/import_result.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Import Result</h2>
+
+<p>DART imported the following settings:</p>
+
+{{ if .appSettingResults }}<h3>Application Settings</h3>{{ end }}
+{{ range $index, $result := .appSettingResults }}
+  {{ template "settings/import_individual_result.html" $result }}
+{{ end }}
+
+
+{{ if .profileResults }}<h3>BagIt Profiles</h3>{{ end }}
+{{ range $index, $result := .profileResults }}
+  {{ template "settings/import_individual_result.html" $result }}
+{{ end }}
+
+
+{{ if .repoResults }}<h3>Remote Repositories</h3>{{ end }}
+{{ range $index, $result := .repoResults }}
+  {{ template "settings/import_individual_result.html" $result }}
+{{ end }}
+
+
+{{ if .ssResults }}<h3>Storage Services</h3>{{ end }}
+{{ range $index, $result := .ssResults }}
+  {{ template "settings/import_individual_result.html" $result }}
+{{ end }}
+
+
+<div class="float-right">
+  <a role="button" class="btn btn-primary" href="/">Done</a>
+</div>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

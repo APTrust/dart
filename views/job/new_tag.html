@@ -1,0 +1,23 @@
+{{ define "job/new_tag.html" }}
+
+<form method="post" action="/jobs/add_tag/{{ .jobID }}" id="NewTagForm">
+
+    {{ template "partials/input_text.html" dict "field" .form.Fields.TagFile }}
+  
+    {{ template "partials/input_text.html" dict "field" .form.Fields.TagName }}
+  
+    {{ template "partials/input_text.html" dict "field" .form.Fields.UserValue }}
+  
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.IsBuiltIn }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.IsUserAddedTag }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.WasAddedForJob }}
+  
+    <div class="bottom-buttons">
+      <div class="float-right">
+      <button type="button" class="btn btn-primary" onclick="submitNewTagFileForm('#NewTagForm')" role="button">Save</button>
+      </div>
+    </div>
+  </form>
+
+  {{ end }}

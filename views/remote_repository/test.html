@@ -1,0 +1,13 @@
+{{ define "remote_repository/test.html" }}
+
+<!-- This renders in a modal, so it does not include the header or footer. -->
+
+<h2>{{ .repo.Name }}</h2>
+
+{{ if .succeeded }}
+<p class="mt-3 mb-3 text-success">{{ .message }}</p>
+{{ else }}
+<p class="mt-3 mb-3 text-danger">{{ .message }}</p>
+{{ end }}
+
+{{ end }}

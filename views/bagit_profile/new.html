@@ -1,0 +1,23 @@
+{{ define "bagit_profile/new.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>New BagIt Profile</h2>
+
+<form method="post" action="/profiles/new" id="{{ .form.Fields.ID.Value }}">
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.BaseProfileID }}
+
+  <div class="bottom-buttons">
+    <div class="float-right">
+      <button type="submit" class="btn btn-primary" role="button">Create</button>
+    </div>
+    <div class="float-right mr-5">
+      <a class="btn btn-secondary" href="/profiles" role="button">Cancel</a>
+    </div>
+  </div>
+</form>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

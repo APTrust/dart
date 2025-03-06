@@ -1,0 +1,33 @@
+{{ define "bagit_profile/list.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>BagIt Profiles</h2>
+<div class="float-right mt-1 mb-3">
+    <a class="btn btn-outline-success" href="/profiles/import" role="button">Import Profile</a>
+    <a class="btn btn-primary" href="/profiles/new" role="button">New</a>
+</div>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $i, $profile := .items}}
+    <tr class="clickable-row" onclick="location.href='/profiles/edit/{{ $profile.ID }}'">
+      <td>{{ $profile.Name }}</td>
+      <td>{{ $profile.Description }}</td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
+
+{{ template "partials/table_bottom_links.html" }}
+
+{{ template "partials/pager.html" . }}
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

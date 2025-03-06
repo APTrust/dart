@@ -1,0 +1,13 @@
+{{ define "partials/table_bottom_links.html" }}
+
+<div class="text-center" id="table-bottom-links">
+    {{ if .previousLink }}
+    <button type="button" class="btn btn-primary btn-sm" onclick="{{ .previousLink }}">&lt;&lt; Previous</button>
+    {{ end }}
+
+    {{ if .nextLink }}
+    <button type="button" class="btn btn-primary btn-sm" onclick="{{ .nextLink }}">Next &gt;&gt;</button>
+    {{ end }}
+</div>
+
+{{ end }}

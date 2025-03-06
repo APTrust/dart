@@ -1,0 +1,7 @@
+{{ define "partials/workflow_job_succeeded.html" }}
+
+<div class="row batch-result" id="{{ .job.id }}">
+<i class="fa fa-check mr-2" aria-hidden="true" style="color: green;"></i> Line {{ .lineNumber }} - {{ .jobName }}
+</div>
+
+{{ end }}

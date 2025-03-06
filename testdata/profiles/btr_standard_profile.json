@@ -1,0 +1,56 @@
+{
+  "BagIt-Profile-Info": {
+    "Source-Organization": "Beyond the Repository Bagit Profile Group",
+    "External-Description": "Bagit Profile for Consistent Deposit to Distributed Digital Preservation Services",
+    "Version": "1.0",
+    "BagIt-Profile-Identifier": "https://github.com/dpscollaborative/btr_bagit_profile/releases/download/1.0/btr-bagit-profile.json",
+    "BagIt-Profile-Version": "1.3.0"
+  },
+  "Bag-Info": {
+    "Source-Organization": { "required": true },
+    "Bagging-Date": { "required": true },
+    "Payload-Oxum": { "required": true },
+    "Organization-Address": { "required": false, "recommended": true },
+    "Contact-Name": { "required": false },
+    "Contact-Phone": { "required": false },
+    "Contact-Email": { "required": false, "recommended": true },
+    "External-Description": { "required": false },
+    "External-Identifier": { "required": false },
+    "Bag-Group-Identifier": {
+      "required": false,
+      "recommended": true,
+      "description": "*Recommended in the case of multiple related bags, otherwise optional"
+    },
+    "Bag-Count": {
+      "required": false,
+      "recommended": true,
+      "description": "*Recommended in the case of multiple related bags, otherwise optional"
+    },
+    "Bag-Size": { "required": false },
+    "Internal-Sender-Identifier": { "required": false, "recommended": true },
+    "Internal-Sender-Description": { "required": false, "recommended": true },
+    "Payload-Identifier": { "required": false },
+    "Bag-Producing-Organization": {
+      "required": false,
+      "recommended": true,
+      "description": "Can be the same as source_organization recommended when not the same as source"
+    }
+  },
+  "Manifests-Required": [],
+  "Manifests-Allowed": ["md5", "sha1", "sha256", "sha512"],
+  "Allow-Fetch.txt": false,
+  "Serialization": "optional",
+  "Accept-Serialization": [
+    "application/zip",
+    "application/tar",
+    "application/x-tar",
+    "application/gzip",
+    "application/x-gzip",
+    "application/x-7z-compressed"
+  ],
+  "Tag-Manifests-Required": [],
+  "Tag-Manifests-Allowed": ["md5", "sha1", "sha256", "sha512"],
+  "Tag-Files-Required": [],
+  "Tag-Files-Allowed": ["*"],
+  "Accept-BagIt-Version": ["0.97", "1.0"]
+}

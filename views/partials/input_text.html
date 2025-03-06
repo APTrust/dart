@@ -1,0 +1,18 @@
+{{ define "partials/input_text.html" }}
+
+<div class="form-group {{ .field.FormGroupClass }}">
+    <label class="control-label {{ if .field.Help }}clickable{{ end }}" for="{{ .field.ID }}"
+           {{ if .field.Help }}data-toggle="popover" data-trigger="hover" title="{{ .field.Label }}" data-content="{{ .field.Help }}"{{ end }}>
+           {{ .field.Label }} {{ if .field.Required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{ end }} 
+           {{ if .field.Help }}<i class="fas fa-question-circle text-primary"></i>{{ end }}</label>
+    <input type="text" name="{{ .field.Name }}" value="{{ .field.Value }}"
+           id="{{ .field.ID }}"
+           class="form-control {{ template "partials/classes.html" . }}"
+           {{ template "partials/attrs.html" .field }} />
+    <small id="{{ .field.Name }}Error" class="form-text text-danger">
+      {{ .field.Error }}
+    </small>
+  </div>
+
+  {{ end }}
+  

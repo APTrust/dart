@@ -1,0 +1,36 @@
+{{ define "partials/recent_jobs.html" }}
+
+<!-- DEPRECATED. Delete this file when we're sure we're no longer using it. -->
+
+<div class="col-md-6">
+  <div class="card">
+    <div class="card-header">Recent Jobs</div>
+    <div class="card-body dashboard-card-body" id="cardRecentJobs">
+
+      {{ if .items }}
+      <table class="table table-hover">
+        <thead class="thead-inverse">
+          <tr>
+            <th>Name</th>
+            <th>Outcome</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{ range $index, $item := .items }}
+          <tr>
+            <td>{{ $item.Name }}</td>
+            <td>{{ $item.Outcome }}</td>
+            <td>{{ $item.Date }}</td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+      {{ else }}
+      <p>"No recent jobs."</p>
+      {{ end }}
+    </div>
+  </div>
+</div>
+
+{{ end }}
