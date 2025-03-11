@@ -8,7 +8,7 @@ import (
 
 	"github.com/APTrust/dart-runner/core"
 	"github.com/APTrust/dart-runner/util"
-	"github.com/APTrust/dart/v3/controllers"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
