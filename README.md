@@ -1,21 +1,26 @@
 # APTrust DART
 
 
-## DART 3
+## DART 3 (Future Version)
 
-<mark><strong>We plan on releasing an alpha version of DART 3 in the first half of 2025.</strong></mark>
+The current version of DART (the one you are looking at) is DART 2. Please continue
+to use DART 2 for production and essential workflows!
+
+For you adventurous souls who aren't afraid to break things now and then, <mark>we have an
+alpha version of DART 3 available!</mark>
 
 DART 3 includes new features such as support for gzipped bags, improved
 uploading, and saving local copies of artifacts such as tag files and manifests.
 More importantly, we will be rolling fixes for DART 2 issues into DART 3, which
 will be the platform on which we build future features.
 
-For info on DART 3's status and rationale, see [DART 3 branch](https://github.com/APTrust/dart/tree/dart3)
-of this repository.
+If you want to help alpha test DART 3, you'll find links to the latest alpha release,
+as well as info about the rationale for DART 3
+on the [DART 3 info page](https://github.com/APTrust/dart/tree/dart3).
 
-If you want to help alpha test DART 3, please contact us at info@aptrust.org,
-or just download the latest release when it's available. We will post download
-links on the [DART 3 branch](https://github.com/APTrust/dart/tree/dart3).
+If you find bugs in DART 3, or if you want to add features, please log your
+reports and requests right here in the DART 2 issue tracker:
+https://github.com/APTrust/dart/issues
 
 ## DART 2 (Current Version)
 
