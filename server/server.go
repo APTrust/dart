@@ -6,7 +6,7 @@ import (
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
-	"github.com/APTrust/dart/v3/controllers"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/gin-gonic/gin"
 )
 
