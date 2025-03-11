@@ -8,12 +8,51 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 Major features are generally known to work in the current alpha build. However, the build has some known issues, including:
 
-* occasional freezing of some dynamic menus and other UI items
-* limited testing on Windows
-* on some Macs dragging a folder into a job to be bagged results in the UI showing that the folder has zero files; on other Macs, dragging folders works as intended
+* After DART 3 starts on MacOS, the dock icon bounces for several minutes, and there's no way to stop it
+* DART 3 has no dock icon on Windows or Linux
+* On all platforms, DART 3 continues to run in the background, even after you close the browser window. Then only way to stop it is to use the task manager, search for "dart3" and click "End Task"
 * importing settings from DART2 doesn't work yet
 * trying to package in any format other than BagIt may cause errors
 * loose (untarred) bags are not supported yet
+
+## Feature Comparison
+
+This table shows the list of features in DART 2 and DART 3 Alpha 1. We will update this list as necessary with each new alpha release of DART 3.
+
+**Last Updated: March 11, 2024**
+
+ **Feature**                                    | **DART 2**   | **DART 3**   | **Notes**
+------------------------------------------------|--------------|--------------|-------------------------------------------------------------------------------------------
+ **Dashboard - Show Recent Jobs**               | Yes          | Yes          |
+ **Dashboard - Show Recent APTrust Work Items** | Yes          | Yes          |
+ **View/Edit Application Settings**             | Yes          | Yes          |
+ **Import BagIt Profiles**                      | Yes          | Yes          |
+ **Export BagIt Profiles**                      | Yes          | Yes          |
+ **Edit/Customize BagIt Profiles**              | Yes          | Yes          |
+ **Remote Repositories**                        | APTrust only | APTrust only |
+ **S3 Storage Services**                        | Yes          | Yes          |
+ **SFTP Storage Services with password**        | Yes          | Yes          |
+ **SFTP Storage Services with SSH key**         | Yes          | Yes          |
+ **Export Settings**                            | Yes          | Yes          |
+ **Import Settings**                            | Yes          | Yes          |
+ **Run Bagging Jobs**                           | Yes          | Yes          |
+ **Create tarred bags**                         | Yes          | Yes          |
+ **Create loose bags**                          | No           | No           |
+ **Create gzipped bags**                        | No           | Yes          | Currently only supports .tar.gz bags.
+ **Run Validation-only Jobs**                   | Yes          | Yes          |
+ **Validate tarred bags**                       | Yes          | Yes          |
+ **Validate loose bags**                        | No           | No           |
+ **Validate gzipped bats**                      | No           | Yes          |
+ **Run upload-only jobs**                       | No           | No           |
+ **Save artifacts after job runs**              | No           | Yes          | Includes job description, job result, tag files and manifests.
+ **Create Workflows**                           | Yes          | Yes          |
+ **Run one-off workflow jobs**                  | Yes          | Yes          |
+ **Run workflow batch jobs**                    | Yes          | Yes          |
+ **Help Link**                                  | Yes          | Yes          |
+ **Context-sensitive help links**               | No           | No           | Coming soon.
+ **View log files**                             | Yes          | Yes          | Log rotation caused problems with log viewing in DART 2. Fixed in DART 3.
+ **Choose how to deal with illegal characters** | No           | Yes          | Choose how DART should deal with illegal filename characters when bagging and validating.
+
 
 ## Getting Started
 

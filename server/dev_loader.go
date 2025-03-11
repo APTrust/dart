@@ -49,12 +49,12 @@ func initTemplates(router *gin.Engine) {
 	// from ../../views because http tests run from web
 	// from ../../../views for member api and admin api
 	// sub directory.
-	if util.FileExists("./views") {
-		router.LoadHTMLGlob("./views/**/*.html")
-	} else if util.FileExists("../views") {
-		router.LoadHTMLGlob("../views/**/*.html")
+	if util.FileExists("./server/views") {
+		router.LoadHTMLGlob("./server/views/**/*.html")
+	} else if util.FileExists("../server/views") {
+		router.LoadHTMLGlob("../server/views/**/*.html")
 	} else {
-		router.LoadHTMLGlob("../../views/**/*.html")
+		router.LoadHTMLGlob("../../server/views/**/*.html")
 	}
 }
 
