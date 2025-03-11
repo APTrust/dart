@@ -15,6 +15,14 @@ Major features are generally known to work in the current alpha build. However, 
 * trying to package in any format other than BagIt may cause errors
 * loose (untarred) bags are not supported yet
 
+## Notable UI Changes
+
+For the most part, DART 3 looks like DART 2. The one notable change is that DART 2 let you drag in files from the desktop to be bagged. In DART 3, the file browser is inside the application, to the left of the drop zone, as in the image below.
+
+![DART job files screen](./server/assets/img/DART_Job_Files.png)
+
+Click any folder to open it. Drag a file into the drop zone to include it in the bag. Drag a folder into the drop zone to include the whole folder in the bag.
+
 ## Feature Comparison
 
 This table shows the list of features in DART 2 and DART 3 Alpha 1. We will update this list as necessary with each new alpha release of DART 3.
@@ -60,20 +68,20 @@ This table shows the list of features in DART 2 and DART 3 Alpha 1. We will upda
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | Coming Soon... |
-| Mac (M chips)          | Coming Soon... |
-| Mac (Intel chips)      | Coming Soon... |
-| Linux (Intel 64-bit)   | Coming Soon... |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-amd64/dart3.exe |
+| Windows (ARM 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-arm64/dart3.exe |
+| Mac (Intel chips)      | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-amd64/dart3.zip |
+| Mac (M chips)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-arm64/dart3.zip |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-amd64/dart3 |
+| Linux (ARM 64-bit)     | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-arm64/dart3 |
 
-2. Open a terminal window and change into the directory containing the dart3 download.
+2. Start the app.
 
-3. Make the app excetable with this command: `chmod +x dart3`
+    1. If you're running Windows, double click on the `dart3.exe` file you just downloaded.
+    2. If you're running MacOS, unzip the DART 3 app, then double click on `dart3.app`. If Mac refuses to open the app, open Finder and command-click on the dart3 app. You'll see a warning about unsigned code. Click the Open button to run DART anyway.
+    3. If you're running Linux, open a terminal window and change into the directory containing the dart3 download, then make the app excetable with this command: `chmod +x dart3`
 
-4. (Non-Mac OS) Run the app with this command `./dart3` (Note the leading dot and slash.)
-
-    (Mac OS) Open Finder and command-click on the dart3 app. You'll see a warning about unsigned code. Click the Open button to run DART anyway.
-
-5. Open a browser and go to __http://localhost:8444__
+3. When the app starts, it should autmatically open a browswer window pointing to __http://localhost:8444__
 
 If you want to run DART on a port other than 8444, start it with this command: `./dart3 -port <number>` where is number is any port number you choose. Number should be above 1024 on most systems, because ports below that may be reserved or require root privileges.
 
@@ -112,6 +120,12 @@ DART 3 brings us down to one policy editor and one implementor, all written in t
 
 Because DART 3 exposes the local file system in the browser, it listens only on 127.0.0.1, which means it will not accept outside connections.
 
+## DART 3 on the Server
+
+In future, we may offer a "server mode" for DART 3, allowing organizations to run the app on a shared server accessible to selected staff. In that case, it will be up to the host organization to secure the DART 3 instance.
+
+Server-hosted DART could have a number of advantages. If hosted on a server attached to shared drives, any DART user could bag and upload items from any of the shares. For long-running jobs, such as bagging and uploading multi-terabyte packages, users could kick off jobs that won't tie up their own workstations. Large jobs and workflows could run in the background for days while users attend to other tasks.
+
 ## Prerequisites for Development
 
 * Go > 1.23
@@ -134,18 +148,13 @@ Since we're in very early alpha phase, we don't have a formal release process ye
 
 1. Manually update the version name in the [build script](./scripts/build_dart.rb). Look for the VERSION string.
 2. Build Windows, Mac and Linux versions using `./scripts/build_dart.rb`
-3. Copy the newly built binaries to our S3 bucket:
+3. Create a new folder under https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/ for the new release. New folder names should match the release name. (E.g. alpah-02, alpha-03, beta-01, beta-02, etc.)
+3. Copy the newly built binaries into the right subdirectory of new release folder. That will be one of:
 
-| Local Binary     | Remote Target |
-| ---------------- | ------------- |
-| dist/linux/dart3 | Coming Soon... |
-| dist/mac-arm64   | Coming Soon... |
-| dist/mac-x64     | Coming Soon... |
-| dist/windows     | Coming Soon... |
+    * linux-amd64
+    * linux-arm64
+    * mac-amd64
+    * mac-arm64
+    * windows-amd64
+    * windows-arm64
 
-## TODOs
-
-* Come up with a meaningful naming scheme for the binaries or for the S3 folders where we make them available. Users should know whether they're downloading version Alpha-01, Alpha-02, etc. We should probably be tagging these releases as well in GitHub.
-* Make naming consistent between local builds and S3 downloads. E.g. mac-x64 vs mac-intel. Choose one or the other.
-* More extensive Windows testing for DART 3.
-* Add builds for Linux arm-64 and Windows arm-64?
