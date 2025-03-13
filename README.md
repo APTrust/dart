@@ -45,10 +45,10 @@ We have not yet implemented code signing for the MacOS version of DART 3, so you
 
 1. First, make DART 3 executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
 
-'''
+```
 cd ~/Downloads
 chmod 0755 dart3
-'''
+```
 
 2. Hold down the Control key while you click on the DART 3 app. You'll see a message saying Mac won't open the app because it's hasn't been signed or is from an untrusted developer.
 
@@ -72,10 +72,10 @@ We will be working on code signing before the final release to all DART 3 to lau
 
 1. First, make DART 3 executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
 
-'''
+```
 cd ~/Downloads
 chmod 0755 dart3
-'''
+```
 
 2. Double-click on **dart3** in your file browser, or simply run `./dart3` in your terminal, and you'll see a new browser tab open with DART 3 running.
 
