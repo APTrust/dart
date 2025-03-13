@@ -4,12 +4,95 @@ DART 3 is currently in ALPHA mode. We encourage you to use it for testing and to
 
 DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stable release build if you want to use this in production.
 
+## Getting Started
+
+1. Dowload the app
+
+| Operating System       | Download Link |
+| ---------------------- | ------------- |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-amd64/dart3.exe |
+| Windows (ARM 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-arm64/dart3.exe |
+| Mac (Intel chips)      | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-amd64/dart3 |
+| Mac (M chips)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-arm64/dart3 |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-amd64/dart3 |
+| Linux (ARM 64-bit)     | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-arm64/dart3 |
+
+2. Follow the instructions below to start the app on your operating system.
+
+3. When the app starts, it should autmatically open a browswer window pointing to __http://localhost:8444__
+
+If you want to run DART on a port other than 8444, start it with this command: `./dart3 -port <number>` where is number is any port number you choose. Number should be above 1024 on most systems, because ports below that may be reserved or require root privileges.
+
+### Starting DART 3 on Windows
+
+1. Double click on dart3.
+
+2. You'll see a message saying Windows protected your computer by refusing to run the app.
+
+![Windows protection message](./server/assets/img/Windows_Protected.png)
+
+3. Click the **More info** link. You'll see the following message:
+
+![Windows protection message](./server/assets/img/Windows_RunAnyway.png)
+
+4. Click **Run Anyway**. You should see a new browser tab showing DART 3.
+
+Currently, the only way to stop DART 3 in Windows is to open the Task Manager, search for **dart3**, right-click on the result and choose **End Task**. We're working on improving this before release.
+
+### Starting DART 3 on MacOS
+
+We have not yet implemented code signing for the MacOS version of DART 3, so you'll have to go through some extra steps to open the app.
+
+1. First, make DART 3 executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
+
+'''
+cd ~/Downloads
+chmod 0755 dart3
+'''
+
+2. Hold down the Control key while you click on the DART 3 app. You'll see a message saying Mac won't open the app because it's hasn't been signed or is from an untrusted developer.
+
+3. Go to the Apple menu in the upper left corner of the screen and select **System Settings**.
+
+4. Scroll down to **Privacy & Security**, then click **Open Anyway** next to the message saying DART 3 was blocked.
+
+![Unblocking DART 3 through Privacy & Security settings](./server/assets/img/MacOS_AllowBlockedApp.png)
+
+5. When asked to open DART 3, click **Open Anyway.**
+
+![DART Open Anyway](./server/assets/img/MacOS_OpenAnyway.png)
+
+6. Enter your password at the system prompt.
+
+DART will open a terminal window and then a browser tab. You can interact with the application in the browser tab. To kill the app, press Control-C in the terminal window.
+
+We will be working on code signing before the final release to all DART 3 to launch without all these hoops.
+
+### Starting DART 3 on Linux
+
+1. First, make DART 3 executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
+
+'''
+cd ~/Downloads
+chmod 0755 dart3
+'''
+
+2. Double-click on **dart3** in your file browser, or simply run `./dart3` in your terminal, and you'll see a new browser tab open with DART 3 running.
+
+For now, the only ways to quit DART 3 in Linux are:
+
+1. If you opened dart3 in the terminal, press Control-C in the same terminal window.
+
+2. Otherwise, open System Monitor, search for **dart3** and select the option to kill it or "Stop Process."
+
+We're working on improving this.
+
+
 ## Known Issues
 
 Major features are generally known to work in the current alpha build. However, the build has some known issues, including:
 
-* After DART 3 starts on MacOS, the dock icon bounces for several minutes, and there's no way to stop it
-* DART 3 has no dock icon on Windows or Linux
+* DART 3 has no dock icon on Windows, Mac, or Linux
 * On all platforms, DART 3 continues to run in the background, even after you close the browser window. Then only way to stop it is to use the task manager, search for "dart3" and click "End Task"
 * importing settings from DART2 doesn't work yet
 * trying to package in any format other than BagIt may cause errors
@@ -25,9 +108,14 @@ Click any folder to open it. Drag a file into the drop zone to include it in the
 
 ## Feature Comparison
 
-This table shows the list of features in DART 2 and DART 3 Alpha 1. We will update this list as necessary with each new alpha release of DART 3.
+DART 3 supports all DART 2 features, plus:
 
-**Last Updated: March 11, 2024**
+  * gzipped bags
+  * local preservation of artifacts such as tag files and manifests
+
+Here's a more complete comparison. We will update this list as necessary with each new alpha release of DART 3.
+
+**Last Updated: March 12, 2024**
 
  **Feature**                                    | **DART 2**   | **DART 3**   | **Notes**
 ------------------------------------------------|--------------|--------------|-------------------------------------------------------------------------------------------
@@ -61,31 +149,6 @@ This table shows the list of features in DART 2 and DART 3 Alpha 1. We will upda
  **View log files**                             | Yes          | Yes          | Log rotation caused problems with log viewing in DART 2. Fixed in DART 3.
  **Choose how to deal with illegal characters** | No           | Yes          | Choose how DART should deal with illegal filename characters when bagging and validating.
 
-
-## Getting Started
-
-1. Dowload the app
-
-| Operating System       | Download Link |
-| ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-amd64/dart3.exe |
-| Windows (ARM 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-arm64/dart3.exe |
-| Mac (Intel chips)      | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-amd64/dart3.zip |
-| Mac (M chips)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-arm64/dart3.zip |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-amd64/dart3 |
-| Linux (ARM 64-bit)     | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-arm64/dart3 |
-
-2. Start the app.
-
-    1. If you're running Windows, double click on the `dart3.exe` file you just downloaded.
-    2. If you're running MacOS, unzip the DART 3 app, then double click on `dart3.app`. If Mac refuses to open the app, open Finder and command-click on the dart3 app. You'll see a warning about unsigned code. Click the Open button to run DART anyway.
-    3. If you're running Linux, open a terminal window and change into the directory containing the dart3 download, then make the app excetable with this command: `chmod +x dart3`
-
-3. When the app starts, it should autmatically open a browswer window pointing to __http://localhost:8444__
-
-If you want to run DART on a port other than 8444, start it with this command: `./dart3 -port <number>` where is number is any port number you choose. Number should be above 1024 on most systems, because ports below that may be reserved or require root privileges.
-
-On Mac OS, you will only have to use command-click to open DART3 the first time you use it. After that, it should open like any other program. We'll resolve this issue when we get Apple code signing in place.
 
 ## Platform Rationale
 
@@ -157,4 +220,3 @@ Since we're in very early alpha phase, we don't have a formal release process ye
     * mac-arm64
     * windows-amd64
     * windows-arm64
-

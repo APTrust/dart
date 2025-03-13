@@ -34,28 +34,28 @@ fi
 VERSION="DART Alpha-01 for Darwin amd64 (Build $COMMIT $DATE)"
 echo "Building MacOS amd64 version in ./dist/mac-amd64/dart3"
 mkdir -p dist/mac-amd64
-mkdir -p dist/mac-amd64/dart3.app/Contents/MacOS
-mkdir -p dist/mac-amd64/dart3.app/Contents/Resources
-cp server/build_support/macos/Info.plist dist/mac-amd64/dart3.app/Contents/Info.plist
-cp server/build_support/macos/icons/icon.icns dist/mac-amd64/dart3.app/Contents/Resources/icon.icns
+#mkdir -p dist/mac-amd64/dart3.app/Contents/MacOS
+#mkdir -p dist/mac-amd64/dart3.app/Contents/Resources
+#cp server/build_support/macos/Info.plist dist/mac-amd64/dart3.app/Contents/Info.plist
+#cp server/build_support/macos/icons/icon.icns dist/mac-amd64/dart3.app/Contents/Resources/icon.icns
 GOOS=darwin \
 	GOARCH=amd64 \
 	CGO_ENABLED=0 \
-	go build -o dist/mac-amd64/dart3.app/Contents/MacOS/dart3 \
+	go build -o dist/mac-amd64/dart3 \
 	-ldflags "-X 'main.Version=$VERSION'" \
 	$BUILD_TAGS dart/main.go
 
 VERSION="DART Alpha-01 for Darwin arm64 (Build $COMMIT $DATE)"
 echo "Building MacOS arm-64 (M-chip) version in ./dist/mac-arm64/dart3"
 mkdir -p dist/mac-arm64
-mkdir -p dist/mac-arm64/dart3.app/Contents/MacOS
-mkdir -p dist/mac-arm64/dart3.app/Contents/Resources
-cp server/build_support/macos/Info.plist dist/mac-arm64/dart3.app/Contents/Info.plist
-cp server/build_support/macos/icons/* dist/mac-arm64/dart3.app/Contents/Resources/
+#mkdir -p dist/mac-arm64/dart3.app/Contents/MacOS
+#mkdir -p dist/mac-arm64/dart3.app/Contents/Resources
+#cp server/build_support/macos/Info.plist dist/mac-arm64/dart3.app/Contents/Info.plist
+#cp server/build_support/macos/icons/* dist/mac-arm64/dart3.app/Contents/Resources/
 GOOS=darwin \
 	GOARCH=arm64 \
 	CGO_ENABLED=0 \
-	go build -o dist/mac-arm64/dart3.app/Contents/MacOS/dart3 \
+	go build -o dist/mac-arm64/dart3 \
 	-ldflags "-X 'main.Version=$VERSION'" \
 	$BUILD_TAGS dart/main.go
 
@@ -107,9 +107,9 @@ GOOS=linux \
 echo "Version info from latest build:"
 if [[ "$OS" == "Darwin" ]]; then
     if [[ "$ARCH" == "x86_64" ]]; then
-        dist/mac-amd64/dart3.app/Contents/MacOS/dart3 --version
+        dist/mac-amd64/dart3 --version
     else
-        dist/mac-arm64/dart3.app/Contents/MacOS/dart3 --version
+        dist/mac-arm64/dart3 --version
     fi
 elif [[ "$OS" == "Linux" ]]; then
     if [[ "$ARCH" == "x86_64" ]]; then
