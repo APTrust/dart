@@ -20,7 +20,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:  "desktop",
+		Title:  "DART",
 		Width:  1024,
 		Height: 768,
 		AssetServer: &assetserver.Options{
@@ -30,6 +30,10 @@ func main() {
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
+		},
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:     true,
+			DisableWebViewDrop: false,
 		},
 	})
 
