@@ -221,9 +221,18 @@ Since we're in very early alpha phase, we don't have a formal release process ye
     * windows-amd64
     * windows-arm64
 
-# Note
+# Note on Wails
 
-Information below will supplant information above if Wails works.
+Wails build is currently working in dart3-wails branch, but Wails drag-and-drop is broken, so we're currently using our own drag-and-drop implementation.
+
+See these open Wails issues:
+  * https://github.com/wailsapp/wails/issues/3563
+  * https://github.com/wailsapp/wails/pull/3949
+
+Some Wails code is currently commented out in these files:
+
+  * server/views/job/files.html
+  * server/views/partials/page_header.html
 
 ## Live Development
 
