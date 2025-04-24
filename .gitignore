@@ -3,9 +3,15 @@
 dist/
 docs/
 node_modules
+
 # Compiled binaries
 tsconfig.json
 apps/bin/*
 aptrust.org/*.tar
 .env
 .DS_Store
+
+# Wails stuff
+build/bin
+node_modules
+frontend/dist
