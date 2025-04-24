@@ -13,34 +13,34 @@
 
     <div class="col-12">
 
-    {{ if .showJumpMenu }}
-    <form method="get" action="">
-        <div class="form-group">
-            <select class="form-control" name="jumpMenu" id="jumpMenu" onchange="jumpToFolder(this)">
-                <option value="">-- Jump to folder --</option>
-                {{ range $index, $location := .defaultPaths }}
-                <option value="{{ $location.FullPath }}">{{ $location.FileInfo.Name }}</option>
-                {{ end }}
-            </select>
-            <div class="form-check mt-2">
-                <label class="form-check-label" for="showHiddenFiles">
-                <input type="checkbox" class="form-check-input" name="showHiddenFiles" id="showHiddenFiles" value="true" {{ if strEq .showHiddenFiles "true" }}checked{{ end }}/>
-                    Show Hidden Files
-                </label>
+        {{ if .showJumpMenu }}
+        <form method="get" action="">
+            <div class="form-group">
+                <select class="form-control" name="jumpMenu" id="jumpMenu" onchange="jumpToFolder(this)">
+                    <option value="">-- Jump to folder --</option>
+                    {{ range $index, $location := .defaultPaths }}
+                    <option value="{{ $location.FullPath }}">{{ $location.FileInfo.Name }}</option>
+                    {{ end }}
+                </select>
+                <div class="form-check mt-2">
+                    <label class="form-check-label" for="showHiddenFiles">
+                        <input type="checkbox" class="form-check-input" name="showHiddenFiles" id="showHiddenFiles" value="true" {{ if strEq .showHiddenFiles "true" }}checked{{ end }} />
+                        Show Hidden Files
+                    </label>
+                </div>
             </div>
+        </form>
+        {{ end }}
+
+
+
+        <p id="currentDir" title="{{ .currentDir }}"><b>{{ truncateMiddle .currentDir 36 }}</b></p>
+
+        {{ if .showParentDirLink }}
+        <div class="file-browser-item" title="Parent Directory">
+            <a class="file-link" href="?directory={{ .parentDir }}&showHiddenFiles={{ .showHiddenFiles }}"><i class="fas fa-angle-left"></i>{{ .parentDirShortName }}</a>
         </div>
-    </form>
-    {{ end }}
-
-
-
-    <p id="currentDir" title="{{ .currentDir }}"><b>{{ truncateMiddle .currentDir 36 }}</b></p>
-
-    {{ if .showParentDirLink }}
-    <div class="file-browser-item" title="Parent Directory">
-    <a class="file-link" href="?directory={{ .parentDir }}&showHiddenFiles={{ .showHiddenFiles }}"><i class="fas fa-angle-left"></i>{{ .parentDirShortName }}</a>
-    </div>
-    {{ end }}
+        {{ end }}
 
     </div>
 </div>
@@ -53,19 +53,19 @@
         {{ $showHiddenFiles := .showHiddenFiles }}
         {{ range $index, $item := .items}}
 
-            <!-- Mark dot files as hidden. Let user choose whether to show them. -->
-            {{ $cssClass := "file-browser-item" }}
-            {{ if strStartsWith $item.FileInfo.Name "." }}
-                {{ $cssClass = "file-browser-item is-hidden-file" }}
-            {{ end }}
+        <!-- Mark dot files as hidden. Let user choose whether to show them. -->
+        {{ $cssClass := "file-browser-item" }}
+        {{ if strStartsWith $item.FileInfo.Name "." }}
+        {{ $cssClass = "file-browser-item is-hidden-file" }}
+        {{ end }}
 
-            {{ if $item.FileInfo.IsDir }}
-            <div class="{{ $cssClass }}" draggable="true" data-full-path="{{ $item.FullPath }}" data-item-type="directory" title="{{ $item.FileInfo.Name }} - Click link to open. Click icon to drag and drop."><i class="far fa-folder"></i>
-                <a class="file-link" href="?directory={{ $item.FullPath }}&showHiddenFiles={{ $showHiddenFiles }}">{{ $item.FileInfo.Name }}</a>
-            </div>
-            {{ else }}
-            <div class="{{ $cssClass }}" draggable="true" title="{{ $item.FileInfo.Name }}" data-full-path="{{ $item.FullPath }}" data-item-type="file">{{ fileIconFor $item.FileInfo.Name }}{{ truncateMiddle $item.FileInfo.Name 36 }}</div>
-            {{ end }}
+        {{ if $item.FileInfo.IsDir }}
+        <div class="{{ $cssClass }}" draggable="true" data-full-path="{{ $item.FullPath }}" data-item-type="directory" title="{{ $item.FileInfo.Name }} - Click link to open. Click icon to drag and drop."><i class="far fa-folder"></i>
+            <a class="file-link" href="?directory={{ $item.FullPath }}&showHiddenFiles={{ $showHiddenFiles }}" data-full-path="{{ $item.FullPath }}" data-item-type="directory">{{ $item.FileInfo.Name }}</a>
+        </div>
+        {{ else }}
+        <div class="{{ $cssClass }}" draggable="true" title="{{ $item.FileInfo.Name }}" data-full-path="{{ $item.FullPath }}" data-item-type="file">{{ fileIconFor $item.FileInfo.Name }}{{ truncateMiddle $item.FileInfo.Name 36 }}</div>
+        {{ end }}
 
         {{ end }}
 
@@ -77,26 +77,26 @@
 </div>
 
 <script>
-$(function(){
-    function toggleHiddenFiles() {
-        var showHidden = "false"
-        if ($("#showHiddenFiles").is(":checked")) {
-            $("div.is-hidden-file").show()
-            showHidden = "true"
-        } else {
-            $("div.is-hidden-file").hide()
+    $(function () {
+        function toggleHiddenFiles() {
+            var showHidden = "false"
+            if ($("#showHiddenFiles").is(":checked")) {
+                $("div.is-hidden-file").show()
+                showHidden = "true"
+            } else {
+                $("div.is-hidden-file").hide()
+            }
+            $("a.file-link").each(function (i) {
+                var url = $(this)[0].href
+                $(this)[0].href = url.replace(/&showHiddenFiles=\w*$/, `&showHiddenFiles=${showHidden}`)
+            })
         }
-        $("a.file-link").each(function(i) {
-            var url = $(this)[0].href
-            $(this)[0].href = url.replace(/&showHiddenFiles=\w*$/, `&showHiddenFiles=${showHidden}`)
-        })
-    }
-    // Show/hide hidden files on page load
-    toggleHiddenFiles()
+        // Show/hide hidden files on page load
+        toggleHiddenFiles()
 
-    // And listen for the user changing their mind
-    $("#showHiddenFiles").on("click", toggleHiddenFiles)
-})
+        // And listen for the user changing their mind
+        $("#showHiddenFiles").on("click", toggleHiddenFiles)
+    })
 </script>
 
 {{ end }}

@@ -115,6 +115,7 @@
             let fullPath = e.dataTransfer.getData("fullPath")
             let fileBrowserPath = document.getElementById("currentDir").attributes.getNamedItem("title").value
             console.log(fullPath)
+            console.log(fileBrowserPath)
             e.currentTarget.classList.remove('drop-zone-over');
 
             // TODO: Display the item in the drop zone.
