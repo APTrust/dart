@@ -7,7 +7,7 @@
   "frontend:dev:watcher": "npm run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "A. Diamond",
-    "email": "diamond@sheprador.com"
+    "name": "Academic Preservation Trust",
+    "email": "help@aptrust.org"
   }
 }
