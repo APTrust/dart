@@ -107,6 +107,7 @@ hr.menu-divider {
     margin: 20px;
     min-height: 550px;
     overflow: auto;
+    --wails-drop-target: drop;
 }
 
 .drop-zone-over {
