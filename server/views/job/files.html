@@ -5,12 +5,12 @@
 <div class="row" id="jobFilesTitle">
     <div class="col-12">
         <h2>Files
-        <span style="font-size: 1rem;"
-            data-toggle="popover"
-            data-trigger="hover"
-            title="Choosing Files"
-            data-content="Click the name of a folder to open it. Drag any file or folder icon to the right to include it in this job.">
-            <i class="fas fa-question-circle text-primary"></i></span>
+            <span style="font-size: 1rem;"
+                data-toggle="popover"
+                data-trigger="hover"
+                title="Choosing Files"
+                data-content="Click the name of a folder to open it. Drag any file or folder icon to the right to include it in this job.">
+                <i class="fas fa-question-circle text-primary"></i></span>
         </h2>
     </div>
 </div>
@@ -24,7 +24,7 @@
 
     <div class="col-8">
         {{ if .workflow }}
-            <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+        <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
         {{ end }}
         <div id="dropZone" class="drop-zone">
             <div class="text-center upload-icon-div" id="uploadIcon">
@@ -49,7 +49,7 @@
                             {{ $fileDeletionUrl := .fileDeletionUrl }}
                             {{ $currentDir := .currentDir }}
                             {{ range $index, $filepath := .sourceFiles }}
-                                {{ template "job/file_row.html"  dict "filepath" $filepath "fileDeletionUrl" $fileDeletionUrl "currentDir" $currentDir }}
+                            {{ template "job/file_row.html"  dict "filepath" $filepath "fileDeletionUrl" $fileDeletionUrl "currentDir" $currentDir }}
                             {{ end }}
                             <tr id="fileTotals">
                                 <td>Totals</td>
@@ -98,12 +98,18 @@
     // https://stackoverflow.com/questions/11573710/event-datatransfer-files-is-empty-when-ondrop-is-fired
     function attachDragAndDropEvents() {
         document.querySelectorAll("[draggable='true']").forEach(item =>
-        item.addEventListener('dragstart', function(e){
-            var target = e.originalTarget || e.target
-            e.dataTransfer.dropEffect = "copy";
-            e.dataTransfer.setData("fullPath", target.dataset.fullPath);
-        }))
+            item.addEventListener('dragstart', function (e) {
+                var target = e.originalTarget || e.target
+                e.dataTransfer.dropEffect = "copy";
+                e.dataTransfer.setData("fullPath", target.dataset.fullPath);
+            }))
         var dropZone = document.querySelector('#dropZone')
+
+        // Implement our own drop handler. Wails drop handler for
+        // 'wails:file-drop' has been broken for some time.
+        // See these open Wails issues:
+        // https://github.com/wailsapp/wails/issues/3563
+        // https://github.com/wailsapp/wails/pull/3949
         dropZone.addEventListener('drop', function (e) {
             e.preventDefault();
             let fullPath = e.dataTransfer.getData("fullPath")
@@ -125,23 +131,23 @@
             postForm(url, data)
 
             return false;
-        });
-        dropZone.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            e.currentTarget.classList.add('drop-zone-over');
-            return false;
-        });
-        dropZone.addEventListener('dragleave', function (e) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drop-zone-over');
-            return false;
-        });
-        dropZone.addEventListener('dragend', function (e) {
-            e.preventDefault();
-            e.currentTarget.classList.remove('drop-zone-over');
-            return false;
-        });
+    });
+    dropZone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+        e.currentTarget.classList.add('drop-zone-over');
+        return false;
+    });
+    dropZone.addEventListener('dragleave', function (e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drop-zone-over');
+        return false;
+    });
+    dropZone.addEventListener('dragend', function (e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drop-zone-over');
+        return false;
+    });
         // console.log("Attached drag and drop events")
     }
     attachDragAndDropEvents();
