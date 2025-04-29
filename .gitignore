@@ -15,3 +15,8 @@ aptrust.org/*.tar
 build/bin
 node_modules
 frontend/dist
+frontend/package.json.md5
+
+# Test coverage output
+c.out
+
