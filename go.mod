@@ -8,7 +8,7 @@ replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
 replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20180306152900-74cfbc9de839
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20250311143853-8dada7676b70
+	github.com/APTrust/dart-runner v0.0.0-20250430132810-b1bca2e5f936
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.10.0
@@ -86,7 +86,7 @@ require (
 	golang.org/x/arch v0.15.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
