@@ -191,7 +191,7 @@ func GetTagFileForms(job *core.Job, withErrors bool) []TagFileForms {
 		}
 		for j, tagDef := range tagDefs {
 			formGroupClass := ""
-			if tagDef.SystemMustSet() || !util.IsEmpty(tagDef.DefaultValue) {
+			if ShouldHideTag(tagDef) {
 				formGroupClass = "form-group-hidden"
 			}
 			field := &core.Field{
@@ -228,6 +228,20 @@ func GetTagFileForms(job *core.Job, withErrors bool) []TagFileForms {
 		tagFiles[i] = metadataTagFile
 	}
 	return tagFiles
+}
+
+// ShouldHideTag returns true if we should hide this tag by default
+// on the Job Metadata page. User can choose to unhide it using the
+// "Show All Tags" button.
+//
+// We hide tags if they have a default value, or if the system must
+// set their value. One exception is the APTrust Storage-Option tag,
+// which shows even if a default is set.
+func ShouldHideTag(tagDef *core.TagDefinition) bool {
+	if tagDef.TagFile == "aptrust-info.txt" && tagDef.TagName == "Storage-Option" {
+		return false
+	}
+	return tagDef.SystemMustSet() || !util.IsEmpty(tagDef.DefaultValue)
 }
 
 func ValidateTagValue(tagDef *core.TagDefinition) string {

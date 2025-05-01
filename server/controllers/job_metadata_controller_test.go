@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/APTrust/dart-runner/core"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -135,4 +136,31 @@ func TestJobSaveAndDeleteTag(t *testing.T) {
 	for _, str := range expected {
 		assert.NotContains(t, html, str, str)
 	}
+}
+
+func TestShouldHideTag(t *testing.T) {
+	tagDef := &core.TagDefinition{
+		TagFile:      "aptrust-info.txt",
+		TagName:      "Storage-Option",
+		DefaultValue: "Standard",
+	}
+	// Should not hide, because aptrust-info.txt/Storage-Option
+	// is an exception.
+	assert.False(t, controllers.ShouldHideTag(tagDef))
+
+	// Should hide because tag has a default value.
+	tagDef.TagName = "Some-Other-Tag"
+	assert.True(t, controllers.ShouldHideTag(tagDef))
+
+	// Should not hide because no default value.
+	tagDef.DefaultValue = ""
+	assert.False(t, controllers.ShouldHideTag(tagDef))
+
+	// Should hide because system must set this value.
+	tagDef.TagFile = "bag-info.txt"
+	tagDef.TagName = "Payload-Oxum"
+	assert.True(t, controllers.ShouldHideTag(tagDef))
+
+	// Default should be false (do not hide)
+	assert.False(t, controllers.ShouldHideTag(&core.TagDefinition{}))
 }
