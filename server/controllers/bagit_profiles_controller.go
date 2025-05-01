@@ -176,6 +176,17 @@ func BagItProfileSave(c *gin.Context) {
 	result := core.ObjFind(c.Param("id"))
 	if result.BagItProfile() != nil {
 		profile = result.BagItProfile()
+
+		// Clear these values out, or else the call
+		// to c.Bind() below will merge them with
+		// values the user submitted. E.g. If we
+		// have 2 ManifestsRequired and user deletes
+		// them both, we'll still have 2 required if
+		// we don't clear the list now.
+		profile.ManifestsAllowed = []string{}
+		profile.ManifestsRequired = []string{}
+		profile.TagManifestsAllowed = []string{}
+		profile.TagManifestsRequired = []string{}
 	}
 
 	err := c.Bind(profile)
