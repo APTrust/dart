@@ -60,6 +60,15 @@ func initTemplates(router *gin.Engine) {
 
 // Serve static assets local file system when running in developer mode.
 func initStaticRoutes(router *gin.Engine) {
-	router.StaticFile("/favicon.ico", "./server/assets/img/favicon.ico")
-	router.Static("/assets", "./server/assets")
+
+	if util.FileExists("./server/assets") {
+		router.StaticFile("/favicon.ico", "./server/assets/img/favicon.ico")
+		router.Static("/assets", "./server/assets")
+	} else if util.FileExists("../server/views") {
+		router.StaticFile("/favicon.ico", "../server/assets/img/favicon.ico")
+		router.Static("/assets", "../server/assets")
+	} else {
+		router.StaticFile("/favicon.ico", "../../server/assets/img/favicon.ico")
+		router.Static("/assets", "../../server/assets")
+	}
 }
