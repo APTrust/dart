@@ -60,6 +60,7 @@ func JobRunExecute(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+	job.UpdatePayloadStats()
 
 	// The subcomponents of core.RunJob handle packaging,
 	// validation and uploading. These components will push
