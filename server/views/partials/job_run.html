@@ -293,6 +293,10 @@ an idea of what goes into them.
     processDiv.show();
   }
 
+  function clearMessageDivs() {
+
+  }
+
   function renderWarning(data) {
     console.log(`Warning: ${data.message}`)
     let section = data.stage + "Info"
@@ -300,7 +304,8 @@ an idea of what goes into them.
     console.log(detailDiv)
     let warningDiv = detailDiv.siblings("div.text-warning").first()
     console.log(warningDiv)
-    warningDiv.html("Warning: " + data.message);
+    warningDiv.html("Warning: " + data.message)
+    warningDiv.removeClass("d-none")
     warningDiv.show()
   }
 
@@ -320,7 +325,7 @@ an idea of what goes into them.
           completedUploads.push(data.message)
           markSuccess(detailDiv, progressBar, completedUploads.join("<br/>\n"))
         } else {
-          //console.log(section)
+          console.log(section)
           markSuccess(detailDiv, progressBar, data.message)
         }
         activateOutputPathLink()
@@ -328,7 +333,9 @@ an idea of what goes into them.
       } else if (data.status == "failed") {
         // Finish with error. Note that detail div here is the outcome
         // div, not the div for the current stage, because job has finished.
-        detailDiv = $(`#runningJobDisplay div.outcome div.detail div.message`);
+        detailDiv = $(`#runningJobDisplay div.outcomeInfo div.detail div.message`);
+        console.log("Failure: " + data.message)
+        console.log("Detail div: " + detailDiv)
         markFailed(detailDiv, progressBar, getErrorsAsHTML(data))
         showBatchJobFailed(data)
       }
@@ -356,6 +363,9 @@ an idea of what goes into them.
     let selectorPrefix = `#runningJobDisplay div.${section} div.detail`;
     let detailDiv = $(`${selectorPrefix} div.message`);
     let progressBar = $(`${selectorPrefix} div.progress-bar`);
+    // console.log("Selector prefix = " + selectorPrefix)
+    // console.log(detailDiv)
+    // console.log(progressBar)
     return [detailDiv, progressBar];
   }
 
@@ -409,6 +419,7 @@ an idea of what goes into them.
   }
 
   function markFailed(detailDiv, progressBar, message) {
+    // console.log("Message: " + message)
     detailDiv.html(message);
     if (progressBar) {
       progressBar.removeClass("progress-bar-striped progress-bar-animated");

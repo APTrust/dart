@@ -20,3 +20,5 @@ frontend/package.json.md5
 # Test coverage output
 c.out
 
+# VS Code debug binaries
+*__debug_bin*
