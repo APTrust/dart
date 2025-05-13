@@ -136,6 +136,7 @@ func BagItProfileImport(c *gin.Context) {
 		return
 	}
 	convertedProfile.Name = fmt.Sprintf("%s %s", convertedProfile.Name, time.Now().Format(time.Stamp))
+	convertedProfile.IsBuiltIn = false // profile is imported, not built-in
 	err = core.ObjSave(convertedProfile)
 	if err != nil {
 		data := gin.H{
