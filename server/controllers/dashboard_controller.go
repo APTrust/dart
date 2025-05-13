@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -108,6 +109,14 @@ func getRepoReport(remoteRepoID, reportName string) (string, error) {
 		return "", result.Error
 	}
 	repo := result.RemoteRepository()
+	if repo == nil {
+		message := "Remote repository configuration is missing."
+		return message, fmt.Errorf(message)
+	}
+	if repo.UserID == "" || repo.APIToken == "" {
+		message := "User name or API key is missing from remote repository configuration."
+		return message, fmt.Errorf(message)
+	}
 	client, err := core.GetRemoteRepoClient(repo)
 	if err != nil {
 		return "", err

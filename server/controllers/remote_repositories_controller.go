@@ -103,7 +103,11 @@ func RemoteRepositoryTestConnection(c *gin.Context) {
 	status := http.StatusOK
 	succeeded := true
 	message := fmt.Sprintf("It worked! We got a successful response from %s.", repo.Url)
-	err = repo.TestConnection()
+	if repo.UserID != "" && repo.APIToken != "" {
+		err = repo.TestConnection()
+	} else {
+		err = fmt.Errorf("Can't test connection because user id or API key is missing.")
+	}
 	if err != nil {
 		message = fmt.Sprintf("Connection failed: %s", err.Error())
 		succeeded = false

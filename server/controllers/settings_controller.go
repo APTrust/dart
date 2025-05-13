@@ -373,12 +373,21 @@ func importSettings(c *gin.Context, settings *core.ExportSettings) {
 	hasError := false
 	appSettingResults := make([]ImportResult, 0)
 	for _, appSetting := range settings.AppSettings {
+		// On import, UserCanDelete defaults to false if
+		// it's not set in the JSON, and it's not if the export
+		// came from DART 2. This is annoying, because the setting
+		// will stick around forever, even if the user doesn't want it.
+		// Let users delete non-essential app settings.
+		if appSetting.Name != "Bagging Directory" && appSetting.Name != "Control Characters in File Names" {
+			appSetting.UserCanDelete = true
+		}
 		result := ImportResult{Name: appSetting.Name, Succeeded: true}
 		err := core.ObjSave(appSetting)
 		if err != nil {
 			hasError = true
 			result.Error = err.Error()
 			result.Succeeded = false
+			core.Dart.Log.Errorf("Error importing AppSetting %s: %v", appSetting.Name, err)
 		}
 		appSettingResults = append(appSettingResults, result)
 	}
@@ -391,6 +400,11 @@ func importSettings(c *gin.Context, settings *core.ExportSettings) {
 			hasError = true
 			result.Error = err.Error()
 			result.Succeeded = false
+			name := ""
+			if profile != nil {
+				name = profile.Name
+			}
+			core.Dart.Log.Errorf("Error importing BagIt profile %s: %v", name, err)
 		}
 		profileResults = append(profileResults, result)
 	}
@@ -403,6 +417,11 @@ func importSettings(c *gin.Context, settings *core.ExportSettings) {
 			hasError = true
 			result.Error = err.Error()
 			result.Succeeded = false
+			name := ""
+			if repo != nil {
+				name = repo.Name
+			}
+			core.Dart.Log.Errorf("Error importing RemoteRepository %s: %v", name, err)
 		}
 		repoResults = append(repoResults, result)
 	}
@@ -410,11 +429,24 @@ func importSettings(c *gin.Context, settings *core.ExportSettings) {
 	ssResults := make([]ImportResult, 0)
 	for _, ss := range settings.StorageServices {
 		result := ImportResult{Name: ss.Name, Succeeded: true}
-		err := core.ObjSave(ss)
+
+		// If StorageService includes hard-coded login and password,
+		// DART 2 will not export these credantials for security reasons.
+		// Those missing attributes will cause a validation failure.
+		// We want users to be able to import the storage service anyway,
+		// and they can fill in user/password credentials later.
+		// For this reason, we save StorageService without validation.
+		err := core.ObjSaveWithoutValidation(ss)
 		if err != nil {
 			hasError = true
 			result.Error = err.Error()
 			result.Succeeded = false
+			name := ""
+			if ss != nil {
+				name = ss.Name
+			}
+
+			core.Dart.Log.Errorf("Error importing StorageService %s: %v", name, err)
 		}
 		ssResults = append(ssResults, result)
 	}
