@@ -16,7 +16,7 @@ will be the platform on which we build future features.
 
 If you want to help alpha test DART 3, you'll find links to the latest alpha release,
 as well as info about the rationale for DART 3
-on the [DART 3 info page](https://github.com/APTrust/dart/tree/dart3).
+on the [DART 3 info page]([https://github.com/APTrust/dart/tree/dart3](https://github.com/APTrust/dart/tree/dart3-wails)).
 
 If you find bugs in DART 3, or if you want to add features, please log your
 reports and requests right here in the DART 2 issue tracker:
