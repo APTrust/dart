@@ -12,6 +12,7 @@ aptrust.org/*.tar
 .DS_Store
 
 # Wails stuff
+build
 build/bin
 node_modules
 frontend/dist

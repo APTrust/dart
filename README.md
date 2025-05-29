@@ -6,22 +6,15 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 ## Getting Started
 
-1. Dowload the app
+1. Dowloading the App
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-amd64/dart3.exe |
-| Windows (ARM 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/windows-arm64/dart3.exe |
-| Mac (Intel chips)      | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-amd64/dart3 |
-| Mac (M chips)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/mac-arm64/dart3 |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-amd64/dart3 |
-| Linux (ARM 64-bit)     | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-01/linux-arm64/dart3 |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3.exe |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/mac-universal/DART.zip |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3-alpha-01.exe |
 
 2. Follow the instructions below to start the app on your operating system.
-
-3. When the app starts, it should autmatically open a browswer window pointing to __http://localhost:8444__
-
-If you want to run DART on a port other than 8444, start it with this command: `./dart3 -port <number>` where is number is any port number you choose. Number should be above 1024 on most systems, because ports below that may be reserved or require root privileges.
 
 ### Starting DART 3 on Windows
 
@@ -37,7 +30,6 @@ If you want to run DART on a port other than 8444, start it with this command: `
 
 4. Click **Run Anyway**. You should see a new browser tab showing DART 3.
 
-Currently, the only way to stop DART 3 in Windows is to open the Task Manager, search for **dart3**, right-click on the result and choose **End Task**. We're working on improving this before release.
 
 ### Starting DART 3 on MacOS
 
@@ -64,8 +56,6 @@ chmod 0755 dart3
 
 6. Enter your password at the system prompt.
 
-DART will open a terminal window and then a browser tab. You can interact with the application in the browser tab. To kill the app, press Control-C in the terminal window.
-
 We will be working on code signing before the final release to all DART 3 to launch without all these hoops.
 
 ### Starting DART 3 on Linux
@@ -79,24 +69,14 @@ chmod 0755 dart3
 
 2. Double-click on **dart3** in your file browser, or simply run `./dart3` in your terminal, and you'll see a new browser tab open with DART 3 running.
 
-For now, the only ways to quit DART 3 in Linux are:
-
-1. If you opened dart3 in the terminal, press Control-C in the same terminal window.
-
-2. Otherwise, open System Monitor, search for **dart3** and select the option to kill it or "Stop Process."
-
-We're working on improving this.
-
 
 ## Known Issues
 
 Major features are generally known to work in the current alpha build. However, the build has some known issues, including:
 
-* DART 3 has no dock icon on Windows, Mac, or Linux
-* On all platforms, DART 3 continues to run in the background, even after you close the browser window. Then only way to stop it is to use the task manager, search for "dart3" and click "End Task"
-* importing settings from DART2 doesn't work yet
-* trying to package in any format other than BagIt may cause errors
-* loose (untarred) bags are not supported yet
+* Trying to package in any format other than BagIt may cause errors.
+* Loose (untarred) bags are not supported yet.
+* The About window currently does not show the version number in the dart3-alpha-02 build.
 
 ## Notable UI Changes
 
@@ -207,19 +187,9 @@ Note that running in dev mode also starts a local SFTP server and a Minio server
 
 ## Releasing
 
-Since we're in very early alpha phase, we don't have a formal release process yet. For now, follow these steps:
+Since we're in very early alpha phase, we don't have a formal release process yet. For now, we build the app as decribed under [Building](#Building) below and then manually copy it to our S3 public download bucket.
 
-1. Manually update the version name in the [build script](./scripts/build_dart.rb). Look for the VERSION string.
-2. Build Windows, Mac and Linux versions using `./scripts/build_dart.rb`
-3. Create a new folder under https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/ for the new release. New folder names should match the release name. (E.g. alpah-02, alpha-03, beta-01, beta-02, etc.)
-3. Copy the newly built binaries into the right subdirectory of new release folder. That will be one of:
-
-    * linux-amd64
-    * linux-arm64
-    * mac-amd64
-    * mac-arm64
-    * windows-amd64
-    * windows-arm64
+Updates to the release notes are also done manually.
 
 # Note on Wails
 
@@ -246,3 +216,5 @@ to this in your browser, and you can call your Go code from devtools.
 To build a redistributable, production mode package, use `wails build -tags release`.
 
 For more on build options, see https://wails.io/docs/guides/manual-builds/. Also note that the build system (and many other things) will be changing in Wails 3. See https://v3alpha.wails.io/whats-new/ for details.
+
+At the moment, we need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
