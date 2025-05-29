@@ -10,9 +10,9 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3.exe |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3-alpha-02.exe |
 | Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/mac-universal/DART.zip |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3-alpha-01.exe |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/linux-amd64/dart3-alpha-02 |
 
 2. Follow the instructions below to start the app on your operating system.
 
@@ -35,11 +35,12 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 We have not yet implemented code signing for the MacOS version of DART 3, so you'll have to go through some extra steps to open the app.
 
-1. First, make DART 3 executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
+1. Unzip DART 3 and make it executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
 
 ```
 cd ~/Downloads
-chmod 0755 dart3
+unzip DART.zip
+chmod 0755 DART.app
 ```
 
 2. Hold down the Control key while you click on the DART 3 app. You'll see a message saying Mac won't open the app because it's hasn't been signed or is from an untrusted developer.
