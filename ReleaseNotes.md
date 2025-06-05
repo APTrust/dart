@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 3.0-alpha-03 - June 5, 2025
+
+* Fixed omissions in the algorithms lists for allowed manifests and allowed tag manifests in version 2.3 of the APTrust BagIt profile. This list now correctly includes sha1 and sha512 as allowed algorithms.
+
 ## 3.0-alpha-02 - May 29, 2025
 
 * Converted app from pure web service to [Wails](https://wails.io) for easier installation and better desktop experience.
