@@ -10,9 +10,9 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/windows-amd64/dart3-alpha-02.exe |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/mac-universal/DART.zip |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-02/linux-amd64/dart3-alpha-02 |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/windows-amd64/dart3-alpha-03.exe |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/mac-universal/DART.zip |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/linux-amd64/dart3-alpha-03 |
 
 2. Follow the instructions below to start the app on your operating system.
 
