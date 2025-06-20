@@ -219,3 +219,8 @@ To build a redistributable, production mode package, use `wails build -tags rele
 For more on build options, see https://wails.io/docs/guides/manual-builds/. Also note that the build system (and many other things) will be changing in Wails 3. See https://v3alpha.wails.io/whats-new/ for details.
 
 At the moment, we need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
+
+## Testing
+
+`./scripts/run tests`
+
