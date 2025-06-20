@@ -41,6 +41,7 @@ We have not yet implemented code signing for the MacOS version of DART 3, so you
 cd ~/Downloads
 unzip DART.zip
 chmod 0755 DART.app
+xattr -d com.apple.quarantine DART.app
 ```
 
 2. Hold down the Control key while you click on the DART 3 app. You'll see a message saying Mac won't open the app because it's hasn't been signed or is from an untrusted developer.
