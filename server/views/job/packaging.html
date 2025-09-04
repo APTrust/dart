@@ -15,7 +15,7 @@
 <!-- { {> bannerAlert message = alertMessage } } -->
 
 {{ if .workflow }}
-    <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+<div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
 {{ end }}
 
 <form method="post" action="/jobs/packaging/{{ .job.ID }}" id="{{ .job.ID }}">
@@ -58,14 +58,22 @@
     let separator = {{ .pathSeparator }}
     let autoSetSerialization = {{ .autoSetSerialization }}
 
-    let extensionForType = {
-      "application/x-7z-compressed": ".7z",
-      "application/tar": ".tar",
-      "application/x-tar": ".tar",
-      "application/zip": ".zip",
-      "application/gzip": ".tar.gz",
-      "application/x-rar-compressed": ".rar",
+    let extensionsForType = {
+      "application/x-7z-compressed": [".7z"],
+      "application/tar": [".tar"],
+      "application/x-tar": [".tar"],
+      "application/zip": [".zip"],
+      "application/gzip": [".tar.gz", ".tgz"],
+      "application/x-rar-compressed": [".rar"],
     }
+
+  function allExtensionsForType(mimeType) {
+      return extensionsForType[mimeType] || ['']
+  }
+  function preferredExtensionForType(mimeType) {
+      let extensions = allExtensionsForType(mimeType)
+      return extensions[0]
+  }
 
   function setOutputPath() {
       var packageName = $('#Job_PackageName').val()
@@ -73,18 +81,26 @@
       {{ if .workflow }}
       // Workflow overrides.
       var mimeType = "{{ .workflow.Serialization }}" || $('#Job_BagItSerialization').val()
-      var extension = extensionForType[mimeType] || ''
+      var preferredExtension = preferredExtensionForType(mimeType)
       {{ else }}
       var mimeType = $('#Job_BagItSerialization').val();
-      var extension = extensionForType[mimeType] || ''
+      var preferredExtension = preferredExtensionForType(mimeType)
       {{ end }}
 
 
-      if (packageName && !packageName.endsWith(extension)) {
-        packageName += extension;
+      var outputPath = $('#Job_OutputPath').val()      
+      for (let ext of allExtensionsForType(mimeType)) {
+        if (packageName && outputPath.endsWith(ext)) {
+          outputPathHasValidExtension = true
+          console.log("Has valid extension " + ext)
+          preferredExtension = ext // keep existing extension
+        }
       }
+
+      packageName += preferredExtension;
+
       // In case user switched to a package format that's not serialized.
-      if (extension == '') {
+      if (preferredExtension == '') {
         packageName = packageName.replace(/\.\w+$/, '')
       }
       $('#Job_OutputPath').val(`${baggingDir}${separator}${packageName}`)

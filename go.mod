@@ -8,11 +8,11 @@ replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
 replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20180306152900-74cfbc9de839
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20250606171556-321038cad5b1
+	github.com/APTrust/dart-runner v0.0.0-20250904164704-be9cac34b1dc
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.10.0
-	github.com/wailsapp/wails/v2 v2.10.1
+	github.com/wailsapp/wails/v2 v2.10.2
 )
 
 require (
@@ -38,6 +38,7 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
