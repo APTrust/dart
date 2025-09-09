@@ -357,6 +357,10 @@ an idea of what goes into them.
       let warningDiv = detailDiv.siblings("div.text-warning").first()
       warningDiv.html("")
     })
+    // Clearn the outcome info as well, or error messages from
+    // prior run may continue to display.
+    let outcomeMessageDiv = $("#runningJobDisplay div.outcomeInfo div.detail div.message");
+    outcomeMessageDiv.html("");
   }
 
   // Display a warning message in the info div of one section
@@ -372,6 +376,9 @@ an idea of what goes into them.
     warningDiv.show()
   }
 
+  // Renders info contained in the data sent by a server-side
+  // event. This is info about the progress or status of the
+  // currently running job.
   function renderInfo(data) {
     let section = data.stage + "Info"
     var [detailDiv, progressBar] = getDivs(section);
@@ -382,33 +389,8 @@ an idea of what goes into them.
       initProgressBar('uploadInfo')
     }
     if (data.eventType == "finish") {
-      console.log(data)
-      if (data.status == "success") {
-        if (section == "") {
-          completedUploads.push(data.message)
-          markSuccess(detailDiv, progressBar, completedUploads.join("<br/>\n"))
-        } else {
-          markSuccess(detailDiv, progressBar, data.message)
-        }
-        activateOutputPathLink()
-        showBatchJobSucceeded(data)
-      } else if (data.status == "failed") {
-        // Finish with error. Note that detail div here is the outcome
-        // div, not the div for the current stage, because job has finished.
-        detailDiv = $(`#runningJobDisplay div.outcomeInfo div.detail div.message`);
-        markFailed(detailDiv, progressBar, getErrorsAsHTML(data))
-        showBatchJobFailed(data)
-      }
-      if (data.stage = "") {
-        // We just completed a job, not a stage.
-        batchLineNumber += 1
-      }
-      if (!weAreRunningAWorkflowBatch) {
-        // This is not a batch. We just completed a job.
-        // So now it's safe to reactivate the Run Job button.
-        $('#btnRunJob').prop('disabled', false)
-      }
-    } else { // info message
+      renderFinishInfo(section, data, detailDiv, progressBar)
+    } else { // start or info message
       detailDiv.text(data.message)
       setProgressBar(progressBar, data);
     }
@@ -416,6 +398,37 @@ an idea of what goes into them.
     // this for the next job.
     if (weAreRunningAWorkflowBatch) {
       completedUploads = []
+    }
+  }
+
+  // Renders info to the UI about the status and outcome
+  // of a finished job.
+  function renderFinishInfo(section, data, detailDiv, progressBar) {
+    console.log(data)
+    if (data.status == "success") {
+      if (section == "") {
+        completedUploads.push(data.message)
+        markSuccess(detailDiv, progressBar, completedUploads.join("<br/>\n"))
+      } else {
+        markSuccess(detailDiv, progressBar, data.message)
+      }
+      activateOutputPathLink()
+      showBatchJobSucceeded(data)
+    } else if (data.status == "failed") {
+      // Finish with error. Note that detail div here is the outcome
+      // div, not the div for the current stage, because job has finished.
+      detailDiv = $(`#runningJobDisplay div.outcomeInfo div.detail div.message`);
+      markFailed(detailDiv, progressBar, getErrorsAsHTML(data))
+      showBatchJobFailed(data)
+    }
+    if (data.stage = "") {
+      // We just completed a job, not a stage.
+      batchLineNumber += 1
+    }
+    if (!weAreRunningAWorkflowBatch) {
+      // This is not a batch. We just completed a job.
+      // So now it's safe to reactivate the Run Job button.
+      $('#btnRunJob').prop('disabled', false)
     }
   }
 
