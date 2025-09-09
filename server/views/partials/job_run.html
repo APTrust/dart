@@ -80,27 +80,7 @@ an idea of what goes into them.
 
 <script>
 
-  // TODO: Clean this up! This code is nasty!
-  //
-  // What happened here?
-  //
-  // This code was initially written to display info about
-  // standard package-validate-upload jobs. Then it was
-  // expanded to also display info about workflow batches.
-  // Then it was expanded to also include upload-only and
-  // validation-only jobs. At this point, we have a mess and
-  // we're just hacking, so it's time to refactor.
-
-  // These vars are set dynamically by the back end.
-  // TODO: In batch workflow, allow dynamic vars to be
-  // passed as JSON through Server-Sent Events.
-  //
-  // Just send this from the backend, period.
-  //
-  // For workflows, on each new job, reset display
-  // and call runJob(jobId). We also need a way to
-  // display workflow validation errors and workflow
-  // results (red x or green check next to each item).
+  // Page globals
   var batchLineNumber = 1
   var completedUploads = []
   var weAreRunningAWorkflowBatch = false
@@ -116,16 +96,24 @@ an idea of what goes into them.
   console.log(settings)
   {{ end }}
 
+  // runJob runs the job or workflow that the user requested,
+  // initializing UI elements as necessary.
   function runJob(eventSourceUrl, jobId) {
-    // Disable this button so user can't kick off a job
-    // while the job is already running.
-    $('#btnRunJob').prop('disabled', true)
-    $('#runWorkflowBatch').prop('disabled', true)
-
+    disableRunButtons()
     if (jobId && !eventSourceUrl.endsWith("/")) {
       eventSourceUrl += "/"
     }
     if (eventSourceUrl.includes("/workflows")) {
+      initWorkflowUI()
+    }
+    // Attach event listeners to respond to job status updates
+    // coming from the backend server.
+    attachEventSourceListeners(eventSourceUrl, jobId)
+  }
+
+  // This initializes the UI for running workflows, showing,
+  // hiding, and clearing UI elements as necessary.
+  function initWorkflowUI() {
       weAreRunningAWorkflowBatch = true
       // User may be re-running batch; remove previous result messages.
       $('#batchCompleted').hide();
@@ -134,12 +122,14 @@ an idea of what goes into them.
       $('#workflowResults').show();
       $('div.batch-result').remove();
       batchLineNumber = 1
-    }
+  }
 
-    // The general pattern SSE listener pattern is:
-    //
-    // sse.addEventListener("eventName", (e) => { code... });
-    //
+  // Attach listeners to handle server-sent events (SSE).
+  // These listeners receive messages from the server describing
+  // the progress and outcome of running jobs, updating display
+  // elements such as progress bars and message divs as the
+  // job proceeds or completes.
+  function attachEventSourceListeners(eventSourceUrl, jobId) {
     let eventSrc = new EventSource(eventSourceUrl + jobId)
     eventSrc.onmessage = (event) => {
       //console.log(event)
@@ -157,27 +147,23 @@ an idea of what goes into them.
         return
       }
 
-      if (data.eventType == "init") {
-        console.log(`Got init event for job ${data.jobSummary.id}`)
-        settings = data.jobSummary
-        console.log(settings)
-        showJobDetails()
-        showProgressDivs()
-        clearMessageDivs()
-      } else if (data.eventType == "batch completed") {
-        $('#batchRunning').hide();
-        $('#batchCompleted').show();
-        $('#runWorkflowBatch').prop('disabled', false)
-      } else if (data.eventType == "disconnect") {
-        console.log("Received disconnect from server")
-        console.log(data.message)
-        eventSrc.close()
-      } else if (data.eventType == "warning") {
-        renderWarning(data)
-      } else {
-        // This handles the default case, where eventType == "info".
-        // Most messages have this type.
-        renderInfo(data)
+      switch(data.eventType) {
+        case "init":
+          showJobInit(data);
+          break;
+        case "batch completed":
+          showBatchCompleted(data);
+          break;
+        case "disconnect":
+          handleSSEDisconnect(data, eventSrc);
+          break;
+        case "warning":
+          renderWarning(data);
+          break;
+        default:
+          // This handles the default case, where eventType == "info".
+          // Most messages have this type.
+          renderInfo(data);
       }
     }
     eventSrc.onerror = (event) => {
@@ -185,6 +171,47 @@ an idea of what goes into them.
     }
   }
 
+  // This displays the basic info about the job, including
+  // what, if anything, should be packaged, validated and/or uploaded.
+  // This is called when a job is loaded.
+  function showJobInit(data) {
+    console.log(`Received init event for job ${data.jobSummary.id}`)
+    settings = data.jobSummary
+    console.log(settings)
+    showJobDetails()
+    showProgressDivs()
+    clearMessageDivs()
+  }
+
+  // This displays information about the status of a batch job
+  // after all jobs in the batch have been run. This is triggered
+  // when the server sends the "batch completed" event.
+  function showBatchCompleted(data) {
+    console.log("Received batch completed event")
+    $('#batchRunning').hide();
+    $('#batchCompleted').show();
+    $('#runWorkflowBatch').prop('disabled', false)
+  }
+
+  // This disconnects the page from server-sent events.
+  // It's called when we receive the disconnect event
+  // from the server. If you fail to call this, the UI
+  // will keep re-running the job forever.
+  function handleSSEDisconnect(data, eventSrc) {
+    console.log("Received disconnect from server")
+    console.log(data.message)
+    eventSrc.close()
+  }
+
+  // Disable run buttons so user can't kick off a job
+  // while the job is already running.
+  function disableRunButtons() {
+    $('#btnRunJob').prop('disabled', true)
+    $('#runWorkflowBatch').prop('disabled', true)
+  }
+
+  // This displays the initial details of a job, including
+  // what is to be packaged, validated, and/or uploaded.
   function showJobDetails() {
     $('#jobName').html(settings.Name)
     clearAndHidePackagingInfo()
@@ -192,30 +219,18 @@ an idea of what goes into them.
       showPackagingInfo()
     }
     if (settings.jobType == "ValidationJob") {
-      console.log("Adding paths to validation job info div")
       showValidationJobInfo()
     }
     if (settings.hasUploadOps) {
-      $('#uploadOpsDiv').show()
-      $('#uploadTargets').empty()
-      for (let item of settings.uploadTargets) {
-        $('#uploadTargets').append(`<li>${item}</li>`)
-      }
-      if (settings.jobType == "UploadJob") {
-        $('#uploadFiles').empty()
-        $('#uploadFilesDiv').show()
-        for (let item of settings.sourceFiles) {
-          $('#uploadFiles').append(`<li>${item}</li>`)
-        }
-      }
+      showUploadOps()
     } else {
-      $('#uploadOpsDiv').hide()
-      $('#uploadFilesDiv').hide()
-      $('#uploadTargets').empty()
-      $('#uploadFilesDiv').empty()
+      clearAndHideUploadInfo()
     }
   }
 
+  // Clear the packaging info from the UI and hide the
+  // div elements that display that info. This part of
+  // the UI reset called as each new job starts.
   function clearAndHidePackagingInfo() {
     $('#packageOpDiv').hide()
     $('#bagItProfileDiv').hide()
@@ -234,6 +249,8 @@ an idea of what goes into them.
     $('#sourceFiles').empty()
   }
 
+  // Display info about what is to be packaged.
+  // This uses the page global settings variable.
   function showPackagingInfo() {
     $('#packageName').html(settings.packageName)
     $('#bagItProfileName').html(settings.bagItProfileName)
@@ -255,12 +272,38 @@ an idea of what goes into them.
     $('#outputPathDiv').show()
   }
 
-  function hideValidationJobInfo() {
-    $('#validationFilesDiv').hide()
+  // Remove info about uploads from UI. We call
+  // this when running a job that has no upload
+  // operations.
+  function clearAndHideUploadInfo() {
+      $('#uploadOpsDiv').hide()
+      $('#uploadFilesDiv').hide()
+      $('#uploadTargets').empty()
+      $('#uploadFilesDiv').empty()
+  }
+
+  // Display information about a job's upload operations
+  // in the UI.
+  function showUploadOps() {
+    $('#uploadOpsDiv').show()
+    $('#uploadTargets').empty()
+    for (let item of settings.uploadTargets) {
+      $('#uploadTargets').append(`<li>${item}</li>`)
+    }
+    // If this is an upload-only job, display the
+    // list of files to be uploaded.
+    if (settings.jobType == "UploadJob") {
+      $('#uploadFiles').empty()
+      $('#uploadFilesDiv').show()
+      for (let item of settings.sourceFiles) {
+        $('#uploadFiles').append(`<li>${item}</li>`)
+      }
+    }
   }
 
   // This is specific to validation-only jobs.
   function showValidationJobInfo() {
+    console.log("Adding paths to validation job info div")
     $('#pathsToValidate').empty()
     $('#bagItProfileName').text(settings.bagItProfileName)
     $('#bagItProfileDescription').text(settings.bagItProfileDescription)
@@ -272,6 +315,16 @@ an idea of what goes into them.
     $('#validationFilesDiv').show()
   }
 
+  // Hide details of a validation-only job.
+  function hideValidationJobInfo() {
+    $('#validationFilesDiv').hide()
+  }
+
+  // Display progress divs, which contain the progress bars
+  // for different parts of the job. Note that the logic
+  // uses the page global settings object to determine which
+  // operations are part of the job, and hence which progress
+  // bars should be displayed.
   function showProgressDivs() {
     let processDiv = $('#jobIdContainer');
     if (settings.hasPackageOp) {
@@ -294,6 +347,8 @@ an idea of what goes into them.
     processDiv.show();
   }
 
+  // This clears the contents of all the job-related message divs.
+  // We call this before running a new job.
   function clearMessageDivs() {
     let sections = ["packageInfo", "validationInfo", "uploadInfo", "outcomeInfo"]
     sections.forEach(function (section) {
@@ -304,6 +359,10 @@ an idea of what goes into them.
     })
   }
 
+  // Display a warning message in the info div of one section
+  // of the UI. There is one section for each job stage:
+  // packaging, validation, and upload, plus one for the
+  // overall job outcome.
   function renderWarning(data) {
     let section = data.stage + "Info"
     var [detailDiv, progressBar] = getDivs(section)
@@ -360,6 +419,9 @@ an idea of what goes into them.
     }
   }
 
+  // Returns the divs containing the progress bar and message area
+  // for the specified section/job operation. Valid sections are:
+  // "package", "validation", "upload" and "outcome".
   function getDivs(section) {
     let selectorPrefix = `#runningJobDisplay div.${section} div.detail`;
     let detailDiv = $(`${selectorPrefix} div.message`);
@@ -367,6 +429,7 @@ an idea of what goes into them.
     return [detailDiv, progressBar];
   }
 
+  // Initializes the progress bar for the specified section.
   function initProgressBar(section) {
     let [_, progressBar] = getDivs(section);
     if (progressBar) {
@@ -383,6 +446,7 @@ an idea of what goes into them.
     }
   }
 
+  // Sets the width of the specified progress bar based on data.percent.
   function setProgressBar(progressBar, data) {
     // Sometimes the data object does not include percentComplete,
     // and when percentComplete is unknown, it's set to -1.
@@ -407,6 +471,22 @@ an idea of what goes into them.
     }
   }
 
+  // Displays info showing that a stage of the job has succeeded
+  // by doing the following:
+  //
+  // 1. Sets the progress bar to green and progress amount to 100%.
+  // 2. Displays message in detailDiv.
+  //
+  // Params:
+  //
+  // detailDiv - jQuery HTMLElement - The div in which to display
+  // the message.
+  //
+  // progressBar - jQuery HTMLElement - The progress bar to be set
+  // to 100% / green.
+  //
+  // message - string - The message to display in detailDiv.
+  //
   function markSuccess(detailDiv, progressBar, message) {
     detailDiv.html(message);
     if (progressBar) {
@@ -416,6 +496,22 @@ an idea of what goes into them.
     }
   }
 
+  // Displays info showing that a stage of the job has failed
+  // by doing the following:
+  //
+  // 1. Sets the progress bar to red and progress amount to 100%.
+  // 2. Displays message in detailDiv.
+  //
+  // Params:
+  //
+  // detailDiv - jQuery HTMLElement - The div in which to display
+  // the message.
+  //
+  // progressBar - jQuery HTMLElement - The progress bar to be set
+  // to 100% / red.
+  //
+  // message - string - The message to display in detailDiv.
+  //
   function markFailed(detailDiv, progressBar, message) {
     detailDiv.html(message);
     if (progressBar) {
@@ -426,12 +522,15 @@ an idea of what goes into them.
     }
   }
 
-  // TODO: We're not getting jobResult info here.
+  // Reads the errors in data.jobResult and returns a formatted
+  // HTML string suitable for display in the UI.
   function getErrorsAsHTML(data) {
     var result = data.jobResult
     if (!result) {
       return "<p>Cannot get error details from job result.</p>"
     }
+
+    // Start the HTML with any packaging errors that may have occurred.
     var html = ""
     if (result.packageResult && result.packageResult.errors && Object.values(result.packageResult.errors).length > 0) {
       html += "<p class='font-weight-bold'>Packaging Errors</p><ol>"
@@ -440,6 +539,8 @@ an idea of what goes into them.
       })
       html += "</ol>"
     }
+
+    // Now add bag validation errors if there were any.
     if (result.validationResults) {
       result.validationResults.forEach(function (validationResult) {
         if (validationResult.errors && Object.values(validationResult.errors).length > 0) {
@@ -458,6 +559,8 @@ an idea of what goes into them.
         }
       })
     }
+
+    // Now add upload errors if there were any.
     if (result.uploadResults) {
       result.uploadResults.forEach(function (uploadResult) {
         if (uploadResult.errors && Object.values(uploadResult.errors).length > 0) {
@@ -469,9 +572,17 @@ an idea of what goes into them.
         }
       })
     }
+
+    // Et voila!
     return html
   }
 
+  // When a job starts, the UI displays the path to the output
+  // file (the result of the packaging operation, which is usually
+  // a bag). The bag won't be there until the packaging operation
+  // succeeds. When it does, this function converts the plain-text
+  // file path to a clickable link, so the user can click to see
+  // the package/bag in their file browser.
   function activateOutputPathLink() {
     var div = $('#outputPathLink')
     var url = settings.outputPath
@@ -481,6 +592,8 @@ an idea of what goes into them.
   }
 
 
+  // Display a message saying that one job in a batch (which
+  // maps to one line in a batch file) has succeeded.
   function showBatchJobSucceeded(data) {
     if (weAreRunningAWorkflowBatch && data.stage == "") {
       let html = `<div class="row batch-result">
@@ -492,6 +605,8 @@ an idea of what goes into them.
     }
   }
 
+  // Display a message saying that one job in a batch (which
+  // maps to one line in a batch file) has failed.
   function showBatchJobFailed(data) {
     if (weAreRunningAWorkflowBatch && data.stage == "" && data.jobResult) {
       let errors = getAllErrorsFromJobResult(data.jobResult)
@@ -516,6 +631,8 @@ an idea of what goes into them.
     }
   }
 
+  // Given a JobResult object, this collects all of the errors
+  // and returns them as an array of strings.
   function getAllErrorsFromJobResult(result) {
     let errors = []
     errors = errors.concat(getErrorsFromOperation(result.packageResult))
@@ -532,7 +649,7 @@ an idea of what goes into them.
     return errors
   }
 
-  // TODO: be more specific about which upload failed.
+  // Returns a list of errors from the specified operation result.
   function getErrorsFromOperation(opResult) {
     let errors = []
     if (opResult && opResult.errors) {
@@ -550,10 +667,12 @@ an idea of what goes into them.
     return errors
   }
 
+  // Converts the first letter of a string to upper case.
   function ucfirst(s) {
     return s[0].toUpperCase() + s.slice(1);
   }
 
+  // If we have jobSummaryJson on load, then show the job details.
   $(function () {
     {{ if .jobSummaryJson }}
     showJobDetails()
