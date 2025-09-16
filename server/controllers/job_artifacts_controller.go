@@ -47,7 +47,7 @@ func JobArtifactShow(c *gin.Context) {
 		core.Dart.Log.Warningf("Cannot find job with ID %s: %v", artifact.JobID, err)
 	}
 
-	_, outputFile, err := artifactOutputDirAndFileName(artifact)
+	_, outputFile, err := ArtifactOutputDirAndFileName(artifact)
 	if err != nil {
 		AbortWithErrorModal(c, http.StatusInternalServerError, err)
 		return
@@ -74,7 +74,7 @@ func JobArtifactSave(c *gin.Context) {
 		AbortWithErrorModal(c, http.StatusNotFound, err)
 		return
 	}
-	outputDir, outputFile, err := artifactOutputDirAndFileName(artifact)
+	outputDir, outputFile, err := ArtifactOutputDirAndFileName(artifact)
 	if err != nil {
 		AbortWithErrorModal(c, http.StatusInternalServerError, err)
 		return
@@ -95,10 +95,10 @@ func JobArtifactSave(c *gin.Context) {
 		"outputDir":  outputDir,
 		"outputFile": outputFile,
 	}
-	c.HTML(http.StatusOK, "job/artifact_saved_modal.html", data)
+	c.HTML(http.StatusCreated, "job/artifact_saved_modal.html", data)
 }
 
-func artifactOutputDirAndFileName(artifact *core.Artifact) (string, string, error) {
+func ArtifactOutputDirAndFileName(artifact *core.Artifact) (string, string, error) {
 	baggingDir, err := core.GetAppSetting(constants.BaggingDirectory)
 	if err != nil {
 		baggingDir = filepath.Join(core.Dart.Paths.Documents, "DART")
