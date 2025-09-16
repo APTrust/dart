@@ -2,8 +2,12 @@ package controllers
 
 import (
 	"net/http"
+	"os"
+	"path"
+	"path/filepath"
 	"strings"
 
+	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +31,7 @@ func JobArtifactsList(c *gin.Context) {
 	c.HTML(http.StatusOK, "job/artifact.html", data)
 }
 
-// GET /jobs/artifact/:id
+// GET /jobs/artifacts/:id
 func JobArtifactShow(c *gin.Context) {
 	artifact, err := core.ArtifactFind(c.Param("id"))
 	if err != nil {
@@ -43,6 +47,12 @@ func JobArtifactShow(c *gin.Context) {
 		core.Dart.Log.Warningf("Cannot find job with ID %s: %v", artifact.JobID, err)
 	}
 
+	_, outputFile, err := artifactOutputDirAndFileName(artifact)
+	if err != nil {
+		AbortWithErrorModal(c, http.StatusInternalServerError, err)
+		return
+	}
+
 	displayAsFormattedJSON := artifact.FileName == "Job Result" || strings.HasSuffix(artifact.FileName, ".json")
 
 	data := gin.H{
@@ -50,7 +60,55 @@ func JobArtifactShow(c *gin.Context) {
 		"artifacts":              artifacts,
 		"helpUrl":                GetHelpUrl(c),
 		"job":                    result.Job(),
+		"outputFile":             outputFile,
 		"displayAsFormattedJSON": displayAsFormattedJSON,
 	}
 	c.HTML(http.StatusOK, "job/artifact.html", data)
+}
+
+// GET /jobs/artifacts/save/:artifact_id
+// Saves an artifact (tag file, manifest or job result) to a file on disk.
+func JobArtifactSave(c *gin.Context) {
+	artifact, err := core.ArtifactFind(c.Param("id"))
+	if err != nil {
+		AbortWithErrorModal(c, http.StatusNotFound, err)
+		return
+	}
+	outputDir, outputFile, err := artifactOutputDirAndFileName(artifact)
+	if err != nil {
+		AbortWithErrorModal(c, http.StatusInternalServerError, err)
+		return
+	}
+	file, err := os.Create(outputFile)
+	if err != nil {
+		AbortWithErrorModal(c, http.StatusInternalServerError, err)
+		return
+	}
+	defer file.Close()
+	_, err = file.WriteString(artifact.RawData)
+	if err != nil {
+		AbortWithErrorModal(c, http.StatusInternalServerError, err)
+		return
+	}
+	data := gin.H{
+		"artifact":   artifact,
+		"outputDir":  outputDir,
+		"outputFile": outputFile,
+	}
+	c.HTML(http.StatusOK, "job/artifact_saved_modal.html", data)
+}
+
+func artifactOutputDirAndFileName(artifact *core.Artifact) (string, string, error) {
+	baggingDir, err := core.GetAppSetting(constants.BaggingDirectory)
+	if err != nil {
+		baggingDir = filepath.Join(core.Dart.Paths.Documents, "DART")
+		core.Dart.Log.Warningf("Bagging Directory not set. Defaulting to %s", baggingDir)
+	}
+	outputDir := path.Join(baggingDir, artifact.BagName, "logs")
+	err = os.MkdirAll(outputDir, 0755)
+	if err != nil {
+		return "", "", err
+	}
+	outputFile := path.Join(outputDir, artifact.FileName)
+	return outputDir, outputFile, err
 }

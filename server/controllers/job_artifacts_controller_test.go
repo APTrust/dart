@@ -43,6 +43,6 @@ func TestJobArtifactShow(t *testing.T) {
 		artifact.FileName,
 		artifact.RawData,
 	}
-	endpointUrl := fmt.Sprintf("/jobs/artifact/%s", artifact.ID)
+	endpointUrl := fmt.Sprintf("/jobs/artifacts/%s", artifact.ID)
 	DoSimpleGetTest(t, endpointUrl, expected)
 }

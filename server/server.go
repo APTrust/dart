@@ -135,7 +135,8 @@ func initRoutes(router *gin.Engine) {
 
 	// Job Artifacts
 	router.GET("/jobs/artifacts/list/:job_id", controllers.JobArtifactsList)
-	router.GET("/jobs/artifact/:id", controllers.JobArtifactShow)
+	router.POST("/jobs/artifacts/save/:id", controllers.JobArtifactSave)
+	router.GET("/jobs/artifacts/:id", controllers.JobArtifactShow)
 
 	// Remote Repositories
 	router.GET("/remote_repositories", controllers.RemoteRepositoryIndex)

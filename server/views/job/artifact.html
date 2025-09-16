@@ -17,7 +17,7 @@
     </div>
     {{ range $i, $artifact := .artifacts }}
       <div class='row {{ if strStartsWith $artifact.FileName "Job Result" }}mt-3{{ end }}'>
-        <a title="Updated {{ dateTimeUS $artifact.UpdatedAt }}" href="/jobs/artifact/{{ $artifact.ID }}">{{ $artifact.FileName }}</a>
+        <a title="Updated {{ dateTimeUS $artifact.UpdatedAt }}" href="/jobs/artifacts/{{ $artifact.ID }}">{{ $artifact.FileName }}</a>
       </div>
     {{ end }}
   </div>
@@ -54,7 +54,8 @@
 
     <div class="bottom-buttons">
       <div class="float-right mr-5">
-        <button type="button" class="btn btn-primary mr-5" id="btnCopyToClipboard" onclick="copyToClipboard('#artifactContent', '#copied')">Copy to Clipboard</button>
+        <button type="button" class="btn btn-primary" id="btnSaveArtifact" title="Save this artifact to {{ .outputFile }}" onclick="loadIntoModal('post', 'Save File', '/jobs/artifacts/save/{{ .artifact.ID }}')">Save to File</button>
+        <button type="button" class="btn btn-primary" id="btnCopyToClipboard" onclick="copyToClipboard('#artifactContent', '#copied')">Copy to Clipboard</button>
       </div>
     </div>
     {{ else }}
@@ -74,7 +75,7 @@ $(function() {
     contentElement.removeClass('text-primary')
     contentElement.jsonViewer(rawData)
   }
-}) 
+})
 </script>
 
 {{ template "partials/page_footer.html" .}}

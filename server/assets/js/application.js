@@ -245,7 +245,7 @@ function openExternalUrl(url) {
         type: "get",
         data: jQuery.param(data),
     }).done(function (response) {
-        console.log("Show help succeeded")
+        console.log("openExternalURL succeeded")
     }).fail(function (xhr, status, err) {
         alertWithSize("large", xhr.responseText)
     })

@@ -74,7 +74,7 @@
     $('select[data-action="show-artifact"]').on("change", function () {
       let artifactId = $(this).val()
       if (artifactId != "") {
-        let url = `/jobs/artifact/${artifactId}`
+        let url = `/jobs/artifacts/${artifactId}`
         loadIntoModal('get', 'Job Artifact', url)
       }
     })
