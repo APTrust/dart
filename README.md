@@ -213,6 +213,17 @@ server that will provide very fast hot reload of your frontend changes. If you w
 and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
 to this in your browser, and you can call your Go code from devtools.
 
+## Debugging
+
+To debug with VS Code:
+
+1. Click the Debug icon in VS Code's left nav.
+2. Select "Launch Package" from the list in the upper left corner beside the words Run and Debug.
+3. Click the green Start Debugging arrow.
+4. Go to http://localhost:8444 (a browser window should open automatically with that URL).
+
+Now you can set breakpoints in the code.
+
 ## Building
 
 To build a redistributable, production mode package, use `wails build -tags release`.
