@@ -96,6 +96,13 @@ func TestJobArtifactOutputDirAndFileName(t *testing.T) {
 
 	assert.Equal(t, path.Join(baggingDir, "testbag.tar", "logs"), outputDir)
 	assert.Equal(t, path.Join(baggingDir, "testbag.tar", "logs", artifact.FileName), outputFile)
+
+	// Test this special case
+	artifact.FileName = "Job Result"
+	outputDir, outputFile, err = controllers.ArtifactOutputDirAndFileName(artifact)
+	require.Nil(t, err)
+	assert.Equal(t, path.Join(baggingDir, "testbag.tar", "logs"), outputDir)
+	assert.Equal(t, path.Join(baggingDir, "testbag.tar", "logs", "JobResult.json"), outputFile)
 }
 
 func createTestJobAndArtifact(t *testing.T) (*core.Job, *core.Artifact) {

@@ -110,5 +110,8 @@ func ArtifactOutputDirAndFileName(artifact *core.Artifact) (string, string, erro
 		return "", "", err
 	}
 	outputFile := path.Join(outputDir, artifact.FileName)
+	if artifact.FileName == "Job Result" {
+		outputFile = path.Join(outputDir, "JobResult.json")
+	}
 	return outputDir, outputFile, err
 }
