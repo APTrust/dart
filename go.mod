@@ -8,7 +8,6 @@ replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
 replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20180306152900-74cfbc9de839
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20250923180502-4e8159ddecc2
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.10.0
@@ -16,6 +15,7 @@ require (
 )
 
 require (
+	github.com/APTrust/dart-runner v0.0.0-20250925200126-3db141b4ce43 // indirect
 	github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
