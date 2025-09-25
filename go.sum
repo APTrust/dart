@@ -4,6 +4,8 @@ github.com/APTrust/dart-runner v0.0.0-20250925194535-7e73ea18858b h1:FxIeS28ZOhI
 github.com/APTrust/dart-runner v0.0.0-20250925194535-7e73ea18858b/go.mod h1:DDZo07f5lD/MYHUeWlhf/Ukrn942N0ipCTJZNjxIY8E=
 github.com/APTrust/dart-runner v0.0.0-20250925200126-3db141b4ce43 h1:FWjoV7KiY2gIoEVStPz/w4UjZg91+UjNWBESIqLLs2Y=
 github.com/APTrust/dart-runner v0.0.0-20250925200126-3db141b4ce43/go.mod h1:DDZo07f5lD/MYHUeWlhf/Ukrn942N0ipCTJZNjxIY8E=
+github.com/APTrust/dart-runner v0.0.0-20250925202541-e4ff7d4ad4f7 h1:bG4d2F+ljxKJjhmxQ//27d07TXPZ9xmGnSvH8Cz7UW8=
+github.com/APTrust/dart-runner v0.0.0-20250925202541-e4ff7d4ad4f7/go.mod h1:DDZo07f5lD/MYHUeWlhf/Ukrn942N0ipCTJZNjxIY8E=
 github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec h1:bH+abBwMq1tQQzl/tXQEmD08bEKjRtkCzKuHoiBNo1M=
 github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec/go.mod h1:xQE/67tfyAbrUSLmkO8yhiMD8rvDH1bJ1xi69R68Whc=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
