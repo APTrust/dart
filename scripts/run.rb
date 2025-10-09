@@ -47,6 +47,24 @@ class Runner
     end
   end
 
+  # Run the Minio and SFTP containers. This enables you to
+  # start DART separately in debug mode so you do end-to-end
+  # debugging of jobs that include uploads.
+  def run_services
+    begin
+      start_minio
+      start_sftp
+      puts "\n"
+      puts "Control-C will stop SFTP and Minio containers\n\n"
+      # Snooze until we get Ctrl-C interrupt from the user.
+      loop do
+        sleep(1)
+      end
+    rescue SystemExit, Interrupt
+      puts "\nKill me, eh? Alright then, off I go."
+    end
+  end
+
   def stop_dart
     if !@dart_pid
         puts "Pid for DART is zero. Can't kill that..."
@@ -209,6 +227,9 @@ class Runner
     puts "    run.rb tests\n"
     puts "To run DART, SFTP and Minio for interactive testing:"
     puts "    run.rb dart\n"
+    puts "To run SFTP and Minio (but not DART) for interactive testing:"
+    puts "    run.rb dart\n"
+    puts "This allows you to launch DART separately from VS Code in debug mode."
   end
 end
 
@@ -219,6 +240,8 @@ if __FILE__ == $0
   action = ARGV[0]
   if action == "tests"
     runner.run_tests
+  elsif action == "services"
+    runner.run_services
   elsif action == "dart"
     runner.run_dart
   else
