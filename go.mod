@@ -15,7 +15,7 @@ require (
 )
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20250925202541-e4ff7d4ad4f7 // indirect
+	github.com/APTrust/dart-runner v0.0.0-20251009163153-769f2bcfb720 // indirect
 	github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
