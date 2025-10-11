@@ -3,12 +3,16 @@ package controllers_test
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
 
+	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
+	"github.com/APTrust/dart-runner/util"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -48,6 +52,48 @@ func TestJobRunShow(t *testing.T) {
 	// expectedContent = append(expectedContent, job.PackageOp.SourceFiles...)
 	pageUrl := fmt.Sprintf("/jobs/summary/%s", job.ID)
 	DoSimpleGetTest(t, pageUrl, expectedContent)
+}
+
+func TestJobRunShowHasStaleBagFlag(t *testing.T) {
+	defer core.ClearDartTable()
+	job := loadTestJob(t)
+	require.NoError(t, core.ObjSave(job))
+	require.NoError(t, core.ObjSave(job.BagItProfile))
+
+	job.PackageOp.BagItSerialization = constants.SerialFormatTar
+	job.PackageOp.OutputPath = "/path/does/not/exist/99887rand"
+	err := core.ObjSave(job)
+	require.Nil(t, err)
+
+	// Output path should not exist
+	expectedContent := []string{
+		"var staleBagExists =  false",
+	}
+
+	pageUrl := fmt.Sprintf("/jobs/summary/%s", job.ID)
+	DoSimpleGetTest(t, pageUrl, expectedContent)
+
+	// Path exists, but serializion is tar, so
+	// staleBagExists should be false
+	job.PackageOp.OutputPath = util.PathToTestData()
+	err = core.ObjSave(job)
+	require.Nil(t, err)
+
+	pageUrl = fmt.Sprintf("/jobs/summary/%s", job.ID)
+	DoSimpleGetTest(t, pageUrl, expectedContent)
+
+	// Path exists, and bag is unserialized, so
+	// staleBagExists should be true
+	job.PackageOp.BagItSerialization = constants.SerialFormatNone
+	err = core.ObjSave(job)
+	require.Nil(t, err)
+
+	expectedContent = []string{
+		"var staleBagExists =  true",
+	}
+	pageUrl = fmt.Sprintf("/jobs/summary/%s", job.ID)
+	DoSimpleGetTest(t, pageUrl, expectedContent)
+
 }
 
 // See:
@@ -118,4 +164,47 @@ func testPostRunJobResult(t *testing.T, jobResult *core.JobResult, whence string
 		assert.True(t, uploadResult.Succeeded(), whence)
 		assert.Empty(t, uploadResult.Errors, whence)
 	}
+}
+
+func TestDeleteStaleUnserializedBag(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up a "stale bag directory" containing two files.
+	tempDir, err := os.MkdirTemp("", "dart-stale-dir-*")
+	require.Nil(t, err)
+
+	file1 := filepath.Join(tempDir, "file1.txt")
+	writeJunkFile(t, file1, "test file 1 for dart stale bag deletion")
+	file2 := filepath.Join(tempDir, "file2.txt")
+	writeJunkFile(t, file2, "test file 2 for dart stale bag deletion")
+
+	assert.True(t, util.FileExists(tempDir))
+	assert.True(t, util.FileExists(file1))
+	assert.True(t, util.FileExists(file2))
+
+	// Now set up a test job whose output path points
+	// the temp directory we just created.
+	job := loadTestJob(t)
+	job.PackageOp.BagItSerialization = constants.SerialFormatNone
+	job.PackageOp.OutputPath = tempDir
+	require.NoError(t, core.ObjSave(job))
+	require.NoError(t, core.ObjSave(job.BagItProfile))
+
+	// Now test to see whether deleting the stale bag
+	// works. It should.
+	err = controllers.DeleteStaleUnserializedBag(job)
+	require.Nil(t, err)
+
+	assert.False(t, util.FileExists(file1))
+	assert.False(t, util.FileExists(file2))
+	assert.False(t, util.FileExists(tempDir))
+}
+
+func writeJunkFile(t *testing.T, filename, content string) {
+	file, err := os.Create(filename)
+	require.Nil(t, err)
+	defer file.Close()
+
+	_, err = file.WriteString(content)
+	require.Nil(t, err)
 }
