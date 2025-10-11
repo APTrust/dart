@@ -7,9 +7,14 @@ replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
 
 replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20180306152900-74cfbc9de839
 
-replace github.com/APTrust/dart-runner => ../dart-runner
+// Uncomment this to use local version of dart-runner instead of
+// GitHub version. This makes development much quicker, as you
+// can instantly pick up changes to dart runner. It's also less
+// messy that git submodules.
+// replace github.com/APTrust/dart-runner => ../dart-runner
 
 require (
+	github.com/APTrust/dart-runner v0.0.0-20251011144618-6e22996d0b69
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.10.0
@@ -17,7 +22,6 @@ require (
 )
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20251009163153-769f2bcfb720 // indirect
 	github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -54,10 +58,8 @@ require (
 	github.com/leaanthony/slicer v1.6.0 // indirect
 	github.com/leaanthony/u v1.1.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	github.com/machinebox/progress v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/melbahja/goph v1.4.0 // indirect
 	github.com/minio/crc64nvme v1.0.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v7 v7.0.88 // indirect
