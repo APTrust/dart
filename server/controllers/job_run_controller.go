@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
+	"github.com/APTrust/dart-runner/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,6 +45,7 @@ func JobRunShow(c *gin.Context) {
 		"backButtonUrl":  fmt.Sprintf("/jobs/upload/%s", job.ID),
 		"helpUrl":        GetHelpUrl(c),
 		"workflow":       workflow,
+		"staleBagExists": StaleUnserializedBagExists(job),
 	}
 	c.HTML(http.StatusOK, "job/run.html", data)
 }
@@ -61,6 +64,13 @@ func JobRunExecute(c *gin.Context) {
 	}
 	job := result.Job()
 	job.UpdatePayloadStats()
+
+	// See the comments above DeleteStaleUnserializedBag for why we
+	// have to do this. Note that the front end asks the user to
+	// confirm that this deletion is okay. If we reach this point in
+	// the code, the user has said it's okay to delete the old version
+	// of the bag
+	DeleteStaleUnserializedBag(job)
 
 	// The subcomponents of core.RunJob handle packaging,
 	// validation and uploading. These components will push
@@ -150,4 +160,44 @@ func JobRunExecute(c *gin.Context) {
 	c.Stream(streamer)
 	c.Writer.Flush()
 	//fmt.Println("Job Execute: client disconnected.")
+}
+
+// StaleUnserializedBagExists returns true if a version of the bag
+// that the job object wants to create already exists in the bagging
+// directory.
+func StaleUnserializedBagExists(job *core.Job) bool {
+	exists := false
+	if job.PackageOp.BagItSerialization == "" || job.PackageOp.BagItSerialization == constants.SerialFormatNone {
+		exists = util.FileExists(job.PackageOp.OutputPath)
+		if exists {
+			core.Dart.Log.Warningf("Stale version of unserialized bag at %s should be deleted", job.PackageOp.OutputPath)
+		}
+	}
+	return exists
+}
+
+// DeleteStaleUnserializedBag deletes a stale version of an unserielized bag
+// from the bagging directory. We do this to prevent the following case:
+//
+// 1. User creates version one of unserialized bag.
+//
+// 2. User changes the contents of the bag and creates version two.
+//
+//  3. Bag validation fails because manifest says the bag should contain
+//     only the version two files, but it actually contains all version
+//     two files, plus remnants of version one files.
+func DeleteStaleUnserializedBag(job *core.Job) error {
+	var err error
+	staleBagExists := util.FileExists(job.PackageOp.OutputPath)
+	isUnserialized := job.PackageOp.BagItSerialization == "" || job.PackageOp.BagItSerialization == constants.SerialFormatNone
+	looksSafeToDelete := util.LooksSafeToDelete(job.PackageOp.OutputPath, 6, 2)
+	if staleBagExists && isUnserialized && looksSafeToDelete {
+		err = os.RemoveAll(job.PackageOp.OutputPath)
+		if err != nil {
+			core.Dart.Log.Infof("Deleted stale version of unserialized bag at %s", job.PackageOp.OutputPath)
+		} else {
+			core.Dart.Log.Errorf("Failed to delete stale version of unserialized bag at %s: %w", job.PackageOp.OutputPath, err)
+		}
+	}
+	return err
 }

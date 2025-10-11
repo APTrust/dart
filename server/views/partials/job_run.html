@@ -85,6 +85,7 @@ an idea of what goes into them.
   var completedUploads = []
   var weAreRunningAWorkflowBatch = false
   var settings = {}
+  var staleBagExists = {{ .staleBagExists }}
 
   // This will be empty for workflow batches, but on the job_run
   // page this lets us display the job details as soon as the
@@ -99,6 +100,10 @@ an idea of what goes into them.
   // runJob runs the job or workflow that the user requested,
   // initializing UI elements as necessary.
   function runJob(eventSourceUrl, jobId) {
+    if (staleBagExists && !confirmDeletionOfStaleBag()) {
+      console.log("User cancelled replacing/rebuilding existing bag.")
+      return
+    }
     disableRunButtons()
     if (jobId && !eventSourceUrl.endsWith("/")) {
       eventSourceUrl += "/"
@@ -109,6 +114,10 @@ an idea of what goes into them.
     // Attach event listeners to respond to job status updates
     // coming from the backend server.
     attachEventSourceListeners(eventSourceUrl, jobId)
+  }
+
+  function confirmDeletionOfStaleBag() {
+    return confirm("An older version of this bag exists in the bagging directory. Click OK if you want to rebuild and replace the existing version.")
   }
 
   // This initializes the UI for running workflows, showing,
