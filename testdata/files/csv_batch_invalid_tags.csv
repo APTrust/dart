@@ -1,0 +1,4 @@
+Bag-Name,Root-Directory,aptrust-info.txt/Title,aptrust-info.txt/Description,aptrust-info.txt/Access,bag-info.txt/Source-Organization,bag-info.txt/Custom-Tag
+bag_one,/users/joe/photos,,A bag of joe's photos,Spongebob,Test University,Custom value one
+bag_two,/users/amy/music,,A whole bunch of MP3's ripped from Amy's old CD collection.,Institution,Staging University,Custom value two
+,/var/www/news,,Snapshot of news site from summer 2020,Restricted,University of Virginia,Custom value three

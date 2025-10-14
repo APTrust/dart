@@ -1,0 +1,30 @@
+{{ define "internal_setting/list.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Internal Settings</h2>
+<p>These settings are created by DART and cannot be edited.</p>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range $index, $item := .items }}
+    <tr>
+      <td>{{ $item.Name }}</td>
+      <td>{{ $item.Value }}</td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
+
+{{ template "partials/table_bottom_links.html" . }}
+
+{{ template "partials/pager.html" . }}
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

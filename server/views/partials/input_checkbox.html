@@ -1,0 +1,18 @@
+{{ define "partials/input_checkbox.html" }}
+
+
+<div class="form-check {{ template "partials/classes.html" .field }} {{ .field.FormGroupClass }}"
+    {{ template "partials/attrs.html" .field }}
+     {{ if .field.Hide }}style="display:none;"{{ end }}>
+  <label class="form-check-label" for="{{ .field.ID }}">
+    <input id="{{ .field.ID }}" class="form-check-input" type="checkbox" name="{{ .field.Name }}" value="{{ .field.Value }}" 
+    {{ if .field.Selected }}checked{{ end }} />
+    {{ .field.Label }}
+  </label>
+</div>
+
+<small id="{{ .field.ID }}Error" class="form-text text-danger">
+    {{ .field.Error }}
+</small>
+
+{{ end }}

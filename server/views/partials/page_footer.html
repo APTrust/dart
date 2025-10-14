@@ -1,0 +1,25 @@
+{{ define "partials/page_footer.html" }}
+
+</div>
+<!-- End of "container" div with main content. This div was opened in shared/page_header.html -->
+
+<div id="spinner" class="spinner" style="display:none"></div>
+
+<div id="modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="modalTitle" class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="modalContent" class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+{{ end }}

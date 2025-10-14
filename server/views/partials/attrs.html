@@ -1,0 +1,3 @@
+{{ define "partials/attrs.html" }}
+{{- range $name, $value := .Attrs }}{{ $name | escapeAttr }}="{{ $value | escapeAttr }}" {{ end -}}
+{{ end }}

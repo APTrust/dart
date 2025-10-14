@@ -1,0 +1,77 @@
+{{ define "storage_service/form.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Storage Service</h2>
+
+{{ if .showTestButton }}
+<div class="float-right mt-1 mb-3">
+  <button class="btn btn-primary" onclick="loadIntoModal('post', 'Connection Test', '/storage_services/test/{{ .form.Fields.ID.Value }}', '{{ .form.ObjType }}')" role="button">Test Connection</button>
+</div>
+{{ end }}
+
+<form method="post" id="{{ .form.ObjType }}">
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Description }}
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.Protocol }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Host }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Port }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Bucket }}
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.AllowsUpload }}
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.AllowsDownload }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Login }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Password }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.LoginExtra }}
+
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+
+  {{ template "partials/form_buttons.html" . }}
+
+</form>
+
+{{ if and .form.UserCanDelete .objectExistsInDB }}
+<form method="post" id="{{ .form.ObjType }}Delete" action="/storage_services/delete/{{ .form.ObjectID }}" style="display:none">
+  <input type="hidden" name="ID" value=".form.ObjectID"/>
+</form>
+{{ end }}
+
+<script>
+  function toggleFieldLabels() {
+    let protocol = document.getElementById("StorageService_Protocol").value
+    if (protocol == "sftp") {
+      setSSFormLabel("Bucket", "Upload Directory ")
+      setSSFormLabel("Login", "Login ")
+      setSSFormLabel("Password", "Password ")
+      setSSFormLabel("LoginExtra", "Path to SSH key (leave blank if you're using password authentication)")
+    } else {
+      setSSFormLabel("Bucket", "Bucket ")
+      setSSFormLabel("Login", "Access Key ID ")
+      setSSFormLabel("Password", "Secret Access Key ")
+      setSSFormLabel("LoginExtra", "Leave this empty for S3")
+    }
+  }
+  function setSSFormLabel(fieldName, value) {
+    let selector = `label[for='StorageService_${fieldName}']`
+    console.log(selector)
+    document.querySelector(selector).firstChild.textContent = value
+  }
+  window.addEventListener("load", (event) => {
+    toggleFieldLabels()
+    document.getElementById("StorageService_Protocol").addEventListener("change", toggleFieldLabels)
+  });
+</script>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

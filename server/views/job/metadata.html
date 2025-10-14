@@ -1,0 +1,120 @@
+{{ define "job/metadata.html" }}
+
+{{ template "partials/page_header.html" . }}
+
+<h2>Bag Metadata</h2>
+
+{{ if .workflow }}
+    <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+{{ end }}
+
+
+<div style="height: 50px;">
+  <div>
+    <div class="float-right p-r-3">
+      <button type="button" class="btn btn-primary" id="btnToggleHidden" style="margin-left: 25px;" onclick="toggleTags()">Show All Tags</button>
+    </div>
+    <div class="float-right">
+      <button role="button" class="btn btn-primary" onclick="loadIntoModal('GET', 'New Tag', '/jobs/add_tag/{{ .job.ID }}')" id="btnAddNewTag">Add New Tag</button>
+    </div>
+  </div>
+</div>
+
+<div>
+  <form method="post" action="/jobs/metadata/{{ .job.ID }}" id="{{ .job.ID }}">
+
+    {{ range $fileIndex, $tagFile := .tagFiles }}
+
+    <div class="card mb-3">
+      <div class="card-header">
+        <a data-toggle="collapse" href="#{{ $tagFile.Name }}" aria-expanded="true" aria-controls="{{ $tagFile.Name }}">{{ $tagFile.Name }}</a>
+        <div class="what-is-showing float-right text-muted">
+          <i>Tags with default values are not showing.</i>
+        </div>
+      </div>
+      <div class="card-body collapse show" id={{ $tagFile.Name }}>
+
+        {{ range $fieldIndex, $field := $tagFile.Fields }}
+
+          {{ if gt (len $field.Choices) 1 }}
+
+            {{ template "partials/input_select.html" dict "field" $field }}
+
+          {{else if eq $field.Attrs.ControlType "textarea" }}
+
+            {{ template "partials/input_textarea.html" dict "field" $field }}
+
+          {{else if eq $field.Attrs.WasAddedForJob "true" }}
+
+            <!-- Needs to be text with delete option. -->
+
+            {{ template "partials/input_text.html" dict "field" $field }}
+
+          {{else}}
+
+            {{ template "partials/input_text.html" dict "field" $field }}
+
+          {{ end }}
+
+        {{ end }}
+
+      </div>
+    </div>
+
+    {{ end }}
+
+
+      <input type="hidden" name="direction" value="next"/>
+
+      <div class="float-left mb-5" id="btnBackDiv">
+        <button type="submit" onclick="document.forms['{{ .job.ID }}'].direction.value='previous'" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+      </div>
+
+      <div class="float-right mb-5" id="btnNextDiv">
+        <button type="submit" onclick="document.forms['{{ .job.ID }}'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+      </div>
+
+
+  </form>
+</div>
+
+
+<script>
+function toggleTags() {
+    let showAll = 'Show All Tags'
+    let hideDefaults = 'Hide Default Tags'
+    let currentText = $("#btnToggleHidden").text().trim()
+    $('.form-group-hidden').toggle()
+    if (currentText == showAll) {
+        $("#btnToggleHidden").text(hideDefaults)
+        $('.what-is-showing i').text('Showing all tags.')
+    } else {
+        $("#btnToggleHidden").text(showAll)
+        $('.what-is-showing i').text('Tags with default values are not showing.')
+    }
+}
+
+function attachDeleteHandlers() {
+  var deletableTags = $('*[data-was-added-for-job="true"]')
+  deletableTags.each(function(index, element){
+    let tagId = element.id //dataset['tagId']
+    //let label = $(`label[for="tagId"]`)
+    console.log(tagId)
+    var deleteId = `delete-${tagId}`
+    var html = `<span style="float: right; cursor:pointer;" title="Delete this tag" id="${deleteId}"><i class="fas fa-times text-danger"></i></span>`
+    $(html).insertBefore(element)
+    var selector = "#" + deleteId
+    $(selector).on('click', function(ev) {
+      let data = { 'tagId': tagId }
+      confirmBackgroundDeletion('Delete this tag?', '/jobs/delete_tag/{{ .job.ID }}', data)
+    })
+  })
+}
+
+attachDeleteHandlers()
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

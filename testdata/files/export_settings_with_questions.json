@@ -1,0 +1,691 @@
+{
+  "id": "00000000-97bb-470d-9fcd-7b55c5ae04bb",
+  "name": "Test Export Settings With Questions",
+  "appSettings": [
+    {
+      "id": "00000000-4fd5-4543-9742-6d7b4469dde8",
+      "name": "Test Setting (Imported)",
+      "value": "one-two-three-four",
+      "help": "",
+      "errors": {},
+      "userCanDelete": true
+    }
+  ],
+  "bagItProfiles": [
+    {
+      "id": "00000000-28a4-4a9d-8230-911185296bd4",
+      "acceptBagItVersion": [
+        "0.97",
+        "1.0"
+      ],
+      "acceptSerialization": [
+        "application/tar"
+      ],
+      "allowFetchTxt": false,
+      "bagItProfileInfo": {
+        "bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json",
+        "bagItProfileVersion": "",
+        "contactEmail": "support@aptrust.org",
+        "contactName": "A. Diamond",
+        "externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
+        "sourceOrganization": "aptrust.org",
+        "version": "2.2"
+      },
+      "baseProfileId": "00000000-c9ff-4112-86f8-8f8f1e6a2dca",
+      "description": "APTrust Profile imported from Test Settings",
+      "isBuiltIn": false,
+      "manifestsAllowed": [
+        "md5",
+        "sha256"
+      ],
+      "manifestsRequired": [
+        "md5"
+      ],
+      "name": "APTrust - Wasabi VA (Imported)",
+      "serialization": "required",
+      "tagFilesAllowed": [
+        "*"
+      ],
+      "tagFilesRequired": null,
+      "tagManifestsAllowed": [
+        "md5",
+        "sha256"
+      ],
+      "tagManifestsRequired": [],
+      "tags": [
+        {
+          "defaultValue": "0.97",
+          "emptyOK": false,
+          "help": "Which version of the BagIt specification describes this bag's format?",
+          "id": "00000000-8e3d-47c3-9cda-5edd0d4ad1fb",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bagit.txt",
+          "tagName": "BagIt-Version",
+          "userValue": "",
+          "values": [
+            "0.97",
+            "1.0"
+          ],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "UTF-8",
+          "emptyOK": false,
+          "help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)",
+          "id": "00000000-ee3b-4c53-96e1-4f93f641338b",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bagit.txt",
+          "tagName": "Tag-File-Character-Encoding",
+          "userValue": "",
+          "values": [
+            "UTF-8"
+          ],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "APTrust",
+          "emptyOK": false,
+          "help": "The name of the organization that produced this bag, or is responsible for its contents.",
+          "id": "00000000-1f30-4bda-b66b-9a657426d5e5",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bag-info.txt",
+          "tagName": "Source-Organization",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags.",
+          "id": "00000000-096f-41f1-8c94-7d9202b9477b",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bag-Count",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "The date this bag was created. The bagging software should set this automatically.",
+          "id": "00000000-e54d-49a1-aad4-c8a4921d15ce",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bagging-Date",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "The name of the software that created this bag. The bagging software should set this automatically.",
+          "id": "00000000-4236-4adf-aaf2-c9d7666e3062",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bagging-Software",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "Identifies the logical group or collection to which a bag belongs. Several bags may share the same Bag-Group-Identifier to indicate that they are part of the same logical grouping.",
+          "id": "00000000-4495-452f-8b3d-bef545fca583",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bag-Group-Identifier",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "A description of the bag's contents for the sender's internal use. This description will appear in the APTrust registry if you do not set the Description tag in the aptrust-info.txt file.",
+          "id": "00000000-5bd1-4a5b-acb6-b7a4ce749252",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Internal-Sender-Description",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "A unique identifier for this bag inside your organization.",
+          "id": "00000000-5597-4406-a705-205c608d827f",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Internal-Sender-Identifier",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "The number of files and bytes in this bag's payload. This should be calculated and set by the bagging software.",
+          "id": "00000000-fadb-4811-88a2-83aafa44fb50",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Payload-Oxum",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "The title or name of that describes this bag's contents.",
+          "id": "00000000-9d06-4444-9d8a-dda7e5c2b8dc",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "aptrust-info.txt",
+          "tagName": "Title",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "Institution",
+          "emptyOK": false,
+          "help": "Access rights for this bag describe who can see that it exists in the repository.",
+          "id": "00000000-6d9c-4825-92cf-e472fb05f3d4",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "aptrust-info.txt",
+          "tagName": "Access",
+          "userValue": "Institution",
+          "values": [
+            "Consortia",
+            "Institution",
+            "Restricted"
+          ],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": true,
+          "help": "The description of the bag that you want to appear in the APTrust registry.",
+          "id": "00000000-49cb-4569-8d27-d9ebbf25c9b2",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "aptrust-info.txt",
+          "tagName": "Description",
+          "userValue": "",
+          "values": [],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "Wasabi-VA",
+          "emptyOK": false,
+          "help": "How do you want this bag to be stored in APTrust? Standard = S3/Virginia + Glacier/Oregon. Glacier-OH = Glacier-only storage in Ohio. Glacier-OR = Glacier-only storage in Oregon. Glacier-VA = Glacier-only storage in Virginia. Standard storage includes regular 90-day fixity checks. Glacier-only storage is less expensive but excludes fixity checks. File in Glacier-only storage may take up to 24 hours longer to restore and excessive Glacier retrieval may incur additional fees.",
+          "id": "00000000-e6cf-4a18-9b34-caa605ed593f",
+          "isBuiltIn": true,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "aptrust-info.txt",
+          "tagName": "Storage-Option",
+          "userValue": "",
+          "values": [
+            "Standard",
+            "Glacier-OH",
+            "Glacier-OR",
+            "Glacier-VA",
+            "Glacier-Deep-OH",
+            "Glacier-Deep-OR",
+            "Glacier-Deep-VA",
+            "Wasabi-VA",
+            "Wasabi-OR"
+          ],
+          "wasAddedForJob": false
+        }
+      ],
+      "tarDirMustMatchName": true
+    },
+    {
+      "id": "00000000-138b-4f3a-8823-e6fe3f24b870",
+      "acceptBagItVersion": [
+        "0.96",
+        "0.97"
+      ],
+      "acceptSerialization": [
+        "application/zip",
+        "application/tar"
+      ],
+      "allowFetchTxt": false,
+      "bagItProfileInfo": {
+        "bagItProfileIdentifier": "http://www.library.yale.edu/mssa/bagitprofiles/disk_images.json",
+        "bagItProfileVersion": "1.1.0",
+        "contactEmail": "",
+        "contactName": "Mark Matienzo",
+        "externalDescription": "BagIt Profile for packaging disk images",
+        "sourceOrganization": "Yale University",
+        "version": "0.3"
+      },
+      "baseProfileId": "",
+      "description": "Disk image profile imported from Test Settings",
+      "isBuiltIn": false,
+      "manifestsAllowed": [
+        "sha512",
+        "sha256",
+        "md5",
+        "sha1"
+      ],
+      "manifestsRequired": [
+        "md5"
+      ],
+      "name": "Yale University Disk Image (Imported)",
+      "serialization": "required",
+      "tagFilesAllowed": [
+        ""
+      ],
+      "tagFilesRequired": [
+        ""
+      ],
+      "tagManifestsAllowed": [
+        "sha512",
+        "sha256",
+        "md5",
+        "sha1"
+      ],
+      "tagManifestsRequired": [],
+      "tags": [
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bagging-Date",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bag-info.txt",
+          "tagName": "Source-Organization",
+          "userValue": "",
+          "values": [
+            "Simon Fraser University",
+            "York University"
+          ],
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bag-info.txt",
+          "tagName": "Contact-Phone",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "1.0",
+          "emptyOK": false,
+          "help": "Which version of the BagIt specification describes this bag's format?",
+          "id": "00000000-bd5d-417f-ade4-afcfc1001cba",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bagit.txt",
+          "tagName": "BagIt-Version",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "UTF-8",
+          "emptyOK": false,
+          "help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)",
+          "id": "00000000-4d9d-4650-be84-8f3a34a98b99",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": true,
+          "tagFile": "bagit.txt",
+          "tagName": "Tag-File-Character-Encoding",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-727a-4191-9aa3-94142c1648b5",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bag-Count",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-0371-46b8-85d7-1286e3e3abb9",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bag-Group-Identifier",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-af42-4957-b26f-3e65e13beb5e",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bag-Size",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-1c70-41e1-9dea-7c8907f520a1",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Bagging-Software",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-f1ce-4e7e-a800-620a2c775526",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Contact-Email",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-16e6-4d55-bf78-a0e2ff000799",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Contact-Name",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-a367-46b8-807a-91494cbb52a6",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "External-Description",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-4499-46a2-927d-86ed5ee5084a",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "External-Identifier",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-8bca-45de-9241-c4f5337e01ec",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Internal-Sender-Description",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-f14e-4813-934f-4530a65ba6ed",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Internal-Sender-Identifier",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-8c18-41e2-bc1f-8263dc6a9a97",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Organization-Address",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        },
+        {
+          "defaultValue": "",
+          "emptyOK": false,
+          "help": "",
+          "id": "00000000-7ce1-4ce3-be87-5582f02e436f",
+          "isBuiltIn": false,
+          "isUserAddedFile": false,
+          "isUserAddedTag": false,
+          "required": false,
+          "tagFile": "bag-info.txt",
+          "tagName": "Payload-Oxum",
+          "userValue": "",
+          "values": null,
+          "wasAddedForJob": false
+        }
+      ],
+      "tarDirMustMatchName": false
+    }
+  ],
+  "questions": [
+    {
+      "id": "33962f80-c860-4a0f-a331-5e9e524bca59",
+      "prompt": "What is your login name for the local Minio service?",
+      "objType": "StorageService",
+      "objId": "00000000-6870-48a3-9dd7-89e21410453b",
+      "field": "Login"
+    },
+    {
+      "id": "2e132b92-eeeb-4b8c-b84d-e507b4aa1c46",
+      "prompt": "Which port should we connect to for the local Minio service? Enter a positive whole number.",
+      "objType": "StorageService",
+      "objId": "00000000-6870-48a3-9dd7-89e21410453b",
+      "field": "Port"
+    },
+    {
+      "id": "1585ab60-91d1-42d4-a2e0-896dbd1eac9e",
+      "prompt": "Does the local SFTP service allow downloads?",
+      "objType": "StorageService",
+      "objId": "00000000-d761-4c03-ab5b-266bacc40f3f",
+      "field": "AllowsDownload"
+    },
+    {
+      "id": "a4663b7f-1bba-4ed0-b821-aedcc1ed2dbd",
+      "prompt": "Enter a value for the test setting. Pick any word you like.",
+      "objType": "AppSetting",
+      "objId": "00000000-4fd5-4543-9742-6d7b4469dde8",
+      "field": "Value"
+    },
+    {
+      "id": "9e99775d-d516-48d8-a45d-2e885f1b5402",
+      "prompt": "Choose a default access option for APTrust bags: Restricted, Institution, or Consortia.",
+      "objType": "BagItProfile",
+      "objId": "00000000-28a4-4a9d-8230-911185296bd4",
+      "field": "00000000-6d9c-4825-92cf-e472fb05f3d4"
+    },
+    {
+      "id": "4e639265-4dbb-4847-a13e-45dd1badcaeb",
+      "prompt": "Enter the default contact name for the Yale BagIt profile.",
+      "objType": "BagItProfile",
+      "objId": "00000000-138b-4f3a-8823-e6fe3f24b870",
+      "field": "00000000-16e6-4d55-bf78-a0e2ff000799"
+    },
+    {
+      "id": "b80561a8-2d08-4d35-9406-6f4de8de8ea4",
+      "prompt": "Enter the user id for the sample repo.",
+      "objType": "RemoteRepository",
+      "objId": "00000000-9d6a-466e-91f0-541cf9894232",
+      "field": "UserID"
+    }
+  ],
+  "remoteRepositories": [
+    {
+      "id": "00000000-9d6a-466e-91f0-541cf9894232",
+      "name": "Sample Repo (Imported)",
+      "url": "https://repo.example.com",
+      "userId": "joe@example.com",
+      "apiToken": "super-secret-token",
+      "loginExtra": "",
+      "pluginId": "c5a6b7db-5a5f-4ca5-a8f8-31b2e60c84bd",
+      "errors": {}
+    }
+  ],
+  "storageServices": [
+    {
+      "id": "00000000-6870-48a3-9dd7-89e21410453b",
+      "allowsDownload": true,
+      "allowsUpload": true,
+      "bucket": "test",
+      "description": "Local minio s3 service",
+      "host": "127.0.0.1",
+      "login": "example-login",
+      "loginExtra": "",
+      "name": "Local Minio (Imported)",
+      "password": "example-password",
+      "port": 9899,
+      "protocol": "s3"
+    },
+    {
+      "id": "00000000-d761-4c03-ab5b-266bacc40f3f",
+      "allowsDownload": false,
+      "allowsUpload": true,
+      "bucket": "uploads",
+      "description": "Local SFTP service using password authentication",
+      "host": "127.0.0.1",
+      "login": "example-login",
+      "loginExtra": "",
+      "name": "Local SFTP (Imported)",
+      "password": "example-password",
+      "port": 2222,
+      "protocol": "sftp"
+    }
+  ]
+}

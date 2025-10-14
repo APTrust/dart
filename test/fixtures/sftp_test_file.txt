@@ -1,1 +1,0 @@
-Test file to be read by SFTP server during unit tests.

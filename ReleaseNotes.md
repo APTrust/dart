@@ -1,5 +1,38 @@
 # DART Release Notes
 
+## [Next] - [Date TBD]
+
+* Feature: DART can now create, validate, and upload tarred, gzipped bags (.tar.gz or .tgz)
+* Feature: DART can now create, validate, and upload loose bags (not tarred or gzipped)
+* Feature: DART can save artifacts (tag files, manifests, etc.) to file from the artifacts screen
+* Fixed: Menu items on tag file dropdown are no longer stuck on after being clicked
+
+## 3.0-alpha-03 - June 6, 2025
+
+* Fixed omissions in the algorithms lists for allowed manifests and allowed tag manifests in version 2.3 of the APTrust BagIt profile. This list now correctly includes sha1 and sha512 as allowed algorithms.
+* Tag Source-Organization is no longer required in APTrust BagIt Profile v2.3 (to match prior profile v2.2).
+
+## 3.0-alpha-02 - May 29, 2025
+
+* Converted app from pure web service to [Wails](https://wails.io) for easier installation and better desktop experience.
+* Fixed: Can now drag folder by icon or name when adding files to a bag.
+* Fixed: Default StorageService AllowsUpload to true, so service appears in list of Job upload options.
+* Fixed: When user chooses to export all settings, export all of them, not just the last one.
+* Fixed: Don't add empty list of allowed tag values when user edits a BagIt Profile tag definition.
+* Fixed: Stop hiding Storage-Option on job metadata page when using APTrust BagIt Profiles.
+* Fixed: When user changes a BagIt profile's required/allowed manifests list, clear out the items they removed.
+* Fixed: Return to Dashboard when user cancels settings export.
+* Changed: "View Artifacts" to "View Logs, Manifests and Tag Files" https://github.com/APTrust/dart/issues/560
+* Fixed: Restored missing job status display messages. https://github.com/APTrust/dart/issues/563
+* Fixed: File and folder count display after job run is now correct. https://github.com/APTrust/dart/issues/561
+* Fixed: DART 3 can now import settings from DART 2.
+* Fixed: Users can now delete imported BagIt profiles.
+
+
+## 3.0-alpha-01 - March 11, 2025
+
+* First alpha release of DART 3, using Golang instead of Electron and JavaScript
+
 ## 2.0.22 - March 14, 2023
 
 * Fixed ["Show Logs" and "About" links not working](https://github.com/APTrust/dart/issues/534).

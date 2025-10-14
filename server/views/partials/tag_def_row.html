@@ -1,0 +1,26 @@
+{{ define "partials/tag_def_row.html" }}
+
+<tr>
+    <td>
+        {{ if .tag.Help }}
+        <i class="fas fa-question-circle text-primary" data-toggle="popover" data-trigger="hover" title="{{ .tag.TagName }}" data-content="{{ .tag.Help }}"></i>
+        {{ end }}
+    </td>
+    <td class="clickable-cell"  onclick="loadIntoModal('get', 'Tag Definition', '/profiles/edit_tag/{{ .bagItProfileID }}/{{ .tag.ID }}')" >
+        {{ .tag.TagName }}
+    </td>
+    <td class="clickable-cell"  onclick="loadIntoModal('get', 'Tag Definition', '/profiles/edit_tag/{{ .bagItProfileID }}/{{ .tag.ID }}')" >
+        {{ if .tag.SystemMustSet }}
+        <span class='text-muted'>[Set automatically by bagger]</span>
+        {{ else }}
+        {{ .tag.DefaultValue }}
+        {{ end }}
+    </td>
+    <td class="clickable-cell" {{ if not .tag.IsBuiltIn }} onclick="confirmBackgroundDeletion('Delete this tag definition?', '/profiles/delete_tag/{{ .bagItProfileID }}/{{ .tag.ID }}')" {{ end }}>
+        {{ if not .tag.IsBuiltIn }}
+        <i class="fas fa-times text-danger" title="Delete {{ .tag.TagName }}"></i>
+        {{ end }}
+    </td>
+</tr>
+
+{{ end }}

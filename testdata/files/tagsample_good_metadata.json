@@ -1,0 +1,730 @@
+{
+  "PathToBag": "./testdata/bags/example.edu.tagsample_good.tar",
+  "Profile": {
+    "acceptBagItVersion": [
+      "0.97",
+      "1.0"
+    ],
+    "acceptSerialization": [
+      "application/tar"
+    ],
+    "allowFetchTxt": false,
+    "bagItProfileInfo": {
+      "bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json",
+      "bagItProfileVersion": "",
+      "contactEmail": "support@aptrust.org",
+      "contactName": "A. Diamond",
+      "externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
+      "sourceOrganization": "aptrust.org"
+    },
+    "description": "APTrust 2.2 default BagIt profile.",
+    "manifestsAllowed": [
+      "md5",
+      "sha256"
+    ],
+    "manifestsRequired": [
+      "md5"
+    ],
+    "name": "APTrust",
+    "serialization": "required",
+    "tagFilesAllowed": [
+      "*",
+      ""
+    ],
+    "tagFilesRequired": null,
+    "tagManifestsAllowed": [
+      "md5",
+      "sha256"
+    ],
+    "tagManifestsRequired": [],
+    "tags": [
+      {
+        "defaultValue": "0.97",
+        "emptyOK": false,
+        "help": "Which version of the BagIt specification describes this bag's format?",
+        "id": "39b8ac8a-8e3d-47c3-9cda-5edd0d4ad1fb",
+        "required": true,
+        "tagFile": "bagit.txt",
+        "tagName": "BagIt-Version",
+        "userValue": "",
+        "values": [
+          "0.97",
+          "1.0"
+        ]
+      },
+      {
+        "defaultValue": "UTF-8",
+        "emptyOK": false,
+        "help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)",
+        "id": "2a914ea2-ee3b-4c53-96e1-4f93f641338b",
+        "required": true,
+        "tagFile": "bagit.txt",
+        "tagName": "Tag-File-Character-Encoding",
+        "userValue": "",
+        "values": [
+          "UTF-8"
+        ]
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": false,
+        "help": "The name of the organization that produced this bag, or is responsible for its contents.",
+        "id": "567451b6-1f30-4bda-b66b-9a657426d5e5",
+        "required": true,
+        "tagFile": "bag-info.txt",
+        "tagName": "Source-Organization",
+        "userValue": "Test University",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags.",
+        "id": "117e46d8-096f-41f1-8c94-7d9202b9477b",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Bag-Count",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "The date this bag was created. The bagging software should set this automatically.",
+        "id": "41b75504-e54d-49a1-aad4-c8a4921d15ce",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Bagging-Date",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "The name of the software that created this bag. The bagging software should set this automatically.",
+        "id": "4d9e682c-4236-4adf-aaf2-c9d7666e3062",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Bagging-Software",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "Identifies the logical group or collection to which a bag belongs. Several bags may share the same Bag-Group-Identifier to indicate that they are part of the same logical grouping.",
+        "id": "32e69005-4495-452f-8b3d-bef545fca583",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Bag-Group-Identifier",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "A description of the bag's contents for the sender's internal use. This description will appear in the APTrust registry if you do not set the Description tag in the aptrust-info.txt file.",
+        "id": "917fc560-5bd1-4a5b-acb6-b7a4ce749252",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Internal-Sender-Description",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "A unique identifier for this bag inside your organization.",
+        "id": "018c0706-5597-4406-a705-205c608d827f",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Internal-Sender-Identifier",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "The number of files and bytes in this bag's payload. This should be calculated and set by the bagging software.",
+        "id": "de2c8f3e-fadb-4811-88a2-83aafa44fb50",
+        "required": false,
+        "tagFile": "bag-info.txt",
+        "tagName": "Payload-Oxum",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": false,
+        "help": "The title or name of that describes this bag's contents.",
+        "id": "9b7344ae-9d06-4444-9d8a-dda7e5c2b8dc",
+        "required": true,
+        "tagFile": "aptrust-info.txt",
+        "tagName": "Title",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": false,
+        "help": "Access rights for this bag describe who can see that it exists in the repository.",
+        "id": "60ef466a-6d9c-4825-92cf-e472fb05f3d4",
+        "required": true,
+        "tagFile": "aptrust-info.txt",
+        "tagName": "Access",
+        "userValue": "Institution",
+        "values": [
+          "Consortia",
+          "Institution",
+          "Restricted"
+        ]
+      },
+      {
+        "defaultValue": "",
+        "emptyOK": true,
+        "help": "The description of the bag that you want to appear in the APTrust registry.",
+        "id": "d94d1d47-49cb-4569-8d27-d9ebbf25c9b2",
+        "required": false,
+        "tagFile": "aptrust-info.txt",
+        "tagName": "Description",
+        "userValue": "",
+        "values": []
+      },
+      {
+        "defaultValue": "Standard",
+        "emptyOK": false,
+        "help": "How do you want this bag to be stored in APTrust? Standard = S3/Virginia + Glacier/Oregon. Glacier-OH = Glacier-only storage in Ohio. Glacier-OR = Glacier-only storage in Oregon. Glacier-VA = Glacier-only storage in Virginia. Standard storage includes regular 90-day fixity checks. Glacier-only storage is less expensive but excludes fixity checks. File in Glacier-only storage may take up to 24 hours longer to restore and excessive Glacier retrieval may incur additional fees.",
+        "id": "53075007-e6cf-4a18-9b34-caa605ed593f",
+        "required": true,
+        "tagFile": "aptrust-info.txt",
+        "tagName": "Storage-Option",
+        "userValue": "",
+        "values": [
+          "Standard",
+          "Glacier-OH",
+          "Glacier-OR",
+          "Glacier-VA",
+          "Glacier-Deep-OH",
+          "Glacier-Deep-OR",
+          "Glacier-Deep-VA",
+          "Wasabi-OR",
+          "Wasabi-VA"
+        ]
+      }
+    ]
+  },
+  "PayloadFiles": {
+    "Type": "payload file",
+    "Files": {
+      "data/datastream-DC": {
+        "Size": 2388,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "44d85cf4810d6c6fe87750117633e461"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "248fac506a5c46b3c760312b99827b6fb5df4698d6cf9a9cdc4c54746728ab99"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "md5",
+            "Digest": "44d85cf4810d6c6fe87750117633e461"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "sha256",
+            "Digest": "248fac506a5c46b3c760312b99827b6fb5df4698d6cf9a9cdc4c54746728ab99"
+          }
+        ]
+      },
+      "data/datastream-MARC": {
+        "Size": 4663,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "93e381dfa9ad0086dbe3b92e0324bae6"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "8e3634d207017f3cfc8c97545b758c9bcd8a7f772448d60e196663ac4b62456a"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "md5",
+            "Digest": "93e381dfa9ad0086dbe3b92e0324bae6"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "sha256",
+            "Digest": "8e3634d207017f3cfc8c97545b758c9bcd8a7f772448d60e196663ac4b62456a"
+          }
+        ]
+      },
+      "data/datastream-RELS-EXT": {
+        "Size": 579,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "ff731b9a1758618f6cc22538dede6174"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "299e1c23e398ec6699976cae63ef08167201500fa64bcf18062111e0c81d6a13"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "md5",
+            "Digest": "ff731b9a1758618f6cc22538dede6174"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "sha256",
+            "Digest": "299e1c23e398ec6699976cae63ef08167201500fa64bcf18062111e0c81d6a13"
+          }
+        ]
+      },
+      "data/datastream-descMetadata": {
+        "Size": 6191,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "4bd0ad5f85c00ce84a455466b24c8960"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "md5",
+            "Digest": "4bd0ad5f85c00ce84a455466b24c8960"
+          },
+          {
+            "Source": "payload file",
+            "Algorithm": "sha256",
+            "Digest": "cf9cbce80062932e10ee9cd70ec05ebc24019deddfea4e54b8788decd28b4bc7"
+          }
+        ]
+      }
+    }
+  },
+  "PayloadManifests": {
+    "Type": "manifest",
+    "Files": {
+      "manifest-md5.txt": {
+        "Size": 230,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "a541b543dad466a93ab60e785671982b"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "7cd2cb0f0f1478e5f7d8266c27ca2dced0a8d333a0650fdeb2c93df790a9ae41"
+          }
+        ]
+      },
+      "manifest-sha256.txt": {
+        "Size": 358,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "4107028bebce5f43300456717e6330e9"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "0cd256d605e31b29ef16c9a54505c8d855068ddde231e59c6e2daf11728a5410"
+          }
+        ]
+      }
+    }
+  },
+  "TagFiles": {
+    "Type": "tag file",
+    "Files": {
+      "aptrust-info.txt": {
+        "Size": 92,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "7b66de1d1cb8695023926e74b109fdaa"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "980959e74f29df4b7130a97fcee54231b8094accde33bfa82b09015be9a92603"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "7b66de1d1cb8695023926e74b109fdaa"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "980959e74f29df4b7130a97fcee54231b8094accde33bfa82b09015be9a92603"
+          }
+        ]
+      },
+      "bag-info.txt": {
+        "Size": 319,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "435fcab7f86032e7ad3f2f47f1dc6ecb"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "34316ea8e151e30973cc2e41bdef1c7075771951abf2049d4378a0c2b21c5468"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "435fcab7f86032e7ad3f2f47f1dc6ecb"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "34316ea8e151e30973cc2e41bdef1c7075771951abf2049d4378a0c2b21c5468"
+          }
+        ]
+      },
+      "bagit.txt": {
+        "Size": 55,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "9e5ad981e0d29adc278f6a294b8c2aca"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "e91f941be5973ff71f1dccbdd1a32d598881893a7f21be516aca743da38b1689"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "9e5ad981e0d29adc278f6a294b8c2aca"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "e91f941be5973ff71f1dccbdd1a32d598881893a7f21be516aca743da38b1689"
+          }
+        ]
+      },
+      "custom_tag_file.txt": {
+        "Size": 50,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "e8605f82f605c1a90ff951ca62899c28"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "07bd722657a1fe5d3564ddabec8f6ede5a1e98ed14d03ca0b1799f46d949f2af"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "e8605f82f605c1a90ff951ca62899c28"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "07bd722657a1fe5d3564ddabec8f6ede5a1e98ed14d03ca0b1799f46d949f2af"
+          }
+        ]
+      },
+      "custom_tags/tracked_file_custom.xml": {
+        "Size": 332,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "bb278da2170f85946c6b4b1501f7c43b"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "be073b631e26d8b205f3d02a2d6273c424fac7b7a4afcd34393341f61821f8d4"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "bb278da2170f85946c6b4b1501f7c43b"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "be073b631e26d8b205f3d02a2d6273c424fac7b7a4afcd34393341f61821f8d4"
+          }
+        ]
+      },
+      "custom_tags/tracked_tag_file.txt": {
+        "Size": 117,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "dafbffffc3ed28ef18363394935a2651"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "dafbffffc3ed28ef18363394935a2651"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "3f2f50c5bde87b58d6132faee14d1a295d115338643c658df7fa147e2296ccdd"
+          }
+        ]
+      },
+      "custom_tags/untracked_tag_file.txt": {
+        "Size": 125,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "bf34469dd624e1b50121edc831bf3a7e"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "1488c68d6d6d839e8f913bc50bf555878b83aa29e027e386bf9eec9462e9f54c"
+          }
+        ]
+      },
+      "junk_file.txt": {
+        "Size": 446,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "e3a1b6c49d0722c0cfee1903e79bc531"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "50d43ca57a95b837523ab1051e58e1bf2533acbee2f2f413ab4eb3933ebaa176"
+          }
+        ]
+      },
+      "manifest-md5.txt": {
+        "Size": 230,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "a541b543dad466a93ab60e785671982b"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "7cd2cb0f0f1478e5f7d8266c27ca2dced0a8d333a0650fdeb2c93df790a9ae41"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "a541b543dad466a93ab60e785671982b"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "7cd2cb0f0f1478e5f7d8266c27ca2dced0a8d333a0650fdeb2c93df790a9ae41"
+          }
+        ]
+      },
+      "manifest-sha256.txt": {
+        "Size": 358,
+        "Checksums": [
+          {
+            "Source": "manifest",
+            "Algorithm": "md5",
+            "Digest": "4107028bebce5f43300456717e6330e9"
+          },
+          {
+            "Source": "manifest",
+            "Algorithm": "sha256",
+            "Digest": "0cd256d605e31b29ef16c9a54505c8d855068ddde231e59c6e2daf11728a5410"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "4107028bebce5f43300456717e6330e9"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "0cd256d605e31b29ef16c9a54505c8d855068ddde231e59c6e2daf11728a5410"
+          }
+        ]
+      }
+    }
+  },
+  "TagManifests": {
+    "Type": "tag manifest",
+    "Files": {
+      "tagmanifest-md5.txt": {
+        "Size": 438,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "e02024b25c01b8f9ebd324b5c1a506ed"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "32b15a582b165d65ed6cec9f4bca56acf380749b56d447de0e8cb19c2863f587"
+          }
+        ]
+      },
+      "tagmanifest-sha256.txt": {
+        "Size": 694,
+        "Checksums": [
+          {
+            "Source": "tag file",
+            "Algorithm": "md5",
+            "Digest": "e3e26efd981b64544bb3408edfbb1223"
+          },
+          {
+            "Source": "tag file",
+            "Algorithm": "sha256",
+            "Digest": "b1e27508f2cfc9cadc4cbc32f8a9a09203ab5a6ea58612352d98a0127d2d94b3"
+          }
+        ]
+      }
+    }
+  },
+  "Tags": [
+    {
+      "tagFile": "junk_file.txt",
+      "tagName": "http",
+      "value": "//tools.ietf.org/html/draft-kunze-bagit-13#section-2.2.4, our bag validator should permit the presence of this file and not try to validate a checksum for it, because it does not appear in any of the tag manifests. We should treat this file as a tag file with some unknown format that does not need checksum validation."
+    },
+    {
+      "tagFile": "bagit.txt",
+      "tagName": "BagIt-Version",
+      "value": "0.97"
+    },
+    {
+      "tagFile": "bagit.txt",
+      "tagName": "Tag-File-Character-Encoding",
+      "value": "UTF-8"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Source-Organization",
+      "value": "virginia.edu"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Bagging-Date",
+      "value": "2014-04-14T11:55:26.17-0400"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Bag-Count",
+      "value": "1 of 1"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Bag-Group-Identifier",
+      "value": "Charley Horse"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Internal-Sender-Description",
+      "value": "so much depends upon a red wheel barrow glazed with rain water beside the white chickens"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Internal-Sender-Identifier",
+      "value": "uva-internal-id-0001"
+    },
+    {
+      "tagFile": "bag-info.txt",
+      "tagName": "Payload-Oxum",
+      "value": "13821.4"
+    },
+    {
+      "tagFile": "aptrust-info.txt",
+      "tagName": "Title",
+      "value": "Thirteen Ways of Looking at a Blackbird"
+    },
+    {
+      "tagFile": "aptrust-info.txt",
+      "tagName": "Access",
+      "value": "Institution"
+    },
+    {
+      "tagFile": "aptrust-info.txt",
+      "tagName": "Storage-Option",
+      "value": "Standard"
+    },
+    {
+      "tagFile": "custom_tag_file.txt",
+      "tagName": "Key1",
+      "value": "Value One"
+    },
+    {
+      "tagFile": "custom_tag_file.txt",
+      "tagName": "Key2",
+      "value": "Value Two"
+    },
+    {
+      "tagFile": "custom_tag_file.txt",
+      "tagName": "Key3",
+      "value": "Value Three"
+    },
+    {
+      "tagFile": "custom_tags/tracked_tag_file.txt",
+      "tagName": "This-File",
+      "value": "Is tracked in the tag manifests."
+    },
+    {
+      "tagFile": "custom_tags/tracked_tag_file.txt",
+      "tagName": "Which-Means",
+      "value": "We should validate the tagmanifest checksums for this file."
+    },
+    {
+      "tagFile": "custom_tags/untracked_tag_file.txt",
+      "tagName": "This-File",
+      "value": "Is NOT tracked in the tag manifests."
+    },
+    {
+      "tagFile": "custom_tags/untracked_tag_file.txt",
+      "tagName": "Which-Means",
+      "value": "We should NOT validate the tagmanifest checksums for this file."
+    }
+  ],
+  "UnparsableTagFiles": [],
+  "Errors": {}
+}

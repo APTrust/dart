@@ -1,0 +1,34 @@
+{{ define "app_setting/form.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Application Setting</h2>
+
+<form method="post" id="{{ .form.ObjType }}">
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+
+
+  {{ if .form.Fields.Value.Choices }}
+  {{ template "partials/input_select.html" dict "field" .form.Fields.Value }}
+  {{ else }}
+  {{ template "partials/input_text.html" dict "field"  .form.Fields.Value }}
+  {{ end }}
+
+  {{ template "partials/input_hidden.html" dict "field"  .form.Fields.UserCanDelete }}
+
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+
+  {{ template "partials/form_buttons.html" . }}
+
+</form>
+
+{{ if and .form.UserCanDelete .objectExistsInDB }}
+<form method="post" id="{{ .form.ObjType }}Delete" action="/app_settings/delete/{{ .form.ObjectID }}" style="display:none">
+  <input type="hidden" name="ID" value=".form.ObjectID" />
+</form>
+{{ end }}
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

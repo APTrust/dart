@@ -1,0 +1,123 @@
+{{ define "job/packaging.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Packaging</h2>
+
+<!--
+<p>
+    Note: Although this page displays a number of serialization formats,
+    DART currently supports only the "None" and ".tar" formats. Additional
+    formats will be coming soon.
+</p>
+-->
+
+<!-- { {> bannerAlert message = alertMessage } } -->
+
+{{ if .workflow }}
+<div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
+{{ end }}
+
+<form method="post" action="/jobs/packaging/{{ .job.ID }}" id="{{ .job.ID }}">
+
+  <div style="display: {{ if .job.WorkflowID }} none {{ else }} block {{ end }};">
+    {{ template "partials/input_select.html" dict "field" .form.Fields.PackageFormat }}
+
+    <!-- div id="jobProfileContainer" style='display: {{if eq "BagIt" .form.Fields.PackageFormat.Value }} block {{ else }} none {{ end }};' -->
+    <div id="jobProfileContainer" style='display:block;'>
+      {{ template "partials/input_select.html" dict "field" .form.Fields.BagItProfileID }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.BagItSerialization }}
+    </div>
+  </div>
+
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.PackageName }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.OutputPath }}
+
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+
+  <input type="hidden" name="direction" value="next" />
+
+
+  <div class="float-left" id="btnBackDiv">
+    <button type="submit" onclick="document.forms['{{ .job.ID }}'].direction.value='previous'" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+  </div>
+
+  <div class="float-right" id="btnNextDiv">
+    <button type="submit" onclick="document.forms['{{ .job.ID }}'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+  </div>
+
+
+</form>
+
+<script>
+  $(function () {
+
+    let baggingDir = {{ .baggingDir }}
+    let separator = {{ .pathSeparator }}
+    let autoSetSerialization = {{ .autoSetSerialization }}
+
+    let extensionsForType = {
+      "application/x-7z-compressed": [".7z"],
+      "application/tar": [".tar"],
+      "application/x-tar": [".tar"],
+      "application/zip": [".zip"],
+      "application/gzip": [".tar.gz", ".tgz"],
+      "application/x-rar-compressed": [".rar"],
+    }
+
+  function allExtensionsForType(mimeType) {
+      return extensionsForType[mimeType] || ['']
+  }
+  function preferredExtensionForType(mimeType) {
+      let extensions = allExtensionsForType(mimeType)
+      return extensions[0]
+  }
+
+  function setOutputPath() {
+      var packageName = $('#Job_PackageName').val()
+
+      {{ if .workflow }}
+      // Workflow overrides.
+      var mimeType = "{{ .workflow.Serialization }}" || $('#Job_BagItSerialization').val()
+      var preferredExtension = preferredExtensionForType(mimeType)
+      {{ else }}
+      var mimeType = $('#Job_BagItSerialization').val();
+      var preferredExtension = preferredExtensionForType(mimeType)
+      {{ end }}
+
+
+      var outputPath = $('#Job_OutputPath').val()      
+      for (let ext of allExtensionsForType(mimeType)) {
+        if (packageName && outputPath.endsWith(ext)) {
+          outputPathHasValidExtension = true
+          console.log("Has valid extension " + ext)
+          preferredExtension = ext // keep existing extension
+        }
+      }
+
+      packageName += preferredExtension;
+
+      // In case user switched to a package format that's not serialized.
+      if (preferredExtension == '') {
+        packageName = packageName.replace(/\.\w+$/, '')
+      }
+      $('#Job_OutputPath').val(`${baggingDir}${separator}${packageName}`)
+    }
+  $('#Job_PackageName').on('keyup', setOutputPath)
+  $('#Job_BagItSerialization').on('change', setOutputPath)
+
+  function setSerialization() {
+      let profileId = $(this).val()
+      let serializationFormat = autoSetSerialization[profileId]
+      $('#Job_BagItSerialization').val(serializationFormat)
+    }
+  $('#Job_BagItProfileID').on('change', setSerialization)
+
+})
+</script>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

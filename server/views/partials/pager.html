@@ -1,0 +1,17 @@
+{{ define "partials/pager.html" }}
+
+<div id="pager-container" class="d-flex justify-content-center align-items-center">
+
+  {{ if .pager.PreviousLink }}
+  <a class="btn btn-sm btn-outline-primary" role="button" href="{{ .pager.PreviousLink }}">&lt;</a>
+  {{ end }}
+
+  <span class="ml-3 mr-3 mt-3 mb-3">{{ .pager.ItemFirst }} - {{ .pager.ItemLast }} of {{ .pager.TotalItems }}</span>
+
+  {{ if .pager.NextLink }}
+  <a class="btn btn-sm btn-outline-primary" role="button" href="{{ .pager.NextLink }}">&gt;</a>
+  {{ end }}
+</div>
+
+
+{{ end }}

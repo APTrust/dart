@@ -1,0 +1,4 @@
+﻿Bag-Name,Root-Directory,aptrust-info.txt/Title,aptrust-info.txt/Description,aptrust-info.txt/Access,bag-info.txt/Source-Organization,bag-info.txt/Custom-Tag,custom-tag-file.txt/Tag-One,custom-tag-file.txt/Tag-Two
+RunnerTestCore,PROJECT_ROOT/core,Runner Test - Core Files,Go source files from DART runner: core directory. These files are bagged as part of the DART runner workflow tests.,Consortia,Test University,Custom Value (Core),Alpha,Abondance
+RunnerTestServer,PROJECT_ROOT/server/controllers,Runner Test - Server Files,Go source files from DART runner: server directory. These files are bagged as part of the DART runner workflow tests.,Institution,Staging University,Custom Value (BagIt),Bravo,Brie
+RunnerTestUtil,PROJECT_ROOT/util,Runner Test - Util Files,Go source files from DART runner: util directory. These files are bagged as part of the DART runner workflow tests.,Restricted,University of Virginia,Custom Value (Util),Charlie,Camembert

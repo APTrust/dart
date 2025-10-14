@@ -1,0 +1,44 @@
+{{ define "tag_definition/form.html" }}
+
+<!-- Template does not include header or footer, because this form loads in a modal dialog. -->
+
+<h2>{{ .form.Fields.TagName.Value }}</h2>
+<p>In file {{ .form.Fields.TagFile.Value }}</p>
+
+<form method="post" action="/profiles/edit_tag/{{ .bagItProfileID }}/{{ .form.Fields.ID.Value }}"  id="{{ .form.Fields.ID.Value }}">
+
+    {{ template "partials/input_text.html" dict "field" .form.Fields.TagName }}
+  
+    {{ template "partials/input_select.html" dict "field" .form.Fields.Required }}
+  
+    {{ template "partials/input_textarea.html" dict "field" .form.Fields.Values }}
+  
+    {{ if .form.Fields.DefaultValue.Choices }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.DefaultValue }}
+    {{ else }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.DefaultValue }}
+    {{ end }}
+  
+    {{ template "partials/input_textarea.html" dict "field" .form.Fields.Help }}
+  
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.TagFile }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.IsBuiltIn }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.IsUserAddedFile }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.IsUserAddedTag }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+
+ 
+    <div class="bottom-buttons">
+      {{ if eq .form.Fields.IsBuiltIn.Value "false" }} 
+      <div class="float-left">
+        <!-- This needs to be a PUT or POST -->
+        <a class="btn btn-danger" href="/profiles/delete_tag/{{ .bagItProfileID }}/{{ .form.Fields.ID.Value }}" role="button">Delete</a>
+      </div>
+      {{ end }}
+      <div class="float-right">
+      <button type="button" class="btn btn-primary" role="button" onclick="submitTagDefForm('#{{ .form.Fields.ID.Value }}')">Save</a>
+      </div>
+    </div>
+  </form>
+  
+  {{ end }}

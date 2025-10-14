@@ -1,0 +1,33 @@
+{{ define "bagit_profile/new_tag_file.html" }}
+
+<form method="post" action="/profiles/new_tag_file/{{ .bagItProfileID }}" id="NewTagFileForm">
+
+    {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+    
+    <div class="bottom-buttons">
+        <div class="float-right">
+            <button class="btn btn-primary" type="button" onclick="submitNewTagFileForm('#NewTagFileForm')" role="button">Save</a>
+        </div>
+        <div class="float-right mr-5">
+            <a class="btn btn-secondary" data-dismiss="modal" role="button">Cancel</a>
+        </div>
+    </div>
+  
+  </form>
+
+  <script>
+    // Hitting the enter key will submit the form and then display
+    // the JSON response. We want submitNewTagFileForm() to handle
+    // the submission.
+    $('#NewTagFileForm').on("keydown", function(e) {
+        if (e.keyCode == 13) {
+            e.stopPropagation()
+            e.preventDefault()
+            if (e.type == 'keydown') {
+                submitNewTagFileForm('#NewTagFileForm')
+            }
+        }
+    })    
+  </script>
+
+  {{ end }}

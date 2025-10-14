@@ -1,0 +1,319 @@
+{
+	"bagItProfile": {
+		"id": "5297d55c-304d-4d8b-97d3-6563dd9a5340",
+		"acceptBagItVersion": ["0.97", "1.0"],
+		"acceptSerialization": ["application/tar"],
+		"allowFetchTxt": false,
+		"bagItProfileInfo": {
+			"bagItProfileIdentifier": "https://raw.githubusercontent.com/APTrust/preservation-services/master/profiles/aptrust-v2.2.json",
+			"bagItProfileVersion": "",
+			"contactEmail": "support@aptrust.org",
+			"contactName": "A. Diamond",
+			"externalDescription": "BagIt profile for ingesting content into APTrust. Updated November 9, 2018.",
+			"sourceOrganization": "aptrust.org"
+		},
+		"description": "APTrust 2.2 default BagIt profile.",
+		"manifestsAllowed": ["md5", "sha256"],
+		"manifestsRequired": ["md5"],
+		"name": "APTrust",
+		"serialization": "required",
+		"tagFilesAllowed": ["*", ""],
+		"tagFilesRequired": null,
+		"tagManifestsAllowed": ["md5", "sha256"],
+		"tagManifestsRequired": [],
+		"tags": [{
+			"defaultValue": "0.97",
+			"emptyOK": false,
+			"help": "Which version of the BagIt specification describes this bag's format?",
+			"id": "39b8ac8a-8e3d-47c3-9cda-5edd0d4ad1fb",
+			"required": true,
+			"tagFile": "bagit.txt",
+			"tagName": "BagIt-Version",
+			"userValue": "",
+			"values": ["0.97", "1.0"]
+		}, {
+			"defaultValue": "UTF-8",
+			"emptyOK": false,
+			"help": "How are this bag's plain-text tag files encoded? (Hint: usually UTF-8)",
+			"id": "2a914ea2-ee3b-4c53-96e1-4f93f641338b",
+			"required": true,
+			"tagFile": "bagit.txt",
+			"tagName": "Tag-File-Character-Encoding",
+			"userValue": "",
+			"values": ["UTF-8"]
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "The name of the organization that produced this bag, or is responsible for its contents.",
+			"id": "567451b6-1f30-4bda-b66b-9a657426d5e5",
+			"required": true,
+			"tagFile": "bag-info.txt",
+			"tagName": "Source-Organization",
+			"userValue": "The Liberry",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "The number of bags that make up this object. Set this only if you are packaging a single object into multiple bags. See https://wiki.aptrust.org/Bagging_specifications for info on naming multi-part APTrust bags.",
+			"id": "117e46d8-096f-41f1-8c94-7d9202b9477b",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Bag-Count",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "The date this bag was created. The bagging software should set this automatically.",
+			"id": "41b75504-e54d-49a1-aad4-c8a4921d15ce",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Bagging-Date",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "The name of the software that created this bag. The bagging software should set this automatically.",
+			"id": "4d9e682c-4236-4adf-aaf2-c9d7666e3062",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Bagging-Software",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "Identifies the logical group or collection to which a bag belongs. Several bags may share the same Bag-Group-Identifier to indicate that they are part of the same logical grouping.",
+			"id": "32e69005-4495-452f-8b3d-bef545fca583",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Bag-Group-Identifier",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "A description of the bag's contents for the sender's internal use. This description will appear in the APTrust registry if you do not set the Description tag in the aptrust-info.txt file.",
+			"id": "917fc560-5bd1-4a5b-acb6-b7a4ce749252",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Internal-Sender-Description",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "A unique identifier for this bag inside your organization.",
+			"id": "018c0706-5597-4406-a705-205c608d827f",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Internal-Sender-Identifier",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "The number of files and bytes in this bag's payload. This should be calculated and set by the bagging software.",
+			"id": "de2c8f3e-fadb-4811-88a2-83aafa44fb50",
+			"required": false,
+			"tagFile": "bag-info.txt",
+			"tagName": "Payload-Oxum",
+			"userValue": "",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "The title or name of that describes this bag's contents.",
+			"id": "9b7344ae-9d06-4444-9d8a-dda7e5c2b8dc",
+			"required": true,
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Title",
+			"userValue": "Baggy Pants",
+			"values": []
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "Access rights for this bag describe who can see that it exists in the repository.",
+			"id": "60ef466a-6d9c-4825-92cf-e472fb05f3d4",
+			"required": true,
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Access",
+			"userValue": "Institution",
+			"values": ["Consortia", "Institution", "Restricted"]
+		}, {
+			"defaultValue": "",
+			"emptyOK": true,
+			"help": "The description of the bag that you want to appear in the APTrust registry.",
+			"id": "d94d1d47-49cb-4569-8d27-d9ebbf25c9b2",
+			"required": false,
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Description",
+			"userValue": "Those are chock full of heady goodness.",
+			"values": []
+		}, {
+			"defaultValue": "Standard",
+			"emptyOK": false,
+			"help": "How do you want this bag to be stored in APTrust? Standard = S3/Virginia + Glacier/Oregon. Glacier-OH = Glacier-only storage in Ohio. Glacier-OR = Glacier-only storage in Oregon. Glacier-VA = Glacier-only storage in Virginia. Standard storage includes regular 90-day fixity checks. Glacier-only storage is less expensive but excludes fixity checks. File in Glacier-only storage may take up to 24 hours longer to restore and excessive Glacier retrieval may incur additional fees.",
+			"id": "53075007-e6cf-4a18-9b34-caa605ed593f",
+			"required": true,
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Storage-Option",
+			"userValue": "Glacier-Deep-OH",
+			"values": ["Standard", "Glacier-OH", "Glacier-OR", "Glacier-VA", "Glacier-Deep-OH", "Glacier-Deep-OR", "Glacier-Deep-VA", "Wasabi-OR", "Wasabi-VA"]
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "",
+			"id": "",
+			"required": false,
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Custom-Test-Tag",
+			"userValue": "Kwik-E-Mart",
+			"values": null
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "",
+			"id": "",
+			"required": false,
+			"tagFile": "custom-file.txt",
+			"tagName": "tag-1",
+			"userValue": "value-1",
+			"values": null
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "",
+			"id": "",
+			"required": false,
+			"tagFile": "custom-file.txt",
+			"tagName": "tag-2",
+			"userValue": "value-2",
+			"values": null
+		}, {
+			"defaultValue": "",
+			"emptyOK": false,
+			"help": "",
+			"id": "",
+			"required": false,
+			"tagFile": "custom-file.txt",
+			"tagName": "tag-3",
+			"userValue": "value-3",
+			"values": null
+		}]
+	},
+	"byteCount": 0,
+	"dirCount": 0,
+	"errors": {},
+	"fileCount": 0,
+	"packageOp": {
+		"bagItSerialization": ".tar",
+		"errors": {},
+		"outputPath": "/var/folders/x0/jpzqmw797rq1crj8vm806s1h0000gq/T/.tar",
+		"packageName": "job_unit_test.tar",
+		"packageFormat": "BagIt",
+		"payloadSize": 0,
+		"result": {
+			"attempt": 0,
+			"completed": "0001-01-01T00:00:00Z",
+			"errors": {},
+			"fileMtime": "0001-01-01T00:00:00Z",
+			"filepath": "",
+			"filesize": 0,
+			"info": "",
+			"operation": "package",
+			"provider": "Bagger - ",
+			"remoteChecksum": "",
+			"remoteURL": "",
+			"started": "0001-01-01T00:00:00Z",
+			"warning": ""
+		},
+		"sourceFiles": ["/Users/apd4n/aptrust/dart-runner/profiles", "/Users/apd4n/aptrust/dart-runner/testdata"]
+	},
+	"uploadOps": [{
+		"errors": {},
+		"payloadSize": 0,
+		"result": {
+			"attempt": 0,
+			"completed": "0001-01-01T00:00:00Z",
+			"errors": {},
+			"fileMtime": "0001-01-01T00:00:00Z",
+			"filepath": "",
+			"filesize": 0,
+			"info": "",
+			"operation": "upload",
+			"provider": "Uploader - ",
+			"remoteChecksum": "",
+			"remoteURL": "",
+			"started": "0001-01-01T00:00:00Z",
+			"warning": ""
+		},
+		"sourceFiles": ["/var/folders/x0/jpzqmw797rq1crj8vm806s1h0000gq/T/.tar"],
+		"storageService": {
+			"allowsDownload": false,
+			"allowsUpload": true,
+			"bucket": "test-bucket",
+			"description": "",
+			"host": "s3.example.com",
+			"login": "user@example.com",
+			"loginExtra": "",
+			"name": "Test s3ervice",
+			"password": "secret",
+			"port": 0,
+			"protocol": "s3"
+		}
+	}, {
+		"errors": {},
+		"payloadSize": 0,
+		"result": {
+			"attempt": 0,
+			"completed": "0001-01-01T00:00:00Z",
+			"errors": {},
+			"fileMtime": "0001-01-01T00:00:00Z",
+			"filepath": "",
+			"filesize": 0,
+			"info": "",
+			"operation": "upload",
+			"provider": "Uploader - ",
+			"remoteChecksum": "",
+			"remoteURL": "",
+			"started": "0001-01-01T00:00:00Z",
+			"warning": ""
+		},
+		"sourceFiles": ["/var/folders/x0/jpzqmw797rq1crj8vm806s1h0000gq/T/.tar"],
+		"storageService": {
+			"allowsDownload": false,
+			"allowsUpload": true,
+			"bucket": "test-bucket",
+			"description": "",
+			"host": "sftp.example.com",
+			"login": "user@example.com",
+			"loginExtra": "",
+			"name": "Test sftpervice",
+			"password": "secret",
+			"port": 0,
+			"protocol": "sftp"
+		}
+	}],
+	"validationOp": {
+		"errors": {},
+		"pathToBag": "/var/folders/x0/jpzqmw797rq1crj8vm806s1h0000gq/T/.tar",
+		"result": {
+			"attempt": 0,
+			"completed": "0001-01-01T00:00:00Z",
+			"errors": {},
+			"fileMtime": "0001-01-01T00:00:00Z",
+			"filepath": "",
+			"filesize": 0,
+			"info": "",
+			"operation": "validation",
+			"provider": "Validator - ",
+			"remoteChecksum": "",
+			"remoteURL": "",
+			"started": "0001-01-01T00:00:00Z",
+			"warning": ""
+		}
+	},
+	"workflowId": "00000000-0000-0000-0000-000000000000"
+}

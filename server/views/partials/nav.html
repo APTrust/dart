@@ -1,0 +1,71 @@
+{{ define "partials/nav.html" }}
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <a class="navbar-brand" href="/"><img src="/assets/img/dart.png" alt="DART logo" style="height:32px;width:32px;">DART</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav">
+      <li class="nav-item {{ if (eq .section "Dashboard") }}active{{ end }}">
+        <a class="nav-link" href="/">Dashboard</a>
+      </li>
+      <li class="nav-item dropdown {{ if (eq .section "Settings")}}active{{ end }}">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Settings</a>
+        <div class="dropdown-menu" aria-labelledby="navbarSettingsDropdownLink">
+          <a class="dropdown-item" href="/app_settings">Application Settings</a>
+          <a class="dropdown-item" href="/profiles">BagIt Profiles</a>
+          <a class="dropdown-item" href="/internal_settings">Internal Settings</a>
+          <a class="dropdown-item" href="/remote_repositories">Remote Repositories</a>
+          <a class="dropdown-item" href="/storage_services">Storage Services</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/settings/import">Import Settings</a>
+          <a class="dropdown-item" href="/settings/export">Export Settings</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown {{ if (eq .section "Jobs")}}active{{ end }}">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Jobs</a>
+        <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
+          <a class="dropdown-item" href="/jobs">List</a>
+          <a class="dropdown-item" href="/jobs/new">New</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/validation_jobs/new">Validate Bags</a>
+          <!-- <a class="dropdown-item" href="/upload_jobs/new">Upload Files</a> -->
+        </div>
+      </li>
+      <li class="nav-item dropdown {{ if (eq .section "Workflows")}}active{{ end }}">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Workflows</a>
+        <div class="dropdown-menu" aria-labelledby="navbarJobsDropdownLink">
+          <a class="dropdown-item" href="/workflows">List</a>
+          <a class="dropdown-item" href="/workflows/new">New</a>
+          <a class="dropdown-item" href="/workflows/batch/choose">Run Batch</a>
+          {{ if workflowList }}
+          <div class="dropdown-divider"></div>
+          {{ range $index, $workflow := workflowList }}
+          <a class="dropdown-item" href="javascript:postDataInBackground('/workflows/run/{{ $workflow.ID }}')">Run {{ $workflow.Name }}</a>
+          {{ end }}
+          {{ end }}
+        </div>
+      </li>
+      <li class="nav-item dropdown {{ if (eq .section "Help")}}active{{ end }}">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Help</a>
+        <div class="dropdown-menu" aria-labelledby="navbarHelpDropdownLink">
+          <a class="dropdown-item" href="#" onclick="openExternalUrl({{ .helpUrl }})">Documentation</a>
+          <a class="dropdown-item" href="#" onclick="execCmd('/open_log')">Open Log File</a>
+          <a class="dropdown-item" href="#" onclick="execCmd('/open_log_folder')">Open Log Folder</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#" onclick="loadIntoModal('get', 'About DART', '/about/')">About</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="float-right">
+    <!--
+      <span id="runningJobsBadge" class="badge badge-pill badge-info">
+        <a href="/" class="text-white"></a>
+      </span>
+      -->
+  </div>
+</nav>
+
+{{ end }}

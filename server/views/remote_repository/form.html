@@ -1,0 +1,42 @@
+{{ define "remote_repository/form.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Remote Repository</h2>
+
+
+{{ if .showTestButton }}
+<div class="float-right mt-1 mb-3">
+  <button class="btn btn-primary" onclick="loadIntoModal('post', 'Connection Test', '/remote_repositories/test/{{ .form.Fields.ID.Value }}', '{{ .form.ObjType }}')" role="button">Test Connection</button>
+</div>
+{{ end }}
+
+<form method="post" id="{{ .form.ObjType }}">
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.Url }}
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.PluginID }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.UserID }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.APIToken }}
+
+  {{ template "partials/input_text.html" dict "field" .form.Fields.LoginExtra }}
+
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+
+  {{ template "partials/form_buttons.html" . }}
+
+</form>
+
+{{ if and .form.UserCanDelete .objectExistsInDB }}
+<form method="post" id="{{ .form.ObjType }}Delete" action="/remote_repositories/delete/{{ .form.ObjectID }}" style="display:none">
+  <input type="hidden" name="ID" value=".form.ObjectID"/>
+</form>
+{{ end }}
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

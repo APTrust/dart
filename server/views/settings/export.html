@@ -1,0 +1,121 @@
+{{ define "settings/export.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+
+<h2>Export Settings</h2>
+
+<form name="exportSettingsForm" id="exportSettingsForm" action="/settings/export/save/{{ .form.ObjectID }}" method="post">
+
+ {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+
+  <div class="card mb-3">
+    <div class="card-header">App Settings</div>
+    <div class="card-body">
+        {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.AppSettings }}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">BagIt Profiles</div>
+    <div class="card-body">
+        {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.BagItProfiles }}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Remote Repositories</div>
+    <div class="card-body">
+        {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.RemoteRepositories }}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Storage Services</div>
+    <div class="card-body">
+        {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.StorageServices }}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">Setup Questions (optional)
+      <span class="float-right">
+        <a role="button" class="btn btn-primary btn-sm" id="btnAddQuestions" title="Add questions to help other users import these settings." href="javascript:loadIntoModal('get', 'New Export Question', '/settings/export/questions/new/{{ .settings.ID }}')">Add</a>
+        <a role="button" class="btn btn-info btn-sm" id="btnQuestionHelp" target="_blank" href="https://aptrust.github.io/dart-docs/users/settings/export/#export-questions">Help</a>
+      </span>
+    </div>
+    <div class="card-body">
+      <a id="questions"></a>
+      <table class="table table-hover" id="setupQuestionsList">
+        <tbody>
+        {{ $settings := .settings }}
+        {{ range $index, $question := .settings.Questions }}
+          {{ $questionNumber := add $index 1}}
+              <tr>
+                <td style="width:90%; border:none;"><a href="#" onclick="loadIntoModal('get', 'Edit Question', '/settings/export/questions/edit/{{ $settings.ID }}/{{ $question.ID }}')">{{ $question.Prompt }}</a></td>
+                <td style="width:10%; border:none;"><a href="#setupQuestionsList" onclick="confirmForegroundDeletion('Delete this question?', '/settings/export/questions/delete/{{ $settings.ID }}/{{ $question.ID }}', null)"><i class="fas fa-times text-danger" title="Delete this question"></i></a></td>
+              </tr>
+        {{ end }}
+        </tbody>
+      </table>     
+    </div>
+  </div>
+
+  <input type="hidden" name="showAfterSave" id="showAfterSave" value="false"/>
+
+  <div class="bottom-buttons mb-3">
+    <div class="float-left">
+      <button type="button" class="btn btn-danger" id="btnDelete" title="Delete these settings.">Delete</button>
+    </div>
+    <div class="float-left ml-3">
+      <a role="button" class="btn btn-secondary" href="/settings/export">Cancel</a>
+    </div>
+    <div class="float-right">
+      <button role="button" type="button" class="btn btn-primary" id="btnExport" title="Export these settings to JSON.">Export</button>
+    </div>
+    <div class="float-right mr-3">
+      <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+    </div>
+  </div>
+
+</form>
+
+<form id="settingsDeletionForm" action="/settings/export/delete/{{ .form.ObjectID }}" method="post">
+  <input type="hidden" name="ID" value="{{ .form.ObjectID }}"/>
+</form>
+
+<script>
+$(function(){
+    $('#btnReset').on('click', function() {
+        confirmOperation("Do you want to clear this form and remove questions related to these settings?",
+          function(userApproved) {
+            if (userApproved) {
+              document.forms['exportSettingsForm'].reset()
+            }
+          })
+    })
+    $('#btnDelete').on('click', function() {
+        confirmOperation("Do you want to delete the export version of these settings? The settings will still exist for your personal use. Only the exportable JSON data will go away.",
+          function(userApproved) {
+            if (userApproved) {
+              document.forms['settingsDeletionForm'].submit()
+            }
+          }
+        )
+    })
+    $('#btnExport').on('click', function() {
+      $('#showAfterSave').val("true")
+      loadIntoModal('post', 'Settings', document.forms['exportSettingsForm'].action, 'exportSettingsForm')
+    })
+    $('#btnSave').on('click', function() {
+      $('#showAfterSave').val("false")
+      document.forms['exportSettingsForm'].submit()
+    })
+})
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+
+{{ end }}

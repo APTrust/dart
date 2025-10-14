@@ -1,0 +1,114 @@
+{{ define "settings/question.html" }}
+
+<form id="{{ .form.ObjectID }}">
+    {{ template "partials/input_textarea.html" dict "field" .form.Fields.Prompt }}
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+    <p>Copy the user's answer to this question to:</p>
+
+    <div class="row">
+        <div class="col">
+            {{ template "partials/input_select.html" dict "field" .form.Fields.ObjType }}
+        </div>
+        <div class="col">
+            {{ template "partials/input_select.html" dict "field" .form.Fields.ObjID }}
+        </div>
+        <div class="col">
+            {{ template "partials/input_select.html" dict "field" .form.Fields.Field }}
+        </div>
+    </div>
+</form>
+
+
+<div class="bottom-buttons">
+  <div class="float-left">
+    <button type="button" class="btn btn-secondary" id="btnCancel" data-dismiss="modal">Cancel</a>
+  </div>
+  <div class="float-right">
+      <button type="button" class="btn btn-primary" id="btnSaveQuestion" onclick="postDataInBackground('/settings/export/questions/{{ .settings.ID }}', Object.fromEntries(new FormData(document.forms['{{ .form.ObjectID }}'])))">Save</button>
+  </div>
+</div>
+
+
+<script>
+var options = {{ .optionsJson }}
+$(function() {
+
+  function loadObjectList(questionId, objType) {
+    let objIdList = $(`select[data-control-name="objId"][data-question-id="${questionId}"]`)
+    let listOptions = []
+    switch (objType) {
+      case "AppSetting":
+        listOptions = options.appSettings
+        break
+      case "BagItProfile":
+        listOptions = options.bagItProfiles
+        break
+      case "RemoteRepository":
+        listOptions = options.remoteRepositories
+        break
+      case "StorageService":
+        listOptions = options.storageServices
+        break
+    }
+    objIdList.empty()
+    objIdList.append(new Option(""))
+    listOptions.forEach(function(item) {
+      objIdList.append(new Option(item.Name, item.ID))
+    })
+  }
+
+  // When ObjType changes, load obj list
+  $('select[data-control-name="objType"]').on('change', function() {
+    let questionId = $(this).data('question-id') 
+    let objType = $(this).val()
+    if (objType) {
+      loadObjectList(questionId, objType)
+    }
+  })
+  
+  // When ObjID changes, load field list
+  $('select[data-control-name="objId"]').on('change', function() {
+    let questionId = $(this).data('question-id') 
+    let objectId = $(this).val()
+    let objType = $(`select[data-control-name="objType"][data-question-id="${questionId}"]`).val()
+    let fieldList = $(`select[data-control-name="field"][data-question-id="${questionId}"]`)
+    let selectedField = fieldList.val()
+    let listOptions = []
+    fieldList.empty()
+    fieldList.append(new Option(""))
+    switch (objType) {
+      case "AppSetting":
+        listOptions = options.appSettingFields
+        break
+      case "BagItProfile":
+        // Get options for the SELECTED profile.
+        listOptions = options.bagItProfileFields[objectId]
+        listOptions.forEach(function(item) {
+          var opt = new Option(item.Name, item.ID)
+          if (item == selectedField) {
+            opt.selected = true
+          }
+          fieldList.append(opt)
+        })
+        return
+      case "RemoteRepository":
+        listOptions = options.remoteRepositoryFields
+        break
+      case "StorageService":
+        listOptions = options.storageServiceFields
+        break
+    }
+    listOptions.forEach(function(item) {
+      var opt = new Option(item, item)
+      if (item == selectedField) {
+        opt.selected = true
+      }
+      fieldList.append(opt)
+    })
+  })
+
+})
+</script>
+
+
+{{ end }}

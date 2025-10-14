@@ -1,0 +1,56 @@
+{{ define "about/index.html" }}
+
+<!-- No header or footer, as this displays in modal. -->
+
+<div class="row about">
+  <p>
+    DART is the Digital Archivist's Resource Tool for packaging
+    and sending data. It produces BagIt files and uploads them to any
+    sftp server or S3-compliant API.
+  </p>
+  <p>
+    For help, see the <a href="#" onclick="openExternalUrl('https://aptrust.github.io/dart-docs/users/getting_started/')">DART User Guide.</a>
+  </p>
+</div>
+
+<div class="row about">
+  <p><b>Version</b>: {{ .version }}</p>
+</div>
+
+<div class="row about">
+  <p><b>App Location</b>: {{ .appPath }}</p>
+</div>
+
+<div class="row about">
+  <p><b>Data Location</b>: <a href="#" onclick="execCmd('/open_data_folder')">{{ .userDataPath }}</a></p>
+</div>
+
+<div class="row about">
+  <p><b>Log File</b>: <a href="#" onclick="execCmd('/open_log')">{{ .logFilePath }}</a></p>
+</div>
+
+<div class="row about">
+  <p>You can watch the running log with the following command:<br /></p>
+</div>
+<div class="highlight">
+  <pre>
+      <code class="language-html" data-lang="html">{{ .tailCommand }}</code>
+    </pre>
+</div>
+
+<div class="row about">
+  <p>Find a bug? Want a feature? Open an issue on our <a href="https://github.com/APTrust/dart/issues" target="_blank">issues page.</a></p>
+</div>
+
+
+<hr />
+
+<div class="row about">
+  <p>
+    DART is open source software produced and maintained by the
+    <a href="#" onclick="openExternalUrl('https://www.aptrust.org')">Academic Preservation Trust</a>
+    on <a href="#" onclick="openExternalUrl('https://github.com/APTrust/dart3')">GitHub</a>.
+  </p>
+</div>
+
+{{ end }}

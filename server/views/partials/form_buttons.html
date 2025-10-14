@@ -1,0 +1,38 @@
+{{ define "partials/form_buttons.html" }}
+
+<div class="bottom-buttons mt-3 mb-5">
+    {{ if and .form.UserCanDelete .objectExistsInDB }}
+    <div class="float-left">
+      <button type="button" class="btn btn-danger" onclick="confirmDeletion('{{ .form.ObjType }}', '{{ .form.ObjectID }}')" role="button">Delete</button>
+    </div>
+    {{ end }}
+    <div class="float-right">
+      <button class="btn btn-primary" type="submit" role="button">Save</a>
+    </div>
+    <div class="float-right mr-5">
+      {{ if .backUrl }}
+      <a class="btn btn-secondary" type="button" role="button" href="{{ .backUrl }}">Cancel</a>
+      {{ else }}
+      <button class="btn btn-secondary" type="button" role="button" onclick="history.back()">Cancel</button>
+      {{ end }}
+    </div>
+  </div>
+
+<script>
+  function confirmDeletion(objType, objId) {
+    //var form = document.forms[objId] || document.forms[objType]
+    var form = document.forms[objType + "Delete"]
+    if (!form) {
+      alertWithSize("small", "Deletion form is missing.")
+      return
+    }
+
+    confirmOperation("Do you want to delete this item?", function(userApproved) {
+      if (userApproved) {
+        return form.submit()
+      }
+    })
+  }
+</script>
+
+{{ end }}

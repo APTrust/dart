@@ -1,0 +1,26 @@
+{{ define "bagit_profile/export.html" }}
+
+<p class="text-info">
+  Below is an export in BagIt Profile v1.3.0 format. Please be sure the BagIt-Profile-Identifier URL is correct before publishing this profile. Also note that this format cannot describe information about required tags outside of the bag-info.txt file.
+</p>
+
+
+<div class="form-group">
+  <textarea id="txtJson" name="txtJson" class="form-control" rows="20">{{ .json }}</textarea>
+</div>
+
+<div class="mt-1 mb-1">
+  <div id="copied" class="text-success" style="display:none">
+    Data has been copied to the clipboard.
+  </div>
+</div>
+
+<div class="bottom-buttons">
+  <div class="float-right mr-5">
+    <button type="button" class="btn btn-primary mr-5" id="btnCopyToClipboard" onclick="copyToClipboard('#txtJson', '#copied')">Copy to Clipboard</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  </div>
+</div>
+
+
+{{ end }}

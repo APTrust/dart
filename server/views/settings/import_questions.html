@@ -1,0 +1,26 @@
+{{ define "settings/import_questions.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Questions</h2>
+
+<form name="importQuestionsForm" id="importQuestionsForm" method="post" action="/settings/import/answers">
+
+    {{ range $index, $question := .settings.Questions }}
+    <div class="form-group" id="{{ $question.ID }}-Container" style="">
+        <label class="control-label" for="{{ $question.ID }}">{{ $question.Prompt }}</label>
+        <input type="text" id="{{ $question.ID }}-Textbox" name="{{ $question.ID }}" class="form-control">
+    </div>
+    {{ end }}
+
+    <input type="hidden" name="settingsJson" id="settingsJson" value="{{ .settingsJson }}" />
+
+    <div class="float-right">
+    <button type="submit" class="btn btn-primary">Submit</a>
+    </div>    
+
+</form>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

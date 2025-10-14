@@ -1,0 +1,40 @@
+{
+	"packageName": "job_params_test.tar",
+	"files": [
+		"./constants",
+		"./core",
+		"./util"
+	],
+	"tags": [
+		{
+			"tagFile": "bag-info.txt",
+			"tagName": "Tag-One",
+			"value": "Value One"
+		},
+		{
+			"tagFile": "bag-info.txt",
+			"tagName": "Tag-Two",
+			"value": "Value Two"
+		},
+		{
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Tag-Three",
+			"value": "Value Three"
+		},
+		{
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Tag-Four",
+			"value": "Value Four"
+		},
+		{
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Title",
+			"value": "Job Params Test Bag"
+		},
+		{
+			"tagFile": "aptrust-info.txt",
+			"tagName": "Description",
+			"value": "This bag is created by a post-build test."
+		}
+	]
+}

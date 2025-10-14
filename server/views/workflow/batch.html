@@ -1,0 +1,133 @@
+{{ define "workflow/batch.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Workflow Batch</h2>
+
+<p>Run all of the directories listed in a spreadsheet through the same workflow. 
+For more information, see DART's 
+<a href="#Help/openExternal?url=https://aptrust.github.io/dart-docs/users/workflows/batch_jobs/">
+batch workflow documentation.</a></p>
+
+<form method="post" action="/workflows/batch/validate" id="workflowBatchForm" enctype="multipart/form-data">
+
+  {{ template "partials/input_select.html" dict "field" .form.Fields.WorkflowID }}
+
+  <!-- // TODO: The input below should be some kind of file chooser -->
+
+  {{ template "partials/input_file.html" dict "field" .form.Fields.CsvUpload }}
+  
+  <div class="bottom-buttons">
+    <div class="float-right">
+      <button id="runWorkflowBatch" class="btn btn-primary" type="button" role="button">Run</button>
+    </div>
+  </div>
+
+</form>
+
+<div id="batchValidation" style="display:none">
+  <h3>Errors</h3>
+  <ul id="batchValidationErrorList">
+  </ul>
+</div>
+
+
+<div class="row" id="dartProcessContainer">
+
+</div>
+
+
+<!-- 
+This template contains the HTML and JavaScript to display
+job details and progress.
+-->
+{{ template "partials/job_run.html" . }}
+
+
+<div class="alert alert-warning" role="alert" id="batchRunning" style="display:none;">
+  Leave DART open and stay on this page until all jobs in the batch are complete.
+</div>
+
+<div class="alert alert-info" role="alert" id="batchCompleted" style="display:none;">
+  All jobs have completed. Check the results below.
+</div>
+
+
+<div class="container mt-2 mb-5" id="workflowResults" style="display:none;">
+  <h3>Results</h3>
+</div>
+
+<script>
+$(function() {
+  function validateAndRunBatch() {
+    clearErrors()
+    let form = $('#workflowBatchForm')
+
+    // Post the form, including the CSV file contents.
+    // Note that form is a jQuery element, while form[0]
+    // is the native HTML element. The FormData constructor
+    // only accepts the native element.
+    $.ajax({
+        url: form.attr('action'),
+        type: 'POST',
+        data: new FormData(form[0]),
+        processData: false,
+        contentType: false,
+        cache: false
+    }).done(function (response) {
+      // On success, proceed to the "run batch" page,
+      // which will be specified, including required query
+      // params, in response.location. 
+      console.log(response)
+      runJob(response.location, '')
+    }).fail(function (xhr, status, err) {
+      // If we get an error here, it means the batch job
+      // was invalid. So we do the following:
+      // 1. Display form validation errors below form controls.
+      // 2. Display other validation errors in list below form.
+      // console.log(xhr.responseText)
+      var showGeneralError = true
+      let data = JSON.parse(xhr.responseText)
+      if (data.errors["WorkflowBatch_CsvUpload"]) {
+        $('#WorkflowBatch_CsvUploadError').html(data.errors["WorkflowBatch_CsvUpload"])
+        showGeneralError = false
+      }
+      if (data.errors["WorkflowBatch_WorkflowID"]) {
+        $('#WorkflowBatch_WorkflowIDError').html(data.errors["WorkflowBatch_WorkflowID"])
+        showGeneralError = false
+      }
+      if (showGeneralError) {
+        displayValidationErrors(data.errors)
+      }
+    })
+  }
+
+  // Clear all error messages from the display. We do this
+  // when the user is resubmitting a batch.
+  function clearErrors() {
+    $('#WorkflowBatch_CsvUploadError').html("")
+    $('#WorkflowBatch_WorkflowIDError').html('')
+    $('#batchValidation').hide()
+    $('#batchValidationErrorList').empty()
+  }
+
+  // Display errors from the back end.
+  function displayValidationErrors(errors) {
+    for(var key of Object.keys(errors).sort()){
+      let errMsg = errors[key]
+      $('#batchValidation').show()
+      $('#batchValidationErrorList').append(`<li>${key} - ${errMsg}</li>`)
+    }    
+  }
+
+  // Now add our callback to the Run button
+  $('#runWorkflowBatch').on('click', validateAndRunBatch)
+});
+
+</script>
+
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

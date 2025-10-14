@@ -1,0 +1,83 @@
+{{ define "job/artifact.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<div class="row mb-5">
+  <div class="col-12">
+    <h2>Artifacts for job {{ .job.Name }}</h2>
+    <p>Artifacts are listed in reverse chronological order, with those from the job's most recent run listed first.</p>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-3">
+    <div class="row">
+        <a title="View raw job json" href="/jobs/show_json/{{ .job.ID }}">Raw Job Description</a>
+    </div>
+    {{ range $i, $artifact := .artifacts }}
+      <div class='row {{ if strStartsWith $artifact.FileName "Job Result" }}mt-3{{ end }}'>
+        <a title="Updated {{ dateTimeUS $artifact.UpdatedAt }}" href="/jobs/artifacts/{{ $artifact.ID }}">{{ $artifact.FileName }}</a>
+      </div>
+    {{ end }}
+  </div>
+
+  <div class="col-9 border p-2">
+    {{ if .artifact }}
+    <table class="table table-sm borderless">
+        <tr>
+            <th>Job</th>
+            <td>{{ .artifact.BagName }}</td>
+        </tr>
+        <tr>
+            <th>File Name</th>
+            <td>{{ .artifact.FileName }}</td>
+        </tr>
+        <tr>
+            <th>Run Date</th>
+            <td>{{ displayDate .artifact.UpdatedAt }}</td>
+        </tr>
+    </table>
+
+    <hr class="mb-5"/>
+
+    <pre id="artifactContent" class="text-primary">{{ .artifact.RawData }}
+    </pre>
+
+    <hr class="mb-5"/>
+
+    <div class="mt-1 mb-1">
+      <div id="copied" class="text-success" style="display:none">
+        Data has been copied to the clipboard.
+      </div>
+    </div>
+
+    <div class="bottom-buttons">
+      <div class="float-right mr-5">
+        <button type="button" class="btn btn-primary" id="btnSaveArtifact" title="Save this artifact to {{ .outputFile }}" onclick="loadIntoModal('post', 'Save File', '/jobs/artifacts/save/{{ .artifact.ID }}')">Save to File</button>
+        <button type="button" class="btn btn-primary" id="btnCopyToClipboard" onclick="copyToClipboard('#artifactContent', '#copied')">Copy to Clipboard</button>
+      </div>
+    </div>
+    {{ else }}
+
+    <p>Click on the title of an artifact to the left to display its contents.</p>
+
+    {{ end }}
+  </div>
+
+</div>
+
+<script>
+$(function() {
+  if ({{ .displayAsFormattedJSON }}) {
+    let rawData = JSON.parse({{ .artifact.RawData }})
+    let contentElement = $('#artifactContent')
+    contentElement.removeClass('text-primary')
+    contentElement.jsonViewer(rawData)
+  }
+})
+</script>
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

@@ -1,0 +1,59 @@
+{{ define "workflow/form.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>Workflow</h2>
+
+<div class="clearfix">
+  <div class="float-right">
+    <button class="btn btn-primary mb-3" onclick="loadIntoModal('get', '{{ .form.Fields.Name.Value }}', '/workflows/export/{{ .form.Fields.ID.Value }}')" role="button">Export</button>
+  </div>
+</div>
+
+<!-- This is the form to edit a workflow -->
+<form method="post" action="/workflows/edit/{{ .form.ObjectID }}">
+
+    {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+
+    {{ template "partials/input_text.html" dict "field" .form.Fields.Description }}
+
+    {{ template "partials/input_select.html" dict "field" .form.Fields.PackageFormat }}
+
+    {{ template "partials/input_select.html" dict "field" .form.Fields.Serialization }}
+
+
+  <div id="jobProfileContainer" style='display: {{ if eq .form.Fields.PackageFormat.Value "BagIt"}} block {{else}} none {{ end }};'>
+    {{ template "partials/input_select.html" dict "field" .form.Fields.BagItProfileID }}
+  </div>
+
+  <p>Upload To</p>
+
+  {{ template "partials/input_checkbox_group.html" dict "field" .form.Fields.StorageServiceIDs }}
+
+
+  {{ template "partials/form_buttons.html" . }}
+
+</form>
+
+<!-- This is the form to delete a workflow -->
+<form method="post" action="/workflows/delete/{{ .form.ObjectID }}" id="WorkflowDelete">
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+</form>
+
+<script>
+function toggleBagItProfile() {
+  var profileControl = $('#jobProfileContainer')
+  var format = $('#Workflow_PackageFormat').val()
+  if (format == "BagIt") {
+    profileControl.show()
+  } else {
+    profileControl.hide()
+  }
+}
+$('#Workflow_PackageFormat').on('change', toggleBagItProfile)
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

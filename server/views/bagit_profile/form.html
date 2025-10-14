@@ -1,0 +1,146 @@
+{{ define "bagit_profile/form.html" }}
+
+{{ template "partials/page_header.html" . }}
+
+<h2>{{ .form.Fields.Name.Value }}</h2>
+
+{{ if .errors }}
+<div class="alert" role="alert">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <p>{{ .errMessage }}</p>
+  <ul class='text-danger'>
+    {{ range $field, $err := .errors }}
+    <li>{{ $field }}: {{ $err }}</li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}
+
+<form method="post" action="/profiles/edit/{{ .form.Fields.ID.Value }}" id="{{ .form.Fields.ID.Value }}">
+
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <a class='nav-item nav-link {{ if eq .activeTab "navAboutTab"}} active show {{ end }}' id="navAboutTab" data-toggle="tab" href="#profileAbout" role="tab" aria-controls="profileAbout" aria-selected="true" onclick="submitFormInBackground('#{{ .form.Fields.ID.Value }}')">About</a>
+      <a class='nav-item nav-link {{ if eq .activeTab "navInfoTab"}} active show {{ end }}' id="navInfoTab" data-toggle="tab" href="#profileInfo" role="tab" aria-controls="profileInfo" aria-selected="false" onclick="submitFormInBackground('#{{ .form.Fields.ID.Value }}')">Info</a>
+      <a class='nav-item nav-link {{ if eq .activeTab "navGeneralTab"}} active show {{ end }}' id="navGeneralTab" data-toggle="tab" href="#profileGeneral" role="tab" aria-controls="profileGeneral" aria-selected="false" onclick="submitFormInBackground('#{{ .form.Fields.ID.Value }}')">General</a>
+      <a class='nav-item nav-link {{ if eq .activeTab "navManifestsTab"}} active show {{ end }}' id="navManifestsTab" data-toggle="tab" href="#profileManifests" role="tab" aria-controls="profileManifests" aria-selected="false" onclick="submitFormInBackground('#{{ .form.Fields.ID.Value }}')">Manifests</a>
+      <a class='nav-item nav-link {{ if eq .activeTab "navSerializationTab"}} active show {{ end }}' id="navSerializationTab" data-toggle="tab" href="#profileSerialization" role="tab" aria-controls="profileSerialization" aria-selected="false" onclick="submitFormInBackground('#{{ .form.Fields.ID.Value }}')">Serialization</a>
+
+      <a class='nav-link dropdown-toggle {{ if eq .activeTab "navTagFilesTab"}} active show {{ end }}' data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Tag Files</a>
+      <div class="dropdown-menu" id="bagItProfileTabFileDropDown">
+        <a class="dropdown-item" id="navTagFilesAllowed" data-toggle="tab" href="#tagFilesAllowed" aria-controls="tagFilesAllowed" aria-selected="false">Show Tag Files Allowed</a>
+        <div class="dropdown-divider"></div>
+        {{ range $i, $tagFile := .tagFileNames }}
+        <a class="dropdown-item" id="navTags-{{ $tagFile }}" data-toggle="tab" href="#profileTags-{{ $tagFile }}" aria-controls="profileTags-{{ $tagFile }}" aria-selected="false">{{ $tagFile }}</a>
+        {{ end }}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" role="button" onclick="loadIntoModal('get', 'New Tag File', '/profiles/new_tag_file/{{ .form.Fields.ID.Value }}')">Add New Tag File</a>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <div class="tab-content mt-4" id="nav-tabContent">
+    <div class='tab-pane fade {{ if eq .activeTab "navAboutTab"}} active show {{ end }}' role="tabpanel" id="profileAbout" aria-labelledby="navAboutTab">
+      {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.Description }}
+    </div>
+    <div class='tab-pane fade {{ if eq .activeTab "navInfoTab"}} active show {{ end }}' role="tabpanel" id="profileInfo" aria-labelledby="navInfoTab">
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoIdentifier }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoContactEmail }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoContactName }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoExternalDescription }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoSourceOrganization }}
+      {{ template "partials/input_text.html" dict "field" .form.Fields.InfoVersion }}
+    </div>
+    <div class='tab-pane fade {{ if eq .activeTab "navGeneralTab"}} active show {{ end }}' role="tabpanel" id="profileGeneral" aria-labelledby="navGeneralTab">
+      {{ template "partials/input_select.html" dict "field" .form.Fields.AcceptBagItVersion }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.AllowFetchTxt }}
+    </div>
+    <div class='tab-pane fade {{ if eq .activeTab "navManifestsTab"}} active show {{ end }}' role="tabpanel" id="profileManifests" aria-labelledby="navManifestsTab">
+      {{ template "partials/input_select.html" dict "field" .form.Fields.ManifestsAllowed }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.ManifestsRequired }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.TagManifestsAllowed }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.TagManifestsRequired }}
+    </div>
+    <div class='tab-pane fade {{ if eq .activeTab "navSerializationTab"}} active show {{ end }}' role="tabpanel" id="profileSerialization" aria-labelledby="navSerializationTab">
+      {{ template "partials/input_select.html" dict "field" .form.Fields.Serialization }}
+      {{ template "partials/input_select.html" dict "field" .form.Fields.AcceptSerialization }}
+      <!-- {{ template "partials/input_select.html" dict "field" .form.Fields.TarDirMustMatchName }} -->
+    </div>
+
+    {{ $tagsInFile := .tagsInFile }}
+    {{ $activeTab := .activeTab }}
+    {{ $activeTagFile := .activeTagFile }}
+    {{ $profileID := .form.Fields.ID.Value }}
+    {{ range $i, $tagFile := .tagFileNames }}
+    {{ $tags := index $tagsInFile $tagFile }}
+
+    <div class='tab-pane fade {{ if and (eq $activeTab "navTagFilesTab") (eq $tagFile $activeTagFile) }} active show {{ end }}' role="tabpanel" id="profileTags-{{ $tagFile }}" aria-labelledby="navTags-{{ $tagFile }}" data-tag-file-name="{{ $tagFile }}">
+      {{ template "partials/profile_tags.html" dict "tags" $tags "bagItProfileID" $profileID "tagFileName" $tagFile }}
+    </div>
+    {{ end }}
+
+    <div class="tab-pane fade" role="tabpanel" id="tagFilesAllowed" aria-labelledby="tagFilesAllowed">
+      {{ template "partials/input_textarea.html" dict "field" .form.Fields.TagFilesAllowed }}
+
+      {{ template "partials/input_textarea.html" dict "field" .form.Fields.TagFilesRequired }}
+    </div>
+
+
+  </div>
+
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.ID }}
+  {{ template "partials/input_hidden.html" dict "field" .form.Fields.BaseProfileID }}
+
+  <div class="bottom-buttons">
+    <div class="float-left">
+      {{ if and .form.UserCanDelete .objectExistsInDB  }}
+      <button type="button" class="btn btn-danger" onclick="deleteProfile('#DeleteProfile-{{ .form.Fields.ID.Value }}')" role="button">Delete Profile</button>
+      {{ end }}
+      <a class="btn btn-outline-success" onclick="loadIntoModal('get', 'BagIt Profile', '/profiles/export/{{ .form.Fields.ID.Value }}', '')" role="button">Export Profile</a>
+    </div>
+
+    <div class="float-right">
+      <button class="btn btn-primary" type="submit" role="button">Save</a>
+    </div>
+    <div class="float-right mr-5">
+      <a class="btn btn-secondary" href="/profiles" role="button">Cancel</a>
+    </div>
+  </div>
+
+
+
+</form>
+
+{{ if and .form.UserCanDelete .objectExistsInDB }}
+<form id="DeleteProfile-{{ .form.Fields.ID.Value }}" method="post" action="/profiles/delete/{{ .form.Fields.ID.Value }}">
+  <input type="hidden" name="ID" value="{{ .form.Fields.ID.Value }}" />
+</form>
+{{ end }}
+
+
+
+<script>
+// This fixes what may be a bootstrap bug.
+// Once the user clicks any item in the Tag Files
+// dropdown menu, that item remains active/highlighted
+// forever. This handler deactivates all the dropdown
+// items after the user clicks by stripping 'active'
+// from the item's list of CSS classes.
+//
+// https://trello.com/c/xsrgcJHT/
+$(function () {
+    let selector = '#bagItProfileTabFileDropDown a.dropdown-item'
+    document.querySelectorAll(selector).forEach((element) => element.addEventListener('click', function() {
+      document.querySelectorAll(selector).forEach((item) => item.classList.remove('active'))
+    }))
+})
+</script>
+
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

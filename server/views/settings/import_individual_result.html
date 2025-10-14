@@ -1,0 +1,12 @@
+{{ define "settings/import_individual_result.html" }}
+
+<!-- This displays the result of an individual settings import operation. -->
+
+  {{ if .Succeeded }}
+    <p><i class="fas fa-check text-success mr-1"></i> {{ .Name }}</p>
+  {{ else }}
+    <p><i class="fas fa-times text-danger mr-1"></i> {{ .Name }} <i class="fa fa-arrow-right text-danger mr-1" aria-hidden="true"></i>
+ <span class="text-danger">{{ .Error }}</span></p>
+  {{ end }}
+
+{{ end }}

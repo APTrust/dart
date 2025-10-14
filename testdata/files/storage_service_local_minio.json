@@ -1,0 +1,14 @@
+{
+    "id": "d9ba0629-6870-48a3-9dd7-89e21410453b",
+    "allowsDownload": true,
+    "allowsUpload": true,
+    "bucket": "test",
+    "description": "Local minio s3 service",
+    "host": "127.0.0.1",
+    "login": "minioadmin",
+    "loginExtra": "",
+    "name": "Local Minio",
+    "password": "minioadmin",
+    "port": 9899,
+    "protocol": "s3"
+}

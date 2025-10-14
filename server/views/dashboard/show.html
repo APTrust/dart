@@ -1,0 +1,78 @@
+{{ define "dashboard/show.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+
+<div class="row mb-5">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">Recent Jobs</div>
+      <div class="card-body dashboard-card-body" id="cardRecentJobs">
+        <table class="table table-hover">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Name</th>
+              <th>Outcome</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range $index, $job := .jobs }}
+            <tr>
+              <td><a href="/jobs/files/{{ $job.ID }}">{{ $job.Outcome.JobName }}</a></td>
+              <td>{{ $job.Outcome.Message }}</td>
+              <td>{{ dateISO $job.Outcome.LastActivity }}</td>
+            </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Reports from remote repos will go in here -->
+<div id="reportsContainer"></div>
+
+
+<script>
+$(function(){
+  var reports = JSON.parse({{ .reportListJson }})
+
+  function runReport(report) {
+    let url = `/dashboard/report?RemoteRepoID=${encodeURIComponent(report.repositoryId)}&ReportName=${encodeURIComponent(report.reportName)}`    
+    $.ajax({
+        url: url,
+        type: "get",
+    }).done(function (response) {
+        let displayName = `${report.reportName} from ${report.repositoryName}`
+        showReport(displayName, response.html)
+    }).fail(function (xhr, status, err) {
+        console.error(`URL: ${url}\nRepository: ${report.repositoryName}\nReport: ${report.reportName}\nResponse: ${xhr.responseText}`)
+    })
+  }
+
+  function showReport(displayName, html) {
+    let newReportDiv = `
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">${displayName}</div>
+          <div class="card-body dashboard-card-body" id="cardRecentJobs">
+          ${html}    
+          </div>
+        </div>
+      </div>
+    </div>`
+    $('#reportsContainer').append(newReportDiv)
+  }
+
+  reports.forEach((report) => runReport(report))  
+})
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}

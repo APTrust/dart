@@ -1,0 +1,57 @@
+{{ define "bagit_profile/import.html" }}
+
+{{ template "partials/page_header.html" . }}
+
+<form action="/profiles/import" method="post" id="profileImportForm">
+
+<!-- TODO: Use the standard form. -->
+
+{{ template "partials/input_select.html" dict "field" .form.Fields.ImportSource }}
+
+<div id="urlContainer" style="display: none;">
+  {{ template "partials/input_text.html" dict "field" .form.Fields.URL }}
+</div>
+
+<div id="jsonContainer" style="display: none;">
+  {{ template "partials/input_textarea.html" dict "field" .form.Fields.JsonData }}
+</div>
+
+<div class="bottom-buttons">
+  <div class="float-right">
+    <button type="submit" class="btn btn-primary" type="button" id="btnImport">Import</button>
+  </div>
+  <div class="float-right mr-3">
+    <a role="button" class="btn btn-secondary" href="/profiles">Cancel</a>
+  </div>
+</div>
+
+</form>
+
+
+<script>
+//
+// Show/Hide controls based on which import source user selects.
+//
+$(function () {
+  $('#BagItProfileImport_ImportSource').on("change", function(e) {
+    let selected = $('#BagItProfileImport_ImportSource').val()
+    console.log(selected)
+    if (selected == "url") {
+      $('#jsonContainer').hide()
+      $('#urlContainer').show()
+    } else if (selected == "json") {
+      $('#jsonContainer').show()
+      $('#urlContainer').hide()
+    } else {
+      $('#jsonContainer').hide()
+      $('#urlContainer').hide()
+    }
+  })
+})
+</script>
+
+
+{{ template "partials/page_footer.html" .}}
+
+{{ end }}
+

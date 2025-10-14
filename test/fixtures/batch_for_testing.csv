@@ -1,4 +1,0 @@
-Bag-Name,Root-Directory,aptrust-info.txt/Title,aptrust-info.txt/Description,aptrust-info.txt/Access,aptrust-info.txt/Storage-Option,bag-info.txt/Source-Organization,bag-info.txt/Bag-Group-Identifier,bag-info.txt/Internal-Sender-Identifier,bag-info.txt/Custom-Tag
-dart-bagit,/home/dev/dart/bagit,DART BagIt,Bagit source code files from DART,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-01,apple
-dart-core,/home/dev/dart/core,DART Core,DART core source files,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-02,orange
-dart-migrations,/home/dev/dart/migrations,DART Migrations,DART migration source files,Institution,Glacier-Deep-OH,test.edu,dart-source-test,dart-js-03,cherry
