@@ -1,5 +1,12 @@
 # DART Release Notes
 
+## [Next] - [Date TBD]
+
+* Feature: DART can now create, validate, and upload tarred, gzipped bags (.tar.gz or .tgz)
+* Feature: DART can now create, validate, and upload loose bags (not tarred or gzipped)
+* Feature: DART can save artifacts (tag files, manifests, etc.) to file from the artifacts screen
+* Fixed: Menu items on tag file dropdown are no longer stuck on after being clicked
+
 ## 3.0-alpha-03 - June 6, 2025
 
 * Fixed omissions in the algorithms lists for allowed manifests and allowed tag manifests in version 2.3 of the APTrust BagIt profile. This list now correctly includes sha1 and sha512 as allowed algorithms.
