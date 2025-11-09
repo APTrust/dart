@@ -117,7 +117,7 @@ func GetHelpUrl(c *gin.Context) string {
 		handler = nameParts[len(nameParts)-1]
 	}
 	if handler != "" {
-		helpUrl = fmt.Sprintf("%s%s", constants.BaseHelpUrl, constants.HelpUrlFor[handler])
+		helpUrl = fmt.Sprintf("%s%s", BaseHelpUrl, HelpUrlFor[handler])
 	}
 	return helpUrl
 }
