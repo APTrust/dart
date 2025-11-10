@@ -38,6 +38,7 @@ func JobShowFiles(c *gin.Context) {
 	templateData["jobDeletionUrl"] = fmt.Sprintf("/jobs/delete/%s", job.ID)
 	templateData["nextButtonUrl"] = fmt.Sprintf("/jobs/packaging/%s", job.ID)
 	templateData["addFileUrl"] = fmt.Sprintf("/jobs/add_file/%s", job.ID)
+	templateData["helpUrl"] = GetHelpUrl(c)
 
 	if job.WorkflowID != "" {
 		result := core.ObjFind(job.WorkflowID)

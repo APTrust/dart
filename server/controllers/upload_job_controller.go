@@ -59,6 +59,7 @@ func UploadJobShowFiles(c *gin.Context) {
 	templateData["jobDeletionUrl"] = fmt.Sprintf("/upload_jobs/delete/%s", uploadJob.ID)
 	templateData["nextButtonUrl"] = fmt.Sprintf("/upload_jobs/targets/%s", uploadJob.ID)
 	templateData["addFileUrl"] = fmt.Sprintf("/upload_jobs/add_file/%s", uploadJob.ID)
+	templateData["helpUrl"] = GetHelpUrl(c)
 
 	c.HTML(http.StatusOK, "job/files.html", templateData)
 

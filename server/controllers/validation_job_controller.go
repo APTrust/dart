@@ -58,6 +58,7 @@ func ValidationJobShowFiles(c *gin.Context) {
 	templateData["jobDeletionUrl"] = fmt.Sprintf("/validation_jobs/delete/%s", valJob.ID)
 	templateData["nextButtonUrl"] = fmt.Sprintf("/validation_jobs/profiles/%s", valJob.ID)
 	templateData["addFileUrl"] = fmt.Sprintf("/validation_jobs/add_file/%s", valJob.ID)
+	templateData["helpUrl"] = GetHelpUrl(c)
 
 	c.HTML(http.StatusOK, "job/files.html", templateData)
 }
