@@ -20,7 +20,7 @@ import (
 func WorkflowNew(c *gin.Context) {
 	workflow := &core.Workflow{
 		ID:            uuid.NewString(),
-		Name:          "New Workflow" + time.Now().Format(time.RFC3339),
+		Name:          "New Workflow " + time.Now().Format(time.RFC3339),
 		PackageFormat: constants.PackageFormatBagIt,
 	}
 	err := core.ObjSaveWithoutValidation(workflow)
