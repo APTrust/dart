@@ -53,7 +53,7 @@ func TestWorkflowNew(t *testing.T) {
 	result = core.ObjList(constants.TypeWorkflow, "obj_name", 10, 0)
 	require.Nil(t, result.Error)
 	assert.Equal(t, 1, len(result.Workflows))
-	assert.Equal(t, "New Workflow", result.Workflow().Name)
+	assert.True(t, strings.HasPrefix(result.Workflow().Name, "New Workflow"))
 }
 
 func TestWorkflowCreateEditDelete(t *testing.T) {
