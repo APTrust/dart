@@ -193,6 +193,8 @@ Also, if you want to run DART 3 through the VS Code debugger and have it upload 
 
 Then start DART 3 in debug mode in VS Code. From there, you can use DART through http://localhost:8444.
 
+Also, not that a number of tests call util.ProjectRoot(), which actually comes from Dart Runner's util code and points to Dart Runner's project root. If you have installed the Dart Runner dependency (which is listed in go.mod and **should**) be installed automatically by Go, then util.ProjectRoot() will point to the root directory of your local copy of Dart Runner.
+
 ## Releasing
 
 Since we're in very early alpha phase, we don't have a formal release process yet. For now, we build the app as decribed under [Building](#Building) below and then manually copy it to our S3 public download bucket.

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"testing"
 	"time"
 
@@ -141,8 +142,8 @@ func TestJobRunExecute(t *testing.T) {
 func testPostRunJobResult(t *testing.T, jobResult *core.JobResult, whence string) {
 	// Check some basic details...
 	assert.Equal(t, "APTrust-S3-Bag-01.tar", jobResult.JobName, whence)
-	assert.True(t, jobResult.PayloadByteCount > 15000000, jobResult.PayloadByteCount, whence)
-	assert.True(t, jobResult.PayloadFileCount > int64(1000), jobResult.PayloadFileCount, whence)
+	assert.True(t, jobResult.PayloadByteCount > int64(1500000), strconv.FormatInt(jobResult.PayloadByteCount, 10), whence)
+	assert.True(t, jobResult.PayloadFileCount > int64(200), strconv.FormatInt(jobResult.PayloadFileCount, 10), whence)
 
 	// Make sure job definition was valid.
 	assert.Empty(t, jobResult.ValidationErrors, whence)

@@ -38,7 +38,7 @@ func loadTestJob(t *testing.T) *core.Job {
 	// from the current project with a variety of file types.
 	job.PackageOp.SourceFiles = []string{
 		filepath.Join(util.ProjectRoot(), "core"),
-		filepath.Join(util.ProjectRoot(), "server", "assets"),
+		filepath.Join(util.ProjectRoot(), "testdata"),
 		filepath.Join(util.ProjectRoot(), "util"),
 	}
 
