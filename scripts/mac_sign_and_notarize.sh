@@ -36,7 +36,7 @@ APP_NAME="DART"
 APP_BUNDLE="build/bin/${APP_NAME}.app"
 CERT_FILE=$APPLE_CERT
 CERT_PASSWORD=""  # Will prompt if not set
-IDENTITY_NAME="Developer ID Application: Your Name (TEAMID)"  # e.g., "Developer ID Application: Your Name (TEAMID)"
+IDENTITY_NAME=$DEV_ID_APPLICATION  # e.g., "Developer ID Application: Your Name (TEAMID)"
 APPLE_ID=$APPLE_ID       # Your Apple ID email
 TEAM_ID=$APPLE_TEAM_ID        # Your 10-character Team ID
 APP_PASSWORD=$APPLE_DART_PASSWORD   # App-specific password from appleid.apple.com
@@ -134,6 +134,19 @@ create_keychain() {
 import_certificate() {
     print_info "Importing certificate..."
 
+    # Import Apple's intermediate certificates first
+    print_info "Downloading Apple intermediate certificates..."
+
+    curl -sS https://www.apple.com/certificateauthority/DeveloperIDG2CA.cer -o /tmp/DeveloperIDG2CA.cer
+    curl -sS https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer -o /tmp/AppleWWDRCAG3.cer
+
+    security import /tmp/DeveloperIDG2CA.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign -T /usr/bin/security
+    security import /tmp/AppleWWDRCAG3.cer -k "$KEYCHAIN_NAME" -T /usr/bin/codesign -T /usr/bin/security
+
+    rm -f /tmp/DeveloperIDG2CA.cer /tmp/AppleWWDRCAG3.cer
+
+    print_info "Importing your Developer ID certificate..."
+
     security import "$CERT_FILE" \
         -k "$KEYCHAIN_NAME" \
         -P "$CERT_PASSWORD" \
@@ -216,7 +229,14 @@ verify_signature() {
     print_info "Verifying signature..."
 
     codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
-    spctl --assess --type execute --verbose=4 "$APP_BUNDLE"
+
+    # Check if app will be accepted by Gatekeeper (will fail if not notarized yet)
+    print_info "Checking Gatekeeper status..."
+    if spctl --assess --type execute --verbose=4 "$APP_BUNDLE" 2>&1 | grep -q "rejected"; then
+        print_info "App not yet notarized (expected at this stage)"
+    else
+        print_status "App accepted by Gatekeeper"
+    fi
 
     print_status "Signature verified"
 }
@@ -288,12 +308,49 @@ notarize_app() {
 
 # Staple the notarization ticket
 staple_ticket() {
-    print_info "Stapling notarization ticket..."
+    print_info "Stapling notarization ticket to app bundle..."
 
     xcrun stapler staple "$APP_BUNDLE"
-    xcrun stapler staple "$DMG_NAME"
 
-    print_status "Notarization ticket stapled"
+    print_status "Notarization ticket stapled to app"
+}
+
+# Notarize and staple DMG
+notarize_dmg() {
+    print_info "Submitting DMG for notarization..."
+
+    # Submit DMG using notarytool
+    DMG_SUBMISSION_ID=$(xcrun notarytool submit "$DMG_NAME" \
+        --apple-id "$APPLE_ID" \
+        --team-id "$TEAM_ID" \
+        --password "$APP_PASSWORD" \
+        --wait \
+        --output-format json | grep -o '"id":"[^"]*' | cut -d'"' -f4)
+
+    if [ -z "$DMG_SUBMISSION_ID" ]; then
+        print_error "Failed to get DMG submission ID"
+        exit 1
+    fi
+
+    print_info "DMG Submission ID: $DMG_SUBMISSION_ID"
+
+    # Check status
+    DMG_STATUS=$(xcrun notarytool info "$DMG_SUBMISSION_ID" \
+        --apple-id "$APPLE_ID" \
+        --team-id "$TEAM_ID" \
+        --password "$APP_PASSWORD" \
+        --output-format json | grep -o '"status":"[^"]*' | cut -d'"' -f4)
+
+    if [ "$DMG_STATUS" == "Accepted" ]; then
+        print_status "DMG notarization successful!"
+
+        print_info "Stapling notarization ticket to DMG..."
+        xcrun stapler staple "$DMG_NAME"
+        print_status "DMG notarization ticket stapled"
+    else
+        print_error "DMG notarization failed with status: $DMG_STATUS"
+        exit 1
+    fi
 }
 
 # Cleanup
@@ -328,6 +385,7 @@ main() {
     notarize_app
     staple_ticket
     create_dmg
+    notarize_dmg
     cleanup
 
     echo
