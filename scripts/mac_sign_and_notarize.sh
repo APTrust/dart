@@ -17,6 +17,26 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
+print_status() {
+    echo -e "${GREEN}[✓]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[✗]${NC} $1"
+}
+
+print_info() {
+    echo -e "${YELLOW}[i]${NC} $1"
+}
+
+# Load codesign.env
+if [ ! -f "codesign.env" ]; then
+    print_error "codesign.env file not found"
+else
+    source codesign.env
+    print_info "Loaded env vars from codesign.env"
+fi
+
 # Note that you need to set the following env vars:
 #
 # $APPLE_CERT   - Absolute path to your Apple code-signing certificate,
@@ -34,12 +54,12 @@ NC='\033[0m' # No Color
 # Configuration
 APP_NAME="DART"
 APP_BUNDLE="build/bin/${APP_NAME}.app"
-CERT_FILE=$APPLE_CERT
-CERT_PASSWORD=""  # Will prompt if not set
-IDENTITY_NAME=$DEV_ID_APPLICATION  # e.g., "Developer ID Application: Your Name (TEAMID)"
-APPLE_ID=$APPLE_ID       # Your Apple ID email
-TEAM_ID=$APPLE_TEAM_ID        # Your 10-character Team ID
-APP_PASSWORD=$APPLE_DART_PASSWORD   # App-specific password from appleid.apple.com
+CERT_FILE=$APPLE_DEVELOPER_CERT_FILE
+CERT_PASSWORD=""                         # Will prompt if not set
+IDENTITY_NAME=$APPLE_IDENTITY_CERT_NAME  # e.g., "Developer ID Application: Your Name (TEAMID)"
+APPLE_ID=$APPLE_ID                       # Your Apple ID email
+TEAM_ID=$APPLE_TEAM_ID                   # Your 10-character Team ID
+APP_PASSWORD=$APPLE_DART_APP_PASSWORD    # App-specific password from appleid.apple.com
 
 # Derived variables
 KEYCHAIN_NAME="signing.keychain-db"
@@ -48,17 +68,6 @@ DMG_NAME="${APP_NAME}-signed.dmg"
 ZIP_NAME="${APP_NAME}-signed.zip"
 ENTITLEMENTS_FILE="entitlements.plist"
 
-print_status() {
-    echo -e "${GREEN}[✓]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[✗]${NC} $1"
-}
-
-print_info() {
-    echo -e "${YELLOW}[i]${NC} $1"
-}
 
 # Check prerequisites
 check_prerequisites() {
@@ -89,6 +98,7 @@ check_prerequisites() {
 
 # Prompt for missing credentials
 prompt_credentials() {
+
     if [ -z "$CERT_PASSWORD" ]; then
         read -sp "Enter certificate password: " CERT_PASSWORD
         echo
