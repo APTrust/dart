@@ -278,3 +278,18 @@ At the moment, we need to build the Wails app on each platform and architecture 
 
 `./scripts/run tests`
 
+## Code Signing for Mac OS
+
+You will need an Apple developer certificate to sign and notarize DART builds so they can run on Mac OS without a lot of hassles and scary warnings. For info on how to get the required certificate and app-specific password, see the [codesign_example.env](codesign_example.env) file.
+
+Once you've set that up, you can build the app using the Building instructions above. After the app is built, if your customized codesign.env file is ready, then just run this script from the project's top-level directory:
+
+`./scripts/mac_sign_and_notarize.sh`
+
+It should only prompt you for the password for your .p12 certificate file. Note that the notarization step of the signing process often appears to hang for 30 seconds - 10 minutes. That's part of Apple's process.
+
+When the app is fully signed and notarized, it should appear here in the top-level directory with the name __DART-signed.dmg__. You should rename it to DART.dmg before uploading it to S3 for public distribution.
+
+__NOTE__: You may want to run the signing script from a terminal window instead of from VS Code's built-in terminal. Running from within VS Code will cause Mac to prompt you to elevate VS Code's permissions, which may be dangerous.
+
+Eventually, we will do code signing at the end of the CI/CD pipeline. For instructions on that, see https://wails.io/docs/guides/signing/.

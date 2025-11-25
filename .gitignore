@@ -23,3 +23,8 @@ c.out
 
 # VS Code debug binaries
 *__debug_bin*
+
+# Env file containing code signing secrets
+codesign.env
+*/codesign.env
+DART-signed.dmg
