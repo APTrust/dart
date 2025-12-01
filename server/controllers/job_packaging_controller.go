@@ -33,6 +33,7 @@ func JobShowPackaging(c *gin.Context) {
 			core.Dart.Log.Warningf("While running workflow job, JobPackagingController could not find workflow with id %s", job.WorkflowID)
 		} else {
 			workflow = result.Workflow()
+			job.PackageOp.BagItSerialization = workflow.Serialization
 		}
 	}
 
