@@ -1,5 +1,7 @@
 github.com/APTrust/dart-runner v0.0.0-20251110133800-dc25e0227b40 h1:i2LtldbV0nsI3XWtGiQy1fnD9T/FarrMYSY9XYNM/0c=
 github.com/APTrust/dart-runner v0.0.0-20251110133800-dc25e0227b40/go.mod h1:DDZo07f5lD/MYHUeWlhf/Ukrn942N0ipCTJZNjxIY8E=
+github.com/APTrust/dart-runner v0.0.0-20251201205943-c2ccf5ec943d h1:iXpJH/DdkHCqzeVO6nPbcgmPuin+CEcGKv6FE7YSU08=
+github.com/APTrust/dart-runner v0.0.0-20251201205943-c2ccf5ec943d/go.mod h1:DDZo07f5lD/MYHUeWlhf/Ukrn942N0ipCTJZNjxIY8E=
 github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec h1:bH+abBwMq1tQQzl/tXQEmD08bEKjRtkCzKuHoiBNo1M=
 github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec/go.mod h1:xQE/67tfyAbrUSLmkO8yhiMD8rvDH1bJ1xi69R68Whc=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

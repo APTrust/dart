@@ -72,6 +72,7 @@ func JobRunExecute(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+	job.ClearErrors()
 	job.UpdatePayloadStats()
 
 	// See the comments above DeleteStaleUnserializedBag for why we

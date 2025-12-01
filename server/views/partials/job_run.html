@@ -104,6 +104,7 @@ an idea of what goes into them.
       console.log("User cancelled replacing/rebuilding existing bag.")
       return
     }
+    clearMessageDivs()
     disableRunButtons()
     if (jobId && !eventSourceUrl.endsWith("/")) {
       eventSourceUrl += "/"
@@ -366,7 +367,7 @@ an idea of what goes into them.
       let warningDiv = detailDiv.siblings("div.text-warning").first()
       warningDiv.html("")
     })
-    // Clearn the outcome info as well, or error messages from
+    // Clear the outcome info as well, or error messages from
     // prior run may continue to display.
     let outcomeMessageDiv = $("#runningJobDisplay div.outcomeInfo div.detail div.message");
     outcomeMessageDiv.html("");
