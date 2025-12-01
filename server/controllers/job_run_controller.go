@@ -36,13 +36,22 @@ func JobRunShow(c *gin.Context) {
 		}
 	}
 
+	// For most jobs, back button should go to the uploads page
+	// so user can choose upload targets. For workflows, the upload
+	// targets are already defined, so we want to skip the uploads
+	// page and go back to the metadata page.
+	backButtonUrl := fmt.Sprintf("/jobs/upload/%s", job.ID)
+	if job.WorkflowID != "" {
+		backButtonUrl = fmt.Sprintf("/jobs/metadata/%s", job.ID)
+	}
+
 	data := gin.H{
 		"jobID":          job.ID,
 		"workflowID":     job.WorkflowID,
 		"jobSummary":     jobSummary,
 		"jobSummaryJson": string(jobSummaryJson),
 		"jobRunUrl":      "/jobs/run",
-		"backButtonUrl":  fmt.Sprintf("/jobs/upload/%s", job.ID),
+		"backButtonUrl":  backButtonUrl,
 		"helpUrl":        GetHelpUrl(c),
 		"workflow":       workflow,
 		"staleBagExists": StaleUnserializedBagExists(job),

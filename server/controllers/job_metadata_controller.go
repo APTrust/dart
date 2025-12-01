@@ -68,6 +68,13 @@ func JobSaveMetadata(c *gin.Context) {
 	direction := c.PostForm("direction")
 	nextPage := fmt.Sprintf("/jobs/upload/%s", job.ID)
 
+	// When running a workflow, the upload targets are pre-defined
+	// and generally should not be changed. In this case, skip
+	// the uploads page and go right to the run page.
+	if job.WorkflowID != "" {
+		nextPage = fmt.Sprintf("/jobs/summary/%s", job.ID)
+	}
+
 	// If user wants to go back to the packaging page,
 	// let them go. We don't need to display the errors
 	// because they'll come back through this page again.
