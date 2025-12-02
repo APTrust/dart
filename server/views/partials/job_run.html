@@ -585,13 +585,17 @@ an idea of what goes into them.
 
     // Now add upload errors if there were any.
     if (result.uploadResults) {
+      let greenCheck = '<i class="fa fa-check mr-2" aria-hidden="true" style="color: green;"></i>'
+      let redX = '<i class="fa fa-times mr-2" aria-hidden="true" style="color: red;"></i>'
       result.uploadResults.forEach(function (uploadResult) {
         if (uploadResult.errors && Object.values(uploadResult.errors).length > 0) {
-          html += `<p class='font-weight-bold'>Upload Errors (${uploadResult.remoteTargetName})</p><ol>`
+          html += `<p class='font-weight-bold'>${redX} Upload Errors (${uploadResult.remoteTargetName})</p><ol>`
           Object.values(uploadResult.errors).forEach(function (errMessage) {
             html += `<li>${errMessage}</li>`
           })
           html += "</ol>"
+        } else {
+          html += `<p class='font-weight-bold'>${greenCheck} Upload Succeeded - (${uploadResult.remoteTargetName})</p>`
         }
       })
     }

@@ -14,7 +14,7 @@ replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20
 // replace github.com/APTrust/dart-runner => ../dart-runner
 
 require (
-	github.com/APTrust/dart-runner v0.0.0-20251201205943-c2ccf5ec943d
+	github.com/APTrust/dart-runner v0.0.0-20251202220011-87709f079baa
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.10.0
