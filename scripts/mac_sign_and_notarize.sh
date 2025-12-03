@@ -53,6 +53,7 @@ fi
 
 # Configuration
 APP_NAME="DART"
+APP_EXECUTABLE="DART"
 APP_BUNDLE="build/bin/${APP_NAME}.app"
 CERT_FILE=$APPLE_DEVELOPER_CERT_FILE
 CERT_PASSWORD=""                         # Will prompt if not set
@@ -64,8 +65,8 @@ APP_PASSWORD=$APPLE_DART_APP_PASSWORD    # App-specific password from appleid.ap
 # Derived variables
 KEYCHAIN_NAME="signing.keychain-db"
 KEYCHAIN_PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32)
-DMG_NAME="${APP_NAME}-signed.dmg"
-ZIP_NAME="${APP_NAME}-signed.zip"
+DMG_NAME="${APP_NAME}.dmg"
+ZIP_NAME="${APP_NAME}.zip"
 ENTITLEMENTS_FILE="entitlements.plist"
 
 
@@ -220,7 +221,7 @@ sign_app() {
         --entitlements "$ENTITLEMENTS_FILE" \
         --timestamp \
         --options runtime \
-        "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+        "$APP_BUNDLE/Contents/MacOS/$APP_EXECUTABLE"
 
     # Sign the entire app bundle
     print_info "Signing app bundle..."
@@ -228,7 +229,6 @@ sign_app() {
         --entitlements "$ENTITLEMENTS_FILE" \
         --timestamp \
         --options runtime \
-        --deep \
         "$APP_BUNDLE"
 
     print_status "Application signed successfully"
@@ -238,7 +238,7 @@ sign_app() {
 verify_signature() {
     print_info "Verifying signature..."
 
-    codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+    codesign --verify --strict --verbose=2 "$APP_BUNDLE"
 
     # Check if app will be accepted by Gatekeeper (will fail if not notarized yet)
     print_info "Checking Gatekeeper status..."
