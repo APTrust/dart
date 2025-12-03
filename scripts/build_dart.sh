@@ -30,7 +30,7 @@ BUILD_TAGS='-tags release'
 # and MSYS_NT-10.0 on Windows 10 cmd.
 if [[ "$OS" == *"_NT-"* ]]; then
 	OS="Windows $(uname -m)"
-	BUILD_TAGS='-tags="release windows"'
+	BUILD_TAGS='-tags release,windows'
 fi
 
 # Create the full version string.
@@ -38,4 +38,5 @@ VERSION="DART $TAG for $OS $ARCH (Build $COMMIT $DATE)"
 
 # Now run wails build with the proper tags and version
 # number.
+echo "wails build $BUILD_TAGS -ldflags \"-X 'main.Version=$VERSION'\""
 wails build $BUILD_TAGS -ldflags "-X 'main.Version=$VERSION'"
