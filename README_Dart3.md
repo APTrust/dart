@@ -8,13 +8,15 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 1. Dowloading the App
 
-| Operating System       | Download Link |
-| ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart |
+| Operating System       | Download Link | SHA-256 Checksum |
+| ---------------------- | ------------- | ---------------- |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe | 5bdcdfef7e288ee869d1e102ea98035d6d0002ee2fb965839d762273d4bfc851 |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg | b36b4fd2dcc21c65b4f166e16bdb3a6a034992254fc5685cf073c66f257b7c52 |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart | c4c2301ac11feca40f0460119a3840a8d3872c598e50ecd4d30ffe16704c00de |
 
 2. Follow the instructions below to start the app on your operating system.
+
+Note that the SHA256 checksum for the Mac app is the checksum of the executable at DART/DART.app/Contents/MacOS/DART. The MacOS version is digitally signed and notarized, so you should not receive any warnings when trying to run it.
 
 ### Starting DART 3 on Windows
 
