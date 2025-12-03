@@ -103,7 +103,7 @@ Here's a more complete comparison. We will update this list as necessary with ea
  **Validate tarred bags**                       | Yes          | Yes          |
  **Validate loose bags**                        | No           | Yes          |
  **Validate gzipped bats**                      | No           | Yes          |
- **Run upload-only jobs**                       | No           | No           |
+ **Run upload-only jobs**                       | No           | Yes          |
  **Save artifacts after job runs**              | No           | Yes          | Includes job description, job result, tag files and manifests.
  **Create Workflows**                           | Yes          | Yes          |
  **Run one-off workflow jobs**                  | Yes          | Yes          |
