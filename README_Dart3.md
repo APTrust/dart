@@ -1,8 +1,8 @@
 # DART 3
 
-DART 3 is currently in ALPHA mode. We encourage you to use it for testing and to report bugs and feature requests at https://github.com/APTrust/dart/issues.
+DART 3 is currently in BETA mode. We encourage you to use it for testing and to report bugs and feature requests at https://github.com/APTrust/dart/issues.
 
-DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stable release build if you want to use this in production.
+Be cautious when using the beta version for essential workflows! Wait for a stable release build if you want to use this in production.
 
 ## Getting Started
 
