@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"os/exec"
 	"runtime"
 	"strconv"
@@ -25,9 +26,19 @@ func AboutShow(c *gin.Context) {
 		tailCommand = fmt.Sprintf("powershell -command Get-Content %s -Wait", logFile)
 	}
 
+	appPath, err := os.Executable()
+	if err != nil {
+		core.Dart.Log.Warningf("Can't get app path: %v", err)
+		appPath = "Unknown"
+	}
+	version := constants.Version
+	if version == "" {
+		version = "undefined"
+	}
+
 	templateData := gin.H{
-		"version":      constants.Version,
-		"appPath":      "App path goes here",
+		"version":      version,
+		"appPath":      appPath,
 		"userDataPath": core.Dart.Paths.DataDir,
 		"logFilePath":  logFile,
 		"tailCommand":  tailCommand,

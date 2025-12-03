@@ -195,11 +195,20 @@ Then start DART 3 in debug mode in VS Code. From there, you can use DART through
 
 Also, not that a number of tests call util.ProjectRoot(), which actually comes from Dart Runner's util code and points to Dart Runner's project root. If you have installed the Dart Runner dependency (which is listed in go.mod and **should**) be installed automatically by Go, then util.ProjectRoot() will point to the root directory of your local copy of Dart Runner.
 
-## Releasing
+## Building for Release
 
-Since we're in very early alpha phase, we don't have a formal release process yet. For now, we build the app as decribed under [Building](#Building) below and then manually copy it to our S3 public download bucket.
+1. Run the build script from the project's top-level directory: `./scripts/build_dart.sh`
+2. On Mac, run the signing script from the top-level directory: `./scripts/mac_sign_and_notarize.sh`
 
-Updates to the release notes are also done manually.
+If you're code-signing on Mac, be sure you have a signing certificate and that you have created a local file called codesign.env that is based on [codesign_example.env](codesign_example.env). Note that that file includes instructions on how to set up Mac code signing. If you have trouble running the code signing process on Mac, run `./scripts/diagnose_cert_file.sh` for diagnostics.
+
+Since we're in very early alpha phase, we don't have a formal release process yet. For now, we build the app as decribed above and then manually copy it to our S3 public download bucket. Updates to the release notes are also done manually.
+
+For more on Wails build options, see https://wails.io/docs/guides/manual-builds/. Also note that the build system (and many other things) will be changing in Wails 3. See https://v3alpha.wails.io/whats-new/ for details.
+
+At the moment, we need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
+
+We are currently not code-signing Windows builds because the process of obtaining a Windows signing certificate is prohibitive.
 
 # Note on Wails
 
@@ -265,14 +274,6 @@ assuming that Dart Runner is one level up the file tree from DART.
 
 Note that when you build a release, you should get rid of the `replace` and point to a
 specific build of Dart Runner.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build -tags release`.
-
-For more on build options, see https://wails.io/docs/guides/manual-builds/. Also note that the build system (and many other things) will be changing in Wails 3. See https://v3alpha.wails.io/whats-new/ for details.
-
-At the moment, we need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
 
 ## Testing
 

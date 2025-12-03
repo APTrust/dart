@@ -17,9 +17,16 @@ var assets embed.FS
 //go:embed build/appicon.png
 var icon []byte
 
+// Version value is injected at build time by ./scripts/build_dart.sh
+// using -ldflags "-X 'main.Version=$VERSION'"
+var Version string
+
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+
+	// Set the version for the server
+	server.SetVersion(Version)
 
 	go server.Run(9797, true)
 

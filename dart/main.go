@@ -13,7 +13,8 @@ import (
 	"github.com/APTrust/dart/v3/server"
 )
 
-// Version value is injected at build time.
+// Version value is injected at build time by ./scripts/build_dart.sh
+// using -ldflags "-X 'main.Version=$VERSION'"
 var Version string
 
 func main() {
