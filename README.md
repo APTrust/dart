@@ -36,8 +36,14 @@ Download the DART installer for your system and then check out our [Getting Star
 
 ## DART 3 Installation
 
-DART 3 is currently in alpha phase and is not yet suitable for production workloads.
-To install DART 3, see the [DART 3 page](README_Dart3.md).
+DART 3 is currently in beta phase and is not yet suitable for production workloads, but it's getting close. To install DART 3, see the [DART 3 page](README_Dart3.md). Or, if you just want to get to it, you can download the beta from the links below.
+
+| Operating System       | Download Link |
+| ---------------------- | ------------- |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart |
+
 
 # DART User Group
 
