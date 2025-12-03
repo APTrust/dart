@@ -13,7 +13,7 @@ packaging formats in future.
 
 DART 2 is the current, stable version of DART. It runs on Mac, Windows, and Linux.
 
-We have a DART 3 alpha available, but it's not yet steady enough for production
+We have a DART 3 beta available, but it's not yet steady enough for production
 use. If you're starting with DART, start with DART 2.
 
 ## DART 2 Installation

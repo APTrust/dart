@@ -10,9 +10,9 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/windows-amd64/dart3-alpha-03.exe |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/mac-universal/DART.zip |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/alpha-03/linux-amd64/dart3-alpha-03 |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart |
 
 2. Follow the instructions below to start the app on your operating system.
 
@@ -31,34 +31,16 @@ DO NOT USE THE ALPHA VERSION FOR ESSENTIAL PRODUCTION WORKFLOWS! Wait for a stab
 4. Click **Run Anyway**. You should see a new browser tab showing DART 3.
 
 
-### Starting DART 3 on MacOS
+### Installing & Starting DART 3 on MacOS
 
-We have not yet implemented code signing for the MacOS version of DART 3, so you'll have to go through some extra steps to open the app.
+To install DART:
 
-1. Unzip DART 3 and make it executable. If you downloaded DART into your Downloads folder, the open a terminal (aka terminal.app) and type the following:
+1. Double-click on the DART.dmg file you downloaded from the URL above.
+2. Drag the DART app into your Applications directory.
 
-```
-cd ~/Downloads
-unzip DART.zip
-chmod 0755 DART.app
-xattr -d com.apple.quarantine DART.app
-```
+If you want to install DART somewhere else, you can drag the app into any directory you like.
 
-2. Hold down the Control key while you click on the DART 3 app. You'll see a message saying Mac won't open the app because it's hasn't been signed or is from an untrusted developer.
-
-3. Go to the Apple menu in the upper left corner of the screen and select **System Settings**.
-
-4. Scroll down to **Privacy & Security**, then click **Open Anyway** next to the message saying DART 3 was blocked.
-
-![Unblocking DART 3 through Privacy & Security settings](./server/assets/img/MacOS_AllowBlockedApp.png)
-
-5. When asked to open DART 3, click **Open Anyway.**
-
-![DART Open Anyway](./server/assets/img/MacOS_OpenAnyway.png)
-
-6. Enter your password at the system prompt.
-
-We will be working on code signing before the final release to all DART 3 to launch without all these hoops.
+To start DART, simply double click the DART app icon.
 
 ### Starting DART 3 on Linux
 
@@ -71,13 +53,11 @@ chmod 0755 dart3
 
 2. Double-click on **dart3** in your file browser, or simply run `./dart3` in your terminal, and you'll see a new browser tab open with DART 3 running.
 
-
 ## Known Issues
 
 Major features are generally known to work in the current alpha build. However, the build has some known issues, including:
 
 * Trying to package in any format other than BagIt may cause errors.
-* The About window currently does not show the version number in the dart3-alpha-02 build.
 
 ## Notable UI Changes
 
@@ -127,27 +107,23 @@ Here's a more complete comparison. We will update this list as necessary with ea
  **Run one-off workflow jobs**                  | Yes          | Yes          |
  **Run workflow batch jobs**                    | Yes          | Yes          |
  **Help Link**                                  | Yes          | Yes          |
- **Context-sensitive help links**               | No           | No           | Coming soon.
+ **Context-sensitive help links**               | No           | Yes          |
  **View log files**                             | Yes          | Yes          | Log rotation caused problems with log viewing in DART 2. Fixed in DART 3.
  **Choose how to deal with illegal characters** | No           | Yes          | Choose how DART should deal with illegal filename characters when bagging and validating.
 
 
 ## Platform Rationale
 
-DART 3 will be the successor to DART 2. DART 2 is an Electron app that whose maintenance has been time consuming and difficult. We chose to write DART 3 in Go as a locally-running web app for a number of reasons, including:
+DART 3 is the successor to DART 2. DART 2 is an Electron app that whose maintenance has been time consuming and difficult. We chose to write DART 3 in Go as a locally-running web app with a [Wails](https://wails.io) front end for a number of reasons, including:
 
 * The tasks DART has to perform can be written much more clearly in Go than in JavaScript. This substantially eases our maintenance burden and makes it easier to add new features. Node's default async model is particularly ill-suited to some of DART's core tasks. (E.g. writing tar files, which MUST be done synchronously.)
 * The Go ecosystem is more stable than the Electron/Node ecosystem. We know this from years of maintaining code on both platforms.
 * Node and Electron often introduce breaking features in new releases, forcing us to abandon and rewrite working code. The Go language and the major browsers rarely do this.
 * The rest of the APTrust ecosystem is written in Go, which allows us to reuse proven code for bagging, validation and file transport. This substantially reduces the burden of having to maintain complex code in two different languages (Go and JavaScript) with identical functionality and behavior.
-* Electron apps like DART use substantial resources. Running the DART test suite consumed about 1.5 GB of RAM. DART 3 uses about 14 MB of RAM and considerably less CPU.
+* Electron apps like DART use substantial resources. Running the DART test suite consumed about 1.5 GB of RAM. DART 3 uses about 20 MB of RAM and considerably less CPU.
 * Electron builds did not always behave the same way as Electron in the development environment. Spending days of developer time to debug these issues was a poor use of developer time.
-* DART 3 now shares a lot of code with Dart Runner, which ensures more consistent behavior between the two apps.
+* DART 3 now uses Dart Runner to package, validate and upload bags. This ensures consistent behavior between the two apps.
 * The use of Go in DART 3 will eventually allow us to share core code between preservation services, DART, Dart Runner and the [apt-cmd](https://github.com/APTrust/apt-cmd) suite of command-line tools.
-
-We evaluated a number of platforms similar to Electron that would allow us to use Go instead of JavaScript for the heavy work. The most promising of these was [Wails](https://wails.io/), but in our early tests in 2022, we experienced some crashes and blank screens, and we didn't feel the platform was mature enough.
-
-We decided to go with the simplest and most reliable technologies available, where are a basic web server and whichever browser the user prefers.
 
 ## Separation of Policy and Implementation
 
@@ -163,7 +139,7 @@ DART 3 brings us down to one policy editor and one implementor, all written in t
 
 ## Security Notes
 
-Because DART 3 exposes the local file system in the browser, it listens only on 127.0.0.1, which means it will not accept outside connections.
+Because DART 3 exposes the local file system in the browser, it listens only on 127.0.0.1:9797, which means it will not accept outside connections.
 
 ## DART 3 on the Server
 
@@ -215,20 +191,14 @@ We are currently not code-signing Windows builds because the process of obtainin
 Wails build is currently working in dart3-wails branch, but Wails drag-and-drop is broken, so we're currently using our own drag-and-drop implementation.
 
 See these open Wails issues:
-  * https://github.com/wailsapp/wails/issues/3563
-  * https://github.com/wailsapp/wails/pull/3949
+  * Drag and drop from the desktop did not work through most of the DART 3 development period, which is why we use drag and drop from inside the app window. See Wails issue https://github.com/wailsapp/wails/issues/3563.
+  * See also: https://github.com/wailsapp/wails/pull/3949
 
-Some Wails code is currently commented out in these files:
+## Live Local Development
 
-  * server/views/job/files.html
-  * server/views/partials/page_header.html
+To run in live development mode, run `wails dev` in the project directory. This will run a Vite development server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect to this in your browser, and you can call your Go code from devtools.
 
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
+**Note** - When using VS Code, choose the `Golang HTML Template` formatter instead of the basic `HTML` formatter for the HTML files in this project. The basic formatter breaks the double-braces that Go templates use to wrap variables and function calls.
 
 ## Debugging
 
@@ -274,6 +244,16 @@ assuming that Dart Runner is one level up the file tree from DART.
 
 Note that when you build a release, you should get rid of the `replace` and point to a
 specific build of Dart Runner.
+
+If you want to change the version of Dart Runner in a dev or release build, use the following command from the command line:
+
+`go get github.com/dart-runner@version`
+
+Where `version` is the commit id you want to build with. For example:
+
+`go get github.com/dart-runner@87709f079baaefd79d76873b711e2c6b64bec688`
+
+That will update go.mod and go.sum as necessary.
 
 ## Testing
 
