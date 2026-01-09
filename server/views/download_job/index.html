@@ -1,0 +1,71 @@
+{{ define "download_job/index.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>S3 Download</h2>
+
+<form method="post" action="/download_jobs/browse" id="downloadForm">
+
+    {{ template "partials/input_select.html" dict "field" .form.Fields.ssid }}
+
+    {{ template "partials/input_select.html" dict "field" .form.Fields.bucket }}
+
+</form>
+
+<div id="s3Objects" style="display: {{ .s3ObjectListDisplay }}; margin-top: 3rem;">
+
+<h3>Contents</h3>
+
+{{ if eq (len .s3Objects) 0 }}
+<p>Bucket is empty.</p>
+{{ else }}
+<p>Click a link to download.</p>
+<table class="table table-hover">
+  <thead class="thead-inverse">
+    <tr>
+        <th>Key</th>
+        <th>Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range .s3Objects }}
+    <tr>
+        <td><a href="#{{ .Key }}" class="download-link">{{ .Key }}</a></td>
+        <td>{{ humanSize .Size }}</td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table>
+{{ end }}
+
+</div>
+
+<script>
+    $(function () {
+        function submitOnChange(e) {
+            let selected = $('#BagItProfileImport_ImportSource').val()
+            // Do nothing if no source was selected
+            if (selected == "") {
+                return
+            }
+            // If source was selected, submit.
+            $('#bucket').val("")
+            document.forms['downloadForm'].submit()
+        }
+
+        $('#Download_ssid').on("change", submitOnChange)
+        $('#Download_bucket').on("change", submitOnChange)
+
+        $('a.download-link').on("click", function() {
+            var s3Key = $(this).text();
+            var s3Bucket = $('#Download_bucket').val()
+            var s3Service = $('#Download_ssid').val()
+            console.log(`${s3Key} - ${s3Bucket} - ${s3Service}`)
+        })
+    })
+</script>
+
+{{ template "partials/page_footer.html" .}}
+
+
+{{ end }}

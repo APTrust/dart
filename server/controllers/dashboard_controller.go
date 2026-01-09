@@ -111,11 +111,11 @@ func getRepoReport(remoteRepoID, reportName string) (string, error) {
 	repo := result.RemoteRepository()
 	if repo == nil {
 		message := "Remote repository configuration is missing."
-		return message, fmt.Errorf(message)
+		return message, fmt.Errorf("Remote repository configuration is missing.")
 	}
 	if repo.UserID == "" || repo.APIToken == "" {
 		message := "User name or API key is missing from remote repository configuration."
-		return message, fmt.Errorf(message)
+		return message, fmt.Errorf("User name or API key is missing from remote repository configuration.")
 	}
 	client, err := core.GetRemoteRepoClient(repo)
 	if err != nil {

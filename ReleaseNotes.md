@@ -1,5 +1,8 @@
 # DART Release Notes
 
+## 3.0-beta-02 -
+
+
 ## 3.0-beta-01 - December 3, 2025
 
 * Feature: DART now includes [upload-only jobs](https://aptrust.github.io/dart-docs/dart3/users/jobs/upload_jobs/). You can upload previously created bags or files of any kind to remote S3 and SFTP servers.
