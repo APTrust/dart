@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -35,6 +36,49 @@ func DownloadJobBrowse(c *gin.Context) {
 		"helpUrl":             GetHelpUrl(c),
 	}
 	c.HTML(http.StatusOK, "download_job/index.html", templateData)
+}
+
+// POST /download_jobs/browse
+func DownloadJobDownload(c *gin.Context) {
+	ssid := c.PostForm("ssid")
+	s3Bucket := c.PostForm("s3Bucket")
+	s3Key := c.PostForm("s3Key")
+	s3Object, stats, err := GetDownloadFile(ssid, s3Bucket, s3Key)
+	if err != nil {
+		core.Dart.Log.Errorf("S3 download error: %v", err)
+		data := gin.H{
+			"error": err.Error(),
+		}
+		c.HTML(http.StatusInternalServerError, "download_job/error.html", data)
+	} else {
+		attachmentName := fmt.Sprintf("attachment; filename=%s", s3Key)
+		c.DataFromReader(
+			http.StatusOK,
+			stats.Size,
+			stats.ContentType,
+			s3Object,
+			map[string]string{
+				"Content-Disposition": attachmentName,
+			},
+		)
+	}
+}
+
+func GetDownloadFile(ssid, s3Bucket, s3Key string) (*minio.Object, minio.ObjectInfo, error) {
+	var obj *minio.Object
+	stats := minio.ObjectInfo{}
+	ss := core.ObjFind(ssid).StorageService()
+	useSSL := ss.Host != "localhost" && ss.Host != "127.0.0.1"
+	s3Client, err := core.NewS3Client(ss, useSSL, nil)
+	if err != nil {
+		return obj, stats, err
+	}
+	obj, err = s3Client.GetObject(s3Bucket, s3Key, minio.GetObjectOptions{})
+	if err != nil {
+		return obj, stats, err
+	}
+	stats, err = obj.Stat()
+	return obj, stats, err
 }
 
 func GetS3DownloadForm(c *gin.Context) (*core.Form, []minio.ObjectInfo) {

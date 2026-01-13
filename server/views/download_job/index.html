@@ -38,6 +38,14 @@
 </table>
 {{ end }}
 
+
+
+<form method="post" action="/download_jobs/download" id="downloadFileForm" style="display:none">
+    <input type="hidden" id="downloadSSID" name="ssid" value=""/>
+    <input type="hidden" id="downloadS3Bucket" name="s3Bucket" value=""/>
+    <input type="hidden" id="downloadS3Key" name="s3Key" value=""/>
+</form>
+
 </div>
 
 <script>
@@ -61,6 +69,11 @@
             var s3Bucket = $('#Download_bucket').val()
             var s3Service = $('#Download_ssid').val()
             console.log(`${s3Key} - ${s3Bucket} - ${s3Service}`)
+
+            $('#downloadSSID').val(s3Service)
+            $('#downloadS3Bucket').val(s3Bucket)
+            $('#downloadS3Key').val(s3Key)
+            document.forms['downloadFileForm'].submit()
         })
     })
 </script>

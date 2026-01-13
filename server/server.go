@@ -195,6 +195,7 @@ func initRoutes(router *gin.Engine) {
 	// Download Jobs
 	router.GET("/download_jobs/new", controllers.DownloadJobNew)
 	router.POST("/download_jobs/browse", controllers.DownloadJobBrowse)
+	router.POST("/download_jobs/download", controllers.DownloadJobDownload)
 
 	// Validation Jobs
 	router.GET("/validation_jobs/new", controllers.ValidationJobNew)

@@ -1,0 +1,19 @@
+{{ define "download_job/error.html" }}
+
+{{ template "partials/page_header.html" .}}
+
+<h2>S3 Download Error</h2>
+
+<div>
+    {{ .error }}
+</div>
+
+<div class="float-right mb-5" id="btnBackDiv">
+    <button type="button" onclick="javascript:history.back()" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+</div>
+
+
+{{ template "partials/page_footer.html" .}}
+
+
+{{ end }}
