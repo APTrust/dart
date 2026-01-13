@@ -38,7 +38,7 @@ func DownloadJobBrowse(c *gin.Context) {
 	c.HTML(http.StatusOK, "download_job/index.html", templateData)
 }
 
-// POST /download_jobs/browse
+// POST /download_jobs/download
 func DownloadJobDownload(c *gin.Context) {
 	ssid := c.PostForm("ssid")
 	s3Bucket := c.PostForm("s3Bucket")
@@ -68,6 +68,9 @@ func GetDownloadFile(ssid, s3Bucket, s3Key string) (*minio.Object, minio.ObjectI
 	var obj *minio.Object
 	stats := minio.ObjectInfo{}
 	ss := core.ObjFind(ssid).StorageService()
+	if ss == nil {
+		return obj, stats, fmt.Errorf("No such storage service: %s", ssid)
+	}
 	useSSL := ss.Host != "localhost" && ss.Host != "127.0.0.1"
 	s3Client, err := core.NewS3Client(ss, useSSL, nil)
 	if err != nil {
