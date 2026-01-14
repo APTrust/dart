@@ -4,38 +4,70 @@
 
 <h2>S3 Download</h2>
 
-<form method="post" action="/download_jobs/browse" id="downloadForm">
+<form method="post" action="/download_jobs/browse" id="listBucketForm">
 
     {{ template "partials/input_select.html" dict "field" .form.Fields.ssid }}
 
     {{ template "partials/input_select.html" dict "field" .form.Fields.bucket }}
 
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.originalSource }}
+
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.originalBucket }}
+
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.startAfter }}
+
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.hasPreviousPage }}
+
+    {{ template "partials/input_hidden.html" dict "field" .form.Fields.hasNextPage }}
+
 </form>
 
-<div id="s3Objects" style="display: {{ .s3ObjectListDisplay }}; margin-top: 3rem;">
+<div id="s3Objects" style="display: {{ .s3ObjectListDisplay }}; margin-top: 3rem; margin-bottom: 6rem;">
 
 <h3>Contents</h3>
 
 {{ if eq (len .s3Objects) 0 }}
 <p>Bucket is empty.</p>
 {{ else }}
-<p>Click a link to download.</p>
+<p>Click a link to download. Note that items in Glacier and Deep Arcive cannot be downloaded.</p>
 <table class="table table-hover">
   <thead class="thead-inverse">
     <tr>
         <th>Key</th>
+        <th>Storage Class</th>
         <th>Size</th>
     </tr>
   </thead>
   <tbody>
     {{ range .s3Objects }}
     <tr>
-        <td><a href="#{{ .Key }}" class="download-link">{{ .Key }}</a></td>
+        <td>
+        {{ if or (eq .StorageClass "GLACIER") (eq .StorageClass "DEEP_ARCHIVE") }}
+            {{ .Key }}
+        {{ else }}
+            <a href="#{{ .Key }}" class="download-link">{{ .Key }}</a>
+        {{ end }}</td>
+        <td>{{ .StorageClass }}</td>
         <td>{{ humanSize .Size }}</td>
     </tr>
     {{ end }}
   </tbody>
 </table>
+
+<div class="mb-3">
+    {{ if .hasPreviousPage }}
+    <div class="float-left" id="btnBackDiv">
+        <button type="submit" onclick="javascript:history.back()" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+    </div>
+    {{ end }}
+
+    {{ if .hasNextPage }}
+    <div class="float-right" id="btnNextDiv">
+        <button type="submit" onclick="javascript:document.forms['listBucketForm'].submit()" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+    </div>
+    {{ end }}
+</div>
+
 {{ end }}
 
 
@@ -50,19 +82,32 @@
 
 <script>
     $(function () {
-        function submitOnChange(e) {
+        function submitOnServiceChange(e) {
             let selected = $('#BagItProfileImport_ImportSource').val()
             // Do nothing if no source was selected
             if (selected == "") {
                 return
             }
-            // If source was selected, submit.
+            // If source was selected, submit. Clear the bucket
+            // name first because the new source may not have
+            // a bucket with this name.
             $('#bucket').val("")
-            document.forms['downloadForm'].submit()
+            document.forms['listBucketForm'].submit()
         }
 
-        $('#Download_ssid').on("change", submitOnChange)
-        $('#Download_bucket').on("change", submitOnChange)
+        function submitOnBucketChange(e) {
+            let selected = $('#BagItProfileImport_ImportSource').val()
+            // Do nothing if no source was selected
+            if (selected == "") {
+                return
+            }
+            // If source was selected, submit and keep
+            // the selected bucket.
+            document.forms['listBucketForm'].submit()
+        }
+
+        $('#Download_ssid').on("change", submitOnServiceChange)
+        $('#Download_bucket').on("change", submitOnBucketChange)
 
         $('a.download-link').on("click", function() {
             var s3Key = $(this).text();
