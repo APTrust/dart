@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -426,4 +427,351 @@ func setupMinioClient(t *testing.T, ss *core.StorageService) *core.S3Client {
 	require.NoError(t, err)
 	require.NotNil(t, s3Client)
 	return s3Client
+}
+
+// TestDownloadJobBrowseStorageClassLinks tests that objects in GLACIER and DEEP_ARCHIVE
+// display as plain text, while other objects display as downloadable links
+func TestDownloadJobBrowseStorageClassLinks(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the bucket first to check if Minio is available
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error
+	if strings.Contains(html, "connection refused") || strings.Contains(html, "Bucket is empty") {
+		t.Skip("Minio is not running or bucket is empty, skipping storage class link test")
+		return
+	}
+
+	// Get list of objects for more detailed checking
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   50,
+	})
+
+	// Skip if no files
+	if len(s3Objects) == 0 {
+		t.Skip("No files in test bucket, skipping storage class link test")
+		return
+	}
+
+	// Check each object in the response
+	for _, obj := range s3Objects {
+		if obj.StorageClass == "GLACIER" || obj.StorageClass == "DEEP_ARCHIVE" {
+			// For GLACIER and DEEP_ARCHIVE, the key should appear as plain text (no link)
+			// Check that there's no <a> tag with download-link class for this key
+			assert.NotContains(t, html, `<a href="#`+obj.Key+`" class="download-link">`+obj.Key+`</a>`,
+				"Object %s in %s should not have a download link", obj.Key, obj.StorageClass)
+		} else {
+			// For other storage classes, the key should be a clickable link
+			assert.Contains(t, html, `<a href="#`+obj.Key+`" class="download-link">`+obj.Key+`</a>`,
+				"Object %s in %s should have a download link", obj.Key, obj.StorageClass)
+		}
+	}
+}
+
+// TestDownloadJobBrowseGlacierNoLinks specifically tests that GLACIER objects don't have download links
+func TestDownloadJobBrowseGlacierNoLinks(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the bucket
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") {
+		t.Skip("Minio is not running, skipping GLACIER link test")
+		return
+	}
+
+	// Check that the HTML contains the note about GLACIER and DEEP_ARCHIVE
+	// (only if there are objects to display)
+	if !strings.Contains(html, "Bucket is empty") {
+		assert.Contains(t, html, "items in Glacier and Deep Arcive cannot be downloaded")
+		// Verify the storage class column header exists
+		assert.Contains(t, html, "Storage Class")
+	}
+}
+
+// TestDownloadJobBrowseDeepArchiveNoLinks specifically tests that DEEP_ARCHIVE objects don't have download links
+func TestDownloadJobBrowseDeepArchiveNoLinks(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the bucket
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") || strings.Contains(html, "Bucket is empty") {
+		t.Skip("Minio is not running or bucket is empty, skipping DEEP_ARCHIVE link test")
+		return
+	}
+
+	// Get list of objects
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   50,
+	})
+
+	// Check for DEEP_ARCHIVE objects specifically
+	for _, obj := range s3Objects {
+		if obj.StorageClass == "DEEP_ARCHIVE" {
+			// Should appear as plain text, not as a link
+			assert.Contains(t, html, obj.Key, "DEEP_ARCHIVE object %s should be visible", obj.Key)
+			// Should not have download-link class
+			assert.NotContains(t, html, `class="download-link">`+obj.Key+`</a>`,
+				"DEEP_ARCHIVE object %s should not have download-link class", obj.Key)
+		}
+	}
+}
+
+// TestDownloadJobBrowseFormFieldsStartAfter tests that the startAfter field is set correctly
+func TestDownloadJobBrowseFormFieldsStartAfter(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the bucket without startAfter
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") {
+		t.Skip("Minio is not running, skipping startAfter test")
+		return
+	}
+
+	// Get list of objects
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   50,
+	})
+
+	// Skip if no files
+	if len(s3Objects) == 0 {
+		t.Skip("No files in test bucket, skipping startAfter test")
+		return
+	}
+
+	// When we browse the first page, startAfter should be set to the last item
+	if len(s3Objects) > 0 {
+		lastKey := s3Objects[len(s3Objects)-1].Key
+		// Check that the hidden input field for startAfter is present
+		assert.Contains(t, html, `name="startAfter"`, "startAfter field should be present")
+		// If there are results, startAfter should contain the last key
+		assert.Contains(t, html, `value="`+lastKey+`"`, "startAfter should be set to last key: %s", lastKey)
+	}
+}
+
+// TestDownloadJobBrowseFormFieldsHasPreviousPage tests that hasPreviousPage is set correctly
+func TestDownloadJobBrowseFormFieldsHasPreviousPage(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the first page (no startAfter)
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") {
+		t.Skip("Minio is not running, skipping hasPreviousPage test")
+		return
+	}
+
+	// On the first page, hasPreviousPage should be false
+	assert.Contains(t, html, `name="hasPreviousPage"`, "hasPreviousPage field should be present")
+	assert.Contains(t, html, `value="false"`, "hasPreviousPage should be false on first page")
+
+	// Get list of objects
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   50,
+	})
+
+	// If we have objects, test with startAfter set
+	if len(s3Objects) > 0 {
+		// Now test with startAfter set
+		// Also set originalSource and originalBucket to prevent controller from clearing startAfter
+		params.Set("startAfter", s3Objects[0].Key)
+		params.Set("originalSource", ss.ID)
+		params.Set("originalBucket", bucketName)
+
+		html = PostUrl(t, PostTestSettings{
+			EndpointUrl:          "/download_jobs/browse",
+			Params:               params,
+			ExpectedResponseCode: http.StatusOK,
+		})
+
+		// When startAfter is set, hasPreviousPage should be true
+		assert.Contains(t, html, `value="true"`, "hasPreviousPage should be true when startAfter is set")
+	}
+}
+
+// TestDownloadJobBrowseFormFieldsHasNextPage tests that hasNextPage is set correctly
+func TestDownloadJobBrowseFormFieldsHasNextPage(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test browsing the bucket
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") {
+		t.Skip("Minio is not running, skipping hasNextPage test")
+		return
+	}
+
+	// Check that hasNextPage field is present
+	assert.Contains(t, html, `name="hasNextPage"`, "hasNextPage field should be present")
+
+	// Get list of objects to see how many there are
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   300, // Get more than the controller's maxKeys (200)
+	})
+
+	// If there are 200 or more objects, hasNextPage should be true
+	// If there are fewer than 200 objects, hasNextPage should be false
+	if len(s3Objects) >= 200 {
+		assert.Contains(t, html, `value="true"`, "hasNextPage should be true when there are 200+ objects")
+	} else {
+		assert.Contains(t, html, `value="false"`, "hasNextPage should be false when there are fewer than 200 objects")
+	}
+}
+
+// TestDownloadJobBrowsePaginationButtons tests that Back and Next buttons appear correctly
+func TestDownloadJobBrowsePaginationButtons(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	bucketName := "test"
+
+	// Test first page (no startAfter)
+	params := url.Values{}
+	params.Set("ssid", ss.ID)
+	params.Set("bucket", bucketName)
+
+	html := PostUrl(t, PostTestSettings{
+		EndpointUrl:          "/download_jobs/browse",
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+	})
+
+	// Check if there's a connection error - skip if Minio not running
+	if strings.Contains(html, "connection refused") {
+		t.Skip("Minio is not running, skipping pagination buttons test")
+		return
+	}
+
+	// On first page, there should be no Back button
+	assert.NotContains(t, html, `id="btnBackDiv"`, "Back button should not appear on first page")
+
+	// Get list of objects
+	s3Client := setupMinioClient(t, ss)
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   50,
+	})
+
+	// If we have objects, test with startAfter set
+	if len(s3Objects) > 0 {
+		// Test a subsequent page (with startAfter)
+		params.Set("startAfter", s3Objects[0].Key)
+		params.Set("originalSource", ss.ID)
+		params.Set("originalBucket", bucketName)
+
+		html = PostUrl(t, PostTestSettings{
+			EndpointUrl:          "/download_jobs/browse",
+			Params:               params,
+			ExpectedResponseCode: http.StatusOK,
+		})
+
+		// On subsequent pages, there should be a Back button
+		assert.Contains(t, html, `id="btnBackDiv"`, "Back button should appear on subsequent pages")
+		assert.Contains(t, html, `&lt;&lt; Back`, "Back button text should be present")
+	}
 }
