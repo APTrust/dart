@@ -2,6 +2,7 @@
 
 ## 3.0-beta-02 -
 
+* Added S3 download feature
 
 ## 3.0-beta-01 - December 3, 2025
 
