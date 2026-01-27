@@ -56,6 +56,10 @@ func DownloadJobDownload(c *gin.Context) {
 		}
 		c.HTML(http.StatusInternalServerError, "download_job/error.html", data)
 	} else {
+		// Note: Setting content-type to application/octet-stream is a hack
+		// to prevent Wails from opening the file in the current window.
+		// Without this setting, text files, images, and some other will open
+		// in the main application window on Mac.
 		attachmentName := fmt.Sprintf("attachment; filename=%s", s3Key)
 		c.DataFromReader(
 			http.StatusOK,
@@ -64,6 +68,7 @@ func DownloadJobDownload(c *gin.Context) {
 			s3Object,
 			map[string]string{
 				"Content-Disposition": attachmentName,
+				"Content-Type":        "application/octet-stream",
 			},
 		)
 	}

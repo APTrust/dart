@@ -45,7 +45,7 @@
         {{ if or (eq .StorageClass "GLACIER") (eq .StorageClass "DEEP_ARCHIVE") }}
             {{ .Key }}
         {{ else }}
-            <a href="#{{ .Key }}" class="download-link">{{ .Key }}</a>
+            <a href="#{{ .Key }}" download class="download-link">{{ .Key }}</a>
         {{ end }}</td>
         <td>{{ .StorageClass }}</td>
         <td>{{ humanSize .Size }}</td>
