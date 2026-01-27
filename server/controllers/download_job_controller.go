@@ -2,14 +2,20 @@ package controllers
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
 	"github.com/gin-gonic/gin"
 	"github.com/minio/minio-go/v7"
 )
+
+var IsRunningWails = false
 
 // GET /download_jobs/new
 func DownloadJobNew(c *gin.Context) {
@@ -56,21 +62,57 @@ func DownloadJobDownload(c *gin.Context) {
 		}
 		c.HTML(http.StatusInternalServerError, "download_job/error.html", data)
 	} else {
-		// Note: Setting content-type to application/octet-stream is a hack
-		// to prevent Wails from opening the file in the current window.
-		// Without this setting, text files, images, and some other will open
-		// in the main application window on Mac.
-		attachmentName := fmt.Sprintf("attachment; filename=%s", s3Key)
-		c.DataFromReader(
-			http.StatusOK,
-			stats.Size,
-			stats.ContentType,
-			s3Object,
-			map[string]string{
-				"Content-Disposition": attachmentName,
-				"Content-Type":        "application/octet-stream",
-			},
-		)
+		if IsRunningWails {
+			// We're running in a Wails window, so we have to save this
+			// file directly from the back end. When Wails adds JS support
+			// for SaveFileDialog, we can open a dialog on the front end
+			// instead. Check https://wails.io/docs/reference/runtime/dialog/
+			// periodically to see when support for SaveFileDialog is
+			// available.
+			downloadFolder := core.Dart.Paths.Downloads
+			fileName := strings.ReplaceAll(s3Key, "/", "_")
+			fileName = strings.ReplaceAll(fileName, "\\", "_")
+			downloadFile := filepath.Join(downloadFolder, fileName)
+
+			// Create the destination file
+			destFile, err := os.Create(downloadFile)
+			if err != nil {
+				core.Dart.Log.Errorf("Failed to create file: %v", err)
+				c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to create file: %v", err))
+				return
+			}
+			defer destFile.Close()
+
+			// Copy s3Object contents to the file
+			_, err = io.Copy(destFile, s3Object)
+			if err != nil {
+				core.Dart.Log.Errorf("Failed to write file: %v", err)
+				c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to write file: %v", err))
+				return
+			}
+
+			message := fmt.Sprintf("Downloaded %s to %s", s3Key, downloadFile)
+			core.Dart.Log.Infof(message)
+			c.String(http.StatusOK, message)
+			return
+		} else {
+			// We're running in a browser.
+			// Note: Setting content-type to application/octet-stream is a hack
+			// to prevent Wails from opening the file in the current window.
+			// Without this setting, text files, images, and some other will open
+			// in the main application window on Mac.
+			attachmentName := fmt.Sprintf("attachment; filename=%s", s3Key)
+			c.DataFromReader(
+				http.StatusOK,
+				stats.Size,
+				stats.ContentType,
+				s3Object,
+				map[string]string{
+					"Content-Disposition": attachmentName,
+					"Content-Type":        "application/octet-stream",
+				},
+			)
+		}
 	}
 }
 

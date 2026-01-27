@@ -109,7 +109,8 @@
         $('#Download_ssid').on("change", submitOnServiceChange)
         $('#Download_bucket').on("change", submitOnBucketChange)
 
-        $('a.download-link').on("click", function() {
+        $('a.download-link').on("click", function(e) {
+            e.preventDefault();
             var s3Key = $(this).text();
             var s3Bucket = $('#Download_bucket').val()
             var s3Service = $('#Download_ssid').val()
@@ -118,7 +119,15 @@
             $('#downloadSSID').val(s3Service)
             $('#downloadS3Bucket').val(s3Bucket)
             $('#downloadS3Key').val(s3Key)
-            document.forms['downloadFileForm'].submit()
+
+            // Check if we're running in Wails (window.go is available)
+            if (window.location.port == "9797") {
+                // Use AJAX and display response in modal
+                loadIntoModal("post", "Download Result", document.forms['downloadFileForm'].action, "downloadFileForm")
+            } else {
+                // Browser mode - use traditional form submission
+                document.forms['downloadFileForm'].submit()
+            }
         })
     })
 </script>

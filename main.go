@@ -4,6 +4,7 @@ import (
 	"embed"
 
 	"github.com/APTrust/dart/v3/server"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -27,6 +28,7 @@ func main() {
 
 	// Set the version for the server
 	server.SetVersion(Version)
+	controllers.IsRunningWails = true
 
 	go server.Run(9797, true)
 
