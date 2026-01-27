@@ -38,5 +38,5 @@ VERSION="DART $TAG for $OS $ARCH (Build $COMMIT $DATE)"
 
 # Now run wails build with the proper tags and version
 # number.
-echo "wails build $BUILD_TAGS -ldflags \"-X 'main.Version=$VERSION'\""
-wails build $BUILD_TAGS -ldflags "-X 'main.Version=$VERSION'"
+echo "wails build -clean $BUILD_TAGS -ldflags \"-X 'main.Version=$VERSION'\""
+wails build -clean $BUILD_TAGS -ldflags "-X 'main.Version=$VERSION'"
