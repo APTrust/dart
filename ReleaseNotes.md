@@ -1,6 +1,6 @@
 # DART Release Notes
 
-## 3.0-beta-02 - January 27, 2026
+## 3.0-beta-02 - January 30, 2026
 
 * Added S3 download feature. You can now browse buckets and download files from S3 endpoints configured in Storage Services.
 * Fixed an issue that caused bagging to fail when the user's Bagging Directory does not exist.
