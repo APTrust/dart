@@ -93,7 +93,11 @@ func DownloadJobDownload(c *gin.Context) {
 
 			message := fmt.Sprintf("Downloaded %s to %s", s3Key, downloadFile)
 			core.Dart.Log.Infof(message)
-			c.String(http.StatusOK, message)
+			templateData := gin.H{
+				"downloadFile":   downloadFile,
+				"downloadFolder": downloadFolder,
+			}
+			c.HTML(http.StatusOK, "download_job/completed.html", templateData)
 			return
 		} else {
 			// We're running in a browser.

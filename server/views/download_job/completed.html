@@ -1,0 +1,10 @@
+{{ define "download_job/completed.html" }}
+
+<p>Download completed. File {{ .downloadFile }} is in your Downloads folder.</p>
+
+<div class="float-right mb-5" id="btnOpenDiv">
+    <button type="button" onclick="javascript:openExternalUrl('{{ .downloadFolder }}')" class="btn btn-primary" role="button">Open Download Folder</button>
+</div>
+
+
+{{ end }}
