@@ -20,6 +20,10 @@ var IsRunningWails = false
 // GET /download_jobs/new
 func DownloadJobNew(c *gin.Context) {
 	form, _ := GetS3DownloadForm(c)
+	if form == nil {
+		// An error occurred and request was redirected.
+		return
+	}
 	templateData := gin.H{
 		"form":                form,
 		"s3Objects":           []minio.ObjectInfo{},
@@ -32,6 +36,10 @@ func DownloadJobNew(c *gin.Context) {
 // POST /download_jobs/browse
 func DownloadJobBrowse(c *gin.Context) {
 	form, s3Objects := GetS3DownloadForm(c)
+	if form == nil {
+		// An error occurred and request was redirected.
+		return
+	}
 	s3ObjectListDisplay := "none"
 	if c.PostForm("bucket") != "" {
 		s3ObjectListDisplay = "block"
@@ -197,6 +205,11 @@ func GetS3DownloadForm(c *gin.Context) (*core.Form, []minio.ObjectInfo) {
 		bucketField.FormGroupClass = "form-group-hidden"
 	} else {
 		ss := core.ObjFind(ssid).StorageService()
+		if ss == nil {
+			SetFlashCookie(c, "S3 endpoint not found.")
+			c.Redirect(http.StatusTemporaryRedirect, c.Request.Referer())
+			return nil, nil
+		}
 		useSSL := ss.Host != "localhost" && ss.Host != "127.0.0.1"
 		s3Client, err := core.NewS3Client(ss, useSSL, nil)
 		if err != nil {

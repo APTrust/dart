@@ -406,7 +406,7 @@ func TestDownloadJobBrowseInvalidStorageService(t *testing.T) {
 	// The controller may panic or return an error
 	// We're testing that it doesn't crash completely
 	// Status could be 200 (with error in form), 400, or 500
-	assert.True(t, w.Code == http.StatusOK || w.Code == http.StatusBadRequest || w.Code == http.StatusInternalServerError)
+	assert.True(t, w.Code == http.StatusTemporaryRedirect)
 }
 
 // Helper functions
