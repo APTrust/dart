@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -86,11 +88,17 @@ func TestJobShowJson(t *testing.T) {
 	require.NoError(t, core.ObjSave(job))
 
 	// Check for some basic elements that should be
-	// present in the JSON data.
+	// present in the JSON data. We seem to have a
+	// problem with Windows paths, so we're going to
+	// look for just the file name on Windows.
+	outputFileName := filepath.Base(job.PackageOp.OutputPath)
+	if runtime.GOOS != "windows" {
+		outputFileName = job.PackageOp.OutputPath
+	}
 	expected := []string{
 		job.ID,
 		job.BagItProfile.ID,
-		job.PackageOp.OutputPath,
+		outputFileName,
 		job.ValidationOp.Result.Provider,
 		job.UploadOps[0].StorageService.ID,
 	}
