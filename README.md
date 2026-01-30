@@ -13,8 +13,8 @@ packaging formats in future.
 
 DART 2 is the current, stable version of DART. It runs on Mac, Windows, and Linux.
 
-We have a DART 3 beta available, but it's not yet steady enough for production
-use. If you're starting with DART, start with DART 2.
+We have a DART 3 beta available, and it's close to being ready for production
+use. If you don't want to use the beta version, you can start with DART 2, which is known to be stable.
 
 ## DART 2 Installation
 
@@ -40,9 +40,9 @@ DART 3 is currently in beta phase and is not yet suitable for production workloa
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/windows-amd64/dart.exe |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/mac-universal/DART.dmg |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/linux-amd64/dart |
 
 
 # DART User Group

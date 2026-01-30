@@ -10,9 +10,9 @@ Be cautious when using the beta version for essential workflows! Wait for a stab
 
 | Operating System       | Download Link | SHA-256 Checksum |
 | ---------------------- | ------------- | ---------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/windows-amd64/dart.exe | 5bdcdfef7e288ee869d1e102ea98035d6d0002ee2fb965839d762273d4bfc851 |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/mac-universal/DART.dmg | b36b4fd2dcc21c65b4f166e16bdb3a6a034992254fc5685cf073c66f257b7c52 |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-01/linux-amd64/dart | c4c2301ac11feca40f0460119a3840a8d3872c598e50ecd4d30ffe16704c00de |
+| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/windows-amd64/dart.exe | 5bdcdfef7e288ee869d1e102ea98035d6d0002ee2fb965839d762273d4bfc851 |
+| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/mac-universal/DART.dmg | b36b4fd2dcc21c65b4f166e16bdb3a6a034992254fc5685cf073c66f257b7c52 |
+| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/linux-amd64/dart | c4c2301ac11feca40f0460119a3840a8d3872c598e50ecd4d30ffe16704c00de |
 
 2. Follow the instructions below to start the app on your operating system.
 
