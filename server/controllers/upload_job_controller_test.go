@@ -130,8 +130,8 @@ func testUploadJobReview(t *testing.T, id string, testStorageServices []*core.St
 	// The review page should show these two files that we
 	// added above. These are the files to be uploaded.
 	expected := []string{
-		filepath.Join(util.PathToTestData(), "bags", "example.edu.sample_good.tar"),
-		filepath.Join(util.PathToTestData(), "bags", "example.edu.tagsample_good.tar"),
+		"example.edu.sample_good.tar",
+		"example.edu.tagsample_good.tar",
 	}
 	// The page should also show the names of the storage services
 	// to which we are uploading materials.
