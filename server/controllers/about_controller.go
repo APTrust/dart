@@ -52,13 +52,14 @@ func AboutShow(c *gin.Context) {
 // TODO: Make context-sensitive. Go to the right page!
 func OpenExternalUrl(c *gin.Context) {
 	externalUrl := c.Query("url")
-	command := "open"
+	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		command = "start"
+		cmd = exec.Command("cmd", "/C", "start", "", externalUrl)
 	} else if runtime.GOOS == "linux" {
-		command = "xdg-open"
+		cmd = exec.Command("xdg-open", externalUrl)
+	} else {
+		cmd = exec.Command("open", externalUrl)
 	}
-	cmd := exec.Command(command, externalUrl)
 	runCommand(c, cmd)
 }
 
@@ -73,31 +74,34 @@ func OpenLog(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, data)
 		return
 	}
-	command := "open"
+	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		command = "start"
+		cmd = exec.Command("cmd", "/C", "start", "", logFile)
+	} else {
+		cmd = exec.Command("open", logFile)
 	}
-	cmd := exec.Command(command, logFile)
 	runCommand(c, cmd)
 }
 
 // GET /open_log_folder
 func OpenLogFolder(c *gin.Context) {
-	command := "open"
+	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		command = "start"
+		cmd = exec.Command("cmd", "/C", "start", "", core.Dart.Paths.LogDir)
+	} else {
+		cmd = exec.Command("open", core.Dart.Paths.LogDir)
 	}
-	cmd := exec.Command(command, core.Dart.Paths.LogDir)
 	runCommand(c, cmd)
 }
 
 // GET /open_data_folder
 func OpenDataFolder(c *gin.Context) {
-	command := "open"
+	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
-		command = "start"
+		cmd = exec.Command("cmd", "/C", "start", "", core.Dart.Paths.DataDir)
+	} else {
+		cmd = exec.Command("open", core.Dart.Paths.DataDir)
 	}
-	cmd := exec.Command(command, core.Dart.Paths.DataDir)
 	runCommand(c, cmd)
 }
 
