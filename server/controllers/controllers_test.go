@@ -2,7 +2,6 @@ package controllers_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -134,9 +133,11 @@ func PostUrl(t *testing.T, settings PostTestSettings) string {
 func DoSimpleGetTest(t *testing.T, endpointUrl string, expected []string) {
 	html := GetUrl(t, endpointUrl)
 	ok, notFound := AssertContainsAllStrings(html, expected)
-	if !ok {
-		fmt.Println(html)
-	}
+	// Print this out if you need to debug, but note that it may
+	// generate huge amounts of output.
+	// if !ok {
+	// 	fmt.Println(html)
+	// }
 	assert.True(t, ok, "Missing from page %s: %v", endpointUrl, notFound)
 }
 
