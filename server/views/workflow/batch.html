@@ -4,9 +4,9 @@
 
 <h2>Workflow Batch</h2>
 
-<p>Run all of the directories listed in a spreadsheet through the same workflow. 
-For more information, see DART's 
-<a href="#Help/openExternal?url=https://aptrust.github.io/dart-docs/users/workflows/batch_jobs/">
+<p>Run all of the directories listed in a spreadsheet through the same workflow.
+For more information, see DART's
+<a href="#" onclick="openExternalUrl('https://aptrust.github.io/dart-docs/dart3/users/workflows/batch_jobs/')">
 batch workflow documentation.</a></p>
 
 <form method="post" action="/workflows/batch/validate" id="workflowBatchForm" enctype="multipart/form-data">
@@ -16,7 +16,7 @@ batch workflow documentation.</a></p>
   <!-- // TODO: The input below should be some kind of file chooser -->
 
   {{ template "partials/input_file.html" dict "field" .form.Fields.CsvUpload }}
-  
+
   <div class="bottom-buttons">
     <div class="float-right">
       <button id="runWorkflowBatch" class="btn btn-primary" type="button" role="button">Run</button>
@@ -37,7 +37,7 @@ batch workflow documentation.</a></p>
 </div>
 
 
-<!-- 
+<!--
 This template contains the HTML and JavaScript to display
 job details and progress.
 -->
@@ -77,7 +77,7 @@ $(function() {
     }).done(function (response) {
       // On success, proceed to the "run batch" page,
       // which will be specified, including required query
-      // params, in response.location. 
+      // params, in response.location.
       console.log(response)
       runJob(response.location, '')
     }).fail(function (xhr, status, err) {
@@ -117,7 +117,7 @@ $(function() {
       let errMsg = errors[key]
       $('#batchValidation').show()
       $('#batchValidationErrorList').append(`<li>${key} - ${errMsg}</li>`)
-    }    
+    }
   }
 
   // Now add our callback to the Run button
