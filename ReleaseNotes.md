@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 3.0-beta-03 - [Not Released Yet]
+
+* Fixed broken link to batch workflows help document.
+* Fixed "percent uploading" going past 100% in job run page.
+
 ## 3.0-beta-02 - January 30, 2026
 
 * Added S3 download feature. You can now browse buckets and download files from S3 endpoints configured in Storage Services.
