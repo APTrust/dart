@@ -124,14 +124,14 @@ an idea of what goes into them.
   // This initializes the UI for running workflows, showing,
   // hiding, and clearing UI elements as necessary.
   function initWorkflowUI() {
-      weAreRunningAWorkflowBatch = true
-      // User may be re-running batch; remove previous result messages.
-      $('#batchCompleted').hide();
-      $('#workflowResults').remove('div.batch-result')
-      $('#batchRunning').show();
-      $('#workflowResults').show();
-      $('div.batch-result').remove();
-      batchLineNumber = 1
+    weAreRunningAWorkflowBatch = true
+    // User may be re-running batch; remove previous result messages.
+    $('#batchCompleted').hide();
+    $('#workflowResults').remove('div.batch-result')
+    $('#batchRunning').show();
+    $('#workflowResults').show();
+    $('div.batch-result').remove();
+    batchLineNumber = 1
   }
 
   // Attach listeners to handle server-sent events (SSE).
@@ -157,7 +157,7 @@ an idea of what goes into them.
         return
       }
 
-      switch(data.eventType) {
+      switch (data.eventType) {
         case "init":
           showJobInit(data);
           break;
@@ -286,10 +286,10 @@ an idea of what goes into them.
   // this when running a job that has no upload
   // operations.
   function clearAndHideUploadInfo() {
-      $('#uploadOpsDiv').hide()
-      $('#uploadFilesDiv').hide()
-      $('#uploadTargets').empty()
-      $('#uploadFilesDiv').empty()
+    $('#uploadOpsDiv').hide()
+    $('#uploadFilesDiv').hide()
+    $('#uploadTargets').empty()
+    $('#uploadFilesDiv').empty()
   }
 
   // Display information about a job's upload operations
@@ -488,6 +488,10 @@ an idea of what goes into them.
     // In both cases, the bar will stick at 100% for a second or two.
     // When all items are complete, the bar animation will stop and
     // the bar will turn green.
+
+    // console.log(progressBar)
+    // console.log(data)
+
     if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
       progressBar.attr("aria-valuenow", data.percent);
       progressBar.css("width", data.percent + '%');

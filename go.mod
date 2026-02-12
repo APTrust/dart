@@ -11,7 +11,7 @@ replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20
 // GitHub version. This makes development much quicker, as you
 // can instantly pick up changes to dart runner. It's also less
 // messy that git submodules.
-// replace github.com/APTrust/dart-runner => ../dart-runner
+replace github.com/APTrust/dart-runner => ../dart-runner
 
 require (
 	github.com/APTrust/dart-runner v1.0.2
