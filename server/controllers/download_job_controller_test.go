@@ -515,7 +515,7 @@ func TestDownloadJobBrowseGlacierNoLinks(t *testing.T) {
 	// Check that the HTML contains the note about GLACIER and DEEP_ARCHIVE
 	// (only if there are objects to display)
 	if !strings.Contains(html, "Bucket is empty") {
-		assert.Contains(t, html, "items in Glacier and Deep Arcive cannot be downloaded")
+		assert.Contains(t, html, "items in Glacier and Deep Archive cannot be downloaded")
 		// Verify the storage class column header exists
 		assert.Contains(t, html, "Storage Class")
 	}

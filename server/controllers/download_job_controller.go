@@ -40,10 +40,14 @@ func DownloadJobBrowse(c *gin.Context) {
 		// An error occurred and request was redirected.
 		return
 	}
+
+	// If the user has selected a bucket, or if there is only one bucket
+	// in the list, we want to display the list of objects in that bucket.
 	s3ObjectListDisplay := "none"
-	if c.PostForm("bucket") != "" {
+	if c.PostForm("bucket") != "" || len(form.Fields["bucket"].Choices) == 1 {
 		s3ObjectListDisplay = "block"
 	}
+
 	hasPreviousPage := form.Fields["hasPreviousPage"].Value == "true"
 	hasNextPage := form.Fields["hasNextPage"].Value == "true"
 	templateData := gin.H{
@@ -218,9 +222,15 @@ func GetS3DownloadForm(c *gin.Context) (*core.Form, []minio.ObjectInfo) {
 		} else {
 			buckets, err := s3Client.ListBuckets()
 			if err != nil {
-				bucketField.Error = err.Error()
-				return form, s3Objects
+				core.Dart.Log.Warningf("Cannot list buckets: %v. Will list only configured bucket for this storage service.")
+				bucketChoices := []core.Choice{
+					{Label: ss.Bucket, Value: ss.Bucket, Selected: true},
+				}
+				bucketField.Choices = bucketChoices
+				// Since we have only one choice, select it.
+				selectedBucket = ss.Bucket
 			} else {
+				// Show all available buckets, if possible.
 				bucketChoices := []core.Choice{
 					{Label: "Choose One", Value: "", Selected: false},
 				}
@@ -244,7 +254,18 @@ func GetS3DownloadForm(c *gin.Context) (*core.Form, []minio.ObjectInfo) {
 				MaxKeys:    maxKeys,
 				StartAfter: startAfter,
 			}) {
-				s3Objects = append(s3Objects, s3Obj)
+				// If the minio client can't get a list of objects, in some cases
+				// it returns a single s3Obj containing an error explaining why it
+				// can't get the object. We don't want to return that because it
+				// shows up on the front end as a zero-byte object with no name, and
+				// it can't be downloaded. So, lets log that as an error instead of
+				// making the user puzzle over the presence of a non-name, zero-byte,
+				// inaccessible object.
+				if s3Obj.Err != nil {
+					core.Dart.Log.Errorf("Error listing objects for bucket %s: %v", selectedBucket, s3Obj.Err)
+				} else {
+					s3Objects = append(s3Objects, s3Obj)
+				}
 			}
 
 			// Set the value of the startAfter form field, so when the

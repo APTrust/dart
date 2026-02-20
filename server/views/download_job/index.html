@@ -24,59 +24,60 @@
 
 <div id="s3Objects" style="display: {{ .s3ObjectListDisplay }}; margin-top: 3rem; margin-bottom: 6rem;">
 
-<h3>Contents</h3>
+    <h3>Contents</h3>
 
-{{ if eq (len .s3Objects) 0 }}
-<p>Bucket is empty.</p>
-{{ else }}
-<p>Click a link to download. Note that items in Glacier and Deep Arcive cannot be downloaded.</p>
-<table class="table table-hover">
-  <thead class="thead-inverse">
-    <tr>
-        <th>Key</th>
-        <th>Storage Class</th>
-        <th>Size</th>
-    </tr>
-  </thead>
-  <tbody>
-    {{ range .s3Objects }}
-    <tr>
-        <td>
-        {{ if or (eq .StorageClass "GLACIER") (eq .StorageClass "DEEP_ARCHIVE") }}
-            {{ .Key }}
-        {{ else }}
-            <a href="#{{ .Key }}" download class="download-link">{{ .Key }}</a>
-        {{ end }}</td>
-        <td>{{ .StorageClass }}</td>
-        <td>{{ humanSize .Size }}</td>
-    </tr>
-    {{ end }}
-  </tbody>
-</table>
+    {{ if eq (len .s3Objects) 0 }}
+    <p>Bucket is empty.</p>
+    {{ else }}
+    <p>Click a link to download. Note that items in Glacier and Deep Archive cannot be downloaded.</p>
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Key</th>
+                <th>Storage Class</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ range .s3Objects }}
+            <tr>
+                <td>
+                    {{ if or (eq .StorageClass "GLACIER") (eq .StorageClass "DEEP_ARCHIVE") }}
+                    {{ .Key }}
+                    {{ else }}
+                    <a href="#{{ .Key }}" download class="download-link">{{ .Key }}</a>
+                    {{ end }}
+                </td>
+                <td>{{ .StorageClass }}</td>
+                <td>{{ humanSize .Size }}</td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
 
-<div class="mb-3">
-    {{ if .hasPreviousPage }}
-    <div class="float-left" id="btnBackDiv">
-        <button type="submit" onclick="javascript:history.back()" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+    <div class="mb-3">
+        {{ if .hasPreviousPage }}
+        <div class="float-left" id="btnBackDiv">
+            <button type="submit" onclick="javascript:history.back()" class="btn btn-primary" role="button">&lt;&lt; Back</button>
+        </div>
+        {{ end }}
+
+        {{ if .hasNextPage }}
+        <div class="float-right" id="btnNextDiv">
+            <button type="submit" onclick="javascript:document.forms['listBucketForm'].submit()" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+        </div>
+        {{ end }}
     </div>
+
     {{ end }}
 
-    {{ if .hasNextPage }}
-    <div class="float-right" id="btnNextDiv">
-        <button type="submit" onclick="javascript:document.forms['listBucketForm'].submit()" class="btn btn-primary" role="button">Next &gt;&gt;</button>
-    </div>
-    {{ end }}
-</div>
-
-{{ end }}
 
 
-
-<form method="post" action="/download_jobs/download" id="downloadFileForm" style="display:none">
-    <input type="hidden" id="downloadSSID" name="ssid" value=""/>
-    <input type="hidden" id="downloadS3Bucket" name="s3Bucket" value=""/>
-    <input type="hidden" id="downloadS3Key" name="s3Key" value=""/>
-</form>
+    <form method="post" action="/download_jobs/download" id="downloadFileForm" style="display:none">
+        <input type="hidden" id="downloadSSID" name="ssid" value="" />
+        <input type="hidden" id="downloadS3Bucket" name="s3Bucket" value="" />
+        <input type="hidden" id="downloadS3Key" name="s3Key" value="" />
+    </form>
 
 </div>
 
@@ -109,7 +110,7 @@
         $('#Download_ssid').on("change", submitOnServiceChange)
         $('#Download_bucket').on("change", submitOnBucketChange)
 
-        $('a.download-link').on("click", function(e) {
+        $('a.download-link').on("click", function (e) {
             e.preventDefault();
             var s3Key = $(this).text();
             var s3Bucket = $('#Download_bucket').val()
