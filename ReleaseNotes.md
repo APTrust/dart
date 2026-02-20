@@ -4,6 +4,7 @@
 
 * Fixed broken link to batch workflows help document.
 * Fixed "percent uploading" going past 100% in job run page.
+* Fixed error on S3 download page: if bucket list is unavailable, show only the contents of the bucket specified in StorageService.Bucket.
 
 ## 3.0-beta-02 - January 30, 2026
 
