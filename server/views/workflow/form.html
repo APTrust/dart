@@ -6,12 +6,14 @@
 
 <div class="clearfix">
   <div class="float-right">
-    <button class="btn btn-primary mb-3" onclick="loadIntoModal('get', '{{ .form.Fields.Name.Value }}', '/workflows/export/{{ .form.Fields.ID.Value }}')" role="button">Export</button>
+    <button class="btn btn-primary mb-3"
+      onclick="loadIntoModal('post', '{{ .form.Fields.Name.Value }}', '/workflows/export/{{ .form.Fields.ID.Value }}', 'workflowForm')"
+      role="button">Export</button>
   </div>
 </div>
 
 <!-- This is the form to edit a workflow -->
-<form method="post" action="/workflows/edit/{{ .form.ObjectID }}">
+<form method="post" id="workflowForm" action="/workflows/edit/{{ .form.ObjectID }}">
 
     {{ template "partials/input_text.html" dict "field" .form.Fields.Name }}
 

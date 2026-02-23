@@ -227,7 +227,20 @@ func TestWorkflowExport(t *testing.T) {
 		workflow.StorageServices[0].ID,
 		workflow.StorageServices[0].Name,
 	}
-	DoSimpleGetTest(t, fmt.Sprintf("/workflows/export/%s", workflow.ID), expected)
+
+	params := url.Values{}
+	params.Set("Name", workflow.Name)
+	params.Set("PackageFormat", workflow.PackageFormat)
+	params.Set("Description", workflow.Description)
+	params.Add("StorageServiceIDs", workflow.StorageServiceIDs[0])
+	params.Set("BagItProfileID", workflow.BagItProfile.ID)
+	settings := PostTestSettings{
+		EndpointUrl:          fmt.Sprintf("/workflows/export/%s", workflow.ID),
+		Params:               params,
+		ExpectedResponseCode: http.StatusOK,
+		ExpectedContent:      expected,
+	}
+	DoSimplePostTest(t, settings)
 }
 
 func TestWorkflowRun(t *testing.T) {

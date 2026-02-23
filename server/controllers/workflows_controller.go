@@ -104,21 +104,7 @@ func WorkflowIndex(c *gin.Context) {
 // PUT /workflows/edit/:id
 // POST /workflows/edit/:id
 func WorkflowSave(c *gin.Context) {
-	workflow := &core.Workflow{}
-	err := c.Bind(workflow)
-	if err != nil {
-		AbortWithErrorHTML(c, http.StatusBadRequest, err)
-		return
-	}
-	workflow.ID = c.Param("id")
-	profileID := c.PostForm("BagItProfileID")
-	if util.LooksLikeUUID(profileID) {
-		result := core.ObjFind(profileID)
-		if result.Error == nil && result.BagItProfile() != nil {
-			workflow.BagItProfile = result.BagItProfile()
-		}
-	}
-	err = core.ObjSave(workflow)
+	workflow, err := saveWorkflow(c)
 	if err != nil {
 		objectExistsInDB, _ := core.ObjExists(workflow.ID)
 		data := gin.H{
@@ -133,14 +119,19 @@ func WorkflowSave(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/workflows")
 }
 
-// GET /workflows/export/:id
+// POST /workflows/export/:id
 func WorkflowExport(c *gin.Context) {
-	result := core.ObjFind(c.Param("id"))
-	if result.Error != nil {
-		AbortWithErrorHTML(c, http.StatusNotFound, result.Error)
+	workflow, err := saveWorkflow(c)
+	if err != nil {
+		objectExistsInDB, _ := core.ObjExists(workflow.ID)
+		data := gin.H{
+			"form":             workflow.ToForm(),
+			"objectExistsInDB": objectExistsInDB,
+			"helpUrl":          GetHelpUrl(c),
+		}
+		c.HTML(http.StatusBadRequest, "workflow/form.html", data)
 		return
 	}
-	workflow := result.Workflow()
 	workflowJson, err := workflow.ExportJson()
 	if err != nil {
 		AbortWithErrorHTML(c, http.StatusInternalServerError, err)
@@ -396,4 +387,22 @@ func WorkflowRunBatch(c *gin.Context) {
 	// Be sure the disconnect event is not emitted until all jobs are complete
 	//
 	// See job_run_controller.go for details on the emitter.
+}
+
+func saveWorkflow(c *gin.Context) (*core.Workflow, error) {
+	workflow := &core.Workflow{}
+	err := c.Bind(workflow)
+	if err != nil {
+		return nil, err
+	}
+	workflow.ID = c.Param("id")
+	profileID := c.PostForm("BagItProfileID")
+	if util.LooksLikeUUID(profileID) {
+		result := core.ObjFind(profileID)
+		if result.Error == nil && result.BagItProfile() != nil {
+			workflow.BagItProfile = result.BagItProfile()
+		}
+	}
+	err = core.ObjSave(workflow)
+	return workflow, err
 }
