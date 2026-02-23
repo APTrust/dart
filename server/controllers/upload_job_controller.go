@@ -266,11 +266,44 @@ func UploadJobRun(c *gin.Context) {
 	// to do something with those events. The streamer merely
 	// receives events from the job runner and passes them out
 	// to the client as server-sent events.
+	//
+	// To prevent overwhelming the browser with hundreds of thousands
+	// of events, we throttle message sending to at most once every
+	// 100ms. This batches rapid-fire events while still providing
+	// responsive updates.
+	lastSendTime := time.Now()
+	var lastMsg *core.EventMessage
+
 	streamer := func(w io.Writer) bool {
 		if msg, ok := <-messageChannel; ok {
-			c.SSEvent("message", msg)
+			now := time.Now()
+			timeSinceLastSend := now.Sub(lastSendTime)
+
+			// Always send disconnect, init, finish, and warning events immediately
+			shouldSendImmediately := msg.EventType == constants.EventTypeDisconnect ||
+				msg.EventType == constants.EventTypeInit ||
+				msg.EventType == constants.EventTypeFinish ||
+				msg.EventType == constants.EventTypeWarning ||
+				msg.EventType == constants.EventTypeBatchCompleted
+
+			// Send regular info messages only if enough time has passed
+			// or if this is a special event
+			if shouldSendImmediately || timeSinceLastSend >= 200*time.Millisecond {
+				c.SSEvent("message", msg)
+				lastSendTime = now
+				lastMsg = msg
+			} else {
+				// Cache the message to send later if needed
+				lastMsg = msg
+			}
+
 			if msg.EventType != constants.EventTypeDisconnect {
 				return true
+			}
+
+			// Before disconnecting, flush any cached message
+			if lastMsg != nil && lastMsg.EventType != constants.EventTypeDisconnect {
+				c.SSEvent("message", lastMsg)
 			}
 		}
 		err := core.ObjSave(uploadJob)
