@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -13,6 +14,10 @@ import (
 	"github.com/APTrust/dart-runner/util"
 	"github.com/gin-gonic/gin"
 )
+
+// runningJobs tracks which jobs are currently executing to prevent
+// duplicate runs when EventSource reconnects due to network issues.
+var runningJobs sync.Map
 
 // GET /jobs/summary/:id
 func JobRunShow(c *gin.Context) {
@@ -72,6 +77,21 @@ func JobRunExecute(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+
+	// Check if this job is already running. This can happen when
+	// EventSource automatically reconnects due to network timeouts
+	// during long-running operations.
+	if _, alreadyRunning := runningJobs.LoadOrStore(job.ID, true); alreadyRunning {
+		core.Dart.Log.Warningf("Job %s (%s) is already running. Ignoring duplicate run request.", job.ID, job.Name())
+		// Send back an error or just close the connection
+		c.Status(http.StatusConflict)
+		c.Writer.WriteString("Job is already running")
+		return
+	}
+
+	// Ensure we clean up the running flag when done
+	defer runningJobs.Delete(job.ID)
+
 	job.ClearErrors()
 	job.UpdatePayloadStats()
 

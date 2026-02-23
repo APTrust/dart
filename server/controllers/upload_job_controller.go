@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -13,6 +14,10 @@ import (
 	"github.com/APTrust/dart-runner/util"
 	"github.com/gin-gonic/gin"
 )
+
+// runningUploadJobs tracks which upload jobs are currently executing
+// to prevent duplicate runs when EventSource reconnects.
+var runningUploadJobs sync.Map
 
 // GET /upload_jobs/new
 func UploadJobNew(c *gin.Context) {
@@ -226,6 +231,15 @@ func UploadJobRun(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusBadRequest, fmt.Errorf("Job is invalid. %s", validationErr))
 		return
 	}
+
+	// Check if this job is already running
+	if _, alreadyRunning := runningUploadJobs.LoadOrStore(uploadJob.ID, true); alreadyRunning {
+		core.Dart.Log.Warningf("Upload job %s is already running. Ignoring duplicate run request.", uploadJob.ID)
+		c.Status(http.StatusConflict)
+		c.Writer.WriteString("Upload job is already running")
+		return
+	}
+	defer runningUploadJobs.Delete(uploadJob.ID)
 
 	messageChannel := make(chan *core.EventMessage)
 	go func() {

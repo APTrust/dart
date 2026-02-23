@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/APTrust/dart-runner/constants"
@@ -13,6 +14,10 @@ import (
 	"github.com/APTrust/dart-runner/util"
 	"github.com/gin-gonic/gin"
 )
+
+// runningValidationJobs tracks which validation jobs are currently executing
+// to prevent duplicate runs when EventSource reconnects.
+var runningValidationJobs sync.Map
 
 // GET /validation_jobs/new
 func ValidationJobNew(c *gin.Context) {
@@ -219,6 +224,15 @@ func ValidationJobRun(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusBadRequest, fmt.Errorf("Job is invalid. %s", validationErr))
 		return
 	}
+
+	// Check if this job is already running
+	if _, alreadyRunning := runningValidationJobs.LoadOrStore(valJob.ID, true); alreadyRunning {
+		core.Dart.Log.Warningf("Validation job %s is already running. Ignoring duplicate run request.", valJob.ID)
+		c.Status(http.StatusConflict)
+		c.Writer.WriteString("Validation job is already running")
+		return
+	}
+	defer runningValidationJobs.Delete(valJob.ID)
 
 	result := core.ObjFind(valJob.BagItProfileID)
 	if result.Error != nil {

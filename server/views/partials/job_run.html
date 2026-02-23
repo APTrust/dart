@@ -141,6 +141,8 @@ an idea of what goes into them.
   // job proceeds or completes.
   function attachEventSourceListeners(eventSourceUrl, jobId) {
     let eventSrc = new EventSource(eventSourceUrl + jobId)
+    let jobStarted = false
+
     eventSrc.onmessage = (event) => {
       //console.log(event)
       if (!event.data) {
@@ -159,6 +161,7 @@ an idea of what goes into them.
 
       switch (data.eventType) {
         case "init":
+          jobStarted = true
           showJobInit(data);
           break;
         case "batch completed":
@@ -177,7 +180,15 @@ an idea of what goes into them.
       }
     }
     eventSrc.onerror = (event) => {
-      console.error(event)
+      console.error("EventSource error:", event)
+      // Once the job has started, close the connection on error
+      // to prevent automatic reconnection which would restart the job.
+      // Before the job starts, we allow reconnection for legitimate
+      // connection setup issues.
+      if (jobStarted) {
+        console.log("Job already started. Closing EventSource to prevent restart.")
+        eventSrc.close()
+      }
     }
   }
 
