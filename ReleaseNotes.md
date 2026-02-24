@@ -6,6 +6,7 @@
 * Fixed "percent uploading" going past 100% in job run page.
 * Fixed error on S3 download page: if bucket list is unavailable, show only the contents of the bucket specified in StorageService.Bucket.
 * Fixed: Save most recent workflow edits when exporting workflow to json.
+* Fixed: Allow huge bags (100,000+ files) to complete bagging, validation and upload without interruption. https://trello.com/c/oPPNjCus
 
 ## 3.0-beta-02 - January 30, 2026
 
