@@ -18,7 +18,7 @@
   <tbody>
     {{ range $index, $job := .jobs }}
     <tr>
-      <td><a href="/jobs/files/{{ $job.ID }}">{{ $job.Name }}</a></td>
+      <td><a href="/jobs/files/{{ $job.ID }}" onclick='$("#spinner").show();'>{{ $job.Name }}</a></td>
       <td>
         {{ displayDate $job.Outcome.LastActivity}}<br />
 

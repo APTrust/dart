@@ -27,7 +27,7 @@ job details and progress.
     {{  end }}
 
     <!-- Though it acts like a link, this has to be a button so we can disable it after click. -->
-    <button id="btnRunJob" class="btn btn-success ml-5" onclick="runJob({{ .jobRunUrl }}, '{{ .jobID }}')" role="button">Run Job</button>
+    <button id="btnRunJob" class="btn btn-success ml-5" onclick="$('#spinner').show();runJob({{ .jobRunUrl }}, '{{ .jobID }}')" role="button">Run Job</button>
   </div>
 </div>
 

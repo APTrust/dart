@@ -21,7 +21,7 @@
   </div>
 
   <div class="float-right mt-5 mb-5" id="btnNextDiv">
-    <button type="submit" onclick="document.forms['{{ .job.ID }}'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
+    <button type="submit" onclick="$('#spinner').show();document.forms['{{ .job.ID }}'].direction.value='next'" class="btn btn-primary" role="button">Next &gt;&gt;</button>
   </div>
 
 </form>

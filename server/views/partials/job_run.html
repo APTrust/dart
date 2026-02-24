@@ -185,6 +185,7 @@ an idea of what goes into them.
   // what, if anything, should be packaged, validated and/or uploaded.
   // This is called when a job is loaded.
   function showJobInit(data) {
+    $("#spinner").hide()
     console.log(`Received init event for job ${data.jobSummary.id}`)
     settings = data.jobSummary
     console.log(settings)
