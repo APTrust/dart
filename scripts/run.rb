@@ -81,6 +81,7 @@ class Runner
   def start_minio
     puts "Starting Minio container"
     @docker_minio_id = `docker run -p 9899:9000 -p 9001:9001 -d minio/minio:RELEASE.2023-12-07T04-16-00Z server /data --console-address ":9001"`
+    # @docker_minio_id = `docker run -p 9899:9000 -p 9001:9001 -v /Volumes/AppleExternal/minio:/data -d minio/minio:RELEASE.2023-12-07T04-16-00Z server /data --console-address ":9001"`
     @docker_minio_id = @docker_minio_id.chomp
     if $?.exitstatus == 0
       puts "Started Minio server with id #{@docker_minio_id}"
