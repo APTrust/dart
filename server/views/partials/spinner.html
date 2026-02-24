@@ -1,3 +1,6 @@
 {{ define "partials/spinner.html" }}
-  <div id="spinner" class="spinner" style="display:none"></div>
+<div id="spinner" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9999; text-align:center;">
+  <div class="spinner" style="position:relative; left:auto; top:auto; margin:0 auto;"></div>
+  <div class="text-primary mt-2">Loading...</div>
+</div>
 {{ end }}
