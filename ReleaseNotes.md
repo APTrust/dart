@@ -7,6 +7,7 @@
 * Fixed error on S3 download page: if bucket list is unavailable, show only the contents of the bucket specified in StorageService.Bucket.
 * Fixed: Save most recent workflow edits when exporting workflow to json.
 * Fixed: Allow huge bags (100,000+ files) to complete bagging, validation and upload without interruption. https://trello.com/c/oPPNjCus
+* Fixed: When connecting to APTrust remote repository, use the member API, not the admin API. This fixes 403/unauthorized exceptions for valid member users. https://trello.com/c/xU77Ploy
 
 ## 3.0-beta-02 - January 30, 2026
 
