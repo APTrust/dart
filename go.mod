@@ -18,12 +18,12 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/minio/minio-go/v7 v7.0.97
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	github.com/wailsapp/wails/v2 v2.10.2
 )
 
 require (
-	github.com/APTrust/preservation-services v0.0.0-20250123225107-b6f846b686ec // indirect
+	github.com/APTrust/preservation-services v0.0.0-20260303193921-0cefb01f4e00 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/bmizerany/perks v0.0.0-20230307044200-03f9df79da1e // indirect
@@ -72,7 +72,7 @@ require (
 	github.com/nsqio/go-nsq v1.1.0 // indirect
 	github.com/nsqio/nsq v1.2.0 // indirect
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/philhofer/fwd v1.2.0 // indirect
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c // indirect
 	github.com/pkg/errors v0.9.1 // indirect
