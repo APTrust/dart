@@ -60,7 +60,7 @@ Running the tests should retrieve all of the Go dependencies. If tests pass, you
 
 Install the package [Go for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=golang.go). This includes a number of tools to help with syntax highlighting, code completion, debugging and formatting.
 
-This extension also correctly formats DART's HTML templates. If you use VS Code's standard HTML formatter, it will split the double braces used to mark template instructions, and that will break the templates. (The standard HTML formatted changes ``{{ instruction }} to { { instruction } }, which is invalid.)
+This extension also correctly formats DART's HTML templates. If you use VS Code's standard HTML formatter, it will split the double braces used to mark template instructions, and that will break the templates. (The standard HTML formatted changes `{{ instruction }}` to `{ { instruction } }`, which is invalid.)
 
 
 ## Local DART Runner Setup
