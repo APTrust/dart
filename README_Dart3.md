@@ -152,22 +152,21 @@ Server-hosted DART could have a number of advantages. If hosted on a server atta
 ## Prerequisites for Development
 
 * Go > 1.23
-* Ruby > 2.0 (to run build and test scripts) - ** We should convert this to bash **
 * Docker (to run Minio and SFTP containers)
 
 ## Notes for Developers
 
-Testing: `./scripts/run.rb tests`
+Testing: `./scripts/run.sh tests`
 
 Building for realease: `./scripts/build_dart.rb`
 
-Running in dev mode: `./scripts/run.rb dart`
+Running in dev mode: `./scripts/run.sh dart`
 
 Note that running in dev mode also starts a local SFTP server and a Minio server, both in docker containers. DART will print the URLs and credentials for these local services in the console so you can look into them if necessary.
 
 Also, if you want to run DART 3 through the VS Code debugger and have it upload to local S3 and SFTP servers, use this:
 
-`./scripts/run.rb services`
+`./scripts/run.sh services`
 
 Then start DART 3 in debug mode in VS Code. From there, you can use DART through http://localhost:8444.
 
@@ -213,7 +212,7 @@ To debug with VS Code:
 
 Now you can set breakpoints in the code.
 
-Also, use `./scripts/run.rb services` to run local SFTP and S3 services during DART debugging.
+Also, use `./scripts/run.sh services` to run local SFTP and S3 services during DART debugging.
 
 ## Working with Dart Runner
 

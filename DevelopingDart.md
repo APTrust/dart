@@ -43,13 +43,12 @@ To work on DART 3, you will need to do the following:
 1. Clone the DART Runner repo from https://github.com/APTrust/dart-runner
 1. Check the [go.mod](https://github.com/APTrust/dart/blob/master/go.mod) files of both projects and be sure you're running a compatible version of Go.
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar container engine. This is required for interactive tests.
-1. Install a recent version of Ruby (3+) to run test scripts. (We hope to move to BASH someday, to get rid of this dependency.)
 
 After completing these steps, run the following to ensure everything works:
 
 1. Start Docker Desktop, as this is required for testing.
-1. Change into the dart-runner directory and run `./scripts/run.rb tests`
-1. Change into the dart directory and run `./scripts/test.rb`
+1. Change into the dart-runner directory and run `./scripts/run.sh tests`
+1. Change into the dart directory and run `./scripts/run.sh tests`
 
 Running the tests should retrieve all of the Go dependencies. If tests pass, you're ready to start developing. Most test errors are due to Docker containers not starting. Check the output messages for messages about Docker containers, and be sure that Docker Desktop is running.
 
@@ -60,7 +59,7 @@ Running the tests should retrieve all of the Go dependencies. If tests pass, you
 
 Install the package [Go for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=golang.go). This includes a number of tools to help with syntax highlighting, code completion, debugging and formatting.
 
-This extension also correctly formats DART's HTML templates. If you use VS Code's standard HTML formatter, it will split the double braces used to mark template instructions, and that will break the templates. (The standard HTML formatted changes `{{ instruction }}` to `{ { instruction } }`, which is invalid.)
+This extension also correctly formats DART's HTML templates. If you use VS Code's standard HTML formatter, it will split the double braces used to mark template instructions, and that will break the templates. (The standard HTML formatter changes `{{ instruction }}` to `{ { instruction } }`, which is invalid.)
 
 
 ## Local DART Runner Setup
@@ -100,7 +99,7 @@ Note that you can ignore these steps if you're making changes only to DART 3 and
 To debug jobs that upload files, you'll need to start DART 3 and add two Storage Service settings. These settings tell DART how to connect to locally-running Docker S3 and SFTP containers.
 
 1. Open a terminal in the DART 3's top-level directory.
-1. Run `./scripts/run.rb services`. After a few seconds, this will open a browser window at http://localhost:8444/.
+1. Run `./scripts/run.sh services`. After a few seconds, this will open a browser window at http://localhost:8444/.
 1. In the DART browser window, click **Settings > Import Settings**.
 1. Select **Import from JSON (Cut and Paste)**.
 1. Paste the following JSON into the **Settings JSON** textbox, then click **Import**.
@@ -162,18 +161,18 @@ To debug jobs that upload files, you'll need to start DART 3 and add two Storage
 
 DART 3's [launch.json](https://github.com/APTrust/dart/blob/master/.vscode/launch.json) file includes debugging configuration. The easiest way to debug is to follow these steps:
 
-1. From DART 3's top-level directory, run `./scripts/run.rb services`. This starts Docker containers that run local S3 and SFTP servers.
+1. From DART 3's top-level directory, run `./scripts/run.sh services`. This starts Docker containers that run local S3 and SFTP servers.
 1. In Visual Studio, click the Run and Debug icon in the left nav bar (the triangle with the insect on it), then click the green triangle next to the "Launch Program" label near the upper left corner of the Visual Studio window.
 
 When you follow these steps, you should be able to debug DART Runner code in addition to DART code. Place a breakpoint in the DART code just before a call to a DART Runner function. Once you hit the breakpoint, you can step into the DART Runner code and begin placing additional breakpoints there.
 
-You can stop the Docker S3 and SFTP containers by pressing Control+C in the terminal window where you started `./scripts/run.rb services`.
+You can stop the Docker S3 and SFTP containers by pressing Control+C in the terminal window where you started `./scripts/run.sh services`.
 
 ## Two Different Run Modes
 
 In development, DART 3 can run in two different modes.
 
-**Web Mode** runs DART 3 in a browser window at http://localhost:8444. This is generally what you want to use during development, as your browser exposes a good set of tools for debugging JavaScript and tracing requests and responses. To run in this mode, run either `./scripts/run.rb dart` or run `./scripts/run.rb services` and then launch DART in debug mode from Visual Studio Code.
+**Web Mode** runs DART 3 in a browser window at http://localhost:8444. This is generally what you want to use during development, as your browser exposes a good set of tools for debugging JavaScript and tracing requests and responses. To run in this mode, run either `./scripts/run.sh dart` or run `./scripts/run.sh services` and then launch DART in debug mode from Visual Studio Code.
 
 The disadvantages of running in web mode are 1) you'll need to hit shift + reload to load script and stylesheet changes, and 2) you'll need to restart the app to load changes to Go code.
 
@@ -184,7 +183,7 @@ Unsupported Platform
 Uncaught TypeError: window.WailsInvoke is not a function
 ```
 
-**Wails Dev Mode** runs DART 3 in a Wails window. This takes longer to start up, but it lets you see the app the way the user will see it, and it's generally better at reloading when you make code changes.
+**Wails Dev Mode** runs DART 3 in a Wails window. This takes longer to start up, but it lets you see the app the way the user will see it, and it's generally better at reloading when you make code changes. To run in Wails dev mode, simply run `wails dev` in the project's top-level directory.
 
 Note that the main functional difference between web mode and Wails mode is the way the app handles downloads. See the function `DownloadJobDownload` in https://github.com/APTrust/dart/blob/master/server/controllers/download_job_controller.go to understand how the two cases are handled.
 
@@ -195,16 +194,16 @@ Note that the main functional difference between web mode and Wails mode is the 
 * **build** - Contains output files from the build process. These are executable binaries.
 * **dart** - Contains the main.go application file. This is the entry point for the app, and this is what we build to create the DART 3 binary.
 * **frontend** - This contains Wails-specific files used in the build process. You can ignore these files. We don't edit them.
-* **scripts** - Contains Ruby and Bash scripts for running, testing and building DART.
+* **scripts** - Contains Bash scripts for running, testing and building DART.
 * **server** - Contains all of our custom DART code.
   * **assets** - Contains front-end assets, including scripts, stylesheets, fonts and images.
   * **build_support** - Contains files used for building the MacOS version of the app. These files may be obsolete since we moved to Wails.
   * **controllers** - Contains the controllers responsible for responding to HTTP requests coming from the DART front end.
   * **views** - Contains HTML templates used by the controllers to render front-end HTML.
-  * **dev_loader.go** - Dynamically loads HTML templates, JavaScript files, stylesheets and images when DART runs in the local development environment. (That is, when DART is run using `./scripts/run.rb dart`.)
+  * **dev_loader.go** - Dynamically loads HTML templates, JavaScript files, stylesheets and images when DART runs in the local development environment. (That is, when DART is run using `./scripts/run.sh dart`.)
   * **release_loader.go** - Loads HTML templates, scripts, stylesheets and images when DART is run in production mode as a compiled application.
   * **server.go** - Sets up the DART HTTP server and maps routes to controller functions.
-* **testdata** - Contains data used in unit and integration tests that are called by `./scripts/run.rb tests`
+* **testdata** - Contains data used in unit and integration tests that are called by `./scripts/run.sh tests`
 
 ## DART 3 Web Requests
 

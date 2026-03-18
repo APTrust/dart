@@ -105,9 +105,9 @@ func TestJobRunExecute(t *testing.T) {
 	// This requires use of StreamRecorder to capture server-sent events.
 	// This also requires a local running Minio server to receive the
 	// upload portion of the job. If you run tests using
-	// `./scripts/run.rb tests`, the script will start the server for you.
+	// `./scripts/run.sh tests`, the script will start the server for you.
 	// If you're running this test by itself or inside VS Code,
-	// be sure the start the Minio server first. See scripts/run.rb.
+	// be sure the start the Minio server first. See scripts/run.sh.
 	defer core.ClearDartTable()
 	job := loadTestJob(t)
 	require.NoError(t, core.ObjSave(job))

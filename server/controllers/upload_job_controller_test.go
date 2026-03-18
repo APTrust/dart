@@ -144,11 +144,11 @@ func testUploadJobReview(t *testing.T, id string, testStorageServices []*core.St
 
 // NOTE: This test assumes that local Minio and SFTP servers are running.
 //
-// If you run the full test suite using `./scripts/run.rb tests`, the
+// If you run the full test suite using `./scripts/run.sh tests`, the
 // script will start those servers for you.
 //
 // If you want to run this as a one-off test, first start the Minio and SFTP
-// servers using `./scripts/run.rb dart`, then run the tests in this file.
+// servers using `./scripts/run.sh dart`, then run the tests in this file.
 func testUploadJobRun(t *testing.T, id string) {
 	// This requires use of StreamRecorder to capture server-sent events.
 	recorder := NewStreamRecorder()

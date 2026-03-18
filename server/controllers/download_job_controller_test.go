@@ -18,11 +18,11 @@ import (
 
 // NOTE: These tests assume that local Minio server is running.
 //
-// If you run the full test suite using `./scripts/run.rb tests`, the
+// If you run the full test suite using `./scripts/run.sh tests`, the
 // script will start the Minio server for you.
 //
 // If you want to run this as a one-off test, first start the Minio
-// server using `./scripts/run.rb servers`, then run the tests in this file.
+// server using `./scripts/run.sh servers`, then run the tests in this file.
 
 // TestDownloadJobNew tests the GET /download_jobs/new endpoint
 func TestDownloadJobNew(t *testing.T) {
