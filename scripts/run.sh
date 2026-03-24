@@ -50,39 +50,51 @@ sftp_image_name() {
 
 start_minio() {
     echo "Starting Minio container"
-    DOCKER_MINIO_ID=$(docker run -p 9899:9000 -p 9001:9001 -d \
-        quay.io/minio/minio server /data \
-        --console-address ":9001")
+    DOCKER_MINIO_ID=$(docker run -p 9899:9000 -p 9001:9001 -v ~/tmp/minio:/data -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" -d quay.io/minio/minio server /data --console-address ":9001")
     local exit_code=$?
-    DOCKER_MINIO_ID=$(echo "$DOCKER_MINIO_ID" | tr -d '\n')
+    DOCKER_MINIO_ID=$(echo "$DOCKER_MINIO_ID" | tr -d '[:space:]')
     if [ $exit_code -eq 0 ]; then
         echo "Started Minio server with id $DOCKER_MINIO_ID"
-        echo "Minio is running on localhost:9899. User/Pwd: $MINIO_USER/$MINIO_PASSWORD"
+        echo "Minio is running on localhost:9899. User/Pwd: ${MINIO_USER}/${MINIO_PASSWORD}"
         echo "Minio console available at http://127.0.0.1:9001"
         MINIO_STARTED=true
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/test
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/dart-runner.test
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/preservation-or
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/preservation-va
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-oh
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-or
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-va
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-deep-oh
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-deep-or
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/glacier-deep-va
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/wasabi-or
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/wasabi-tx
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/wasabi-va
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/receiving
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/staging
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.receiving.test.test.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.restore.test.test.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.receiving.test.institution1.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.restore.test.institution1.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.receiving.test.institution2.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.restore.test.institution2.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.receiving.test.example.edu
-        docker exec -it "$DOCKER_MINIO_ID" mkdir /data/aptrust.restore.test.example.edu
+        echo "Waiting for Minio to be ready..."
+        local attempts=0
+        until curl -sf http://localhost:9899/minio/health/ready > /dev/null 2>&1; do
+            attempts=$((attempts + 1))
+            if [ $attempts -ge 30 ]; then
+                echo "Minio did not become ready in time"
+                break
+            fi
+            sleep 1
+        done
+        docker exec "$DOCKER_MINIO_ID" mc alias set local http://localhost:9000 "$MINIO_USER" "$MINIO_PASSWORD" > /dev/null 2>&1
+        echo "Creating Minio buckets..."
+      # Make our two test buckets, plus receiving and
+      # restoration buckets for test.edu.
+      docker exec $DOCKER_MINIO_ID mc mb local/test
+      docker exec $DOCKER_MINIO_ID mc mb local/dart-runner.test
+      docker exec $DOCKER_MINIO_ID mc mb local/preservation-or
+      docker exec $DOCKER_MINIO_ID mc mb local/preservation-va
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-oh
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-or
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-va
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-oh
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-or
+      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-va
+      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-or
+      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-tx
+      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-va
+      docker exec $DOCKER_MINIO_ID mc mb local/receiving
+      docker exec $DOCKER_MINIO_ID mc mb local/staging
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.test.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.test.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.institution1.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.institution1.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.institution2.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.institution2.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.example.edu
+      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.example.edu
     else
         echo "Error starting Minio docker container. Is one already running?"
         echo "$DOCKER_MINIO_ID"
