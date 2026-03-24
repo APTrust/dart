@@ -50,7 +50,8 @@ sftp_image_name() {
 
 start_minio() {
     echo "Starting Minio container"
-    DOCKER_MINIO_ID=$(docker run -p 9899:9000 -p 9001:9001 -v ~/tmp/minio:/data -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" -d quay.io/minio/minio server /data --console-address ":9001")
+    docker rm -f dart-minio > /dev/null 2>&1 || true
+    DOCKER_MINIO_ID=$(docker run --name dart-minio --rm -p 9899:9000 -p 9001:9001 -v ~/tmp/minio:/data -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" -d quay.io/minio/minio server /data --console-address ":9001")
     local exit_code=$?
     DOCKER_MINIO_ID=$(echo "$DOCKER_MINIO_ID" | tr -d '[:space:]')
     if [ $exit_code -eq 0 ]; then
@@ -121,7 +122,8 @@ start_sftp() {
     local image
     image=$(sftp_image_name)
     echo "Using SFTP config options from $sftp_dir"
-    DOCKER_SFTP_ID=$(docker run \
+    docker rm -f dart-sftp > /dev/null 2>&1 || true
+    DOCKER_SFTP_ID=$(docker run --name dart-sftp --rm \
         -v "$sftp_dir/sftp_user_key.pub:/home/key_user/.ssh/keys/sftp_user_key.pub:ro" \
         -v "$sftp_dir/users.conf:/etc/sftp/users.conf:ro" \
         -p 2222:22 -d "$image")
