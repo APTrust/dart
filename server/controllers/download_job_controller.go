@@ -66,7 +66,9 @@ func DownloadJobDownload(c *gin.Context) {
 	ssid := c.PostForm("ssid")
 	s3Bucket := c.PostForm("s3Bucket")
 	s3Key := c.PostForm("s3Key")
-	s3Object, stats, err := GetDownloadFile(ssid, s3Bucket, s3Key)
+	s3ObjectSize, _ := strconv.ParseInt(c.PostForm("s3ObjectSize"), 10, 64)
+	s3ContentType := c.PostForm("s3ContentType")
+	readCloser, err := GetDownloadFile(ssid, s3Bucket, s3Key, s3ObjectSize)
 	if err != nil {
 		core.Dart.Log.Errorf("S3 download error: %v", err)
 		data := gin.H{
@@ -96,7 +98,7 @@ func DownloadJobDownload(c *gin.Context) {
 			defer destFile.Close()
 
 			// Copy s3Object contents to the file
-			_, err = io.Copy(destFile, s3Object)
+			_, err = io.Copy(destFile, readCloser)
 			if err != nil {
 				core.Dart.Log.Errorf("Failed to write file: %v", err)
 				c.String(http.StatusInternalServerError, fmt.Sprintf("Failed to write file: %v", err))
@@ -120,9 +122,9 @@ func DownloadJobDownload(c *gin.Context) {
 			attachmentName := fmt.Sprintf("attachment; filename=%s", s3Key)
 			c.DataFromReader(
 				http.StatusOK,
-				stats.Size,
-				stats.ContentType,
-				s3Object,
+				s3ObjectSize,
+				s3ContentType,
+				readCloser,
 				map[string]string{
 					"Content-Disposition": attachmentName,
 					"Content-Type":        "application/octet-stream",
@@ -132,24 +134,36 @@ func DownloadJobDownload(c *gin.Context) {
 	}
 }
 
-func GetDownloadFile(ssid, s3Bucket, s3Key string) (*minio.Object, minio.ObjectInfo, error) {
-	var obj *minio.Object
-	stats := minio.ObjectInfo{}
+func GetDownloadFile(ssid, s3Bucket, s3Key string, objectSize int64) (io.ReadCloser, error) {
 	ss := core.ObjFind(ssid).StorageService()
 	if ss == nil {
-		return obj, stats, fmt.Errorf("No such storage service: %s", ssid)
+		return nil, fmt.Errorf("No such storage service: %s", ssid)
 	}
 	useSSL := ss.Host != "localhost" && ss.Host != "127.0.0.1"
 	s3Client, err := core.NewS3Client(ss, useSSL, nil)
 	if err != nil {
-		return obj, stats, err
+		return nil, err
 	}
-	obj, err = s3Client.GetObject(s3Bucket, s3Key, minio.GetObjectOptions{})
-	if err != nil {
-		return obj, stats, err
+
+	// Choose GetObject or GetLargeObject here.
+	if objectSize > constants.MaxS3RequestSize {
+		// Note that GetLargeObject calls Stat() internally and will
+		// return an error if the remote file does not exist.
+		return s3Client.GetLargeObject(s3Bucket, s3Key)
+	} else {
+		obj, err := s3Client.GetObject(s3Bucket, s3Key, minio.GetObjectOptions{})
+		if err != nil {
+			return nil, err
+		}
+		// GetObject is lazy: it returns a handle without making a network
+		// request, so a missing key produces no error until you read from it.
+		// Stat() forces the real request now so we catch errors here.
+		if _, err = obj.Stat(); err != nil {
+			obj.Close()
+			return nil, err
+		}
+		return obj, nil
 	}
-	stats, err = obj.Stat()
-	return obj, stats, err
 }
 
 func GetS3DownloadForm(c *gin.Context) (*core.Form, []minio.ObjectInfo) {

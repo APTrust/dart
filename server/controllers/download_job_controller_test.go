@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -129,6 +130,8 @@ func TestDownloadJobDownloadError(t *testing.T) {
 	params.Set("ssid", ss.ID)
 	params.Set("s3Bucket", "nonexistent-bucket")
 	params.Set("s3Key", "nonexistent-file.txt")
+	params.Set("s3ObjectSize", "99999")
+	params.Set("s3ContentType", "text/html")
 
 	w := httptest.NewRecorder()
 	req, err := NewPostRequest("/download_jobs/download", params)
@@ -168,13 +171,49 @@ func TestGetDownloadFile(t *testing.T) {
 	testFileName := s3Objects[0].Key
 
 	// Test GetDownloadFile
-	obj, stats, err := controllers.GetDownloadFile(ss.ID, bucketName, testFileName)
+	obj, err := controllers.GetDownloadFile(ss.ID, bucketName, testFileName, s3Objects[0].Size)
 	require.NoError(t, err)
 	require.NotNil(t, obj)
 
-	// Verify the stats
-	assert.Equal(t, testFileName, stats.Key)
-	assert.Greater(t, stats.Size, int64(0))
+	// Read and verify we can get content
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(obj)
+	require.NoError(t, err)
+	assert.NotEmpty(t, buf.String())
+}
+
+// TestGetDownloadFileLarge tests the GetDownloadFile helper function,
+// forcing it to call GetLargeObject
+func TestGetDownloadFileLarge(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Set up storage service
+	ss := loadMinioStorageService(t)
+
+	// Use the existing "test" bucket
+	s3Client := setupMinioClient(t, ss)
+	bucketName := "test"
+
+	// Get list of objects in bucket
+	s3Objects := s3Client.ListObjects(bucketName, "", minio.ListObjectsOptions{
+		Recursive: true,
+		MaxKeys:   1,
+	})
+
+	// Skip test if no files exist
+	if len(s3Objects) == 0 {
+		t.Skip("No files in test bucket, skipping GetDownloadFile test")
+		return
+	}
+
+	testFileName := s3Objects[0].Key
+
+	// Test GetDownloadFile. Pass in a bogus file size so the
+	// back-end code thinks it's a huge object and calls
+	// GetLargeObject.
+	obj, err := controllers.GetDownloadFile(ss.ID, bucketName, testFileName, 2*constants.MaxS3RequestSize)
+	require.NoError(t, err)
+	require.NotNil(t, obj)
 
 	// Read and verify we can get content
 	buf := new(bytes.Buffer)
@@ -188,10 +227,9 @@ func TestGetDownloadFileInvalidStorageService(t *testing.T) {
 	defer core.ClearDartTable()
 
 	// Try to get a file with an invalid storage service ID
-	obj, stats, err := controllers.GetDownloadFile("invalid-id", "bucket", "key")
+	obj, err := controllers.GetDownloadFile("invalid-id", "bucket", "key", 999)
 	assert.Error(t, err)
 	assert.Nil(t, obj)
-	assert.Equal(t, "", stats.Key)
 }
 
 // TestDownloadJobBrowseMultipleBuckets tests browsing with multiple buckets
@@ -323,6 +361,8 @@ func TestDownloadJobDownloadLargeFile(t *testing.T) {
 	params.Set("ssid", ss.ID)
 	params.Set("s3Bucket", bucketName)
 	params.Set("s3Key", testFileName)
+	params.Set("s3ObjectSize", strconv.Itoa(int(s3Objects[0].Size)))
+	params.Set("s3ContentType", s3Objects[0].ContentType)
 
 	w := httptest.NewRecorder()
 	req, err := NewPostRequest("/download_jobs/download", params)

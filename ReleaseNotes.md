@@ -8,6 +8,7 @@
 * Fixed: Save most recent workflow edits when exporting workflow to json.
 * Fixed: Allow huge bags (100,000+ files) to complete bagging, validation and upload without interruption. https://trello.com/c/oPPNjCus
 * Fixed: When connecting to APTrust remote repository, use the member API, not the admin API. This fixes 403/unauthorized exceptions for valid member users. https://trello.com/c/xU77Ploy
+* Allow huge file downloads from S3 (up to 50TB)
 * Replaced run.rb with run.sh to remove Ruby dependency for dev/test/build.
 
 ## 3.0-beta-02 - January 30, 2026
