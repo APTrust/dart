@@ -73,29 +73,31 @@ start_minio() {
         echo "Creating Minio buckets..."
       # Make our two test buckets, plus receiving and
       # restoration buckets for test.edu.
-      docker exec $DOCKER_MINIO_ID mc mb local/test
-      docker exec $DOCKER_MINIO_ID mc mb local/dart-runner.test
-      docker exec $DOCKER_MINIO_ID mc mb local/preservation-or
-      docker exec $DOCKER_MINIO_ID mc mb local/preservation-va
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-oh
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-or
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-va
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-oh
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-or
-      docker exec $DOCKER_MINIO_ID mc mb local/glacier-deep-va
-      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-or
-      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-tx
-      docker exec $DOCKER_MINIO_ID mc mb local/wasabi-va
-      docker exec $DOCKER_MINIO_ID mc mb local/receiving
-      docker exec $DOCKER_MINIO_ID mc mb local/staging
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.test.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.test.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.institution1.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.institution1.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.institution2.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.institution2.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.receiving.test.example.edu
-      docker exec $DOCKER_MINIO_ID mc mb local/aptrust.restore.test.example.edu
+      # --ignore-existing suppresses errors when a bucket already exists
+      # (which happens because the ~/tmp/minio volume persists across runs).
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/test
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/dart-runner.test
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/preservation-or
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/preservation-va
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-oh
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-or
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-va
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-deep-oh
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-deep-or
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/glacier-deep-va
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/wasabi-or
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/wasabi-tx
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/wasabi-va
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/receiving
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/staging
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.receiving.test.test.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.restore.test.test.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.receiving.test.institution1.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.restore.test.institution1.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.receiving.test.institution2.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.restore.test.institution2.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.receiving.test.example.edu
+      docker exec $DOCKER_MINIO_ID mc mb --ignore-existing local/aptrust.restore.test.example.edu
     else
         echo "Error starting Minio docker container. Is one already running?"
         echo "$DOCKER_MINIO_ID"
