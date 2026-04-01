@@ -1,6 +1,6 @@
 # DART Release Notes
 
-## 3.0-beta-03 - [Not Released Yet]
+## 3.0-beta-03 - 2026-04-01
 
 * Fixed broken link to batch workflows help document.
 * Fixed "percent uploading" going past 100% in job run page.
