@@ -40,9 +40,9 @@ DART 3 is currently in beta phase and is not yet suitable for production workloa
 
 | Operating System       | Download Link |
 | ---------------------- | ------------- |
-| Windows (Intel 64-bit) | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/windows-amd64/dart.exe |
-| Mac (Any CPU)          | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/mac-universal/DART.dmg |
-| Linux (Intel 64-bit)   | https://s3.us-east-1.amazonaws.com/aptrust.public.download/dart3/beta-02/linux-amd64/dart |
+| Windows (Intel 64-bit) | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/windows-amd64/dart.exe |
+| Mac (Any CPU)          | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/mac-universal/DART.dmg |
+| Linux (Intel 64-bit)   | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/linux-amd64/dart |
 
 
 # DART User Group
