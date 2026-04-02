@@ -6,11 +6,11 @@
 
 set -e
 
-# Note: Env var $APPLE_CERT should be the absolute path to your
-# Apple code-signing certificate, which is a .p12 file.
+# Note: Env var $APPLE_DEVELOPER_CERT_FILE should be the absolute
+# path to your Apple code-signing certificate, which is a .p12 file.
 
 # Configuration
-CERT_FILE=$APPLE_CERT
+CERT_FILE=$APPLE_DEVELOPER_CERT_FILE
 TEST_KEYCHAIN="test-cert.keychain-db"
 TEST_PASSWORD=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 32)
 
@@ -131,6 +131,9 @@ echo "======================================"
 echo "Checking system login keychain:"
 echo "======================================"
 security find-identity -v -p codesigning | grep "Developer ID Application" || echo "None found in login keychain"
+if [ -z "$IDENTITY" ]; then
+    IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | head -1 | sed -n 's/.*"\(.*\)"/\1/p')
+fi
 echo
 
 # Cleanup

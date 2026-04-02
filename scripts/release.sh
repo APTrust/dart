@@ -100,7 +100,8 @@ check_release_notes() {
     # Match the first ## headline that contains the version string.
     # The headline may be prefixed (e.g. "## 3.0-beta-03 - January 30, 2026").
     local match
-    match="$(grep -m1 "^## .*${VERSION}" "$notes_file" || true)"
+    local version_no_v="${VERSION#v}"
+    match="$(grep -m1 "^## .*${version_no_v}" "$notes_file" || true)"
 
     if [[ -z "$match" ]]; then
         die "ReleaseNotes.md does not contain an h2 (##) section for '$VERSION'. " \

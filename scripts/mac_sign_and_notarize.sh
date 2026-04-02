@@ -58,6 +58,7 @@ APP_BUNDLE="build/bin/${APP_NAME}.app"
 CERT_FILE=$APPLE_DEVELOPER_CERT_FILE
 CERT_PASSWORD=""                         # Will prompt if not set
 IDENTITY_NAME=$APPLE_IDENTITY_CERT_NAME  # e.g., "Developer ID Application: Your Name (TEAMID)"
+USING_LOGIN_KEYCHAIN=false               # Set to true when falling back to login keychain
 APPLE_ID=$APPLE_ID                       # Your Apple ID email
 TEAM_ID=$APPLE_TEAM_ID                   # Your 10-character Team ID
 APP_PASSWORD=$APPLE_DART_APP_PASSWORD    # App-specific password from appleid.apple.com
@@ -70,12 +71,33 @@ ZIP_NAME="${APP_NAME}.zip"
 ENTITLEMENTS_FILE="entitlements.plist"
 
 
+# Look for a Developer ID Application identity in the login keychain.
+# Sets IDENTITY_NAME and USING_LOGIN_KEYCHAIN=true if one is found.
+resolve_identity_from_login_keychain() {
+    local found
+    found=$(security find-identity -v -p codesigning \
+        | grep "Developer ID Application" \
+        | head -1 \
+        | sed -n 's/.*"\(.*\)"/\1/p')
+    if [ -n "$found" ]; then
+        IDENTITY_NAME="$found"
+        USING_LOGIN_KEYCHAIN=true
+        print_info "Using identity from login keychain: $IDENTITY_NAME"
+        return 0
+    fi
+    return 1
+}
+
 # Check prerequisites
 check_prerequisites() {
     print_info "Checking prerequisites..."
 
-    if [ ! -f "$CERT_FILE" ]; then
-        print_error "Certificate file not found: $CERT_FILE"
+    # Prefer an identity already installed in the login keychain; this avoids
+    # needing a valid .p12 file when the cert is already trusted on this machine.
+    if resolve_identity_from_login_keychain; then
+        print_status "Found signing identity in login keychain; skipping .p12 import."
+    elif [ ! -f "$CERT_FILE" ]; then
+        print_error "No .p12 certificate file and no Developer ID Application identity found in login keychain."
         exit 1
     fi
 
@@ -100,12 +122,16 @@ check_prerequisites() {
 # Prompt for missing credentials
 prompt_credentials() {
 
-    if [ -z "$CERT_PASSWORD" ]; then
+    if [ "$USING_LOGIN_KEYCHAIN" = false ] && [ -z "$CERT_PASSWORD" ]; then
         read -sp "Enter certificate password: " CERT_PASSWORD
         echo
     fi
 
     if [ -z "$IDENTITY_NAME" ]; then
+        if [ "$USING_LOGIN_KEYCHAIN" = true ]; then
+            print_error "IDENTITY_NAME is empty even after checking login keychain. Cannot continue."
+            exit 1
+        fi
         read -p "Enter signing identity (e.g., 'Developer ID Application: Your Name (TEAMID)'): " IDENTITY_NAME
     fi
 
@@ -367,8 +393,10 @@ notarize_dmg() {
 cleanup() {
     print_info "Cleaning up..."
 
-    # Remove temporary keychain
-    security delete-keychain "$KEYCHAIN_NAME" 2>/dev/null || true
+    # Remove temporary keychain (only if we created one)
+    if [ "$USING_LOGIN_KEYCHAIN" = false ]; then
+        security delete-keychain "$KEYCHAIN_NAME" 2>/dev/null || true
+    fi
 
     # Remove temporary files
     rm -f "$ZIP_NAME" "$ENTITLEMENTS_FILE"
@@ -386,8 +414,10 @@ main() {
 
     check_prerequisites
     prompt_credentials
-    create_keychain
-    import_certificate
+    if [ "$USING_LOGIN_KEYCHAIN" = false ]; then
+        create_keychain
+        import_certificate
+    fi
     create_entitlements
     sign_app
     verify_signature
