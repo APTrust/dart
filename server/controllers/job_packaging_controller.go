@@ -64,6 +64,10 @@ func JobSavePackaging(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+	if job.PackageOp == nil {
+		core.Dart.Log.Warningf("Job %s has nil PackageOp. Reinitializing package operation.", job.ID)
+		job.PackageOp = core.NewPackageOperation("", "", make([]string, 0))
+	}
 	job.PackageOp.BagItSerialization = c.PostForm("BagItSerialization")
 	job.PackageOp.OutputPath = c.PostForm("OutputPath")
 	job.PackageOp.PackageFormat = c.PostForm("PackageFormat")
@@ -75,11 +79,17 @@ func JobSavePackaging(c *gin.Context) {
 	} else if job.BagItProfile == nil || job.BagItProfile.ID != bagItProfileID {
 		profileResult := core.ObjFind(bagItProfileID)
 		if profileResult.Error != nil {
-			err := fmt.Errorf("BagIt Profile: %s", result.Error.Error())
+			err := fmt.Errorf("BagIt Profile: %s", profileResult.Error.Error())
 			AbortWithErrorHTML(c, http.StatusNotFound, err)
 			return
 		}
-		job.BagItProfile = profileResult.BagItProfile()
+		profile := profileResult.BagItProfile()
+		if profile == nil {
+			err := fmt.Errorf("BagIt Profile: object %s is not a BagIt profile", bagItProfileID)
+			AbortWithErrorHTML(c, http.StatusNotFound, err)
+			return
+		}
+		job.BagItProfile = profile
 	}
 
 	if job.ValidationOp == nil {

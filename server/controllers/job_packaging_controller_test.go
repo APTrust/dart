@@ -72,3 +72,53 @@ func TestJobSavePackaging(t *testing.T) {
 	assert.Equal(t, "baggervance.tar", job.Name())
 	assert.Equal(t, btrProfile.ID, job.BagItProfile.ID)
 }
+
+func TestJobSavePackagingWithMissingProfile(t *testing.T) {
+	defer core.ClearDartTable()
+	job := loadTestJob(t)
+	require.NoError(t, core.ObjSave(job))
+
+	values := url.Values{}
+	values.Set("direction", "next")
+	values.Set("BagItSerialization", "application/tar")
+	values.Set("OutputPath", "/path/to/output.tar")
+	values.Set("PackageFormat", constants.PackageFormatBagIt)
+	values.Set("PackageName", "output.tar")
+	values.Set("BagItProfileID", "missing-profile-id")
+	settings := PostTestSettings{
+		EndpointUrl:          fmt.Sprintf("/jobs/packaging/%s", job.ID),
+		Params:               values,
+		ExpectedResponseCode: http.StatusNotFound,
+	}
+	DoSimplePostTest(t, settings)
+}
+
+func TestJobSavePackagingWithNilPackageOp(t *testing.T) {
+	defer core.ClearDartTable()
+	job := loadTestJob(t)
+	job.PackageOp = nil
+	require.NoError(t, core.ObjSaveWithoutValidation(job))
+
+	values := url.Values{}
+	values.Set("direction", "previous")
+	values.Set("BagItSerialization", "application/tar")
+	values.Set("OutputPath", "/path/to/output.tar")
+	values.Set("PackageFormat", constants.PackageFormatBagIt)
+	values.Set("PackageName", "output.tar")
+	settings := PostTestSettings{
+		EndpointUrl:              fmt.Sprintf("/jobs/packaging/%s", job.ID),
+		Params:                   values,
+		ExpectedResponseCode:     http.StatusFound,
+		ExpectedRedirectLocation: fmt.Sprintf("/jobs/files/%s", job.ID),
+	}
+	DoSimplePostTest(t, settings)
+
+	result := core.ObjFind(job.ID)
+	require.NoError(t, result.Error)
+	reloadedJob := result.Job()
+	require.NotNil(t, reloadedJob.PackageOp)
+	assert.Equal(t, "application/tar", reloadedJob.PackageOp.BagItSerialization)
+	assert.Equal(t, "/path/to/output.tar", reloadedJob.PackageOp.OutputPath)
+	assert.Equal(t, constants.PackageFormatBagIt, reloadedJob.PackageOp.PackageFormat)
+	assert.Equal(t, "output.tar", reloadedJob.PackageOp.PackageName)
+}
