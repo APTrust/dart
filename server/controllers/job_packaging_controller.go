@@ -64,10 +64,20 @@ func JobSavePackaging(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+
+	// See https://github.com/APTrust/dart/issues/568
+	// This condition is extremely rare, but if we run into
+	// others like it, we may want to fix the issue closer
+	// to the root, in core.ObjFind(). We could force that
+	// to add a PackageOp if one is missing, but that may
+	// present new problems. For example, validation-only
+	// and upload-only jobs should never have a PackageOp.
+	// Keep an eye out for issues similar to the one above.
 	if job.PackageOp == nil {
 		core.Dart.Log.Warningf("Job %s has nil PackageOp. Reinitializing package operation.", job.ID)
 		job.PackageOp = core.NewPackageOperation("", "", make([]string, 0))
 	}
+
 	job.PackageOp.BagItSerialization = c.PostForm("BagItSerialization")
 	job.PackageOp.OutputPath = c.PostForm("OutputPath")
 	job.PackageOp.PackageFormat = c.PostForm("PackageFormat")
