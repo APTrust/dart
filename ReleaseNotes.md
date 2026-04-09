@@ -1,5 +1,10 @@
 # DART Release Notes
 
+## 3.0 - Not Released Yet
+
+* Fixed https://github.com/APTrust/dart/issues/568, which could cause crashes in rare cases when user submits job packaging form.
+* Fixed https://trello.com/c/xaLGkJMI. Display Storage Service credentials as password field, instead of plain text, with option to display as plain text.
+
 ## 3.0-beta-03 - April 1, 2026
 
 * Fixed broken link to batch workflows help document.
