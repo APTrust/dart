@@ -104,6 +104,8 @@ To debug jobs that upload files, you'll need to start DART 3 and add two Storage
 1. Select **Import from JSON (Cut and Paste)**.
 1. Paste the following JSON into the **Settings JSON** textbox, then click **Import**.
 
+Note that you will need to change the path in the JSON below, `/Users/diamond/aptrust/dart-runner/testdata/sftp/sftp_user_key`, to a path that is valid on your machine. You will find the sftp_user_key inside the dart-runner project, so this path should point to that project on your computer.
+
 ```json
 {
   "id": "0ea86806-fed0-4213-b5ac-4223f4d3d4d5",
