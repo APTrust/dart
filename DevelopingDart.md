@@ -1,5 +1,9 @@
 # Getting Started on DART 3 Development
 
+Want to contribute to DART? Start with the video, and then read on below.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Oi87ojgJqMw?si=-9P2QT6r4cyOr_hu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## A Note on DART 3 Architecture
 
 We built DART 3 on Go to simplify the app for future maintenance. DART 2 was built on Electron and Node.js, which made the implementation unnecessarily complex and maintenance very difficult. It was normal for DART 2 builds to break every week due to changes in Electron and breaking changes in npm dependencies. We got sick of having to fix code every week, so we ditched Electron and Node.js.
