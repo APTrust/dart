@@ -2,7 +2,7 @@
 
 Want to contribute to DART? Start with the video, and then read on below.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Oi87ojgJqMw?si=-9P2QT6r4cyOr_hu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Getting Started with DART 3 Development](https://img.youtube.com/vi/Oi87ojgJqMw/0.jpg)](https://www.youtube.com/embed/Oi87ojgJqMw?si=-9P2QT6r4cyOr_hu)
 
 ## A Note on DART 3 Architecture
 
