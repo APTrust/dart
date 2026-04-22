@@ -9,7 +9,7 @@
                 data-toggle="popover"
                 data-trigger="hover"
                 title="Choosing Files"
-                data-content="Click the name of a folder to open it. Drag any file or folder icon to the right to include it in this job.">
+                data-content="Drag any file or folder into the box below to include it in this job.">
                 <i class="fas fa-question-circle text-primary"></i></span>
         </h2>
     </div>
@@ -17,12 +17,12 @@
 
 <div class="row" id="jobFilesContainer">
 
-    <div class="col-4">
+    <div class="col-4" id="jobFileBrowser">
         {{ template "partials/file_browser.html" . }}
     </div>
 
 
-    <div class="col-8">
+    <div class="col-8" id="jobFileDropZone">
         {{ if .workflow }}
         <div class="mb-3">Workflow: <strong>{{ .workflow.Name }}</strong></div>
         {{ end }}
@@ -151,9 +151,48 @@
         e.currentTarget.classList.remove('drop-zone-over');
         return false;
     });
+
+        // If running inside a Wails window, also register the Wails file-drop
+        // handler so the user can drag files directly from Finder/Explorer.
+        // window.WailsInvoke is injected by Wails and absent in a plain browser.
+        if (typeof window.WailsInvoke === 'function') {
+            window.runtime.OnFileDrop(function (x, y, paths) {
+                if (!paths || paths.length === 0) return;
+
+                let addUrl = {{ .addFileUrl }}
+                let promises = paths.map(function (filePath) {
+                    // Derive the parent directory from the dropped path so the
+                    // file browser stays in a useful location after the reload.
+                    let parts = filePath.split('/')
+                    parts.pop()
+                    let dir = parts.join('/') || '/'
+
+                    let body = 'fullPath=' + encodeURIComponent(filePath) +
+                               '&directory=' + encodeURIComponent(dir)
+                    return fetch(addUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: body,
+                    })
+                })
+
+                Promise.all(promises)
+                    .then(function () { location.reload() })
+                    .catch(function (err) {
+                        console.error('Error adding files from Finder drop:', err)
+                        location.reload()
+                    })
+            }, true)
+        }
+
         // console.log("Attached drag and drop events")
     }
     attachDragAndDropEvents();
+
+    if (typeof window.WailsInvoke === 'function') {
+        document.getElementById('jobFileBrowser').style.display = 'none'
+        document.getElementById('jobFileDropZone').className = 'col-12'
+    }
 </script>
 
 

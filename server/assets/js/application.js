@@ -239,7 +239,7 @@ function deleteProfile(formId) {
 }
 
 function openExternalUrl(url) {
-    if (typeof window.runtime !== 'undefined') {
+    if (typeof window.WailsInvoke === 'function') {
         // Running inside a Wails window: delegate to the Go server,
         // which uses the OS to open the URL in the default browser.
         let data = { "url": url }
