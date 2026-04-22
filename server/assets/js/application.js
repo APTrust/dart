@@ -239,16 +239,23 @@ function deleteProfile(formId) {
 }
 
 function openExternalUrl(url) {
-    let data = { "url": url }
-    $.ajax({
-        url: "/open_external",
-        type: "get",
-        data: jQuery.param(data),
-    }).done(function (response) {
-        console.log("openExternalURL succeeded")
-    }).fail(function (xhr, status, err) {
-        alertWithSize("large", xhr.responseText)
-    })
+    if (typeof window.runtime !== 'undefined') {
+        // Running inside a Wails window: delegate to the Go server,
+        // which uses the OS to open the URL in the default browser.
+        let data = { "url": url }
+        $.ajax({
+            url: "/open_external",
+            type: "get",
+            data: jQuery.param(data),
+        }).done(function (response) {
+            console.log("openExternalURL succeeded")
+        }).fail(function (xhr, status, err) {
+            alertWithSize("large", xhr.responseText)
+        })
+    } else {
+        // Running in a regular browser: open directly in a new tab.
+        window.open(url, '_blank', 'noopener,noreferrer')
+    }
 }
 
 function execCmd(url) {
