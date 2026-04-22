@@ -4,7 +4,8 @@
 
 * Fixed https://github.com/APTrust/dart/issues/568, which could cause crashes in rare cases when user submits job packaging form.
 * Fixed https://trello.com/c/xaLGkJMI. Display Storage Service credentials as password field, instead of plain text, with option to display as plain text.
-* Dashboard links to APTrust Registry now open correctly in external browser.
+* Dashboard links to APTrust Registry now open correctly in external browser. https://trello.com/c/xT6TK0RU
+* On Job Packaging screen, BagIt profile is now required when selecting BagIt format. https://trello.com/c/WCXqeiSA
 
 ## 3.0-beta-03 - April 1, 2026
 

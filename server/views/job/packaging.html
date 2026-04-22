@@ -88,7 +88,7 @@
       {{ end }}
 
 
-      var outputPath = $('#Job_OutputPath').val()      
+      var outputPath = $('#Job_OutputPath').val()
       for (let ext of allExtensionsForType(mimeType)) {
         if (packageName && outputPath.endsWith(ext)) {
           outputPathHasValidExtension = true
@@ -114,6 +114,30 @@
       $('#Job_BagItSerialization').val(serializationFormat)
     }
   $('#Job_BagItProfileID').on('change', setSerialization)
+
+  $('#Job_PackageFormat').on('change', toggleProfileRequirement)
+
+  function toggleProfileRequirement() {
+    let packageFormat = $('#Job_PackageFormat').val()
+    let label = $('label.control-label[for="Job_BagItProfileID"]')
+    let asterisk = '<i class="fas fa-asterisk fa-xs text-danger js-required-marker"></i>'
+    label.find('.js-required-marker').remove()
+    if (packageFormat === "BagIt") {
+      label.append(' ' + asterisk)
+    }
+  }
+  toggleProfileRequirement()
+
+  $('form#{{ .job.ID }}').on('submit', function (e) {
+    let packageFormat = $('#Job_PackageFormat').val()
+    let profileId = $('#Job_BagItProfileID').val()
+    if (packageFormat === "BagIt" && !profileId) {
+      e.preventDefault()
+      $('#Job_BagItProfileIDError').text('When selecting BagIt format, you must choose a BagIt profile.')
+    } else {
+      $('#Job_BagItProfileIDError').text('')
+    }
+  })
 
 })
 </script>
