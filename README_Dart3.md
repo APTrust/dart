@@ -8,11 +8,11 @@ Be cautious when using the beta version for essential workflows! Wait for a stab
 
 1. Dowloading the App
 
-| Operating System       | Download Link | SHA-256 Checksum |
-| ---------------------- | ------------- | ---------------- |
-| Windows (Intel 64-bit) | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/windows-amd64/dart.exe | 853b082397c60160b9bf22977acb621a66fd373d536890889a12c94a98320d63 |
-| Mac (Any CPU)          | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/mac-universal/DART.dmg | 92fb0a6ac010d7f82fb2e048774f73050fe7279bf45b43d95c063b9b66aabdb5 |
-| Linux (Intel 64-bit)   | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0-beta-03/linux-amd64/dart | d513e5fe05741d8e49a9d1d670744f2d84fda63e25d42e36be801a61671b71d5 |
+| Operating System       | Version | Download Link | SHA-256 Checksum |
+| ---------------------- | ------- | ------------- | ---------------- |
+| Windows (Intel 64-bit) | 3.0     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0/windows-amd64/dart.exe | a6e587694a39495ed00337bb8c816146161caf54d3c3c72031496acecb29ed28 |
+| Mac (Any CPU)          | 3.0     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0/mac-universal/DART.dmg | 33f5f634df80b0860bd50c42f58737bb874ebd21179e5acd99b78886df31abd7 |
+| Linux (Intel 64-bit)   | 3.0     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0/linux-amd64/dart | 79ad553782f063f07aca7044cd57d10d587ab38a869fdccade8a7c4f478b1717 |
 
 2. Follow the instructions below to start the app on your operating system.
 
@@ -174,16 +174,37 @@ Also, not that a number of tests call util.ProjectRoot(), which actually comes f
 
 ## Building for Release
 
-1. Run the build script from the project's top-level directory: `./scripts/build_dart.sh`
-2. On Mac, run the signing script from the top-level directory: `./scripts/mac_sign_and_notarize.sh`
+Before cutting a new release, be sure you have done the following:
 
-If you're code-signing on Mac, be sure you have a signing certificate and that you have created a local file called codesign.env that is based on [codesign_example.env](codesign_example.env). Note that that file includes instructions on how to set up Mac code signing. If you have trouble running the code signing process on Mac, run `./scripts/diagnose_cert_file.sh` for diagnostics.
+1. Installed [Wails](https://wails.io/docs/gettingstarted/installation)
+1. Installed Xcode, if you're running on Mac: `xcode-select --install`
+1. Installed npm: `brew install npm`
+1. Added AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KE to your environment.
+1. Set up your app-specific password on the Apple Developer site for Apple code signing.
+1. Run `wails doctor` to ensure that your system has all of the Wails requirements.
+1. Tag the release using `git tag -a <version> -m "Version <number>"`, where version is something like "v3.4" (lower-case v) and number is something like "3.4". You can run `git tag -l` to see a list of existing tags.
+1. In ReleaseNotes.md, put today's date next to the heading for version. Example: `# v3.4 - August 24, 2026`
+1. If you're code-signing on Mac, be sure you have a signing certificate and that you have created a local file called codesign.env that is based on [codesign_example.env](codesign_example.env). Note that that file includes instructions on how to set up Mac code signing. If you have trouble running the code signing process on Mac, run `./scripts/diagnose_cert_file.sh` for diagnostics.
 
-Since we're in very early alpha phase, we don't have a formal release process yet. For now, we build the app as decribed above and then manually copy it to our S3 public download bucket. Updates to the release notes are also done manually.
+Now you can do a test run of the the release script by running `./scripts/release.sh --precheck <version>`.
+
+If the test run reports no errors, run the full release script: `./scripts/release.sh <version>`
+
+The release script does the following:
+
+1. Builds DART
+1. Signs and notarizes DART on a Mac
+1. Creates S3 folders for the release
+1. Uploads the new binaries to the S3 folders
+1. Prints out a list of release links and checksums
+1. Reminds the developer--you--to update the DART download links in a number of locations. The script prints the locations to the screen and also prints the new URLs and checksums, so you can cut and paste them.
+
+Note that when you run `release.sh` on a Mac, it builds, signs and uploads only the MacOS version. You will need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. On those architectures, simple run `./scripts/release.sh <version>` and the script will do what it needs to do.
+
+Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
+
 
 For more on Wails build options, see https://wails.io/docs/guides/manual-builds/. Also note that the build system (and many other things) will be changing in Wails 3. See https://v3alpha.wails.io/whats-new/ for details.
-
-At the moment, we need to build the Wails app on each platform and architecture separately. This means we build Windows amd64 on a Windows amd64 machine, Linux amd64 on a Linux amd64 box, etc. Once we have CI/CD set up in GitLab, we should be able to do cross-platform builds using a method like the one described here: https://wails.io/docs/guides/crossplatform-build/
 
 We are currently not code-signing Windows builds because the process of obtaining a Windows signing certificate is prohibitive.
 
