@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 3.1 - [Not Yet Released]
+
+* Upgraded to use dart runner v1.0.5, which fixes two bugs that caused invalid path names in bagged files. See the release notes for version v1.0.5 in the [Dart Runner Changelog](https://github.com/APTrust/dart-runner/blob/master/changelog.md)
+
 ## 3.0 - April 28, 2026
 
 * Fixed https://github.com/APTrust/dart/issues/568, which could cause crashes in rare cases when user submits job packaging form.

@@ -1,6 +1,6 @@
 module github.com/APTrust/dart/v3
 
-go 1.24.11
+go 1.25.0
 
 // Force use of nsq v1.2.0 because v1.3.0 has breaking changes.
 replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
@@ -14,7 +14,7 @@ replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20
 // replace github.com/APTrust/dart-runner => ../dart-runner
 
 require (
-	github.com/APTrust/dart-runner v1.0.4
+	github.com/APTrust/dart-runner v1.0.5
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/minio/minio-go/v7 v7.0.98
@@ -93,11 +93,11 @@ require (
 	github.com/wailsapp/mimetype v1.4.1 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/crypto v0.47.0 // indirect
+	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394 // indirect
-	golang.org/x/net v0.49.0 // indirect
-	golang.org/x/sys v0.40.0 // indirect
-	golang.org/x/text v0.33.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/libc v1.61.13 // indirect

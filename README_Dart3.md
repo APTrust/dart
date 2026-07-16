@@ -279,7 +279,12 @@ That will update go.mod and go.sum as necessary.
 
 ## Testing
 
-`./scripts/run tests`
+`./scripts/run.sh tests`
+
+If you see an error saying **go: no such tool "covdata"**, try running the tests with the following command:
+
+`GOTOOLCHAIN=go1.25.0+auto ./scripts/run.sh tests`
+
 
 ## Code Signing for Mac OS
 
