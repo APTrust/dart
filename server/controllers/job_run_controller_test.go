@@ -8,7 +8,6 @@ import (
 	"runtime"
 	"strconv"
 	"testing"
-	"time"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
@@ -116,9 +115,7 @@ func TestJobRunExecute(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/jobs/run/%s", job.ID), nil)
 	dartServer.ServeHTTP(recorder, req)
 
-	for !recorder.Flushed {
-		time.Sleep(250 * time.Millisecond)
-	}
+	waitForRecorderFlush(t, recorder)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	html := recorder.Body.String()

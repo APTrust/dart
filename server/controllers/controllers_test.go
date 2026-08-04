@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
@@ -36,6 +37,7 @@ type StreamRecorder struct {
 	EventCount   int
 	ResultEvent  *core.EventMessage
 	LastEvent    *core.EventMessage
+	closeOnce    sync.Once
 	mutex        sync.RWMutex
 }
 
@@ -67,7 +69,9 @@ func (r *StreamRecorder) WriteString(data []byte) (int, error) {
 }
 
 func (r *StreamRecorder) close() {
-	r.closeChannel <- true
+	r.closeOnce.Do(func() {
+		close(r.closeChannel)
+	})
 }
 
 func NewStreamRecorder() *StreamRecorder {
@@ -77,8 +81,16 @@ func NewStreamRecorder() *StreamRecorder {
 		0,
 		nil,
 		nil,
+		sync.Once{},
 		sync.RWMutex{},
 	}
+}
+
+func waitForRecorderFlush(t *testing.T, recorder *StreamRecorder) {
+	t.Helper()
+	require.Eventually(t, func() bool {
+		return recorder.Flushed
+	}, 30*time.Second, 250*time.Millisecond, "timeout waiting for SSE disconnect event")
 }
 
 type PostTestSettings struct {
