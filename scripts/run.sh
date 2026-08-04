@@ -139,15 +139,17 @@ start_sftp() {
         echo "Started SFTP server with id $DOCKER_SFTP_ID"
         echo "Waiting for SFTP server to be ready..."
         local attempts=0
-        until timeout 1 bash -c '</dev/tcp/127.0.0.1/2222' > /dev/null 2>&1; do
-            attempts=$((attempts + 1))
-            if [ $attempts -ge 30 ]; then
-                echo "SFTP server did not become ready in time"
-                docker logs --tail 80 "$DOCKER_SFTP_ID" || true
-                return 1
-            fi
-            sleep 1
-        done
+        if [ "$(uname)" = "Linux" ]; then
+            until timeout 1 bash -c '</dev/tcp/127.0.0.1/2222' > /dev/null 2>&1; do
+                attempts=$((attempts + 1))
+                if [ $attempts -ge 30 ]; then
+                    echo "SFTP server did not become ready in time"
+                    docker logs --tail 80 "$DOCKER_SFTP_ID" || true
+                    return 1
+                fi
+                sleep 1
+            done
+        fi
         echo "To log in and view the contents, use"
         echo "sftp -P 2222 pw_user@localhost"
         echo "The password is 'password' without the quotes"
