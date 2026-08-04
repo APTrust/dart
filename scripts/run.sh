@@ -51,7 +51,10 @@ sftp_image_name() {
 start_minio() {
     echo "Starting Minio container"
     docker rm -f dart-minio > /dev/null 2>&1 || true
-    DOCKER_MINIO_ID=$(docker run --name dart-minio --rm -p 9899:9000 -p 9001:9001 -v ~/tmp/minio:/data -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" -d quay.io/minio/minio server /data --console-address ":9001")
+    # Must exist and be owned by the current user before the container starts,
+    # otherwise Docker auto-creates it as root and --user can't write to /data.
+    mkdir -p "$HOME/tmp/minio"
+    DOCKER_MINIO_ID=$(docker run --name dart-minio --rm -p 9899:9000 -p 9001:9001 -v ~/tmp/minio:/data --user "$(id -u):$(id -g)" -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" -d quay.io/minio/minio server /data --console-address ":9001")
     local exit_code=$?
     DOCKER_MINIO_ID=$(echo "$DOCKER_MINIO_ID" | tr -d '[:space:]')
     if [ $exit_code -eq 0 ]; then
@@ -124,22 +127,36 @@ start_sftp() {
     local image
     image=$(sftp_image_name)
     echo "Using SFTP config options from $sftp_dir"
-    docker rm -f dart-sftp > /dev/null 2>&1 || true
-    DOCKER_SFTP_ID=$(docker run --name dart-sftp --rm \
-        -v "$sftp_dir/sftp_user_key.pub:/home/key_user/.ssh/keys/sftp_user_key.pub:ro" \
+    DOCKER_SFTP_ID=$(docker run \
+        --ulimit nofile=512:512 \
+        -v "$sftp_dir/sftp_user_key.pub:/home/key_user/.ssh/keys/sftp_user_key.pub" \
+        -v "$sftp_dir/sftp_user_key.pub:/home/key_user/.ssh/keys/id_rsa.pub:ro" \
         -v "$sftp_dir/users.conf:/etc/sftp/users.conf:ro" \
         -p 2222:22 -d "$image")
     local exit_code=$?
-    DOCKER_SFTP_ID=$(echo "$DOCKER_SFTP_ID" | tr -d '\n')
+    DOCKER_SFTP_ID=$(echo "$DOCKER_SFTP_ID" | tr -d '[:space:]')
     if [ $exit_code -eq 0 ]; then
         echo "Started SFTP server with id $DOCKER_SFTP_ID"
-        echo "To log in and view the contents, use:"
+        echo "Waiting for SFTP server to be ready..."
+        local attempts=0
+        until timeout 1 bash -c '</dev/tcp/127.0.0.1/2222' > /dev/null 2>&1; do
+            attempts=$((attempts + 1))
+            if [ $attempts -ge 30 ]; then
+                echo "SFTP server did not become ready in time"
+                docker logs --tail 80 "$DOCKER_SFTP_ID" || true
+                return 1
+            fi
+            sleep 1
+        done
+        echo "To log in and view the contents, use"
         echo "sftp -P 2222 pw_user@localhost"
         echo "The password is 'password' without the quotes"
         SFTP_STARTED=true
+        return 0
     else
         echo "Error starting SFTP docker container. Is one already running?"
         echo "$DOCKER_SFTP_ID"
+        return 1
     fi
 }
 
@@ -183,6 +200,22 @@ cleanup() {
 }
 
 run_tests() {
+    if [ -n "${GOROOT:-}" ]; then
+        echo "Ignoring external GOROOT=$GOROOT to avoid toolchain mismatch"
+        unset GOROOT
+    fi
+    if [ -n "${GOTOOLDIR:-}" ]; then
+        echo "Ignoring external GOTOOLDIR=$GOTOOLDIR to avoid toolchain mismatch"
+        unset GOTOOLDIR
+    fi
+
+    local required_go
+    required_go=$(awk '/^go / {print $2; exit}' "$PROJECT_ROOT/go.mod")
+    if [ -n "$required_go" ]; then
+        export GOTOOLCHAIN="go${required_go}+auto"
+        echo "Using GOTOOLCHAIN=$GOTOOLCHAIN"
+    fi
+
     make_test_dirs
     start_minio
     start_sftp
