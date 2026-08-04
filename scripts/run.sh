@@ -133,6 +133,10 @@ stop_minio() {
 
 start_sftp() {
     local sftp_dir="$PROJECT_ROOT/testdata/sftp"
+    # Docker Desktop on Windows requires Windows-style paths for volume mounts
+    if [[ "$(uname -s)" == *MINGW* ]] || [[ "$(uname -s)" == *CYGWIN* ]]; then
+        sftp_dir=$(cygpath -w "$sftp_dir" | tr '\\' '/')
+    fi
     local image
     image=$(sftp_image_name)
     echo "Using SFTP config options from $sftp_dir"
