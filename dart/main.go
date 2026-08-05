@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/APTrust/dart-runner/core"
-	"github.com/APTrust/dart/server"
+	"github.com/APTrust/dart/v3/server"
 )
 
 // Version value is injected at build time by ./scripts/build_dart.sh

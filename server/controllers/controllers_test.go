@@ -12,7 +12,7 @@ import (
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
-	"github.com/APTrust/dart/server"
+	"github.com/APTrust/dart/v3/server"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/APTrust/dart-runner/core"
-	"github.com/APTrust/dart/server/controllers"
+	"github.com/APTrust/dart/v3/server/controllers"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
