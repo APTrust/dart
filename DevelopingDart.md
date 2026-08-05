@@ -51,11 +51,11 @@ To work on DART 3, you will need to do the following:
 After completing these steps, run the following to ensure everything works:
 
 1. Start Docker Desktop, as this is required for testing.
-2. In the top level directory of the cloned https://github.com/APTrust/dart repository, run `wails build`
-3. Run `go get github.com/APTrust/dart/v3/dart`
-4. Run `go get github.com/APTrust/dart/v3/server`
-5. Change into the dart-runner directory and run `./scripts/run.sh tests`
-6. Change into the dart directory and run `./scripts/run.sh tests`
+2. In the top level directory of the cloned https://github.com/APTrust/dart-runner repository, run `./scripts/run.sh tests`
+3. Now navigate to the top level directory of the cloned https://github.com/APTrust/dart repository, and run `wails build`
+4. Staying in the dart directory, run `go get github.com/APTrust/dart/v3/dart`
+5. Also in the dart directory, run `go get github.com/APTrust/dart/v3/server`
+6. Finally, in the dart directory run `./scripts/run.sh tests`
 
 Running the tests should retrieve all of the Go dependencies. If tests pass, you're ready to start developing. Most test errors are due to Docker containers not starting. Check the output messages for messages about Docker containers, and be sure that Docker Desktop is running.
 
