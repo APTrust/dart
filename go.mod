@@ -1,4 +1,4 @@
-module github.com/APTrust/dart/v3
+module github.com/APTrust/dart
 
 go 1.25.0
 

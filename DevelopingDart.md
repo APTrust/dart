@@ -43,16 +43,17 @@ We found that after 8 years, only one group ever used the plugin system, so we a
 To work on DART 3, you will need to do the following:
 
 1. Install Visual Studio Code or your development environment of choice
-1. Clone the DART repo from https://github.com/APTrust/dart
-1. Clone the DART Runner repo from https://github.com/APTrust/dart-runner
-1. Check the [go.mod](https://github.com/APTrust/dart/blob/master/go.mod) files of both projects and be sure you're running a compatible version of Go.
-1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar container engine. This is required for interactive tests.
+2. Clone the DART repo from https://github.com/APTrust/dart
+3. Clone the DART Runner repo from https://github.com/APTrust/dart-runner
+4. Check the [go.mod](https://github.com/APTrust/dart/blob/master/go.mod) files of both projects and be sure you're running a compatible version of Go.
+5. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or a similar container engine. This is required for interactive tests.
 
 After completing these steps, run the following to ensure everything works:
 
 1. Start Docker Desktop, as this is required for testing.
-1. Change into the dart-runner directory and run `./scripts/run.sh tests`
-1. Change into the dart directory and run `./scripts/run.sh tests`
+2. In the top level directory of the cloned https://github.com/APTrust/dart repository, run `wails build`
+3. Change into the dart-runner directory and run `./scripts/run.sh tests`
+4. Change into the dart directory and run `./scripts/run.sh tests`
 
 Running the tests should retrieve all of the Go dependencies. If tests pass, you're ready to start developing. Most test errors are due to Docker containers not starting. Check the output messages for messages about Docker containers, and be sure that Docker Desktop is running.
 
@@ -94,7 +95,7 @@ Note the **replace** function above. This tells Go to replace github.com/APTrust
 Also, be sure to do the following when pushing code back to GitHub for a pull request:
 
 1. Comment out the `replace` statement in DART 3's go.mod.
-1. Point the require statement for dart-runner to the actual commit you want to include in your DART 3 build. For example, instead of requiring `github.com/APTrust/dart-runner v1.0.2`, you would require somthing like `github.com/APTrust/dart-runner v0.0.0-20210307081110-f21760c49a8d`. You should be able to add this line to your go.mod file by running `go get github.com/APTrust/dart-runner f4f0e131cbaf46741add670978507732b48f735c`
+2. Point the require statement for dart-runner to the actual commit you want to include in your DART 3 build. For example, instead of requiring `github.com/APTrust/dart-runner v1.0.2`, you would require somthing like `github.com/APTrust/dart-runner v0.0.0-20210307081110-f21760c49a8d`. You should be able to add this line to your go.mod file by running `go get github.com/APTrust/dart-runner f4f0e131cbaf46741add670978507732b48f735c`
 
 Note that you can ignore these steps if you're making changes only to DART 3 and not to DART Runner.
 
@@ -103,10 +104,10 @@ Note that you can ignore these steps if you're making changes only to DART 3 and
 To debug jobs that upload files, you'll need to start DART 3 and add two Storage Service settings. These settings tell DART how to connect to locally-running Docker S3 and SFTP containers.
 
 1. Open a terminal in the DART 3's top-level directory.
-1. Run `./scripts/run.sh services`. After a few seconds, this will open a browser window at http://localhost:8444/.
-1. In the DART browser window, click **Settings > Import Settings**.
-1. Select **Import from JSON (Cut and Paste)**.
-1. Paste the following JSON into the **Settings JSON** textbox, then click **Import**.
+2. Run `./scripts/run.sh services`. After a few seconds, this will open a browser window at http://localhost:8444/.
+3. In the DART browser window, click **Settings > Import Settings**.
+4. Select **Import from JSON (Cut and Paste)**.
+5. Paste the following JSON into the **Settings JSON** textbox, then click **Import**.
 
 Note that you will need to change the path in the JSON below, `/Users/diamond/aptrust/dart-runner/testdata/sftp/sftp_user_key`, to a path that is valid on your machine. You will find the sftp_user_key inside the dart-runner project, so this path should point to that project on your computer.
 
@@ -168,7 +169,7 @@ Note that you will need to change the path in the JSON below, `/Users/diamond/ap
 DART 3's [launch.json](https://github.com/APTrust/dart/blob/master/.vscode/launch.json) file includes debugging configuration. The easiest way to debug is to follow these steps:
 
 1. From DART 3's top-level directory, run `./scripts/run.sh services`. This starts Docker containers that run local S3 and SFTP servers.
-1. In Visual Studio, click the Run and Debug icon in the left nav bar (the triangle with the insect on it), then click the green triangle next to the "Launch Program" label near the upper left corner of the Visual Studio window.
+2. In Visual Studio, click the Run and Debug icon in the left nav bar (the triangle with the insect on it), then click the green triangle next to the "Launch Program" label near the upper left corner of the Visual Studio window.
 
 When you follow these steps, you should be able to debug DART Runner code in addition to DART code. Place a breakpoint in the DART code just before a call to a DART Runner function. Once you hit the breakpoint, you can step into the DART Runner code and begin placing additional breakpoints there.
 
