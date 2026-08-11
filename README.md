@@ -13,6 +13,13 @@ packaging formats in future.
 
 DART 3 is the current, stable version of DART. It runs on Mac, Windows, and Linux.
 
+To upgrade from DART 2 to DART 3, you may find it helpful to import your settings.
+[Import Settings into DART 3](https://aptrust.github.io/dart-docs/dart3/users/settings/import/).
+
+If you are using an Intel-based Mac, you'll need to download DART 2 instead. Please refer
+to the [DART 2 page](README_Dart2.md) for installation links. Otherwise, we recommend using
+DART 3.
+
 ## DART 3 Installation
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
