@@ -1,4 +1,4 @@
-## DART 2 (Current Version)
+## DART 2 (Old Version)
 
 [![Build Status](https://travis-ci.com/APTrust/dart.svg?branch=master)](https://travis-ci.org/APTrust/dart)
 [![Build status](https://ci.appveyor.com/api/projects/status/i5d8hrlan9kph5np?svg=true)](https://ci.appveyor.com/project/aptrust/dart/branch/master)
@@ -25,15 +25,14 @@ tool for creating archival packages and sending them to a remote repository.
 
 ## Installation
 
+> [!NOTE]
+> DART 2 is no longer under current development. We recommend switching to the new DART 3, unless you are using an Intel-based Mac, in which case you'll want to download DART 2 below. [DART 3 README](https://github.com/APTrust/dart-runner/blob/master/server/README.md).
+
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
 * [Mac OSX v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.22.dmg)
 * [Windows v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.22.exe)
 * [Linux v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.22_amd64.deb)
-
-> [!NOTE]
-> While DART 2.0.22 is the current stable version, an early alpha version of DART 3 is available. Future development will occur in DART 3, but for now, it's not quite ready for production use. We welcome testers and feedback on the new version. If you're interested in learning more, take a look at the [DART 3 README](https://github.com/APTrust/dart-runner/blob/master/server/README.md).
-
 
 ## Documentation
 
