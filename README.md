@@ -11,32 +11,20 @@ upload materials to a remote digital repository.
 DART currently supports the BagIt packaging format, but may include additional
 packaging formats in future.
 
-DART 2 is the current, stable version of DART. It runs on Mac, Windows, and Linux.
+DART 3 is the current, stable version of DART. It runs on Mac, Windows, and Linux.
 
-We have a DART 3 beta available, and it's close to being ready for production
-use. If you don't want to use the beta version, you can start with DART 2, which is known to be stable.
+To upgrade from DART 2 to DART 3, you may find it helpful to import your settings.
+[Import Settings into DART 3](https://aptrust.github.io/dart-docs/dart3/users/settings/import/).
 
-## DART 2 Installation
-
-Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
-
-* [Mac OSX v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART-2.0.22.dmg)
-* [Windows v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART+Setup+2.0.22.exe)
-* [Linux v2.0.22](https://s3.amazonaws.com/aptrust.public.download/DART/DART_2.0.22_amd64.deb)
-
-## DART 2 Documentation
-
-[User and developer docs](https://aptrust.github.io/dart-docs)
-
-[API documentation](https://aptrust.github.io/dart)
-
-[Change Log / Release Notes](ReleaseNotes.md)
-
-[DART 2 page](README_Dart2.md)
+If you are using an Intel-based Mac, you'll need to download DART 2 instead. Please refer
+to the [DART 2 page](README_Dart2.md) for installation links. Otherwise, we recommend using
+DART 3.
 
 ## DART 3 Installation
 
-DART 3 is currently in beta phase and is not yet suitable for production workloads, but it's getting close. To install DART 3, see the [DART 3 page](README_Dart3.md). Or, if you just want to get to it, you can download the beta from the links below.
+Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
+
+To install DART 3, see the [DART 3 page](README_Dart3.md). Or, if you just want to get to it, you can download the official release from the links below.
 
 | Operating System       | Version | Download Link | SHA-256 Checksum |
 | ---------------------- | ------- | ------------- | ---------------- |
@@ -50,6 +38,15 @@ On Windows, double click the app icon, then click **More Info** and **Run Anyway
 
 On Linux, you may have to grant DART executable permissions by running `chmod 0755 dart` in the directory containing the DART program.
 
+## DART 3 Documentation
+
+[User and developer docs](https://aptrust.github.io/dart-docs)
+
+[API documentation](https://aptrust.github.io/dart)
+
+[Change Log / Release Notes](ReleaseNotes.md)
+
+[DART 3 page](README_Dart3.md)
 
 # DART User Group
 
