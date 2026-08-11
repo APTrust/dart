@@ -1,8 +1,8 @@
-# DART 3
+# DART 3 (Current Version)
 
-DART 3 is currently in BETA mode. We encourage you to use it for testing and to report bugs and feature requests at https://github.com/APTrust/dart/issues.
+DART 3 is the latest version of DART.
 
-Be cautious when using the beta version for essential workflows! Wait for a stable release build if you want to use this in production.
+Please report bugs and feature requests at https://github.com/APTrust/dart/issues.
 
 ## Getting Started
 
