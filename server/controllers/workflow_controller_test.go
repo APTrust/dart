@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
@@ -367,9 +366,7 @@ func testWorkflowRunBatch(t *testing.T, batchUrl string) {
 	req, _ := http.NewRequest(http.MethodGet, batchUrl, nil)
 	dartServer.ServeHTTP(recorder, req)
 
-	for !recorder.Flushed {
-		time.Sleep(250 * time.Millisecond)
-	}
+	waitForRecorderFlush(t, recorder)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	html := recorder.Body.String()

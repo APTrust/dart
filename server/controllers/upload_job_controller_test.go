@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
@@ -155,11 +154,7 @@ func testUploadJobRun(t *testing.T, id string) {
 	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/upload_jobs/run/%s", id), nil)
 	dartServer.ServeHTTP(recorder, req)
 
-	// This should wrap up in <250 ms, but we'll give it
-	// as long as it needs.
-	for !recorder.Flushed {
-		time.Sleep(250 * time.Millisecond)
-	}
+	waitForRecorderFlush(t, recorder)
 
 	assert.Equal(t, http.StatusOK, recorder.Code)
 	html := recorder.Body.String()
