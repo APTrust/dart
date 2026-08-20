@@ -17,6 +17,7 @@ build/bin
 node_modules
 frontend/dist
 frontend/package.json.md5
+frontend/wailsjs
 
 # Test coverage output
 c.out

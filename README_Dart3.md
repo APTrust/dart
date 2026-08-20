@@ -151,10 +151,20 @@ Server-hosted DART could have a number of advantages. If hosted on a server atta
 
 ## Prerequisites for Development
 
-* Go > 1.23
+* Go > 1.25
 * Docker (to run Minio and SFTP containers)
+* [Wails](https://wails.io/docs/gettingstarted/installation)
+* [node/npm](https://formulae.brew.sh/formula/node#default) (required by Wails)
 
 ## Notes for Developers
+
+Before the first time you run tests, run the following to generate the necessary files in the frontend/wailsjs directory:
+
+`wails build`
+
+If that fails, try running `wails doctor` to diagnose missing dependencies.
+
+After `wails build` has been run once, you can run tests with the following command:
 
 Testing: `./scripts/run.sh tests`
 
