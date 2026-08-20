@@ -26,7 +26,7 @@ tool for creating archival packages and sending them to a remote repository.
 ## Installation
 
 > [!NOTE]
-> DART 2 is no longer under current development. We recommend switching to the new DART 3, unless you are using an Intel-based Mac, in which case you'll want to download DART 2 below. [DART 3 README](https://github.com/APTrust/dart-runner/blob/master/server/README.md).
+> DART 2 is no longer under current development. We recommend switching to the new DART 3, unless you are using an Intel-based Mac, in which case you'll want to download DART 2 below. [DART 3 README](https://github.com/APTrust/dart/blob/master/README_Dart3.md).
 
 Download the DART installer for your system and then check out our [Getting Started](https://aptrust.github.io/dart-docs/users/getting_started/) page.
 
