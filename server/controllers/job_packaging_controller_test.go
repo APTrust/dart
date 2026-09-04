@@ -10,6 +10,7 @@ import (
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
 	"github.com/APTrust/dart-runner/util"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -121,4 +122,42 @@ func TestJobSavePackagingWithNilPackageOp(t *testing.T) {
 	assert.Equal(t, "/path/to/output.tar", reloadedJob.PackageOp.OutputPath)
 	assert.Equal(t, constants.PackageFormatBagIt, reloadedJob.PackageOp.PackageFormat)
 	assert.Equal(t, "output.tar", reloadedJob.PackageOp.PackageName)
+}
+
+func TestJobSavePackagingDuplicateName(t *testing.T) {
+	defer core.ClearDartTable()
+
+	// Existing job with the target name
+	job1 := loadTestJob(t)
+	job1.PackageOp.PackageName = "duplicate-name.tar"
+	require.NoError(t, core.ObjSave(job1))
+
+	// Job we will attempt to save with the duplicate name
+	job2 := loadTestJob(t)
+	// Ensure a different UUID so DB treats it as a separate object
+	id, err := uuid.NewV7()
+	require.Nil(t, err, "uuid generator blew its own mind")
+	job2.ID = id.String()
+	job2.PackageOp.PackageName = "unique-name.tar"
+	require.NoError(t, core.ObjSave(job2))
+
+	values := url.Values{}
+	values.Set("direction", "previous")
+	values.Set("BagItSerialization", "application/tar")
+	values.Set("OutputPath", "/path/to/output.tar")
+	values.Set("PackageFormat", constants.PackageFormatBagIt)
+	// Try to change job2's name to the existing job's name
+	values.Set("PackageName", "duplicate-name.tar")
+
+	settings := PostTestSettings{
+		EndpointUrl:          fmt.Sprintf("/jobs/packaging/%s", job2.ID),
+		Params:               values,
+		ExpectedResponseCode: http.StatusInternalServerError,
+		ExpectedContent: []string{
+			"DART cannot save this job because there is an existing job",
+			"DART job names must be unique",
+			"duplicate-name.tar",
+		},
+	}
+	DoSimplePostTest(t, settings)
 }
