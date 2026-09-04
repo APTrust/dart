@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -134,7 +135,28 @@ func JobSavePackaging(c *gin.Context) {
 	// If direction == "previous", just save and go back.
 	err := core.ObjSaveWithoutValidation(job)
 	if err != nil {
-		AbortWithErrorHTML(c, http.StatusInternalServerError, err)
+		errorToDisplay := err
+		// Fixes https://trello.com/c/4akB0rL9.
+		// There is a reason we prevent duplicate job names, but unless we
+		// explain it clearly to users, it looks like a bug. This fix makes
+		// the explanation more clear. Someday, messages like this should go
+		// into separate HTML templates and/or should be made easier to
+		// internationalize.
+		if err.Error() == constants.ErrUniqueConstraint.Error() {
+			message := fmt.Sprintf(
+				`DART cannot save this job because there is an existing job
+				with the same name. DART job names must be unique because it's
+				too confusing to users to have multiple bags with the same name
+				and different contents. If you want to add files to the existing
+				bag, add them to the older job named "%s". If you want to
+				create a new bag, please rename this job to something other
+				than "%s".`, job.Name(), job.Name())
+			errorToDisplay = errors.New(message)
+			core.Dart.Log.Errorf(
+				`Caught unique constraint error on job name when attempting to save
+				job "%s". Reporting more instructive error message to user.`, job.Name())
+		}
+		AbortWithErrorHTML(c, http.StatusInternalServerError, errorToDisplay)
 		return
 	}
 	c.Redirect(http.StatusFound, nextPage)

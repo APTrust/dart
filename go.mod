@@ -19,11 +19,10 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/minio/minio-go/v7 v7.0.98
 	github.com/stretchr/testify v1.11.1
-	github.com/wailsapp/wails/v2 v2.15.0
+	github.com/wailsapp/wails/v2 v2.10.1
 )
 
 require (
-	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3 // indirect
 	github.com/APTrust/preservation-services v0.0.0-20260303193921-0cefb01f4e00 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -46,7 +45,6 @@ require (
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
-	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/julienschmidt/httprouter v1.3.0 // indirect
