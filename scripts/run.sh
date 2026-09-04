@@ -123,11 +123,34 @@ start_sftp() {
     local sftp_dir="$PROJECT_ROOT/testdata/sftp"
     local image
     image=$(sftp_image_name)
+    # Resolve host file paths and print diagnostics. On Windows (Git Bash / MSYS),
+    # Docker may need a Windows-style path for -v mounts; attempt conversion
+    # using `cygpath` when available.
+    local host_key_pub="$sftp_dir/sftp_user_key.pub"
+    local host_users_conf="$sftp_dir/users.conf"
+
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            if command -v cygpath >/dev/null 2>&1; then
+                # Convert to Windows path and normalize backslashes to slashes
+                host_key_pub=$(cygpath -w "$host_key_pub" | sed 's#\\\\#/#g')
+                host_users_conf=$(cygpath -w "$host_users_conf" | sed 's#\\\\#/#g')
+            fi
+            ;;
+    esac
+
     echo "Using SFTP config options from $sftp_dir"
+    echo "  host_key_pub: $host_key_pub"
+    echo "  host_users_conf: $host_users_conf"
+    ls -l "$sftp_dir" > /dev/null 2>&1 || true
+    if [ ! -f "$host_users_conf" ]; then
+        echo "ERROR: users.conf not found at $host_users_conf"
+    fi
+
     docker rm -f dart-sftp > /dev/null 2>&1 || true
     DOCKER_SFTP_ID=$(docker run --name dart-sftp --rm \
-        -v "$sftp_dir/sftp_user_key.pub:/home/key_user/.ssh/keys/sftp_user_key.pub:ro" \
-        -v "$sftp_dir/users.conf:/etc/sftp/users.conf:ro" \
+        -v "$host_key_pub:/home/key_user/.ssh/keys/sftp_user_key.pub:ro" \
+        -v "$host_users_conf:/etc/sftp/users.conf:ro" \
         -p 2222:22 -d "$image")
     local exit_code=$?
     DOCKER_SFTP_ID=$(echo "$DOCKER_SFTP_ID" | tr -d '\n')
@@ -187,6 +210,28 @@ run_tests() {
     start_minio
     start_sftp
     go clean -testcache
+
+    # Set GOTOOLCHAIN based on the project's go.mod `go` directive. This
+    # reads the `go` version (e.g. "1.20" or "1.25") and converts it to a
+    # three-part version if necessary (e.g. "1.20.0"), then prefixes with
+    # "go" to produce the toolchain name used by `go` toolchains like
+    # "go1.25.0+auto". This fixes an issue with covdata not being found in
+    # Go 1.25+ when using the `go test -coverprofile` option.
+    local go_mod_file="$PROJECT_ROOT/go.mod"
+    if [ -f "$go_mod_file" ]; then
+        local go_ver
+        go_ver=$(awk '/^go[ \t]+/ {print $2; exit}' "$go_mod_file")
+        if [ -n "$go_ver" ]; then
+            # Ensure we have three components (major.minor.patch)
+            local parts
+            parts=$(echo "$go_ver" | awk -F. '{print NF}')
+            if [ "$parts" -eq 2 ]; then
+                go_ver="${go_ver}.0"
+            fi
+            export GOTOOLCHAIN="go${go_ver}+auto"
+            echo "Using GOTOOLCHAIN=$GOTOOLCHAIN"
+        fi
+    fi
     go test -race -p 1 ./... -coverprofile c.out
     local exit_code=$?
     if [ $exit_code -eq 0 ]; then
