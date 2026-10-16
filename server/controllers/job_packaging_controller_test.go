@@ -152,10 +152,9 @@ func TestJobSavePackagingDuplicateName(t *testing.T) {
 	settings := PostTestSettings{
 		EndpointUrl:          fmt.Sprintf("/jobs/packaging/%s", job2.ID),
 		Params:               values,
-		ExpectedResponseCode: http.StatusInternalServerError,
+		ExpectedResponseCode: http.StatusBadRequest,
 		ExpectedContent: []string{
-			"DART cannot save this job because there is an existing job",
-			"DART job names must be unique",
+			"A job already exists with this name.",
 			"duplicate-name.tar",
 		},
 	}

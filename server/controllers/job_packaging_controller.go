@@ -21,33 +21,44 @@ func JobShowPackaging(c *gin.Context) {
 		return
 	}
 	job := result.Job()
+	workflow := loadJobWorkflow(job)
+	if workflow != nil {
+		job.PackageOp.BagItSerialization = workflow.Serialization
+	}
+	data := packagingPageData(c, job, job.ToForm(), workflow)
+	c.HTML(http.StatusOK, "job/packaging.html", data)
+}
+
+// loadJobWorkflow returns the job's workflow, or nil if it has none or it can't be loaded.
+func loadJobWorkflow(job *core.Job) *core.Workflow {
+	if job.WorkflowID == "" {
+		return nil
+	}
+	result := core.ObjFind(job.WorkflowID)
+	if result.Error != nil {
+		core.Dart.Log.Warningf("While running workflow job, JobPackagingController could not find workflow with id %s", job.WorkflowID)
+		return nil
+	}
+	return result.Workflow()
+}
+
+// packagingPageData builds the template data for job/packaging.html.
+// The page's JavaScript needs every key, or it renders them as null.
+func packagingPageData(c *gin.Context, job *core.Job, form *core.Form, workflow *core.Workflow) gin.H {
 	baggingDir, err := core.GetAppSetting(constants.BaggingDirectory)
 	if err != nil {
 		baggingDir = filepath.Join(core.Dart.Paths.Documents, "DART")
 		core.Dart.Log.Warningf("Bagging Directory not set. Defaulting to %s", baggingDir)
 	}
-
-	var workflow *core.Workflow
-	if job.WorkflowID != "" {
-		result := core.ObjFind(job.WorkflowID)
-		if result.Error != nil {
-			core.Dart.Log.Warningf("While running workflow job, JobPackagingController could not find workflow with id %s", job.WorkflowID)
-		} else {
-			workflow = result.Workflow()
-			job.PackageOp.BagItSerialization = workflow.Serialization
-		}
-	}
-
-	data := gin.H{
+	return gin.H{
 		"job":                  job,
-		"form":                 job.ToForm(),
+		"form":                 form,
 		"pathSeparator":        string(os.PathSeparator),
 		"baggingDir":           baggingDir,
 		"autoSetSerialization": getSerlializationAutosets(),
 		"helpUrl":              GetHelpUrl(c),
 		"workflow":             workflow,
 	}
-	c.HTML(http.StatusOK, "job/packaging.html", data)
 }
 
 // POST /jobs/packaging/:id
@@ -121,13 +132,7 @@ func JobSavePackaging(c *gin.Context) {
 				errors[fieldName] = value
 			}
 			job.Errors = errors
-			form := job.ToForm()
-			data := gin.H{
-				"job":           job,
-				"form":          form,
-				"pathSeparator": string(os.PathSeparator),
-				"helpUrl":       GetHelpUrl(c),
-			}
+			data := packagingPageData(c, job, job.ToForm(), loadJobWorkflow(job))
 			c.HTML(http.StatusBadRequest, "job/packaging.html", data)
 			return
 		}
@@ -144,18 +149,23 @@ func JobSavePackaging(c *gin.Context) {
 		// internationalize.
 		if err.Error() == constants.ErrUniqueConstraint.Error() {
 			message := fmt.Sprintf(
-				`DART cannot save this job because there is an existing job
-				with the same name. DART job names must be unique because it's
-				too confusing to users to have multiple bags with the same name
-				and different contents. If you want to add files to the existing
-				bag, add them to the older job named "%s". If you want to
-				create a new bag, please rename this job to something other
-				than "%s".`, job.Name(), job.Name())
+				`A job already exists with this name. If you want to add files 
+				to the existing bag, add them to the older job named "%s". 
+				If you want to create a new bag, please rename this job.`, job.Name())
 			errorToDisplay = errors.New(message)
 			core.Dart.Log.Errorf(
 				`Caught unique constraint error on job name when attempting to save
 				job "%s". Reporting more instructive error message to user.`, job.Name())
+
+			errors := make(map[string]string)
+			errors["PackageName"] = message
+			job.Errors = errors
+			data := packagingPageData(c, job, job.ToForm(), loadJobWorkflow(job))
+			c.HTML(http.StatusBadRequest, "job/packaging.html", data)
+			return
 		}
+
+		// Some error other than unique constraint violation occurred.
 		AbortWithErrorHTML(c, http.StatusInternalServerError, errorToDisplay)
 		return
 	}
