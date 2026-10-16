@@ -1,8 +1,8 @@
-# DART 3
+# DART 3 (Current Version)
 
-DART 3 is currently in BETA mode. We encourage you to use it for testing and to report bugs and feature requests at https://github.com/APTrust/dart/issues.
+DART 3 is the latest version of DART.
 
-Be cautious when using the beta version for essential workflows! Wait for a stable release build if you want to use this in production.
+Please report bugs and feature requests at https://github.com/APTrust/dart/issues.
 
 ## Getting Started
 
@@ -151,10 +151,20 @@ Server-hosted DART could have a number of advantages. If hosted on a server atta
 
 ## Prerequisites for Development
 
-* Go > 1.23
+* Go > 1.25
 * Docker (to run Minio and SFTP containers)
+* [Wails](https://wails.io/docs/gettingstarted/installation)
+* [node/npm](https://formulae.brew.sh/formula/node#default) (required by Wails)
 
 ## Notes for Developers
+
+Before the first time you run tests, run the following to generate the necessary files in the frontend/wailsjs directory:
+
+`wails build`
+
+If that fails, try running `wails doctor` to diagnose missing dependencies.
+
+After `wails build` has been run once, you can run tests with the following command:
 
 Testing: `./scripts/run.sh tests`
 

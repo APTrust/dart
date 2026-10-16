@@ -3,6 +3,7 @@
 ## 3.1 - [Not Yet Released]
 
 * Upgraded to use dart runner v1.0.5, which fixes two bugs that caused invalid path names in bagged files. See the release notes for version v1.0.5 in the [Dart Runner Changelog](https://github.com/APTrust/dart-runner/blob/master/changelog.md)
+* Clarified error message when user tries to create a new job that has the same name as an existing job. Fixes https://trello.com/c/4akB0rL9.
 
 ## 3.0 - April 28, 2026
 
