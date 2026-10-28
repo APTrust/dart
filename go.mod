@@ -1,6 +1,6 @@
 module github.com/APTrust/dart/v3
 
-go 1.25.0
+go 1.26.10
 
 // Force use of nsq v1.2.0 because v1.3.0 has breaking changes.
 replace github.com/nsqio/nsq => github.com/nsqio/nsq v1.2.0
@@ -14,7 +14,7 @@ replace github.com/nsqio/go-diskqueue => github.com/nsqio/go-diskqueue v0.0.0-20
 // replace github.com/APTrust/dart-runner => ../dart-runner
 
 require (
-	github.com/APTrust/dart-runner v1.0.5
+	github.com/APTrust/dart-runner v1.0.6
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
 	github.com/minio/minio-go/v7 v7.0.98
