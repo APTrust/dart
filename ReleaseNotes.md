@@ -2,7 +2,7 @@
 
 ## 3.0.1 - October 28, 2026
 
-* Upgraded to use DART Runner v1.0.6, which fixes two bugs that caused invalid path names in bagged files. See the release notes for version v1.0.6 in the [Dart Runner Changelog](https://github.com/APTrust/dart-runner/blob/master/changelog.md)
+* Upgraded to use DART Runner v1.0.6, which fixes two bugs that caused invalid path names in bagged files. See release notes for version v1.0.6 in the [Dart Runner Changelog](https://github.com/APTrust/dart-runner/blob/master/changelog.md)
 * Clarified error message when user tries to create a new job that has the same name as an existing job. Fixes https://trello.com/c/4akB0rL9.
 * Fixed Linux tests that failed due to permissions problems with Docker containers.
 
