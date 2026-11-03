@@ -12,8 +12,7 @@ Please report bugs and feature requests at https://github.com/APTrust/dart/issue
 | ---------------------- | ------- | ------------- | ---------------- |
 | Windows (Intel 64-bit) | 3.0.1     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0.1/windows-amd64/dart.exe | 49f4de3e01f3a3b1d1bbe46f68b15067b3edd3381c63610ccce454750b8a3b6e |
 | Mac (Any CPU)          | 3.0.1     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0.1/mac-universal/DART.dmg | 88da2988bcd765dd77827444958bbb1419fa8fa9027cb4e633ef8c7954d47cad |
-| Linux (Intel 64-bit)   | 3.0.1     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0.1/linux-amd64/dart
- | 9fd9dcc279d2893d46f954d359cdb20eee8d70ec615f01f6a77a5a9260a6a7bd |
+| Linux (Intel 64-bit)   | 3.0.1     | https://s3.amazonaws.com/aptrust.public.download/dart3/v3.0.1/linux-amd64/dart | 9fd9dcc279d2893d46f954d359cdb20eee8d70ec615f01f6a77a5a9260a6a7bd |
 
 2. Follow the instructions below to start the app on your operating system.
 
