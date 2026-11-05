@@ -14,7 +14,7 @@ body, .navbar, .nav-item, .nav-link, .dropdown-menu, .dropdown-item, tr, th, td,
     cursor: pointer;
 }
 .local-file {
-    color: #007bff;
+    color: #0056b3;
 }
 .clickable-card:hover {
     background-color: #f8f9fa;
@@ -289,4 +289,24 @@ of the original designer's color and display choices.
 .navbar-light .navbar-nav .nav-link:hover,
 .navbar-light .navbar-nav .nav-link:focus {
     color: #212529;
+}
+
+/*
+  Link contrast - issue #646
+  Bootstrap's default link color #007bff is only 3.98:1 on #fff and
+  3.43:1 on #eee. WCAG AA requires 4.5:1 for text.
+    normal:  #0056b3 -> 7.04:1 on #fff, 6.07:1 on #eee
+    hover:   #003d80 -> 10.61:1 on #fff, 9.15:1 on #eee
+  Bootstrap hard-codes the link color in .btn-link and .page-link
+  as well, so those are overridden here too. 
+*/
+a,
+.btn-link,
+.page-link {
+    color: #0056b3;
+}
+a:hover,
+.btn-link:hover,
+.page-link:hover {
+    color: #003d80;
 }
