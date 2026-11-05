@@ -251,3 +251,20 @@ svg.fa-file-pdf {
 table.borderless td,table.borderless th{
     border: none !important;
 }
+
+/*
+  Accessible focus indicator (issues #577 and #633).
+  Bootstrap's default light-blue focus ring has too little contrast
+  against both white backgrounds and the dark blue buttons.
+  This uses a white inner ring (contrasts with the button) plus a
+  dark navy outer ring (contrasts with the page background).
+  Each ring is at least 3:1 against the color it borders.
+*/
+.btn:focus,
+.btn.focus,
+.btn:not(:disabled):not(.disabled):active:focus,
+.btn:not(:disabled):not(.disabled).active:focus,
+.show > .btn.dropdown-toggle:focus {
+    outline: 0;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #00264d;
+}
