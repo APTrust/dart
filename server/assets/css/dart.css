@@ -253,6 +253,12 @@ table.borderless td,table.borderless th{
 }
 
 /*
+Accessibility overrides appear below. The bootstrap theme DART uses
+does not meet accessibility guidelines, so we have to override some
+of the original designer's color and display choices.
+*/
+
+/*
   Accessible focus indicator (issues #577 and #633).
   Bootstrap's default light-blue focus ring has too little contrast
   against both white backgrounds and the dark blue buttons.
@@ -267,4 +273,20 @@ table.borderless td,table.borderless th{
 .show > .btn.dropdown-toggle:focus {
     outline: 0;
     box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #00264d;
+}
+
+/*
+  Navbar link contrast (issue #647).
+  Bootstrap's .navbar-light links use rgba(0,0,0,.5), which on the
+  #e3f2fd navbar background is only 3.87:1. WCAG AA requires 4.5:1.
+    normal:        #495057 ->  7.16:1
+    hover/focus:   #212529 -> 13.51:1
+    active:        Bootstrap's rgba(0,0,0,.9) -> 15.57:1 (unchanged)
+*/
+.navbar-light .navbar-nav .nav-link {
+    color: #495057;
+}
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .nav-link:focus {
+    color: #212529;
 }
