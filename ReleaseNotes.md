@@ -1,5 +1,9 @@
 # DART Release Notes
 
+## 3.0.2 - [Not Yet Released]
+
+* Fixed settings import failures, which particularly affected attempts to import settings from DART 2. https://github.com/APTrust/dart/issues/663
+
 ## 3.0.1 - October 28, 2026
 
 * Upgraded to use DART Runner v1.0.6, which fixes two bugs that caused invalid path names in bagged files. See release notes for version v1.0.6 in the [Dart Runner Changelog](https://github.com/APTrust/dart-runner/blob/master/changelog.md)
