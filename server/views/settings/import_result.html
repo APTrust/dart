@@ -4,6 +4,13 @@
 
 <h2>Import Result</h2>
 
+{{ if .answerResults }}<h3>Your Answers</h3>
+<p>Answers marked with a red X could not be applied. DART still imported the settings they belong to, keeping the values from the import file. You can edit those settings later to correct them.</p>
+{{ end }}
+{{ range $index, $result := .answerResults }}
+  {{ template "settings/import_individual_result.html" $result }}
+{{ end }}
+
 <p>DART imported the following settings:</p>
 
 {{ if .appSettingResults }}<h3>Application Settings</h3>{{ end }}

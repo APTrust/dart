@@ -504,3 +504,85 @@ func TestSettingsImportAnswers(t *testing.T) {
 	}
 	DoSimplePostTest(t, postTestSettings)
 }
+
+func TestSettingsImportAnswersWithFailures(t *testing.T) {
+	defer core.ClearDartTable()
+	settings := loadExportSettings(t)
+
+	newSettings := settings[1]
+	newSettings.ID = uuid.NewString()
+
+	// Add questions that can't be applied: one with an unknown
+	// object type, and one that points to an object that isn't
+	// in the settings.
+	unknownType := &core.ExportQuestion{
+		ID:      uuid.NewString(),
+		Prompt:  "Question with unknown object type",
+		ObjType: "NoSuchType",
+		ObjID:   uuid.NewString(),
+		Field:   "Name",
+	}
+	missingObj := &core.ExportQuestion{
+		ID:      uuid.NewString(),
+		Prompt:  "Question about missing repo",
+		ObjType: constants.TypeRemoteRepository,
+		ObjID:   uuid.NewString(),
+		Field:   "UserID",
+	}
+	newSettings.Questions = append(newSettings.Questions, unknownType, missingObj)
+
+	settingsJson, err := json.Marshal(newSettings)
+	require.Nil(t, err)
+	params := url.Values{}
+	params.Set("settingsJson", string(settingsJson))
+	params.Set(newSettings.Questions[0].ID, "My Minio Service")
+	params.Set(newSettings.Questions[1].ID, "not a number") // Port: bad value
+	params.Set(newSettings.Questions[2].ID, "yes")
+	params.Set(newSettings.Questions[3].ID, "Naugahyde")
+	params.Set(newSettings.Questions[4].ID, "Restricted")
+	params.Set(newSettings.Questions[5].ID, "Joe Contact")
+	params.Set(newSettings.Questions[6].ID, "user@example.com")
+	params.Set(unknownType.ID, "whatever")
+	params.Set(missingObj.ID, "whatever")
+
+	// The failed answers are reported, and everything
+	// else is still imported.
+	expected := []string{
+		"Your Answers",
+		"fa-check text-success",
+		"fa-times text-danger",
+		"field Port requires a whole number",
+		"DART doesn&#39;t recognize the setting type &#34;NoSuchType&#34;.",
+		"The setting this answer belongs to isn&#39;t in the import file.",
+		"Test Setting (Imported)",
+		"APTrust - Wasabi VA (Imported)",
+		"Yale University Disk Image (Imported)",
+		"Sample Repo (Imported)",
+		"Local Minio (Imported)",
+		"Local SFTP (Imported)",
+	}
+
+	// Failed answers make the response StatusBadRequest,
+	// like any other failure on the import result page.
+	postTestSettings := PostTestSettings{
+		EndpointUrl:          "/settings/import/answers",
+		Params:               params,
+		ExpectedResponseCode: http.StatusBadRequest,
+		ExpectedContent:      expected,
+	}
+	html := PostUrl(t, postTestSettings)
+	ok, notFound := AssertContainsAllStrings(html, expected)
+	assert.True(t, ok, "Missing from page: %v", notFound)
+
+	// Each prompt appears once, and the reasons leave out
+	// the prompt and low-level parse errors.
+	assert.Equal(t, 1, strings.Count(html, "Question about missing repo"))
+	assert.Equal(t, 1, strings.Count(html, "Which port should we connect to"))
+	assert.NotContains(t, html, "cannot apply answer")
+	assert.NotContains(t, html, "invalid syntax")
+
+	// The answers that could be applied were saved.
+	result := core.ObjFind(newSettings.AppSettings[0].ID)
+	require.Nil(t, result.Error)
+	assert.Equal(t, "Naugahyde", result.AppSetting().Value)
+}

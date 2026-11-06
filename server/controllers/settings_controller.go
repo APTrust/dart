@@ -2,16 +2,16 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"math/rand"
 	"net/http"
-	"strconv"
+	"strings"
 
 	"github.com/APTrust/dart-runner/constants"
 	"github.com/APTrust/dart-runner/core"
-	"github.com/APTrust/dart-runner/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -344,7 +344,7 @@ func processImport(c *gin.Context, jsonBytes []byte) {
 	if len(settings.Questions) > 0 {
 		showImportQuestions(c, settings)
 	} else {
-		importSettings(c, settings)
+		importSettings(c, settings, nil)
 	}
 }
 
@@ -361,16 +361,60 @@ func showImportQuestions(c *gin.Context, settings *core.ExportSettings) {
 	c.HTML(http.StatusOK, "settings/import_questions.html", data)
 }
 
-func importSettings(c *gin.Context, settings *core.ExportSettings) {
-	// Save all app settings, bagit profiles, remote repos and storage services
-	// For each successful import, show green check next to type and name.
-	// For each failure, show red X beside type and name, and error message underneath.
-	type ImportResult struct {
-		Name      string
-		Succeeded bool
-		Error     string
+// answerFailureReason returns a short explanation of why the answer
+// to an import question could not be applied. The import result page
+// already shows the question's prompt, so unlike the error from
+// SetValueFromResponse, the reason doesn't repeat it.
+//
+// This depends on how SetValueFromResponse builds its errors: when the
+// answer can't be stored in the field, it wraps the field's error after
+// the prompt, and when it can't find what the question points to, it
+// returns a sentinel error with the prompt in the message.
+func answerFailureReason(question *core.ExportQuestion, err error) string {
+	inner := errors.Unwrap(err)
+	if inner != nil && inner != constants.ErrUnknownType && inner != constants.ErrNoSuchField && inner != constants.ErrInvalidOperation {
+		// The field rejected the value. Drop the low-level cause,
+		// such as a strconv parse error, and keep the part that
+		// says what the field needs.
+		reason := inner.Error()
+		if cause := errors.Unwrap(inner); cause != nil {
+			reason = strings.TrimSuffix(reason, ": "+cause.Error())
+		}
+		return reason
 	}
+	switch {
+	case errors.Is(err, constants.ErrUnknownType):
+		return fmt.Sprintf("DART doesn't recognize the setting type %q.", question.ObjType)
+	case errors.Is(err, constants.ErrNoSuchField) && question.ObjType == constants.TypeBagItProfile:
+		return "The BagIt profile tag this answer belongs to isn't in the import file."
+	case errors.Is(err, constants.ErrNoSuchField):
+		return "The setting this answer belongs to isn't in the import file."
+	}
+	return err.Error()
+}
+
+// ImportResult describes the outcome of importing one setting,
+// or of applying one answer to an import question. The import
+// result page shows a green check for each success and a red X
+// with the error message for each failure.
+type ImportResult struct {
+	Name      string
+	Succeeded bool
+	Error     string
+}
+
+// importSettings saves all app settings, BagIt profiles, remote
+// repositories and storage services, then shows the user which
+// ones were imported and which failed. answerResults describes
+// which of the user's answers to import questions were applied;
+// it's nil when the settings had no questions.
+func importSettings(c *gin.Context, settings *core.ExportSettings, answerResults []ImportResult) {
 	hasError := false
+	for _, result := range answerResults {
+		if !result.Succeeded {
+			hasError = true
+		}
+	}
 	appSettingResults := make([]ImportResult, 0)
 	for _, appSetting := range settings.AppSettings {
 		// On import, UserCanDelete defaults to false if
@@ -456,6 +500,7 @@ func importSettings(c *gin.Context, settings *core.ExportSettings) {
 		status = http.StatusBadRequest
 	}
 	data := gin.H{
+		"answerResults":     answerResults,
 		"appSettingResults": appSettingResults,
 		"profileResults":    profileResults,
 		"repoResults":       repoResults,
@@ -478,100 +523,29 @@ func SettingsImportAnswers(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusBadRequest, err)
 		return
 	}
-	// Copy answers to the right settings.
+	// Copy answers to the right settings. If an answer can't be
+	// applied (unknown object type, missing object or tag, or a
+	// value that doesn't fit the field), record the failure and
+	// keep going, so we import everything we can. The affected
+	// setting keeps the value it had in the import file.
+	answerResults := make([]ImportResult, 0, len(settings.Questions))
 	for _, question := range settings.Questions {
+		if question == nil {
+			continue
+		}
+		result := ImportResult{Name: question.Prompt, Succeeded: true}
 		response := c.PostForm(question.ID)
-		switch question.ObjType {
-		case constants.TypeAppSetting:
-			err = setAppSettingValue(settings, question, response)
-		case constants.TypeBagItProfile:
-			err = setBagItProfileValue(settings, question, response)
-		case constants.TypeRemoteRepository:
-			err = setRemoteRepoValue(settings, question, response)
-		case constants.TypeStorageService:
-			err = setStorageServiceValue(settings, question, response)
+		if err := settings.SetValueFromResponse(question, response); err != nil {
+			result.Succeeded = false
+			result.Error = answerFailureReason(question, err)
+			core.Dart.Log.Warningf("Skipping answer to import question %q: %v", question.Prompt, err)
 		}
-		if err != nil {
-			AbortWithErrorHTML(c, http.StatusInternalServerError, err)
-			return
-		}
+		answerResults = append(answerResults, result)
 	}
 
-	// At this point, we should have copied user answers
-	// to the right settings / profile tags, and now we
-	// can save the settings locally.
-	importSettings(c, settings)
-}
-
-func setAppSettingValue(settings *core.ExportSettings, question *core.ExportQuestion, value string) error {
-	err := constants.ErrNoSuchField
-	for i := range settings.AppSettings {
-		setting := settings.AppSettings[i]
-		if setting.ID == question.ObjID {
-			// All fields on AppSetting type are string
-			err = util.SetStringValue(setting, question.Field, value)
-		}
-	}
-	return err
-}
-
-func setBagItProfileValue(settings *core.ExportSettings, question *core.ExportQuestion, value string) error {
-	err := constants.ErrNoSuchField
-	for _, profile := range settings.BagItProfiles {
-		for i := range profile.Tags {
-			tag := profile.Tags[i]
-			// Unlike other settings, where question.Field
-			// refers to the field name of a struct, for
-			// BagIt profiles, question.Field refers to the
-			// UUID of a tag.
-			if tag.ID == question.Field {
-				// Tag values are always strings
-				tag.DefaultValue = value
-				err = nil
-			}
-		}
-	}
-	return err
-}
-
-func setRemoteRepoValue(settings *core.ExportSettings, question *core.ExportQuestion, value string) error {
-	err := constants.ErrNoSuchField
-	for i := range settings.RemoteRepositories {
-		repo := settings.RemoteRepositories[i]
-		if repo.ID == question.ObjID {
-			// All fields on RemoteRepository type are string
-			err = util.SetStringValue(repo, question.Field, value)
-		}
-	}
-	return err
-}
-
-func setStorageServiceValue(settings *core.ExportSettings, question *core.ExportQuestion, value string) error {
-	err := constants.ErrNoSuchField
-	for i := range settings.StorageServices {
-		ss := settings.StorageServices[i]
-		if ss.ID == question.ObjID {
-			if question.Field == "AllowsUpload" || question.Field == "AllowsDownload" {
-				boolValue, conversionError := util.StringToBool(value)
-				if conversionError != nil {
-					err = conversionError
-				} else {
-					err = util.SetBoolValue(ss, question.Field, boolValue)
-				}
-			} else if question.Field == "Port" {
-				intValue, conversionError := strconv.Atoi(value)
-				if conversionError != nil {
-					err = conversionError
-				} else {
-					err = util.SetIntValue(ss, question.Field, int64(intValue))
-				}
-			} else {
-				// All other types on this object are string
-				err = util.SetStringValue(ss, question.Field, value)
-			}
-		}
-	}
-	return err
+	// Save the settings locally, including whatever answers
+	// we were able to apply.
+	importSettings(c, settings, answerResults)
 }
 
 // // TODO: Delete this? I'm not sure it's used anymore.
