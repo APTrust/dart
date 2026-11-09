@@ -1,24 +1,46 @@
 {{ define "partials/banner_alert.html" }}
 
-<div id="ajaxAlert" class="alert alert-success" role="alert" style="display:none">
+<!--
+  Screen reader live regions (accessibility). These are always present
+  and visually hidden. Call announce(message) in application.js to have
+  a screen reader read a status message aloud. Screen readers reliably
+  announce text that changes inside an existing live region, but not
+  elements that are added to the page or unhidden with text already in
+  them. The modal dialog has its own pair of regions; see page_footer.html.
+-->
+<div id="srStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+<div id="srAlert" class="sr-only" role="alert" aria-live="assertive" aria-atomic="true"></div>
+
+<!--
+  The AJAX banners have no role because showAjaxAlert() and
+  showAjaxError() announce their messages through the live regions above.
+  A role here would cause some screen readers to read them twice.
+-->
+<div id="ajaxAlert" class="alert alert-success" style="display:none">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   <div id="ajaxAlertContent"></div>
 </div>
 
-<div id="ajaxError" class="alert alert-success" role="alert" style="display:none">
+<div id="ajaxError" class="alert alert-danger" style="display:none">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   <div id="ajaxErrorContent"></div>
 </div>
 
+<!--
+  Flash messages are rendered with the page. tabindex="-1" lets
+  application.js move focus to the message when the page loads, so the
+  screen reader reads it first instead of cutting it off while it starts
+  reading the new page (accessibility, issue #634).
+-->
 {{ if .flash }}
-<div class="alert alert-success" role="alert">
+<div id="flashMessage" class="alert alert-success" role="status" tabindex="-1">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   {{ .flash }}
 </div>
 {{ end }}
 
 {{ if .error }}
-<div class="alert alert-danger" role="alert">
+<div id="errorMessage" class="alert alert-danger" role="alert" tabindex="-1">
   <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
   {{ .error }}
 </div>

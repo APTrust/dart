@@ -93,16 +93,52 @@ function submitFormInBackground(formId, successCallback, failureCallback) {
 // TODO: Deprecate/remove?
 function showAjaxAlert(message) {
     console.log("Ajax Alert: " + message)
-    $("#ajaxAlertMessage").html(message)
+    $("#ajaxAlertContent").html(message)
     $("#ajaxAlert").show()
+    announce($("#ajaxAlertContent").text())
 }
 
 // TODO: Deprecate/remove?
 function showAjaxError(message) {
     console.log("Ajax Error: " + message)
-    $("#ajaxErrorMessage").html(message)
+    $("#ajaxErrorContent").html(message)
     $("#ajaxError").show()
+    announce($("#ajaxErrorContent").text(), true)
 }
+
+// announce has a screen reader read a status message aloud without
+// moving focus (accessibility, WCAG 4.1.3 Status Messages). It writes
+// the message into one of the hidden live regions in banner_alert.html,
+// or into the modal's own live regions when the modal is open, because
+// some screen readers ignore live regions outside an open modal.
+//
+// Set assertive to true for errors. This interrupts whatever the screen
+// reader is currently saying. Otherwise, the message is read when the
+// screen reader finishes its current speech.
+//
+// The region is cleared first and the message is written after a short
+// delay so that the screen reader notices the change, even when the
+// same message is announced twice in a row.
+function announce(message, assertive = false) {
+    let modalIsOpen = $('#modal').hasClass('show')
+    let id = assertive ? 'Alert' : 'Status'
+    let region = $(modalIsOpen ? `#modalSr${id}` : `#sr${id}`)
+    region.text('')
+    setTimeout(function () {
+        region.text(message)
+    }, 100)
+}
+
+// When a page loads with a flash message or error message, move focus
+// to it so the screen reader reads it first. Without this, the screen
+// reader starts reading the new page and cuts the message off
+// (accessibility, issue #634). Errors take priority over flash messages.
+$(function () {
+    let message = $('#errorMessage').length ? $('#errorMessage') : $('#flashMessage')
+    if (message.length) {
+        message.trigger('focus')
+    }
+})
 
 function copyToClipboard(copySourceId, messageDivId) {
     let copyText = document.querySelector(copySourceId).textContent;
