@@ -221,6 +221,20 @@ function announce(message, assertive = false) {
     }, 100)
 }
 
+// showSpinner shows the loading spinner and announces message to
+// screen reader users, who can't see the spinner (accessibility,
+// issue #631). Use it in place of $('#spinner').show().
+function showSpinner(message = 'Loading') {
+    $('#spinner').show()
+    announce(message)
+}
+
+// hideSpinner hides the loading spinner. It doesn't announce anything,
+// because whatever replaces the spinner announces itself.
+function hideSpinner() {
+    $('#spinner').hide()
+}
+
 // When a page loads with form validation errors, a flash message, or an
 // error message, move focus to it so the screen reader reads it first.
 // Without this, the screen reader starts reading the new page and cuts

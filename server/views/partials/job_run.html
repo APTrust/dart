@@ -185,13 +185,21 @@ an idea of what goes into them.
   // what, if anything, should be packaged, validated and/or uploaded.
   // This is called when a job is loaded.
   function showJobInit(data) {
-    $("#spinner").hide()
+    hideSpinner()
     console.log(`Received init event for job ${data.jobSummary.id}`)
     settings = data.jobSummary
     console.log(settings)
+    // Start each job with an empty list of completed uploads, so a
+    // re-run doesn't show uploads from the previous run.
+    completedUploads = []
     showJobDetails()
     showProgressDivs()
     clearMessageDivs()
+    // Tell screen reader users the job has started (accessibility,
+    // issue #624). In a batch, we announce each job's result instead.
+    if (!weAreRunningAWorkflowBatch) {
+      announce(`Running job ${settings.name}`)
+    }
   }
 
   // This displays information about the status of a batch job
@@ -202,6 +210,8 @@ an idea of what goes into them.
     $('#batchRunning').hide();
     $('#batchCompleted').show();
     $('#runWorkflowBatch').prop('disabled', false)
+    // Announce that the batch is done (accessibility, issue #624).
+    announce($('#batchCompleted').text().trim())
   }
 
   // This disconnects the page from server-sent events.
@@ -224,7 +234,7 @@ an idea of what goes into them.
   // This displays the initial details of a job, including
   // what is to be packaged, validated, and/or uploaded.
   function showJobDetails() {
-    $('#jobName').html(settings.Name)
+    $('#jobName').text(settings.name)
     clearAndHidePackagingInfo()
     if (settings.hasPackageOp) {
       showPackagingInfo()
@@ -417,7 +427,9 @@ an idea of what goes into them.
   function renderFinishInfo(section, data, detailDiv, progressBar) {
     console.log(data)
     if (data.status == "success") {
-      if (section == "") {
+      if (section == "uploadInfo") {
+        // A job can upload to several targets. List every completed
+        // upload, not just the latest one.
         completedUploads.push(data.message)
         markSuccess(detailDiv, progressBar, completedUploads.join("<br/>\n"))
       } else {
@@ -432,10 +444,9 @@ an idea of what goes into them.
       markFailed(detailDiv, progressBar, getErrorsAsHTML(data))
       showBatchJobFailed(data)
     }
-    if (data.stage = "") {
-      // We just completed a job, not a stage.
-      batchLineNumber += 1
-    }
+    // showBatchJobSucceeded() and showBatchJobFailed() advance
+    // batchLineNumber when a whole job (not a stage) finishes, so it
+    // isn't incremented here.
     if (!weAreRunningAWorkflowBatch) {
       // This is not a batch. We just completed a job.
       // So now it's safe to reactivate the Run Job button.
@@ -459,14 +470,38 @@ an idea of what goes into them.
     if (progressBar) {
       progressBar.removeClass("bg-success");
       progressBar.removeClass("bg-danger");
-      let initialClasses = ["progress-bar-striped", "progress-bar-animated"];
-      for (let cssClass of initialClasses) {
-        if (progressBar.hasClass(cssClass)) {
-          progressBar.addClass(cssClass);
-        }
+      // Restore the striped animation that markSuccess() and
+      // markFailed() remove when a stage finishes.
+      progressBar.addClass("progress-bar-striped progress-bar-animated");
+      // Reset the bar directly. setProgressBar() ignores changes once
+      // a bar reaches 100%, so it can't reset a bar that finished an
+      // earlier upload.
+      progressBar.attr("aria-valuenow", 0);
+      progressBar.attr("aria-valuetext", "0 percent");
+      progressBar.css("width", '0%');
+      progressBar.data("announcedQuarter", 0);
+    }
+  }
+
+  // Returns the label of the row that contains progressBar, such as
+  // "Packaging" or "Upload", for use in screen reader announcements.
+  function progressLabel(progressBar) {
+    return progressBar.closest("div.row").children("div.col-3").first().text().trim()
+  }
+
+  // Screen readers don't announce changes to aria-valuenow on their own,
+  // and announcing every update would drown out everything else. So we
+  // announce progress at 25%, 50% and 75% (accessibility, issue #624).
+  // We skip these during a workflow batch, where many jobs run one after
+  // another; there, we announce the result of each job instead.
+  function announceProgress(progressBar, percent) {
+    let quarter = Math.floor(percent / 25)
+    let announced = progressBar.data("announcedQuarter") || 0
+    if (quarter > announced && quarter < 4) {
+      progressBar.data("announcedQuarter", quarter)
+      if (!weAreRunningAWorkflowBatch) {
+        announce(`${progressLabel(progressBar)} ${quarter * 25} percent complete`)
       }
-      data = { percent: 0 }
-      setProgressBar(progressBar, data)
     }
   }
 
@@ -494,8 +529,11 @@ an idea of what goes into them.
     console.log(data)
 
     if (parseInt(progressBar.attr("aria-valuenow"), 10) != 100) {
-      progressBar.attr("aria-valuenow", data.percent);
+      let percent = Math.round(data.percent)
+      progressBar.attr("aria-valuenow", percent);
+      progressBar.attr("aria-valuetext", `${percent} percent`);
       progressBar.css("width", data.percent + '%');
+      announceProgress(progressBar, percent)
     }
   }
 
@@ -517,10 +555,16 @@ an idea of what goes into them.
   //
   function markSuccess(detailDiv, progressBar, message) {
     detailDiv.html(message);
-    if (progressBar) {
+    if (progressBar.length) {
       setProgressBar(progressBar, { percent: 100 });
+      progressBar.attr("aria-valuetext", "Complete");
       progressBar.removeClass("progress-bar-striped progress-bar-animated");
       progressBar.addClass("bg-success");
+      // Announce each stage's result (accessibility, issue #624).
+      // In a batch, showBatchJobSucceeded() announces each job instead.
+      if (!weAreRunningAWorkflowBatch) {
+        announce(`${progressLabel(progressBar)} complete. ${detailDiv.text().trim()}`)
+      }
     }
   }
 
@@ -542,11 +586,20 @@ an idea of what goes into them.
   //
   function markFailed(detailDiv, progressBar, message) {
     detailDiv.html(message);
-    if (progressBar) {
+    if (progressBar.length) {
       progressBar.removeClass("progress-bar-striped progress-bar-animated");
       progressBar.attr("aria-valuenow", 100);
+      progressBar.attr("aria-valuetext", "Failed");
       progressBar.css("width", '100%');
       progressBar.addClass("bg-danger");
+    }
+    // Announce the failure right away (accessibility, issue #624). The
+    // error details can be long, so point the user to them rather than
+    // reading them all. In a batch, showBatchJobFailed() announces
+    // each job instead.
+    if (!weAreRunningAWorkflowBatch) {
+      let label = progressBar.length ? progressLabel(progressBar) : 'Job'
+      announce(`${label} failed. The errors are listed under Outcome.`, true)
     }
   }
 
@@ -633,6 +686,8 @@ an idea of what goes into them.
             Line ${batchLineNumber} - ${settings.name}
             </div>`
       $('#workflowResults').append(html)
+      // Announce each job's result (accessibility, issue #624).
+      announce(`Line ${batchLineNumber} succeeded`)
       batchLineNumber += 1
     }
   }
@@ -659,6 +714,10 @@ an idea of what goes into them.
             </ul>
           </div>`
       $('#workflowResults').append(html)
+      // Announce each job's result (accessibility, issue #624). Polite,
+      // not assertive, so a failure doesn't cut off the announcement
+      // for the line before it.
+      announce(`Line ${batchLineNumber} failed. The errors are listed under Results.`)
       batchLineNumber += 1
     }
   }

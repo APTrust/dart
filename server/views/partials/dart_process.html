@@ -1,5 +1,10 @@
 {{ define "partials/dart_process.html" }}
 
+<!--
+  Each progress bar takes its accessible name from its row label, such as
+  "Packaging", through aria-labelledby. job_run.html updates
+  aria-valuetext and announces progress (accessibility, issue #624).
+-->
 <div class="container mb-3" data-job-id="{{ .ID }}" id="runningJobDisplay">
   <div class="row">
     <div class="col-3">Job</div>
@@ -10,32 +15,32 @@
     <div class="col-9" id="job-start-time"></div>
   </div>
   <div class="row packageInfo" style="display:none">
-    <div class="col-3">Packaging</div>
+    <div class="col-3" id="{{ .ID }}-packageInfoLabel">Packaging</div>
     <div class="col-9 detail">
       <div class="message">&nbsp;</div>
       <div class="text-warning d-none">&nbsp;</div>
       <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-labelledby="{{ .ID }}-packageInfoLabel" aria-valuetext="0 percent" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
   </div>
   <div class="row validationInfo" style="display:none">
-    <div class="col-3">Validation</div>
+    <div class="col-3" id="{{ .ID }}-validationInfoLabel">Validation</div>
     <div class="col-9 detail">
       <div class="message">&nbsp;</div>
       <div class="text-warning d-none">&nbsp;</div>
       <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-labelledby="{{ .ID }}-validationInfoLabel" aria-valuetext="0 percent" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
   </div>
   <div class="row uploadInfo" style="display:none">
-    <div class="col-3">Upload</div>
+    <div class="col-3" id="{{ .ID }}-uploadInfoLabel">Upload</div>
     <div class="col-9 detail">
       <div class="message">&nbsp;</div>
       <div class="text-warning d-none">&nbsp;</div>
       <div class="progress">
-        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-labelledby="{{ .ID }}-uploadInfoLabel" aria-valuetext="0 percent" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
       </div>
     </div>
   </div>
