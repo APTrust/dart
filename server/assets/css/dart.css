@@ -323,3 +323,16 @@ a:hover,
 .text-muted {
     color: #5a6268 !important;
 }
+
+/*
+  Active dropdown item contrast.
+  Bootstrap's .dropdown-item.active uses white text on #007bff,
+  which is only 3.98:1. This appears, for example, when a tag file
+  is selected from the Tag Files dropdown on the BagIt profile form.
+    #fff on #0056b3 -> 7.04:1 (matches the link color above)
+*/
+.dropdown-item.active,
+.dropdown-item:active {
+    color: #fff;
+    background-color: #0056b3;
+}
