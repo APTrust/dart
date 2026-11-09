@@ -453,3 +453,25 @@ a:hover,
     background-color: #12633d;
     border-color: #12633d;
 }
+
+/*
+  Tab outline contrast (WCAG 1.4.11, non-text contrast).
+  Bootstrap's tab borders are #dee2e6 (1.30:1 on #fff) and the hover
+  border is #e9ecef (1.19:1). Borders need at least 3:1. These use
+  the same gray as the form control borders above.
+    #7a8288 -> 3.91:1 on #fff
+  The active tab keeps a white bottom border so it still appears
+  joined to the panel below. Hover must come before active so the
+  active tab's white bottom border wins.
+*/
+.nav-tabs {
+    border-bottom-color: #7a8288;
+}
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    border-color: #7a8288;
+}
+.nav-tabs .nav-item.show .nav-link,
+.nav-tabs .nav-link.active {
+    border-color: #7a8288 #7a8288 #fff;
+}
