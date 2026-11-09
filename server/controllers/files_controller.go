@@ -36,5 +36,6 @@ func InitFileChooser(c *gin.Context) (gin.H, error) {
 		"showJumpMenu":       showJumpMenu,
 		"currentDir":         directory,
 		"showHiddenFiles":    showHiddenFiles,
+		"flash":              GetFlashCookie(c),
 	}, nil
 }

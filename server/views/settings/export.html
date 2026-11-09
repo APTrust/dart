@@ -53,7 +53,7 @@
           {{ $questionNumber := add $index 1}}
               <tr>
                 <td style="width:90%; border:none;"><a href="#" onclick="loadIntoModal('get', 'Edit Question', '/settings/export/questions/edit/{{ $settings.ID }}/{{ $question.ID }}')">{{ $question.Prompt }}</a></td>
-                <td style="width:10%; border:none;"><a href="#setupQuestionsList" onclick="confirmForegroundDeletion('Delete this question?', '/settings/export/questions/delete/{{ $settings.ID }}/{{ $question.ID }}', null)"><i class="fas fa-times text-danger" title="Delete this question"></i></a></td>
+                <td style="width:10%; border:none;"><a href="#setupQuestionsList" aria-label="Delete question: {{ $question.Prompt }}" onclick="confirmForegroundDeletion('Delete this question?', '/settings/export/questions/delete/{{ $settings.ID }}/{{ $question.ID }}', null)"><i class="fas fa-times text-danger" title="Delete this question" aria-hidden="true"></i></a></td>
               </tr>
         {{ end }}
         </tbody>

@@ -35,6 +35,7 @@ func BagItProfileCreate(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusInternalServerError, err)
 		return
 	}
+	SetFlashCookie(c, "Created a new BagIt profile")
 	c.Redirect(http.StatusFound, fmt.Sprintf("/profiles/edit/%s", newProfile.ID))
 }
 
@@ -146,6 +147,7 @@ func BagItProfileImport(c *gin.Context) {
 		c.HTML(http.StatusBadRequest, "bagit_profile/import.html", data)
 		return
 	}
+	SetFlashCookie(c, fmt.Sprintf("Imported BagIt profile %s", convertedProfile.Name))
 	c.Redirect(http.StatusFound, fmt.Sprintf("/profiles/edit/%s", convertedProfile.ID))
 }
 
@@ -218,6 +220,7 @@ func BagItProfileSave(c *gin.Context) {
 		c.HTML(http.StatusBadRequest, "bagit_profile/form.html", data)
 		return
 	}
+	SetFlashCookie(c, fmt.Sprintf("Saved BagIt profile %s", profile.Name))
 	c.Redirect(http.StatusFound, "/profiles")
 }
 
@@ -313,7 +316,10 @@ func BagItProfileSaveTag(c *gin.Context) {
 	// Bad practice returning JSON here, when we return HTML above.
 	// However, this XHR request is tricky to handle otherwise.
 	// On successful save, we want to redirect, not just re-render.
+	// The flash cookie set here is sent with the JSON response, so the
+	// page the browser goes to next displays and announces the message.
 
+	SetFlashCookie(c, fmt.Sprintf("Saved tag %s in %s", tag.TagName, tag.TagFile))
 	query := url.Values{}
 	query.Set("tab", "navTagFilesTab")
 	query.Set("tagFile", tag.TagFile)
@@ -349,6 +355,7 @@ func BagItProfileDeleteTag(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusInternalServerError, err)
 		return
 	}
+	SetFlashCookie(c, fmt.Sprintf("Deleted tag %s from %s", tag.TagName, tag.TagFile))
 	query := url.Values{}
 	query.Set("tab", "navTagFilesTab")
 	query.Set("tagFile", tag.TagFile)
@@ -420,6 +427,7 @@ func BagItProfileCreateTagFile(c *gin.Context) {
 		return
 	}
 
+	SetFlashCookie(c, fmt.Sprintf("Added tag file %s", tagFileName))
 	query := url.Values{}
 	query.Set("tab", "navTagFilesTab")
 	query.Set("tagFile", tagFileName)
@@ -456,6 +464,8 @@ func BagItProfileDeleteTagFile(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusNotFound, err)
 		return
 	}
+
+	SetFlashCookie(c, fmt.Sprintf("Deleted tag file %s", tagFileName))
 
 	// Show the tab for bag-info.txt, since that one can't be deleted.
 	query := url.Values{}

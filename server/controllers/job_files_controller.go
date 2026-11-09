@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/APTrust/dart-runner/core"
@@ -75,6 +76,9 @@ func JobAddFile(c *gin.Context) {
 			AbortWithErrorHTML(c, http.StatusNotFound, err)
 			return
 		}
+		SetFlashCookie(c, fmt.Sprintf("Added %s to the package", filepath.Base(fileToAdd)))
+	} else {
+		SetFlashCookie(c, fmt.Sprintf("%s is already in the package", filepath.Base(fileToAdd)))
 	}
 	fileBrowserPath := c.PostForm("directory")
 	values := url.Values{}
@@ -105,6 +109,7 @@ func JobDeleteFile(c *gin.Context) {
 			AbortWithErrorHTML(c, http.StatusNotFound, err)
 			return
 		}
+		SetFlashCookie(c, fmt.Sprintf("Removed %s from the package", filepath.Base(fileToDelete)))
 	}
 	fileBrowserPath := c.PostForm("directory")
 	values := url.Values{}

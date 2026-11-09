@@ -213,6 +213,14 @@ func SettingsExportSaveQuestion(c *gin.Context) {
 		return
 	}
 
+	// The flash cookie set here is sent with the JSON response, so the
+	// page the browser goes to next displays and announces the message.
+	if found {
+		SetFlashCookie(c, "Saved setup question")
+	} else {
+		SetFlashCookie(c, "Added setup question")
+	}
+
 	// Note that we add a random query string value here. This is
 	// because the browser will not reload the underlying page if
 	// only the query hash has changed. The additional random param
@@ -279,6 +287,7 @@ func SettingsExportDeleteQuestion(c *gin.Context) {
 		AbortWithErrorHTML(c, http.StatusInternalServerError, err)
 		return
 	}
+	SetFlashCookie(c, "Deleted setup question")
 	redirectUrl := fmt.Sprintf("/settings/export/edit/%s", c.Param("settings_id"))
 	c.Redirect(http.StatusFound, redirectUrl)
 }

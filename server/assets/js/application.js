@@ -232,15 +232,36 @@ $(function () {
     }
     let message = $('#errorMessage').length ? $('#errorMessage') : $('#flashMessage')
     if (message.length) {
-        message.trigger('focus')
+        // If the URL points to a section of the page, such as
+        // #questions after saving an export setup question, keep that
+        // section on screen instead of scrolling up to the message.
+        // The screen reader still reads the message.
+        message[0].focus({ preventScroll: window.location.hash != '' })
     }
 })
 
+// copyToClipboard copies the text of copySourceId to the clipboard, then
+// shows and announces the confirmation in messageDivId (accessibility,
+// issue #592). The confirmation stays on screen for five seconds, long
+// enough to read; it used to fade out in under two. It appears only
+// after the copy succeeds. If the copy fails, a visible error is shown
+// and announced instead.
 function copyToClipboard(copySourceId, messageDivId) {
     let copyText = document.querySelector(copySourceId).textContent;
-    navigator.clipboard.writeText(copyText)
-    $(messageDivId).show();
-    $(messageDivId).fadeOut({ duration: 1800 });
+    let message = $(messageDivId)
+    // Reset in case the user clicks Copy again before the fade finishes.
+    message.stop(true, true).hide()
+    message.siblings('.copy-failed').remove()
+    navigator.clipboard.writeText(copyText).then(function () {
+        message.show()
+        announce(message.text().trim())
+        message.delay(5000).fadeOut({ duration: 1000 })
+    }).catch(function (err) {
+        console.log(err)
+        let failure = 'Could not copy to the clipboard.'
+        $('<div class="text-danger copy-failed"></div>').text(failure).insertAfter(message)
+        announce(failure, true)
+    })
 }
 
 function submitTagDefForm(formId) {
