@@ -369,3 +369,34 @@ a:hover,
 .text-success {
     color: #157347 !important;
 }
+
+/*
+  Info button contrast.
+  Bootstrap's .btn-info puts white text on #17a2b8, which is only
+  3.04:1. WCAG AA requires 4.5:1 for text. Each state is darkened
+  one step so hover and active remain visibly different.
+    normal/disabled: #117a8b -> 5.02:1
+    hover/focus:     #0f6674 -> 6.62:1
+    active:          #0c5460 -> 8.56:1
+*/
+.btn-info,
+.btn-info.disabled,
+.btn-info:disabled {
+    color: #fff;
+    background-color: #117a8b;
+    border-color: #117a8b;
+}
+.btn-info:hover,
+.btn-info:focus,
+.btn-info.focus {
+    color: #fff;
+    background-color: #0f6674;
+    border-color: #0f6674;
+}
+.btn-info:not(:disabled):not(.disabled):active,
+.btn-info:not(:disabled):not(.disabled).active,
+.show > .btn-info.dropdown-toggle {
+    color: #fff;
+    background-color: #0c5460;
+    border-color: #0c5460;
+}
