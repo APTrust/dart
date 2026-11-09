@@ -386,9 +386,9 @@ a:hover,
     background-color: #117a8b;
     border-color: #117a8b;
 }
-.btn-info:hover,
-.btn-info:focus,
-.btn-info.focus {
+.btn-info:not(:disabled):not(.disabled):hover,
+.btn-info:not(:disabled):not(.disabled):focus,
+.btn-info:not(:disabled):not(.disabled).focus {
     color: #fff;
     background-color: #0f6674;
     border-color: #0f6674;
@@ -399,4 +399,57 @@ a:hover,
     color: #fff;
     background-color: #0c5460;
     border-color: #0c5460;
+}
+
+/*
+  Success button contrast.
+  Bootstrap's success green #28a745 is only 3.13:1 against white,
+  whether as white text on a green button or green text on an
+  outline button. WCAG AA requires 4.5:1 for text. These use the
+  same green as .text-success above, darkened one step per state.
+    #157347 -> 5.87:1    #12633d -> 7.30:1    #0f5132 -> 9.36:1
+*/
+
+/* Solid .btn-success: white text on green. */
+.btn-success,
+.btn-success.disabled,
+.btn-success:disabled {
+    color: #fff;
+    background-color: #157347;
+    border-color: #157347;
+}
+.btn-success:not(:disabled):not(.disabled):hover,
+.btn-success:not(:disabled):not(.disabled):focus,
+.btn-success:not(:disabled):not(.disabled).focus {
+    color: #fff;
+    background-color: #12633d;
+    border-color: #12633d;
+}
+.btn-success:not(:disabled):not(.disabled):active,
+.btn-success:not(:disabled):not(.disabled).active,
+.show > .btn-success.dropdown-toggle {
+    color: #fff;
+    background-color: #0f5132;
+    border-color: #0f5132;
+}
+
+/* Outline .btn-outline-success: green text on white, filled on hover. */
+.btn-outline-success,
+.btn-outline-success.disabled,
+.btn-outline-success:disabled {
+    color: #157347;
+    background-color: transparent;
+    border-color: #157347;
+}
+.btn-outline-success:not(:disabled):not(.disabled):hover {
+    color: #fff;
+    background-color: #157347;
+    border-color: #157347;
+}
+.btn-outline-success:not(:disabled):not(.disabled):active,
+.btn-outline-success:not(:disabled):not(.disabled).active,
+.show > .btn-outline-success.dropdown-toggle {
+    color: #fff;
+    background-color: #12633d;
+    border-color: #12633d;
 }
