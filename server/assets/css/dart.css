@@ -336,3 +336,24 @@ a:hover,
     color: #fff;
     background-color: #0056b3;
 }
+
+/*
+  Form control border contrast (WCAG 1.4.11, non-text contrast).
+  Bootstrap's input border #ced4da is only 1.49:1 on #fff, and the
+  focus border #80bdff is 1.97:1. Borders need at least 3:1.
+    normal: #7a8288 -> 3.91:1 on #fff, 3.65:1 on #f7f7f7,
+                       3.29:1 on #e9ecef
+    focus:  #0056b3 -> 7.04:1 on #fff (matches the link color)
+  Bootstrap's red .is-invalid border (#dc3545, 4.53:1) already passes.
+*/
+.form-control,
+.custom-select,
+.custom-file-label,
+.input-group-text {
+    border-color: #7a8288;
+}
+.form-control:focus,
+.custom-select:focus,
+.custom-file-input:focus ~ .custom-file-label {
+    border-color: #0056b3;
+}
