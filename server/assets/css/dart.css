@@ -357,3 +357,15 @@ a:hover,
 .custom-file-input:focus ~ .custom-file-label {
     border-color: #0056b3;
 }
+
+/*
+  Success text contrast.
+  Bootstrap's .text-success color #28a745 is only 3.13:1 on #fff.
+  WCAG AA requires 4.5:1 for text.
+    #157347 -> 5.87:1 on #fff, 5.48:1 on #f7f7f7,
+               5.06:1 on #eee, 4.95:1 on #e9ecef
+  Bootstrap declares .text-success with !important, so we must too.
+*/
+.text-success {
+    color: #157347 !important;
+}
