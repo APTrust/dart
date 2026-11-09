@@ -5,7 +5,8 @@
            {{ if .field.Help }}data-toggle="popover" data-trigger="hover" title="{{ .field.Label }}" data-content="{{ .field.Help }}"{{ end }}>{{ .field.Label }} {{ if .field.Attrs.required}}<i class="fas fa-asterisk fa-xs text-danger"></i>{{ end }} {{ if .field.Help }}<i class="fas fa-question-circle text-primary"></i>{{ end }}</label>
     <input type="file" id="{{ .field.ID }}" name="{{ .field.Name }}"
            class="form-control {{ template "partials/classes.html" .field }}"
-           {{ template "partials/attrs.html" .field }} />
+           {{ template "partials/attrs.html" .field }}
+           {{ if .field.Error }}aria-invalid="true" aria-describedby="{{ .field.ID }}Error"{{ end }} />
     <small id="{{ .field.ID }}Error" class="form-text text-danger">
       {{ .field.Error }}
     </small>

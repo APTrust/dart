@@ -8,8 +8,9 @@
     <input type="text" name="{{ .field.Name }}" value="{{ .field.Value }}"
            id="{{ .field.ID }}"
            class="form-control {{ template "partials/classes.html" . }}"
-           {{ template "partials/attrs.html" .field }} />
-    <small id="{{ .field.Name }}Error" class="form-text text-danger">
+           {{ template "partials/attrs.html" .field }}
+           {{ if .field.Error }}aria-invalid="true" aria-describedby="{{ .field.ID }}Error"{{ end }} />
+    <small id="{{ .field.ID }}Error" class="form-text text-danger">
       {{ .field.Error }}
     </small>
   </div>

@@ -25,8 +25,12 @@ batch workflow documentation.</a></p>
 
 </form>
 
-<div id="batchValidation" style="display:none">
-  <h3>Errors</h3>
+<!--
+  tabindex="-1" lets displayValidationErrors() move focus here so the
+  screen reader reads the errors (accessibility, issue #637).
+-->
+<div id="batchValidation" style="display:none" tabindex="-1" aria-labelledby="batchValidationHeading">
+  <h3 id="batchValidationHeading">Errors</h3>
   <ul id="batchValidationErrorList">
   </ul>
 </div>
@@ -89,15 +93,19 @@ $(function() {
       var showGeneralError = true
       let data = JSON.parse(xhr.responseText)
       if (data.errors["WorkflowBatch_CsvUpload"]) {
-        $('#WorkflowBatch_CsvUploadError').html(data.errors["WorkflowBatch_CsvUpload"])
+        setFieldError('WorkflowBatch_CsvUpload', data.errors["WorkflowBatch_CsvUpload"])
         showGeneralError = false
       }
       if (data.errors["WorkflowBatch_WorkflowID"]) {
-        $('#WorkflowBatch_WorkflowIDError').html(data.errors["WorkflowBatch_WorkflowID"])
+        setFieldError('WorkflowBatch_WorkflowID', data.errors["WorkflowBatch_WorkflowID"])
         showGeneralError = false
       }
       if (showGeneralError) {
         displayValidationErrors(data.errors)
+      } else {
+        // Summarize the field errors and move focus to the summary
+        // so the screen reader reads them (accessibility, issue #637).
+        showFormErrorSummary('#workflowBatchForm')
       }
     })
   }
@@ -105,19 +113,24 @@ $(function() {
   // Clear all error messages from the display. We do this
   // when the user is resubmitting a batch.
   function clearErrors() {
-    $('#WorkflowBatch_CsvUploadError').html("")
-    $('#WorkflowBatch_WorkflowIDError').html('')
+    setFieldError('WorkflowBatch_CsvUpload', '')
+    setFieldError('WorkflowBatch_WorkflowID', '')
+    $('#workflowBatchForm .form-error-summary').remove()
     $('#batchValidation').hide()
     $('#batchValidationErrorList').empty()
   }
 
-  // Display errors from the back end.
+  // Display errors from the back end. Then move focus to the list
+  // of errors so the screen reader reads them. Without this, the
+  // errors appear on screen but screen reader users don't know
+  // (accessibility, issue #637).
   function displayValidationErrors(errors) {
     for(var key of Object.keys(errors).sort()){
       let errMsg = errors[key]
       $('#batchValidation').show()
-      $('#batchValidationErrorList').append(`<li>${key} - ${errMsg}</li>`)
+      $('<li></li>').text(`${key} - ${errMsg}`).appendTo('#batchValidationErrorList')
     }
+    $('#batchValidation').trigger('focus')
   }
 
   // Now add our callback to the Run button

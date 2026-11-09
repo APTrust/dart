@@ -7,7 +7,8 @@
      {{ if $field.Hide }}style="display:none;"{{ end }}>
   <label class="form-check-label">
     <input class="form-check-input" type="checkbox" name="{{ $field.Name }}" value="{{ $option.Value }}" 
-    {{ if $option.Selected }}checked{{ end }} />
+    {{ if $option.Selected }}checked{{ end }}
+    {{ if $field.Error }}aria-invalid="true" aria-describedby="{{ $field.ID }}Error"{{ end }} />
     {{ $option.Label }}
   </label>
 </div>

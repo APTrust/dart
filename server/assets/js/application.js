@@ -55,7 +55,99 @@ function showModalContent(title, content) {
     $('#modalTitle').html(title);
     $('#modalContent').html(content);
     $('[data-toggle="popover"]').popover()
-    $('#modal').modal('show');
+    // If the content is a form with validation errors, summarize them
+    // and move focus to the summary (accessibility). When the modal is
+    // opening, wait until Bootstrap has finished showing it, because
+    // Bootstrap moves focus to the modal itself at that point.
+    let modal = $('#modal')
+    if (modal.hasClass('show')) {
+        showFormErrorSummary('#modalContent')
+    } else {
+        modal.one('shown.bs.modal', function () {
+            showFormErrorSummary('#modalContent')
+        })
+        modal.modal('show');
+    }
+}
+
+// showFormErrorSummary looks for field validation errors (the
+// <small class="form-text text-danger"> elements in the input partials)
+// inside container. If any contain text, it adds a summary of the errors
+// to the top of the form, with a link to each field, and moves focus to
+// the summary so the screen reader reads it (accessibility, WCAG 4.1.3
+// Status Messages, issues #591 and #620). Without this, a form that is
+// redisplayed with errors gives screen reader users no sign that
+// anything went wrong.
+//
+// Returns true if it found errors and showed a summary.
+function showFormErrorSummary(container) {
+    let scope = $(container)
+    scope.find('.form-error-summary').remove()
+    let errors = scope.find('small.form-text.text-danger').filter(function () {
+        return $(this).text().trim() != ''
+    })
+    if (errors.length == 0) {
+        return false
+    }
+
+    let list = $('<ul class="mb-0"></ul>')
+    errors.each(function () {
+        let message = $(this).text().trim()
+        let fieldId = this.id.replace(/Error$/, '')
+        let field = document.getElementById(fieldId)
+        let label = $(`label[for="${CSS.escape(fieldId)}"]`).first().text().trim()
+        let text = label ? `${label}: ${message}` : message
+        let item = $('<li></li>')
+        if (field) {
+            // Clicking the link moves focus to the field, not just
+            // scrolling to it. Some fields, such as job metadata tags
+            // with default values, start out hidden; show the field
+            // first so it can receive focus.
+            $('<a></a>').attr('href', '#' + fieldId).text(text).on('click', function (e) {
+                e.preventDefault()
+                if (!$(field).is(':visible')) {
+                    $(field).closest('.form-group-hidden').show()
+                }
+                field.focus()
+            }).appendTo(item)
+        } else {
+            item.text(text)
+        }
+        list.append(item)
+    })
+
+    // No role here, because focus makes the screen reader read the
+    // summary, and a role="alert" would make some of them read it twice.
+    let problems = errors.length == 1 ? '1 problem' : `${errors.length} problems`
+    let summary = $('<div class="alert alert-danger form-error-summary" tabindex="-1"></div>')
+    $('<p class="mb-1 font-weight-bold"></p>').text(`Please correct ${problems} before continuing:`).appendTo(summary)
+    summary.append(list)
+
+    let form = errors.first().closest('form')
+    if (form.length) {
+        form.prepend(summary)
+    } else {
+        scope.prepend(summary)
+    }
+    summary.trigger('focus')
+    return true
+}
+
+// setFieldError displays (or, with an empty message, clears) the
+// validation error for the field with the specified id, and marks the
+// field invalid so the screen reader reads the error when the field
+// gets focus (accessibility). The input partials do the same thing for
+// errors rendered by the server. Use this when JavaScript displays the
+// error.
+function setFieldError(fieldId, message) {
+    let errorId = fieldId + 'Error'
+    $('#' + errorId).text(message || '')
+    let field = $('#' + fieldId)
+    if (message) {
+        field.attr('aria-invalid', 'true').attr('aria-describedby', errorId)
+    } else {
+        field.removeAttr('aria-invalid').removeAttr('aria-describedby')
+    }
 }
 
 function submitFormInBackground(formId, successCallback, failureCallback) {
@@ -129,11 +221,15 @@ function announce(message, assertive = false) {
     }, 100)
 }
 
-// When a page loads with a flash message or error message, move focus
-// to it so the screen reader reads it first. Without this, the screen
-// reader starts reading the new page and cuts the message off
-// (accessibility, issue #634). Errors take priority over flash messages.
+// When a page loads with form validation errors, a flash message, or an
+// error message, move focus to it so the screen reader reads it first.
+// Without this, the screen reader starts reading the new page and cuts
+// the message off (accessibility, issue #634). Form validation errors
+// come first, then error messages, then flash messages.
 $(function () {
+    if (showFormErrorSummary(document.body)) {
+        return
+    }
     let message = $('#errorMessage').length ? $('#errorMessage') : $('#flashMessage')
     if (message.length) {
         message.trigger('focus')

@@ -7,7 +7,8 @@
            {{ if .field.Help }}<i class="fas fa-question-circle text-primary"></i>{{ end }}</label>
     <select id="{{ .field.ID }}" name="{{ .field.Name }}"
            class="form-control {{ template "partials/classes.html" . }}"
-           {{ template "partials/attrs.html" .field }} >
+           {{ template "partials/attrs.html" .field }}
+           {{ if .field.Error }}aria-invalid="true" aria-describedby="{{ .field.ID }}Error"{{ end }} >
       {{ range $option := .field.Choices }}
         <option value="{{ $option.Value }}" {{ if $option.Selected }}selected{{ end }}>{{ $option.Label }}</option>
       {{ end }}

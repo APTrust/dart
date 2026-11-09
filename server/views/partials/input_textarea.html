@@ -8,7 +8,8 @@
     <textarea id="{{ .field.ID }}" name="{{ .field.Name }}"
            class="form-control {{ template "partials/classes.html" . }}" 
            {{ if not .field.Attrs.rows }}rows="4"{{ end }}
-           {{ template "partials/attrs.html" .field }} >{{ .field.Value }}</textarea>
+           {{ template "partials/attrs.html" .field }}
+           {{ if .field.Error }}aria-invalid="true" aria-describedby="{{ .field.ID }}Error"{{ end }} >{{ .field.Value }}</textarea>
     <small id="{{ .field.ID }}Error" class="form-text text-danger">
       {{ .field.Error }}
     </small>

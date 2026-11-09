@@ -133,9 +133,12 @@
     let profileId = $('#Job_BagItProfileID').val()
     if (packageFormat === "BagIt" && !profileId) {
       e.preventDefault()
-      $('#Job_BagItProfileIDError').text('When selecting BagIt format, you must choose a BagIt profile.')
+      setFieldError('Job_BagItProfileID', 'When selecting BagIt format, you must choose a BagIt profile.')
+      // Summarize the error and move focus to the summary so the
+      // screen reader reads it (accessibility, issue #620).
+      showFormErrorSummary(this)
     } else {
-      $('#Job_BagItProfileIDError').text('')
+      setFieldError('Job_BagItProfileID', '')
     }
   })
 
