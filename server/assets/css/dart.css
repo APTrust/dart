@@ -310,3 +310,16 @@ a:hover,
 .page-link:hover {
     color: #003d80;
 }
+
+/*
+  Muted text contrast.
+  Bootstrap's .text-muted color #6c757d passes only on pure white
+  (4.69:1). On the card header background (~#f7f7f7) it is 4.38:1,
+  and on #eee it is 4.04:1. WCAG AA requires 4.5:1 for text.
+    #5a6268 -> 6.21:1 on #fff, 5.80:1 on #f7f7f7,
+               5.35:1 on #eee, 5.44:1 on #e3f2fd
+  Bootstrap declares .text-muted with !important, so we must too.
+*/
+.text-muted {
+    color: #5a6268 !important;
+}
