@@ -6,7 +6,8 @@
   footer and nav.
 -->
 
-<h2>Saved</h2>
+<!-- This loads into the modal dialog, whose title is an h2, so this heading is an h3 (accessibility). Class h2 keeps its original size. -->
+<h3 class="h2">Saved</h3>
 
 <p>{{ .artifact.FileName }} was saved to {{ .outputFile }}.</p>
 

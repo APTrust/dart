@@ -1,10 +1,11 @@
 {{ define "partials/modal.html" }}
 
-  <div id="modal" class="modal fade" tabindex="-1" role="dialog">
+  <div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalTitle">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 id="modalTitle" class="modal-title"></h5>
+          <!-- The modal title is an h2 so it follows each page's h2 title in heading order (accessibility). Class h5 keeps the size of Bootstrap's default h5 modal title. -->
+          <h2 id="modalTitle" class="modal-title h5"></h2>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
           </button>

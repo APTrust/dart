@@ -2,7 +2,8 @@
 
 <!-- This renders in a modal, so it does not include the header or footer. -->
 
-<h2>{{ .repo.Name }}</h2>
+<!-- This loads into the modal dialog, whose title is an h2, so this heading is an h3 (accessibility). Class h2 keeps its original size. -->
+<h3 class="h2">{{ .repo.Name }}</h3>
 
 {{ if .succeeded }}
 <p class="mt-3 mb-3 text-success">{{ .message }}</p>

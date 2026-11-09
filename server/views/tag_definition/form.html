@@ -2,7 +2,8 @@
 
 <!-- Template does not include header or footer, because this form loads in a modal dialog. -->
 
-<h2>{{ .form.Fields.TagName.Value }}</h2>
+<!-- This loads into the modal dialog, whose title is an h2, so this heading is an h3 (accessibility). Class h2 keeps its original size. -->
+<h3 class="h2">{{ .form.Fields.TagName.Value }}</h3>
 <p>In file {{ .form.Fields.TagFile.Value }}</p>
 
 <form method="post" action="/profiles/edit_tag/{{ .bagItProfileID }}/{{ .form.Fields.ID.Value }}"  id="{{ .form.Fields.ID.Value }}">

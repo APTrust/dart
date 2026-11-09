@@ -1,7 +1,8 @@
 {{ define "settings/export_result.html" }}
 
 
-<h2>{{ .settings.Name }}</h2>
+<!-- This loads into the modal dialog, whose title is an h2, so this heading is an h3 (accessibility). Class h2 keeps its original size. -->
+<h3 class="h2">{{ .settings.Name }}</h3>
 
 <div class="form-group">
   <textarea id="txtJson" name="txtJson" class="form-control" rows="20">{{- .json -}}</textarea>
@@ -9,7 +10,8 @@
 
 <div class="mt-1 mb-1 p-4 alert-danger" style="display:{{ .displayPlaintextWarning }}">
 
-    <h3>Warning</h3>
+    <!-- This loads into the modal dialog, so this heading is an h4 under the h3 above (accessibility). Class h3 keeps its original size. -->
+    <h4 class="h3">Warning</h4>
 
     {{ if .displayPasswordWarning }}
     <p>One or more storage service records in these settings contains a plaintext password. </p> 
