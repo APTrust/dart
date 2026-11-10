@@ -25,6 +25,11 @@ batch workflow documentation.</a></p>
 
 </form>
 
+<!--
+The live region stays displayed and only its text changes, so screen
+readers announce a short summary. The full error list sits outside it.
+-->
+<div role="alert" aria-live="assertive" id="batchValidationAlert"><p id="batchValidationStatus"></p></div>
 <div id="batchValidation" style="display:none">
   <h3>Errors</h3>
   <ul id="batchValidationErrorList">
@@ -88,6 +93,7 @@ $(function() {
       // console.log(xhr.responseText)
       var showGeneralError = true
       let data = JSON.parse(xhr.responseText)
+      announceValidationErrors(Object.keys(data.errors).length)
       if (data.errors["WorkflowBatch_CsvUpload"]) {
         $('#WorkflowBatch_CsvUploadError').html(data.errors["WorkflowBatch_CsvUpload"])
         showGeneralError = false
@@ -109,6 +115,15 @@ $(function() {
     $('#WorkflowBatch_WorkflowIDError').html('')
     $('#batchValidation').hide()
     $('#batchValidationErrorList').empty()
+    $('#batchValidationStatus').text('')
+  }
+
+  // Put a short summary in the live region so screen readers
+  // announce that errors exist without reading the whole list.
+  function announceValidationErrors(count) {
+    if (count > 0) {
+      $('#batchValidationStatus').text(`Batch validation failed with ${count} error(s). See the errors list below.`)
+    }
   }
 
   // Display errors from the back end.
