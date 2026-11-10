@@ -404,3 +404,17 @@ func loadTestWorkflow(t *testing.T) *core.Workflow {
 	}
 	return workflow
 }
+
+// The batch form must have a live region for validation errors, so
+// screen readers announce them without focus moving to the message.
+// The region must stay displayed, and the page script must call
+// announceValidationErrors from the failed-submit handler, or the
+// announcement will not be made. This checks the rendered script for
+// that call site; it does not execute the JavaScript.
+func TestWorkflowBatchForm_ValidationErrorsAreAlerts(t *testing.T) {
+	DoSimpleGetTest(t, "/workflows/batch/choose", []string{
+		`<div role="alert" aria-live="assertive" id="batchValidationAlert"><p id="batchValidationStatus"></p></div>`,
+		`function announceValidationErrors(count) {`,
+		`announceValidationErrors(Object.keys(data.errors).length)`,
+	})
+}
